@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { appointmentSchema, SERVICES, DOCTORS, TIME_SLOTS } from '@/utils/validationSchemas'
+import { appointmentSchema, SERVICES, DOCTORS, TIME_SLOTS, formatPhoneNumber } from '@/utils/validationSchemas'
 import type { z } from 'zod'
 import { Input, Textarea, Select, Button, LoadingOverlay } from '@/components/ui'
 import { PenSquare, Check, X } from 'lucide-react'
@@ -12,7 +12,7 @@ import { getAvailableSlots, createAppointment } from '@/services/appointments'
 import { storeLocalReminder } from '@/services/reminders'
 import { sendBookingConfirmation } from '@/services/notifications'
 import { withToast } from '@/utils/toast'
-import { BookingEvent } from '@/utils/analytics'
+import { BookingEvent, FormEvent, AnalyticsEventCategory, trackEvent } from '@/utils/analytics'
 import { useNavigate } from 'react-router-dom'
 
 type BookingFormValues = z.infer<typeof appointmentSchema>
@@ -30,6 +30,7 @@ export default function BookingForm() {
     watch,
     reset,
     trigger,
+    setValue,
     formState: { errors, isSubmitting, isSubmitSuccessful },
   } = useForm<BookingFormValues>({
     resolver: zodResolver(appointmentSchema) as any,
@@ -155,9 +156,21 @@ export default function BookingForm() {
       [],
     ] as const
     const ok = await trigger(fieldsByStep[step] as any, { shouldFocus: true })
-    if (ok) setStep((s) => Math.min(2, s + 1))
+    if (ok) {
+      setStep((s) => {
+        const nextStep = Math.min(2, s + 1)
+        try { trackEvent(FormEvent.FormStep, AnalyticsEventCategory.Forms, { form: 'booking', step: nextStep }) } catch {}
+        return nextStep
+      })
+    }
   }
-  const back = () => setStep((s) => Math.max(0, s - 1))
+  const back = () => {
+    setStep((s) => {
+      const prev = Math.max(0, s - 1)
+      try { trackEvent(FormEvent.FormStep, AnalyticsEventCategory.Forms, { form: 'booking', step: prev }) } catch {}
+      return prev
+    })
+  }
   
   // In-place edit for summary
   type EditableField = keyof BookingFormValues
@@ -241,7 +254,12 @@ export default function BookingForm() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Телефон *</label>
-                <Input type="tel" fullWidth placeholder="+380 XX XXX XX XX" error={errors.phone?.message} {...register('phone')} />
+                <Input type="tel" fullWidth placeholder="+380 XX XXX XX XX" error={errors.phone?.message} {...register('phone', {
+                  onBlur: (e) => {
+                    const formatted = formatPhoneNumber(e.target.value)
+                    setValue('phone', formatted, { shouldValidate: true })
+                  }
+                })} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>

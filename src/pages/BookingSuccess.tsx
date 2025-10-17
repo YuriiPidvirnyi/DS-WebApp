@@ -59,7 +59,14 @@ export default function BookingSuccess() {
         <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6 mx-auto max-w-md">
           <h2 className="text-lg font-medium text-gray-900 mb-3">Деталі запису</h2>
           <div className="space-y-2 text-sm">
-            <p className="text-gray-500">Номер запису: <span className="font-mono font-medium text-gray-900">{ref}</span></p>
+            <p className="text-gray-500 flex items-center gap-2">Номер запису: <span className="font-mono font-medium text-gray-900">{ref}</span>
+              <button
+                onClick={async () => { try { await navigator.clipboard.writeText(ref || ''); } catch {} }}
+                className="text-xs px-2 py-0.5 border border-gray-300 rounded hover:bg-gray-50"
+              >
+                Копіювати
+              </button>
+            </p>
             {bookingDetails && (
               <>
                 <p className="text-gray-500">Послуга: <span className="font-medium text-gray-900">{bookingDetails.service}</span></p>

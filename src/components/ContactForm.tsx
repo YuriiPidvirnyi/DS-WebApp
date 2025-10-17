@@ -4,7 +4,7 @@ import { useRef } from 'react'
 import { Send, CheckCircle } from 'lucide-react'
 import { Input, Textarea, Button } from './ui'
 import { useSubmissionCooldown } from '@/hooks/useSubmissionCooldown'
-import { contactFormSchema, type ContactFormData } from '../utils/validationSchemas'
+import { contactFormSchema, type ContactFormData, formatPhoneNumber } from '../utils/validationSchemas'
 import { withToast } from '../utils/toast'
 import { sanitizeUserInput } from '../utils/security'
 import { createContact } from '@/services/contacts'
@@ -24,6 +24,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
     handleSubmit,
     formState: { errors, isSubmitting, isSubmitSuccessful },
     reset,
+    setValue,
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
@@ -134,7 +135,12 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
             placeholder="+380 XX XXX XX XX"
             disabled={isSubmitting}
             error={errors.phone?.message}
-            {...register('phone')}
+            {...register('phone', {
+              onBlur: (e) => {
+                const formatted = formatPhoneNumber(e.target.value)
+                setValue('phone', formatted, { shouldValidate: true })
+              }
+            })}
           />
         </div>
 
