@@ -4,6 +4,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Accessibility class for screen readers only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 @layer base {
   body {
     @apply bg-white text-gray-900 font-sans;
@@ -41,7 +54,7 @@
   }
 
   /* Reduce motion for users who prefer it */
-  @media (prefers-reduced-motion: reduce) {
+  @media (prefers-reduced-motion: reduce), .reduced-motion {
     *,
     *::before,
     *::after {
@@ -50,5 +63,73 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+  }
+  
+  /* High contrast mode */
+  .high-contrast {
+    --text-main: #ffffff;
+    --text-secondary: #ffffff;
+    --bg-main: #000000;
+    --bg-secondary: #333333;
+    --accent-color: #ffff00;
+  }
+  
+  .high-contrast body {
+    background-color: var(--bg-main) !important;
+    color: var(--text-main) !important;
+  }
+  
+  .high-contrast a,
+  .high-contrast button:not([disabled]) {
+    color: var(--accent-color) !important;
+    background-color: var(--bg-main) !important;
+    border-color: var(--accent-color) !important;
+    outline-color: var(--accent-color) !important;
+  }
+  
+  .high-contrast input,
+  .high-contrast textarea,
+  .high-contrast select {
+    color: var(--text-main) !important;
+    background-color: var(--bg-secondary) !important;
+    border-color: var(--text-main) !important;
+  }
+  
+  /* Font size utilities */
+  .font-size-normal {
+    /* default size, no changes needed */
+  }
+  
+  .font-size-larger {
+    font-size: 1.25em !important;
+    line-height: 1.5 !important;
+  }
+  
+  .font-size-largest {
+    font-size: 1.5em !important;
+    line-height: 1.7 !important;
+  }
+  
+  /* Color blindness simulation filters */
+  .protanopia {
+    filter: url('#protanopia-filter');
+  }
+  
+  .deuteranopia {
+    filter: url('#deuteranopia-filter');
+  }
+  
+  .tritanopia {
+    filter: url('#tritanopia-filter');
+  }
+  
+  /* Adding focus indicators for keyboard navigation */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 3px solid #2563eb !important;
+    outline-offset: 2px !important;
   }
 }

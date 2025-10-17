@@ -56,12 +56,12 @@ export default function PerformanceMetrics() {
           return // Don't measure for users with saveData enabled
         }
 
-        const { getCLS, getFID, getLCP, getFCP, getTTFB } = await import('web-vitals')
-        getCLS(reportWebVitals)
-        getFID(reportWebVitals)
-        getLCP(reportWebVitals)
-        getFCP(reportWebVitals)
-        getTTFB(reportWebVitals)
+        const { onCLS, onINP, onLCP, onFCP, onTTFB } = await import('web-vitals')
+        onCLS(reportWebVitals)
+        onINP(reportWebVitals)
+        onLCP(reportWebVitals)
+        onFCP(reportWebVitals)
+        onTTFB(reportWebVitals)
       } catch (error) {
         console.error('Failed to register web vitals', error)
       }
