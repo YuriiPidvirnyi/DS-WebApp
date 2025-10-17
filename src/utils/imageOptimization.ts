@@ -83,7 +83,6 @@ export const createImageConfig = (
   } = {}
 ) => {
   const {
-    quality = 'high',
     sizes = {},
     priority = false,
     webpSupported = true,

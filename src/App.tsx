@@ -9,6 +9,7 @@ import { AccessibilityProvider } from './components/AccessibilityProvider'
 import { AccessibilityPanel } from './components/AccessibilityPanel'
 import SVGFilters from './components/SVGFilters'
 import ErrorBoundary from './components/ErrorBoundary'
+import ToastProvider from './components/providers/ToastProvider'
 import { initializeAnalytics } from './utils/analytics'
 import { initializeSentry } from './utils/sentry'
 import './styles/globals.css'
@@ -35,6 +36,7 @@ function App() {
   return (
     <ErrorBoundary>
       <AccessibilityProvider>
+        <ToastProvider />
         <Router>
           <div className="min-h-screen flex flex-col">
             <StructuredData type="organization" />

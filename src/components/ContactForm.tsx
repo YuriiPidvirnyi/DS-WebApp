@@ -1,203 +1,187 @@
-import { useState } from 'react'
-import { Send, CheckCircle, AlertCircle } from 'lucide-react'
-import { Input, Textarea, Select, Button } from '@/components/ui'
-import { useForm } from '@/hooks/useForm'
-import { validators } from '@/utils/validation'
-import { createAppointment } from '@/services'
-import { getErrorMessage } from '@/services/api'
-import type { AppointmentFormData } from '@/types'
-
-const initialValues: AppointmentFormData = {
-  name: '',
-  phone: '',
-  email: '',
-  service: '',
-  message: '',
-}
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Send, CheckCircle } from 'lucide-react'
+import { Input, Textarea, Button } from './ui'
+import { contactFormSchema, type ContactFormData } from '../utils/validationSchemas'
+import { withToast } from '../utils/toast'
+import { sanitizeUserInput } from '../utils/security'
 
 interface ContactFormProps {
   onSuccess?: () => void
 }
 
 export default function ContactForm({ onSuccess }: ContactFormProps) {
-  const [submitError, setSubmitError] = useState<string | null>(null)
-
-  const validateForm = (
-    values: AppointmentFormData
-  ): Partial<Record<keyof AppointmentFormData, string>> => {
-    const errors: Partial<Record<keyof AppointmentFormData, string>> = {}
-
-    // Name validation
-    const nameError =
-      validators.required(values.name, "Ім'я та прізвище") ||
-      validators.fullName(values.name)
-    if (nameError) errors.name = nameError
-
-    // Phone validation
-    const phoneError =
-      validators.required(values.phone, 'Номер телефону') ||
-      validators.phone(values.phone)
-    if (phoneError) errors.phone = phoneError
-
-    // Email validation (optional but must be valid if provided)
-    if (values.email) {
-      const emailError = validators.email(values.email)
-      if (emailError) errors.email = emailError
-    }
-
-    return errors
-  }
-
-  const handleSubmit = async (values: AppointmentFormData) => {
-    setSubmitError(null)
-
-    try {
-      const response = await createAppointment(values)
-
-      if (response.success) {
-        // Success! Reset form and show success message
-        resetForm()
-        if (onSuccess) {
-          onSuccess()
-        }
-      }
-    } catch (error) {
-      const errorMessage = getErrorMessage(error)
-      setSubmitError(errorMessage)
-      console.error('Appointment submission error:', error)
-    }
-  }
-
   const {
-    values,
-    errors,
-    isSubmitting,
-    isSubmitted,
-    handleChange,
-    handleSubmit: onSubmit,
-    resetForm,
-  } = useForm({
-    initialValues,
-    onSubmit: handleSubmit,
-    validate: validateForm,
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting, isSubmitSuccessful },
+    reset,
+  } = useForm<ContactFormData>({
+    resolver: zodResolver(contactFormSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      message: '',
+      consent: false,
+    },
   })
+
+  const onSubmit = async (data: ContactFormData) => {
+    try {
+      // Sanitize input data
+      const sanitizedData = {
+        name: sanitizeUserInput(data.name),
+        email: sanitizeUserInput(data.email),
+        phone: sanitizeUserInput(data.phone),
+        message: sanitizeUserInput(data.message),
+        consent: data.consent,
+      }
+
+      // Simulate API call - replace with actual API call
+      await withToast(
+        async () => {
+          // Simulate network delay
+          await new Promise(resolve => setTimeout(resolve, 2000))
+          
+          // For now, just log the data
+          console.log('Contact form submission:', sanitizedData)
+          
+          // In a real app, this would be:
+          // const response = await contactAPI.createContact(sanitizedData)
+          // return response
+          
+          return { success: true, id: Date.now() }
+        },
+        {
+          formType: 'contact',
+        }
+      )
+
+      // Reset form on success
+      reset()
+      
+      // Call success callback
+      if (onSuccess) {
+        onSuccess()
+      }
+      
+    } catch (error) {
+      console.error('Contact form error:', error)
+      // Error toast is handled by withToast utility
+    }
+  }
 
   return (
     <div className="bg-white rounded-2xl shadow-lg p-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        Записатися на прийом
+        Зв'язатися з нами
       </h2>
 
-      {isSubmitted && !submitError && (
+      {isSubmitSuccessful && (
         <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-start gap-3">
           <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
           <div>
             <h4 className="font-semibold text-green-900 mb-1">
-              Заявку успішно надіслано!
+              Повідомлення успішно надіслано!
             </h4>
             <p className="text-sm text-green-700">
-              Дякуємо за звернення. Ми зв'яжемося з вами протягом 30 хвилин для
-              підтвердження запису.
+              Дякуємо за звернення. Ми зв'яжемося з вами найближчим часом.
             </p>
           </div>
         </div>
       )}
 
-      {submitError && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-          <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-          <div>
-            <h4 className="font-semibold text-red-900 mb-1">Помилка</h4>
-            <p className="text-sm text-red-700">{submitError}</p>
-          </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div>
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+            Ім'я та прізвище *
+          </label>
+          <Input
+            id="name"
+            fullWidth
+            placeholder="Введіть ваше ім'я та прізвище"
+            disabled={isSubmitting}
+            error={errors.name?.message}
+            {...register('name')}
+          />
         </div>
-      )}
 
-      <form onSubmit={onSubmit} className="space-y-6">
-        <Input
-          label="Ім'я та прізвище"
-          name="name"
-          type="text"
-          required
-          fullWidth
-          value={values.name}
-          onChange={handleChange}
-          error={errors.name}
-          placeholder="Введіть ваше ім'я та прізвище"
-          disabled={isSubmitting}
-        />
+        <div>
+          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+            Номер телефону *
+          </label>
+          <Input
+            id="phone"
+            type="tel"
+            fullWidth
+            placeholder="+380 XX XXX XX XX"
+            disabled={isSubmitting}
+            error={errors.phone?.message}
+            {...register('phone')}
+          />
+        </div>
 
-        <Input
-          label="Номер телефону"
-          name="phone"
-          type="tel"
-          required
-          fullWidth
-          value={values.phone}
-          onChange={handleChange}
-          error={errors.phone}
-          placeholder="+380 XX XXX XX XX"
-          disabled={isSubmitting}
-        />
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            Email *
+          </label>
+          <Input
+            id="email"
+            type="email"
+            fullWidth
+            placeholder="example@email.com"
+            disabled={isSubmitting}
+            error={errors.email?.message}
+            {...register('email')}
+          />
+        </div>
 
-        <Input
-          label="Email"
-          name="email"
-          type="email"
-          fullWidth
-          value={values.email}
-          onChange={handleChange}
-          error={errors.email}
-          placeholder="example@email.com"
-          helperText="Необов'язкове поле"
-          disabled={isSubmitting}
-        />
+        <div>
+          <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
+            Повідомлення *
+          </label>
+          <Textarea
+            id="message"
+            rows={4}
+            fullWidth
+            placeholder="Опишіть ваші побажання або питання"
+            disabled={isSubmitting}
+            error={errors.message?.message}
+            {...register('message')}
+          />
+        </div>
 
-        <Select
-          label="Послуга"
-          name="service"
-          fullWidth
-          value={values.service}
-          onChange={handleChange}
-          error={errors.service}
-          disabled={isSubmitting}
-        >
-          <option value="">Оберіть послугу</option>
-          <option value="consultation">Консультація</option>
-          <option value="treatment">Лікування зубів</option>
-          <option value="cleaning">Професійна гігієна</option>
-          <option value="implants">Імплантація</option>
-          <option value="orthodontics">Ортодонтія</option>
-          <option value="prosthetics">Протезування</option>
-          <option value="whitening">Відбілювання</option>
-          <option value="surgery">Хірургія</option>
-        </Select>
-
-        <Textarea
-          label="Повідомлення"
-          name="message"
-          rows={4}
-          fullWidth
-          value={values.message}
-          onChange={handleChange}
-          error={errors.message}
-          placeholder="Опишіть ваші побажання або питання"
-          disabled={isSubmitting}
-        />
+        <div className="flex items-start mb-6">
+          <div className="flex items-center h-5">
+            <input
+              id="consent"
+              type="checkbox"
+              className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"
+              disabled={isSubmitting}
+              {...register('consent')}
+            />
+          </div>
+          <label htmlFor="consent" className="ml-2 text-sm font-medium text-gray-700">
+            Я даю згоду на обробку моїх персональних даних *
+          </label>
+        </div>
+        {errors.consent && (
+          <p className="text-sm text-red-600 mt-1">{errors.consent.message}</p>
+        )}
 
         <Button
           type="submit"
           fullWidth
           size="lg"
           isLoading={isSubmitting}
-          disabled={isSubmitting || isSubmitted}
         >
           {!isSubmitting && <Send className="h-5 w-5 mr-2" />}
-          {isSubmitted ? 'Заявку надіслано' : 'Надіслати заявку'}
+          Надіслати повідомлення
         </Button>
 
         <p className="text-sm text-gray-500 text-center">
-          * Обов'язкові поля. Ми зв'яжемося з вами протягом 30 хвилин.
+          * Обов'язкові поля. Ми зв'яжемося з вами найближчим часом.
         </p>
       </form>
     </div>

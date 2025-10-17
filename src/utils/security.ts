@@ -113,8 +113,8 @@ export const generateCSP = (nonce: string): string => {
  * Set of common security patterns for validation
  */
 export const securityPatterns = {
-  // Only allow alphanumeric, spaces, and common punctuation
-  name: /^[\p{L}\p{N}\s\-\'.]{2,100}$/u,
+  // Only allow letters, numbers, spaces, and common punctuation
+  name: /^[a-zA-ZаА-яЯієїґІЄЇҐ0-9\s\-'.]{2,100}$/,
   // Valid email format
   email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
   // Ukrainian phone format
