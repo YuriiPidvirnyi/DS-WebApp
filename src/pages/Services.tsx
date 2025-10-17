@@ -1,4 +1,6 @@
 import { Check } from 'lucide-react'
+import FAQAccordion from '@/components/FAQAccordion'
+import { ALL_FAQS } from '@/content/faqs'
 
 const Services = () => {
   const services = [
@@ -187,6 +189,10 @@ const Services = () => {
             </button>
           </div>
         </div>
+      </div>
+      {/* FAQ Section */}
+      <div className="mt-20">
+        <FAQAccordion categories={ALL_FAQS} />
       </div>
     </div>
   )
