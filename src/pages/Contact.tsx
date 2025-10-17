@@ -35,7 +35,14 @@ const Contact = () => {
                   <Phone className="h-6 w-6 mt-1 text-yellow-300" />
                   <div>
                     <h3 className="font-semibold mb-1">Телефон</h3>
-                    <a href={`tel:${CONTACT_INFO.phoneRaw}`} className="hover:underline">
+                    <a 
+                      href={`tel:${CONTACT_INFO.phoneRaw}`} 
+                      className="hover:underline"
+                      data-track-id="call_click"
+                      data-track-category="outbound"
+                      data-track-label="contact_phone"
+                      data-track-prop-destination={CONTACT_INFO.phoneRaw}
+                    >
                       {CONTACT_INFO.phone}
                     </a>
                     <p className="text-sm text-blue-100">Робочі години: {CONTACT_INFO.workingHours.weekdays}</p>
@@ -46,7 +53,14 @@ const Contact = () => {
                   <Mail className="h-6 w-6 mt-1 text-yellow-300" />
                   <div>
                     <h3 className="font-semibold mb-1">Email</h3>
-                    <a href={`mailto:${CONTACT_INFO.email}`} className="hover:underline">
+                    <a 
+                      href={`mailto:${CONTACT_INFO.email}`} 
+                      className="hover:underline"
+                      data-track-id="email_click"
+                      data-track-category="outbound"
+                      data-track-label="contact_email"
+                      data-track-prop-destination={CONTACT_INFO.email}
+                    >
                       {CONTACT_INFO.email}
                     </a>
                     <p className="text-sm text-blue-100">Відповідаємо протягом 2 годин</p>
@@ -123,6 +137,9 @@ const Contact = () => {
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="inline-flex items-center text-dental-teal hover:text-teal-600 font-medium text-sm"
+                  data-track-id="open_maps"
+                  data-track-category="navigation"
+                  data-track-label="contact_map_link"
                 >
                   <MapPin className="h-4 w-4 mr-1" />
                   Відкрити в Google Maps →

@@ -26,13 +26,27 @@ const Header = () => {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-1">
                 <Phone className="h-4 w-4" aria-hidden="true" />
-                <a href={`tel:${CONTACT_INFO.phoneRaw}`} className="hover:underline">
+                <a 
+                  href={`tel:${CONTACT_INFO.phoneRaw}`} 
+                  className="hover:underline"
+                  data-track-id="call_click"
+                  data-track-category="outbound"
+                  data-track-label="header_phone"
+                  data-track-prop-destination={CONTACT_INFO.phoneRaw}
+                >
                   {CONTACT_INFO.phone}
                 </a>
               </div>
               <div className="flex items-center space-x-1">
                 <Mail className="h-4 w-4" aria-hidden="true" />
-                <a href={`mailto:${CONTACT_INFO.email}`} className="hover:underline">
+                <a 
+                  href={`mailto:${CONTACT_INFO.email}`} 
+                  className="hover:underline"
+                  data-track-id="email_click"
+                  data-track-category="outbound"
+                  data-track-label="header_email"
+                  data-track-prop-destination={CONTACT_INFO.email}
+                >
                   {CONTACT_INFO.email}
                 </a>
               </div>
@@ -74,8 +88,11 @@ const Header = () => {
           {/* CTA Button */}
           <div className="hidden md:block">
             <Link
-              to="/contact"
+              to="/booking"
               className="bg-dental-teal hover:bg-teal-600 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
+              data-track-id="cta_book_now"
+              data-track-category="navigation"
+              data-track-label="header_cta"
             >
               Записатись на прийом
             </Link>

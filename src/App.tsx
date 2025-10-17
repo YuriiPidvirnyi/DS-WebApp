@@ -12,6 +12,7 @@ import ErrorBoundary from './components/ErrorBoundary'
 import ToastProvider from './components/providers/ToastProvider'
 import { initializeAnalytics } from './utils/analytics'
 import { initializeSentry } from './utils/sentry'
+import useAnalytics from './hooks/useAnalytics'
 import './styles/globals.css'
 
 // Lazy load all pages
@@ -34,6 +35,9 @@ function App() {
     // Initialize error tracking
     initializeSentry();
   }, []);
+
+  // Initialize page view tracking and delegated click tracking
+  useAnalytics();
   return (
     <ErrorBoundary>
       <AccessibilityProvider>
