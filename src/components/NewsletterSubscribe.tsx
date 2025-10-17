@@ -5,6 +5,7 @@ import { newsletterSchema } from '@/utils/validationSchemas'
 import type { z } from 'zod'
 import { withToast } from '@/utils/toast'
 import { subscribeNewsletter } from '@/services/subscriptions'
+import MicroFeedback from '@/components/MicroFeedback'
 
 type NewsletterValues = z.infer<typeof newsletterSchema>
 
@@ -48,7 +49,12 @@ export default function NewsletterSubscribe() {
         </label>
       </div>
       {isSubmitSuccessful && (
-        <p className="text-xs text-green-400">Дякуємо! Ви підписані.</p>
+        <div className="text-xs text-green-400">
+          <p>Дякуємо! Ви підписані.</p>
+          <div className="mt-1">
+            <MicroFeedback form="newsletter" compact />
+          </div>
+        </div>
       )}
     </form>
   )

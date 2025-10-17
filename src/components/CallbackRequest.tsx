@@ -5,6 +5,7 @@ import { callbackSchema } from '@/utils/validationSchemas'
 import type { z } from 'zod'
 import { withToast } from '@/utils/toast'
 import { mockAPIResponse } from '@/services/api'
+import MicroFeedback from '@/components/MicroFeedback'
 
 // Simple mock callback service (can be replaced with real service later)
 async function createCallback(_payload: { name: string; phone: string; preferredTime: string; service?: string }) {
@@ -51,7 +52,12 @@ export default function CallbackRequest() {
           <label htmlFor="cb-consent" className="text-xs text-gray-600">Погоджуюся на обробку персональних даних</label>
         </div>
         <Button type="submit" fullWidth isLoading={isSubmitting}>Замовити дзвінок</Button>
-        {isSubmitSuccessful && <p className="text-xs text-green-600">Дякуємо! Ми зателефонуємо найближчим часом.</p>}
+        {isSubmitSuccessful && (
+          <div className="mt-2">
+            <p className="text-xs text-green-600 mb-1">Дякуємо! Ми зателефонуємо найближчим часом.</p>
+            <MicroFeedback form="callback" compact />
+          </div>
+        )}
       </form>
     </div>
   )

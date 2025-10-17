@@ -7,6 +7,7 @@ import { withToast } from '../utils/toast'
 import { sanitizeUserInput } from '../utils/security'
 import { createContact } from '@/services/contacts'
 import Turnstile from '@/components/Turnstile'
+import MicroFeedback from '@/components/MicroFeedback'
 
 interface ContactFormProps {
   onSuccess?: () => void
@@ -71,15 +72,16 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
       </h2>
 
       {isSubmitSuccessful && (
-        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-start gap-3">
-          <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-          <div>
-            <h4 className="font-semibold text-green-900 mb-1">
-              Повідомлення успішно надіслано!
-            </h4>
-            <p className="text-sm text-green-700">
-              Дякуємо за звернення. Ми зв'яжемося з вами найближчим часом.
-            </p>
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <div className="flex items-start gap-3">
+            <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-semibold text-green-900 mb-1">Повідомлення успішно надіслано!</h4>
+              <p className="text-sm text-green-700">Дякуємо за звернення. Ми зв'яжемося з вами найближчим часом.</p>
+            </div>
+          </div>
+          <div className="mt-3">
+            <MicroFeedback form="contact" />
           </div>
         </div>
       )}
