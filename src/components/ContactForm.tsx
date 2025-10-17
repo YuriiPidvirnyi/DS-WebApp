@@ -6,6 +6,7 @@ import { contactFormSchema, type ContactFormData } from '../utils/validationSche
 import { withToast } from '../utils/toast'
 import { sanitizeUserInput } from '../utils/security'
 import { createContact } from '@/services/contacts'
+import Turnstile from '@/components/Turnstile'
 
 interface ContactFormProps {
   onSuccess?: () => void
@@ -160,6 +161,8 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         {errors.consent && (
           <p className="text-sm text-red-600 mt-1">{errors.consent.message}</p>
         )}
+
+        <Turnstile className="mb-4" />
 
         <Button
           type="submit"
