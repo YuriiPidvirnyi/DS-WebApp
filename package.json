@@ -17,11 +17,12 @@
     "test:coverage": "echo \"Coverage will be added with Vitest\""
   },
   "dependencies": {
+    "clsx": "^2.0.0",
+    "lucide-react": "^0.294.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.20.1",
-    "lucide-react": "^0.294.0",
-    "clsx": "^2.0.0"
+    "react-helmet-async": "^2.0.5",
+    "react-router-dom": "^6.20.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.37",

@@ -1,0 +1,14 @@
+# robots.txt for Dental Story Website
+
+User-agent: *
+Allow: /
+
+# Disallow admin and private pages (if any in future)
+Disallow: /admin/
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://dentalstory.com.ua/sitemap.xml
+
+# Crawl delay (optional, adjust as needed)
+# Crawl-delay: 1
