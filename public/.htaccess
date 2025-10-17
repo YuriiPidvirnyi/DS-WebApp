@@ -1,0 +1,97 @@
+# Security Headers for Apache
+<IfModule mod_headers.c>
+    # Strict-Transport-Security (HSTS)
+    # Forces browsers to use HTTPS for a specified time
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+    # Content-Security-Policy (CSP)
+    # Defines approved sources for content (scripts, styles, etc)
+    Header set Content-Security-Policy "default-src 'self'; \
+script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com; \
+style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; \
+img-src 'self' data: https://www.google-analytics.com; \
+font-src 'self' https://fonts.gstatic.com; \
+connect-src 'self' https://www.google-analytics.com; \
+frame-src 'self' https://www.google.com https://maps.google.com; \
+object-src 'none'; \
+base-uri 'self'; \
+form-action 'self'; \
+frame-ancestors 'none'; \
+block-all-mixed-content; \
+upgrade-insecure-requests;"
+
+    # X-Content-Type-Options
+    # Prevents MIME sniffing
+    Header always set X-Content-Type-Options "nosniff"
+
+    # X-Frame-Options
+    # Prevents your site from being embedded in iframes
+    Header always set X-Frame-Options "SAMEORIGIN"
+
+    # X-XSS-Protection
+    # Enables XSS filtering in browsers
+    Header always set X-XSS-Protection "1; mode=block"
+
+    # Referrer-Policy
+    # Controls how much referrer information is passed
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Feature Policy / Permissions Policy
+    # Allows you to control browser features
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(self), interest-cohort=()"
+</IfModule>
+
+# Protect against directory browsing
+Options -Indexes
+
+# Protect files that may contain sensitive information
+<FilesMatch "^\.([Hh][Tt]|[Dd][Ss]_[Ss])">
+    Order allow,deny
+    Deny from all
+    Satisfy All
+</FilesMatch>
+
+# Protect system files
+<FilesMatch "(\.(bak|config|sql|fla|psd|ini|log|sh|inc|swp|dist|env|local|example)|~)$">
+    Order allow,deny
+    Deny from all
+    Satisfy All
+</FilesMatch>
+
+# Redirect HTTP to HTTPS
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# SPA Routing (Handle all routes through index.html)
+RewriteBase /
+RewriteRule ^index\.html$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]
+
+# Enable Compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/x-javascript application/json application/xml application/rss+xml
+</IfModule>
+
+# Set Expiration Headers
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/jpg "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 month"
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/pdf "access plus 1 month"
+  ExpiresByType text/javascript "access plus 1 month"
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType application/xhtml+xml "access plus 0 seconds"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType application/x-javascript "access plus 1 month"
+  ExpiresByType application/x-shockwave-flash "access plus 1 month"
+  ExpiresByType image/x-icon "access plus 1 year"
+  ExpiresDefault "access plus 2 days"
+</IfModule>

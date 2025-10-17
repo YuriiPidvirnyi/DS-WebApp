@@ -8,6 +8,7 @@ import { StructuredData } from './components/StructuredData'
 import { AccessibilityProvider } from './components/AccessibilityProvider'
 import { AccessibilityPanel } from './components/AccessibilityPanel'
 import SVGFilters from './components/SVGFilters'
+import ErrorBoundary from './components/ErrorBoundary'
 import './styles/globals.css'
 
 // Lazy load all pages
@@ -22,18 +23,19 @@ const NotFound = lazy(() => import('./pages/NotFound'))
 
 function App() {
   return (
-    <AccessibilityProvider>
-      <Router>
-        <div className="min-h-screen flex flex-col">
-          <StructuredData type="organization" />
-          <PerformanceMetrics />
-          <SVGFilters />
-          <AccessibilityPanel />
-          <a href="#main-content" className="skip-to-content">
-            Перейти до основного вмісту
-          </a>
-          <Header />
-          <main id="main-content" className="flex-1" role="main">
+    <ErrorBoundary>
+      <AccessibilityProvider>
+        <Router>
+          <div className="min-h-screen flex flex-col">
+            <StructuredData type="organization" />
+            <PerformanceMetrics />
+            <SVGFilters />
+            <AccessibilityPanel />
+            <a href="#main-content" className="skip-to-content">
+              Перейти до основного вмісту
+            </a>
+            <Header />
+            <main id="main-content" className="flex-1" role="main">
           <Suspense fallback={<LoadingPage />}>
             <Routes>
               <Route path="/" element={<Home />} />
@@ -48,9 +50,10 @@ function App() {
           </Suspense>
         </main>
         <Footer />
-      </div>
-    </Router>
-  </AccessibilityProvider>
+        </div>
+      </Router>
+    </AccessibilityProvider>
+  </ErrorBoundary>
   )
 }
 
