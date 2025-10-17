@@ -73,13 +73,4 @@ export default function PerformanceMetrics() {
   return null // This component doesn't render anything
 }
 
-// Add TypeScript interfaces for window globals
-declare global {
-  interface Window {
-    gtag?: (
-      command: string,
-      action: string,
-      params: Record<string, unknown>
-    ) => void
-  }
-}
+// We don't need to redeclare gtag here as it's already declared in analytics.ts

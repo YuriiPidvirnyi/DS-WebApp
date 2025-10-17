@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
@@ -9,6 +9,8 @@ import { AccessibilityProvider } from './components/AccessibilityProvider'
 import { AccessibilityPanel } from './components/AccessibilityPanel'
 import SVGFilters from './components/SVGFilters'
 import ErrorBoundary from './components/ErrorBoundary'
+import { initializeAnalytics } from './utils/analytics'
+import { initializeSentry } from './utils/sentry'
 import './styles/globals.css'
 
 // Lazy load all pages
@@ -22,6 +24,14 @@ const TermsOfService = lazy(() => import('./pages/TermsOfService'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
 function App() {
+  // Initialize analytics and error tracking
+  useEffect(() => {
+    // Initialize analytics
+    initializeAnalytics();
+    
+    // Initialize error tracking
+    initializeSentry();
+  }, []);
   return (
     <ErrorBoundary>
       <AccessibilityProvider>
