@@ -3,6 +3,7 @@ import MicroFeedback from '@/components/MicroFeedback'
 import { useEffect, useMemo, useState } from 'react'
 import { createICSEvent, downloadICS } from '@/utils/calendar'
 import { CalendarPlus } from 'lucide-react'
+import ReminderSettings from '@/components/ReminderSettings'
 
 type BookingDetails = {
   id: string
@@ -75,9 +76,13 @@ export default function BookingSuccess() {
             )}
           </div>
         </div>
-        <div className="flex justify-center mb-6">
+        <div className="flex flex-col items-center gap-4 mb-6">
           {/* @ts-ignore */}
           <MicroFeedback form="appointment" refId={ref || undefined} />
+          
+          <div className="w-full max-w-md">
+            <ReminderSettings />
+          </div>
         </div>
         <div className="flex justify-center gap-3">
           <Link to="/" className="px-5 py-2 rounded-lg bg-dental-teal text-white">На головну</Link>

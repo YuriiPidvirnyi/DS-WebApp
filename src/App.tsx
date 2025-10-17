@@ -13,6 +13,7 @@ import ToastProvider from './components/providers/ToastProvider'
 import { initializeAnalytics } from './utils/analytics'
 import { initializeSentry } from './utils/sentry'
 import useAnalytics from './hooks/useAnalytics'
+import { useReminders } from './hooks/useReminders'
 import FloatingQuickActions from './components/FloatingQuickActions'
 import './styles/globals.css'
 
@@ -40,6 +41,9 @@ function App() {
 
   // Initialize page view tracking and delegated click tracking
   useAnalytics();
+  
+  // Initialize appointment reminders
+  useReminders();
   return (
     <ErrorBoundary>
       <AccessibilityProvider>

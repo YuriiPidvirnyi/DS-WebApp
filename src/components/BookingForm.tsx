@@ -9,6 +9,7 @@ import Turnstile, { TurnstileRef } from '@/components/Turnstile'
 import { assertValidTurnstile } from '@/utils/turnstileVerify'
 import { useSubmissionCooldown } from '@/hooks/useSubmissionCooldown'
 import { getAvailableSlots, createAppointment } from '@/services/appointments'
+import { storeLocalReminder } from '@/services/reminders'
 import { sendBookingConfirmation } from '@/services/notifications'
 import { withToast } from '@/utils/toast'
 import { BookingEvent } from '@/utils/analytics'
@@ -128,7 +129,13 @@ export default function BookingForm() {
     }
     
     try { 
-      localStorage.setItem('last_booking', JSON.stringify(bookingDetails)) 
+      // Store booking details for reference
+      localStorage.setItem('last_booking', JSON.stringify(bookingDetails))
+      
+      // Set up automatic reminders based on user preference
+      if (data.reminderPreference !== 'none') {
+        storeLocalReminder(appointmentId, data.date, data.time)
+      }
     } catch {}
     
     // Start cooldown and clear form data after successful submission
@@ -633,11 +640,24 @@ export default function BookingForm() {
               <label className="block text-sm font-medium text-gray-700 mb-1">Симптоми / побажання</label>
               <Textarea rows={4} fullWidth placeholder="Коротко опишіть ваш запит" error={errors.symptoms?.message as any} {...register('symptoms')} />
             </div>
-            <div className="flex items-start">
-              <input id="consent" type="checkbox" className="mt-1" {...register('consent')} />
-              <label htmlFor="consent" className="ml-2 text-sm text-gray-700">Я даю згоду на обробку персональних даних *</label>
+            <div className="space-y-4">
+              {/* Reminder preference */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Нагадування</label>
+                <Select fullWidth {...register('reminderPreference')}>
+                  <option value="email">По email</option>
+                  <option value="sms">По SMS</option>
+                  <option value="both">По email та SMS</option>
+                  <option value="none">Не надсилати нагадування</option>
+                </Select>
+              </div>
+
+              <div className="flex items-start">
+                <input id="consent" type="checkbox" className="mt-1" {...register('consent')} />
+                <label htmlFor="consent" className="ml-2 text-sm text-gray-700">Я даю згоду на обробку персональних даних *</label>
+              </div>
+              <Turnstile ref={turnstileRef} className="mt-2" />
             </div>
-            <Turnstile ref={turnstileRef} className="mt-2" />
           </>
         )}
 
