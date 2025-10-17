@@ -28,6 +28,7 @@ const TermsOfService = lazy(() => import('./pages/TermsOfService'))
 const Booking = lazy(() => import('./pages/Booking'))
 const BookingSuccess = lazy(() => import('./pages/BookingSuccess'))
 const NotFound = lazy(() => import('./pages/NotFound'))
+const Reviews = lazy(() => import('./pages/Reviews'))
 
 function App() {
   // Initialize analytics and error tracking
@@ -68,6 +69,7 @@ function App() {
               <Route path="/booking" element={<Booking />} />
               <Route path="/booking/success" element={<BookingSuccess />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/reviews" element={<Reviews />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route path="*" element={<NotFound />} />
