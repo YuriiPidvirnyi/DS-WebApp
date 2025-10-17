@@ -1,0 +1,86 @@
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+
+// Base URL and timeouts
+const BASE_URL = (import.meta.env.VITE_API_URL as string | undefined) || 'http://localhost:3001/api'
+const TIMEOUT = 10_000
+
+// Simple in-memory cache for GET requests
+type CacheEntry = { data: unknown; expiry: number }
+const cache = new Map<string, CacheEntry>()
+const DEFAULT_TTL = 30_000 // 30s
+
+// Create axios instance
+const http: AxiosInstance = axios.create({
+  baseURL: BASE_URL,
+  timeout: TIMEOUT,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
+
+// Request interceptor: add auth token, request ID, etc.
+http.interceptors.request.use((config) => {
+  // Attach correlation/request id
+  config.headers = config.headers || {}
+  config.headers['X-Request-Id'] = crypto.randomUUID ? crypto.randomUUID() : String(Date.now())
+
+  // Optional: attach bearer token if available (placeholder)
+  const token = (window as any)?.__AUTH_TOKEN__ as string | undefined
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`
+  }
+
+  // Simple GET cache: serve cached response before request if fresh
+  if (config.method?.toLowerCase() === 'get') {
+    const key = `${config.baseURL || ''}${config.url}?${new URLSearchParams((config.params || {}) as any)}`
+    const cached = cache.get(key)
+    if (cached && cached.expiry > Date.now()) {
+      // Cancel request and return cached response via adapter
+      return {
+        ...config,
+        adapter: async () => ({
+          data: cached.data,
+          status: 200,
+          statusText: 'OK (cache)',
+          headers: {},
+          config,
+          request: {},
+        } as AxiosResponse),
+      }
+    }
+  }
+
+  return config
+})
+
+// Response interceptor: cache GETs and retry on transient errors
+http.interceptors.response.use(
+  (response) => {
+    // Cache GET responses
+    const config = response.config
+    if (config.method?.toLowerCase() === 'get') {
+      const key = `${config.baseURL || ''}${config.url}?${new URLSearchParams((config.params || {}) as any)}`
+      cache.set(key, { data: response.data, expiry: Date.now() + DEFAULT_TTL })
+    }
+    return response
+  },
+  async (error: AxiosError) => {
+    const config = error.config as (AxiosRequestConfig & { __retryCount?: number }) | undefined
+    const status = error.response?.status
+
+    // Retry on network errors, 429, and 5xx (up to 3 times)
+    const shouldRetry = !status || status === 429 || (status >= 500 && status < 600)
+    if (config && shouldRetry) {
+      config.__retryCount = (config.__retryCount || 0) + 1
+      if (config.__retryCount <= 3) {
+        const delay = 250 * Math.pow(2, config.__retryCount) // 250ms, 500ms, 1000ms
+        await new Promise((r) => setTimeout(r, delay))
+        return http(config)
+      }
+    }
+
+    return Promise.reject(error)
+  }
+)
+
+export default http

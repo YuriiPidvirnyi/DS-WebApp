@@ -15,3 +15,5 @@ export type { InputProps, TextareaProps, SelectProps } from './Input'
 
 export { Spinner } from './Spinner'
 export type { SpinnerProps } from './Spinner'
+
+export { default as LoadingOverlay } from './LoadingOverlay'

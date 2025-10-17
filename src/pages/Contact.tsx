@@ -1,5 +1,6 @@
 import { Phone, Mail, MapPin, Clock } from 'lucide-react'
 import ContactForm from '@/components/ContactForm'
+import GoogleMap from '@/components/GoogleMap'
 import { CONTACT_INFO } from '@/utils/constants'
 
 const Contact = () => {
@@ -114,17 +115,7 @@ const Contact = () => {
                 </p>
               </div>
               <div className="relative h-80">
-                <iframe 
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2574.600386934008!2d24.034215276362477!3d49.812380033100865!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x473ae7d471be0ba5%3A0xbc1336f142c1e357!2sDental%20Story!5e0!3m2!1suk!2sgr!4v1760715689970!5m2!1suk!2sgr"
-                  width="100%" 
-                  height="100%" 
-                  style={{ border: 0 }} 
-                  allowFullScreen 
-                  loading="lazy" 
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Dental Story - Розташування клініки на карті"
-                  className="w-full h-full"
-                ></iframe>
+                <GoogleMap className="w-full h-full" height="100%" />
               </div>
               <div className="p-4 bg-white border-t">
                 <a 

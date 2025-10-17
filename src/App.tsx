@@ -22,6 +22,7 @@ const Contact = lazy(() => import('./pages/Contact'))
 const Gallery = lazy(() => import('./pages/Gallery'))
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'))
 const TermsOfService = lazy(() => import('./pages/TermsOfService'))
+const Booking = lazy(() => import('./pages/Booking'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
 function App() {
@@ -54,6 +55,7 @@ function App() {
               <Route path="/services" element={<Services />} />
               <Route path="/about" element={<About />} />
               <Route path="/gallery" element={<Gallery />} />
+              <Route path="/booking" element={<Booking />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
