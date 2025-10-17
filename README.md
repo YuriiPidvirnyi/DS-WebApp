@@ -1,0 +1,122 @@
+# Dental Story - Dental Clinic Website
+
+Modern, responsive website for Dental Story dental clinic built with React, TypeScript, and Tailwind CSS.
+
+## Features
+
+- 🦷 Modern dental clinic design
+- 📱 Fully responsive layout
+- ⚡ Fast performance with Vite
+- 🎨 Beautiful UI with Tailwind CSS
+- 📝 Contact form for appointments
+- 🌐 Ukrainian language support
+- ♿ Accessible design
+
+## Tech Stack
+
+- **Framework**: React 18
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Build Tool**: Vite
+- **Icons**: Lucide React
+- **Routing**: React Router DOM
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+ 
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd dental-story-webapp
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Start the development server:
+```bash
+npm run dev
+```
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+- `npm run lint:fix` - Fix ESLint issues
+- `npm run typecheck` - Run TypeScript type checking
+- `npm run format` - Format code with Prettier
+
+## Project Structure
+
+```
+src/
+├── components/          # Reusable UI components
+│   ├── Header.tsx      # Main navigation
+│   └── Footer.tsx      # Site footer
+├── pages/              # Page components
+│   ├── Home.tsx        # Homepage
+│   ├── Services.tsx    # Services page
+│   ├── About.tsx       # About page
+│   └── Contact.tsx     # Contact page
+├── styles/             # Global styles
+│   └── globals.css     # Tailwind CSS imports
+├── utils/              # Utility functions
+└── assets/             # Static assets
+
+```
+
+## Features Overview
+
+### Pages
+
+1. **Home** - Hero section, features, services overview
+2. **Services** - Detailed list of dental services
+3. **About** - Clinic information, team, values
+4. **Contact** - Contact form, clinic info, FAQ
+
+### Components
+
+- Responsive navigation with mobile menu
+- Professional footer with contact info
+- Modern card-based layouts
+- Accessible form components
+
+## Deployment
+
+Build for production:
+
+```bash
+npm run build
+```
+
+The built files will be in the `dist/` directory, ready for deployment.
+
+## Browser Support
+
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+
+## License
+
+MIT License - see LICENSE file for details.
+
+## Contact
+
+For questions about this website, contact Dental Story clinic:
+- Phone: +380 44 123 45 67
+- Email: info@dentalstory.ua
+- Website: www.dentalstory.ua
