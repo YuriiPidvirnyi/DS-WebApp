@@ -15,13 +15,13 @@ interface UseFormReturn<T> {
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => void
   handleSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void>
-  setFieldValue: (name: keyof T, value: any) => void
+  setFieldValue: (name: keyof T, value: T[keyof T]) => void
   setFieldError: (name: keyof T, error: string) => void
   resetForm: () => void
   clearErrors: () => void
 }
 
-export function useForm<T extends Record<string, any>>({
+export function useForm<T extends Record<string, unknown>>({
   initialValues,
   onSubmit,
   validate,
@@ -47,7 +47,7 @@ export function useForm<T extends Record<string, any>>({
     }
   }
 
-  const setFieldValue = (name: keyof T, value: any) => {
+  const setFieldValue = (name: keyof T, value: T[keyof T]) => {
     setValues(prev => ({ ...prev, [name]: value } as T))
   }
 
