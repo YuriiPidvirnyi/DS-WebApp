@@ -1,6 +1,7 @@
 import { Phone, Mail, MapPin, Clock } from 'lucide-react'
 import ContactForm from '@/components/ContactForm'
 import GoogleMap from '@/components/GoogleMap'
+import CallbackRequest from '@/components/CallbackRequest'
 import { CONTACT_INFO } from '@/utils/constants'
 
 const Contact = () => {
@@ -116,6 +117,9 @@ const Contact = () => {
                 </p>
               </div>
             </div>
+
+            {/* Quick callback */}
+            <CallbackRequest />
 
             {/* Embedded Google Map */}
             <div className="bg-gray-100 rounded-2xl overflow-hidden">

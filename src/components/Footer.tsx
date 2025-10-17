@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Phone, Mail, MapPin, Clock } from 'lucide-react'
 import { CONTACT_INFO, SITE_INFO } from '@/utils/constants'
+import NewsletterSubscribe from '@/components/NewsletterSubscribe'
 
 const Footer = () => {
   return (
@@ -25,6 +26,14 @@ const Footer = () => {
               <a href="#" className="text-gray-300 hover:text-dental-teal transition-colors" aria-label="Telegram">
                 Telegram
               </a>
+            </div>
+
+            <div className="mt-6">
+              <h4 className="text-sm font-semibold mb-2">Підписка на новини</h4>
+              <p className="text-xs text-gray-400 mb-3">Отримуйте акції та корисні поради від наших лікарів</p>
+              <div className="max-w-sm">
+                <NewsletterSubscribe />
+              </div>
             </div>
           </div>
 
