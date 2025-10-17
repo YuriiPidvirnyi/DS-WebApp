@@ -5,6 +5,7 @@ import { Input, Textarea, Button } from './ui'
 import { contactFormSchema, type ContactFormData } from '../utils/validationSchemas'
 import { withToast } from '../utils/toast'
 import { sanitizeUserInput } from '../utils/security'
+import { createContact } from '@/services/contacts'
 
 interface ContactFormProps {
   onSuccess?: () => void
@@ -38,24 +39,14 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         consent: data.consent,
       }
 
-      // Simulate API call - replace with actual API call
+      // Real API call with mock fallback inside service
       await withToast(
         async () => {
-          // Simulate network delay
-          await new Promise(resolve => setTimeout(resolve, 2000))
-          
-          // For now, just log the data
-          console.log('Contact form submission:', sanitizedData)
-          
-          // In a real app, this would be:
-          // const response = await contactAPI.createContact(sanitizedData)
-          // return response
-          
-          return { success: true, id: Date.now() }
+          const res = await createContact(sanitizedData)
+          if (!res.success) throw new Error(res.error || 'Не вдалося надіслати повідомлення')
+          return res
         },
-        {
-          formType: 'contact',
-        }
+        { formType: 'contact' }
       )
 
       // Reset form on success

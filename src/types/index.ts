@@ -83,3 +83,12 @@ export interface ApiError {
   code?: string
   details?: unknown
 }
+
+// Типи запиту з контактної форми
+export interface ContactRequest {
+  name: string
+  email: string
+  phone: string
+  message: string
+  consent: boolean
+}
