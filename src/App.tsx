@@ -13,6 +13,7 @@ import ToastProvider from './components/providers/ToastProvider'
 import { initializeAnalytics } from './utils/analytics'
 import { initializeSentry } from './utils/sentry'
 import useAnalytics from './hooks/useAnalytics'
+import FloatingQuickActions from './components/FloatingQuickActions'
 import './styles/globals.css'
 
 // Lazy load all pages
@@ -70,6 +71,12 @@ function App() {
           </Suspense>
         </main>
         <Footer />
+        </div>
+        {/* Floating quick actions */}
+        <div className="fixed inset-0 pointer-events-none">
+          <div className="pointer-events-auto">
+            <FloatingQuickActions />
+          </div>
         </div>
       </Router>
     </AccessibilityProvider>
