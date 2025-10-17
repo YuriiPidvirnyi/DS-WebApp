@@ -117,6 +117,12 @@ MIT License - see LICENSE file for details.
 ## Contact
 
 For questions about this website, contact Dental Story clinic:
-- Phone: +380 44 123 45 67
-- Email: info@dentalstory.ua
-- Website: www.dentalstory.ua
+- **Address:** Kyiv, Academician Koroleva Street, 10, Dniprovsky District
+- **Phone:** +380 50 455 47 74
+- **Email:** info@dentalstory.com.ua
+- **Website:** www.dentalstory.com.ua
+- **Google Maps:** https://maps.app.goo.gl/euKMW8R8eGTd2wJr9
+- **Working Hours:**
+  - Mon-Fri: 9:00-19:00
+  - Sat: 9:00-16:00
+  - Sun: Closed

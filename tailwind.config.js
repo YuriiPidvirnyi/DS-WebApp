@@ -4,21 +4,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-        },
         dental: {
-          blue: '#2563eb',
-          teal: '#14b8a6',
-          green: '#10b981',
+          primary: '#AECED3',    // Основний блакитний з brandbook
+          secondary: '#D1CAC0',   // Бежевий з brandbook
+          white: '#FFFFFF',
         },
+        // Для сумісності зі старим кодом
+        'dental-blue': '#AECED3',
+        'dental-teal': '#AECED3',
+        'dental-green': '#AECED3',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Stolzl', 'system-ui', 'sans-serif'],
       },
     },
   },

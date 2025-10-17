@@ -1,14 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
 @layer base {
-  * {
-    @apply border-border;
-  }
   body {
     @apply bg-white text-gray-900 font-sans;
+  }
+
+  /* Focus visible styles for accessibility */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-dental-teal ring-offset-2;
+  }
+
+  /* Improved focus styles for interactive elements */
+  a:focus-visible,
+  button:focus-visible {
+    @apply ring-2 ring-dental-teal ring-offset-2 outline-none;
+  }
+
+  /* Remove outline for mouse users but keep for keyboard users */
+  *:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Smooth scroll behavior */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Skip to content link (hidden until focused) */
+  .skip-to-content {
+    @apply sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-dental-teal focus:text-white focus:px-4 focus:py-2 focus:rounded;
+  }
+
+  /* Ensure sufficient color contrast */
+  ::selection {
+    @apply bg-dental-teal text-white;
+  }
+
+  /* Reduce motion for users who prefer it */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }

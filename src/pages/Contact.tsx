@@ -1,37 +1,8 @@
-import { useState } from 'react'
-import { Phone, Mail, MapPin, Clock, Send } from 'lucide-react'
+import { Phone, Mail, MapPin, Clock } from 'lucide-react'
+import ContactForm from '@/components/ContactForm'
+import { CONTACT_INFO } from '@/utils/constants'
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    service: '',
-    message: ''
-  })
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }))
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle form submission here
-    console.log('Form submitted:', formData)
-    alert('Дякуємо за звернення! Ми зв\'яжемося з вами найближчим часом.')
-    // Reset form
-    setFormData({
-      name: '',
-      phone: '',
-      email: '',
-      service: '',
-      message: ''
-    })
-  }
 
   return (
     <div className="py-16">
@@ -48,110 +19,7 @@ const Contact = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           {/* Contact Form */}
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Записатися на прийом
-            </h2>
-            
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                  Ім'я та прізвище *
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  required
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dental-teal focus:border-dental-teal transition-colors"
-                  placeholder="Введіть ваше ім'я та прізвище"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                  Номер телефону *
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  required
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dental-teal focus:border-dental-teal transition-colors"
-                  placeholder="+380 XX XXX XX XX"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dental-teal focus:border-dental-teal transition-colors"
-                  placeholder="example@email.com"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="service" className="block text-sm font-medium text-gray-700 mb-2">
-                  Послуга
-                </label>
-                <select
-                  id="service"
-                  name="service"
-                  value={formData.service}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dental-teal focus:border-dental-teal transition-colors"
-                >
-                  <option value="">Оберіть послугу</option>
-                  <option value="consultation">Консультація</option>
-                  <option value="treatment">Лікування зубів</option>
-                  <option value="cleaning">Професійна гігієна</option>
-                  <option value="implants">Імплантація</option>
-                  <option value="orthodontics">Ортодонтія</option>
-                  <option value="prosthetics">Протезування</option>
-                  <option value="whitening">Відбілювання</option>
-                  <option value="surgery">Хірургія</option>
-                </select>
-              </div>
-
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                  Повідомлення
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  rows={4}
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dental-teal focus:border-dental-teal transition-colors"
-                  placeholder="Опишіть ваші побажання або питання"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-dental-teal hover:bg-teal-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center"
-              >
-                <Send className="h-5 w-5 mr-2" />
-                Надіслати заявку
-              </button>
-
-              <p className="text-sm text-gray-500 text-center">
-                * Обов'язкові поля. Ми зв'яжемося з вами протягом 30 хвилин.
-              </p>
-            </form>
-          </div>
+          <ContactForm />
 
           {/* Contact Information */}
           <div className="space-y-8">
@@ -166,8 +34,10 @@ const Contact = () => {
                   <Phone className="h-6 w-6 mt-1 text-yellow-300" />
                   <div>
                     <h3 className="font-semibold mb-1">Телефон</h3>
-                    <p>+380 44 123 45 67</p>
-                    <p className="text-sm text-blue-100">Цілодобова підтримка</p>
+                    <a href={`tel:${CONTACT_INFO.phoneRaw}`} className="hover:underline">
+                      {CONTACT_INFO.phone}
+                    </a>
+                    <p className="text-sm text-blue-100">Робочі години: {CONTACT_INFO.workingHours.weekdays}</p>
                   </div>
                 </div>
 
@@ -175,7 +45,9 @@ const Contact = () => {
                   <Mail className="h-6 w-6 mt-1 text-yellow-300" />
                   <div>
                     <h3 className="font-semibold mb-1">Email</h3>
-                    <p>info@dentalstory.ua</p>
+                    <a href={`mailto:${CONTACT_INFO.email}`} className="hover:underline">
+                      {CONTACT_INFO.email}
+                    </a>
                     <p className="text-sm text-blue-100">Відповідаємо протягом 2 годин</p>
                   </div>
                 </div>
@@ -184,9 +56,16 @@ const Contact = () => {
                   <MapPin className="h-6 w-6 mt-1 text-yellow-300" />
                   <div>
                     <h3 className="font-semibold mb-1">Адреса</h3>
-                    <p>м. Київ, вул. Хрещатик, 25</p>
-                    <p>офіс 301, 3-й поверх</p>
-                    <p className="text-sm text-blue-100">5 хвилин від метро Хрещатик</p>
+                    <p>{CONTACT_INFO.address.full}</p>
+                    <p>{CONTACT_INFO.address.district}</p>
+                    <a 
+                      href={CONTACT_INFO.social ? 'https://maps.app.goo.gl/euKMW8R8eGTd2wJr9' : '#'} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-sm text-blue-100 hover:underline"
+                    >
+                      Переглянути на карті →
+                    </a>
                   </div>
                 </div>
 
@@ -194,9 +73,10 @@ const Contact = () => {
                   <Clock className="h-6 w-6 mt-1 text-yellow-300" />
                   <div>
                     <h3 className="font-semibold mb-1">Години роботи</h3>
-                    <p>Пн-Пт: 8:00 - 20:00</p>
-                    <p>Субота: 9:00 - 17:00</p>
-                    <p>Неділя: вихідний</p>
+                    <p>{CONTACT_INFO.workingHours.weekdays}</p>
+                    <p>{CONTACT_INFO.workingHours.saturday}</p>
+                    <p>{CONTACT_INFO.workingHours.sunday}</p>
+                    <p className="text-sm text-blue-100">{CONTACT_INFO.workingHours.timezone}</p>
                   </div>
                 </div>
               </div>
@@ -208,24 +88,54 @@ const Contact = () => {
                 🚨 Екстрена допомога
               </h3>
               <p className="text-red-700 mb-4">
-                У разі гострого болю або травми зв'яжіться з нами негайно:
+                У разі гострого болю або травми зв'яжіться з нами:
               </p>
               <div className="space-y-2">
                 <p className="font-semibold text-red-800">
-                  📞 +380 67 123 45 67 (цілодобово)
+                  <a href={`tel:${CONTACT_INFO.emergencyPhoneRaw}`} className="hover:underline">
+                    📞 {CONTACT_INFO.emergencyPhone}
+                  </a>
                 </p>
                 <p className="text-red-600 text-sm">
-                  Екстрені виклики приймаємо 24/7
+                  В робочі години та за необхідності
                 </p>
               </div>
             </div>
 
-            {/* Map placeholder */}
-            <div className="bg-gray-100 rounded-2xl h-64 flex items-center justify-center">
-              <div className="text-center text-gray-500">
-                <MapPin className="h-12 w-12 mx-auto mb-3" />
-                <p className="font-medium">Інтерактивна карта</p>
-                <p className="text-sm">вул. Хрещатик, 25, Київ</p>
+            {/* Embedded Google Map */}
+            <div className="bg-gray-100 rounded-2xl overflow-hidden">
+              <div className="p-4 bg-white">
+                <div className="flex items-center mb-2">
+                  <MapPin className="h-5 w-5 text-dental-teal mr-2" />
+                  <h3 className="font-semibold text-gray-900">Наше розташування</h3>
+                </div>
+                <p className="text-gray-600 text-sm mb-4">
+                  {CONTACT_INFO.address.street}, {CONTACT_INFO.address.city}
+                </p>
+              </div>
+              <div className="relative h-80">
+                <iframe 
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2574.600386934008!2d24.034215276362477!3d49.812380033100865!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x473ae7d471be0ba5%3A0xbc1336f142c1e357!2sDental%20Story!5e0!3m2!1suk!2sgr!4v1760715689970!5m2!1suk!2sgr"
+                  width="100%" 
+                  height="100%" 
+                  style={{ border: 0 }} 
+                  allowFullScreen 
+                  loading="lazy" 
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Dental Story - Розташування клініки на карті"
+                  className="w-full h-full"
+                ></iframe>
+              </div>
+              <div className="p-4 bg-white border-t">
+                <a 
+                  href="https://maps.app.goo.gl/euKMW8R8eGTd2wJr9" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center text-dental-teal hover:text-teal-600 font-medium text-sm"
+                >
+                  <MapPin className="h-4 w-4 mr-1" />
+                  Відкрити в Google Maps →
+                </a>
               </div>
             </div>
           </div>

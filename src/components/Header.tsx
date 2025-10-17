@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu, X, Phone, Mail } from 'lucide-react'
+import { CONTACT_INFO } from '@/utils/constants'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -10,29 +11,34 @@ const Header = () => {
     { name: 'Головна', href: '/' },
     { name: 'Послуги', href: '/services' },
     { name: 'Про нас', href: '/about' },
+    { name: 'Галерея', href: '/gallery' },
     { name: 'Контакти', href: '/contact' },
   ]
 
   const isActive = (path: string) => location.pathname === path
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
+    <header className="bg-white shadow-sm sticky top-0 z-50" role="banner">
       {/* Top bar */}
-      <div className="bg-dental-blue text-white py-2">
+      <div className="bg-dental-blue text-white py-2" role="complementary" aria-label="Контактна інформація">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center text-sm">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-1">
-                <Phone className="h-4 w-4" />
-                <span>+380 44 123 45 67</span>
+                <Phone className="h-4 w-4" aria-hidden="true" />
+                <a href={`tel:${CONTACT_INFO.phoneRaw}`} className="hover:underline">
+                  {CONTACT_INFO.phone}
+                </a>
               </div>
               <div className="flex items-center space-x-1">
-                <Mail className="h-4 w-4" />
-                <span>info@dentalstory.ua</span>
+                <Mail className="h-4 w-4" aria-hidden="true" />
+                <a href={`mailto:${CONTACT_INFO.email}`} className="hover:underline">
+                  {CONTACT_INFO.email}
+                </a>
               </div>
             </div>
             <div className="hidden md:block">
-              <span>Пн-Пт: 8:00-20:00 | Сб: 9:00-17:00</span>
+              <span>{CONTACT_INFO.workingHours.weekdays} | {CONTACT_INFO.workingHours.saturday}</span>
             </div>
           </div>
         </div>
@@ -49,7 +55,7 @@ const Header = () => {
           </div>
 
           {/* Desktop navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex space-x-8" role="navigation" aria-label="Основна навігація">
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -80,8 +86,11 @@ const Header = () => {
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-gray-700 hover:text-dental-blue"
+              aria-label={isMenuOpen ? 'Закрити меню' : 'Відкрити меню'}
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-menu"
             >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isMenuOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
             </button>
           </div>
         </div>
@@ -89,8 +98,8 @@ const Header = () => {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t">
+        <div className="md:hidden" id="mobile-menu">
+          <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t" role="navigation" aria-label="Мобільне меню">
             {navigation.map((item) => (
               <Link
                 key={item.name}

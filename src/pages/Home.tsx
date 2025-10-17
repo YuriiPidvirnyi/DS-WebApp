@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Smile, Shield, Users, Award, ArrowRight } from 'lucide-react'
+import Testimonials from '@/components/Testimonials'
 
 const Home = () => {
   const features = [
@@ -183,6 +184,9 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Testimonials Section */}
+      <Testimonials />
 
       {/* CTA Section */}
       <section className="py-20 bg-dental-blue text-white">
