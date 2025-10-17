@@ -1,6 +1,8 @@
 import { useSearchParams, Link } from 'react-router-dom'
 import MicroFeedback from '@/components/MicroFeedback'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { createICSEvent, downloadICS } from '@/utils/calendar'
+import { CalendarPlus } from 'lucide-react'
 
 type BookingDetails = {
   id: string
@@ -25,6 +27,26 @@ export default function BookingSuccess() {
       }
     } catch {}
   }, [])
+
+  const canCreateEvent = useMemo(() => Boolean(bookingDetails?.date && bookingDetails?.time && ref), [bookingDetails, ref])
+
+  const handleAddToCalendar = () => {
+    if (!bookingDetails || !ref) return
+    // Parse the time from the booking details
+    const startLocal = new Date(bookingDetails.date + 'T' + bookingDetails.time)
+    // Default 30 minutes duration
+    const endLocal = new Date(startLocal.getTime() + 30 * 60 * 1000)
+    const ics = createICSEvent({
+      uid: ref,
+      title: `Візит: ${bookingDetails.service}`,
+      description: `Запис №${ref}. Пацієнт: ${bookingDetails.name || ''}`.trim(),
+      location: 'Dental Studio',
+      start: startLocal,
+      end: endLocal,
+      url: window.location.href,
+    })
+    downloadICS(`booking-${ref}.ics`, ics)
+  }
 
   return (
     <div className="py-16">
@@ -60,6 +82,11 @@ export default function BookingSuccess() {
         <div className="flex justify-center gap-3">
           <Link to="/" className="px-5 py-2 rounded-lg bg-dental-teal text-white">На головну</Link>
           <Link to="/booking" className="px-5 py-2 rounded-lg bg-gray-100 text-gray-800">Створити ще один запис</Link>
+          {canCreateEvent && (
+            <button onClick={handleAddToCalendar} className="px-5 py-2 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 inline-flex items-center gap-2">
+              <CalendarPlus className="h-5 w-5" /> Додати в календар
+            </button>
+          )}
         </div>
       </div>
     </div>

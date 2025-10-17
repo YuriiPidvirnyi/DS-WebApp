@@ -7,6 +7,7 @@ import { Input, Textarea, Select, Button, LoadingOverlay } from '@/components/ui
 import { PenSquare, Check, X } from 'lucide-react'
 import Turnstile, { TurnstileRef } from '@/components/Turnstile'
 import { assertValidTurnstile } from '@/utils/turnstileVerify'
+import { useSubmissionCooldown } from '@/hooks/useSubmissionCooldown'
 import { getAvailableSlots, createAppointment } from '@/services/appointments'
 import { sendBookingConfirmation } from '@/services/notifications'
 import { withToast } from '@/utils/toast'
@@ -19,6 +20,7 @@ export default function BookingForm() {
   const [slots, setSlots] = useState<string[]>(TIME_SLOTS as unknown as string[])
   const [loadingSlots, setLoadingSlots] = useState(false)
   const turnstileRef = useRef<TurnstileRef>(null)
+  const { isCoolingDown, remainingSec, start: startCooldown } = useSubmissionCooldown('booking_form', 60)
 
   const navigate = useNavigate()
   const {
@@ -77,6 +79,11 @@ export default function BookingForm() {
   }, [selectedDate, selectedDoctor])
 
   const onSubmit = async (data: BookingFormValues) => {
+    // Cooldown check to prevent spam
+    if (isCoolingDown) {
+      return withToast.error(`Занадто часті відправлення. Спробуйте через ${remainingSec} с.`)
+    }
+
     // Verify Turnstile token
     try {
       const token = turnstileRef.current?.getToken() || ''
@@ -124,7 +131,8 @@ export default function BookingForm() {
       localStorage.setItem('last_booking', JSON.stringify(bookingDetails)) 
     } catch {}
     
-    // Clear form data after successful submission
+    // Start cooldown and clear form data after successful submission
+    startCooldown(60)
     reset()
     
     // Navigate to success page with reference
@@ -662,7 +670,9 @@ export default function BookingForm() {
           {step<2 ? (
             <Button type="button" onClick={next} disabled={isSubmitting}>Далі</Button>
           ) : (
-            <Button type="submit" size="lg" isLoading={isSubmitting}>Записатися</Button>
+            <Button type="submit" size="lg" disabled={isSubmitting || isCoolingDown} isLoading={isSubmitting}>
+              {isCoolingDown ? `Зачекайте ${remainingSec} с` : 'Записатися'}
+            </Button>
           )}
         </div>
       </form>

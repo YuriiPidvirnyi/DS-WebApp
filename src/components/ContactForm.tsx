@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useRef } from 'react'
 import { Send, CheckCircle } from 'lucide-react'
 import { Input, Textarea, Button } from './ui'
+import { useSubmissionCooldown } from '@/hooks/useSubmissionCooldown'
 import { contactFormSchema, type ContactFormData } from '../utils/validationSchemas'
 import { withToast } from '../utils/toast'
 import { sanitizeUserInput } from '../utils/security'
@@ -17,6 +18,7 @@ interface ContactFormProps {
 
 export default function ContactForm({ onSuccess }: ContactFormProps) {
   const turnstileRef = useRef<TurnstileRef>(null)
+  const { isCoolingDown, remainingSec, start: startCooldown } = useSubmissionCooldown('contact_form', 30)
   const {
     register,
     handleSubmit,
@@ -35,6 +37,11 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
 
   const onSubmit = async (data: ContactFormData) => {
     try {
+      // Cooldown check to prevent spam
+      if (isCoolingDown) {
+        return withToast.error(`Занадто часті відправлення. Спробуйте через ${remainingSec} с.`)
+      }
+      
       // Verify Turnstile token
       try {
         const token = turnstileRef.current?.getToken() || ''
@@ -65,7 +72,8 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         { formType: 'contact' }
       )
 
-      // Reset form on success
+      // Start cooldown and reset form on success
+      startCooldown(30)
       reset()
       
       // Call success callback
@@ -184,10 +192,11 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
           type="submit"
           fullWidth
           size="lg"
+          disabled={isSubmitting || isCoolingDown}
           isLoading={isSubmitting}
         >
           {!isSubmitting && <Send className="h-5 w-5 mr-2" />}
-          Надіслати повідомлення
+          {isCoolingDown ? `Зачекайте ${remainingSec} с` : 'Надіслати повідомлення'}
         </Button>
 
         <p className="text-sm text-gray-500 text-center">

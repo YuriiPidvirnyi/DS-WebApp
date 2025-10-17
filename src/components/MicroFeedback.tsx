@@ -13,7 +13,7 @@ interface MicroFeedbackProps {
 }
 
 export default function MicroFeedback({ form, refId, compact = false }: MicroFeedbackProps) {
-  const [submitted, setSubmitted] = useState<boolean | null>(null)
+  const [submitted, setSubmitted] = useState<boolean | null>(null) // can be true, false, or null
   const [showCommentForm, setShowCommentForm] = useState(false)
   
   const { 
@@ -59,27 +59,27 @@ export default function MicroFeedback({ form, refId, compact = false }: MicroFee
   return (
     <div className={compact ? 'flex items-center gap-2' : 'mt-3'}>
       {/* Feedback buttons */}
-      {(!submitted || (submitted === false && !showCommentForm)) && (
+      {(!submitted || (submitted === false as boolean && !showCommentForm)) && (
         <>
           {!compact && (
             <span className="text-sm text-gray-600 mr-2">Ця форма була корисною?</span>
           )}
-          <button
-            type="button"
-            aria-label="Так"
-            onClick={() => handle(true)}
-            className={`px-2 py-1 rounded-md border transition-colors ${submitted===true ? 'bg-green-50 border-green-300' : 'hover:bg-gray-50 border-gray-300'}`}
-            disabled={submitted !== null}
-          >
+      <button
+        type="button"
+        aria-label="Так"
+        onClick={() => handle(true)}
+        className={`px-2 py-1 rounded-md border transition-colors ${submitted === true as boolean ? 'bg-green-50 border-green-300' : 'hover:bg-gray-50 border-gray-300'}`}
+        disabled={submitted !== null}
+      >
             <ThumbsUp className="h-4 w-4 text-green-600" />
           </button>
-          <button
-            type="button"
-            aria-label="Ні"
-            onClick={() => handle(false)}
-            className={`px-2 py-1 rounded-md border transition-colors ${submitted===false ? 'bg-red-50 border-red-300' : 'hover:bg-gray-50 border-gray-300'}`}
-            disabled={submitted !== null}
-          >
+      <button
+        type="button"
+        aria-label="Ні"
+        onClick={() => handle(false)}
+        className={`px-2 py-1 rounded-md border transition-colors ${submitted === false ? 'bg-red-50 border-red-300' : 'hover:bg-gray-50 border-gray-300'}`}
+        disabled={submitted !== null}
+      >
             <ThumbsDown className="h-4 w-4 text-red-600" />
           </button>
           {submitted === true && (

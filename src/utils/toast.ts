@@ -130,7 +130,8 @@ export const updateToast = (toastId: string, message: string, type: 'success' | 
 }
 
 // Utility function to handle async operations with toast
-export const withToast = async <T>(
+export const withToast = Object.assign(
+async <T>(
   operation: () => Promise<T>,
   options: {
     loadingMessage?: string
@@ -186,7 +187,17 @@ export const withToast = async <T>(
     toast.dismiss(toastId)
     throw error
   }
-}
+}, {
+  // Add direct error method for immediate error display
+  error: (message: string) => {
+    showError(message)
+    return undefined as any
+  },
+  success: (message: string) => {
+    showSuccess(message)
+    return undefined as any
+  }
+})
 
 // Common toast messages for the dental clinic
 export const COMMON_MESSAGES = {
