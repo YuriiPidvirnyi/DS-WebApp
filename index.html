@@ -2,8 +2,20 @@
 <html lang="uk">
   <head>
     <meta charset="UTF-8" />
+    
+    <!-- Favicon and App Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-touch-icon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon-16x16.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0078d7" />
+    <meta name="msapplication-TileColor" content="#0078d7" />
+    
+    <!-- Preload critical resources -->
     <link rel="preload" href="/src/styles/globals.css" as="style" />
+    <link rel="preload" href="/assets/images/hero/hero-placeholder.svg" as="image" type="image/svg+xml" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Primary Meta Tags -->
@@ -19,7 +31,11 @@
     <meta property="og:url" content="https://dentalstory.com.ua/" />
     <meta property="og:title" content="Dental Story - Сучасна стоматологічна клініка в Києві" />
     <meta property="og:description" content="Професійна стоматологічна клініка на вул. Академіка Корольова. Безболісне лікування, сучасні технології. Запис: +380 50 455 47 74" />
-    <meta property="og:image" content="https://dentalstory.com.ua/og-image.jpg" />
+    <meta property="og:image" content="https://dentalstory.com.ua/assets/images/og/og-image.svg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/svg+xml" />
+    <meta property="og:image:alt" content="Dental Story - Сучасна стоматологічна клініка в Києві" />
     <meta property="og:locale" content="uk_UA" />
     <meta property="og:site_name" content="Dental Story" />
     
@@ -28,7 +44,8 @@
     <meta property="twitter:url" content="https://dentalstory.com.ua/" />
     <meta property="twitter:title" content="Dental Story - Сучасна стоматологічна клініка в Києві" />
     <meta property="twitter:description" content="Професійна стоматологічна клініка на Корольова. Безболісне лікування. Тел: +380 50 455 47 74" />
-    <meta property="twitter:image" content="https://dentalstory.com.ua/og-image.jpg" />
+    <meta property="twitter:image" content="https://dentalstory.com.ua/assets/images/og/og-image.svg" />
+    <meta property="twitter:image:alt" content="Dental Story - Сучасна стоматологічна клініка в Києві" />
     
     <!-- Structured Data / Schema.org -->
     <script type="application/ld+json">
@@ -39,8 +56,9 @@
       "alternateName": "Стоматологічна клініка Dental Story",
       "description": "Професійна стоматологічна клініка в Києві. Повний спектр стоматологічних послуг.",
       "image": [
-        "https://dentalstory.com.ua/logo.jpg",
-        "https://dentalstory.com.ua/clinic-photo.jpg"
+        "https://dentalstory.com.ua/assets/images/logo/logo.svg",
+        "https://dentalstory.com.ua/assets/images/hero/hero-placeholder.svg",
+        "https://dentalstory.com.ua/assets/images/og/og-image.svg"
       ],
       "@id": "https://dentalstory.com.ua",
       "url": "https://dentalstory.com.ua",
