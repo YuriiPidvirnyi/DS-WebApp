@@ -195,6 +195,55 @@ export default function BookingForm() {
         {/* Step 3: Extra */}
         {step===2 && (
           <>
+            {/* Summary before confirm */}
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
+              <h3 className="text-sm font-semibold text-gray-900 mb-3">Перевірте дані перед підтвердженням</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                <div>
+                  <div className="text-gray-500">Послуга</div>
+                  <div className="font-medium text-gray-900">{watch('service') || '—'}</div>
+                </div>
+                <div>
+                  <div className="text-gray-500">Дата</div>
+                  <div className="font-medium text-gray-900">{watch('date') || '—'}</div>
+                </div>
+                <div>
+                  <div className="text-gray-500">Час</div>
+                  <div className="font-medium text-gray-900">{watch('time') || '—'}</div>
+                </div>
+                <div>
+                  <div className="text-gray-500">Лікар</div>
+                  <div className="font-medium text-gray-900">{watch('doctor') || 'Будь-який'}</div>
+                </div>
+                <div>
+                  <div className="text-gray-500">Ім'я</div>
+                  <div className="font-medium text-gray-900">{watch('firstName')} {watch('lastName')}</div>
+                </div>
+                <div>
+                  <div className="text-gray-500">Телефон</div>
+                  <div className="font-medium text-gray-900">{watch('phone')}</div>
+                </div>
+                <div>
+                  <div className="text-gray-500">Email</div>
+                  <div className="font-medium text-gray-900">{watch('email')}</div>
+                </div>
+                <div>
+                  <div className="text-gray-500">Дата народження</div>
+                  <div className="font-medium text-gray-900">{watch('dateOfBirth')}</div>
+                </div>
+                <div className="md:col-span-2">
+                  <div className="text-gray-500">Симптоми / побажання</div>
+                  <div className="font-medium text-gray-900 whitespace-pre-wrap break-words">{watch('symptoms') || '—'}</div>
+                </div>
+              </div>
+              <div className="flex gap-2 mt-3">
+                <button type="button" className="text-sm text-dental-teal hover:underline" onClick={() => setStep(0)}>Редагувати деталі</button>
+                <span className="text-gray-300">•</span>
+                <button type="button" className="text-sm text-dental-teal hover:underline" onClick={() => setStep(1)}>Редагувати контакти</button>
+              </div>
+            </div>
+
+            {/* Extra input before submit */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Симптоми / побажання</label>
               <Textarea rows={4} fullWidth placeholder="Коротко опишіть ваш запит" error={errors.symptoms?.message as any} {...register('symptoms')} />
