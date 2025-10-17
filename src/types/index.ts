@@ -15,7 +15,7 @@ export interface ServiceCategory {
 }
 
 // Типи для запису на прийом
-export interface AppointmentFormData {
+export interface AppointmentFormData extends Record<string, unknown> {
   name: string
   phone: string
   email: string

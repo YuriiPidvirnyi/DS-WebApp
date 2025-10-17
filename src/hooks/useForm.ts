@@ -1,6 +1,6 @@
 import { useState, ChangeEvent, FormEvent } from 'react'
 
-interface UseFormOptions<T> {
+interface UseFormOptions<T extends Record<string, unknown>> {
   initialValues: T
   onSubmit: (values: T) => Promise<void> | void
   validate?: (values: T) => Partial<Record<keyof T, string>>
