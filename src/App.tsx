@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import LoadingPage from './components/LoadingPage'
+import PerformanceMetrics from './components/PerformanceMetrics'
+import { StructuredData } from './components/StructuredData'
 import './styles/globals.css'
 
 // Lazy load all pages
@@ -19,6 +21,8 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen flex flex-col">
+        <StructuredData type="organization" />
+        <PerformanceMetrics />
         <a href="#main-content" className="skip-to-content">
           Перейти до основного вмісту
         </a>
