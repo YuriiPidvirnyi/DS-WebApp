@@ -1,14 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { appointmentSchema, SERVICES, DOCTORS, TIME_SLOTS } from '@/utils/validationSchemas'
 import type { z } from 'zod'
 import { Input, Textarea, Select, Button, LoadingOverlay } from '@/components/ui'
+import { PenSquare, Check, X } from 'lucide-react'
+import Turnstile, { TurnstileRef } from '@/components/Turnstile'
+import { assertValidTurnstile } from '@/utils/turnstileVerify'
 import { getAvailableSlots, createAppointment } from '@/services/appointments'
 import { sendBookingConfirmation } from '@/services/notifications'
 import { withToast } from '@/utils/toast'
 import { BookingEvent } from '@/utils/analytics'
-import Turnstile from '@/components/Turnstile'
 import { useNavigate } from 'react-router-dom'
 
 type BookingFormValues = z.infer<typeof appointmentSchema>
@@ -16,6 +18,7 @@ type BookingFormValues = z.infer<typeof appointmentSchema>
 export default function BookingForm() {
   const [slots, setSlots] = useState<string[]>(TIME_SLOTS as unknown as string[])
   const [loadingSlots, setLoadingSlots] = useState(false)
+  const turnstileRef = useRef<TurnstileRef>(null)
 
   const navigate = useNavigate()
   const {
@@ -74,7 +77,18 @@ export default function BookingForm() {
   }, [selectedDate, selectedDoctor])
 
   const onSubmit = async (data: BookingFormValues) => {
-    await withToast(
+    // Verify Turnstile token
+    try {
+      const token = turnstileRef.current?.getToken() || ''
+      await assertValidTurnstile(token)
+    } catch (error) {
+      if (error instanceof Error) {
+        return withToast.error(error.message)
+      }
+      return withToast.error('Перевірка безпеки не пройдена. Спробуйте ще раз.')
+    }
+    
+    const response = await withToast(
       async () => {
         const res = await createAppointment({
           name: `${data.firstName} ${data.lastName}`,
@@ -94,11 +108,27 @@ export default function BookingForm() {
       },
       { formType: 'appointment' }
     )
-    // Navigate to success page with reference
-    const ref = (await (async () => JSON.parse(localStorage.getItem('last_booking') || 'null'))())
-    try { localStorage.setItem('last_booking', JSON.stringify({ service: data.service })) } catch {}
+    
+    // Store appointment details for reference
+    const appointmentId = response?.data?.id || `temp-${Date.now().toString()}`
+    const bookingDetails = {
+      id: appointmentId,
+      service: data.service,
+      date: data.date,
+      time: data.time,
+      name: `${data.firstName} ${data.lastName}`,
+      created: new Date().toISOString()
+    }
+    
+    try { 
+      localStorage.setItem('last_booking', JSON.stringify(bookingDetails)) 
+    } catch {}
+    
+    // Clear form data after successful submission
     reset()
-    navigate(`/booking/success?ref=${encodeURIComponent((ref?.id) ?? (Date.now().toString()))}`)
+    
+    // Navigate to success page with reference
+    navigate(`/booking/success?ref=${encodeURIComponent(appointmentId)}`)
   }
 
   // Simple 3-step UI
@@ -113,6 +143,24 @@ export default function BookingForm() {
     if (ok) setStep((s) => Math.min(2, s + 1))
   }
   const back = () => setStep((s) => Math.max(0, s - 1))
+  
+  // In-place edit for summary
+  type EditableField = keyof BookingFormValues
+  const [editingField, setEditingField] = useState<EditableField | null>(null)
+  
+  const startEditing = (field: EditableField) => {
+    setEditingField(field)
+  }
+  
+  const cancelEditing = () => {
+    setEditingField(null)
+  }
+  
+  const saveEditing = async () => {
+    if (!editingField) return
+    const ok = await trigger(editingField as any, { shouldFocus: true })
+    if (ok) setEditingField(null)
+  }
 
   return (
     <div className="bg-white rounded-2xl shadow-lg p-8 relative">
@@ -197,49 +245,378 @@ export default function BookingForm() {
           <>
             {/* Summary before confirm */}
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">Перевірте дані перед підтвердженням</h3>
+              <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                Перевірте дані перед підтвердженням
+                <span className="ml-2 text-xs text-gray-500 font-normal">(натисніть на поле для редагування)</span>
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                <div>
-                  <div className="text-gray-500">Послуга</div>
-                  <div className="font-medium text-gray-900">{watch('service') || '—'}</div>
+                {/* Service */}
+                <div className="relative">
+                  <div className="text-gray-500 flex justify-between">
+                    <span>Послуга</span>
+                    {editingField !== 'service' && (
+                      <button 
+                        type="button" 
+                        onClick={() => startEditing('service')}
+                        className="text-gray-400 hover:text-dental-teal"
+                      >
+                        <PenSquare className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+                  
+                  {editingField === 'service' ? (
+                    <div className="mt-1">
+                      <Select 
+                        fullWidth 
+                        error={errors.service?.message} 
+                        {...register('service')} 
+                        autoFocus
+                      >
+                        <option value="">Оберіть послугу</option>
+                        {SERVICES.map((s) => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </Select>
+                      <div className="flex justify-end gap-2 mt-1">
+                        <button type="button" onClick={cancelEditing} className="p-1 text-gray-500 hover:text-gray-700">
+                          <X className="h-4 w-4" />
+                        </button>
+                        <button type="button" onClick={saveEditing} className="p-1 text-dental-teal hover:text-dental-teal-dark">
+                          <Check className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="font-medium text-gray-900">{watch('service') || '—'}</div>
+                  )}
                 </div>
-                <div>
-                  <div className="text-gray-500">Дата</div>
-                  <div className="font-medium text-gray-900">{watch('date') || '—'}</div>
+                
+                {/* Date */}
+                <div className="relative">
+                  <div className="text-gray-500 flex justify-between">
+                    <span>Дата</span>
+                    {editingField !== 'date' && (
+                      <button 
+                        type="button" 
+                        onClick={() => startEditing('date')}
+                        className="text-gray-400 hover:text-dental-teal"
+                      >
+                        <PenSquare className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+                  
+                  {editingField === 'date' ? (
+                    <div className="mt-1">
+                      <Input 
+                        type="date" 
+                        fullWidth 
+                        error={errors.date?.message} 
+                        {...register('date')} 
+                        autoFocus
+                      />
+                      <div className="flex justify-end gap-2 mt-1">
+                        <button type="button" onClick={cancelEditing} className="p-1 text-gray-500 hover:text-gray-700">
+                          <X className="h-4 w-4" />
+                        </button>
+                        <button type="button" onClick={saveEditing} className="p-1 text-dental-teal hover:text-dental-teal-dark">
+                          <Check className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="font-medium text-gray-900">{watch('date') || '—'}</div>
+                  )}
                 </div>
-                <div>
-                  <div className="text-gray-500">Час</div>
-                  <div className="font-medium text-gray-900">{watch('time') || '—'}</div>
+                
+                {/* Time */}
+                <div className="relative">
+                  <div className="text-gray-500 flex justify-between">
+                    <span>Час</span>
+                    {editingField !== 'time' && (
+                      <button 
+                        type="button" 
+                        onClick={() => startEditing('time')}
+                        className="text-gray-400 hover:text-dental-teal"
+                      >
+                        <PenSquare className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+                  
+                  {editingField === 'time' ? (
+                    <div className="mt-1 relative">
+                      <Select 
+                        fullWidth 
+                        error={errors.time?.message} 
+                        {...register('time')} 
+                        autoFocus
+                      >
+                        <option value="">Оберіть час</option>
+                        {slots.map((t) => (
+                          <option key={t} value={t}>{t}</option>
+                        ))}
+                      </Select>
+                      <LoadingOverlay show={loadingSlots} message="Завантажуємо вільні години..." />
+                      <div className="flex justify-end gap-2 mt-1">
+                        <button type="button" onClick={cancelEditing} className="p-1 text-gray-500 hover:text-gray-700">
+                          <X className="h-4 w-4" />
+                        </button>
+                        <button type="button" onClick={saveEditing} className="p-1 text-dental-teal hover:text-dental-teal-dark">
+                          <Check className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="font-medium text-gray-900">{watch('time') || '—'}</div>
+                  )}
                 </div>
-                <div>
-                  <div className="text-gray-500">Лікар</div>
-                  <div className="font-medium text-gray-900">{watch('doctor') || 'Будь-який'}</div>
+                
+                {/* Doctor */}
+                <div className="relative">
+                  <div className="text-gray-500 flex justify-between">
+                    <span>Лікар</span>
+                    {editingField !== 'doctor' && (
+                      <button 
+                        type="button" 
+                        onClick={() => startEditing('doctor')}
+                        className="text-gray-400 hover:text-dental-teal"
+                      >
+                        <PenSquare className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+                  
+                  {editingField === 'doctor' ? (
+                    <div className="mt-1">
+                      <Select 
+                        fullWidth 
+                        error={errors.doctor?.message} 
+                        {...register('doctor')} 
+                        autoFocus
+                      >
+                        {DOCTORS.map((d) => (
+                          <option key={d.id} value={d.id}>{d.name}</option>
+                        ))}
+                      </Select>
+                      <div className="flex justify-end gap-2 mt-1">
+                        <button type="button" onClick={cancelEditing} className="p-1 text-gray-500 hover:text-gray-700">
+                          <X className="h-4 w-4" />
+                        </button>
+                        <button type="button" onClick={saveEditing} className="p-1 text-dental-teal hover:text-dental-teal-dark">
+                          <Check className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="font-medium text-gray-900">
+                      {watch('doctor') === 'any' ? 'Будь-який' : DOCTORS.find(d => d.id === watch('doctor'))?.name || '—'}
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <div className="text-gray-500">Ім'я</div>
-                  <div className="font-medium text-gray-900">{watch('firstName')} {watch('lastName')}</div>
+                
+                {/* Name */}
+                <div className="relative">
+                  <div className="text-gray-500 flex justify-between">
+                    <span>Ім'я</span>
+                    {editingField !== 'firstName' && editingField !== 'lastName' && (
+                      <button 
+                        type="button" 
+                        onClick={() => startEditing('firstName')}
+                        className="text-gray-400 hover:text-dental-teal"
+                      >
+                        <PenSquare className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+                  
+                  {editingField === 'firstName' || editingField === 'lastName' ? (
+                    <div className="mt-1">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <Input 
+                          fullWidth 
+                          placeholder="Ім'я" 
+                          error={errors.firstName?.message} 
+                          {...register('firstName')} 
+                          autoFocus={editingField === 'firstName'}
+                        />
+                        <Input 
+                          fullWidth 
+                          placeholder="Прізвище" 
+                          error={errors.lastName?.message} 
+                          {...register('lastName')} 
+                          autoFocus={editingField === 'lastName'}
+                        />
+                      </div>
+                      <div className="flex justify-end gap-2 mt-1">
+                        <button type="button" onClick={cancelEditing} className="p-1 text-gray-500 hover:text-gray-700">
+                          <X className="h-4 w-4" />
+                        </button>
+                        <button type="button" onClick={saveEditing} className="p-1 text-dental-teal hover:text-dental-teal-dark">
+                          <Check className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="font-medium text-gray-900">{watch('firstName')} {watch('lastName')}</div>
+                  )}
                 </div>
-                <div>
-                  <div className="text-gray-500">Телефон</div>
-                  <div className="font-medium text-gray-900">{watch('phone')}</div>
+                
+                {/* Phone */}
+                <div className="relative">
+                  <div className="text-gray-500 flex justify-between">
+                    <span>Телефон</span>
+                    {editingField !== 'phone' && (
+                      <button 
+                        type="button" 
+                        onClick={() => startEditing('phone')}
+                        className="text-gray-400 hover:text-dental-teal"
+                      >
+                        <PenSquare className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+                  
+                  {editingField === 'phone' ? (
+                    <div className="mt-1">
+                      <Input 
+                        type="tel" 
+                        fullWidth 
+                        placeholder="+380 XX XXX XX XX" 
+                        error={errors.phone?.message} 
+                        {...register('phone')} 
+                        autoFocus
+                      />
+                      <div className="flex justify-end gap-2 mt-1">
+                        <button type="button" onClick={cancelEditing} className="p-1 text-gray-500 hover:text-gray-700">
+                          <X className="h-4 w-4" />
+                        </button>
+                        <button type="button" onClick={saveEditing} className="p-1 text-dental-teal hover:text-dental-teal-dark">
+                          <Check className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="font-medium text-gray-900">{watch('phone')}</div>
+                  )}
                 </div>
-                <div>
-                  <div className="text-gray-500">Email</div>
-                  <div className="font-medium text-gray-900">{watch('email')}</div>
+                
+                {/* Email */}
+                <div className="relative">
+                  <div className="text-gray-500 flex justify-between">
+                    <span>Email</span>
+                    {editingField !== 'email' && (
+                      <button 
+                        type="button" 
+                        onClick={() => startEditing('email')}
+                        className="text-gray-400 hover:text-dental-teal"
+                      >
+                        <PenSquare className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+                  
+                  {editingField === 'email' ? (
+                    <div className="mt-1">
+                      <Input 
+                        type="email" 
+                        fullWidth 
+                        placeholder="email@example.com" 
+                        error={errors.email?.message} 
+                        {...register('email')} 
+                        autoFocus
+                      />
+                      <div className="flex justify-end gap-2 mt-1">
+                        <button type="button" onClick={cancelEditing} className="p-1 text-gray-500 hover:text-gray-700">
+                          <X className="h-4 w-4" />
+                        </button>
+                        <button type="button" onClick={saveEditing} className="p-1 text-dental-teal hover:text-dental-teal-dark">
+                          <Check className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="font-medium text-gray-900">{watch('email')}</div>
+                  )}
                 </div>
-                <div>
-                  <div className="text-gray-500">Дата народження</div>
-                  <div className="font-medium text-gray-900">{watch('dateOfBirth')}</div>
+                
+                {/* Date of Birth */}
+                <div className="relative">
+                  <div className="text-gray-500 flex justify-between">
+                    <span>Дата народження</span>
+                    {editingField !== 'dateOfBirth' && (
+                      <button 
+                        type="button" 
+                        onClick={() => startEditing('dateOfBirth')}
+                        className="text-gray-400 hover:text-dental-teal"
+                      >
+                        <PenSquare className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+                  
+                  {editingField === 'dateOfBirth' ? (
+                    <div className="mt-1">
+                      <Input 
+                        type="date" 
+                        fullWidth 
+                        error={errors.dateOfBirth?.message as any} 
+                        {...register('dateOfBirth')} 
+                        autoFocus
+                      />
+                      <div className="flex justify-end gap-2 mt-1">
+                        <button type="button" onClick={cancelEditing} className="p-1 text-gray-500 hover:text-gray-700">
+                          <X className="h-4 w-4" />
+                        </button>
+                        <button type="button" onClick={saveEditing} className="p-1 text-dental-teal hover:text-dental-teal-dark">
+                          <Check className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="font-medium text-gray-900">{watch('dateOfBirth')}</div>
+                  )}
                 </div>
-                <div className="md:col-span-2">
-                  <div className="text-gray-500">Симптоми / побажання</div>
-                  <div className="font-medium text-gray-900 whitespace-pre-wrap break-words">{watch('symptoms') || '—'}</div>
+                
+                {/* Symptoms / Notes */}
+                <div className="md:col-span-2 relative">
+                  <div className="text-gray-500 flex justify-between">
+                    <span>Симптоми / побажання</span>
+                    {editingField !== 'symptoms' && (
+                      <button 
+                        type="button" 
+                        onClick={() => startEditing('symptoms')}
+                        className="text-gray-400 hover:text-dental-teal"
+                      >
+                        <PenSquare className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+                  
+                  {editingField === 'symptoms' ? (
+                    <div className="mt-1">
+                      <Textarea 
+                        rows={4} 
+                        fullWidth 
+                        placeholder="Коротко опишіть ваш запит" 
+                        error={errors.symptoms?.message as any} 
+                        {...register('symptoms')} 
+                        autoFocus
+                      />
+                      <div className="flex justify-end gap-2 mt-1">
+                        <button type="button" onClick={cancelEditing} className="p-1 text-gray-500 hover:text-gray-700">
+                          <X className="h-4 w-4" />
+                        </button>
+                        <button type="button" onClick={saveEditing} className="p-1 text-dental-teal hover:text-dental-teal-dark">
+                          <Check className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="font-medium text-gray-900 whitespace-pre-wrap break-words">{watch('symptoms') || '—'}</div>
+                  )}
                 </div>
-              </div>
-              <div className="flex gap-2 mt-3">
-                <button type="button" className="text-sm text-dental-teal hover:underline" onClick={() => setStep(0)}>Редагувати деталі</button>
-                <span className="text-gray-300">•</span>
-                <button type="button" className="text-sm text-dental-teal hover:underline" onClick={() => setStep(1)}>Редагувати контакти</button>
               </div>
             </div>
 
@@ -252,7 +629,7 @@ export default function BookingForm() {
               <input id="consent" type="checkbox" className="mt-1" {...register('consent')} />
               <label htmlFor="consent" className="ml-2 text-sm text-gray-700">Я даю згоду на обробку персональних даних *</label>
             </div>
-            <Turnstile className="mt-2" />
+            <Turnstile ref={turnstileRef} className="mt-2" />
           </>
         )}
 

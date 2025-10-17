@@ -1,15 +1,37 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react'
+
+export interface TurnstileRef {
+  getToken: () => string;
+  reset: () => void;
+}
 
 interface TurnstileProps {
-  onVerify?: (token: string) => void
-  className?: string
+  onVerify?: (token: string) => void;
+  className?: string;
 }
 
 // Cloudflare Turnstile widget wrapper (no-op if no site key)
-export default function Turnstile({ onVerify, className }: TurnstileProps) {
+const Turnstile = forwardRef<TurnstileRef, TurnstileProps>(function Turnstile(
+  { onVerify, className }: TurnstileProps,
+  ref
+) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [ready, setReady] = useState(false)
+  const [token, setToken] = useState<string>('')
+  const widgetIdRef = useRef<string | null>(null)
   const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
+  
+  // Expose methods for parents
+  useImperativeHandle(ref, () => ({
+    getToken: () => token,
+    reset: () => {
+      const w = window as any
+      if (widgetIdRef.current && w.turnstile?.reset) {
+        w.turnstile.reset(widgetIdRef.current)
+        setToken('')
+      }
+    }
+  }))
 
   useEffect(() => {
     if (!siteKey) return
@@ -36,11 +58,22 @@ export default function Turnstile({ onVerify, className }: TurnstileProps) {
     const w = window as any
     const widgetId = w.turnstile?.render(containerRef.current, {
       sitekey: siteKey,
-      callback: (token: string) => onVerify?.(token),
-      'error-callback': () => onVerify?.(''),
-      'timeout-callback': () => onVerify?.(''),
+      callback: (tokenResponse: string) => {
+        setToken(tokenResponse)
+        onVerify?.(tokenResponse)
+      },
+      'error-callback': () => {
+        setToken('')
+        onVerify?.('')
+      },
+      'timeout-callback': () => {
+        setToken('')
+        onVerify?.('')
+      },
       theme: 'auto',
     })
+    
+    widgetIdRef.current = widgetId
 
     return () => {
       if (widgetId && w.turnstile?.remove) w.turnstile.remove(widgetId)
@@ -49,4 +82,7 @@ export default function Turnstile({ onVerify, className }: TurnstileProps) {
 
   if (!siteKey) return null
   return <div ref={containerRef} className={className} />
+})
+
+export default Turnstile
 }

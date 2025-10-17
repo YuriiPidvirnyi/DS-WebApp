@@ -184,6 +184,16 @@ export const newsletterSchema = z.object({
 
 export type NewsletterFormData = z.infer<typeof newsletterSchema>
 
+// Micro Feedback Schema
+export const feedbackCommentSchema = z.object({
+  comment: z
+    .string()
+    .min(5, 'Коментар повинен містити принаймні 5 символів')
+    .max(300, 'Коментар не може містити більше 300 символів')
+})
+
+export type FeedbackCommentData = z.infer<typeof feedbackCommentSchema>
+
 // Review/Feedback Schema
 export const reviewSchema = z.object({
   name: z

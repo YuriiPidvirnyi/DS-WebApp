@@ -1,19 +1,22 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRef } from 'react'
 import { Send, CheckCircle } from 'lucide-react'
 import { Input, Textarea, Button } from './ui'
 import { contactFormSchema, type ContactFormData } from '../utils/validationSchemas'
 import { withToast } from '../utils/toast'
 import { sanitizeUserInput } from '../utils/security'
 import { createContact } from '@/services/contacts'
-import Turnstile from '@/components/Turnstile'
 import MicroFeedback from '@/components/MicroFeedback'
+import Turnstile, { TurnstileRef } from '@/components/Turnstile'
+import { assertValidTurnstile } from '@/utils/turnstileVerify'
 
 interface ContactFormProps {
   onSuccess?: () => void
 }
 
 export default function ContactForm({ onSuccess }: ContactFormProps) {
+  const turnstileRef = useRef<TurnstileRef>(null)
   const {
     register,
     handleSubmit,
@@ -32,6 +35,17 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
 
   const onSubmit = async (data: ContactFormData) => {
     try {
+      // Verify Turnstile token
+      try {
+        const token = turnstileRef.current?.getToken() || ''
+        await assertValidTurnstile(token)
+      } catch (error) {
+        if (error instanceof Error) {
+          return withToast.error(error.message)
+        }
+        return withToast.error('Перевірка безпеки не пройдена. Спробуйте ще раз.')
+      }
+      
       // Sanitize input data
       const sanitizedData = {
         name: sanitizeUserInput(data.name),
@@ -164,7 +178,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
           <p className="text-sm text-red-600 mt-1">{errors.consent.message}</p>
         )}
 
-        <Turnstile className="mb-4" />
+        <Turnstile ref={turnstileRef} className="mb-4" />
 
         <Button
           type="submit"
