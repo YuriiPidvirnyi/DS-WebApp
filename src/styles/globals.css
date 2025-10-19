@@ -1,4 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+/* Stolzl font - if available locally, otherwise fallback to similar fonts */
+@font-face {
+  font-family: 'Stolzl Medium';
+  src: local('Stolzl Medium'), local('Stolzl-Medium');
+  font-weight: 500;
+  font-display: swap;
+}
 
 @tailwind base;
 @tailwind components;
@@ -18,6 +25,17 @@
 }
 
 @layer base {
+  :root {
+    /* Dental Story brand colors */
+    --dental-primary: 174, 206, 211;     /* #AECED3 */
+    --dental-secondary: 209, 202, 192;   /* #D1CAC0 */
+    --dental-white: 255, 255, 255;       /* #FFFFFF */
+    
+    /* CMYK values for reference */
+    --dental-primary-cmyk: 31, 8, 14, 0;
+    --dental-secondary-cmyk: 18, 17, 22, 0;
+  }
+
   body {
     @apply bg-white text-gray-900 font-sans;
   }

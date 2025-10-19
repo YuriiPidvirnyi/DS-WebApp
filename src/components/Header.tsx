@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu, X, Phone, Mail } from 'lucide-react'
 import { CONTACT_INFO } from '@/utils/constants'
+import Logo from '@/components/ui/Logo'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -61,10 +62,10 @@ const Header = () => {
       {/* Main header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
-          {/* Logo */}
+{/* Logo */}
           <div className="flex items-center">
-            <Link to="/" className="text-2xl font-bold text-dental-blue">
-              Dental Story
+<Link to="/" aria-label="Dental Story - на головну" className="shrink-0">
+              <Logo variant="default" size="md" />
             </Link>
           </div>
 

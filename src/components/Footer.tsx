@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Phone, Mail, MapPin, Clock } from 'lucide-react'
 import { CONTACT_INFO, SITE_INFO } from '@/utils/constants'
 import NewsletterSubscribe from '@/components/NewsletterSubscribe'
+import Logo from '@/components/ui/Logo'
 
 const Footer = () => {
   return (
@@ -10,8 +11,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo and description */}
           <div className="col-span-1 md:col-span-2">
-            <div className="text-2xl font-bold text-dental-teal mb-4">
-              Dental Story
+<div className="mb-4">
+<Logo variant="white" size="md" />
+              <span className="sr-only">Dental Story</span>
             </div>
             <p className="text-gray-300 mb-4">
               {SITE_INFO.description}
