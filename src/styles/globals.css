@@ -2,8 +2,11 @@
 /* Stolzl font - if available locally, otherwise fallback to similar fonts */
 @font-face {
   font-family: 'Stolzl Medium';
-  src: local('Stolzl Medium'), local('Stolzl-Medium');
+  src: url('/assets/fonts/Stolzl-Medium.woff2') format('woff2'),
+       url('/assets/fonts/Stolzl-Medium.woff') format('woff'),
+       local('Stolzl Medium'), local('Stolzl-Medium');
   font-weight: 500;
+  font-style: normal;
   font-display: swap;
 }
 
