@@ -18,7 +18,7 @@ const Footer = () => {
             <p className="text-gray-300 mb-4">
               {SITE_INFO.description}
             </p>
-            <div className="flex space-x-4" role="list" aria-label="Соціальні мережі">
+            <div className="flex space-x-4" aria-label="Соціальні мережі">
               <a href="#" className="text-gray-300 hover:text-dental-teal transition-colors" aria-label="Facebook">
                 Facebook
               </a>

@@ -1,87 +1,11 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
 import type { GalleryImage } from '@/types'
+import galleryData from '@/content/gallery.json'
+import { Helmet } from 'react-helmet-async'
 
-// Mock gallery data з placeholder зображеннями
-const galleryImages: GalleryImage[] = [
-  // Clinic
-  {
-    id: '1',
-    url: 'https://images.unsplash.com/photo-1629909615184-74f495363b67?w=800&q=80',
-    title: 'Ресепшн клініки',
-    category: 'clinic',
-    description: 'Сучасний та затишний ресепшн для комфорту наших пацієнтів',
-  },
-  {
-    id: '2',
-    url: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800&q=80',
-    title: 'Лікувальний кабінет',
-    category: 'clinic',
-    description: 'Сучасні кабінети з найновішим обладнанням',
-  },
-  {
-    id: '3',
-    url: 'https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=800&q=80',
-    title: 'Зона очікування',
-    category: 'clinic',
-    description: 'Комфортна зона очікування з Wi-Fi та напоями',
-  },
-
-  // Equipment
-  {
-    id: '4',
-    url: 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=800&q=80',
-    title: 'Стоматологічне крісло',
-    category: 'equipment',
-    description: 'Ергономічне крісло для максимального комфорту пацієнта',
-  },
-  {
-    id: '5',
-    url: 'https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?w=800&q=80',
-    title: '3D томограф',
-    category: 'equipment',
-    description: 'Сучасний 3D томограф для точної діагностики',
-  },
-  {
-    id: '6',
-    url: 'https://images.unsplash.com/photo-1611177729567-3cc21f7a9a4d?w=800&q=80',
-    title: 'Стоматологічні інструменти',
-    category: 'equipment',
-    description: 'Стерилізовані інструменти найвищої якості',
-  },
-
-  // Team
-  {
-    id: '7',
-    url: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=800&q=80',
-    title: 'Наша команда',
-    category: 'team',
-    description: 'Команда професіональних стоматологів',
-  },
-  {
-    id: '8',
-    url: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=800&q=80',
-    title: 'Робочий процес',
-    category: 'team',
-    description: 'Наші лікарі за роботою',
-  },
-
-  // Before/After
-  {
-    id: '9',
-    url: 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=800&q=80',
-    title: 'Відбілювання зубів',
-    category: 'before-after',
-    description: 'Результат професійного відбілювання',
-  },
-  {
-    id: '10',
-    url: 'https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=800&q=80',
-    title: 'Імплантація',
-    category: 'before-after',
-    description: 'Успішна імплантація зубів',
-  },
-]
+// Local gallery data (replaces external Unsplash links). Drop real photos into public/assets/images and update src/content/gallery.json
+const galleryImages: GalleryImage[] = galleryData as unknown as GalleryImage[]
 
 const categories = [
   { value: 'all', label: 'Всі фото' },
@@ -141,6 +65,11 @@ const Gallery = () => {
 
   return (
     <div className="py-16">
+      <Helmet>
+        <title>Галерея — Dental Story</title>
+        <meta name="description" content="Фото клініки, обладнання та результатів лікування. До/після згоди пацієнтів." />
+        <link rel="canonical" href="https://dentalstory.com.ua/gallery" />
+      </Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">

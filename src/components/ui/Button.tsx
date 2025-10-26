@@ -24,7 +24,7 @@ export const Button = ({
 
   const variantStyles = {
     primary:
-      'bg-dental-teal text-white hover:bg-teal-600 focus:ring-dental-teal',
+      'bg-teal-800 text-white hover:bg-teal-900 focus:ring-teal-800',
     secondary:
       'bg-dental-blue text-white hover:bg-blue-600 focus:ring-dental-blue',
     outline:

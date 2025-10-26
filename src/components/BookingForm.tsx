@@ -200,6 +200,10 @@ export default function BookingForm() {
         </div>
       )}
 
+      {/* Screen reader error announcer */}
+      <div aria-live="polite" role="status" className="sr-only">
+        {errors?.service?.message || errors?.date?.message || errors?.time?.message || errors?.firstName?.message || errors?.lastName?.message || errors?.email?.message || errors?.phone?.message || errors?.dateOfBirth?.message || errors?.consent?.message}
+      </div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Stepper */}
         <div className="flex items-center gap-2 mb-2">
@@ -212,8 +216,8 @@ export default function BookingForm() {
         {step===0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Послуга *</label>
-              <Select fullWidth error={errors.service?.message} {...register('service')}>
+              <label htmlFor="service" className="block text-sm font-medium text-gray-700 mb-1">Послуга *</label>
+              <Select id="service" fullWidth error={errors.service?.message} {...register('service')}>
                 <option value="">Оберіть послугу</option>
                 {SERVICES.map((s) => (
                   <option key={s} value={s}>{s}</option>
@@ -221,12 +225,12 @@ export default function BookingForm() {
               </Select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Дата *</label>
-              <Input type="date" fullWidth error={errors.date?.message} {...register('date')} />
+              <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">Дата *</label>
+              <Input id="date" type="date" fullWidth error={errors.date?.message} {...register('date')} />
             </div>
             <div className="relative">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Час *</label>
-              <Select fullWidth error={errors.time?.message} {...register('time')}>
+              <label htmlFor="time" className="block text-sm font-medium text-gray-700 mb-1">Час *</label>
+              <Select id="time" fullWidth error={errors.time?.message} {...register('time')}>
                 <option value="">Оберіть час</option>
                 {slots.map((t) => (
                   <option key={t} value={t}>{t}</option>
@@ -242,19 +246,19 @@ export default function BookingForm() {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Ім'я *</label>
-                <Input fullWidth placeholder="Ім'я" error={errors.firstName?.message} {...register('firstName')} />
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">Ім'я *</label>
+                <Input id="firstName" fullWidth placeholder="Ім'я" error={errors.firstName?.message} {...register('firstName')} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Прізвище *</label>
-                <Input fullWidth placeholder="Прізвище" error={errors.lastName?.message} {...register('lastName')} />
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">Прізвище *</label>
+                <Input id="lastName" fullWidth placeholder="Прізвище" error={errors.lastName?.message} {...register('lastName')} />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Телефон *</label>
-                <Input type="tel" fullWidth placeholder="+380 XX XXX XX XX" error={errors.phone?.message} {...register('phone', {
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Телефон *</label>
+                <Input id="phone" type="tel" fullWidth placeholder="+380 XX XXX XX XX" error={errors.phone?.message} {...register('phone', {
                   onBlur: (e) => {
                     const formatted = formatPhoneNumber(e.target.value)
                     setValue('phone', formatted, { shouldValidate: true })
@@ -262,12 +266,12 @@ export default function BookingForm() {
                 })} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-                <Input type="email" fullWidth placeholder="email@example.com" error={errors.email?.message} {...register('email')} />
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                <Input id="email" type="email" fullWidth placeholder="email@example.com" error={errors.email?.message} {...register('email')} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Дата народження *</label>
-                <Input type="date" fullWidth error={errors.dateOfBirth?.message as any} {...register('dateOfBirth')} />
+                <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700 mb-1">Дата народження *</label>
+                <Input id="dateOfBirth" type="date" fullWidth error={errors.dateOfBirth?.message as any} {...register('dateOfBirth')} />
               </div>
             </div>
           </>
@@ -345,6 +349,7 @@ export default function BookingForm() {
                       <Input 
                         type="date" 
                         fullWidth 
+                        aria-label="Дата"
                         error={errors.date?.message} 
                         {...register('date')} 
                         autoFocus
@@ -382,6 +387,7 @@ export default function BookingForm() {
                     <div className="mt-1 relative">
                       <Select 
                         fullWidth 
+                        aria-label="Час"
                         error={errors.time?.message} 
                         {...register('time')} 
                         autoFocus
@@ -425,6 +431,7 @@ export default function BookingForm() {
                     <div className="mt-1">
                       <Select 
                         fullWidth 
+                        aria-label="Лікар"
                         error={errors.doctor?.message} 
                         {...register('doctor')} 
                         autoFocus
@@ -661,8 +668,8 @@ export default function BookingForm() {
             <div className="space-y-4">
               {/* Reminder preference */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Нагадування</label>
-                <Select fullWidth {...register('reminderPreference')}>
+              <label htmlFor="reminderPreference" className="block text-sm font-medium text-gray-700 mb-1">Нагадування</label>
+              <Select id="reminderPreference" fullWidth {...register('reminderPreference')}>
                   <option value="email">По email</option>
                   <option value="sms">По SMS</option>
                   <option value="both">По email та SMS</option>
@@ -671,7 +678,7 @@ export default function BookingForm() {
               </div>
 
               <div className="flex items-start">
-                <input id="consent" type="checkbox" className="mt-1" {...register('consent')} />
+              <input id="consent" type="checkbox" className="mt-1" {...register('consent')} />
                 <label htmlFor="consent" className="ml-2 text-sm text-gray-700">Я даю згоду на обробку персональних даних *</label>
               </div>
               <Turnstile ref={turnstileRef} className="mt-2" />
@@ -680,10 +687,10 @@ export default function BookingForm() {
         )}
 
         {step===0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Лікар</label>
-              <Select fullWidth {...register('doctor')}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="doctor" className="block text-sm font-medium text-gray-700 mb-1">Лікар</label>
+              <Select id="doctor" fullWidth {...register('doctor')}>
                 {DOCTORS.map((d) => (
                   <option key={d.id} value={d.id}>{d.name}</option>
                 ))}

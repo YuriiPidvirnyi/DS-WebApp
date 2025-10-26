@@ -18,7 +18,8 @@ export default {
         'dental-green': '#AECED3',
       },
       fontFamily: {
-        sans: ['Stolzl', 'system-ui', 'sans-serif'],
+        sans: ['DM Sans', 'Inter', 'system-ui', 'sans-serif'],
+        heading: ['Rubik', 'DM Sans', 'Inter', 'system-ui', 'sans-serif'],
       },
     },
   },

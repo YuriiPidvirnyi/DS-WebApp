@@ -39,13 +39,13 @@ export default function CallbackRequest() {
         <Input placeholder="Ваше ім'я" fullWidth error={errors.name?.message} {...register('name')} />
         <Input type="tel" placeholder="Номер телефону" fullWidth error={errors.phone?.message} {...register('phone')} />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <select className="px-4 py-3 border rounded-lg" {...register('preferredTime')}>
+          <select aria-label="Зручний час для дзвінка" className="px-4 py-3 border rounded-lg" {...register('preferredTime')}>
             <option value="any">Будь-коли</option>
             <option value="morning">Ранок</option>
             <option value="afternoon">День</option>
             <option value="evening">Вечір</option>
           </select>
-          <Input placeholder="Послуга (необов'язково)" {...register('service')} />
+          <Input aria-label="Послуга (необов'язково)" placeholder="Послуга (необов'язково)" {...register('service')} />
         </div>
         <div className="flex items-start gap-2">
           <input id="cb-consent" type="checkbox" className="mt-1" {...register('consent')} />

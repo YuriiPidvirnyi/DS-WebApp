@@ -11,7 +11,8 @@ interface StarRatingProps {
 export default function StarRating({ value, onChange, readOnly = false, size = 20 }: StarRatingProps) {
   const stars = [1,2,3,4,5]
   return (
-    <div className="flex items-center gap-1" aria-label={`Оцінка ${value} з 5`}>
+    <div className="flex items-center gap-1">
+      <span className="sr-only">Рейтинг: {value} з 5 зірок</span>
       {stars.map((s) => (
         <button
           key={s}

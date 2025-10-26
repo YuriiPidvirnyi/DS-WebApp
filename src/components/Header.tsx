@@ -21,15 +21,15 @@ const Header = () => {
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50" role="banner">
       {/* Top bar */}
-      <div className="bg-dental-blue text-white py-2" role="complementary" aria-label="Контактна інформація">
+      <div className="bg-slate-800 text-white py-2.5" role="complementary" aria-label="Контактна інформація">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center text-sm">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-1">
-                <Phone className="h-4 w-4" aria-hidden="true" />
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-1.5">
+                <Phone className="h-4 w-4 text-dental-teal" aria-hidden="true" />
                 <a 
                   href={`tel:${CONTACT_INFO.phoneRaw}`} 
-                  className="hover:underline"
+                  className="hover:text-dental-teal font-semibold tracking-wide transition-colors"
                   data-track-id="call_click"
                   data-track-category="outbound"
                   data-track-label="header_phone"
@@ -38,11 +38,11 @@ const Header = () => {
                   {CONTACT_INFO.phone}
                 </a>
               </div>
-              <div className="flex items-center space-x-1">
-                <Mail className="h-4 w-4" aria-hidden="true" />
+              <div className="flex items-center space-x-1.5">
+                <Mail className="h-4 w-4 text-dental-teal" aria-hidden="true" />
                 <a 
                   href={`mailto:${CONTACT_INFO.email}`} 
-                  className="hover:underline"
+                  className="hover:text-dental-teal font-semibold tracking-wide transition-colors"
                   data-track-id="email_click"
                   data-track-category="outbound"
                   data-track-label="header_email"
@@ -52,8 +52,8 @@ const Header = () => {
                 </a>
               </div>
             </div>
-            <div className="hidden md:block">
-              <span>{CONTACT_INFO.workingHours.weekdays} | {CONTACT_INFO.workingHours.saturday}</span>
+            <div className="hidden md:block text-gray-300">
+              <span className="font-medium">{CONTACT_INFO.workingHours.weekdays} | {CONTACT_INFO.workingHours.saturday}</span>
             </div>
           </div>
         </div>
@@ -90,7 +90,7 @@ const Header = () => {
           <div className="hidden md:block">
             <Link
               to="/booking"
-              className="bg-dental-teal hover:bg-teal-600 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
+              className="bg-teal-800 hover:bg-teal-900 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
               data-track-id="cta_book_now"
               data-track-category="navigation"
               data-track-label="header_cta"
@@ -103,7 +103,13 @@ const Header = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 hover:text-dental-blue"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  setIsMenuOpen(!isMenuOpen)
+                }
+              }}
+              className="p-2 text-gray-700 hover:text-dental-blue focus:outline-none focus:ring-2 focus:ring-dental-teal focus:ring-offset-2 rounded-lg"
               aria-label={isMenuOpen ? 'Закрити меню' : 'Відкрити меню'}
               aria-expanded={isMenuOpen}
               aria-controls="mobile-menu"
@@ -117,26 +123,37 @@ const Header = () => {
       {/* Mobile menu */}
       {isMenuOpen && (
         <div className="md:hidden" id="mobile-menu">
-          <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t" role="navigation" aria-label="Мобільне меню">
+          <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t shadow-lg" role="navigation" aria-label="Мобільне меню">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
-                className={`block px-3 py-2 text-gray-700 hover:text-dental-blue transition-colors duration-200 ${
-                  isActive(item.href) ? 'text-dental-blue bg-blue-50' : ''
+                className={`block px-3 py-2 rounded-lg text-gray-700 hover:text-dental-blue hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-dental-teal focus:ring-inset transition-colors duration-200 ${
+                  isActive(item.href) ? 'text-dental-blue bg-blue-50 font-semibold' : ''
                 }`}
                 onClick={() => setIsMenuOpen(false)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') {
+                    setIsMenuOpen(false)
+                  }
+                }}
+                tabIndex={0}
               >
                 {item.name}
               </Link>
             ))}
-            <Link
-              to="/contact"
-              className="block px-3 py-2 bg-dental-teal text-white rounded-lg text-center font-medium mt-4"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Записатись на прийом
-            </Link>
+            <div className="px-3 mt-4">
+              <Link
+                to="/booking"
+                className="block px-6 py-4 min-h-[48px] bg-teal-800 hover:bg-teal-900 text-white rounded-xl text-center font-bold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+                onClick={() => setIsMenuOpen(false)}
+                data-track-id="cta_book_now_mobile"
+                data-track-category="navigation"
+                data-track-label="mobile_cta"
+              >
+                📞 Записатись на прийом
+              </Link>
+            </div>
           </div>
         </div>
       )}

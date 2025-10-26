@@ -48,6 +48,32 @@ npm run dev
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+### Environment Variables
+
+Create a `.env.local` in the project root (you can use `.env.example` as a reference):
+
+```env
+VITE_API_URL=http://localhost:3001/api
+VITE_SITE_URL=http://localhost:3000
+# Optional (can be empty locally)
+VITE_GOOGLE_MAPS_API_KEY=
+VITE_GOOGLE_ANALYTICS_ID=
+VITE_SENTRY_DSN=
+VITE_TURNSTILE_SITE_KEY=
+VITE_ENVIRONMENT=development
+VITE_ENABLE_SENTRY_IN_DEV=
+VITE_PHONE_NUMBER=+380504554774
+VITE_EMERGENCY_PHONE=+380504554774
+VITE_EMAIL=info@dentalstory.com.ua
+VITE_FACEBOOK_URL=https://facebook.com/dentalstory
+VITE_INSTAGRAM_URL=https://instagram.com/dentalstory
+VITE_TELEGRAM_URL=https://t.me/dentalstory
+```
+
+Notes:
+- Dev server runs on port 3000 (see `vite.config.ts`). If it's busy, change the port or stop the process occupying it.
+- Backend should be available at `VITE_API_URL`; otherwise some features will be limited locally.
+
 ## Available Scripts
 
 - `npm run dev` - Start development server

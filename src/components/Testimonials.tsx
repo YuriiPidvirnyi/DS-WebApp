@@ -54,7 +54,8 @@ const testimonials: Testimonial[] = [
 
 const StarRating = ({ rating }: { rating: number }) => {
   return (
-    <div className="flex gap-1" aria-label={`Рейтинг: ${rating} з 5 зірок`}>
+    <div className="flex gap-1">
+      <span className="sr-only">Рейтинг: {rating} з 5 зірок</span>
       {[...Array(5)].map((_, index) => (
         <Star
           key={index}
@@ -79,12 +80,12 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
 
   // Генеруємо колір фону на основі імені
   const colors = [
-    'bg-dental-blue',
-    'bg-dental-teal',
-    'bg-dental-green',
-    'bg-purple-500',
-    'bg-pink-500',
-    'bg-indigo-500',
+    'bg-teal-800',
+    'bg-slate-800',
+    'bg-emerald-800',
+    'bg-purple-700',
+    'bg-pink-700',
+    'bg-indigo-700',
   ]
   const colorIndex = testimonial.name.charCodeAt(0) % colors.length
   const bgColor = colors[colorIndex]
@@ -114,7 +115,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
       {/* Service */}
       {testimonial.service && (
         <div className="pt-3 border-t border-gray-100">
-          <p className="text-sm text-dental-teal font-medium">
+          <p className="text-sm text-teal-800 font-medium">
             {testimonial.service}
           </p>
         </div>
@@ -159,7 +160,7 @@ const Testimonials = () => {
           </p>
           <a
             href="/contact"
-            className="inline-block bg-dental-teal hover:bg-teal-600 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
+            className="inline-block bg-teal-800 hover:bg-teal-900 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
           >
             Записатися на прийом
           </a>

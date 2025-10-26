@@ -1,4 +1,6 @@
 import { Award, Users, Clock, Heart } from 'lucide-react'
+import images from '@/content/images.json'
+import { Helmet } from 'react-helmet-async'
 
 const About = () => {
   const stats = [
@@ -29,6 +31,15 @@ const About = () => {
     }
   ]
 
+  // Map photos from images.json to team members by name
+  type TeamPhoto = { title: string; src?: string; fallback?: string; alt?: string }
+  type EquipmentPhoto = { src?: string; fallback?: string; alt?: string; title?: string }
+  const data = images as unknown as { team?: TeamPhoto[]; equipment?: EquipmentPhoto[] }
+  const teamPhotos: Record<string, { src?: string; fallback?: string; alt?: string }> = {}
+  data.team?.forEach((p) => {
+    teamPhotos[p.title] = { src: p.src, fallback: p.fallback, alt: p.alt }
+  })
+
   const values = [
     {
       icon: <Heart className="h-8 w-8 text-dental-teal" />,
@@ -54,6 +65,11 @@ const About = () => {
 
   return (
     <div className="py-16">
+      <Helmet>
+        <title>Про нас — Dental Story</title>
+        <meta name="description" content="Сучасна стоматологічна клініка: досвідчена команда, інноваційне обладнання, турбота про пацієнтів." />
+        <link rel="canonical" href="https://dentalstory.com.ua/about" />
+      </Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <div className="text-center mb-16">
@@ -70,7 +86,7 @@ const About = () => {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
           {stats.map((stat, index) => (
             <div key={index} className="text-center">
-              <div className="text-4xl lg:text-5xl font-bold text-dental-blue mb-2">
+              <div className="text-4xl lg:text-5xl font-bold text-slate-800 mb-2">
                 {stat.number}
               </div>
               <div className="text-gray-600 font-medium">
@@ -152,27 +168,38 @@ const About = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {team.map((doctor, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-lg p-8 text-center hover:shadow-xl transition-shadow">
-                <div className="w-24 h-24 bg-gradient-to-br from-dental-blue to-dental-teal rounded-full mx-auto mb-6 flex items-center justify-center">
-                  <span className="text-white text-2xl font-bold">
-                    {doctor.name.split(' ')[1][0]}
-                  </span>
+            {team.map((doctor, index) => {
+              const photo = teamPhotos[doctor.name]
+              const fallback = photo?.fallback || '/assets/images/gallery/gallery-placeholder.svg'
+              return (
+                <div key={index} className="bg-white rounded-xl shadow-lg p-8 text-center hover:shadow-xl transition-shadow">
+                  <div className="w-24 h-24 rounded-full mx-auto mb-6 overflow-hidden bg-dental-blue/20">
+                    <img
+                      src={photo?.src || fallback}
+                      onError={(e) => {
+                        const img = e.currentTarget as HTMLImageElement
+                        if (img.src !== window.location.origin + fallback) img.src = fallback
+                      }}
+                      alt={photo?.alt || doctor.name}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    {doctor.name}
+                  </h3>
+                  <p className="text-teal-800 font-medium mb-2">
+                    {doctor.position}
+                  </p>
+                  <p className="text-gray-600 text-sm mb-3">
+                    {doctor.experience}
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    {doctor.education}
+                  </p>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  {doctor.name}
-                </h3>
-                <p className="text-dental-teal font-medium mb-2">
-                  {doctor.position}
-                </p>
-                <p className="text-gray-600 text-sm mb-3">
-                  {doctor.experience}
-                </p>
-                <p className="text-gray-500 text-sm">
-                  {doctor.education}
-                </p>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
 
@@ -189,7 +216,7 @@ const About = () => {
                   <span className="text-gray-700">Цифрова рентген-діагностика</span>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-2 h-2 bg-dental-teal rounded-full mr-3"></div>
+<div className="w-2 h-2 bg-dental-teal rounded-full mr-3"></div>
                   <span className="text-gray-700">3D-томографія</span>
                 </div>
                 <div className="flex items-center">
@@ -206,8 +233,20 @@ const About = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-gradient-to-br from-dental-blue/20 to-dental-teal/20 rounded-2xl h-64 flex items-center justify-center">
-              <span className="text-6xl">🏥</span>
+            <div className="rounded-2xl">
+              <div className="grid grid-cols-2 gap-4">
+                {data.equipment?.slice(0,4).map((eq, idx) => (
+                  <div key={idx} className="aspect-[3/2] overflow-hidden rounded-xl bg-white">
+                    <img 
+                      src={eq.src || '/assets/images/gallery/gallery-placeholder.svg'} 
+                      onError={(e) => { const img = e.currentTarget as HTMLImageElement; if (!img.dataset.fallback) { img.dataset.fallback = '1'; img.src = eq.fallback || '/assets/images/gallery/gallery-placeholder.svg' } }}
+                      alt={eq.alt || eq.title || 'Обладнання стоматології'}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>

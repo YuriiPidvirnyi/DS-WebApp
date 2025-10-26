@@ -89,5 +89,5 @@ export default function GoogleMap({
     )
   }
 
-  return <div ref={mapRef} className={className} style={{ height }} aria-label={title} />
+  return <div ref={mapRef} className={className} style={{ height }} />
 }

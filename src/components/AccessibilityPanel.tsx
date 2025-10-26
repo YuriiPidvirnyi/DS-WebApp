@@ -19,7 +19,7 @@ export function AccessibilityPanel() {
   } = useAccessibility()
 
   return (
-    <div className="fixed bottom-4 right-4 z-50" role="region" aria-label="Налаштування доступності">
+    <div className="fixed bottom-4 left-4 z-50" role="region" aria-label="Налаштування доступності">
       {/* Toggle button */}
       <button
         onClick={() => setIsOpen(prev => !prev)}
@@ -35,7 +35,7 @@ export function AccessibilityPanel() {
       {isOpen && (
         <div 
           id="a11y-panel"
-          className="bg-white rounded-lg shadow-xl p-4 absolute bottom-16 right-0 w-64 border border-gray-200"
+          className="bg-white rounded-lg shadow-xl p-4 absolute bottom-16 left-0 w-64 border border-gray-200"
           aria-live="polite"
         >
           <h3 className="text-lg font-semibold mb-4 text-gray-900">Доступність</h3>

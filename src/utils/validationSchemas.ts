@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 // Common validation helpers
-const phoneRegex = /^(\+38|38|8)?[0-9]{3}[0-9]{3}[0-9]{2}[0-9]{2}$/
+const phoneRegex = /^\+?380\d{9}$/
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 // Contact Form Schema
@@ -280,18 +280,28 @@ export const validateEmail = (email: string): boolean => {
 }
 
 export const formatPhoneNumber = (phone: string): string => {
-  // Remove all non-digit characters
+  // Normalize to +380XXXXXXXXX
   const digits = phone.replace(/\D/g, '')
-  
-  // Add country code if not present
-  if (digits.length === 10 && digits.startsWith('0')) {
-    return '+38' + digits
-  } else if (digits.length === 9) {
-    return '+380' + digits
-  } else if (digits.length === 12 && digits.startsWith('38')) {
-    return '+' + digits
+
+  // If already starts with 380 and has extra digits, take last 9 digits
+  if (digits.startsWith('380')) {
+    const last9 = digits.slice(-9)
+    if (last9.length === 9) return '+380' + last9
   }
-  
+
+  // Handle 0XXXXXXXXX (10 digits) or 9-digit local form
+  if (digits.length === 10 && digits.startsWith('0')) {
+    return '+380' + digits.slice(1)
+  }
+  if (digits.length === 9) {
+    return '+380' + digits
+  }
+
+  // Fallback: if at least 9 digits exist, use the last 9
+  if (digits.length > 9) {
+    return '+380' + digits.slice(-9)
+  }
+
   return phone // Return original if format is unclear
 }
 

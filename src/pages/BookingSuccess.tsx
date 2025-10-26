@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { createICSEvent, downloadICS } from '@/utils/calendar'
 import { CalendarPlus } from 'lucide-react'
 import ReminderSettings from '@/components/ReminderSettings'
+import { Helmet } from 'react-helmet-async'
 
 type BookingDetails = {
   id: string
@@ -51,6 +52,11 @@ export default function BookingSuccess() {
 
   return (
     <div className="py-16">
+      <Helmet>
+        <title>Запис створено — Dental Story</title>
+        <meta name="description" content="Дякуємо! Ми зв'яжемося для підтвердження запису. Додайте подію в календар та увімкніть нагадування." />
+        <link rel="canonical" href="https://dentalstory.com.ua/booking/success" />
+      </Helmet>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">Дякуємо! Запис створено</h1>
         <p className="text-gray-600 mb-6">Ми зв'яжемося з вами для підтвердження найближчим часом.</p>
@@ -84,7 +90,6 @@ export default function BookingSuccess() {
           </div>
         </div>
         <div className="flex flex-col items-center gap-4 mb-6">
-          {/* @ts-ignore */}
           <MicroFeedback form="appointment" refId={ref || undefined} />
           
           <div className="w-full max-w-md">

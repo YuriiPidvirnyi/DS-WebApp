@@ -7,6 +7,7 @@ import StarRating from '@/components/StarRating'
 import { getReviews, createReview, type Review } from '@/services/reviews'
 import { withToast } from '@/utils/toast'
 import { CheckCircle } from 'lucide-react'
+import { Helmet } from 'react-helmet-async'
 
 export default function ReviewsPage() {
   const [loading, setLoading] = useState(true)
@@ -66,6 +67,11 @@ export default function ReviewsPage() {
 
   return (
     <div className="py-16">
+      <Helmet>
+        <title>Відгуки пацієнтів — Dental Story</title>
+        <meta name="description" content="Оцініть наш сервіс та прочитайте відгуки пацієнтів про лікування у Dental Story." />
+        <link rel="canonical" href="https://dentalstory.com.ua/reviews" />
+      </Helmet>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Відгуки пацієнтів</h1>
@@ -102,35 +108,35 @@ export default function ReviewsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Ім'я *</label>
-                <Input fullWidth error={errors.name?.message} {...register('name')} />
+                <label htmlFor="review-name" className="block text-sm font-medium text-gray-700 mb-1">Ім'я *</label>
+                <Input id="review-name" aria-label="Ім'я" fullWidth error={errors.name?.message} {...register('name')} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email (необов'язково)</label>
-                <Input type="email" fullWidth error={errors.email?.message} {...register('email')} />
+                <label htmlFor="review-email" className="block text-sm font-medium text-gray-700 mb-1">Email (необов'язково)</label>
+                <Input id="review-email" aria-label="Email" type="email" fullWidth error={errors.email?.message} {...register('email')} />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Послуга *</label>
-                <Select fullWidth error={errors.service?.message} {...register('service')}>
+                <label htmlFor="review-service" className="block text-sm font-medium text-gray-700 mb-1">Послуга *</label>
+                <Select id="review-service" aria-label="Послуга" fullWidth error={errors.service?.message} {...register('service')}>
                   {SERVICES.map(s => <option key={s} value={s}>{s}</option>)}
                 </Select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Лікар (необов'язково)</label>
-                <Input fullWidth error={errors.doctor?.message} {...register('doctor')} />
+                <label htmlFor="review-doctor" className="block text-sm font-medium text-gray-700 mb-1">Лікар (необов'язково)</label>
+                <Input id="review-doctor" aria-label="Лікар" fullWidth error={errors.doctor?.message} {...register('doctor')} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Дата візиту (необов'язково)</label>
-                <Input type="date" fullWidth error={errors.visitDate?.message} {...register('visitDate')} />
+                <label htmlFor="review-visitDate" className="block text-sm font-medium text-gray-700 mb-1">Дата візиту (необов'язково)</label>
+                <Input id="review-visitDate" type="date" fullWidth error={errors.visitDate?.message} {...register('visitDate')} />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Коментар *</label>
-              <Textarea rows={4} fullWidth error={errors.comment?.message} {...register('comment')} />
+              <label htmlFor="review-comment" className="block text-sm font-medium text-gray-700 mb-1">Коментар *</label>
+              <Textarea id="review-comment" rows={4} fullWidth error={errors.comment?.message} {...register('comment')} />
             </div>
 
             <div className="flex items-center gap-2">

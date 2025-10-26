@@ -87,7 +87,7 @@ export default function FloatingQuickActions() {
         aria-expanded={open}
         aria-label={open ? 'Закрити швидкі дії' : 'Відкрити швидкі дії'}
         onClick={() => setOpen((v) => !v)}
-        className="rounded-full shadow-lg bg-dental-teal hover:bg-teal-600 text-white w-14 h-14 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dental-teal"
+        className="rounded-full shadow-lg bg-teal-800 hover:bg-teal-900 text-white w-14 h-14 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-800"
         data-track-id="quick_actions_toggle"
         data-track-category="engagement"
       >

@@ -28,7 +28,6 @@ export const useLocale = () => {
   const t = (key: LocaleKey, params?: Record<string, string | number>): string => {
     try {
       const keys = key.split('.')
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let value: any = locale
 
       // Проходимо по вкладених ключах
@@ -70,7 +69,6 @@ export const useLocale = () => {
   const tArray = (key: LocaleKey): string[] => {
     try {
       const keys = key.split('.')
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let value: any = locale
 
       for (const k of keys) {

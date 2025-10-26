@@ -3,11 +3,17 @@ import ContactForm from '@/components/ContactForm'
 import GoogleMap from '@/components/GoogleMap'
 import CallbackRequest from '@/components/CallbackRequest'
 import { CONTACT_INFO } from '@/utils/constants'
+import { Helmet } from 'react-helmet-async'
 
 const Contact = () => {
 
   return (
     <div className="py-16">
+      <Helmet>
+        <title>Контакти — Dental Story</title>
+        <meta name="description" content="Телефон, email, адреса та години роботи клініки. Швидкий зворотній дзвінок і карта Google." />
+        <link rel="canonical" href="https://dentalstory.com.ua/contact" />
+      </Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
@@ -46,7 +52,7 @@ const Contact = () => {
                     >
                       {CONTACT_INFO.phone}
                     </a>
-                    <p className="text-sm text-blue-100">Робочі години: {CONTACT_INFO.workingHours.weekdays}</p>
+                    <p className="text-sm text-white/90">Робочі години: {CONTACT_INFO.workingHours.weekdays}</p>
                   </div>
                 </div>
 
@@ -64,7 +70,7 @@ const Contact = () => {
                     >
                       {CONTACT_INFO.email}
                     </a>
-                    <p className="text-sm text-blue-100">Відповідаємо протягом 2 годин</p>
+                    <p className="text-sm text-white/90">Відповідаємо протягом 2 годин</p>
                   </div>
                 </div>
 
@@ -92,7 +98,7 @@ const Contact = () => {
                     <p>{CONTACT_INFO.workingHours.weekdays}</p>
                     <p>{CONTACT_INFO.workingHours.saturday}</p>
                     <p>{CONTACT_INFO.workingHours.sunday}</p>
-                    <p className="text-sm text-blue-100">{CONTACT_INFO.workingHours.timezone}</p>
+                    <p className="text-sm text-white/90">{CONTACT_INFO.workingHours.timezone}</p>
                   </div>
                 </div>
               </div>
@@ -112,7 +118,7 @@ const Contact = () => {
                     📞 {CONTACT_INFO.emergencyPhone}
                   </a>
                 </p>
-                <p className="text-red-600 text-sm">
+                <p className="text-red-800 text-sm">
                   В робочі години та за необхідності
                 </p>
               </div>
@@ -126,13 +132,13 @@ const Contact = () => {
               <div className="p-4 bg-white">
                 <div className="flex items-center mb-2">
                   <MapPin className="h-5 w-5 text-dental-teal mr-2" />
-                  <h3 className="font-semibold text-gray-900">Наше розташування</h3>
+                  <h3 id="location-heading" className="font-semibold text-gray-900">Наше розташування</h3>
                 </div>
                 <p className="text-gray-600 text-sm mb-4">
                   {CONTACT_INFO.address.street}, {CONTACT_INFO.address.city}
                 </p>
               </div>
-              <div className="relative h-80">
+              <div className="relative h-80" role="region" aria-labelledby="location-heading">
                 <GoogleMap className="w-full h-full" height="100%" />
               </div>
               <div className="p-4 bg-white border-t">
@@ -140,7 +146,7 @@ const Contact = () => {
                   href="https://maps.app.goo.gl/euKMW8R8eGTd2wJr9" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="inline-flex items-center text-dental-teal hover:text-teal-600 font-medium text-sm"
+                  className="inline-flex items-center text-teal-800 hover:text-teal-900 font-medium text-sm"
                   data-track-id="open_maps"
                   data-track-category="navigation"
                   data-track-label="contact_map_link"

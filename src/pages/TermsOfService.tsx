@@ -1,10 +1,16 @@
 import { Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import { CONTACT_INFO, SITE_INFO } from '@/utils/constants'
+import { Helmet } from 'react-helmet-async'
 
 const TermsOfService = () => {
   return (
     <div className="py-16">
+      <Helmet>
+        <title>Умови використання — Dental Story</title>
+        <meta name="description" content="Правила користування веб-сайтом та надання стоматологічних послуг Dental Story." />
+        <link rel="canonical" href="https://dentalstory.com.ua/terms-of-service" />
+      </Helmet>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">

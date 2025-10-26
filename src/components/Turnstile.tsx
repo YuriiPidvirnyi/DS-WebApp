@@ -85,4 +85,3 @@ const Turnstile = forwardRef<TurnstileRef, TurnstileProps>(function Turnstile(
 })
 
 export default Turnstile
-}

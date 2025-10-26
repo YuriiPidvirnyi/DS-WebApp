@@ -1,9 +1,11 @@
 import { lazy, Suspense, useEffect } from 'react'
-import { HashRouter as Router, Routes, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import LoadingPage from './components/LoadingPage'
 import PerformanceMetrics from './components/PerformanceMetrics'
+import ResourcePreloader from './components/ResourcePreloader'
+import LiveRegion from './components/ui/LiveRegion'
 import { StructuredData } from './components/StructuredData'
 import { AccessibilityProvider } from './components/AccessibilityProvider'
 import { AccessibilityPanel } from './components/AccessibilityPanel'
@@ -33,11 +35,17 @@ const Reviews = lazy(() => import('./pages/Reviews'))
 function App() {
   // Initialize analytics and error tracking
   useEffect(() => {
-    // Initialize analytics
-    initializeAnalytics();
-    
-    // Initialize error tracking
-    initializeSentry();
+    try {
+      // Initialize analytics
+      initializeAnalytics();
+      
+      // Initialize error tracking only in production
+      if (import.meta.env.PROD) {
+        initializeSentry();
+      }
+    } catch (error) {
+      console.warn('Failed to initialize analytics/sentry:', error);
+    }
   }, []);
 
   // Initialize page view tracking and delegated click tracking
@@ -45,46 +53,50 @@ function App() {
   
   // Initialize appointment reminders
   useReminders();
+  
   return (
     <ErrorBoundary>
       <AccessibilityProvider>
         <ToastProvider />
-        <Router>
           <div className="min-h-screen flex flex-col">
             <StructuredData type="organization" />
             <PerformanceMetrics />
+            <ResourcePreloader />
+            <LiveRegion />
             <SVGFilters />
             <AccessibilityPanel />
-            <a href="#main-content" className="skip-to-content">
+            <a 
+              href="#main-content" 
+              className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-50 bg-dental-teal text-white px-4 py-2 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-white"
+            >
               Перейти до основного вмісту
             </a>
             <Header />
             <main id="main-content" className="flex-1" role="main">
-          <Suspense fallback={<LoadingPage />}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/services" element={<Services />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/gallery" element={<Gallery />} />
-              <Route path="/booking" element={<Booking />} />
-              <Route path="/booking/success" element={<BookingSuccess />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/reviews" element={<Reviews />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/terms-of-service" element={<TermsOfService />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </main>
-        <Footer />
-        </div>
-        {/* Floating quick actions */}
-        <div className="fixed inset-0 pointer-events-none">
-          <div className="pointer-events-auto">
-            <FloatingQuickActions />
+              <Suspense fallback={<LoadingPage />}>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/services" element={<Services />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/gallery" element={<Gallery />} />
+                  <Route path="/booking" element={<Booking />} />
+                  <Route path="/booking/success" element={<BookingSuccess />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/reviews" element={<Reviews />} />
+                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                  <Route path="/terms-of-service" element={<TermsOfService />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </main>
+            <Footer />
           </div>
-        </div>
-      </Router>
+          {/* Floating quick actions */}
+          <div className="fixed inset-0 pointer-events-none">
+            <div className="pointer-events-auto">
+              <FloatingQuickActions />
+            </div>
+          </div>
     </AccessibilityProvider>
   </ErrorBoundary>
   )

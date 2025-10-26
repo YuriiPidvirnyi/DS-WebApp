@@ -1,9 +1,14 @@
 import { Link } from 'react-router-dom'
 import { Home, ArrowLeft } from 'lucide-react'
+import { Helmet } from 'react-helmet-async'
 
 const NotFound = () => {
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4">
+      <Helmet>
+        <title>404 — Сторінку не знайдено | Dental Story</title>
+        <meta name="robots" content="noindex" />
+      </Helmet>
       <div className="text-center max-w-2xl">
         {/* 404 Number */}
         <div className="mb-8">
@@ -25,7 +30,7 @@ const NotFound = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             to="/"
-            className="inline-flex items-center justify-center px-6 py-3 bg-dental-teal text-white font-semibold rounded-lg hover:bg-teal-600 transition-colors"
+            className="inline-flex items-center justify-center px-6 py-3 bg-teal-800 text-white font-semibold rounded-lg hover:bg-teal-900 transition-colors"
           >
             <Home className="h-5 w-5 mr-2" />
             На головну

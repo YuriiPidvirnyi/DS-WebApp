@@ -49,7 +49,7 @@ export const initializeAnalytics = (): void => {
     return;
   }
 
-  // Load the GA script dynamically
+  // Load the GA script dynamically (canonical GA4 snippet)
   const loadGoogleAnalytics = (): void => {
     const script = document.createElement('script');
     script.async = true;
@@ -57,15 +57,14 @@ export const initializeAnalytics = (): void => {
     document.head.appendChild(script);
 
     // Initialize the dataLayer array
-    window.dataLayer = window.dataLayer || [];
-    window.gtag = function gtag(command: string, action: string, params: Record<string, unknown>): void {
-      window.dataLayer.push([command, action, params]);
+    (window as any).dataLayer = (window as any).dataLayer || [];
+    (window as any).gtag = function gtag() {
+      (window as any).dataLayer.push(arguments);
     };
 
     // Initialize Google Analytics with your tracking ID
-    const dateString = new Date().toISOString();
-    window.gtag('js', dateString, {});
-    window.gtag('config', gaId, {
+    (window as any).gtag('js', new Date());
+    (window as any).gtag('config', gaId, {
       send_page_view: false, // We'll track page views manually with the router
     });
 
@@ -171,6 +170,7 @@ export const trackOutboundLink = (url: string, linkText: string): void => {
 declare global {
   interface Window {
     dataLayer: unknown[];
-    gtag: (command: string, action: string, params: Record<string, unknown>) => void;
+    // GA4 canonical signature supports variadic args
+    gtag: (...args: any[]) => void;
   }
 }

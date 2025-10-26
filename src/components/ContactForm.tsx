@@ -109,6 +109,10 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         </div>
       )}
 
+      {/* Screen reader error announcer */}
+      <div aria-live="polite" role="status" className="sr-only">
+        {errors?.name?.message || errors?.phone?.message || errors?.email?.message || errors?.message?.message}
+      </div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
