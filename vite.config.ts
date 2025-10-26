@@ -110,7 +110,10 @@ export default defineConfig({
       'lucide-react',
       'clsx',
       'react-helmet-async',
-      'axios'
+      'axios',
+      // Force prebundle problematic CJS deps to ESM for dev
+      'hoist-non-react-statics',
+      'react-is',
     ],
     exclude: ['@sentry/react']
   },
