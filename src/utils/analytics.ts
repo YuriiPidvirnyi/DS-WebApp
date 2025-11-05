@@ -40,43 +40,45 @@ export enum BookingEvent {
 
 // Initialize Google Analytics
 export const initializeAnalytics = (): void => {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') return
 
   // Check if GA ID exists in environment variables
-  const gaId = import.meta.env.VITE_GOOGLE_ANALYTICS_ID;
+  const gaId = import.meta.env.VITE_GOOGLE_ANALYTICS_ID
   if (!gaId) {
-    console.warn('Google Analytics ID not found in environment variables');
-    return;
+    console.warn('Google Analytics ID not found in environment variables')
+    return
   }
 
   // Load the GA script dynamically (canonical GA4 snippet)
   const loadGoogleAnalytics = (): void => {
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
-    document.head.appendChild(script);
+    const script = document.createElement('script')
+    script.async = true
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`
+    document.head.appendChild(script)
 
     // Initialize the dataLayer array
-    (window as any).dataLayer = (window as any).dataLayer || [];
-    (window as any).gtag = function gtag() {
-      (window as any).dataLayer.push(arguments);
-    };
+    window.dataLayer = window.dataLayer || []
+    window.gtag = function gtag(...args: unknown[]) {
+      window.dataLayer.push(args)
+    }
 
     // Initialize Google Analytics with your tracking ID
-    (window as any).gtag('js', new Date());
-    (window as any).gtag('config', gaId, {
+    window.gtag('js', new Date())
+    window.gtag('config', gaId, {
       send_page_view: false, // We'll track page views manually with the router
-    });
+    })
 
-    console.log('Google Analytics initialized');
-  };
+    if (import.meta.env.DEV) {
+      console.warn('Google Analytics initialized')
+    }
+  }
 
   try {
-    loadGoogleAnalytics();
+    loadGoogleAnalytics()
   } catch (error) {
-    console.error('Failed to load Google Analytics:', error);
+    console.error('Failed to load Google Analytics:', error)
   }
-};
+}
 
 /**
  * Track a page view in Google Analytics
@@ -84,18 +86,18 @@ export const initializeAnalytics = (): void => {
  * @param pageTitle The title of the current page
  */
 export const trackPageView = (pagePath: string, pageTitle: string): void => {
-  if (typeof window === 'undefined' || !window.gtag) return;
+  if (typeof window === 'undefined' || !window.gtag) return
 
   try {
     window.gtag('event', 'page_view', {
       page_path: pagePath,
       page_title: pageTitle,
       page_location: window.location.href,
-    });
+    })
   } catch (error) {
-    console.error('Failed to track page view:', error);
+    console.error('Failed to track page view:', error)
   }
-};
+}
 
 /**
  * Track a generic event in Google Analytics
@@ -108,17 +110,17 @@ export const trackEvent = (
   category: AnalyticsEventCategory,
   parameters?: Record<string, unknown>
 ): void => {
-  if (typeof window === 'undefined' || !window.gtag) return;
+  if (typeof window === 'undefined' || !window.gtag) return
 
   try {
     window.gtag('event', eventName, {
       event_category: category,
       ...parameters,
-    });
+    })
   } catch (error) {
-    console.error(`Failed to track event ${eventName}:`, error);
+    console.error(`Failed to track event ${eventName}:`, error)
   }
-};
+}
 
 /**
  * Track a form submission event
@@ -139,8 +141,8 @@ export const trackFormSubmission = (
       form_success: isSuccess,
       ...data,
     }
-  );
-};
+  )
+}
 
 /**
  * Track a booking event
@@ -151,8 +153,8 @@ export const trackBooking = (
   eventName: BookingEvent,
   bookingData: Record<string, unknown>
 ): void => {
-  trackEvent(eventName, AnalyticsEventCategory.Booking, bookingData);
-};
+  trackEvent(eventName, AnalyticsEventCategory.Booking, bookingData)
+}
 
 /**
  * Track an outbound link click
@@ -163,14 +165,19 @@ export const trackOutboundLink = (url: string, linkText: string): void => {
   trackEvent('outbound_link_click', AnalyticsEventCategory.Outbound, {
     outbound_url: url,
     link_text: linkText,
-  });
-};
+  })
+}
 
-// Type definition for gtag
+// Type definitions for Google Analytics
+type GtagArgs =
+  | [command: 'js', date: Date]
+  | [command: 'config', targetId: string, config?: Record<string, unknown>]
+  | [command: 'event', eventName: string, parameters?: Record<string, unknown>]
+  | [command: 'set', parameters: Record<string, unknown>]
+
 declare global {
   interface Window {
-    dataLayer: unknown[];
-    // GA4 canonical signature supports variadic args
-    gtag: (...args: any[]) => void;
+    dataLayer: unknown[]
+    gtag: (...args: GtagArgs) => void
   }
 }

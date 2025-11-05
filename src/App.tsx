@@ -14,6 +14,7 @@ import ErrorBoundary from './components/ErrorBoundary'
 import ToastProvider from './components/providers/ToastProvider'
 import { initializeAnalytics } from './utils/analytics'
 import { initializeSentry } from './utils/sentry'
+import performanceMonitor from './services/performance'
 import useAnalytics from './hooks/useAnalytics'
 import { useReminders } from './hooks/useReminders'
 import FloatingQuickActions from './components/FloatingQuickActions'
@@ -33,72 +34,82 @@ const NotFound = lazy(() => import('./pages/NotFound'))
 const Reviews = lazy(() => import('./pages/Reviews'))
 
 function App() {
-  // Initialize analytics and error tracking
+  // Initialize analytics, error tracking and performance monitoring
   useEffect(() => {
-    try {
-      // Initialize analytics
-      initializeAnalytics();
-      
-      // Initialize error tracking only in production
-      if (import.meta.env.PROD) {
-        initializeSentry();
+    const initialize = async () => {
+      try {
+        // Initialize analytics
+        initializeAnalytics()
+
+        // Initialize performance monitoring
+        performanceMonitor.init()
+
+        // Initialize error tracking only in production (lazy loaded)
+        if (import.meta.env.PROD) {
+          await initializeSentry()
+        }
+      } catch (error) {
+        console.warn(
+          'Failed to initialize analytics/sentry/performance:',
+          error
+        )
       }
-    } catch (error) {
-      console.warn('Failed to initialize analytics/sentry:', error);
     }
-  }, []);
+
+    initialize()
+  }, [])
 
   // Initialize page view tracking and delegated click tracking
-  useAnalytics();
-  
+  useAnalytics()
+
   // Initialize appointment reminders
-  useReminders();
-  
+  useReminders()
+
   return (
     <ErrorBoundary>
       <AccessibilityProvider>
         <ToastProvider />
-          <div className="min-h-screen flex flex-col">
-            <StructuredData type="organization" />
-            <PerformanceMetrics />
-            <ResourcePreloader />
-            <LiveRegion />
-            <SVGFilters />
-            <AccessibilityPanel />
-            <a 
-              href="#main-content" 
-              className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-50 bg-dental-teal text-white px-4 py-2 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-white"
-            >
-              Перейти до основного вмісту
-            </a>
-            <Header />
-            <main id="main-content" className="flex-1" role="main">
-              <Suspense fallback={<LoadingPage />}>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/services" element={<Services />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/gallery" element={<Gallery />} />
-                  <Route path="/booking" element={<Booking />} />
-                  <Route path="/booking/success" element={<BookingSuccess />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/reviews" element={<Reviews />} />
-                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                  <Route path="/terms-of-service" element={<TermsOfService />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </main>
-            <Footer />
+        <div className="min-h-screen flex flex-col">
+          <StructuredData type="organization" />
+          <PerformanceMetrics />
+          <ResourcePreloader />
+          <LiveRegion />
+          <SVGFilters />
+          <AccessibilityPanel />
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-50 bg-dental-teal text-white px-4 py-2 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-white"
+          >
+            Перейти до основного вмісту
+          </a>
+          <Header />
+          <main id="main-content" className="flex-1" role="main">
+            <Suspense fallback={<LoadingPage />}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/services" element={<Services />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/gallery" element={<Gallery />} />
+                <Route path="/booking" element={<Booking />} />
+                <Route path="/booking/success" element={<BookingSuccess />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/reviews" element={<Reviews />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms-of-service" element={<TermsOfService />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </main>
+          <Footer />
+        </div>
+        {/* Floating quick actions */}
+        <div className="fixed inset-0 pointer-events-none">
+          <div className="pointer-events-auto">
+            <FloatingQuickActions />
           </div>
-          {/* Floating quick actions */}
-          <div className="fixed inset-0 pointer-events-none">
-            <div className="pointer-events-auto">
-              <FloatingQuickActions />
-            </div>
-          </div>
-    </AccessibilityProvider>
-  </ErrorBoundary>
+        </div>
+      </AccessibilityProvider>
+    </ErrorBoundary>
   )
 }
 

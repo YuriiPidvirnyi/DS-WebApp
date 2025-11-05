@@ -15,7 +15,7 @@ export default function PerformanceMetrics() {
   const reportWebVitals = useCallback(async (metric: WebVitalsMetric) => {
     // Log to console in development
     if (import.meta.env.DEV) {
-      console.log(`Web Vital: ${metric.name}`, metric)
+      console.warn(`Web Vital: ${metric.name}`, metric)
     }
 
     // In production, we would send to analytics service
@@ -51,12 +51,19 @@ export default function PerformanceMetrics() {
     // Dynamically import web vitals (only used in client)
     const registerWebVitals = async () => {
       try {
-        if ('connection' in navigator && 
-            (navigator.connection as any)?.saveData) {
+        interface NetworkInformation {
+          saveData?: boolean
+        }
+        const connection = (
+          navigator as Navigator & { connection?: NetworkInformation }
+        ).connection
+        if (connection?.saveData) {
           return // Don't measure for users with saveData enabled
         }
 
-        const { onCLS, onINP, onLCP, onFCP, onTTFB } = await import('web-vitals')
+        const { onCLS, onINP, onLCP, onFCP, onTTFB } = await import(
+          'web-vitals'
+        )
         onCLS(reportWebVitals)
         onINP(reportWebVitals)
         onLCP(reportWebVitals)

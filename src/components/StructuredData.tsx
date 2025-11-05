@@ -1,82 +1,91 @@
 import { Helmet } from 'react-helmet-async'
+import { CONTACT_INFO, SITE_INFO } from '@/utils/constants'
 
 interface StructuredDataProps {
   type?: 'organization' | 'localBusiness' | 'medicalClinic' | 'service'
   data?: Record<string, unknown>
 }
 
-export const StructuredData = ({ type = 'organization' }: StructuredDataProps) => {
+export const StructuredData = ({
+  type = 'organization',
+}: StructuredDataProps) => {
   const getOrganizationSchema = () => ({
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'Dental Story',
-    alternateName: 'Стоматологічна клініка Dental Story',
-    url: 'https://dentalstory.com.ua',
-    logo: 'https://dentalstory.com.ua/assets/images/favicon/favicon-32x32.png',
-    description: 'Сучасна стоматологічна клініка в Києві. Професійне лікування зубів, імплантація, протезування.',
-    telephone: '+380504554774',
-    email: 'info@dentalstory.com.ua',
+    name: SITE_INFO.name,
+    alternateName: `Стоматологічна клініка ${SITE_INFO.name}`,
+    url: SITE_INFO.url,
+    logo: `${SITE_INFO.url}/assets/images/favicon/favicon-32x32.png`,
+    description: SITE_INFO.description,
+    telephone: CONTACT_INFO.phone,
+    email: CONTACT_INFO.email,
     address: {
       '@type': 'PostalAddress',
-      streetAddress: 'вул. Академіка Корольова, 10',
-      addressLocality: 'Київ',
-      addressRegion: 'Київська область',
-      postalCode: '02660',
+      streetAddress: CONTACT_INFO.address.street,
+      addressLocality: CONTACT_INFO.address.city,
+      addressRegion: CONTACT_INFO.address.district,
+      postalCode: CONTACT_INFO.address.postalCode,
       addressCountry: 'UA',
     },
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: '50.5147',
-      longitude: '30.6348',
+      latitude: String(CONTACT_INFO.coordinates.lat),
+      longitude: String(CONTACT_INFO.coordinates.lng),
     },
     sameAs: [
-      'https://facebook.com/dentalstory',
-      'https://instagram.com/dentalstory',
-      'https://t.me/dentalstory',
+      CONTACT_INFO.social.facebook,
+      CONTACT_INFO.social.instagram,
+      CONTACT_INFO.social.telegram,
     ],
   })
 
   const getLocalBusinessSchema = () => ({
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
-    '@id': 'https://dentalstory.com.ua/#localbusiness',
-    name: 'Dental Story',
-    image: 'https://dentalstory.com.ua/assets/images/og/og-image.svg',
-    telephone: '+380504554774',
-    email: 'info@dentalstory.com.ua',
+    '@id': `${SITE_INFO.url}/#localbusiness`,
+    name: SITE_INFO.name,
+    image: `${SITE_INFO.url}/assets/images/og/og-image.svg`,
+    telephone: CONTACT_INFO.phone,
+    email: CONTACT_INFO.email,
     address: {
       '@type': 'PostalAddress',
-      streetAddress: 'вул. Академіка Корольова, 10',
-      addressLocality: 'Київ',
-      addressRegion: 'Київська область',
-      postalCode: '02660',
+      streetAddress: CONTACT_INFO.address.street,
+      addressLocality: CONTACT_INFO.address.city,
+      addressRegion: CONTACT_INFO.address.district,
+      postalCode: CONTACT_INFO.address.postalCode,
       addressCountry: 'UA',
     },
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: '50.5147',
-      longitude: '30.6348',
+      latitude: String(CONTACT_INFO.coordinates.lat),
+      longitude: String(CONTACT_INFO.coordinates.lng),
     },
-    url: 'https://dentalstory.com.ua',
+    url: SITE_INFO.url,
     openingHoursSpecification: [
       {
         '@type': 'OpeningHoursSpecification',
         dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
         opens: '09:00',
-        closes: '19:00',
+        closes: '21:00',
       },
       {
         '@type': 'OpeningHoursSpecification',
         dayOfWeek: 'Saturday',
         opens: '09:00',
-        closes: '16:00',
+        closes: '18:00',
+      },
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: 'Sunday',
+        opens: '08:00',
+        closes: '22:00',
       },
     ],
     priceRange: '$$',
     aggregateRating: {
       '@type': 'AggregateRating',
-      ratingValue: '4.9',
-      reviewCount: '150',
+      ratingValue: String(SITE_INFO.rating || '4.7'),
+      reviewCount: String(SITE_INFO.reviewCount || '71'),
       bestRating: '5',
       worstRating: '1',
     },
@@ -85,10 +94,10 @@ export const StructuredData = ({ type = 'organization' }: StructuredDataProps) =
   const getMedicalClinicSchema = () => ({
     '@context': 'https://schema.org',
     '@type': ['MedicalClinic', 'Dentist'],
-    '@id': 'https://dentalstory.com.ua/#medicalclinic',
-    name: 'Dental Story - Стоматологічна Клініка',
-    description: 'Сучасна стоматологічна клініка в Києві з новітнім обладнанням та досвідченими лікарями',
-    image: 'https://dentalstory.com.ua/assets/images/og/og-image.svg',
+    '@id': `${SITE_INFO.url}/#medicalclinic`,
+    name: `${SITE_INFO.name} - Стоматологічна Клініка`,
+    description: SITE_INFO.description,
+    image: `${SITE_INFO.url}/assets/images/og/og-image.svg`,
     medicalSpecialty: [
       'Dentistry',
       'Orthodontics',
@@ -116,14 +125,14 @@ export const StructuredData = ({ type = 'organization' }: StructuredDataProps) =
     ],
     address: {
       '@type': 'PostalAddress',
-      streetAddress: 'вул. Академіка Корольова, 10, Дніпровський район',
-      addressLocality: 'Київ',
-      postalCode: '02660',
+      streetAddress: CONTACT_INFO.address.full,
+      addressLocality: CONTACT_INFO.address.city,
+      postalCode: CONTACT_INFO.address.postalCode,
       addressCountry: 'UA',
     },
-    telephone: '+380504554774',
-    email: 'info@dentalstory.com.ua',
-    url: 'https://dentalstory.com.ua',
+    telephone: CONTACT_INFO.phone,
+    email: CONTACT_INFO.email,
+    url: SITE_INFO.url,
   })
 
   const getSchema = () => {

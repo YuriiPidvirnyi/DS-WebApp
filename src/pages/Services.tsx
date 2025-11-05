@@ -1,5 +1,15 @@
-import { Check, HeartPulse, Syringe, Sparkles, Baby, Smile, Zap, Crown } from 'lucide-react'
+import {
+  Check,
+  HeartPulse,
+  Syringe,
+  Sparkles,
+  Baby,
+  Smile,
+  Zap,
+  Crown,
+} from 'lucide-react'
 import FAQAccordion from '@/components/FAQAccordion'
+import PriceCalculator from '@/components/PriceCalculator'
 import { ALL_FAQS } from '@/content/faqs'
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
@@ -16,7 +26,7 @@ const Services = () => {
         'Лікування періодонтиту',
         'Професійна гігієна',
         'Реставрація зубів',
-      ]
+      ],
     },
     {
       category: 'Хірургічна стоматологія',
@@ -28,7 +38,7 @@ const Services = () => {
         'Синус-ліфтинг',
         'Кісткова пластика',
         'Лікування пародонтиту',
-      ]
+      ],
     },
     {
       category: 'Ортопедична стоматологія',
@@ -40,7 +50,7 @@ const Services = () => {
         'Знімні протези',
         'Вінири',
         'Люмінири',
-      ]
+      ],
     },
     {
       category: 'Ортодонтія',
@@ -52,7 +62,7 @@ const Services = () => {
         'Лінгвальні брекети',
         'Елайнери (капи)',
         'Ретейнери',
-      ]
+      ],
     },
     {
       category: 'Естетична стоматологія',
@@ -64,7 +74,7 @@ const Services = () => {
         'Керамічні вінири',
         'Реконтурінг ясен',
         'Естетичні пломби',
-      ]
+      ],
     },
     {
       category: 'Дитяча стоматологія',
@@ -76,15 +86,18 @@ const Services = () => {
         'Герметизація фісур',
         'Пластинки для дітей',
         'Навчання гігієні',
-      ]
-    }
+      ],
+    },
   ]
 
   return (
     <div className="py-16">
       <Helmet>
         <title>Послуги — Dental Story</title>
-        <meta name="description" content="Терапевтична, хірургічна, ортопедична стоматологія, ортодонтія, естетика та дитяча стоматологія." />
+        <meta
+          name="description"
+          content="Терапевтична, хірургічна, ортопедична стоматологія, ортодонтія, естетика та дитяча стоматологія."
+        />
         <link rel="canonical" href="https://dentalstory.com.ua/services" />
       </Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -94,8 +107,8 @@ const Services = () => {
             Наші послуги
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Повний спектр стоматологічних послуг для всієї родини. 
-            Ми використовуємо найсучасніші технології та матеріали для досягнення 
+            Повний спектр стоматологічних послуг для всієї родини. Ми
+            використовуємо найсучасніші технології та матеріали для досягнення
             найкращих результатів лікування.
           </p>
         </div>
@@ -121,7 +134,7 @@ const Services = () => {
                   return <Zap className="h-8 w-8 text-dental-teal" />
               }
             }
-            
+
             const getBgColor = () => {
               switch (category.category) {
                 case 'Терапевтична стоматологія':
@@ -140,43 +153,48 @@ const Services = () => {
                   return 'bg-white border-gray-200'
               }
             }
-            
+
             return (
-            <div key={index} className={`rounded-2xl shadow-sm border-2 p-8 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 ${getBgColor()}`}>
-              <div className="mb-8">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="bg-white p-3 rounded-xl shadow-sm">
-                    {getIcon()}
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-900">
-                      {category.category}
-                    </h2>
-                    <p className="text-gray-600 text-lg">
-                      {category.description}
-                    </p>
+              <div
+                key={index}
+                className={`rounded-2xl shadow-sm border-2 p-8 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 ${getBgColor()}`}
+              >
+                <div className="mb-8">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="bg-white p-3 rounded-xl shadow-sm">
+                      {getIcon()}
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-gray-900">
+                        {category.category}
+                      </h2>
+                      <p className="text-gray-600 text-lg">
+                        {category.description}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-              
-              <ul className="space-y-4">
-                {category.services.map((service, serviceIndex) => (
-                  <li key={serviceIndex} className="flex items-start group">
-                    <div className="bg-dental-teal/10 p-1 rounded-full mr-4 mt-0.5">
-                      <Check className="h-4 w-4 text-dental-teal" />
-                    </div>
-                    <span className="text-gray-700 group-hover:text-gray-900 transition-colors font-medium">{service}</span>
-                  </li>
-                ))}
-              </ul>
 
-              <div className="mt-8 pt-6 border-t border-gray-200">
-                <button className="w-full bg-white/80 hover:bg-white text-gray-800 py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-sm hover:shadow-md border border-gray-200">
-                  Дізнатися більше про ціни →
-                </button>
+                <ul className="space-y-4">
+                  {category.services.map((service, serviceIndex) => (
+                    <li key={serviceIndex} className="flex items-start group">
+                      <div className="bg-dental-teal/10 p-1 rounded-full mr-4 mt-0.5">
+                        <Check className="h-4 w-4 text-dental-teal" />
+                      </div>
+                      <span className="text-gray-700 group-hover:text-gray-900 transition-colors font-medium">
+                        {service}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-8 pt-6 border-t border-gray-200">
+                  <button className="w-full bg-white/80 hover:bg-white text-gray-800 py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-sm hover:shadow-md border border-gray-200">
+                    Дізнатися більше про ціни →
+                  </button>
+                </div>
               </div>
-            </div>
-          )
+            )
           })}
         </div>
 
@@ -187,7 +205,8 @@ const Services = () => {
               Що входить в кожну послугу
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Ми забезпечуємо комплексний підхід до лікування з урахуванням індивідуальних потреб пацієнта
+              Ми забезпечуємо комплексний підхід до лікування з урахуванням
+              індивідуальних потреб пацієнта
             </p>
           </div>
 
@@ -224,23 +243,39 @@ const Services = () => {
                 Післялікувальний контроль
               </h3>
               <p className="text-gray-600">
-                Регулярні контрольні огляди для забезпечення тривалого результату
+                Регулярні контрольні огляди для забезпечення тривалого
+                результату
               </p>
             </div>
           </div>
         </div>
 
+        {/* Price Calculator */}
+        <div className="mt-20">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+              Розрахуйте вартість
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Використовуйте наш калькулятор для приблизного розрахунку вартості
+              послуг
+            </p>
+          </div>
+          <PriceCalculator />
+        </div>
+
         {/* CTA */}
         <div className="mt-16 text-center">
           <div className="bg-teal-800 rounded-2xl p-8 lg:p-12 text-white">
-            <h2 className="text-3xl font-bold mb-4">
-              Потрібна консультація?
-            </h2>
+            <h2 className="text-3xl font-bold mb-4">Потрібна консультація?</h2>
             <p className="text-white mb-8 max-w-2xl mx-auto">
-              Наші лікарі проведуть детальний огляд та розроблять індивідуальний план лікування, 
-              який підходить саме вам
+              Наші лікарі проведуть детальний огляд та розроблять індивідуальний
+              план лікування, який підходить саме вам
             </p>
-<Link to="/booking" className="inline-block bg-white text-teal-800 px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors">
+            <Link
+              to="/booking"
+              className="inline-block bg-white text-teal-800 px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
+            >
               Записатися на консультацію
             </Link>
           </div>

@@ -1,0 +1,86 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check if version changed
+        id: version
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          git fetch --tags
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          LAST_VERSION=${LAST_TAG#v}
+          echo "last=$LAST_VERSION" >> $GITHUB_OUTPUT
+          if [ "$CURRENT_VERSION" != "$LAST_VERSION" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build application
+        if: steps.version.outputs.changed == 'true'
+        run: npm run build
+
+      - name: Create GitHub Release
+        if: steps.version.outputs.changed == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.current }}
+          name: Release v${{ steps.version.outputs.current }}
+          body: |
+            ## 🎉 Release v${{ steps.version.outputs.current }}
+            
+            ### 📋 Changes
+            See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.
+            
+            ### 📦 Assets
+            - Source code (zip)
+            - Source code (tar.gz)
+            
+            ### 🚀 Installation
+            ```bash
+            npm install
+            npm run build
+            ```
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+
+      - name: Update CHANGELOG
+        if: steps.version.outputs.changed == 'true'
+        run: |
+          echo "## [v${{ steps.version.outputs.current }}] - $(date +'%Y-%m-%d')" >> CHANGELOG.md
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add CHANGELOG.md
+          git diff --quiet && git diff --staged --quiet || git commit -m "docs: update CHANGELOG for v${{ steps.version.outputs.current }}"
+          git push

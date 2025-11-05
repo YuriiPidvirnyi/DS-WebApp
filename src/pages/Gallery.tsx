@@ -12,6 +12,10 @@ const categories = [
   { value: 'clinic', label: 'Клініка' },
   { value: 'equipment', label: 'Обладнання' },
   { value: 'team', label: 'Команда' },
+  { value: 'implants', label: 'Імплантація' },
+  { value: 'whitening', label: 'Відбілювання' },
+  { value: 'braces', label: 'Брекети' },
+  { value: 'veneers', label: 'Вініри' },
   { value: 'before-after', label: 'До/Після' },
 ]
 
@@ -67,7 +71,10 @@ const Gallery = () => {
     <div className="py-16">
       <Helmet>
         <title>Галерея — Dental Story</title>
-        <meta name="description" content="Фото клініки, обладнання та результатів лікування. До/після згоди пацієнтів." />
+        <meta
+          name="description"
+          content="Фото клініки, обладнання та результатів лікування. До/після згоди пацієнтів."
+        />
         <link rel="canonical" href="https://dentalstory.com.ua/gallery" />
       </Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -174,10 +181,7 @@ const Gallery = () => {
             ›
           </button>
 
-          <div
-            className="max-w-5xl w-full"
-            onClick={e => e.stopPropagation()}
-          >
+          <div className="max-w-5xl w-full" onClick={e => e.stopPropagation()}>
             <img
               src={selectedImage.url}
               alt={selectedImage.title}

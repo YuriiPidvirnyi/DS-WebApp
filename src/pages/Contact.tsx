@@ -2,16 +2,19 @@ import { Phone, Mail, MapPin, Clock } from 'lucide-react'
 import ContactForm from '@/components/ContactForm'
 import GoogleMap from '@/components/GoogleMap'
 import CallbackRequest from '@/components/CallbackRequest'
+import FAQ from '@/components/FAQ'
 import { CONTACT_INFO } from '@/utils/constants'
 import { Helmet } from 'react-helmet-async'
 
 const Contact = () => {
-
   return (
     <div className="py-16">
       <Helmet>
         <title>Контакти — Dental Story</title>
-        <meta name="description" content="Телефон, email, адреса та години роботи клініки. Швидкий зворотній дзвінок і карта Google." />
+        <meta
+          name="description"
+          content="Телефон, email, адреса та години роботи клініки. Швидкий зворотній дзвінок і карта Google."
+        />
         <link rel="canonical" href="https://dentalstory.com.ua/contact" />
       </Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -21,7 +24,8 @@ const Contact = () => {
             Контакти
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Зв'яжіться з нами зручним для вас способом або запишіться на прийом онлайн
+            Зв'яжіться з нами зручним для вас способом або запишіться на прийом
+            онлайн
           </p>
         </div>
 
@@ -33,17 +37,15 @@ const Contact = () => {
           <div className="space-y-8">
             {/* Contact Details */}
             <div className="bg-gradient-to-br from-dental-blue to-dental-teal text-white rounded-2xl p-8">
-              <h2 className="text-2xl font-bold mb-6">
-                Контактна інформація
-              </h2>
-              
+              <h2 className="text-2xl font-bold mb-6">Контактна інформація</h2>
+
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
                   <Phone className="h-6 w-6 mt-1 text-yellow-300" />
                   <div>
                     <h3 className="font-semibold mb-1">Телефон</h3>
-                    <a 
-                      href={`tel:${CONTACT_INFO.phoneRaw}`} 
+                    <a
+                      href={`tel:${CONTACT_INFO.phoneRaw}`}
                       className="hover:underline"
                       data-track-id="call_click"
                       data-track-category="outbound"
@@ -52,7 +54,9 @@ const Contact = () => {
                     >
                       {CONTACT_INFO.phone}
                     </a>
-                    <p className="text-sm text-white/90">Робочі години: {CONTACT_INFO.workingHours.weekdays}</p>
+                    <p className="text-sm text-white/90">
+                      Робочі години: {CONTACT_INFO.workingHours.weekdays}
+                    </p>
                   </div>
                 </div>
 
@@ -60,8 +64,8 @@ const Contact = () => {
                   <Mail className="h-6 w-6 mt-1 text-yellow-300" />
                   <div>
                     <h3 className="font-semibold mb-1">Email</h3>
-                    <a 
-                      href={`mailto:${CONTACT_INFO.email}`} 
+                    <a
+                      href={`mailto:${CONTACT_INFO.email}`}
                       className="hover:underline"
                       data-track-id="email_click"
                       data-track-category="outbound"
@@ -70,7 +74,9 @@ const Contact = () => {
                     >
                       {CONTACT_INFO.email}
                     </a>
-                    <p className="text-sm text-white/90">Відповідаємо протягом 2 годин</p>
+                    <p className="text-sm text-white/90">
+                      Відповідаємо протягом 2 годин
+                    </p>
                   </div>
                 </div>
 
@@ -80,9 +86,9 @@ const Contact = () => {
                     <h3 className="font-semibold mb-1">Адреса</h3>
                     <p>{CONTACT_INFO.address.full}</p>
                     <p>{CONTACT_INFO.address.district}</p>
-                    <a 
-                      href={CONTACT_INFO.social ? 'https://maps.app.goo.gl/euKMW8R8eGTd2wJr9' : '#'} 
-                      target="_blank" 
+                    <a
+                      href="https://maps.app.goo.gl/gprGw94tfAJH7xFSA"
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm text-blue-100 hover:underline"
                     >
@@ -98,7 +104,9 @@ const Contact = () => {
                     <p>{CONTACT_INFO.workingHours.weekdays}</p>
                     <p>{CONTACT_INFO.workingHours.saturday}</p>
                     <p>{CONTACT_INFO.workingHours.sunday}</p>
-                    <p className="text-sm text-white/90">{CONTACT_INFO.workingHours.timezone}</p>
+                    <p className="text-sm text-white/90">
+                      {CONTACT_INFO.workingHours.timezone}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -114,7 +122,10 @@ const Contact = () => {
               </p>
               <div className="space-y-2">
                 <p className="font-semibold text-red-800">
-                  <a href={`tel:${CONTACT_INFO.emergencyPhoneRaw}`} className="hover:underline">
+                  <a
+                    href={`tel:${CONTACT_INFO.emergencyPhoneRaw}`}
+                    className="hover:underline"
+                  >
                     📞 {CONTACT_INFO.emergencyPhone}
                   </a>
                 </p>
@@ -132,19 +143,28 @@ const Contact = () => {
               <div className="p-4 bg-white">
                 <div className="flex items-center mb-2">
                   <MapPin className="h-5 w-5 text-dental-teal mr-2" />
-                  <h3 id="location-heading" className="font-semibold text-gray-900">Наше розташування</h3>
+                  <h3
+                    id="location-heading"
+                    className="font-semibold text-gray-900"
+                  >
+                    Наше розташування
+                  </h3>
                 </div>
                 <p className="text-gray-600 text-sm mb-4">
                   {CONTACT_INFO.address.street}, {CONTACT_INFO.address.city}
                 </p>
               </div>
-              <div className="relative h-80" role="region" aria-labelledby="location-heading">
+              <div
+                className="relative h-80"
+                role="region"
+                aria-labelledby="location-heading"
+              >
                 <GoogleMap className="w-full h-full" height="100%" />
               </div>
               <div className="p-4 bg-white border-t">
-                <a 
-                  href="https://maps.app.goo.gl/euKMW8R8eGTd2wJr9" 
-                  target="_blank" 
+                <a
+                  href="https://maps.app.goo.gl/gprGw94tfAJH7xFSA"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center text-teal-800 hover:text-teal-900 font-medium text-sm"
                   data-track-id="open_maps"
@@ -160,53 +180,7 @@ const Contact = () => {
         </div>
 
         {/* FAQ */}
-        <div className="mt-20">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-            Часті питання
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="font-semibold text-gray-900 mb-3">
-                Чи потрібно записуватися заздалегідь?
-              </h3>
-              <p className="text-gray-600">
-                Так, ми працюємо за попереднім записом. Це дозволяє нам приділити 
-                кожному пацієнту достатньо часу та уваги.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="font-semibold text-gray-900 mb-3">
-                Чи можна перенести прийом?
-              </h3>
-              <p className="text-gray-600">
-                Так, ви можете перенести прийом, повідомивши нас за 24 години до 
-                запланованого часу візиту.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="font-semibold text-gray-900 mb-3">
-                Які документи потрібні для прийому?
-              </h3>
-              <p className="text-gray-600">
-                Візьміть з собою паспорт або інший документ, що посвідчує особу. 
-                Якщо є медична картка - також приносьте її.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="font-semibold text-gray-900 mb-3">
-                Чи надаєте ви гарантію на лікування?
-              </h3>
-              <p className="text-gray-600">
-                Так, ми надаємо гарантію на всі види робіт згідно з медичними 
-                стандартами та вимогами.
-              </p>
-            </div>
-          </div>
-        </div>
+        <FAQ />
       </div>
     </div>
   )
