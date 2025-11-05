@@ -1,8 +1,22 @@
 module.exports = {
   root: true,
   env: { browser: true, es2020: true, node: true },
-  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'plugin:react-hooks/recommended', 'plugin:storybook/recommended'],
-  ignorePatterns: ['dist', '.eslintrc.cjs', 'commitlint.config.cjs', 'node_modules', 'coverage', 'test-results', 'src/stories/**/*.stories.tsx', 'src/stories/**/*.stories.ts'],
+  extends: [
+    'eslint:recommended', 
+    'plugin:@typescript-eslint/recommended', 
+    'plugin:react-hooks/recommended'
+  ],
+  ignorePatterns: [
+    'dist', 
+    '.eslintrc.cjs', 
+    'commitlint.config.cjs', 
+    'node_modules', 
+    'coverage', 
+    'test-results',
+    'playwright-report',
+    'storybook-static',
+    '.storybook'
+  ],
   parser: '@typescript-eslint/parser',
   plugins: ['react-refresh', '@typescript-eslint'],
   rules: {
@@ -32,4 +46,14 @@ module.exports = {
     'prefer-const': 'error',
     'prefer-rest-params': 'warn',
   },
+  overrides: [
+    {
+      // Storybook files
+      files: ['**/*.stories.tsx', '**/*.stories.ts', '.storybook/**/*'],
+      rules: {
+        'react-refresh/only-export-components': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
+      }
+    }
+  ]
 }

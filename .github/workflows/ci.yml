@@ -18,11 +18,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci --include=optional
+          npm install --no-save @rollup/rollup-linux-x64-gnu
 
       - name: Run ESLint
         run: npm run lint
@@ -44,11 +46,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci --include=optional
+          npm install --no-save @rollup/rollup-linux-x64-gnu
 
       - name: Run unit tests
         run: npm run test:run
@@ -63,6 +67,7 @@ jobs:
         with:
           file: ./coverage/coverage-final.json
           fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   e2e-tests:
     name: End-to-End Tests
@@ -76,17 +81,21 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci --include=optional
+          npm install --no-save @rollup/rollup-linux-x64-gnu
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
       - name: Build application
         run: npm run build
+        env:
+          VITE_ENVIRONMENT: production
 
       - name: Run E2E tests
         run: npm run test:e2e
@@ -98,6 +107,7 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+          if-no-files-found: ignore
 
   build:
     name: Build Application
@@ -111,11 +121,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci --include=optional
+          npm install --no-save @rollup/rollup-linux-x64-gnu
 
       - name: Build for production
         run: npm run build
@@ -132,9 +144,9 @@ jobs:
       - name: Check bundle size
         run: |
           echo "## Bundle Size Report" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "\\\" >> $GITHUB_STEP_SUMMARY
           du -sh dist/* | sort -h >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "\\\" >> $GITHUB_STEP_SUMMARY
 
   security-audit:
     name: Security Audit
@@ -147,7 +159,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
 
       - name: Run npm audit
@@ -207,11 +219,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci --include=optional
+          npm install --no-save @rollup/rollup-linux-x64-gnu
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
