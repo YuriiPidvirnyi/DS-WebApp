@@ -45,6 +45,7 @@ module.exports = {
     'no-useless-escape': 'warn',
     'prefer-const': 'error',
     'prefer-rest-params': 'warn',
+    'no-extra-semi': 'off',
   },
   overrides: [
     {
@@ -57,3 +58,4 @@ module.exports = {
     }
   ]
 }
+
