@@ -10,65 +10,73 @@ const Home = () => {
     {
       icon: <Smile className="h-14 w-14 text-dental-teal" />,
       title: 'Комфортне лікування',
-      description: 'Сучасні методи знеболювання та комфортна атмосфера'
+      description: 'Сучасні методи знеболювання та комфортна атмосфера',
     },
     {
       icon: <Shield className="h-14 w-14 text-dental-teal" />,
       title: 'Безпека та стерильність',
-      description: 'Дотримання найвищих стандартів гігієни та безпеки'
+      description: 'Дотримання найвищих стандартів гігієни та безпеки',
     },
     {
       icon: <Users className="h-14 w-14 text-dental-teal" />,
       title: 'Досвідчені лікарі',
-      description: 'Команда кваліфікованих стоматологів з багаторічним досвідом'
+      description:
+        'Команда кваліфікованих стоматологів з багаторічним досвідом',
     },
     {
       icon: <Award className="h-14 w-14 text-dental-teal" />,
       title: 'Сучасне обладнання',
-      description: 'Новітні технології для точної діагностики та лікування'
-    }
+      description: 'Новітні технології для точної діагностики та лікування',
+    },
   ]
 
   const services = [
     {
       title: 'Терапевтична стоматологія',
       description: 'Лікування карієсу, пульпіту, періодонтиту',
-      image: '/api/placeholder/300/200'
+      image: '/api/placeholder/300/200',
     },
     {
       title: 'Хірургічна стоматологія',
       description: 'Видалення зубів, імплантація, пародонтологія',
-      image: '/api/placeholder/300/200'
+      image: '/api/placeholder/300/200',
     },
     {
       title: 'Ортопедична стоматологія',
       description: 'Протезування, коронки, мости, вінири',
-      image: '/api/placeholder/300/200'
+      image: '/api/placeholder/300/200',
     },
     {
       title: 'Ортодонтія',
       description: 'Виправлення прикусу, брекети, елайнери',
-      image: '/api/placeholder/300/200'
-    }
+      image: '/api/placeholder/300/200',
+    },
   ]
 
   return (
     <div>
       <Helmet>
         <title>Dental Story — Сучасна стоматологічна клініка в Києві</title>
-        <meta name="description" content="Професійне лікування зубів, імплантація, ортодонтія, естетична стоматологія. Запис онлайн або телефоном." />
+        <meta
+          name="description"
+          content="Професійне лікування зубів, імплантація, ортодонтія, естетична стоматологія. Запис онлайн або телефоном."
+        />
         <link rel="canonical" href="https://dentalstory.com.ua/" />
       </Helmet>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-slate-800 via-slate-700 to-dental-teal text-white py-24 overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.3) 1px, transparent 0)',
-            backgroundSize: '40px 40px'
-          }}></div>
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.3) 1px, transparent 0)',
+              backgroundSize: '40px 40px',
+            }}
+          ></div>
         </div>
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7">
@@ -78,19 +86,19 @@ const Home = () => {
                 </span>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                Ваша посмішка - 
+                Ваша посмішка -
                 <span className="bg-gradient-to-r from-dental-teal to-teal-300 bg-clip-text text-transparent">
                   наша місія
                 </span>
               </h1>
               <p className="text-xl mb-8 text-gray-300 leading-relaxed max-w-2xl">
-                Професійна стоматологічна допомога з використанням найсучасніших 
+                Професійна стоматологічна допомога з використанням найсучасніших
                 технологій та індивідуальним підходом до кожного пацієнта.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <Link
                   to="/booking"
-className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 inline-flex items-center justify-center"
+                  className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 inline-flex items-center justify-center"
                   data-track-id="cta_hero_booking"
                   data-track-category="hero"
                   data-track-label="primary_cta"
@@ -105,7 +113,7 @@ className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 rounded-xl font-bo
                   Наші послуги
                 </Link>
               </div>
-              
+
               {/* Trust Indicators */}
               <div className="flex items-center space-x-6 text-sm text-gray-400">
                 <div className="flex items-center">
@@ -122,15 +130,17 @@ className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 rounded-xl font-bo
                 </div>
               </div>
             </div>
-            
+
             <div className="lg:col-span-5 hidden lg:block">
               <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
                 <div className="text-center mb-6">
                   <div className="text-6xl mb-4">🦷</div>
                   <h3 className="text-2xl font-bold mb-2">Dental Story</h3>
-                  <p className="text-gray-300">Сучасна стоматологічна клініка</p>
+                  <p className="text-gray-300">
+                    Сучасна стоматологічна клініка
+                  </p>
                 </div>
-                
+
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
                     <div className="flex items-center">
@@ -151,10 +161,12 @@ className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 rounded-xl font-bo
                       <Award className="h-5 w-5 text-dental-teal mr-3" />
                       <span>Досвід роботи</span>
                     </div>
-                    <span className="font-bold text-dental-teal">10+ років</span>
+                    <span className="font-bold text-dental-teal">
+                      10+ років
+                    </span>
                   </div>
                 </div>
-                
+
                 <div className="mt-6 p-4 bg-gradient-to-r from-dental-teal/20 to-teal-500/20 rounded-xl border border-dental-teal/30">
                   <p className="text-sm text-center font-medium">
                     💎 Безкоштовна консультація для нових пацієнтів
@@ -174,23 +186,22 @@ className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 rounded-xl font-bo
               Чому пацієнти обирають Dental Story
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Ми поєднуємо професіоналізм, сучасні технології та індивідуальний підхід 
-              для досягнення найкращих результатів лікування
+              Ми поєднуємо професіоналізм, сучасні технології та індивідуальний
+              підхід для досягнення найкращих результатів лікування
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <div key={index} className="text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex justify-center mb-4">
-                  {feature.icon}
-                </div>
+              <div
+                key={index}
+                className="text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="flex justify-center mb-4">{feature.icon}</div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600">
-                  {feature.description}
-                </p>
+                <p className="text-gray-600">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -212,14 +223,20 @@ className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 rounded-xl font-bo
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {services.map((service, index) => {
               const svc = (images as any).services?.[index]
-              const bg = svc?.src || '/assets/images/gallery/gallery-placeholder.svg'
+              const bg =
+                svc?.src || '/assets/images/gallery/gallery-placeholder.svg'
               return (
-                <div key={index} className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                <div
+                  key={index}
+                  className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+                >
                   <div className="h-48 relative">
-                    <LazyImage 
-                      src={svc?.src || bg} 
-                      fallback={svc?.fallback} 
-                      alt={svc?.alt || `${service.title} - стоматологічна послуга`}
+                    <LazyImage
+                      src={svc?.src || bg}
+                      fallback={svc?.fallback}
+                      alt={
+                        svc?.alt || `${service.title} - стоматологічна послуга`
+                      }
                       className="absolute inset-0"
                       width={1200}
                       height={800}
@@ -230,9 +247,7 @@ className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 rounded-xl font-bo
                     <h3 className="text-xl font-semibold text-gray-900 mb-3">
                       {service.title}
                     </h3>
-                    <p className="text-gray-600 mb-4">
-                      {service.description}
-                    </p>
+                    <p className="text-gray-600 mb-4">{service.description}</p>
                     <Link
                       to="/services"
                       className="text-dental-teal hover:text-teal-600 font-medium inline-flex items-center"
@@ -249,7 +264,7 @@ className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 rounded-xl font-bo
           <div className="text-center mt-12">
             <Link
               to="/services"
-className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-3 rounded-lg font-semibold transition-colors inline-flex items-center"
+              className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-3 rounded-lg font-semibold transition-colors inline-flex items-center"
             >
               Всі послуги
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -266,7 +281,8 @@ className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-3 rounded-lg font-se
               Прозорі ціни
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Без прихованих доплат. Всі ціни фіксовані та узгоджуються перед початком лікування
+              Без прихованих доплат. Всі ціни фіксовані та узгоджуються перед
+              початком лікування
             </p>
           </div>
 
@@ -337,7 +353,7 @@ className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-3 rounded-lg font-se
                 </ul>
                 <Link
                   to="/booking"
-className="block w-full bg-teal-800 hover:bg-teal-900 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                  className="block w-full bg-teal-800 hover:bg-teal-900 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
                 >
                   Записатися
                 </Link>
@@ -383,7 +399,8 @@ className="block w-full bg-teal-800 hover:bg-teal-900 text-white px-6 py-3 round
 
           <div className="text-center mt-12">
             <p className="text-gray-600 mb-4">
-              *Остаточна вартість залежить від складності випадку та обраного методу лікування
+              *Остаточна вартість залежить від складності випадку та обраного
+              методу лікування
             </p>
             <Link
               to="/services"
@@ -406,7 +423,8 @@ className="block w-full bg-teal-800 hover:bg-teal-900 text-white px-6 py-3 round
             Готові до красивої посмішки?
           </h2>
           <p className="text-xl text-white mb-8 max-w-3xl mx-auto">
-            Запишіться на безкоштовну консультацію та отримайте індивідуальний план лікування
+            Запишіться на безкоштовну консультацію та отримайте індивідуальний
+            план лікування
           </p>
           <Link
             to="/contact"

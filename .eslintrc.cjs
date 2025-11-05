@@ -2,42 +2,49 @@ module.exports = {
   root: true,
   env: { browser: true, es2020: true, node: true },
   extends: [
-    'eslint:recommended', 
-    'plugin:@typescript-eslint/recommended', 
-    'plugin:react-hooks/recommended'
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:react-hooks/recommended',
   ],
   ignorePatterns: [
-    'dist', 
-    '.eslintrc.cjs', 
-    'commitlint.config.cjs', 
-    'node_modules', 
-    'coverage', 
+    'dist',
+    '.eslintrc.cjs',
+    'commitlint.config.cjs',
+    'node_modules',
+    'coverage',
     'test-results',
     'playwright-report',
+    'scripts',
     'storybook-static',
-    '.storybook'
+    '.storybook',
   ],
   parser: '@typescript-eslint/parser',
   plugins: ['react-refresh', '@typescript-eslint'],
   rules: {
     // Stricter TypeScript rules
     '@typescript-eslint/no-explicit-any': 'warn',
-    '@typescript-eslint/no-unused-vars': ['error', { 
-      argsIgnorePattern: '^_',
-      varsIgnorePattern: '^_',
-      caughtErrorsIgnorePattern: '^_'
-    }],
-    
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+      },
+    ],
+
     // React hooks rules
     'react-hooks/exhaustive-deps': 'warn',
     'react-hooks/rules-of-hooks': 'error',
-    
+
     // React refresh
-    'react-refresh/only-export-components': ['warn', { 
-      allowConstantExport: true,
-      allowExportNames: ['loader', 'action', 'meta']
-    }],
-    
+    'react-refresh/only-export-components': [
+      'warn',
+      {
+        allowConstantExport: true,
+        allowExportNames: ['loader', 'action', 'meta'],
+      },
+    ],
+
     // Code quality rules
     'no-console': ['warn', { allow: ['warn', 'error'] }],
     'no-debugger': 'error',
@@ -54,8 +61,8 @@ module.exports = {
       rules: {
         'react-refresh/only-export-components': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
-      }
-    }
-  ]
+      },
+    },
+  ],
 }
 

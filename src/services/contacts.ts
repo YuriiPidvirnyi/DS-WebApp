@@ -6,9 +6,14 @@ const ENDPOINTS = {
   create: '/contacts',
 } as const
 
-export async function createContact(payload: ContactRequest): Promise<ApiResponse<{ id: string }>> {
+export async function createContact(
+  payload: ContactRequest
+): Promise<ApiResponse<{ id: string }>> {
   try {
-    const res = await http.post<ApiResponse<{ id: string }>>(ENDPOINTS.create, payload)
+    const res = await http.post<ApiResponse<{ id: string }>>(
+      ENDPOINTS.create,
+      payload
+    )
     return res.data
   } catch {
     // Fallback mock

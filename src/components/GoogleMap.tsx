@@ -27,7 +27,9 @@ export default function GoogleMap({
     if (!apiKey) return // No key - we'll use iframe fallback
 
     // If script already added
-    const existing = document.querySelector<HTMLScriptElement>('script[data-google-maps]')
+    const existing = document.querySelector<HTMLScriptElement>(
+      'script[data-google-maps]'
+    )
     if (existing) {
       existing.addEventListener('load', () => setLoaded(true))
       if ((window as any).google?.maps) setLoaded(true)
@@ -57,7 +59,11 @@ export default function GoogleMap({
       mapTypeControl: false,
       streetViewControl: false,
       styles: [
-        { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+        {
+          featureType: 'poi',
+          elementType: 'labels',
+          stylers: [{ visibility: 'off' }],
+        },
         { featureType: 'transit', stylers: [{ visibility: 'off' }] },
       ],
     })

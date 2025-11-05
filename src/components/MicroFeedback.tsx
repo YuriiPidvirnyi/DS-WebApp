@@ -4,7 +4,10 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { trackEvent, AnalyticsEventCategory } from '@/utils/analytics'
 import { sendFormFeedback } from '@/services/feedback'
-import { feedbackCommentSchema, type FeedbackCommentData } from '@/utils/validationSchemas'
+import {
+  feedbackCommentSchema,
+  type FeedbackCommentData,
+} from '@/utils/validationSchemas'
 
 interface MicroFeedbackProps {
   form: 'contact' | 'appointment' | 'callback' | 'newsletter'
@@ -12,16 +15,20 @@ interface MicroFeedbackProps {
   compact?: boolean
 }
 
-export default function MicroFeedback({ form, refId, compact = false }: MicroFeedbackProps) {
+export default function MicroFeedback({
+  form,
+  refId,
+  compact = false,
+}: MicroFeedbackProps) {
   const [submitted, setSubmitted] = useState<boolean | null>(null) // can be true, false, or null
   const [showCommentForm, setShowCommentForm] = useState(false)
-  
-  const { 
-    register, 
-    handleSubmit, 
-    formState: { errors, isSubmitting } 
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
   } = useForm<FeedbackCommentData>({
-    resolver: zodResolver(feedbackCommentSchema)
+    resolver: zodResolver(feedbackCommentSchema),
   })
 
   const handle = async (positive: boolean) => {
@@ -29,7 +36,11 @@ export default function MicroFeedback({ form, refId, compact = false }: MicroFee
     setSubmitted(positive)
     // analytics
     try {
-      trackEvent('form_feedback', AnalyticsEventCategory.Forms, { form, rating: positive ? 'up' : 'down', ref: refId })
+      trackEvent('form_feedback', AnalyticsEventCategory.Forms, {
+        form,
+        rating: positive ? 'up' : 'down',
+        ref: refId,
+      })
     } catch {}
 
     // If negative feedback, show comment form instead of immediately submitting
@@ -41,17 +52,25 @@ export default function MicroFeedback({ form, refId, compact = false }: MicroFee
       } catch {}
       return
     }
-    
+
     // backend (mock fallback inside service)
     try {
       await sendFormFeedback({ form, rating: positive ? 'up' : 'down', refId })
     } catch {}
   }
-  
+
   const onSubmitComment = async (data: FeedbackCommentData) => {
     try {
-      trackEvent('feedback_comment', AnalyticsEventCategory.Forms, { form, ref: refId })
-      await sendFormFeedback({ form, rating: 'down', refId, comment: data.comment })
+      trackEvent('feedback_comment', AnalyticsEventCategory.Forms, {
+        form,
+        ref: refId,
+      })
+      await sendFormFeedback({
+        form,
+        rating: 'down',
+        refId,
+        comment: data.comment,
+      })
       setShowCommentForm(false)
     } catch {}
   }
@@ -59,31 +78,36 @@ export default function MicroFeedback({ form, refId, compact = false }: MicroFee
   return (
     <div className={compact ? 'flex items-center gap-2' : 'mt-3'}>
       {/* Feedback buttons */}
-      {(!submitted || (submitted === false as boolean && !showCommentForm)) && (
+      {(!submitted ||
+        (submitted === (false as boolean) && !showCommentForm)) && (
         <>
           {!compact && (
-            <span className="text-sm text-gray-600 mr-2">Ця форма була корисною?</span>
+            <span className="text-sm text-gray-600 mr-2">
+              Ця форма була корисною?
+            </span>
           )}
-      <button
-        type="button"
-        aria-label="Так"
-        onClick={() => handle(true)}
-        className={`px-2 py-1 rounded-md border transition-colors ${submitted === true as boolean ? 'bg-green-50 border-green-300' : 'hover:bg-gray-50 border-gray-300'}`}
-        disabled={submitted !== null}
-      >
+          <button
+            type="button"
+            aria-label="Так"
+            onClick={() => handle(true)}
+            className={`px-2 py-1 rounded-md border transition-colors ${submitted === (true as boolean) ? 'bg-green-50 border-green-300' : 'hover:bg-gray-50 border-gray-300'}`}
+            disabled={submitted !== null}
+          >
             <ThumbsUp className="h-4 w-4 text-green-600" />
           </button>
-      <button
-        type="button"
-        aria-label="Ні"
-        onClick={() => handle(false)}
-        className={`px-2 py-1 rounded-md border transition-colors ${submitted === false ? 'bg-red-50 border-red-300' : 'hover:bg-gray-50 border-gray-300'}`}
-        disabled={submitted !== null}
-      >
+          <button
+            type="button"
+            aria-label="Ні"
+            onClick={() => handle(false)}
+            className={`px-2 py-1 rounded-md border transition-colors ${submitted === false ? 'bg-red-50 border-red-300' : 'hover:bg-gray-50 border-gray-300'}`}
+            disabled={submitted !== null}
+          >
             <ThumbsDown className="h-4 w-4 text-red-600" />
           </button>
           {submitted === true && (
-            <span className="ml-2 text-xs text-gray-500">Дякуємо за відгук!</span>
+            <span className="ml-2 text-xs text-gray-500">
+              Дякуємо за відгук!
+            </span>
           )}
         </>
       )}
@@ -91,9 +115,15 @@ export default function MicroFeedback({ form, refId, compact = false }: MicroFee
       {/* Comment form for negative feedback */}
       {submitted === false && showCommentForm && (
         <div className="mt-2 w-full">
-          <form onSubmit={handleSubmit(onSubmitComment)} className="flex flex-col gap-2">
+          <form
+            onSubmit={handleSubmit(onSubmitComment)}
+            className="flex flex-col gap-2"
+          >
             <div>
-              <label htmlFor="feedback-comment" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="feedback-comment"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Що можна покращити?
               </label>
               <textarea
@@ -104,7 +134,9 @@ export default function MicroFeedback({ form, refId, compact = false }: MicroFee
                 placeholder="Розкажіть нам, як ми можемо покращити вашу взаємодію з цією формою"
               />
               {errors.comment && (
-                <p className="mt-1 text-sm text-red-600">{errors.comment.message}</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.comment.message}
+                </p>
               )}
             </div>
             <div className="flex items-center justify-between">
@@ -116,8 +148,8 @@ export default function MicroFeedback({ form, refId, compact = false }: MicroFee
                 <Send className="h-4 w-4 mr-1" />
                 Надіслати відгук
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => {
                   setShowCommentForm(false)
                 }}
@@ -129,7 +161,7 @@ export default function MicroFeedback({ form, refId, compact = false }: MicroFee
           </form>
         </div>
       )}
-      
+
       {/* Thank you message after comment submission or skip */}
       {submitted === false && !showCommentForm && (
         <span className="ml-2 text-xs text-gray-500">Дякуємо за відгук!</span>

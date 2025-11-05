@@ -10,7 +10,12 @@ import MicroFeedback from '@/components/MicroFeedback'
 type NewsletterValues = z.infer<typeof newsletterSchema>
 
 export default function NewsletterSubscribe() {
-  const { register, handleSubmit, formState: { errors, isSubmitting, isSubmitSuccessful }, reset } = useForm<NewsletterValues>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting, isSubmitSuccessful },
+    reset,
+  } = useForm<NewsletterValues>({
     resolver: zodResolver(newsletterSchema),
     defaultValues: { email: '', consent: true },
   })
@@ -28,14 +33,18 @@ export default function NewsletterSubscribe() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3" aria-label="Форма підписки на розсилку">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-3"
+      aria-label="Форма підписки на розсилку"
+    >
       <div className="flex gap-2">
         <div className="flex-1">
-          <Input 
-            placeholder="Ваш email" 
-            fullWidth 
+          <Input
+            placeholder="Ваш email"
+            fullWidth
             error={errors.email?.message}
-            {...register('email')} 
+            {...register('email')}
           />
         </div>
         <Button type="submit" disabled={isSubmitting}>
@@ -43,7 +52,12 @@ export default function NewsletterSubscribe() {
         </Button>
       </div>
       <div className="flex items-start gap-2">
-        <input id="newsletter-consent" type="checkbox" className="mt-1" {...register('consent')} />
+        <input
+          id="newsletter-consent"
+          type="checkbox"
+          className="mt-1"
+          {...register('consent')}
+        />
         <label htmlFor="newsletter-consent" className="text-xs text-gray-300">
           Погоджуюся отримувати новини та акції на email
         </label>

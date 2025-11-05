@@ -1,20 +1,20 @@
 /**
  * Security utilities for the application
  */
-import DOMPurify from 'dompurify';
+import DOMPurify from 'dompurify'
 
 // Use dynamic import to ensure SSR compatibility
-let purifyInstance: typeof DOMPurify | null = null;
+let purifyInstance: typeof DOMPurify | null = null
 
 // Initialize DOMPurify in browser only
 const initDOMPurify = async (): Promise<typeof DOMPurify> => {
   if (!purifyInstance) {
     // Dynamic import for better tree-shaking
-    const domPurifyModule = await import('dompurify');
-    purifyInstance = domPurifyModule.default;
+    const domPurifyModule = await import('dompurify')
+    purifyInstance = domPurifyModule.default
   }
-  return purifyInstance;
-};
+  return purifyInstance
+}
 
 /**
  * Sanitize HTML content to prevent XSS attacks
@@ -23,11 +23,28 @@ const initDOMPurify = async (): Promise<typeof DOMPurify> => {
  */
 export const sanitizeHTML = async (html: string): Promise<string> => {
   try {
-    const purify = await initDOMPurify();
+    const purify = await initDOMPurify()
     return purify.sanitize(html, {
       ALLOWED_TAGS: [
-        'b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'ol', 'li',
-        'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'code', 'pre'
+        'b',
+        'i',
+        'em',
+        'strong',
+        'a',
+        'p',
+        'br',
+        'ul',
+        'ol',
+        'li',
+        'h1',
+        'h2',
+        'h3',
+        'h4',
+        'h5',
+        'h6',
+        'blockquote',
+        'code',
+        'pre',
       ],
       ALLOWED_ATTR: ['href', 'target', 'rel', 'class'],
       FORBID_TAGS: ['script', 'style', 'iframe', 'frame', 'object', 'embed'],
@@ -42,16 +59,16 @@ export const sanitizeHTML = async (html: string): Promise<string> => {
       FORCE_BODY: false,
       SANITIZE_NAMED_PROPS: true,
       KEEP_CONTENT: true,
-    });
+    })
   } catch (error) {
-    console.error('HTML sanitization failed:', error);
+    console.error('HTML sanitization failed:', error)
     // If sanitization fails, return plain text
-    return html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return html.replace(/</g, '&lt;').replace(/>/g, '&gt;')
   }
-};
+}
 
 /**
- * Validate and sanitize user input 
+ * Validate and sanitize user input
  * @param input String input from user
  * @returns Sanitized string
  */
@@ -63,8 +80,8 @@ export const sanitizeUserInput = (input: string): string => {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;')
-    .replace(/\\/g, '&#92;');
-};
+    .replace(/\\/g, '&#92;')
+}
 
 /**
  * Validate input against allowed patterns
@@ -73,18 +90,18 @@ export const sanitizeUserInput = (input: string): string => {
  * @returns True if valid, false otherwise
  */
 export const validatePattern = (input: string, pattern: RegExp): boolean => {
-  return pattern.test(input);
-};
+  return pattern.test(input)
+}
 
 /**
  * Generate a random nonce for CSP
  * @returns Random nonce string
  */
 export const generateNonce = (): string => {
-  const array = new Uint8Array(16);
-  crypto.getRandomValues(array);
-  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-};
+  const array = new Uint8Array(16)
+  crypto.getRandomValues(array)
+  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('')
+}
 
 /**
  * Creates CSP headers for the application
@@ -106,8 +123,10 @@ export const generateCSP = (nonce: string): string => {
     frame-ancestors 'none';
     block-all-mixed-content;
     upgrade-insecure-requests;
-  `.replace(/\s+/g, ' ').trim();
-};
+  `
+    .replace(/\s+/g, ' ')
+    .trim()
+}
 
 /**
  * Set of common security patterns for validation
@@ -125,4 +144,4 @@ export const securityPatterns = {
   noHtml: /^((?!<[^>]+>).)*$/,
   // UUID format
   uuid: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
-};
+}

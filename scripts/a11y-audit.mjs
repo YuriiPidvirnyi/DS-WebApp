@@ -25,7 +25,11 @@ async function waitForServer(url, timeoutMs = 20000) {
   const ok = await waitForServer(BASE)
   if (!ok) {
     const { spawn } = await import('child_process')
-    previewProc = spawn('npx', ['vite', 'preview', '--port', '4173', '--strictPort'], { stdio: 'ignore', shell: process.platform === 'win32' })
+    previewProc = spawn(
+      'npx',
+      ['vite', 'preview', '--port', '4173', '--strictPort'],
+      { stdio: 'ignore', shell: process.platform === 'win32' }
+    )
     const ready = await waitForServer(BASE, 20000)
     if (!ready) {
       previewProc?.kill('SIGTERM')
@@ -44,7 +48,9 @@ async function waitForServer(url, timeoutMs = 20000) {
     const url = BASE + path
     console.log(`\nChecking ${url}`)
     await page.goto(url)
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa'])
+      .analyze()
     const violations = results.violations || []
     total += violations.length
 
@@ -58,7 +64,8 @@ async function waitForServer(url, timeoutMs = 20000) {
           for (const n of v.nodes.slice(0, 3)) {
             console.log(`    - ${n.target?.join(' ')}`)
           }
-          if (v.nodes.length > 3) console.log(`    ...and ${v.nodes.length - 3} more`)        
+          if (v.nodes.length > 3)
+            console.log(`    ...and ${v.nodes.length - 3} more`)
         }
       }
     } else {
@@ -72,7 +79,7 @@ async function waitForServer(url, timeoutMs = 20000) {
   if (failed > 0) process.exitCode = 1
 
   if (previewProc) previewProc.kill('SIGTERM')
-})().catch((e) => {
+})().catch(e => {
   console.error(e)
   process.exit(1)
 })

@@ -39,7 +39,11 @@ export const QUALITY_SETTINGS = {
  */
 export const generateSrcSet = (
   basePath: string,
-  sizes: number[] = [IMAGE_BREAKPOINTS.mobile, IMAGE_BREAKPOINTS.tablet, IMAGE_BREAKPOINTS.desktop],
+  sizes: number[] = [
+    IMAGE_BREAKPOINTS.mobile,
+    IMAGE_BREAKPOINTS.tablet,
+    IMAGE_BREAKPOINTS.desktop,
+  ],
   format: string = 'jpg'
 ): string => {
   return sizes
@@ -61,11 +65,11 @@ export const generateSizes = (breakpoints: Record<string, string>): string => {
     const minWidth = IMAGE_BREAKPOINTS[bp as keyof typeof IMAGE_BREAKPOINTS]
     return `(min-width: ${minWidth}px) ${size}`
   })
-  
+
   // Add default size (last entry)
   const defaultSize = entries[entries.length - 1][1]
   sizeQueries.push(defaultSize)
-  
+
   return sizeQueries.join(', ')
 }
 
@@ -82,11 +86,7 @@ export const createImageConfig = (
     webpSupported?: boolean
   } = {}
 ) => {
-  const {
-    sizes = {},
-    priority = false,
-    webpSupported = true,
-  } = options
+  const { sizes = {}, priority = false, webpSupported = true } = options
 
   // Default sizes for different image types
   const defaultSizes = {
@@ -118,12 +118,22 @@ export const createImageConfig = (
   }
 
   // Common image sizes based on type
-  const imageSizes = type === 'hero' 
-    ? [IMAGE_BREAKPOINTS.mobile, IMAGE_BREAKPOINTS.tablet, IMAGE_BREAKPOINTS.desktop, IMAGE_BREAKPOINTS.large]
-    : [IMAGE_BREAKPOINTS.mobile, IMAGE_BREAKPOINTS.tablet, IMAGE_BREAKPOINTS.desktop]
+  const imageSizes =
+    type === 'hero'
+      ? [
+          IMAGE_BREAKPOINTS.mobile,
+          IMAGE_BREAKPOINTS.tablet,
+          IMAGE_BREAKPOINTS.desktop,
+          IMAGE_BREAKPOINTS.large,
+        ]
+      : [
+          IMAGE_BREAKPOINTS.mobile,
+          IMAGE_BREAKPOINTS.tablet,
+          IMAGE_BREAKPOINTS.desktop,
+        ]
 
   const basePath = imagePath.replace(/\.(jpg|jpeg|png)$/i, '')
-  
+
   const config = {
     src: `${basePath}.jpg`,
     srcSet: generateSrcSet(basePath, imageSizes, 'jpg'),
@@ -133,7 +143,7 @@ export const createImageConfig = (
     ...(webpSupported && {
       webpSrc: `${basePath}.webp`,
       webpSrcSet: generateSrcSet(basePath, imageSizes, 'webp'),
-    })
+    }),
   }
 
   return config
@@ -143,21 +153,23 @@ export const createImageConfig = (
  * Preload critical images for better performance
  * @param imageConfigs Array of image configurations
  */
-export const preloadCriticalImages = (imageConfigs: Array<{
-  src: string
-  webpSrc?: string
-  priority: boolean
-}>): void => {
+export const preloadCriticalImages = (
+  imageConfigs: Array<{
+    src: string
+    webpSrc?: string
+    priority: boolean
+  }>
+): void => {
   imageConfigs
     .filter(config => config.priority)
     .forEach(config => {
       const link = document.createElement('link')
       link.rel = 'preload'
       link.as = 'image'
-      
+
       // Prefer WebP if available
       link.href = config.webpSrc || config.src
-      
+
       document.head.appendChild(link)
     })
 }
@@ -167,12 +179,13 @@ export const preloadCriticalImages = (imageConfigs: Array<{
  * @returns Promise<boolean>
  */
 export const checkWebPSupport = (): Promise<boolean> => {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const webP = new Image()
     webP.onload = webP.onerror = () => {
       resolve(webP.height === 2)
     }
-    webP.src = 'data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACyAgCdASoCAAIALmk0mk0iIiIiIgBoSygABc6WWgAA/veff/0PP8bA//LwYAAA'
+    webP.src =
+      'data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACyAgCdASoCAAIALmk0mk0iIiIiIgBoSygABc6WWgAA/veff/0PP8bA//LwYAAA'
   })
 }
 
@@ -193,10 +206,10 @@ export const enableLazyLoading = (
             const img = entry.target as HTMLImageElement
             const src = img.dataset.src
             const srcSet = img.dataset.srcset
-            
+
             if (src) img.src = src
             if (srcSet) img.srcset = srcSet
-            
+
             img.classList.remove('lazy')
             observer.unobserve(img)
           }
@@ -215,11 +228,11 @@ export const enableLazyLoading = (
  * Image optimization constants for different contexts
  */
 export const IMAGE_CONFIGS = {
-  hero: createImageConfig('/assets/images/hero/hero-placeholder', 'hero', { 
+  hero: createImageConfig('/assets/images/hero/hero-placeholder', 'hero', {
     priority: true,
-    sizes: { mobile: '100vw', tablet: '100vw', desktop: '100vw' }
+    sizes: { mobile: '100vw', tablet: '100vw', desktop: '100vw' },
   }),
-  
+
   logo: {
     src: '/assets/images/logo/logo.svg',
     alt: 'Dental Story логотип',
@@ -227,10 +240,16 @@ export const IMAGE_CONFIGS = {
     height: 60,
     priority: true,
   },
-  
-  service: createImageConfig('/assets/images/services/service-placeholder', 'service'),
-  
+
+  service: createImageConfig(
+    '/assets/images/services/service-placeholder',
+    'service'
+  ),
+
   team: createImageConfig('/assets/images/team/team-placeholder', 'team'),
-  
-  gallery: createImageConfig('/assets/images/gallery/gallery-placeholder', 'gallery'),
+
+  gallery: createImageConfig(
+    '/assets/images/gallery/gallery-placeholder',
+    'gallery'
+  ),
 }

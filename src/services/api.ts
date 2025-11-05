@@ -1,7 +1,9 @@
 import type { ApiResponse } from '@/types'
 
 // API Base URL from environment variables
-const API_URL = (import.meta.env?.VITE_API_URL as string | undefined) || 'http://localhost:3001/api'
+const API_URL =
+  (import.meta.env?.VITE_API_URL as string | undefined) ||
+  'http://localhost:3001/api'
 
 /**
  * Custom error class for API errors
@@ -61,7 +63,7 @@ async function fetchAPI<T>(
 
     if (error instanceof Error) {
       throw new APIError(
-        'Помилка з\'єднання. Перевірте інтернет-підключення.',
+        "Помилка з'єднання. Перевірте інтернет-підключення.",
         0,
         'NETWORK_ERROR',
         error.message

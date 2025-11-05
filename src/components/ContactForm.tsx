@@ -4,7 +4,11 @@ import { useRef } from 'react'
 import { Send, CheckCircle } from 'lucide-react'
 import { Input, Textarea, Button } from './ui'
 import { useSubmissionCooldown } from '@/hooks/useSubmissionCooldown'
-import { contactFormSchema, type ContactFormData, formatPhoneNumber } from '../utils/validationSchemas'
+import {
+  contactFormSchema,
+  type ContactFormData,
+  formatPhoneNumber,
+} from '../utils/validationSchemas'
 import { withToast } from '../utils/toast'
 import { sanitizeUserInput } from '../utils/security'
 import { createContact } from '@/services/contacts'
@@ -18,7 +22,11 @@ interface ContactFormProps {
 
 export default function ContactForm({ onSuccess }: ContactFormProps) {
   const turnstileRef = useRef<TurnstileRef>(null)
-  const { isCoolingDown, remainingSec, start: startCooldown } = useSubmissionCooldown('contact_form', 30)
+  const {
+    isCoolingDown,
+    remainingSec,
+    start: startCooldown,
+  } = useSubmissionCooldown('contact_form', 30)
   const {
     register,
     handleSubmit,
@@ -40,9 +48,11 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
     try {
       // Cooldown check to prevent spam
       if (isCoolingDown) {
-        return withToast.error(`Занадто часті відправлення. Спробуйте через ${remainingSec} с.`)
+        return withToast.error(
+          `Занадто часті відправлення. Спробуйте через ${remainingSec} с.`
+        )
       }
-      
+
       // Verify Turnstile token
       try {
         const token = turnstileRef.current?.getToken() || ''
@@ -51,9 +61,11 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         if (error instanceof Error) {
           return withToast.error(error.message)
         }
-        return withToast.error('Перевірка безпеки не пройдена. Спробуйте ще раз.')
+        return withToast.error(
+          'Перевірка безпеки не пройдена. Спробуйте ще раз.'
+        )
       }
-      
+
       // Sanitize input data
       const sanitizedData = {
         name: sanitizeUserInput(data.name),
@@ -67,7 +79,8 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
       await withToast(
         async () => {
           const res = await createContact(sanitizedData)
-          if (!res.success) throw new Error(res.error || 'Не вдалося надіслати повідомлення')
+          if (!res.success)
+            throw new Error(res.error || 'Не вдалося надіслати повідомлення')
           return res
         },
         { formType: 'contact' }
@@ -76,12 +89,11 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
       // Start cooldown and reset form on success
       startCooldown(30)
       reset()
-      
+
       // Call success callback
       if (onSuccess) {
         onSuccess()
       }
-      
     } catch (error) {
       console.error('Contact form error:', error)
       // Error toast is handled by withToast utility
@@ -99,8 +111,12 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
           <div className="flex items-start gap-3">
             <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-semibold text-green-900 mb-1">Повідомлення успішно надіслано!</h4>
-              <p className="text-sm text-green-700">Дякуємо за звернення. Ми зв'яжемося з вами найближчим часом.</p>
+              <h4 className="font-semibold text-green-900 mb-1">
+                Повідомлення успішно надіслано!
+              </h4>
+              <p className="text-sm text-green-700">
+                Дякуємо за звернення. Ми зв'яжемося з вами найближчим часом.
+              </p>
             </div>
           </div>
           <div className="mt-3">
@@ -111,11 +127,17 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
 
       {/* Screen reader error announcer */}
       <div aria-live="polite" role="status" className="sr-only">
-        {errors?.name?.message || errors?.phone?.message || errors?.email?.message || errors?.message?.message}
+        {errors?.name?.message ||
+          errors?.phone?.message ||
+          errors?.email?.message ||
+          errors?.message?.message}
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="name"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Ім'я та прізвище *
           </label>
           <Input
@@ -129,7 +151,10 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         </div>
 
         <div>
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="phone"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Номер телефону *
           </label>
           <Input
@@ -140,16 +165,19 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
             disabled={isSubmitting}
             error={errors.phone?.message}
             {...register('phone', {
-              onBlur: (e) => {
+              onBlur: e => {
                 const formatted = formatPhoneNumber(e.target.value)
                 setValue('phone', formatted, { shouldValidate: true })
-              }
+              },
             })}
           />
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Email *
           </label>
           <Input
@@ -164,7 +192,10 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         </div>
 
         <div>
-          <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="message"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Повідомлення *
           </label>
           <Textarea
@@ -188,7 +219,10 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
               {...register('consent')}
             />
           </div>
-          <label htmlFor="consent" className="ml-2 text-sm font-medium text-gray-700">
+          <label
+            htmlFor="consent"
+            className="ml-2 text-sm font-medium text-gray-700"
+          >
             Я даю згоду на обробку моїх персональних даних *
           </label>
         </div>
@@ -206,7 +240,9 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
           isLoading={isSubmitting}
         >
           {!isSubmitting && <Send className="h-5 w-5 mr-2" />}
-          {isCoolingDown ? `Зачекайте ${remainingSec} с` : 'Надіслати повідомлення'}
+          {isCoolingDown
+            ? `Зачекайте ${remainingSec} с`
+            : 'Надіслати повідомлення'}
         </Button>
 
         <p className="text-sm text-gray-500 text-center">

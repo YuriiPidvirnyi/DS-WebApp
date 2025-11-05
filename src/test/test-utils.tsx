@@ -10,9 +10,7 @@ const TestProviders = ({ children }: { children: React.ReactNode }) => {
   return (
     <HelmetProvider>
       <BrowserRouter>
-        <AccessibilityProvider>
-          {children}
-        </AccessibilityProvider>
+        <AccessibilityProvider>{children}</AccessibilityProvider>
       </BrowserRouter>
     </HelmetProvider>
   )
@@ -66,7 +64,10 @@ export const expectToBeInTheDocument = (element: HTMLElement | null) => {
   expect(element).toBeInTheDocument()
 }
 
-export const expectToHaveAccessibleName = (element: HTMLElement, name: string) => {
+export const expectToHaveAccessibleName = (
+  element: HTMLElement,
+  name: string
+) => {
   expect(element).toHaveAccessibleName(name)
 }
 
@@ -80,12 +81,14 @@ export const mockIntersectionObserver = () => {
   const mockUnobserve = vi.fn()
   const mockDisconnect = vi.fn()
 
-  ;(globalThis as any).IntersectionObserver = vi.fn().mockImplementation((callback: any) => ({
-    observe: mockObserve,
-    unobserve: mockUnobserve,
-    disconnect: mockDisconnect,
-    callback,
-  }))
+  ;(globalThis as any).IntersectionObserver = vi
+    .fn()
+    .mockImplementation((callback: any) => ({
+      observe: mockObserve,
+      unobserve: mockUnobserve,
+      disconnect: mockDisconnect,
+      callback,
+    }))
 
   return { mockObserve, mockUnobserve, mockDisconnect }
 }
