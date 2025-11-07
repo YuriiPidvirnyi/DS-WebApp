@@ -5,6 +5,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  appType: 'spa',
   base: './',
   plugins: [
     react(),
@@ -124,5 +125,9 @@ export default defineConfig({
       'react-is',
     ],
     exclude: ['@sentry/react'],
+  },
+  preview: {
+    port: 4173,
+    host: true,
   },
 })
