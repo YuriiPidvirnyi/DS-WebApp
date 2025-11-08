@@ -14,7 +14,6 @@ import ErrorBoundary from './components/ErrorBoundary'
 import ToastProvider from './components/providers/ToastProvider'
 import { initializeAnalytics } from './utils/analytics'
 import { initializeSentry } from './utils/sentry'
-import performanceMonitor from './services/performance'
 import useAnalytics from './hooks/useAnalytics'
 import { useReminders } from './hooks/useReminders'
 import FloatingQuickActions from './components/FloatingQuickActions'
@@ -34,25 +33,19 @@ const NotFound = lazy(() => import('./pages/NotFound'))
 const Reviews = lazy(() => import('./pages/Reviews'))
 
 function App() {
-  // Initialize analytics, error tracking and performance monitoring
+  // Initialize analytics and error tracking
   useEffect(() => {
     const initialize = async () => {
       try {
         // Initialize analytics
         initializeAnalytics()
 
-        // Initialize performance monitoring
-        performanceMonitor.init()
-
         // Initialize error tracking only in production (lazy loaded)
         if (import.meta.env.PROD) {
           await initializeSentry()
         }
       } catch (error) {
-        console.warn(
-          'Failed to initialize analytics/sentry/performance:',
-          error
-        )
+        console.warn('Failed to initialize analytics/sentry:', error)
       }
     }
 

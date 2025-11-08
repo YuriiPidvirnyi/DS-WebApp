@@ -22,7 +22,12 @@ if (import.meta.env.PROD) {
   })
 }
 
-registerSW({ immediate: true })
+// Defer PWA registration to not block initial page load
+if ('requestIdleCallback' in window) {
+  requestIdleCallback(() => registerSW({ immediate: true }))
+} else {
+  setTimeout(() => registerSW({ immediate: true }), 2000)
+}
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
