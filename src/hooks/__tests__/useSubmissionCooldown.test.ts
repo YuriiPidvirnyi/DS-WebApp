@@ -50,7 +50,9 @@ describe('useSubmissionCooldown', () => {
   })
 
   it('maintains separate cooldowns for different keys', () => {
-    const { result: result1 } = renderHook(() =>
+    vi.useFakeTimers()
+
+    const { result: result1, rerender: rerender1 } = renderHook(() =>
       useSubmissionCooldown('form_a', 30)
     )
 
@@ -58,13 +60,28 @@ describe('useSubmissionCooldown', () => {
     renderHook(() => useSubmissionCooldown('form_b', 30))
 
     act(() => {
-      result1.current.start(30)
+      result1.current.start()
     })
 
+    // Advance time by 100ms to trigger interval update
+    act(() => {
+      vi.advanceTimersByTime(100)
+    })
+
+    // Trigger re-render to update state
+    rerender1()
+
+    // Check that cooldown is active
+    expect(result1.current.isCoolingDown).toBe(true)
+
+    // Check localStorage
     const stored = localStorage.getItem('submission_cooldowns')
+    expect(stored).not.toBeNull()
     const parsed = stored ? JSON.parse(stored) : {}
     expect(parsed['form_a']).toBeDefined()
     expect(parsed['form_b']).toBeUndefined()
+
+    vi.useRealTimers()
   })
 
   it('handles corrupted localStorage data', () => {

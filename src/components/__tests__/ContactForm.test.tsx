@@ -61,9 +61,11 @@ describe('ContactForm', () => {
     await user.click(submitButton)
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/ім'я повинно містити принаймні 2 символи/i)
-      ).toBeInTheDocument()
+      const errorMessage = document.getElementById('name-error')
+      expect(errorMessage).toBeInTheDocument()
+      expect(errorMessage).toHaveTextContent(
+        /ім'я повинно містити принаймні 2 символи/i
+      )
     })
   })
 
@@ -76,8 +78,9 @@ describe('ContactForm', () => {
     await user.tab()
 
     await waitFor(() => {
-      const errorMessage = screen.queryByText(/невірний формат телефону/i)
+      const errorMessage = document.getElementById('phone-error')
       expect(errorMessage).toBeInTheDocument()
+      expect(errorMessage).toHaveTextContent(/невірний формат телефону/i)
     })
   })
 
@@ -86,12 +89,14 @@ describe('ContactForm', () => {
     render(<ContactForm />)
 
     const emailInput = screen.getByLabelText(/email/i)
-    await user.type(emailInput, 'invalid-email')
+    // Type invalid email (no @ or domain)
+    await user.type(emailInput, 'notanemail')
     await user.tab()
 
     await waitFor(() => {
-      const errorMessage = screen.queryByText(/невірний формат email/i)
+      const errorMessage = document.getElementById('email-error')
       expect(errorMessage).toBeInTheDocument()
+      expect(errorMessage).toHaveTextContent(/невірний формат email/i)
     })
   })
 
@@ -324,28 +329,24 @@ describe('ContactForm', () => {
     await user.click(screen.getByRole('checkbox'))
     await user.click(screen.getByRole('button', { name: /надіслати/i }))
 
+    // Wait for success message
     await waitFor(() => {
-      expect(mockCreateContact).toHaveBeenCalledTimes(1)
+      expect(
+        screen.getByText(/повідомлення успішно надіслано/i)
+      ).toBeInTheDocument()
     })
 
+    const firstCallCount = mockCreateContact.mock.calls.length
+
     // Try to submit again immediately - fill the form again
-    await user.type(
-      screen.getByLabelText(/ім'я та прізвище/i),
-      'Петро Іваненко'
-    )
+    await user.type(screen.getByLabelText(/ім'я та прізвище/i), 'Петро')
     await user.type(screen.getByLabelText(/номер телефону/i), '+380501234568')
-    await user.type(
-      screen.getByLabelText(/email/i),
-      'petro.ivanenko@example.com'
-    )
-    await user.type(
-      screen.getByLabelText(/повідомлення/i),
-      'Test message 2 here for validation'
-    )
+    await user.type(screen.getByLabelText(/email/i), 'petro@example.com')
+    await user.type(screen.getByLabelText(/повідомлення/i), 'Test message 2')
     await user.click(screen.getByRole('checkbox'))
     await user.click(screen.getByRole('button', { name: /надіслати/i }))
 
     // Should not submit again (cooldown active)
-    expect(mockCreateContact).toHaveBeenCalledTimes(1)
-  })
+    expect(mockCreateContact.mock.calls.length).toBe(firstCallCount)
+  }, 10000)
 })

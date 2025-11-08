@@ -87,7 +87,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
       )
 
       // Start cooldown and reset form on success
-      startCooldown(30)
+      startCooldown()
       reset()
 
       // Call success callback
