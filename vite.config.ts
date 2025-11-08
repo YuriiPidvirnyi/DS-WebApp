@@ -1,13 +1,40 @@
-import { defineConfig } from 'vite'
+import { defineConfig, Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 import { VitePWA } from 'vite-plugin-pwa'
+import fs from 'fs'
+
+// SPA fallback plugin for preview server
+const spaFallbackPlugin = (): Plugin => ({
+  name: 'spa-fallback',
+  configurePreviewServer(server) {
+    server.middlewares.use((req, res, next) => {
+      // Skip if it's an asset or API request
+      if (
+        req.url?.startsWith('/assets') ||
+        req.url?.includes('.') ||
+        req.url?.startsWith('/api')
+      ) {
+        return next()
+      }
+      // Serve index.html for all other routes
+      const indexPath = resolve(__dirname, 'dist/index.html')
+      if (fs.existsSync(indexPath)) {
+        res.setHeader('Content-Type', 'text/html')
+        res.end(fs.readFileSync(indexPath))
+      } else {
+        next()
+      }
+    })
+  },
+})
 
 // https://vitejs.dev/config/
 export default defineConfig({
   appType: 'spa',
   plugins: [
     react(),
+    spaFallbackPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: [
