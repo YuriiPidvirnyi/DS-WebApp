@@ -92,7 +92,12 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Run E2E tests with dev server
+      - name: Build application
+        run: npm run build
+        env:
+          VITE_ENVIRONMENT: production
+
+      - name: Run E2E tests
         run: npx playwright test
 
       - name: Upload test results

@@ -8,7 +8,7 @@ export default defineConfig({
   fullyParallel: false,
   reporter: [['list']],
   use: {
-    baseURL: process.env.CI ? 'http://localhost:5173' : 'http://localhost:4173',
+    baseURL: 'http://localhost:4173',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -20,11 +20,10 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: process.env.CI ? 'npm run dev' : 'npm run preview',
-    url: process.env.CI ? 'http://localhost:5173' : 'http://localhost:4173',
+    command: 'npm run preview',
+    url: 'http://localhost:4173',
     reuseExistingServer: !process.env.CI,
     stdout: 'ignore',
     stderr: 'pipe',
-    timeout: 120 * 1000,
   },
 })
