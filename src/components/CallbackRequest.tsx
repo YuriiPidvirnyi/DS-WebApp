@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form'
+import { useForm, type Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input, Button } from '@/components/ui'
 import { callbackSchema } from '@/utils/validationSchemas'
@@ -26,7 +26,7 @@ export default function CallbackRequest() {
     formState: { errors, isSubmitting, isSubmitSuccessful },
     reset,
   } = useForm<CallbackValues>({
-    resolver: zodResolver(callbackSchema) as any,
+    resolver: zodResolver(callbackSchema) as Resolver<CallbackValues>,
     defaultValues: {
       name: '',
       phone: '',

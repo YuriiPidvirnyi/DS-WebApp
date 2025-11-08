@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, type Resolver, type FieldPath } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   appointmentSchema,
@@ -56,7 +56,7 @@ export default function BookingForm() {
     setValue,
     formState: { errors, isSubmitting, isSubmitSuccessful },
   } = useForm<BookingFormValues>({
-    resolver: zodResolver(appointmentSchema) as any,
+    resolver: zodResolver(appointmentSchema) as Resolver<BookingFormValues>,
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -137,7 +137,7 @@ export default function BookingForm() {
           message: data.symptoms || '',
           preferredDate: data.date,
           preferredTime: data.time,
-        } as any)
+        })
         if (!res.success || !res.data)
           throw new Error('Не вдалося створити запис')
         // Send confirmation (mock)
@@ -195,7 +195,10 @@ export default function BookingForm() {
       ['firstName', 'lastName', 'email', 'phone', 'dateOfBirth'],
       [],
     ] as const
-    const ok = await trigger(fieldsByStep[step] as any, { shouldFocus: true })
+    const ok = await trigger(
+      fieldsByStep[step] as unknown as FieldPath<BookingFormValues>[],
+      { shouldFocus: true }
+    )
     if (ok) {
       setStep(s => {
         const nextStep = Math.min(2, s + 1)
@@ -236,7 +239,7 @@ export default function BookingForm() {
 
   const saveEditing = async () => {
     if (!editingField) return
-    const ok = await trigger(editingField as any, { shouldFocus: true })
+    const ok = await trigger(editingField, { shouldFocus: true })
     if (ok) setEditingField(null)
   }
 
@@ -428,7 +431,7 @@ export default function BookingForm() {
                   id="dateOfBirth"
                   type="date"
                   fullWidth
-                  error={errors.dateOfBirth?.message as any}
+                  error={errors.dateOfBirth?.message}
                   {...register('dateOfBirth')}
                 />
               </div>
@@ -844,7 +847,7 @@ export default function BookingForm() {
                       <Input
                         type="date"
                         fullWidth
-                        error={errors.dateOfBirth?.message as any}
+                        error={errors.dateOfBirth?.message}
                         {...register('dateOfBirth')}
                         autoFocus
                       />
@@ -893,7 +896,7 @@ export default function BookingForm() {
                         rows={4}
                         fullWidth
                         placeholder="Коротко опишіть ваш запит"
-                        error={errors.symptoms?.message as any}
+                        error={errors.symptoms?.message}
                         {...register('symptoms')}
                         autoFocus
                       />
@@ -932,7 +935,7 @@ export default function BookingForm() {
                 rows={4}
                 fullWidth
                 placeholder="Коротко опишіть ваш запит"
-                error={errors.symptoms?.message as any}
+                error={errors.symptoms?.message}
                 {...register('symptoms')}
               />
             </div>
