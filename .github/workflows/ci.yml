@@ -134,6 +134,10 @@ jobs:
         env:
           VITE_ENVIRONMENT: production
 
+      - name: Check performance budgets
+        run: npm run perf:check
+        continue-on-error: false
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:

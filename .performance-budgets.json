@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json.schemastore.org/bundlesize",
+  "budgets": [
+    {
+      "resourceType": "script",
+      "budget": 250
+    },
+    {
+      "resourceType": "style",
+      "budget": 50
+    },
+    {
+      "resourceType": "image",
+      "budget": 200
+    },
+    {
+      "resourceType": "font",
+      "budget": 100
+    },
+    {
+      "resourceType": "document",
+      "budget": 50
+    },
+    {
+      "resourceType": "total",
+      "budget": 600
+    }
+  ],
+  "metrics": {
+    "FCP": {
+      "budget": 1800,
+      "unit": "millisecond"
+    },
+    "LCP": {
+      "budget": 2500,
+      "unit": "millisecond"
+    },
+    "TBT": {
+      "budget": 200,
+      "unit": "millisecond"
+    },
+    "CLS": {
+      "budget": 0.1,
+      "unit": "unitless"
+    },
+    "SI": {
+      "budget": 3400,
+      "unit": "millisecond"
+    },
+    "TTI": {
+      "budget": 3800,
+      "unit": "millisecond"
+    }
+  },
+  "files": [
+    {
+      "path": "dist/assets/index-*.js",
+      "maxSize": "100kb",
+      "compression": "gzip"
+    },
+    {
+      "path": "dist/assets/vendor-*.js",
+      "maxSize": "250kb",
+      "compression": "gzip"
+    },
+    {
+      "path": "dist/assets/react-vendor-*.js",
+      "maxSize": "80kb",
+      "compression": "gzip"
+    },
+    {
+      "path": "dist/assets/*.css",
+      "maxSize": "50kb",
+      "compression": "gzip"
+    }
+  ],
+  "thresholds": {
+    "performance": 0.9,
+    "accessibility": 0.95,
+    "bestPractices": 0.9,
+    "seo": 0.95,
+    "pwa": 0.8
+  }
+}
