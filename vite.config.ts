@@ -105,9 +105,10 @@ export default defineConfig({
           if (id.includes('node_modules/axios')) {
             return 'http-vendor'
           }
-          if (id.includes('node_modules/@sentry')) {
-            return 'sentry-vendor'
-          }
+          // Don't pre-bundle Sentry - let it load dynamically
+          // if (id.includes('node_modules/@sentry')) {
+          //   return 'sentry-vendor'
+          // }
           if (id.includes('node_modules/zod')) {
             return 'validation-vendor'
           }
@@ -156,7 +157,7 @@ export default defineConfig({
       'hoist-non-react-statics',
       'react-is',
     ],
-    exclude: ['@sentry/react'],
+    exclude: ['@sentry/react', '@sentry/replay', '@sentry/integrations'],
   },
   preview: {
     port: 4173,

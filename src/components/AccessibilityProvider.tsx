@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useState,
-  useContext,
-  useEffect,
-  ReactNode,
-} from 'react'
+import React, { createContext, useState, useEffect, ReactNode } from 'react'
 
 // Interface for accessibility context
 interface AccessibilityContextType {
@@ -30,7 +24,7 @@ interface AccessibilityContextType {
 }
 
 // Creating context with default values
-const AccessibilityContext = createContext<
+export const AccessibilityContext = createContext<
   AccessibilityContextType | undefined
 >(undefined)
 
@@ -205,17 +199,4 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({
       {children}
     </AccessibilityContext.Provider>
   )
-}
-
-// Custom hook to use accessibility context
-export const useAccessibility = () => {
-  const context = useContext(AccessibilityContext)
-
-  if (context === undefined) {
-    throw new Error(
-      'useAccessibility must be used within an AccessibilityProvider'
-    )
-  }
-
-  return context
 }

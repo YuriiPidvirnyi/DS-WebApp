@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAccessibility } from './AccessibilityProvider'
+import { useAccessibility } from '@/hooks/useAccessibility'
 import { Settings, Maximize, Minimize } from 'lucide-react'
 import { Button } from './ui'
 
