@@ -6,7 +6,11 @@ export interface SpinnerProps {
   color?: 'teal' | 'blue' | 'white'
 }
 
-export const Spinner = ({ size = 'md', className, color = 'teal' }: SpinnerProps) => {
+export const Spinner = ({
+  size = 'md',
+  className,
+  color = 'teal',
+}: SpinnerProps) => {
   const sizeStyles = {
     sm: 'h-4 w-4 border-2',
     md: 'h-8 w-8 border-2',

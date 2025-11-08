@@ -33,7 +33,7 @@ const FocusTrap: React.FC<FocusTrapProps> = ({
       )
 
       if (focusableElements.length > 0) {
-        (focusableElements[0] as HTMLElement).focus()
+        ;(focusableElements[0] as HTMLElement).focus()
       } else {
         containerRef.current.focus()
       }
@@ -50,7 +50,9 @@ const FocusTrap: React.FC<FocusTrapProps> = ({
       if (focusableElements.length === 0) return
 
       const firstElement = focusableElements[0] as HTMLElement
-      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement
+      const lastElement = focusableElements[
+        focusableElements.length - 1
+      ] as HTMLElement
 
       if (e.key === 'Tab') {
         if (e.shiftKey) {
@@ -71,7 +73,9 @@ const FocusTrap: React.FC<FocusTrapProps> = ({
       // Escape key support
       if (e.key === 'Escape') {
         // Custom event that parent components can listen to
-        const escapeEvent = new CustomEvent('focustrap:escape', { bubbles: true })
+        const escapeEvent = new CustomEvent('focustrap:escape', {
+          bubbles: true,
+        })
         containerRef.current.dispatchEvent(escapeEvent)
       }
     }
@@ -85,7 +89,7 @@ const FocusTrap: React.FC<FocusTrapProps> = ({
 
       // Restore focus to the previously focused element
       if (restoreFocus && previousActiveElement.current) {
-        (previousActiveElement.current as HTMLElement).focus()
+        ;(previousActiveElement.current as HTMLElement).focus()
       }
     }
   }, [active, restoreFocus])

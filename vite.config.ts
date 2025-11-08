@@ -5,7 +5,8 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: './',
+  appType: 'spa',
+  base: '/',
   plugins: [
     react(),
     VitePWA({
@@ -14,14 +15,15 @@ export default defineConfig({
         'assets/images/favicon/favicon-16x16.png',
         'assets/images/favicon/favicon-32x32.png',
         'assets/images/favicon/apple-touch-icon.png',
-        'assets/images/favicon/safari-pinned-tab.svg'
+        'assets/images/favicon/safari-pinned-tab.svg',
       ],
       workbox: {
         navigateFallback: '/offline.html',
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp}'],
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/(fonts\.gstatic\.com|fonts\.googleapis\.com)\//,
+            urlPattern:
+              /^https:\/\/(fonts\.gstatic\.com|fonts\.googleapis\.com)\//,
             handler: 'CacheFirst',
             options: {
               cacheName: 'google-fonts',
@@ -45,9 +47,12 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
+        manualChunks: id => {
           // Vendor chunks
-          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+          if (
+            id.includes('node_modules/react') ||
+            id.includes('node_modules/react-dom')
+          ) {
             return 'react-vendor'
           }
           if (id.includes('node_modules/react-router')) {
@@ -56,7 +61,10 @@ export default defineConfig({
           if (id.includes('node_modules/lucide-react')) {
             return 'icons-vendor'
           }
-          if (id.includes('node_modules/@hookform') || id.includes('node_modules/react-hook-form')) {
+          if (
+            id.includes('node_modules/@hookform') ||
+            id.includes('node_modules/react-hook-form')
+          ) {
             return 'forms-vendor'
           }
           if (id.includes('node_modules/react-helmet-async')) {
@@ -65,13 +73,14 @@ export default defineConfig({
           if (id.includes('node_modules/axios')) {
             return 'http-vendor'
           }
-          if (id.includes('node_modules/@sentry')) {
-            return 'sentry-vendor'
-          }
+          // Don't pre-bundle Sentry - let it load dynamically
+          // if (id.includes('node_modules/@sentry')) {
+          //   return 'sentry-vendor'
+          // }
           if (id.includes('node_modules/zod')) {
             return 'validation-vendor'
           }
-          
+
           // Pages chunks
           if (id.includes('/pages/Home')) return 'home-page'
           if (id.includes('/pages/Booking')) return 'booking-page'
@@ -79,12 +88,13 @@ export default defineConfig({
           if (id.includes('/pages/About')) return 'about-page'
           if (id.includes('/pages/Contact')) return 'contact-page'
           if (id.includes('/pages/Gallery')) return 'gallery-page'
-          
+
           // Components chunks
-          if (id.includes('/components/BookingForm')) return 'booking-components'
+          if (id.includes('/components/BookingForm'))
+            return 'booking-components'
           if (id.includes('/components/Accessibility')) return 'a11y-components'
           if (id.includes('/components/GoogleMap')) return 'map-components'
-          
+
           // Other vendor packages
           if (id.includes('node_modules')) {
             return 'vendor'
@@ -104,8 +114,8 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: [
-      'react', 
-      'react-dom', 
+      'react',
+      'react-dom',
       'react-router-dom',
       'lucide-react',
       'clsx',
@@ -115,6 +125,10 @@ export default defineConfig({
       'hoist-non-react-statics',
       'react-is',
     ],
-    exclude: ['@sentry/react']
+    exclude: ['@sentry/react', '@sentry/replay', '@sentry/integrations'],
+  },
+  preview: {
+    port: 4173,
+    host: true,
   },
 })

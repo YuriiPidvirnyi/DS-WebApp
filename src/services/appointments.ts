@@ -17,7 +17,10 @@ export async function createAppointment(
   data: AppointmentFormData
 ): Promise<ApiResponse<Appointment>> {
   try {
-    const res = await http.post<ApiResponse<Appointment>>(ENDPOINTS.create, data)
+    const res = await http.post<ApiResponse<Appointment>>(
+      ENDPOINTS.create,
+      data
+    )
     return res.data
   } catch (e) {
     // Fallback to mock in development/no-backend
@@ -48,7 +51,9 @@ export async function getAppointment(
 /**
  * Get all appointments (for admin)
  */
-export async function getAllAppointments(): Promise<ApiResponse<Appointment[]>> {
+export async function getAllAppointments(): Promise<
+  ApiResponse<Appointment[]>
+> {
   try {
     const res = await http.get<ApiResponse<Appointment[]>>(ENDPOINTS.list)
     return res.data
@@ -65,7 +70,10 @@ export async function updateAppointmentStatus(
   status: Appointment['status']
 ): Promise<ApiResponse<Appointment>> {
   try {
-    const res = await http.patch<ApiResponse<Appointment>>(ENDPOINTS.status(id), { status })
+    const res = await http.patch<ApiResponse<Appointment>>(
+      ENDPOINTS.status(id),
+      { status }
+    )
     return res.data
   } catch {
     throw new Error('Not implemented')
@@ -100,7 +108,17 @@ export async function getAvailableSlots(
     return res.data
   } catch {
     // Mock data fallback
-    const slots = ['09:00','10:00','11:00','12:00','14:00','15:00','16:00','17:00','18:00']
+    const slots = [
+      '09:00',
+      '10:00',
+      '11:00',
+      '12:00',
+      '14:00',
+      '15:00',
+      '16:00',
+      '17:00',
+      '18:00',
+    ]
     return mockAPIResponse(slots, 500)
   }
 }

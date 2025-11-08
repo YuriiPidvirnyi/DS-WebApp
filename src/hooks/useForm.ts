@@ -35,7 +35,7 @@ export function useForm<T extends Record<string, unknown>>({
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target
-    setValues(prev => ({ ...prev, [name]: value } as T))
+    setValues(prev => ({ ...prev, [name]: value }) as T)
 
     // Clear error for this field when user starts typing
     if (errors[name as keyof T]) {
@@ -48,7 +48,7 @@ export function useForm<T extends Record<string, unknown>>({
   }
 
   const setFieldValue = (name: keyof T, value: T[keyof T]) => {
-    setValues(prev => ({ ...prev, [name]: value } as T))
+    setValues(prev => ({ ...prev, [name]: value }) as T)
   }
 
   const setFieldError = (name: keyof T, error: string) => {

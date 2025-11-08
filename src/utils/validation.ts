@@ -34,7 +34,7 @@ export function isValidEmail(email: string): boolean {
 export function isValidUkrainianPhone(phone: string): boolean {
   // Видаляємо всі пробіли, дефіси, дужки
   const cleaned = phone.replace(/[\s\-()]/g, '')
-  
+
   const patterns = [
     /^\+380\d{9}$/, // +380XXXXXXXXX
     /^380\d{9}$/, // 380XXXXXXXXX
@@ -49,22 +49,22 @@ export function isValidUkrainianPhone(phone: string): boolean {
  */
 export function formatUkrainianPhone(phone: string): string {
   const cleaned = phone.replace(/[\s\-()]/g, '')
-  
+
   // Якщо починається з 0, конвертуємо в +380
   if (cleaned.startsWith('0') && cleaned.length === 10) {
     return `+380 ${cleaned.slice(1, 3)} ${cleaned.slice(3, 6)} ${cleaned.slice(6, 8)} ${cleaned.slice(8)}`
   }
-  
+
   // Якщо починається з 380
   if (cleaned.startsWith('380') && cleaned.length === 12) {
     return `+380 ${cleaned.slice(3, 5)} ${cleaned.slice(5, 8)} ${cleaned.slice(8, 10)} ${cleaned.slice(10)}`
   }
-  
+
   // Якщо починається з +380
   if (cleaned.startsWith('+380') && cleaned.length === 13) {
     return `+380 ${cleaned.slice(4, 6)} ${cleaned.slice(6, 9)} ${cleaned.slice(9, 11)} ${cleaned.slice(11)}`
   }
-  
+
   return phone
 }
 
@@ -99,24 +99,26 @@ export const validators = {
 
   fullName: (value: string): string | undefined => {
     if (isEmpty(value)) return undefined
-    return !isValidFullName(value)
-      ? 'Введіть ім\'я та прізвище'
-      : undefined
+    return !isValidFullName(value) ? "Введіть ім'я та прізвище" : undefined
   },
 
-  minLength: (min: number) => (value: string, fieldName: string = 'Поле'): string | undefined => {
-    if (isEmpty(value)) return undefined
-    return !minLength(value, min)
-      ? `${fieldName} повинно містити мінімум ${min} символів`
-      : undefined
-  },
+  minLength:
+    (min: number) =>
+    (value: string, fieldName: string = 'Поле'): string | undefined => {
+      if (isEmpty(value)) return undefined
+      return !minLength(value, min)
+        ? `${fieldName} повинно містити мінімум ${min} символів`
+        : undefined
+    },
 
-  maxLength: (max: number) => (value: string, fieldName: string = 'Поле'): string | undefined => {
-    if (isEmpty(value)) return undefined
-    return !maxLength(value, max)
-      ? `${fieldName} повинно містити максимум ${max} символів`
-      : undefined
-  },
+  maxLength:
+    (max: number) =>
+    (value: string, fieldName: string = 'Поле'): string | undefined => {
+      if (isEmpty(value)) return undefined
+      return !maxLength(value, max)
+        ? `${fieldName} повинно містити максимум ${max} символів`
+        : undefined
+    },
 }
 
 /**

@@ -38,13 +38,16 @@ export function useSubmissionCooldown(key: string, defaultDurationSec = 30) {
   const remainingSec = Math.ceil(remainingMs / 1000)
   const isCoolingDown = remainingMs > 0
 
-  const start = useCallback((durationSec?: number) => {
-    const cd = readCooldowns()
-    const until = Date.now() + 1000 * (durationSec ?? defaultDurationSec)
-    cd[key] = until
-    writeCooldowns(cd)
-    setNow(Date.now())
-  }, [key, defaultDurationSec])
+  const start = useCallback(
+    (durationSec?: number) => {
+      const cd = readCooldowns()
+      const until = Date.now() + 1000 * (durationSec ?? defaultDurationSec)
+      cd[key] = until
+      writeCooldowns(cd)
+      setNow(Date.now())
+    },
+    [key, defaultDurationSec]
+  )
 
   const clear = useCallback(() => {
     const cd = readCooldowns()

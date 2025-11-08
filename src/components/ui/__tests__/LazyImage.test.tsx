@@ -18,9 +18,9 @@ describe('LazyImage', () => {
 
   it('renders placeholder initially', () => {
     render(
-      <LazyImage 
-        src="/test-image.jpg" 
-        alt="Test image" 
+      <LazyImage
+        src="/test-image.jpg"
+        alt="Test image"
         placeholder="/placeholder.svg"
       />
     )
@@ -32,10 +32,12 @@ describe('LazyImage', () => {
 
   it('shows loading overlay initially', () => {
     render(<LazyImage src="/test-image.jpg" alt="Test image" />)
-    
+
     expect(screen.getByRole('img')).toHaveClass('opacity-70')
     // Check for loading dots animation instead of text
-    const loadingDots = screen.getByRole('img').parentElement?.querySelector('.animate-pulse')
+    const loadingDots = screen
+      .getByRole('img')
+      .parentElement?.querySelector('.animate-pulse')
     expect(loadingDots).toBeInTheDocument()
   })
 
@@ -47,20 +49,14 @@ describe('LazyImage', () => {
     }
     mockImage.mockReturnValue(mockImageInstance)
 
-    render(
-      <LazyImage 
-        src="/test-image.jpg" 
-        alt="Test image" 
-        loading="eager"
-      />
-    )
+    render(<LazyImage src="/test-image.jpg" alt="Test image" loading="eager" />)
 
     expect(mockImage).toHaveBeenCalled()
   })
 
   it('uses intersection observer for lazy loading', () => {
     render(<LazyImage src="/test-image.jpg" alt="Test image" />)
-    
+
     expect(mockObserve).toHaveBeenCalled()
   })
 
@@ -71,20 +67,14 @@ describe('LazyImage', () => {
       src: '',
     }
     mockImage.mockReturnValue(mockImageInstance)
-    
-    render(
-      <LazyImage 
-        src="/test-image.jpg" 
-        alt="Test image"
-        loading="eager"
-      />
-    )
+
+    render(<LazyImage src="/test-image.jpg" alt="Test image" loading="eager" />)
 
     // Simulate successful image load
     await act(async () => {
       mockImageInstance.onload()
     })
-    
+
     await waitFor(() => {
       const img = screen.getByRole('img')
       expect(img).toHaveAttribute('src', '/test-image.jpg')
@@ -103,15 +93,15 @@ describe('LazyImage', () => {
       onerror: vi.fn(),
       src: '',
     }
-    
+
     mockImage
       .mockReturnValueOnce(mockImageInstance)
       .mockReturnValueOnce(mockFallbackInstance)
 
     render(
-      <LazyImage 
+      <LazyImage
         src="/test-image.jpg"
-        fallback="/fallback-image.jpg" 
+        fallback="/fallback-image.jpg"
         alt="Test image"
         loading="eager"
       />
@@ -137,13 +127,7 @@ describe('LazyImage', () => {
     }
     mockImage.mockReturnValue(mockImageInstance)
 
-    render(
-      <LazyImage 
-        src="/test-image.jpg" 
-        alt="Test image"
-        loading="eager"
-      />
-    )
+    render(<LazyImage src="/test-image.jpg" alt="Test image" loading="eager" />)
 
     // Simulate image load error
     await act(async () => {
@@ -157,8 +141,8 @@ describe('LazyImage', () => {
 
   it('applies custom className', () => {
     render(
-      <LazyImage 
-        src="/test-image.jpg" 
+      <LazyImage
+        src="/test-image.jpg"
         alt="Test image"
         className="custom-class"
       />
@@ -170,8 +154,8 @@ describe('LazyImage', () => {
 
   it('sets proper aspect ratio when width and height provided', () => {
     render(
-      <LazyImage 
-        src="/test-image.jpg" 
+      <LazyImage
+        src="/test-image.jpg"
         alt="Test image"
         width={800}
         height={600}
@@ -193,8 +177,8 @@ describe('LazyImage', () => {
     mockImage.mockReturnValue(mockImageInstance)
 
     render(
-      <LazyImage 
-        src="/test-image.jpg" 
+      <LazyImage
+        src="/test-image.jpg"
         alt="Test image"
         onLoad={onLoad}
         loading="eager"
@@ -221,8 +205,8 @@ describe('LazyImage', () => {
     mockImage.mockReturnValue(mockImageInstance)
 
     render(
-      <LazyImage 
-        src="/test-image.jpg" 
+      <LazyImage
+        src="/test-image.jpg"
         alt="Test image"
         onError={onError}
         loading="eager"

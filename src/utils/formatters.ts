@@ -1,13 +1,29 @@
 /**
  * Форматування дати в українському форматі
  */
-export function formatDate(date: Date | string, format: 'short' | 'long' | 'full' = 'short'): string {
+export function formatDate(
+  date: Date | string,
+  format: 'short' | 'long' | 'full' = 'short'
+): string {
   const d = typeof date === 'string' ? new Date(date) : date
 
   const formats = {
-    short: { day: '2-digit', month: '2-digit', year: 'numeric' } as Intl.DateTimeFormatOptions,
-    long: { day: 'numeric', month: 'long', year: 'numeric' } as Intl.DateTimeFormatOptions,
-    full: { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' } as Intl.DateTimeFormatOptions,
+    short: {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    } as Intl.DateTimeFormatOptions,
+    long: {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    } as Intl.DateTimeFormatOptions,
+    full: {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    } as Intl.DateTimeFormatOptions,
   }
 
   return new Intl.DateTimeFormat('uk-UA', formats[format]).format(d)
@@ -16,7 +32,10 @@ export function formatDate(date: Date | string, format: 'short' | 'long' | 'full
 /**
  * Форматування часу
  */
-export function formatTime(date: Date | string, includeSeconds: boolean = false): string {
+export function formatTime(
+  date: Date | string,
+  includeSeconds: boolean = false
+): string {
   const d = typeof date === 'string' ? new Date(date) : date
 
   const options: Intl.DateTimeFormatOptions = {
@@ -38,7 +57,10 @@ export function formatDateTime(date: Date | string): string {
 /**
  * Форматування валюти (гривні)
  */
-export function formatCurrency(amount: number, currency: string = 'UAH'): string {
+export function formatCurrency(
+  amount: number,
+  currency: string = 'UAH'
+): string {
   return new Intl.NumberFormat('uk-UA', {
     style: 'currency',
     currency: currency,
@@ -93,7 +115,8 @@ export function formatRelativeTime(date: Date | string): string {
  */
 function getMinutesWord(n: number): string {
   if (n % 10 === 1 && n % 100 !== 11) return 'хвилину'
-  if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) return 'хвилини'
+  if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20))
+    return 'хвилини'
   return 'хвилин'
 }
 
@@ -102,7 +125,8 @@ function getMinutesWord(n: number): string {
  */
 function getHoursWord(n: number): string {
   if (n % 10 === 1 && n % 100 !== 11) return 'годину'
-  if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) return 'години'
+  if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20))
+    return 'години'
   return 'годин'
 }
 
@@ -111,7 +135,8 @@ function getHoursWord(n: number): string {
  */
 function getDaysWord(n: number): string {
   if (n % 10 === 1 && n % 100 !== 11) return 'день'
-  if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) return 'дні'
+  if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20))
+    return 'дні'
   return 'днів'
 }
 

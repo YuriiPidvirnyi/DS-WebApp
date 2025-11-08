@@ -15,7 +15,7 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -58,14 +58,14 @@ jobs:
           name: Release v${{ steps.version.outputs.current }}
           body: |
             ## 🎉 Release v${{ steps.version.outputs.current }}
-            
+
             ### 📋 Changes
             See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.
-            
+
             ### 📦 Assets
             - Source code (zip)
             - Source code (tar.gz)
-            
+
             ### 🚀 Installation
             ```bash
             npm install

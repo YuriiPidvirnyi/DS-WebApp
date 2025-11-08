@@ -2,11 +2,12 @@ import { useMemo } from 'react'
 import ukLocale from '../locales/uk.json'
 
 type DeepKeyOf<T> = T extends object
-  ? { [K in keyof T]: K extends string 
-      ? T[K] extends object 
-        ? `${K}.${DeepKeyOf<T[K]>}`
-        : K 
-      : never 
+  ? {
+      [K in keyof T]: K extends string
+        ? T[K] extends object
+          ? `${K}.${DeepKeyOf<T[K]>}`
+          : K
+        : never
     }[keyof T]
   : never
 
@@ -25,7 +26,10 @@ export const useLocale = () => {
    * @param params - параметри для інтерполяції (необов'язково)
    * @returns перекладений текст
    */
-  const t = (key: LocaleKey, params?: Record<string, string | number>): string => {
+  const t = (
+    key: LocaleKey,
+    params?: Record<string, string | number>
+  ): string => {
     try {
       const keys = key.split('.')
       let value: any = locale
@@ -48,8 +52,11 @@ export const useLocale = () => {
       // Інтерполяція параметрів
       if (params) {
         return Object.entries(params).reduce(
-          (text, [paramKey, paramValue]) => 
-            text.replace(new RegExp(`{{${paramKey}}}`, 'g'), String(paramValue)),
+          (text, [paramKey, paramValue]) =>
+            text.replace(
+              new RegExp(`{{${paramKey}}}`, 'g'),
+              String(paramValue)
+            ),
           value
         )
       }
@@ -100,7 +107,7 @@ export const useLocale = () => {
   const formatDate = (date: Date): string => {
     const dateFormat = locale.dateFormat
     return new Intl.DateTimeFormat(
-      dateFormat.locale, 
+      dateFormat.locale,
       dateFormat.options as Intl.DateTimeFormatOptions
     ).format(date)
   }
@@ -123,7 +130,7 @@ export const useLocale = () => {
     formatDate,
     getMeta,
     getNavigation,
-    locale
+    locale,
   }
 }
 

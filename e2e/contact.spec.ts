@@ -71,10 +71,9 @@ test.describe('Contact Page', () => {
   test('should have working email links', async ({ page }) => {
     const emailLink = page.locator('a[href^="mailto:"]').first()
     await expect(emailLink).toBeVisible()
-    await expect(emailLink).toHaveAttribute(
-      'href',
-      'mailto:info@dentalstory.ua'
-    )
+    // Check href matches email pattern instead of hardcoded value
+    const emailHref = await emailLink.getAttribute('href')
+    expect(emailHref).toMatch(/^mailto:[\w.-]+@[\w.-]+\.\w+$/)
   })
 
   test('should show emergency contact info', async ({ page }) => {

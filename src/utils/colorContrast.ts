@@ -3,7 +3,9 @@
 /**
  * Convert hex color to RGB
  */
-export function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+export function hexToRgb(
+  hex: string
+): { r: number; g: number; b: number } | null {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
   return result
     ? {
@@ -19,7 +21,7 @@ export function hexToRgb(hex: string): { r: number; g: number; b: number } | nul
  * https://www.w3.org/TR/WCAG20/#relativeluminancedef
  */
 export function getLuminance(r: number, g: number, b: number): number {
-  const [rs, gs, bs] = [r, g, b].map((c) => {
+  const [rs, gs, bs] = [r, g, b].map(c => {
     c = c / 255
     return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
   })
@@ -113,21 +115,21 @@ export const accessibleColors = {
   },
   dentalBlue: {
     onWhite: '#2D7A7A',
-    onDark: '#B8E6E6', 
+    onDark: '#B8E6E6',
     onLight: '#1A5F5F',
   },
   // Text colors
   text: {
-    primary: '#1F2937',     // gray-800
-    secondary: '#4B5563',   // gray-600  
-    muted: '#6B7280',       // gray-500
-    light: '#9CA3AF',       // gray-400
+    primary: '#1F2937', // gray-800
+    secondary: '#4B5563', // gray-600
+    muted: '#6B7280', // gray-500
+    light: '#9CA3AF', // gray-400
   },
   // Status colors with good contrast
   status: {
-    success: '#059669',     // green-600
-    warning: '#D97706',     // amber-600
-    error: '#DC2626',       // red-600
-    info: '#2563EB',        // blue-600
-  }
+    success: '#059669', // green-600
+    warning: '#D97706', // amber-600
+    error: '#DC2626', // red-600
+    info: '#2563EB', // blue-600
+  },
 }
