@@ -30,19 +30,16 @@ app.use(
     maxAge: '1d',
     etag: true,
     lastModified: true,
+    index: false, // Disable automatic index.html serving
   })
 )
 
 // SPA fallback - serve index.html for all non-asset routes
-app.use((req, res, next) => {
-  // Skip if it's a file with extension (except .html)
-  const ext = path.extname(req.path)
-  if (ext && ext !== '.html') {
-    return next()
-  }
-
-  // Serve index.html for all routes (SPA fallback)
+app.use((req, res) => {
+  // If request has extension and file exists, it was already served by static middleware
+  // Otherwise serve index.html (for SPA routes)
   const indexPath = path.join(DIST_DIR, 'index.html')
+
   if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath)
   } else {
