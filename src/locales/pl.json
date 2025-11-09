@@ -1,0 +1,250 @@
+{
+  "navigation": {
+    "home": "Strona główna",
+    "services": "Usługi",
+    "about": "O nas",
+    "gallery": "Galeria",
+    "contact": "Kontakt",
+    "privacyPolicy": "Polityka prywatności",
+    "termsOfService": "Warunki użytkowania"
+  },
+  "common": {
+    "phone": "Telefon",
+    "email": "Email",
+    "address": "Adres",
+    "workingHours": "Godziny otwarcia",
+    "close": "Zamknij",
+    "open": "Otwórz",
+    "submit": "Wyślij",
+    "cancel": "Anuluj",
+    "save": "Zapisz",
+    "edit": "Edytuj",
+    "delete": "Usuń",
+    "loading": "Ładowanie...",
+    "error": "Błąd",
+    "success": "Sukces",
+    "back": "Wstecz",
+    "next": "Dalej",
+    "previous": "Poprzedni",
+    "required": "Wymagane",
+    "optional": "Opcjonalne"
+  },
+  "buttons": {
+    "bookAppointment": "Umów wizytę",
+    "bookConsultation": "Umów konsultację",
+    "learnMore": "Dowiedz się więcej",
+    "viewAll": "Zobacz wszystko",
+    "allServices": "Wszystkie usługi",
+    "sendRequest": "Wyślij zapytanie",
+    "requestSent": "Zapytanie wysłane",
+    "backToHome": "Na stronę główną",
+    "goBack": "Wróć",
+    "viewImage": "Zobacz obraz"
+  },
+  "forms": {
+    "labels": {
+      "fullName": "Imię i nazwisko",
+      "phone": "Numer telefonu",
+      "email": "Email",
+      "service": "Usługa",
+      "message": "Wiadomość"
+    },
+    "placeholders": {
+      "fullName": "Wprowadź imię i nazwisko",
+      "phone": "+48 XXX XXX XXX",
+      "email": "przyklad@email.com",
+      "selectService": "Wybierz usługę",
+      "message": "Opisz swoje pytania lub wątpliwości"
+    },
+    "validation": {
+      "required": "{{field}} jest wymagane",
+      "invalidEmail": "Wprowadź poprawny adres email",
+      "invalidPhone": "Wprowadź poprawny numer telefonu",
+      "minLength": "{{field}} musi zawierać co najmniej {{min}} znaków"
+    },
+    "messages": {
+      "success": "Zapytanie zostało pomyślnie wysłane!",
+      "successDescription": "Dziękujemy za zapytanie. Skontaktujemy się z Tobą w ciągu 30 minut, aby potwierdzić wizytę.",
+      "error": "Błąd",
+      "requiredFields": "* Pola wymagane. Skontaktujemy się z Tobą w ciągu 30 minut.",
+      "emailOptional": "Pole opcjonalne"
+    }
+  },
+  "services": {
+    "categories": {
+      "therapeutic": "Stomatologia zachowawcza",
+      "surgical": "Chirurgia stomatologiczna",
+      "orthopedic": "Protetyka stomatologiczna",
+      "orthodontics": "Ortodoncja",
+      "aesthetic": "Stomatologia estetyczna",
+      "pediatric": "Stomatologia dziecięca"
+    },
+    "list": {
+      "consultation": "Konsultacja",
+      "treatment": "Leczenie zębów",
+      "cleaning": "Higiena zawodowa",
+      "implants": "Implanty stomatologiczne",
+      "orthodontics": "Ortodoncja",
+      "prosthetics": "Protetyka",
+      "whitening": "Wybielanie zębów",
+      "surgery": "Chirurgia jamy ustnej"
+    }
+  },
+  "gallery": {
+    "categories": {
+      "all": "Wszystkie zdjęcia",
+      "clinic": "Klinika",
+      "equipment": "Sprzęt",
+      "team": "Zespół",
+      "beforeAfter": "Przed/Po"
+    },
+    "noPhotos": "Brak zdjęć w tej kategorii",
+    "navigation": {
+      "close": "Zamknij",
+      "previous": "Poprzednie zdjęcie",
+      "next": "Następne zdjęcie",
+      "viewImage": "Zobacz zdjęcie"
+    }
+  },
+  "contact": {
+    "title": "Kontakt",
+    "description": "Skontaktuj się z nami w wygodny dla Ciebie sposób lub umów wizytę online",
+    "contactInfo": "Informacje kontaktowe",
+    "emergency": {
+      "title": "🚨 Pomoc w nagłych wypadkach",
+      "description": "W przypadku ostrego bólu lub urazu, skontaktuj się z nami natychmiast:",
+      "phone": "📞 +380 50 455 47 74",
+      "availability": "Przyjmujemy połączenia alarmowe 24/7"
+    },
+    "faq": {
+      "title": "Często zadawane pytania",
+      "questions": {
+        "appointment": {
+          "q": "Czy muszę umawiać wizytę z wyprzedzeniem?",
+          "a": "Tak, pracujemy na podstawie wcześniejszej rezerwacji. Pozwala nam to poświęcić każdemu pacjentowi wystarczającą ilość czasu i uwagi."
+        },
+        "reschedule": {
+          "q": "Czy mogę przełożyć wizytę?",
+          "a": "Tak, możesz przełożyć wizytę, informując nas o tym 24 godziny przed zaplanowanym terminem."
+        },
+        "documents": {
+          "q": "Jakie dokumenty są potrzebne?",
+          "a": "Zabierz ze sobą paszport lub dowód osobisty. Jeśli masz kartę medyczną, również ją weź."
+        },
+        "warranty": {
+          "q": "Czy udzielacie gwarancji?",
+          "a": "Tak, udzielamy gwarancji na wszystkie usługi zgodnie ze standardami medycznymi i wymogami."
+        }
+      }
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "Twój uśmiech - nasza misja",
+      "description": "Profesjonalna opieka dentystyczna z wykorzystaniem najnowszych technologii i indywidualnego podejścia do każdego pacjenta.",
+      "whyChooseUs": "Dlaczego warto nas wybrać?",
+      "benefits": [
+        "Bezbolesne leczenie",
+        "Gwarancja na wszystkie usługi",
+        "Nowoczesny sprzęt",
+        "Wykwalifikowani lekarze"
+      ]
+    },
+    "features": {
+      "title": "Dlaczego pacjenci wybierają Dental Story",
+      "subtitle": "Łączymy profesjonalizm, nowoczesne technologie i indywidualne podejście, aby osiągnąć najlepsze wyniki leczenia"
+    },
+    "services": {
+      "title": "Nasze usługi",
+      "subtitle": "Pełen zakres usług stomatologicznych dla całej rodziny"
+    },
+    "cta": {
+      "title": "Gotowy na piękny uśmiech?",
+      "description": "Umów bezpłatną konsultację i otrzymaj spersonalizowany plan leczenia"
+    }
+  },
+  "about": {
+    "title": "O naszej klinice",
+    "subtitle": "Dental Story to nowoczesna klinika dentystyczna, która łączy profesjonalizm, innowacyjne technologie i indywidualne podejście do każdego pacjenta.",
+    "stats": {
+      "experience": "Lat doświadczenia",
+      "patients": "Zadowolonych pacjentów",
+      "specialists": "Specjalistów",
+      "reviews": "Pozytywnych opinii"
+    },
+    "story": {
+      "title": "Nasza historia",
+      "tagline": "Twój uśmiech - nasza misja"
+    },
+    "values": {
+      "title": "Nasze wartości",
+      "subtitle": "Zasady, którymi kierujemy się w codziennej pracy i relacjach z pacjentami"
+    },
+    "team": {
+      "title": "Nasz zespół",
+      "subtitle": "Doświadczeni lekarze z wyższym wykształceniem i międzynarodowymi certyfikatami"
+    },
+    "equipment": {
+      "title": "Nowoczesny sprzęt"
+    }
+  },
+  "testimonials": {
+    "title": "Opinie naszych pacjentów",
+    "subtitle": "Szczęście naszych pacjentów to nasza największa nagroda. Przeczytaj prawdziwe opinie osób, które powierzyły nam swoje zdrowie",
+    "rating": "Ocena: {{rating}} z 5 gwiazdek",
+    "basedOn": "na podstawie {{count}} opinii",
+    "cta": {
+      "question": "Chcesz dołączyć do naszej szczęśliwej rodziny pacjentów?",
+      "button": "Umów wizytę"
+    }
+  },
+  "notFound": {
+    "title": "Strona nie znaleziona",
+    "description": "Niestety, strona, której szukasz, nie istnieje lub została przeniesiona.",
+    "actions": {
+      "home": "Strona główna",
+      "back": "Wróć"
+    },
+    "suggestions": {
+      "title": "Może szukałeś:",
+      "services": "Usługi",
+      "about": "O nas",
+      "gallery": "Galeria",
+      "contact": "Kontakt"
+    }
+  },
+  "footer": {
+    "description": "Nowoczesna klinika dentystyczna oferująca pełen zakres usług dla zdrowia Twoich zębów. Profesjonalni lekarze, nowoczesny sprzęt i indywidualne podejście do każdego pacjenta.",
+    "navigation": "Nawigacja",
+    "contacts": "Kontakty",
+    "copyright": "© 2024 Dental Story. Wszelkie prawa zastrzeżone.",
+    "workingHours": {
+      "weekdays": "Pn-Pt: 9:00-19:00",
+      "saturday": "Sob: 9:00-16:00",
+      "sunday": "Niedz: Zamknięte"
+    },
+    "socialMedia": "Media społecznościowe"
+  },
+  "accessibility": {
+    "skipToContent": "Przejdź do głównej treści",
+    "mainNavigation": "Główna nawigacja",
+    "mobileMenu": "Menu mobilne",
+    "contactInfo": "Informacje kontaktowe",
+    "siteNavigation": "Nawigacja po stronie",
+    "openMenu": "Otwórz menu",
+    "closeMenu": "Zamknij menu"
+  },
+  "dateFormat": {
+    "locale": "pl-PL",
+    "options": {
+      "year": "numeric",
+      "month": "long",
+      "day": "numeric"
+    }
+  },
+  "meta": {
+    "title": "Dental Story - Nowoczesna klinika dentystyczna w Kijowie | Dzielnica Dniprowski",
+    "description": "Profesjonalna klinika dentystyczna na ul. Akademika Korolova. Pełen zakres usług: leczenie, implanty, ortodoncja. Bezbolesne leczenie, nowoczesny sprzęt. Rezerwacja: +380 50 455 47 74",
+    "keywords": "dentysta Kijów, dentysta Korolova, klinika dentystyczna Dniprowski, leczenie zębów, implanty stomatologiczne, aparaty ortodontyczne, wybielanie zębów, Dental Story"
+  }
+}

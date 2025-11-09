@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { Menu, X, Phone, Mail } from 'lucide-react'
 import { CONTACT_INFO } from '@/utils/constants'
 import Logo from '@/components/ui/Logo'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 const Header = memo(() => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -127,8 +128,9 @@ const Header = memo(() => {
             ))}
           </nav>
 
-          {/* CTA Button */}
-          <div className="hidden md:block">
+          {/* Language Switcher & CTA */}
+          <div className="hidden md:flex items-center space-x-4">
+            <LanguageSwitcher />
             <Link
               to="/booking"
               className="bg-teal-800 hover:bg-teal-900 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"

@@ -5,6 +5,7 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import App from './App.tsx'
 import { registerSW } from 'virtual:pwa-register'
 import performanceMonitor from './services/performance'
+import './i18n/config' // Initialize i18n
 
 // Initialize performance monitoring
 if (import.meta.env.PROD) {

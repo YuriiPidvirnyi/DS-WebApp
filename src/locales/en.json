@@ -1,0 +1,250 @@
+{
+  "navigation": {
+    "home": "Home",
+    "services": "Services",
+    "about": "About",
+    "gallery": "Gallery",
+    "contact": "Contact",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service"
+  },
+  "common": {
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "workingHours": "Working Hours",
+    "close": "Close",
+    "open": "Open",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "required": "Required",
+    "optional": "Optional"
+  },
+  "buttons": {
+    "bookAppointment": "Book Appointment",
+    "bookConsultation": "Book Consultation",
+    "learnMore": "Learn More",
+    "viewAll": "View All",
+    "allServices": "All Services",
+    "sendRequest": "Send Request",
+    "requestSent": "Request Sent",
+    "backToHome": "Back to Home",
+    "goBack": "Go Back",
+    "viewImage": "View Image"
+  },
+  "forms": {
+    "labels": {
+      "fullName": "Full Name",
+      "phone": "Phone Number",
+      "email": "Email",
+      "service": "Service",
+      "message": "Message"
+    },
+    "placeholders": {
+      "fullName": "Enter your full name",
+      "phone": "+380 50 XXX XX XX",
+      "email": "example@email.com",
+      "selectService": "Select service",
+      "message": "Describe your concerns or questions"
+    },
+    "validation": {
+      "required": "{{field}} is required",
+      "invalidEmail": "Enter a valid email address",
+      "invalidPhone": "Enter a valid phone number",
+      "minLength": "{{field}} must contain at least {{min}} characters"
+    },
+    "messages": {
+      "success": "Request sent successfully!",
+      "successDescription": "Thank you for your inquiry. We will contact you within 30 minutes to confirm your appointment.",
+      "error": "Error",
+      "requiredFields": "* Required fields. We will contact you within 30 minutes.",
+      "emailOptional": "Optional field"
+    }
+  },
+  "services": {
+    "categories": {
+      "therapeutic": "Therapeutic Dentistry",
+      "surgical": "Surgical Dentistry",
+      "orthopedic": "Prosthetic Dentistry",
+      "orthodontics": "Orthodontics",
+      "aesthetic": "Aesthetic Dentistry",
+      "pediatric": "Pediatric Dentistry"
+    },
+    "list": {
+      "consultation": "Consultation",
+      "treatment": "Dental Treatment",
+      "cleaning": "Professional Hygiene",
+      "implants": "Dental Implants",
+      "orthodontics": "Orthodontics",
+      "prosthetics": "Prosthetics",
+      "whitening": "Teeth Whitening",
+      "surgery": "Oral Surgery"
+    }
+  },
+  "gallery": {
+    "categories": {
+      "all": "All Photos",
+      "clinic": "Clinic",
+      "equipment": "Equipment",
+      "team": "Team",
+      "beforeAfter": "Before/After"
+    },
+    "noPhotos": "No photos in this category yet",
+    "navigation": {
+      "close": "Close",
+      "previous": "Previous image",
+      "next": "Next image",
+      "viewImage": "View image"
+    }
+  },
+  "contact": {
+    "title": "Contact",
+    "description": "Contact us in the way that's most convenient for you or book an appointment online",
+    "contactInfo": "Contact Information",
+    "emergency": {
+      "title": "🚨 Emergency Care",
+      "description": "In case of acute pain or injury, contact us immediately:",
+      "phone": "📞 +380 50 455 47 74",
+      "availability": "We accept emergency calls 24/7"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "questions": {
+        "appointment": {
+          "q": "Do I need to book in advance?",
+          "a": "Yes, we work by appointment. This allows us to dedicate enough time and attention to each patient."
+        },
+        "reschedule": {
+          "q": "Can I reschedule an appointment?",
+          "a": "Yes, you can reschedule by notifying us 24 hours before your scheduled visit."
+        },
+        "documents": {
+          "q": "What documents are needed?",
+          "a": "Bring your passport or ID. If you have a medical card, please bring it too."
+        },
+        "warranty": {
+          "q": "Do you provide warranty?",
+          "a": "Yes, we provide warranty on all services according to medical standards and requirements."
+        }
+      }
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "Your Smile - Our Mission",
+      "description": "Professional dental care using the latest technologies and an individual approach to each patient.",
+      "whyChooseUs": "Why Choose Us?",
+      "benefits": [
+        "Painless Treatment",
+        "Warranty on All Services",
+        "Modern Equipment",
+        "Qualified Doctors"
+      ]
+    },
+    "features": {
+      "title": "Why Patients Choose Dental Story",
+      "subtitle": "We combine professionalism, modern technologies and an individual approach to achieve the best treatment results"
+    },
+    "services": {
+      "title": "Our Services",
+      "subtitle": "Full range of dental services for the whole family"
+    },
+    "cta": {
+      "title": "Ready for a Beautiful Smile?",
+      "description": "Book a free consultation and get your personalized treatment plan"
+    }
+  },
+  "about": {
+    "title": "About Our Clinic",
+    "subtitle": "Dental Story is a modern dental clinic that combines professionalism, innovative technologies, and an individual approach to each patient.",
+    "stats": {
+      "experience": "Years of Experience",
+      "patients": "Satisfied Patients",
+      "specialists": "Specialists",
+      "reviews": "Positive Reviews"
+    },
+    "story": {
+      "title": "Our Story",
+      "tagline": "Your Smile - Our Mission"
+    },
+    "values": {
+      "title": "Our Values",
+      "subtitle": "Principles that guide us in our daily work and relationships with patients"
+    },
+    "team": {
+      "title": "Our Team",
+      "subtitle": "Experienced doctors with higher education and international certificates"
+    },
+    "equipment": {
+      "title": "Modern Equipment"
+    }
+  },
+  "testimonials": {
+    "title": "Patient Reviews",
+    "subtitle": "The happiness of our patients is our greatest reward. Read real reviews from people who trusted us with their health",
+    "rating": "Rating: {{rating}} out of 5 stars",
+    "basedOn": "based on {{count}} reviews",
+    "cta": {
+      "question": "Want to become part of our happy patient family?",
+      "button": "Book Appointment"
+    }
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "Unfortunately, the page you're looking for doesn't exist or has been moved.",
+    "actions": {
+      "home": "Home",
+      "back": "Go Back"
+    },
+    "suggestions": {
+      "title": "Perhaps you were looking for:",
+      "services": "Services",
+      "about": "About",
+      "gallery": "Gallery",
+      "contact": "Contact"
+    }
+  },
+  "footer": {
+    "description": "Modern dental clinic providing a full range of services for your dental health. Professional doctors, state-of-the-art equipment, and an individual approach to each patient.",
+    "navigation": "Navigation",
+    "contacts": "Contacts",
+    "copyright": "© 2024 Dental Story. All rights reserved.",
+    "workingHours": {
+      "weekdays": "Mon-Fri: 9:00-19:00",
+      "saturday": "Sat: 9:00-16:00",
+      "sunday": "Sun: Closed"
+    },
+    "socialMedia": "Social Media"
+  },
+  "accessibility": {
+    "skipToContent": "Skip to main content",
+    "mainNavigation": "Main navigation",
+    "mobileMenu": "Mobile menu",
+    "contactInfo": "Contact information",
+    "siteNavigation": "Site navigation",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "dateFormat": {
+    "locale": "en-US",
+    "options": {
+      "year": "numeric",
+      "month": "long",
+      "day": "numeric"
+    }
+  },
+  "meta": {
+    "title": "Dental Story - Modern Dental Clinic in Kyiv | Dniprovskyi District",
+    "description": "Professional dental clinic on Akademika Korolova St. Full range of services: treatment, implants, orthodontics. Painless treatment, modern equipment. Booking: +380 50 455 47 74",
+    "keywords": "dentist Kyiv, dentist Korolova, dental clinic Dniprovskyi, dental treatment, dental implants, braces, teeth whitening, Dental Story"
+  }
+}
