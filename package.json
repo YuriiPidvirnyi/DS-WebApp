@@ -32,9 +32,11 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
+    "@sentry/browser": "^10.23.0",
     "@sentry/integrations": "^7.114.0",
     "@sentry/react": "^10.20.0",
     "@sentry/replay": "^7.116.0",
+    "@sentry/tracing": "^7.120.4",
     "@types/dompurify": "^3.0.5",
     "axios": "^1.12.2",
     "clsx": "^2.0.0",

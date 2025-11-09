@@ -1,11 +1,14 @@
 import { Component, ErrorInfo, ReactNode } from 'react'
-import { AlertCircle, Home, RefreshCw } from 'lucide-react'
+import { AlertCircle, Home, RefreshCw, MessageCircle } from 'lucide-react'
 import { Button } from './ui'
 import { Link } from 'react-router-dom'
+import { captureException } from '@/utils/sentry'
 
 interface ErrorBoundaryProps {
   children: ReactNode
   fallback?: ReactNode
+  onReset?: () => void
+  showReportDialog?: boolean
 }
 
 interface ErrorBoundaryState {
@@ -13,6 +16,8 @@ interface ErrorBoundaryState {
   error: Error | null
   errorInfo: ErrorInfo | null
   errorKey?: number
+  errorCount: number
+  lastErrorTime?: number
 }
 
 /**
@@ -22,11 +27,50 @@ interface ErrorBoundaryState {
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props)
-    this.state = {
+
+    // Restore error state from localStorage if available
+    const savedState = this.loadErrorState()
+
+    this.state = savedState || {
       hasError: false,
       error: null,
       errorInfo: null,
       errorKey: 0,
+      errorCount: 0,
+    }
+  }
+
+  private loadErrorState(): ErrorBoundaryState | null {
+    try {
+      const saved = localStorage.getItem('error_boundary_state')
+      if (!saved) return null
+
+      const parsed = JSON.parse(saved)
+      const timeSinceError = Date.now() - (parsed.lastErrorTime || 0)
+
+      // Clear error state if more than 1 hour has passed
+      if (timeSinceError > 3600000) {
+        localStorage.removeItem('error_boundary_state')
+        return null
+      }
+
+      return parsed
+    } catch {
+      return null
+    }
+  }
+
+  private saveErrorState(state: Partial<ErrorBoundaryState>): void {
+    try {
+      localStorage.setItem(
+        'error_boundary_state',
+        JSON.stringify({
+          ...state,
+          lastErrorTime: Date.now(),
+        })
+      )
+    } catch {
+      // Ignore localStorage errors
     }
   }
 
@@ -39,30 +83,70 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // Log the error to an error reporting service
-    this.setState({
+    const errorCount = this.state.errorCount + 1
+
+    // Report to Sentry in production
+    if (import.meta.env.PROD) {
+      try {
+        captureException(error, {
+          componentStack: errorInfo.componentStack,
+          errorCount,
+        })
+      } catch (sentryError) {
+        console.error('Failed to report error to Sentry:', sentryError)
+      }
+    }
+
+    // Update state with error details
+    const newState: Partial<ErrorBoundaryState> = {
       error,
       errorInfo,
-    })
-
-    // In production, we would log to a service like Sentry
-    if (import.meta.env.PROD) {
-      // Example: Send to Sentry or other error tracking service
-      // Sentry.captureException(error, { extra: errorInfo });
-      console.error('Error caught by ErrorBoundary:', error, errorInfo)
-    } else {
-      // In development, we log to console with more detail
-      console.error('Error caught by ErrorBoundary:', error, errorInfo)
+      errorCount,
     }
+
+    this.setState(newState as ErrorBoundaryState)
+
+    // Persist error state
+    this.saveErrorState(newState)
+
+    // Log to console
+    console.error('Error caught by ErrorBoundary:', error, errorInfo)
   }
 
   handleReset = (): void => {
+    // Clear persisted error state
+    try {
+      localStorage.removeItem('error_boundary_state')
+    } catch {
+      // Ignore
+    }
+
     this.setState({
       hasError: false,
       error: null,
       errorInfo: null,
       errorKey: this.state.errorKey ? this.state.errorKey + 1 : 1,
     })
+
+    // Call custom reset handler if provided
+    if (this.props.onReset) {
+      this.props.onReset()
+    }
+  }
+
+  handleReportFeedback = (): void => {
+    // Trigger user feedback collection via Sentry
+    const { error, errorInfo } = this.state
+
+    if (error) {
+      captureException(error, {
+        componentStack: errorInfo?.componentStack,
+        userFeedback: true,
+      })
+      alert(
+        'Дякуємо за повідомлення! Наша команда отримала інформацію про проблему.'
+      )
+    }
   }
 
   render(): ReactNode {
@@ -130,6 +214,17 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Спробувати ще раз
               </Button>
+
+              {import.meta.env.PROD && (
+                <Button
+                  onClick={this.handleReportFeedback}
+                  variant="secondary"
+                  className="flex items-center"
+                >
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  Повідомити про проблему
+                </Button>
+              )}
 
               <Link to="/">
                 <Button variant="outline" className="flex items-center">
