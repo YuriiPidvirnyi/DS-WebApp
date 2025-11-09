@@ -6,6 +6,10 @@ import App from './App.tsx'
 import { registerSW } from 'virtual:pwa-register'
 import performanceMonitor from './services/performance'
 import './i18n/config' // Initialize i18n
+import { initSecurity } from './utils/security' // Initialize security
+
+// Initialize security features
+initSecurity()
 
 // Initialize performance monitoring
 if (import.meta.env.PROD) {
