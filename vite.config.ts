@@ -22,7 +22,11 @@ export default defineConfig({
       workbox: {
         navigateFallback: '/offline.html',
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp}'],
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+        skipWaiting: true,
         runtimeCaching: [
+          // Google Fonts - CacheFirst (long-term cache)
           {
             urlPattern:
               /^https:\/\/(fonts\.gstatic\.com|fonts\.googleapis\.com)\//,
@@ -30,6 +34,53 @@ export default defineConfig({
             options: {
               cacheName: 'google-fonts',
               expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          // API responses - StaleWhileRevalidate (always fresh)
+          {
+            urlPattern: /^https:\/\/api\.cliniccards\.com\//,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'api-cache',
+              networkTimeoutSeconds: 10,
+              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 5 }, // 5 minutes
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          // Images - CacheFirst with fallback
+          {
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|avif)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'images-cache',
+              expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 30 }, // 30 days
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          // Static assets (JS, CSS) - CacheFirst with long TTL
+          {
+            urlPattern: /\.(?:js|css)$/,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'static-resources',
+              expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 7 }, // 7 days
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          // Google Analytics - NetworkOnly (no cache)
+          {
+            urlPattern: /^https:\/\/www\.google-analytics\.com\//,
+            handler: 'NetworkOnly',
+          },
+          // Same-origin navigation - NetworkFirst
+          {
+            urlPattern: /^\/[^.]*$/,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'pages-cache',
+              networkTimeoutSeconds: 5,
+              expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 }, // 1 hour
             },
           },
         ],
