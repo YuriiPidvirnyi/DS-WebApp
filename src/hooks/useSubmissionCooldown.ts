@@ -32,7 +32,7 @@ export function useSubmissionCooldown(key: string, defaultDurationSec = 30) {
     const cooldowns = readCooldowns()
     const expiresAt = cooldowns[key] || 0
     return { expiresAt }
-  }, [key, now])
+  }, [key])
 
   const remainingMs = Math.max(0, expiresAt - now)
   const remainingSec = Math.ceil(remainingMs / 1000)

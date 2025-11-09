@@ -97,7 +97,15 @@ function showHourBeforeReminder(reminder: ScheduledReminder) {
   }
 }
 
-function offerCalendarDownload(booking: any) {
+interface BookingData {
+  id: string
+  date: string
+  time: string
+  service: string
+  [key: string]: unknown
+}
+
+function offerCalendarDownload(booking: BookingData) {
   // Only proceed if we have the required data
   if (!booking.date || !booking.time || !booking.id) return
 

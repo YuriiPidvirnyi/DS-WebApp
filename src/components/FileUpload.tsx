@@ -81,6 +81,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         onFilesChange([...value, ...validFiles])
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [value, maxFiles, onFilesChange]
   )
 

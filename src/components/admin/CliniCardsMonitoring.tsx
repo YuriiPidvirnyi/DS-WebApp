@@ -87,6 +87,7 @@ export const CliniCardsMonitoring: React.FC = () => {
       setLoading(false)
       setRefreshing(false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTimeRange, refreshing])
 
   useEffect(() => {

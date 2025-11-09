@@ -6,6 +6,15 @@ import {
   useImperativeHandle,
 } from 'react'
 
+interface TurnstileWindow extends Window {
+  turnstile?: {
+    render: (element: HTMLElement, options: Record<string, unknown>) => string
+    reset: (widgetId: string) => void
+    remove: (widgetId: string) => void
+  }
+  onTurnstileLoad?: () => void
+}
+
 export interface TurnstileRef {
   getToken: () => string
   reset: () => void
@@ -31,7 +40,7 @@ const Turnstile = forwardRef<TurnstileRef, TurnstileProps>(function Turnstile(
   useImperativeHandle(ref, () => ({
     getToken: () => token,
     reset: () => {
-      const w = window as any
+      const w = window as TurnstileWindow
       if (widgetIdRef.current && w.turnstile?.reset) {
         w.turnstile.reset(widgetIdRef.current)
         setToken('')
@@ -47,7 +56,7 @@ const Turnstile = forwardRef<TurnstileRef, TurnstileProps>(function Turnstile(
       'script[data-turnstile]'
     )
     if (existing) {
-      if ((window as any).turnstile) setReady(true)
+      if ((window as TurnstileWindow).turnstile) setReady(true)
       existing.addEventListener('load', () => setReady(true))
       return
     }
@@ -58,13 +67,13 @@ const Turnstile = forwardRef<TurnstileRef, TurnstileProps>(function Turnstile(
     script.async = true
     script.defer = true
     script.setAttribute('data-turnstile', 'true')
-    ;(window as any).onTurnstileLoad = () => setReady(true)
+    ;(window as TurnstileWindow).onTurnstileLoad = () => setReady(true)
     document.head.appendChild(script)
   }, [siteKey])
 
   useEffect(() => {
     if (!siteKey || !ready || !containerRef.current) return
-    const w = window as any
+    const w = window as TurnstileWindow
     const widgetId = w.turnstile?.render(containerRef.current, {
       sitekey: siteKey,
       callback: (tokenResponse: string) => {
@@ -82,7 +91,7 @@ const Turnstile = forwardRef<TurnstileRef, TurnstileProps>(function Turnstile(
       theme: 'auto',
     })
 
-    widgetIdRef.current = widgetId
+    widgetIdRef.current = widgetId || null
 
     return () => {
       if (widgetId && w.turnstile?.remove) w.turnstile.remove(widgetId)

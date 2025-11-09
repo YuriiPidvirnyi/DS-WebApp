@@ -37,6 +37,7 @@ export async function verifyTurnstileToken(
   const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
   if (!siteKey) {
     // If no site key is configured, we'll simulate a successful response
+    // eslint-disable-next-line no-console
     console.log('Turnstile verification skipped (no site key configured)')
     return {
       success: true,

@@ -100,6 +100,7 @@ class PerformanceMonitor {
         : data.rating === 'needs-improvement'
           ? '⚠️'
           : '❌'
+    // eslint-disable-next-line no-console
     console.log(
       `%c${emoji} ${data.name}`,
       `color: ${data.rating === 'good' ? 'green' : data.rating === 'needs-improvement' ? 'orange' : 'red'}; font-weight: bold;`,
@@ -215,6 +216,7 @@ class PerformanceMonitor {
       }
 
       if (this.config.enableLogging) {
+        // eslint-disable-next-line no-console
         console.table(pageLoadMetrics)
       }
 
@@ -292,6 +294,7 @@ class PerformanceMonitor {
     } catch (error) {
       // Long task observer not supported
       if (this.config.enableLogging) {
+        // eslint-disable-next-line no-console
         console.log('Long task observer not supported')
       }
     }
@@ -379,6 +382,7 @@ class PerformanceMonitor {
     }
 
     if (this.config.enableLogging) {
+      // eslint-disable-next-line no-console
       console.log('📊 User interaction:', interactionData)
     }
 

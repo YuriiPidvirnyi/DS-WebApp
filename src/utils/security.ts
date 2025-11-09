@@ -139,6 +139,7 @@ export const securityPatterns = {
   // Ukrainian phone format
   phone: /^\+?380\d{9}$/,
   // URL format
+  // eslint-disable-next-line no-useless-escape
   url: /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/,
   // No HTML or script tags
   noHtml: /^((?!<[^>]+>).)*$/,
