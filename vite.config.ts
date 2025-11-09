@@ -9,7 +9,13 @@ export default defineConfig({
   appType: 'spa',
   base: '/',
   plugins: [
-    react(),
+    react({
+      jsxRuntime: 'automatic',
+      jsxImportSource: 'react',
+      babel: {
+        plugins: [],
+      },
+    }),
     securityHeadersPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
