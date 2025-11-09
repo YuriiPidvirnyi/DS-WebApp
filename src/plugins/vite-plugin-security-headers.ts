@@ -29,6 +29,7 @@ export function securityHeadersPlugin(): Plugin {
             "font-src 'self' data: https://fonts.gstatic.com",
             "connect-src 'self' ws: wss: https://www.google-analytics.com https://api.cliniccards.com",
             "frame-src 'self' https://www.google.com https://maps.google.com",
+            "worker-src 'self' blob:", // Allow Vite HMR workers
             "object-src 'none'",
             "base-uri 'self'",
             "form-action 'self'",

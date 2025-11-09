@@ -20,7 +20,7 @@ export default function PerformanceMetrics() {
         FID: 100,
         CLS: 0.1,
         FCP: 1800,
-        TTFB: 800,
+        TTFB: import.meta.env.DEV ? 5000 : 800, // Higher threshold for dev server
         INP: 200,
       }
       const threshold = thresholds[metric.name]
