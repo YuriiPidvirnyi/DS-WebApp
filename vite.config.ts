@@ -22,7 +22,6 @@ export default defineConfig({
       includeAssets: [
         'assets/images/favicon/favicon-16x16.png',
         'assets/images/favicon/favicon-32x32.png',
-        'assets/images/favicon/apple-touch-icon.png',
         'assets/images/favicon/safari-pinned-tab.svg',
       ],
       workbox: {
