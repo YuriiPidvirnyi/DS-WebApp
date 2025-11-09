@@ -92,7 +92,15 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, './src'),
     },
-    dedupe: ['react', 'react-dom', 'react-router-dom'],
+    dedupe: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      'react-helmet-async',
+      'react-hot-toast',
+      'react-i18next',
+      'react-hook-form',
+    ],
   },
   server: {
     port: 3000,
@@ -100,28 +108,26 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
+      external: [],
       output: {
         manualChunks: id => {
-          // Vendor chunks - React must be in a single chunk
+          // Vendor chunks - ALL React-related packages in one chunk
           if (
             id.includes('node_modules/react') ||
             id.includes('node_modules/react-dom') ||
             id.includes('node_modules/react-router') ||
-            id.includes('node_modules/scheduler')
+            id.includes('node_modules/scheduler') ||
+            id.includes('node_modules/react-helmet-async') ||
+            id.includes('node_modules/react-hot-toast') ||
+            id.includes('node_modules/react-i18next') ||
+            id.includes('node_modules/react-is') ||
+            id.includes('node_modules/@hookform') ||
+            id.includes('node_modules/react-hook-form')
           ) {
             return 'react-vendor'
           }
           if (id.includes('node_modules/lucide-react')) {
             return 'icons-vendor'
-          }
-          if (
-            id.includes('node_modules/@hookform') ||
-            id.includes('node_modules/react-hook-form')
-          ) {
-            return 'forms-vendor'
-          }
-          if (id.includes('node_modules/react-helmet-async')) {
-            return 'seo-vendor'
           }
           if (id.includes('node_modules/axios')) {
             return 'http-vendor'
@@ -157,13 +163,13 @@ export default defineConfig({
     },
     chunkSizeWarningLimit: 500,
     sourcemap: false,
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-      },
-    },
+    minify: 'esbuild', // Use esbuild instead of terser
+    // terserOptions: {
+    //   compress: {
+    //     drop_console: true,
+    //     drop_debugger: true,
+    //   },
+    // },
   },
   optimizeDeps: {
     include: [
