@@ -50,9 +50,15 @@ export const initializeSentry = async (): Promise<void> => {
     return
   }
 
-  // Check if Sentry DSN exists in environment variables
-  if (!dsn) {
-    console.warn('Sentry DSN not found in environment variables')
+  // Check if Sentry DSN exists and is valid
+  if (
+    !dsn ||
+    dsn.includes('YOUR_SENTRY_DSN') ||
+    dsn === 'your_sentry_dsn_here'
+  ) {
+    if (import.meta.env.DEV) {
+      console.info('ℹ️ Sentry not configured (optional)')
+    }
     return
   }
 

@@ -8,46 +8,8 @@ const ResourcePreloader = () => {
         return
       }
 
-      // Preload only existing critical images
-      const criticalImages = ['/assets/images/logo/dental-story-logo.svg']
-
-      const preloadResource = (src: string, as: string, type?: string) => {
-        try {
-          const link = document.createElement('link')
-          link.rel = 'preload'
-          link.href = src
-          link.as = as
-          if (type) link.type = type
-          if (as === 'font') link.crossOrigin = 'anonymous'
-
-          // Check if resource exists before preloading
-          link.onerror = () => {
-            if (import.meta.env.DEV) {
-              console.warn(`Preload failed for: ${src}`)
-            }
-            try {
-              if (link.parentNode) {
-                link.parentNode.removeChild(link)
-              }
-            } catch (e) {
-              if (import.meta.env.DEV) {
-                console.warn('Failed to remove failed preload link:', e)
-              }
-            }
-          }
-
-          document.head.appendChild(link)
-        } catch (error) {
-          if (import.meta.env.DEV) {
-            console.warn('Failed to create preload link for:', src, error)
-          }
-        }
-      }
-
-      // Preload critical images
-      criticalImages.forEach(src => {
-        preloadResource(src, 'image')
-      })
+      // Note: Logo removed from preload as it's not used immediately on page load
+      // It loads fast enough without preloading
 
       // Preload next likely page
       const prefetchPages = ['/services', '/booking', '/contact']
