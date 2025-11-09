@@ -37,11 +37,9 @@ export function addToQueue(
     saveQueue(queue)
 
     if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
       console.log(`Added ${type} submission to offline queue`)
     }
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error('Failed to add submission to queue:', error)
   }
 }

@@ -358,7 +358,6 @@ class AuditLogger {
     }
 
     if (severity === 'critical' || severity === 'error') {
-      // eslint-disable-next-line no-console
       console.error('[AUDIT]', log)
     }
   }
