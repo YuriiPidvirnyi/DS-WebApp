@@ -25,6 +25,7 @@
     "test:e2e:ui": "playwright test --ui",
     "perf:check": "node scripts/check-performance-budgets.js",
     "perf:build": "npm run build && npm run perf:check",
+    "seo:sitemap": "node scripts/generate-sitemap.js",
     "prepare": "husky",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
