@@ -108,57 +108,8 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      external: [],
       output: {
-        manualChunks: id => {
-          // Vendor chunks - ALL React-related packages in one chunk
-          if (
-            id.includes('node_modules/react') ||
-            id.includes('node_modules/react-dom') ||
-            id.includes('node_modules/react-router') ||
-            id.includes('node_modules/scheduler') ||
-            id.includes('node_modules/react-helmet-async') ||
-            id.includes('node_modules/react-hot-toast') ||
-            id.includes('node_modules/react-i18next') ||
-            id.includes('node_modules/react-is') ||
-            id.includes('node_modules/@hookform') ||
-            id.includes('node_modules/react-hook-form')
-          ) {
-            return 'react-vendor'
-          }
-          if (id.includes('node_modules/lucide-react')) {
-            return 'icons-vendor'
-          }
-          if (id.includes('node_modules/axios')) {
-            return 'http-vendor'
-          }
-          // Don't pre-bundle Sentry - let it load dynamically
-          // if (id.includes('node_modules/@sentry')) {
-          //   return 'sentry-vendor'
-          // }
-          if (id.includes('node_modules/zod')) {
-            return 'validation-vendor'
-          }
-
-          // Pages chunks
-          if (id.includes('/pages/Home')) return 'home-page'
-          if (id.includes('/pages/Booking')) return 'booking-page'
-          if (id.includes('/pages/Services')) return 'services-page'
-          if (id.includes('/pages/About')) return 'about-page'
-          if (id.includes('/pages/Contact')) return 'contact-page'
-          if (id.includes('/pages/Gallery')) return 'gallery-page'
-
-          // Components chunks
-          if (id.includes('/components/BookingForm'))
-            return 'booking-components'
-          if (id.includes('/components/Accessibility')) return 'a11y-components'
-          if (id.includes('/components/GoogleMap')) return 'map-components'
-
-          // Other vendor packages
-          if (id.includes('node_modules')) {
-            return 'vendor'
-          }
-        },
+        manualChunks: undefined, // Let Vite handle chunking automatically
       },
     },
     chunkSizeWarningLimit: 500,
