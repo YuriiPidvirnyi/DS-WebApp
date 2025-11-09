@@ -20,13 +20,13 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: [
-        'assets/images/favicon/favicon-16x16.png',
-        'assets/images/favicon/favicon-32x32.png',
-        'assets/images/favicon/safari-pinned-tab.svg',
+        // Favicons are handled by HTML link tags, don't precache them
+        // to avoid revision conflicts
       ],
       workbox: {
         navigateFallback: '/offline.html',
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp}'],
+        globIgnores: ['**/assets/images/favicon/**'],
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true,
