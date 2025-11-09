@@ -61,7 +61,6 @@
     "react-i18next": "^16.2.4",
     "react-router-dom": "^7.9.4",
     "tailwind-merge": "^3.3.1",
-    "web-vitals": "^5.1.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {
@@ -105,7 +104,8 @@
     "typescript": "^5.2.2",
     "vite": "^7.1.12",
     "vite-plugin-pwa": "^1.1.0",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "web-vitals": "^5.1.0"
   },
   "keywords": [
     "dental-clinic",
