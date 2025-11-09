@@ -25,6 +25,14 @@
       "purpose": "any maskable"
     }
   ],
+  "prefer_related_applications": false,
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "com.dentalstory.webapp",
+      "url": "https://play.google.com/store/apps/details?id=com.dentalstory.webapp"
+    }
+  ],
   "shortcuts": [
     {
       "name": "Записатися на прийом",
