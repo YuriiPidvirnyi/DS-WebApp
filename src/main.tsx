@@ -1,4 +1,4 @@
-import React from 'react'
+import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { HelmetProvider } from 'react-helmet-async'
 import { BrowserRouter as Router } from 'react-router-dom'
@@ -35,11 +35,11 @@ if ('requestIdleCallback' in window) {
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+  <StrictMode>
     <HelmetProvider>
       <Router>
         <App />
       </Router>
     </HelmetProvider>
-  </React.StrictMode>
+  </StrictMode>
 )
