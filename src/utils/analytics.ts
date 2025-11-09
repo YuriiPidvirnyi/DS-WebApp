@@ -45,7 +45,9 @@ export const initializeAnalytics = (): void => {
   // Check if GA ID exists in environment variables
   const gaId = import.meta.env.VITE_GOOGLE_ANALYTICS_ID
   if (!gaId) {
-    console.warn('Google Analytics ID not found in environment variables')
+    if (import.meta.env.DEV) {
+      console.info('ℹ️ Google Analytics ID not configured (optional in dev)')
+    }
     return
   }
 
@@ -69,7 +71,7 @@ export const initializeAnalytics = (): void => {
     })
 
     if (import.meta.env.DEV) {
-      console.warn('Google Analytics initialized')
+      console.info('✅ Google Analytics initialized')
     }
   }
 

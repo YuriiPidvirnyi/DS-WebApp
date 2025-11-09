@@ -13,9 +13,23 @@ export default function PerformanceMetrics() {
   const location = useLocation()
 
   const reportWebVitals = useCallback(async (metric: WebVitalsMetric) => {
-    // Log to console in development
+    // Log to console in development (only poor metrics)
     if (import.meta.env.DEV) {
-      console.warn(`Web Vital: ${metric.name}`, metric)
+      const thresholds: Record<string, number> = {
+        LCP: 2500,
+        FID: 100,
+        CLS: 0.1,
+        FCP: 1800,
+        TTFB: 800,
+        INP: 200,
+      }
+      const threshold = thresholds[metric.name]
+      if (threshold && metric.value > threshold * 1.5) {
+        console.warn(
+          `⚠️ Poor ${metric.name}: ${metric.value.toFixed(0)}ms`,
+          metric
+        )
+      }
     }
 
     // In production, we would send to analytics service
