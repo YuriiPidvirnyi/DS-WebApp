@@ -32,7 +32,11 @@ class MonitoringService {
   private readonly MAX_SESSION_EVENTS = 500
 
   // Performance Monitoring
-  trackMetric(name: string, value: number, tags?: Record<string, string>): void {
+  trackMetric(
+    name: string,
+    value: number,
+    tags?: Record<string, string>
+  ): void {
     const metric: MetricData = {
       name,
       value,
@@ -50,11 +54,19 @@ class MonitoringService {
     this.sendToEndpoint('/metrics', metric)
   }
 
-  trackTiming(name: string, duration: number, tags?: Record<string, string>): void {
+  trackTiming(
+    name: string,
+    duration: number,
+    tags?: Record<string, string>
+  ): void {
     this.trackMetric(`timing.${name}`, duration, tags)
   }
 
-  trackCount(name: string, count: number = 1, tags?: Record<string, string>): void {
+  trackCount(
+    name: string,
+    count: number = 1,
+    tags?: Record<string, string>
+  ): void {
     this.trackMetric(`count.${name}`, count, tags)
   }
 
@@ -99,7 +111,7 @@ class MonitoringService {
 
   startSessionRecording(): void {
     // Track clicks
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', e => {
       const target = e.target as HTMLElement
       this.recordSessionEvent('click', {
         tag: target.tagName,
@@ -125,7 +137,7 @@ class MonitoringService {
     })
 
     // Track errors
-    window.addEventListener('error', (e) => {
+    window.addEventListener('error', e => {
       this.trackError(e.error || e.message, 'error', {
         filename: e.filename,
         lineno: e.lineno,
@@ -134,7 +146,7 @@ class MonitoringService {
     })
 
     // Track unhandled promise rejections
-    window.addEventListener('unhandledrejection', (e) => {
+    window.addEventListener('unhandledrejection', e => {
       this.trackError(
         e.reason instanceof Error ? e.reason : String(e.reason),
         'error',
@@ -152,17 +164,20 @@ class MonitoringService {
     let filtered = [...this.metrics]
 
     if (filter?.name) {
-      filtered = filtered.filter((m) => m.name.includes(filter.name!))
+      filtered = filtered.filter(m => m.name.includes(filter.name!))
     }
 
     if (filter?.since) {
-      filtered = filtered.filter((m) => m.timestamp >= filter.since!)
+      filtered = filtered.filter(m => m.timestamp >= filter.since!)
     }
 
     return filtered
   }
 
-  getAggregatedMetrics(name: string, since?: number): {
+  getAggregatedMetrics(
+    name: string,
+    since?: number
+  ): {
     count: number
     sum: number
     avg: number
@@ -175,7 +190,7 @@ class MonitoringService {
       return { count: 0, sum: 0, avg: 0, min: 0, max: 0 }
     }
 
-    const values = metrics.map((m) => m.value)
+    const values = metrics.map(m => m.value)
     const sum = values.reduce((a, b) => a + b, 0)
 
     return {
@@ -188,15 +203,18 @@ class MonitoringService {
   }
 
   // Error Statistics
-  getErrors(filter?: { level?: ErrorEvent['level']; since?: number }): ErrorEvent[] {
+  getErrors(filter?: {
+    level?: ErrorEvent['level']
+    since?: number
+  }): ErrorEvent[] {
     let filtered = [...this.errors]
 
     if (filter?.level) {
-      filtered = filtered.filter((e) => e.level === filter.level)
+      filtered = filtered.filter(e => e.level === filter.level)
     }
 
     if (filter?.since) {
-      filtered = filtered.filter((e) => e.timestamp >= filter.since!)
+      filtered = filtered.filter(e => e.timestamp >= filter.since!)
     }
 
     return filtered
@@ -216,7 +234,9 @@ class MonitoringService {
     cls: number | null
     ttfb: number | null
   } {
-    const perf = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
+    const perf = performance.getEntriesByType(
+      'navigation'
+    )[0] as PerformanceNavigationTiming
 
     return {
       fcp: this.getFCP(),
@@ -249,9 +269,11 @@ class MonitoringService {
   private getCLS(): number | null {
     // This is simplified - in production, use web-vitals library
     let cls = 0
-    const entries = performance.getEntriesByType('layout-shift') as LayoutShift[]
-    
-    entries.forEach((entry) => {
+    const entries = performance.getEntriesByType(
+      'layout-shift'
+    ) as LayoutShift[]
+
+    entries.forEach(entry => {
       if (!entry.hadRecentInput) {
         cls += entry.value
       }
@@ -270,19 +292,28 @@ class MonitoringService {
     }
   } {
     const errorRate = this.getErrorRate(60000)
-    const responseTimeMetrics = this.getAggregatedMetrics('timing.api', Date.now() - 300000)
-    
+    const responseTimeMetrics = this.getAggregatedMetrics(
+      'timing.api',
+      Date.now() - 300000
+    )
+
     // @ts-expect-error - performance.memory is Chrome-specific extension
     const memoryUsage = performance.memory
       ? // @ts-expect-error - usedJSHeapSize is Chrome-specific
-        (performance.memory.usedJSHeapSize / performance.memory.jsHeapSizeLimit) * 100
+        (performance.memory.usedJSHeapSize /
+          performance.memory.jsHeapSizeLimit) *
+        100
       : 0
 
     let status: 'healthy' | 'degraded' | 'unhealthy' = 'healthy'
 
     if (errorRate > 0.1 || responseTimeMetrics.avg > 1000 || memoryUsage > 90) {
       status = 'unhealthy'
-    } else if (errorRate > 0.05 || responseTimeMetrics.avg > 500 || memoryUsage > 75) {
+    } else if (
+      errorRate > 0.05 ||
+      responseTimeMetrics.avg > 500 ||
+      memoryUsage > 75
+    ) {
       status = 'degraded'
     }
 
@@ -319,7 +350,7 @@ class MonitoringService {
     metrics: MetricData[]
     errors: ErrorEvent[]
     sessionEvents: SessionReplayEvent[]
-    health: ReturnType<typeof this.getHealthStatus>
+    health: ReturnType<MonitoringService['getHealthStatus']>
   } {
     return {
       metrics: this.getMetrics(),

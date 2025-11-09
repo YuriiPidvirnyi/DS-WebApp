@@ -99,15 +99,16 @@ interface ApiResponse<T> {
 
 class CliniCardsApiService {
   private config: CliniCardsConfig
-  private requestCache: Map<string, { data: any; timestamp: number }> = new Map()
+  private requestCache: Map<string, { data: any; timestamp: number }> =
+    new Map()
   private readonly CACHE_TTL = 5 * 60 * 1000 // 5 minutes
 
   constructor(config: CliniCardsConfig) {
     this.config = {
+      ...config,
       baseUrl: config.baseUrl || 'https://api.cliniccards.com/v1',
       timeout: config.timeout || 10000,
       retries: config.retries || 3,
-      ...config,
     }
   }
 
@@ -132,7 +133,7 @@ class CliniCardsApiService {
 
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${this.config.apiKey}`,
+      Authorization: `Bearer ${this.config.apiKey}`,
       'X-API-Version': '1.0',
       ...options.headers,
     }
@@ -143,7 +144,10 @@ class CliniCardsApiService {
     for (let attempt = 1; attempt <= this.config.retries!; attempt++) {
       try {
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), this.config.timeout)
+        const timeoutId = setTimeout(
+          () => controller.abort(),
+          this.config.timeout
+        )
 
         const response = await fetch(url, {
           ...options,
@@ -155,7 +159,10 @@ class CliniCardsApiService {
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}))
-          throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`)
+          throw new Error(
+            errorData.message ||
+              `HTTP ${response.status}: ${response.statusText}`
+          )
         }
 
         const data = await response.json()
@@ -168,7 +175,7 @@ class CliniCardsApiService {
         return { success: true, data }
       } catch (error) {
         lastError = error as Error
-        
+
         // Don't retry on 4xx errors
         if (error instanceof Error && error.message.includes('HTTP 4')) {
           break
@@ -176,7 +183,9 @@ class CliniCardsApiService {
 
         // Wait before retry (exponential backoff)
         if (attempt < this.config.retries!) {
-          await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000))
+          await new Promise(resolve =>
+            setTimeout(resolve, Math.pow(2, attempt) * 1000)
+          )
         }
       }
     }
@@ -203,7 +212,9 @@ class CliniCardsApiService {
       ...(params.doctorId && { doctor_id: params.doctorId }),
     })
 
-    return this.request<Schedule[]>(`/schedule?${queryParams}`, { method: 'GET' })
+    return this.request<Schedule[]>(`/schedule?${queryParams}`, {
+      method: 'GET',
+    })
   }
 
   /**
@@ -222,7 +233,9 @@ class CliniCardsApiService {
   /**
    * Create new appointment
    */
-  async createAppointment(appointment: Appointment): Promise<ApiResponse<{ id: string }>> {
+  async createAppointment(
+    appointment: Appointment
+  ): Promise<ApiResponse<{ id: string }>> {
     return this.request<{ id: string }>(
       '/appointments',
       {
@@ -348,17 +361,18 @@ class CliniCardsApiService {
       ...(params.patientId && { patient_id: params.patientId }),
     })
 
-    return this.request<TreatmentPlan[]>(
-      `/treatment-plans?${queryParams}`,
-      { method: 'GET' }
-    )
+    return this.request<TreatmentPlan[]>(`/treatment-plans?${queryParams}`, {
+      method: 'GET',
+    })
   }
 
   /**
    * Get treatment plan by ID
    */
   async getTreatmentPlan(planId: string): Promise<ApiResponse<TreatmentPlan>> {
-    return this.request<TreatmentPlan>(`/treatment-plans/${planId}`, { method: 'GET' })
+    return this.request<TreatmentPlan>(`/treatment-plans/${planId}`, {
+      method: 'GET',
+    })
   }
 
   // ============= WORK PERFORMED METHODS =============
@@ -379,7 +393,9 @@ class CliniCardsApiService {
       ...(params.doctorId && { doctor_id: params.doctorId }),
     })
 
-    return this.request<Procedure[]>(`/work-performed?${queryParams}`, { method: 'GET' })
+    return this.request<Procedure[]>(`/work-performed?${queryParams}`, {
+      method: 'GET',
+    })
   }
 
   // ============= PAYMENT METHODS =============
@@ -398,14 +414,18 @@ class CliniCardsApiService {
       ...(params.patientId && { patient_id: params.patientId }),
     })
 
-    return this.request<Payment[]>(`/payments?${queryParams}`, { method: 'GET' })
+    return this.request<Payment[]>(`/payments?${queryParams}`, {
+      method: 'GET',
+    })
   }
 
   /**
    * Get patient's payment history
    */
   async getPatientPayments(patientId: string): Promise<ApiResponse<Payment[]>> {
-    return this.request<Payment[]>(`/patients/${patientId}/payments`, { method: 'GET' })
+    return this.request<Payment[]>(`/patients/${patientId}/payments`, {
+      method: 'GET',
+    })
   }
 
   // ============= PRICE LIST METHODS =============
@@ -421,7 +441,9 @@ class CliniCardsApiService {
    * Get price for specific service
    */
   async getServicePrice(serviceId: string): Promise<ApiResponse<PriceItem>> {
-    return this.request<PriceItem>(`/price-list/${serviceId}`, { method: 'GET' })
+    return this.request<PriceItem>(`/price-list/${serviceId}`, {
+      method: 'GET',
+    })
   }
 
   // ============= UTILITY METHODS =============
@@ -436,7 +458,9 @@ class CliniCardsApiService {
   /**
    * Check API connection
    */
-  async healthCheck(): Promise<ApiResponse<{ status: string; version: string }>> {
+  async healthCheck(): Promise<
+    ApiResponse<{ status: string; version: string }>
+  > {
     return this.request<{ status: string; version: string }>(
       '/health',
       { method: 'GET' },
@@ -454,7 +478,9 @@ export function initCliniCardsApi(config: CliniCardsConfig): void {
 
 export function getCliniCardsApi(): CliniCardsApiService {
   if (!clinicardsApi) {
-    throw new Error('CliniCards API not initialized. Call initCliniCardsApi first.')
+    throw new Error(
+      'CliniCards API not initialized. Call initCliniCardsApi first.'
+    )
   }
   return clinicardsApi
 }
