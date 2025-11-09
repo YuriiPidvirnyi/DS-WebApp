@@ -92,6 +92,7 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, './src'),
     },
+    dedupe: ['react', 'react-dom', 'react-router-dom'],
   },
   server: {
     port: 3000,
@@ -101,15 +102,14 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: id => {
-          // Vendor chunks
+          // Vendor chunks - React must be in a single chunk
           if (
             id.includes('node_modules/react') ||
-            id.includes('node_modules/react-dom')
+            id.includes('node_modules/react-dom') ||
+            id.includes('node_modules/react-router') ||
+            id.includes('node_modules/scheduler')
           ) {
             return 'react-vendor'
-          }
-          if (id.includes('node_modules/react-router')) {
-            return 'router-vendor'
           }
           if (id.includes('node_modules/lucide-react')) {
             return 'icons-vendor'
