@@ -297,11 +297,13 @@ class MonitoringService {
       Date.now() - 300000
     )
 
-    // @ts-expect-error - performance.memory is Chrome-specific extension
-    const memoryUsage = performance.memory
-      ? // @ts-expect-error - usedJSHeapSize is Chrome-specific
-        (performance.memory.usedJSHeapSize /
-          performance.memory.jsHeapSizeLimit) *
+    // performance.memory is Chrome-specific extension
+    const perfWithMemory = performance as Performance & {
+      memory?: { usedJSHeapSize: number; jsHeapSizeLimit: number }
+    }
+    const memoryUsage = perfWithMemory.memory
+      ? (perfWithMemory.memory.usedJSHeapSize /
+          perfWithMemory.memory.jsHeapSizeLimit) *
         100
       : 0
 
