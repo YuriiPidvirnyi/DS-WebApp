@@ -1,16 +1,14 @@
-import React from 'react'
-
 interface LogoProps {
   variant?: 'default' | 'white'
   size?: 'sm' | 'md' | 'lg'
   className?: string
 }
 
-const Logo: React.FC<LogoProps> = ({
+const Logo = ({
   variant = 'default',
   size = 'md',
   className = '',
-}) => {
+}: LogoProps) => {
   const sizeClasses: Record<NonNullable<LogoProps['size']>, string> = {
     sm: 'w-32 h-10',
     md: 'w-48 h-12',

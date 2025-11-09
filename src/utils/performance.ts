@@ -2,7 +2,6 @@
  * Performance monitoring and Core Web Vitals tracking
  */
 
-import React from 'react'
 import type { Metric } from 'web-vitals'
 
 export interface PerformanceMetrics {
@@ -226,12 +225,14 @@ export const performanceMonitor = new PerformanceMonitor()
 /**
  * React hook for performance monitoring
  */
+import { useState, useEffect } from 'react'
+
 export function usePerformanceMonitoring(
   onMetricsUpdate?: (metrics: PerformanceMetrics) => void
 ): PerformanceMetrics {
-  const [metrics, setMetrics] = React.useState<PerformanceMetrics>({})
+  const [metrics, setMetrics] = useState<PerformanceMetrics>({})
 
-  React.useEffect(() => {
+  useEffect(() => {
     const unsubscribe = performanceMonitor.subscribe(newMetrics => {
       setMetrics(newMetrics)
       onMetricsUpdate?.(newMetrics)
