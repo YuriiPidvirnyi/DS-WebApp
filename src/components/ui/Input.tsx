@@ -1,6 +1,42 @@
 import { InputHTMLAttributes, TextareaHTMLAttributes, forwardRef } from 'react'
 import clsx from 'clsx'
 
+// Helper function to determine autocomplete value based on input type and name
+const getAutoCompleteFromType = (
+  type?: string,
+  name?: string
+): string | undefined => {
+  if (!type && !name) return undefined
+
+  // Common autocomplete values based on type
+  const typeMap: Record<string, string> = {
+    email: 'email',
+    tel: 'tel',
+    url: 'url',
+  }
+
+  if (type && typeMap[type]) return typeMap[type]
+
+  // Common autocomplete values based on name
+  if (name) {
+    const nameLower = name.toLowerCase()
+    if (nameLower.includes('name') && !nameLower.includes('user')) return 'name'
+    if (nameLower.includes('firstname') || nameLower.includes('first-name'))
+      return 'given-name'
+    if (nameLower.includes('lastname') || nameLower.includes('last-name'))
+      return 'family-name'
+    if (nameLower.includes('email')) return 'email'
+    if (nameLower.includes('phone') || nameLower.includes('tel')) return 'tel'
+    if (nameLower.includes('address')) return 'street-address'
+    if (nameLower.includes('city')) return 'address-level2'
+    if (nameLower.includes('postal') || nameLower.includes('zip'))
+      return 'postal-code'
+    if (nameLower.includes('country')) return 'country-name'
+  }
+
+  return undefined
+}
+
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
   error?: string
@@ -50,6 +86,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               : helperText
                 ? `${inputId}-helper`
                 : undefined
+          }
+          autoComplete={
+            props.autoComplete ||
+            getAutoCompleteFromType(props.type, props.name)
           }
           {...props}
         />
