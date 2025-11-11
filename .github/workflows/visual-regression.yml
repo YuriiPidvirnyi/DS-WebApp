@@ -30,6 +30,7 @@ jobs:
         run: |
           rm -rf node_modules package-lock.json
           npm install
+          npm install --no-save @rollup/rollup-linux-x64-gnu
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
@@ -122,6 +123,7 @@ jobs:
         run: |
           rm -rf node_modules package-lock.json
           npm install
+          npm install --no-save @rollup/rollup-linux-x64-gnu
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
