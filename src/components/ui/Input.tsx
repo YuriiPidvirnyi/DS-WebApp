@@ -1,6 +1,42 @@
 import { InputHTMLAttributes, TextareaHTMLAttributes, forwardRef } from 'react'
 import clsx from 'clsx'
 
+// Helper function to determine autocomplete value based on input type and name
+const getAutoCompleteFromType = (
+  type?: string,
+  name?: string
+): string | undefined => {
+  if (!type && !name) return undefined
+
+  // Common autocomplete values based on type
+  const typeMap: Record<string, string> = {
+    email: 'email',
+    tel: 'tel',
+    url: 'url',
+  }
+
+  if (type && typeMap[type]) return typeMap[type]
+
+  // Common autocomplete values based on name
+  if (name) {
+    const nameLower = name.toLowerCase()
+    if (nameLower.includes('name') && !nameLower.includes('user')) return 'name'
+    if (nameLower.includes('firstname') || nameLower.includes('first-name'))
+      return 'given-name'
+    if (nameLower.includes('lastname') || nameLower.includes('last-name'))
+      return 'family-name'
+    if (nameLower.includes('email')) return 'email'
+    if (nameLower.includes('phone') || nameLower.includes('tel')) return 'tel'
+    if (nameLower.includes('address')) return 'street-address'
+    if (nameLower.includes('city')) return 'address-level2'
+    if (nameLower.includes('postal') || nameLower.includes('zip'))
+      return 'postal-code'
+    if (nameLower.includes('country')) return 'country-name'
+  }
+
+  return undefined
+}
+
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
   error?: string
@@ -10,15 +46,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
-    {
-      label,
-      error,
-      helperText,
-      fullWidth = false,
-      className,
-      id,
-      ...props
-    },
+    { label, error, helperText, fullWidth = false, className, id, ...props },
     ref
   ) => {
     const inputId = id || label?.toLowerCase().replace(/\s+/g, '-')
@@ -53,7 +81,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
           aria-invalid={error ? 'true' : 'false'}
           aria-describedby={
-            error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined
+            error
+              ? `${inputId}-error`
+              : helperText
+                ? `${inputId}-helper`
+                : undefined
+          }
+          autoComplete={
+            props.autoComplete ||
+            getAutoCompleteFromType(props.type, props.name)
           }
           {...props}
         />
@@ -69,10 +105,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
 
         {!error && helperText && (
-          <p
-            id={`${inputId}-helper`}
-            className="mt-2 text-sm text-gray-500"
-          >
+          <p id={`${inputId}-helper`} className="mt-2 text-sm text-gray-500">
             {helperText}
           </p>
         )}
@@ -94,15 +127,7 @@ export interface TextareaProps
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (
-    {
-      label,
-      error,
-      helperText,
-      fullWidth = false,
-      className,
-      id,
-      ...props
-    },
+    { label, error, helperText, fullWidth = false, className, id, ...props },
     ref
   ) => {
     const textareaId = id || label?.toLowerCase().replace(/\s+/g, '-')
@@ -140,8 +165,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             error
               ? `${textareaId}-error`
               : helperText
-              ? `${textareaId}-helper`
-              : undefined
+                ? `${textareaId}-helper`
+                : undefined
           }
           {...props}
         />
@@ -157,10 +182,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         )}
 
         {!error && helperText && (
-          <p
-            id={`${textareaId}-helper`}
-            className="mt-2 text-sm text-gray-500"
-          >
+          <p id={`${textareaId}-helper`} className="mt-2 text-sm text-gray-500">
             {helperText}
           </p>
         )}
@@ -172,8 +194,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 Textarea.displayName = 'Textarea'
 
 // Select component
-export interface SelectProps
-  extends InputHTMLAttributes<HTMLSelectElement> {
+export interface SelectProps extends InputHTMLAttributes<HTMLSelectElement> {
   label?: string
   error?: string
   helperText?: string
@@ -230,8 +251,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             error
               ? `${selectId}-error`
               : helperText
-              ? `${selectId}-helper`
-              : undefined
+                ? `${selectId}-helper`
+                : undefined
           }
           {...props}
         >
@@ -249,10 +270,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         )}
 
         {!error && helperText && (
-          <p
-            id={`${selectId}-helper`}
-            className="mt-2 text-sm text-gray-500"
-          >
+          <p id={`${selectId}-helper`} className="mt-2 text-sm text-gray-500">
             {helperText}
           </p>
         )}

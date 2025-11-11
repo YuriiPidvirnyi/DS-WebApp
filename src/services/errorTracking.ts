@@ -143,6 +143,7 @@ class ErrorTracker {
       })
 
       this.initialized = true
+      // eslint-disable-next-line no-console
       console.log('Sentry initialized successfully')
     } catch (error) {
       console.error('Failed to initialize Sentry:', error)

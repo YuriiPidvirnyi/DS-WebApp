@@ -18,8 +18,10 @@ type BookingDetails = {
 export default function BookingSuccess() {
   const [params] = useSearchParams()
   const ref = params.get('ref')
-  const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(null)
-  
+  const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(
+    null
+  )
+
   useEffect(() => {
     try {
       const saved = localStorage.getItem('last_booking')
@@ -30,7 +32,10 @@ export default function BookingSuccess() {
     } catch {}
   }, [])
 
-  const canCreateEvent = useMemo(() => Boolean(bookingDetails?.date && bookingDetails?.time && ref), [bookingDetails, ref])
+  const canCreateEvent = useMemo(
+    () => Boolean(bookingDetails?.date && bookingDetails?.time && ref),
+    [bookingDetails, ref]
+  )
 
   const handleAddToCalendar = () => {
     if (!bookingDetails || !ref) return
@@ -41,7 +46,8 @@ export default function BookingSuccess() {
     const ics = createICSEvent({
       uid: ref,
       title: `Візит: ${bookingDetails.service}`,
-      description: `Запис №${ref}. Пацієнт: ${bookingDetails.name || ''}`.trim(),
+      description:
+        `Запис №${ref}. Пацієнт: ${bookingDetails.name || ''}`.trim(),
       location: 'Dental Studio',
       start: startLocal,
       end: endLocal,
@@ -54,20 +60,38 @@ export default function BookingSuccess() {
     <div className="py-16">
       <Helmet>
         <title>Запис створено — Dental Story</title>
-        <meta name="description" content="Дякуємо! Ми зв'яжемося для підтвердження запису. Додайте подію в календар та увімкніть нагадування." />
-        <link rel="canonical" href="https://dentalstory.com.ua/booking/success" />
+        <meta
+          name="description"
+          content="Дякуємо! Ми зв'яжемося для підтвердження запису. Додайте подію в календар та увімкніть нагадування."
+        />
+        <link
+          rel="canonical"
+          href="https://dentalstory.com.ua/booking/success"
+        />
       </Helmet>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Дякуємо! Запис створено</h1>
-        <p className="text-gray-600 mb-6">Ми зв'яжемося з вами для підтвердження найближчим часом.</p>
-        
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          Дякуємо! Запис створено
+        </h1>
+        <p className="text-gray-600 mb-6">
+          Ми зв'яжемося з вами для підтвердження найближчим часом.
+        </p>
+
         {/* Appointment details */}
         <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6 mx-auto max-w-md">
-          <h2 className="text-lg font-medium text-gray-900 mb-3">Деталі запису</h2>
+          <h2 className="text-lg font-medium text-gray-900 mb-3">
+            Деталі запису
+          </h2>
           <div className="space-y-2 text-sm">
-            <p className="text-gray-500 flex items-center gap-2">Номер запису: <span className="font-mono font-medium text-gray-900">{ref}</span>
+            <p className="text-gray-500 flex items-center gap-2">
+              Номер запису:{' '}
+              <span className="font-mono font-medium text-gray-900">{ref}</span>
               <button
-                onClick={async () => { try { await navigator.clipboard.writeText(ref || ''); } catch {} }}
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(ref || '')
+                  } catch {}
+                }}
                 className="text-xs px-2 py-0.5 border border-gray-300 rounded hover:bg-gray-50"
               >
                 Копіювати
@@ -75,15 +99,35 @@ export default function BookingSuccess() {
             </p>
             {bookingDetails && (
               <>
-                <p className="text-gray-500">Послуга: <span className="font-medium text-gray-900">{bookingDetails.service}</span></p>
+                <p className="text-gray-500">
+                  Послуга:{' '}
+                  <span className="font-medium text-gray-900">
+                    {bookingDetails.service}
+                  </span>
+                </p>
                 {bookingDetails.date && (
-                  <p className="text-gray-500">Дата: <span className="font-medium text-gray-900">{bookingDetails.date}</span></p>
+                  <p className="text-gray-500">
+                    Дата:{' '}
+                    <span className="font-medium text-gray-900">
+                      {bookingDetails.date}
+                    </span>
+                  </p>
                 )}
                 {bookingDetails.time && (
-                  <p className="text-gray-500">Час: <span className="font-medium text-gray-900">{bookingDetails.time}</span></p>
+                  <p className="text-gray-500">
+                    Час:{' '}
+                    <span className="font-medium text-gray-900">
+                      {bookingDetails.time}
+                    </span>
+                  </p>
                 )}
                 {bookingDetails.name && (
-                  <p className="text-gray-500">Ім'я: <span className="font-medium text-gray-900">{bookingDetails.name}</span></p>
+                  <p className="text-gray-500">
+                    Ім'я:{' '}
+                    <span className="font-medium text-gray-900">
+                      {bookingDetails.name}
+                    </span>
+                  </p>
                 )}
               </>
             )}
@@ -91,16 +135,29 @@ export default function BookingSuccess() {
         </div>
         <div className="flex flex-col items-center gap-4 mb-6">
           <MicroFeedback form="appointment" refId={ref || undefined} />
-          
+
           <div className="w-full max-w-md">
             <ReminderSettings />
           </div>
         </div>
         <div className="flex justify-center gap-3">
-          <Link to="/" className="px-5 py-2 rounded-lg bg-dental-teal text-white">На головну</Link>
-          <Link to="/booking" className="px-5 py-2 rounded-lg bg-gray-100 text-gray-800">Створити ще один запис</Link>
+          <Link
+            to="/"
+            className="px-5 py-2 rounded-lg bg-dental-teal text-white"
+          >
+            На головну
+          </Link>
+          <Link
+            to="/booking"
+            className="px-5 py-2 rounded-lg bg-gray-100 text-gray-800"
+          >
+            Створити ще один запис
+          </Link>
           {canCreateEvent && (
-            <button onClick={handleAddToCalendar} className="px-5 py-2 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 inline-flex items-center gap-2">
+            <button
+              onClick={handleAddToCalendar}
+              className="px-5 py-2 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 inline-flex items-center gap-2"
+            >
               <CalendarPlus className="h-5 w-5" /> Додати в календар
             </button>
           )}

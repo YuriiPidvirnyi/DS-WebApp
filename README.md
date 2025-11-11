@@ -25,23 +25,26 @@ Modern, responsive website for Dental Story dental clinic built with React, Type
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
 
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <repository-url>
 cd dental-story-webapp
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -71,6 +74,7 @@ VITE_TELEGRAM_URL=https://t.me/dentalstory
 ```
 
 Notes:
+
 - Dev server runs on port 3000 (see `vite.config.ts`). If it's busy, change the port or stop the process occupying it.
 - Backend should be available at `VITE_API_URL`; otherwise some features will be limited locally.
 
@@ -143,6 +147,7 @@ MIT License - see LICENSE file for details.
 ## Contact
 
 For questions about this website, contact Dental Story clinic:
+
 - **Address:** Kyiv, Academician Koroleva Street, 10, Dniprovsky District
 - **Phone:** +380 50 455 47 74
 - **Email:** info@dentalstory.com.ua

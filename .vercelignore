@@ -1,0 +1,46 @@
+# Dependencies
+node_modules
+
+# Testing
+coverage
+.nyc_output
+tests
+playwright-report
+test-results
+
+# Development
+.vscode
+.idea
+*.log
+*.lock
+.env.local
+.env.*.local
+
+# Documentation
+docs
+*.md
+!README.md
+
+# Storybook
+storybook-static
+.storybook
+
+# Build artifacts (will be rebuilt)
+dist
+.cache
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# CI/CD
+.github
+.husky
+
+# Scripts
+scripts
+
+# Misc
+.DS_Store
+Thumbs.db

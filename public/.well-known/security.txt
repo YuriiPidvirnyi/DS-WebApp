@@ -1,0 +1,25 @@
+Contact: mailto:info@dentalstory.ua
+Expires: 2025-12-31T23:59:59.000Z
+Preferred-Languages: uk, en
+Canonical: https://dentalstory.com.ua/.well-known/security.txt
+
+# Security Policy
+
+We take security seriously. If you discover a security vulnerability,
+please report it to us privately.
+
+# Reporting Process
+
+1. Email us at info@dentalstory.ua with details
+2. Include steps to reproduce the vulnerability
+3. Allow us reasonable time to address the issue
+4. We will keep you informed of our progress
+
+# Out of Scope
+
+- Social engineering attacks
+- Phishing attacks
+- Physical security issues
+- DoS/DDoS attacks
+
+Thank you for helping keep Dental Story and our users safe!

@@ -1,7 +1,14 @@
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import axios, {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+} from 'axios'
 
 // Base URL and timeouts
-const BASE_URL = (import.meta.env.VITE_API_URL as string | undefined) || 'http://localhost:3001/api'
+const BASE_URL =
+  (import.meta.env.VITE_API_URL as string | undefined) ||
+  'http://localhost:3001/api'
 const TIMEOUT = 10_000
 
 // Simple in-memory cache for GET requests
@@ -35,35 +42,40 @@ const http: AxiosInstance = axios.create({
 })
 
 // Request interceptor: add auth token, request ID, etc.
-http.interceptors.request.use((config) => {
+http.interceptors.request.use(config => {
   // Attach correlation/request id
   config.headers = config.headers || {}
-  config.headers['X-Request-Id'] = crypto.randomUUID ? crypto.randomUUID() : String(Date.now())
+  config.headers['X-Request-Id'] = crypto.randomUUID
+    ? crypto.randomUUID()
+    : String(Date.now())
 
   // Optional: attach bearer token if available (placeholder)
   const token = (window as any)?.__AUTH_TOKEN__ as string | undefined
   if (token) {
     config.headers['Authorization'] = `Bearer ${token}`
   }
-  
+
   // Apply rate limiting (except for GET requests which are cached)
   if (config.method?.toLowerCase() !== 'get') {
     const endpoint = `${config.method?.toUpperCase() || 'UNK'}:${config.baseURL || ''}${config.url}`
     const now = Date.now()
-    const rateLimit = rateLimits.get(endpoint) || { count: 0, resetAt: now + RATE_WINDOW }
-    
+    const rateLimit = rateLimits.get(endpoint) || {
+      count: 0,
+      resetAt: now + RATE_WINDOW,
+    }
+
     // Reset counter if window expired
     if (rateLimit.resetAt <= now) {
       rateLimit.count = 0
       rateLimit.resetAt = now + RATE_WINDOW
     }
-    
+
     // Check if rate limited
     if (rateLimit.count >= MAX_REQUESTS) {
       const retryAfter = rateLimit.resetAt - now
       throw new RateLimitExceededError(endpoint, retryAfter)
     }
-    
+
     // Increment counter and update map
     rateLimit.count++
     rateLimits.set(endpoint, rateLimit)
@@ -77,14 +89,15 @@ http.interceptors.request.use((config) => {
       // Cancel request and return cached response via adapter
       return {
         ...config,
-        adapter: async () => ({
-          data: cached.data,
-          status: 200,
-          statusText: 'OK (cache)',
-          headers: {},
-          config,
-          request: {},
-        } as AxiosResponse),
+        adapter: async () =>
+          ({
+            data: cached.data,
+            status: 200,
+            statusText: 'OK (cache)',
+            headers: {},
+            config,
+            request: {},
+          }) as AxiosResponse,
       }
     }
   }
@@ -94,7 +107,7 @@ http.interceptors.request.use((config) => {
 
 // Response interceptor: cache GETs and retry on transient errors
 http.interceptors.response.use(
-  (response) => {
+  response => {
     // Cache GET responses
     const config = response.config
     if (config.method?.toLowerCase() === 'get') {
@@ -105,32 +118,39 @@ http.interceptors.response.use(
   },
   async (error: AxiosError) => {
     // Handle rate limit errors
-    if (error.name === 'RateLimitExceededError' && error instanceof RateLimitExceededError) {
+    if (
+      error.name === 'RateLimitExceededError' &&
+      error instanceof RateLimitExceededError
+    ) {
       console.warn(`Rate limit exceeded. Retry after ${error.retryAfter}ms.`)
       return Promise.reject(error)
     }
-    
-    const config = error.config as (AxiosRequestConfig & { __retryCount?: number }) | undefined
+
+    const config = error.config as
+      | (AxiosRequestConfig & { __retryCount?: number })
+      | undefined
     const status = error.response?.status
 
     // Retry on network errors, 429, and 5xx (up to 3 times)
-    const shouldRetry = !status || status === 429 || (status >= 500 && status < 600)
+    const shouldRetry =
+      !status || status === 429 || (status >= 500 && status < 600)
     if (config && shouldRetry) {
       config.__retryCount = (config.__retryCount || 0) + 1
       if (config.__retryCount <= 3) {
         const delay = 250 * Math.pow(2, config.__retryCount) // 250ms, 500ms, 1000ms
-        await new Promise((r) => setTimeout(r, delay))
+        await new Promise(r => setTimeout(r, delay))
         return http(config)
       }
     }
-    
+
     // If we get a 429 from the server, update our rate limiting knowledge
     if (status === 429 && config?.url) {
       const endpoint = `${config.method?.toUpperCase() || 'UNK'}:${config.baseURL || ''}${config.url}`
-      const retryAfter = parseInt(error.response?.headers['retry-after'] || '60', 10) * 1000
-      rateLimits.set(endpoint, { 
-        count: MAX_REQUESTS, 
-        resetAt: Date.now() + retryAfter 
+      const retryAfter =
+        parseInt(error.response?.headers['retry-after'] || '60', 10) * 1000
+      rateLimits.set(endpoint, {
+        count: MAX_REQUESTS,
+        resetAt: Date.now() + retryAfter,
       })
     }
 

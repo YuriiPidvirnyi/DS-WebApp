@@ -1,7 +1,8 @@
 import { useState, useEffect, ImgHTMLAttributes } from 'react'
 import { twMerge } from 'tailwind-merge'
 
-export interface ResponsiveImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src'> {
+export interface ResponsiveImageProps
+  extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src'> {
   src: string
   webpSrc?: string
   fallbackSrc?: string
@@ -19,7 +20,7 @@ export interface ResponsiveImageProps extends Omit<ImgHTMLAttributes<HTMLImageEl
 
 /**
  * ResponsiveImage component with WebP support and lazy loading
- * 
+ *
  * Features:
  * - Automatic WebP format support with fallback
  * - Lazy loading for better performance
@@ -48,9 +49,9 @@ export default function ResponsiveImage({
   const [error, setError] = useState(false)
 
   // Generate an aspect ratio style if dimensions are provided
-  const aspectRatioStyle = aspectRatio 
-    ? { aspectRatio } 
-    : (width && height) 
+  const aspectRatioStyle = aspectRatio
+    ? { aspectRatio }
+    : width && height
       ? { aspectRatio: `${width} / ${height}` }
       : {}
 

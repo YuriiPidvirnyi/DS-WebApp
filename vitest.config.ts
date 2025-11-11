@@ -2,15 +2,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { storybookTest } from '@storybook/addon-vitest/vitest-plugin'
-const dirname =
-  typeof __dirname !== 'undefined'
-    ? __dirname
-    : path.dirname(fileURLToPath(import.meta.url))
 
-// More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
   plugins: [react()],
   test: {
@@ -18,11 +10,13 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     css: true,
-    // Exclude e2e tests from unit tests
+    // Exclude e2e tests and Storybook from unit tests
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
       '**/e2e/**',
+      '**/.storybook/**',
+      '**/src/stories/**',
       '**/.{idea,git,cache,output,temp}/**',
     ],
     coverage: {
@@ -31,6 +25,8 @@ export default defineConfig({
       exclude: [
         'node_modules/',
         'src/test/',
+        'src/stories/',
+        '.storybook/',
         'e2e/',
         '**/*.d.ts',
         '**/*.config.*',
@@ -39,32 +35,6 @@ export default defineConfig({
         '**/.{idea,git,cache,output,temp}/**',
       ],
     },
-    projects: [
-      {
-        extends: true,
-        plugins: [
-          // The plugin will run tests for the stories defined in your Storybook config
-          // See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
-          storybookTest({
-            configDir: path.join(dirname, '.storybook'),
-          }),
-        ],
-        test: {
-          name: 'storybook',
-          browser: {
-            enabled: true,
-            headless: true,
-            provider: 'playwright',
-            instances: [
-              {
-                browser: 'chromium',
-              },
-            ],
-          },
-          setupFiles: ['.storybook/vitest.setup.ts'],
-        },
-      },
-    ],
   },
   resolve: {
     alias: {

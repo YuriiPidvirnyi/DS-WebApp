@@ -18,7 +18,7 @@ const LiveRegion: React.FC<LiveRegionProps> = ({
 
     // Clear the region first to ensure the message is announced
     regionRef.current.textContent = ''
-    
+
     if (message) {
       // Small delay to ensure screen readers pick up the change
       const timer = setTimeout(() => {
@@ -56,12 +56,15 @@ export default LiveRegion
 export const useLiveRegion = () => {
   const regionRef = useRef<HTMLDivElement>(null)
 
-  const announce = (message: string, politeness: 'polite' | 'assertive' = 'polite') => {
+  const announce = (
+    message: string,
+    politeness: 'polite' | 'assertive' = 'polite'
+  ) => {
     if (!regionRef.current) return
 
     // Update aria-live attribute if needed
     regionRef.current.setAttribute('aria-live', politeness)
-    
+
     // Clear and set message
     regionRef.current.textContent = ''
     setTimeout(() => {

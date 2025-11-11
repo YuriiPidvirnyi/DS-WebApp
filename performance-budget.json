@@ -1,0 +1,38 @@
+{
+  "budgets": [
+    {
+      "resourceType": "script",
+      "budget": 300
+    },
+    {
+      "resourceType": "stylesheet",
+      "budget": 50
+    },
+    {
+      "resourceType": "image",
+      "budget": 500
+    },
+    {
+      "resourceType": "font",
+      "budget": 100
+    },
+    {
+      "resourceType": "document",
+      "budget": 50
+    },
+    {
+      "resourceType": "total",
+      "budget": 1000
+    }
+  ],
+  "timings": {
+    "firstContentfulPaint": 1800,
+    "largestContentfulPaint": 2500,
+    "firstInputDelay": 100,
+    "cumulativeLayoutShift": 0.1,
+    "totalBlockingTime": 300,
+    "speedIndex": 3000,
+    "timeToInteractive": 3500,
+    "maxPotentialFID": 130
+  }
+}

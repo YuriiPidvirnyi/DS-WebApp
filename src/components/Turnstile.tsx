@@ -1,13 +1,28 @@
-import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react'
+import {
+  useEffect,
+  useRef,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+} from 'react'
+
+interface TurnstileWindow extends Window {
+  turnstile?: {
+    render: (element: HTMLElement, options: Record<string, unknown>) => string
+    reset: (widgetId: string) => void
+    remove: (widgetId: string) => void
+  }
+  onTurnstileLoad?: () => void
+}
 
 export interface TurnstileRef {
-  getToken: () => string;
-  reset: () => void;
+  getToken: () => string
+  reset: () => void
 }
 
 interface TurnstileProps {
-  onVerify?: (token: string) => void;
-  className?: string;
+  onVerify?: (token: string) => void
+  className?: string
 }
 
 // Cloudflare Turnstile widget wrapper (no-op if no site key)
@@ -20,42 +35,45 @@ const Turnstile = forwardRef<TurnstileRef, TurnstileProps>(function Turnstile(
   const [token, setToken] = useState<string>('')
   const widgetIdRef = useRef<string | null>(null)
   const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
-  
+
   // Expose methods for parents
   useImperativeHandle(ref, () => ({
     getToken: () => token,
     reset: () => {
-      const w = window as any
+      const w = window as TurnstileWindow
       if (widgetIdRef.current && w.turnstile?.reset) {
         w.turnstile.reset(widgetIdRef.current)
         setToken('')
       }
-    }
+    },
   }))
 
   useEffect(() => {
     if (!siteKey) return
 
     // Check existing script
-    const existing = document.querySelector<HTMLScriptElement>('script[data-turnstile]')
+    const existing = document.querySelector<HTMLScriptElement>(
+      'script[data-turnstile]'
+    )
     if (existing) {
-      if ((window as any).turnstile) setReady(true)
+      if ((window as TurnstileWindow).turnstile) setReady(true)
       existing.addEventListener('load', () => setReady(true))
       return
     }
 
     const script = document.createElement('script')
-    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad'
+    script.src =
+      'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad'
     script.async = true
     script.defer = true
     script.setAttribute('data-turnstile', 'true')
-    ;(window as any).onTurnstileLoad = () => setReady(true)
+    ;(window as TurnstileWindow).onTurnstileLoad = () => setReady(true)
     document.head.appendChild(script)
   }, [siteKey])
 
   useEffect(() => {
     if (!siteKey || !ready || !containerRef.current) return
-    const w = window as any
+    const w = window as TurnstileWindow
     const widgetId = w.turnstile?.render(containerRef.current, {
       sitekey: siteKey,
       callback: (tokenResponse: string) => {
@@ -72,8 +90,8 @@ const Turnstile = forwardRef<TurnstileRef, TurnstileProps>(function Turnstile(
       },
       theme: 'auto',
     })
-    
-    widgetIdRef.current = widgetId
+
+    widgetIdRef.current = widgetId || null
 
     return () => {
       if (widgetId && w.turnstile?.remove) w.turnstile.remove(widgetId)

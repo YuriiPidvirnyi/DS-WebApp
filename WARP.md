@@ -19,12 +19,14 @@ Essential commands for development workflow:
 This is a modern React 18 + TypeScript dental clinic website built with:
 
 ### Core Stack
+
 - **React 18** with React Router DOM for client-side routing
 - **TypeScript** with strict configuration
 - **Vite** as build tool with React plugin
 - **Tailwind CSS** with custom dental theme colors and Inter font
 
 ### Project Structure
+
 ```
 src/
 ├── components/
@@ -49,8 +51,9 @@ src/
 **Path Aliases**: `@/` maps to `./src/` (configured in both vite.config.ts and tsconfig.json)
 
 **Custom Tailwind Colors**:
+
 - `dental-blue: #2563eb` - Primary brand color
-- `dental-teal: #14b8a6` - Secondary/accent color  
+- `dental-teal: #14b8a6` - Secondary/accent color
 - `dental-green: #10b981` - Tertiary color
 - Extended primary palette (50, 100, 500, 600, 700)
 
@@ -65,18 +68,21 @@ src/
 ## Development Patterns
 
 ### Component Structure
+
 - Functional components with TypeScript interfaces
 - React Router DOM for navigation with active state detection
 - Responsive design with mobile-first approach using Tailwind breakpoints
 - Lucide React for consistent iconography
 
 ### Styling Approach
+
 - Utility-first with Tailwind CSS
 - Custom color palette for dental branding
 - Gradient backgrounds and professional healthcare aesthetics
 - Responsive navigation with mobile hamburger menu
 
 ### Code Formatting
+
 - Prettier configured with single quotes, no semicolons, 2-space indentation
 - ESLint with TypeScript and React hooks rules
 - Trailing commas in ES5 style
@@ -92,12 +98,14 @@ src/
 ## New Components and Features
 
 ### UI Components (`src/components/ui/`)
+
 - **Button** - 4 variants, 3 sizes, loading state
 - **Card** - with Header, Title, Description, Footer sub-components
 - **Input/Textarea/Select** - Full validation, error states, accessibility
 - **Spinner** - Multiple sizes and colors for loading states
 
 ### Pages
+
 - **Home** - Hero, features, services preview, testimonials
 - **Services** - 6 service categories with detailed lists
 - **About** - Team, values, equipment, clinic history
@@ -106,12 +114,14 @@ src/
 - **NotFound (404)** - Custom error page
 
 ### Utilities
+
 - **useForm hook** - Universal form state management
 - **validation.ts** - Ukrainian phone/name validation
 - **formatters.ts** - Date/time/currency formatting
 - **constants.ts** - Centralized contact info and navigation
 
 ### Performance & Optimization
+
 - React.lazy + Suspense for all routes (code splitting)
 - LoadingPage fallback component
 - Optimized bundle size

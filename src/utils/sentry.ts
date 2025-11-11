@@ -50,9 +50,15 @@ export const initializeSentry = async (): Promise<void> => {
     return
   }
 
-  // Check if Sentry DSN exists in environment variables
-  if (!dsn) {
-    console.warn('Sentry DSN not found in environment variables')
+  // Check if Sentry DSN exists and is valid
+  if (
+    !dsn ||
+    dsn.includes('YOUR_SENTRY_DSN') ||
+    dsn === 'your_sentry_dsn_here'
+  ) {
+    if (import.meta.env.DEV) {
+      console.info('ℹ️ Sentry not configured (optional)')
+    }
     return
   }
 
@@ -70,16 +76,15 @@ export const initializeSentry = async (): Promise<void> => {
       integrations: [
         // Enable session replay to help reproduce user issues
         new Replay({
-          // Capture 10% of all sessions
-          sessionSampleRate: 0.1,
-          // Capture 100% of sessions with errors
-          errorSampleRate: 1.0,
           // Mask user inputs by default for privacy
           maskAllInputs: true,
           maskTextSelector: '[data-mask]',
           blockAllMedia: true,
         }),
       ],
+      // Replay sample rates (moved from Replay integration)
+      replaysSessionSampleRate: 0.1, // Capture 10% of all sessions
+      replaysOnErrorSampleRate: 1.0, // Capture 100% of sessions with errors
       // Enable performance monitoring
       tracesSampleRate: 0.2,
 

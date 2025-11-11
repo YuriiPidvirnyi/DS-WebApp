@@ -21,10 +21,10 @@
 @layer base {
   :root {
     /* Dental Story brand colors */
-    --dental-primary: 174, 206, 211;     /* #AECED3 */
-    --dental-secondary: 209, 202, 192;   /* #D1CAC0 */
-    --dental-white: 255, 255, 255;       /* #FFFFFF */
-    
+    --dental-primary: 174, 206, 211; /* #AECED3 */
+    --dental-secondary: 209, 202, 192; /* #D1CAC0 */
+    --dental-white: 255, 255, 255; /* #FFFFFF */
+
     /* CMYK values for reference */
     --dental-primary-cmyk: 31, 8, 14, 0;
     --dental-secondary-cmyk: 18, 17, 22, 0;
@@ -34,7 +34,12 @@
     @apply bg-white text-gray-900 font-sans;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: theme('fontFamily.heading');
   }
 
@@ -80,7 +85,7 @@
       scroll-behavior: auto !important;
     }
   }
-  
+
   /* High contrast mode */
   .high-contrast {
     --text-main: #ffffff;
@@ -89,12 +94,12 @@
     --bg-secondary: #333333;
     --accent-color: #ffff00;
   }
-  
+
   .high-contrast body {
     background-color: var(--bg-main) !important;
     color: var(--text-main) !important;
   }
-  
+
   .high-contrast a,
   .high-contrast button:not([disabled]) {
     color: var(--accent-color) !important;
@@ -102,7 +107,7 @@
     border-color: var(--accent-color) !important;
     outline-color: var(--accent-color) !important;
   }
-  
+
   .high-contrast input,
   .high-contrast textarea,
   .high-contrast select {
@@ -110,35 +115,35 @@
     background-color: var(--bg-secondary) !important;
     border-color: var(--text-main) !important;
   }
-  
+
   /* Font size utilities */
   .font-size-normal {
     /* default size, no changes needed */
   }
-  
+
   .font-size-larger {
     font-size: 1.25em !important;
     line-height: 1.5 !important;
   }
-  
+
   .font-size-largest {
     font-size: 1.5em !important;
     line-height: 1.7 !important;
   }
-  
+
   /* Color blindness simulation filters */
   .protanopia {
     filter: url('#protanopia-filter');
   }
-  
+
   .deuteranopia {
     filter: url('#deuteranopia-filter');
   }
-  
+
   .tritanopia {
     filter: url('#tritanopia-filter');
   }
-  
+
   /* Adding focus indicators for keyboard navigation */
   a:focus-visible,
   button:focus-visible,

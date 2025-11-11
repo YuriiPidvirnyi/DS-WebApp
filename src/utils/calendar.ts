@@ -5,10 +5,12 @@ export function formatDateToICS(date: Date) {
   return (
     date.getUTCFullYear().toString() +
     pad(date.getUTCMonth() + 1) +
-    pad(date.getUTCDate()) + 'T' +
+    pad(date.getUTCDate()) +
+    'T' +
     pad(date.getUTCHours()) +
     pad(date.getUTCMinutes()) +
-    pad(date.getUTCSeconds()) + 'Z'
+    pad(date.getUTCSeconds()) +
+    'Z'
   )
 }
 
@@ -23,14 +25,25 @@ export function createICSEvent(options: {
   organizer?: string
 }) {
   const {
-    uid, title, description = '', location = '', start, end, url = window.location.origin, organizer = 'noreply@example.com'
+    uid,
+    title,
+    description = '',
+    location = '',
+    start,
+    end,
+    url = window.location.origin,
+    organizer = 'noreply@example.com',
   } = options
 
   const dtstamp = formatDateToICS(new Date())
   const dtstart = formatDateToICS(start)
   const dtend = formatDateToICS(end)
 
-  const escape = (s: string) => s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,|;/g, (m) => `\\${m}`)
+  const escape = (s: string) =>
+    s
+      .replace(/\\/g, '\\\\')
+      .replace(/\n/g, '\\n')
+      .replace(/,|;/g, m => `\\${m}`)
 
   const ics = [
     'BEGIN:VCALENDAR',
@@ -49,8 +62,10 @@ export function createICSEvent(options: {
     url ? `URL:${escape(url)}` : '',
     `ORGANIZER:mailto:${organizer}`,
     'END:VEVENT',
-    'END:VCALENDAR'
-  ].filter(Boolean).join('\r\n')
+    'END:VCALENDAR',
+  ]
+    .filter(Boolean)
+    .join('\r\n')
 
   return ics
 }

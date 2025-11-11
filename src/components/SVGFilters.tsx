@@ -5,8 +5,8 @@
  */
 export default function SVGFilters() {
   return (
-    <svg 
-      aria-hidden="true" 
+    <svg
+      aria-hidden="true"
       style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden' }}
     >
       {/* Protanopia Filter (red-blind) */}
@@ -51,5 +51,5 @@ export default function SVGFilters() {
         </filter>
       </defs>
     </svg>
-  );
+  )
 }

@@ -220,6 +220,54 @@ class FeatureFlagsService {
       })
     }
   }
+
+  // A/B Testing
+  private tests: Map<string, {
+    variants: { name: string; weight: number }[]
+    active: boolean
+  }> = new Map()
+  private userVariants: Map<string, string> = new Map()
+
+  registerABTest(key: string, variants: { name: string; weight: number }[]) {
+    this.tests.set(key, { variants, active: true })
+  }
+
+  getTestVariant(testKey: string): string {
+    // Check if user already has variant
+    if (this.userVariants.has(testKey)) {
+      return this.userVariants.get(testKey)!
+    }
+
+    const test = this.tests.get(testKey)
+    if (!test || !test.active) return 'control'
+
+    // Assign variant based on weights
+    const totalWeight = test.variants.reduce((sum, v) => sum + v.weight, 0)
+    const hash = Math.abs(this.hashCode(this.userId + testKey)) % 10000
+    const random = (hash / 10000) * totalWeight
+
+    let cumulative = 0
+    for (const variant of test.variants) {
+      cumulative += variant.weight
+      if (random < cumulative) {
+        this.userVariants.set(testKey, variant.name)
+        return variant.name
+      }
+    }
+
+    return test.variants[0].name
+  }
+
+  trackConversion(testKey: string, conversionName: string) {
+    const variant = this.getTestVariant(testKey)
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      ;(window as any).gtag('event', 'ab_test_conversion', {
+        test_key: testKey,
+        variant: variant,
+        conversion: conversionName,
+      })
+    }
+  }
 }
 
 // Singleton instance
@@ -235,4 +283,9 @@ export function useFeatureFlag(key: string): boolean {
   }
 
   return enabled
+}
+
+// React hook for A/B testing
+export function useABTest(testKey: string): string {
+  return featureFlags.getTestVariant(testKey)
 }

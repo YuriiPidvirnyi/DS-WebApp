@@ -195,6 +195,7 @@ export default function PriceCalculator() {
       })
       .join(', ')
 
+    // eslint-disable-next-line no-console
     console.log('Запит на розрахунок:', {
       name,
       phone,

@@ -20,9 +20,10 @@ export default function ToastProvider() {
           color: '#333',
           fontSize: '14px',
           padding: '12px 16px',
-          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+          boxShadow:
+            '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
         },
-        
+
         // Success toast styling
         success: {
           duration: 5000,
@@ -36,7 +37,7 @@ export default function ToastProvider() {
             secondary: '#f0fdf4',
           },
         },
-        
+
         // Error toast styling
         error: {
           duration: 6000,
@@ -50,7 +51,7 @@ export default function ToastProvider() {
             secondary: '#fef2f2',
           },
         },
-        
+
         // Loading toast styling
         loading: {
           style: {
@@ -63,7 +64,7 @@ export default function ToastProvider() {
             secondary: '#f0f9ff',
           },
         },
-        
+
         // Custom toast styling
         custom: {
           duration: 4000,

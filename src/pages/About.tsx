@@ -15,28 +15,44 @@ const About = () => {
       name: 'Др. Олена Іванова',
       position: 'Головний лікар, стоматолог-терапевт',
       experience: '15 років досвіду',
-      education: 'НМУ ім. Богомольця, спеціалізація в ендодонтії'
+      education: 'НМУ ім. Богомольця, спеціалізація в ендодонтії',
     },
     {
       name: 'Др. Микола Петренко',
       position: 'Стоматолог-хірург, імплантолог',
-      experience: '12 років досвіду', 
-      education: 'УМСА, сертифікат по імплантології (Німеччина)'
+      experience: '12 років досвіду',
+      education: 'УМСА, сертифікат по імплантології (Німеччина)',
     },
     {
       name: 'Др. Марія Коваленко',
       position: 'Стоматолог-ортодонт',
       experience: '8 років досвіду',
-      education: 'НМУ ім. Богомольця, спеціалізація в ортодонтії'
-    }
+      education: 'НМУ ім. Богомольця, спеціалізація в ортодонтії',
+    },
   ]
 
   // Map photos from images.json to team members by name
-  type TeamPhoto = { title: string; src?: string; fallback?: string; alt?: string }
-  type EquipmentPhoto = { src?: string; fallback?: string; alt?: string; title?: string }
-  const data = images as unknown as { team?: TeamPhoto[]; equipment?: EquipmentPhoto[] }
-  const teamPhotos: Record<string, { src?: string; fallback?: string; alt?: string }> = {}
-  data.team?.forEach((p) => {
+  type TeamPhoto = {
+    title: string
+    src?: string
+    fallback?: string
+    alt?: string
+  }
+  type EquipmentPhoto = {
+    src?: string
+    fallback?: string
+    alt?: string
+    title?: string
+  }
+  const data = images as unknown as {
+    team?: TeamPhoto[]
+    equipment?: EquipmentPhoto[]
+  }
+  const teamPhotos: Record<
+    string,
+    { src?: string; fallback?: string; alt?: string }
+  > = {}
+  data.team?.forEach(p => {
     teamPhotos[p.title] = { src: p.src, fallback: p.fallback, alt: p.alt }
   })
 
@@ -44,30 +60,34 @@ const About = () => {
     {
       icon: <Heart className="h-8 w-8 text-dental-teal" />,
       title: 'Турбота про пацієнтів',
-      description: 'Індивідуальний підхід та комфорт кожного пацієнта - наш пріоритет'
+      description:
+        'Індивідуальний підхід та комфорт кожного пацієнта - наш пріоритет',
     },
     {
       icon: <Award className="h-8 w-8 text-dental-teal" />,
       title: 'Професіоналізм',
-      description: 'Висококваліфіковані лікарі з багаторічним досвідом'
+      description: 'Висококваліфіковані лікарі з багаторічним досвідом',
     },
     {
       icon: <Users className="h-8 w-8 text-dental-teal" />,
       title: 'Командна робота',
-      description: 'Злагоджена команда спеціалістів для найкращих результатів'
+      description: 'Злагоджена команда спеціалістів для найкращих результатів',
     },
     {
       icon: <Clock className="h-8 w-8 text-dental-teal" />,
       title: 'Пунктуальність',
-      description: 'Поважаємо ваш час - прийоми за розкладом без затримок'
-    }
+      description: 'Поважаємо ваш час - прийоми за розкладом без затримок',
+    },
   ]
 
   return (
     <div className="py-16">
       <Helmet>
         <title>Про нас — Dental Story</title>
-        <meta name="description" content="Сучасна стоматологічна клініка: досвідчена команда, інноваційне обладнання, турбота про пацієнтів." />
+        <meta
+          name="description"
+          content="Сучасна стоматологічна клініка: досвідчена команда, інноваційне обладнання, турбота про пацієнтів."
+        />
         <link rel="canonical" href="https://dentalstory.com.ua/about" />
       </Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -77,8 +97,9 @@ const About = () => {
             Про нашу клініку
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Dental Story - це сучасна стоматологічна клініка, яка поєднує професіоналізм, 
-            інноваційні технології та індивідуальний підхід до кожного пацієнта.
+            Dental Story - це сучасна стоматологічна клініка, яка поєднує
+            професіоналізм, інноваційні технології та індивідуальний підхід до
+            кожного пацієнта.
           </p>
         </div>
 
@@ -89,9 +110,7 @@ const About = () => {
               <div className="text-4xl lg:text-5xl font-bold text-slate-800 mb-2">
                 {stat.number}
               </div>
-              <div className="text-gray-600 font-medium">
-                {stat.label}
-              </div>
+              <div className="text-gray-600 font-medium">{stat.label}</div>
             </div>
           ))}
         </div>
@@ -99,20 +118,19 @@ const About = () => {
         {/* Our Story */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
           <div className="space-y-6">
-            <h2 className="text-3xl font-bold text-gray-900">
-              Наша історія
-            </h2>
+            <h2 className="text-3xl font-bold text-gray-900">Наша історія</h2>
             <p className="text-gray-600 leading-relaxed">
-              Клініка Dental Story була заснована в 2014 році з метою надання якісної 
-              стоматологічної допомоги з використанням найсучасніших технологій. 
-              Наша команда об'єднує досвідчених лікарів, які постійно підвищують 
-              свою кваліфікацію та слідкують за новітніми тенденціями в стоматології.
+              Клініка Dental Story була заснована в 2014 році з метою надання
+              якісної стоматологічної допомоги з використанням найсучасніших
+              технологій. Наша команда об'єднує досвідчених лікарів, які
+              постійно підвищують свою кваліфікацію та слідкують за новітніми
+              тенденціями в стоматології.
             </p>
             <p className="text-gray-600 leading-relaxed">
-              Ми пишаємося тим, що за роки роботи допомогли тисячам пацієнтів 
-              відновити здоров'я зубів та красиву посмішку. Наша філософія базується 
-              на принципах довіри, професіоналізму та індивідуального підходу до 
-              кожного пацієнта.
+              Ми пишаємося тим, що за роки роботи допомогли тисячам пацієнтів
+              відновити здоров'я зубів та красиву посмішку. Наша філософія
+              базується на принципах довіри, професіоналізму та індивідуального
+              підходу до кожного пацієнта.
             </p>
           </div>
           <div className="bg-gradient-to-br from-dental-blue/10 to-dental-teal/10 rounded-2xl p-8 flex items-center justify-center">
@@ -121,9 +139,7 @@ const About = () => {
               <h3 className="text-2xl font-semibold text-gray-900 mb-2">
                 Dental Story
               </h3>
-              <p className="text-gray-600">
-                Ваша посмішка - наша місія
-              </p>
+              <p className="text-gray-600">Ваша посмішка - наша місія</p>
             </div>
           </div>
         </div>
@@ -135,22 +151,22 @@ const About = () => {
               Наші цінності
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Принципи, якими ми керуємося в щоденній роботі та відносинах з пацієнтами
+              Принципи, якими ми керуємося в щоденній роботі та відносинах з
+              пацієнтами
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {values.map((value, index) => (
-              <div key={index} className="text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex justify-center mb-4">
-                  {value.icon}
-                </div>
+              <div
+                key={index}
+                className="text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="flex justify-center mb-4">{value.icon}</div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   {value.title}
                 </h3>
-                <p className="text-gray-600">
-                  {value.description}
-                </p>
+                <p className="text-gray-600">{value.description}</p>
               </div>
             ))}
           </div>
@@ -170,15 +186,21 @@ const About = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {team.map((doctor, index) => {
               const photo = teamPhotos[doctor.name]
-              const fallback = photo?.fallback || '/assets/images/gallery/gallery-placeholder.svg'
+              const fallback =
+                photo?.fallback ||
+                '/assets/images/gallery/gallery-placeholder.svg'
               return (
-                <div key={index} className="bg-white rounded-xl shadow-lg p-8 text-center hover:shadow-xl transition-shadow">
+                <div
+                  key={index}
+                  className="bg-white rounded-xl shadow-lg p-8 text-center hover:shadow-xl transition-shadow"
+                >
                   <div className="w-24 h-24 rounded-full mx-auto mb-6 overflow-hidden bg-dental-blue/20">
                     <img
                       src={photo?.src || fallback}
-                      onError={(e) => {
+                      onError={e => {
                         const img = e.currentTarget as HTMLImageElement
-                        if (img.src !== window.location.origin + fallback) img.src = fallback
+                        if (img.src !== window.location.origin + fallback)
+                          img.src = fallback
                       }}
                       alt={photo?.alt || doctor.name}
                       className="w-full h-full object-cover"
@@ -194,9 +216,7 @@ const About = () => {
                   <p className="text-gray-600 text-sm mb-3">
                     {doctor.experience}
                   </p>
-                  <p className="text-gray-500 text-sm">
-                    {doctor.education}
-                  </p>
+                  <p className="text-gray-500 text-sm">{doctor.education}</p>
                 </div>
               )
             })}
@@ -213,10 +233,12 @@ const About = () => {
               <div className="space-y-4">
                 <div className="flex items-center">
                   <div className="w-2 h-2 bg-dental-teal rounded-full mr-3"></div>
-                  <span className="text-gray-700">Цифрова рентген-діагностика</span>
+                  <span className="text-gray-700">
+                    Цифрова рентген-діагностика
+                  </span>
                 </div>
                 <div className="flex items-center">
-<div className="w-2 h-2 bg-dental-teal rounded-full mr-3"></div>
+                  <div className="w-2 h-2 bg-dental-teal rounded-full mr-3"></div>
                   <span className="text-gray-700">3D-томографія</span>
                 </div>
                 <div className="flex items-center">
@@ -225,7 +247,9 @@ const About = () => {
                 </div>
                 <div className="flex items-center">
                   <div className="w-2 h-2 bg-dental-teal rounded-full mr-3"></div>
-                  <span className="text-gray-700">CAD/CAM система для протезування</span>
+                  <span className="text-gray-700">
+                    CAD/CAM система для протезування
+                  </span>
                 </div>
                 <div className="flex items-center">
                   <div className="w-2 h-2 bg-dental-teal rounded-full mr-3"></div>
@@ -235,11 +259,25 @@ const About = () => {
             </div>
             <div className="rounded-2xl">
               <div className="grid grid-cols-2 gap-4">
-                {data.equipment?.slice(0,4).map((eq, idx) => (
-                  <div key={idx} className="aspect-[3/2] overflow-hidden rounded-xl bg-white">
-                    <img 
-                      src={eq.src || '/assets/images/gallery/gallery-placeholder.svg'} 
-                      onError={(e) => { const img = e.currentTarget as HTMLImageElement; if (!img.dataset.fallback) { img.dataset.fallback = '1'; img.src = eq.fallback || '/assets/images/gallery/gallery-placeholder.svg' } }}
+                {data.equipment?.slice(0, 4).map((eq, idx) => (
+                  <div
+                    key={idx}
+                    className="aspect-[3/2] overflow-hidden rounded-xl bg-white"
+                  >
+                    <img
+                      src={
+                        eq.src ||
+                        '/assets/images/gallery/gallery-placeholder.svg'
+                      }
+                      onError={e => {
+                        const img = e.currentTarget as HTMLImageElement
+                        if (!img.dataset.fallback) {
+                          img.dataset.fallback = '1'
+                          img.src =
+                            eq.fallback ||
+                            '/assets/images/gallery/gallery-placeholder.svg'
+                        }
+                      }}
                       alt={eq.alt || eq.title || 'Обладнання стоматології'}
                       className="w-full h-full object-cover"
                       loading="lazy"

@@ -1,0 +1,157 @@
+name: Visual Regression Testing
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  visual-tests:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          rm -rf node_modules package-lock.json
+          npm install
+          npm install --no-save @rollup/rollup-linux-x64-gnu
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Build application
+        run: npm run build
+        continue-on-error: true
+
+      - name: Run visual regression tests
+        run: npm run test:visual
+        continue-on-error: true
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: visual-test-results
+          path: test-results/
+          retention-days: 30
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: visual-screenshots
+          path: tests/visual/**/*-snapshots/
+          retention-days: 30
+
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Comment PR with results
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request' && always()
+        with:
+          script: |
+            const fs = require('fs')
+            let comment = '## 📸 Visual Regression Test Results\n\n'
+            
+            try {
+              const results = JSON.parse(fs.readFileSync('test-results/results.json', 'utf8'))
+              const passed = results.suites.reduce((acc, suite) => acc + suite.specs.filter(s => s.ok).length, 0)
+              const failed = results.suites.reduce((acc, suite) => acc + suite.specs.filter(s => !s.ok).length, 0)
+              
+              comment += `✅ Passed: ${passed}\n`
+              comment += `❌ Failed: ${failed}\n\n`
+              
+              if (failed > 0) {
+                comment += '### Failed Tests\n'
+                results.suites.forEach(suite => {
+                  suite.specs.filter(s => !s.ok).forEach(spec => {
+                    comment += `- ${spec.title}\n`
+                  })
+                })
+              }
+              
+              comment += '\n[View full report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})'
+            } catch (error) {
+              comment += '⚠️ Could not parse test results\n'
+              comment += `Error: ${error.message}`
+            }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            })
+
+  compare-screenshots:
+    runs-on: ubuntu-latest
+    needs: visual-tests
+    if: false  # Disabled until fully implemented
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          rm -rf node_modules package-lock.json
+          npm install
+          npm install --no-save @rollup/rollup-linux-x64-gnu
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Build base version
+        run: npm run build
+        continue-on-error: true
+
+      - name: Generate baseline screenshots
+        run: npm run test:visual
+        continue-on-error: true
+
+      - name: Save baseline screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: baseline-screenshots
+          path: tests/visual/**/*-snapshots/
+          retention-days: 30
+
+      - name: Download PR screenshots
+        uses: actions/download-artifact@v4
+        with:
+          name: visual-screenshots
+          path: pr-screenshots/
+
+      - name: Compare screenshots
+        run: |
+          echo "Comparing baseline with PR screenshots..."
+          # Add screenshot comparison logic here
+          # Could use pixelmatch or similar tool

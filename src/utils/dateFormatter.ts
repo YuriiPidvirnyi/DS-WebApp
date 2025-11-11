@@ -32,7 +32,7 @@ export function getRelativeTimeString(date: Date, lang = 'uk'): string {
   const diffMs = date.getTime() - now.getTime()
   const diffSec = Math.floor(diffMs / 1000)
   const absDiffSec = Math.abs(diffSec)
-  
+
   // Define time units in seconds
   const minute = 60
   const hour = minute * 60
@@ -40,7 +40,7 @@ export function getRelativeTimeString(date: Date, lang = 'uk'): string {
   const week = day * 7
   const month = day * 30
   const year = day * 365
-  
+
   // Format strings based on language
   const units = {
     uk: {
@@ -66,16 +66,16 @@ export function getRelativeTimeString(date: Date, lang = 'uk'): string {
       year: ['year', 'years'],
     },
   }
-  
+
   const isUkrainian = lang === 'uk'
-  
+
   // Get correct plural form for Ukrainian
   const getUkrainianForm = (number: number, forms: string[]) => {
     const absNumber = Math.abs(number)
     if (absNumber % 10 === 1 && absNumber % 100 !== 11) {
       return forms[0]
     } else if (
-      [2, 3, 4].includes(absNumber % 10) && 
+      [2, 3, 4].includes(absNumber % 10) &&
       ![12, 13, 14].includes(absNumber % 100)
     ) {
       return forms[1]
@@ -83,19 +83,19 @@ export function getRelativeTimeString(date: Date, lang = 'uk'): string {
       return forms[2]
     }
   }
-  
+
   // Get English plural form
   const getEnglishForm = (number: number, forms: string[]) => {
     return Math.abs(number) === 1 ? forms[0] : forms[1]
   }
-  
+
   const selectedLang = isUkrainian ? units.uk : units.en
   const getForm = isUkrainian ? getUkrainianForm : getEnglishForm
-  
+
   // Determine appropriate time unit
   let value: number
   let unit: string
-  
+
   if (absDiffSec < minute) {
     value = absDiffSec
     unit = getForm(value, selectedLang.second)
@@ -118,13 +118,17 @@ export function getRelativeTimeString(date: Date, lang = 'uk'): string {
     value = Math.floor(absDiffSec / year)
     unit = getForm(value, selectedLang.year)
   }
-  
+
   // Format the output
   const direction = diffSec >= 0 ? selectedLang.future : selectedLang.past
-  
+
   if (isUkrainian) {
-    return diffSec >= 0 ? `${direction} ${value} ${unit}` : `${value} ${unit} ${direction}`
+    return diffSec >= 0
+      ? `${direction} ${value} ${unit}`
+      : `${value} ${unit} ${direction}`
   } else {
-    return diffSec >= 0 ? `${direction} ${value} ${unit}` : `${value} ${unit} ${direction}`
+    return diffSec >= 0
+      ? `${direction} ${value} ${unit}`
+      : `${value} ${unit} ${direction}`
   }
 }

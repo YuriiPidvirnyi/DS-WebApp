@@ -35,7 +35,7 @@ const NotFound = () => {
             <Home className="h-5 w-5 mr-2" />
             На головну
           </Link>
-          
+
           <button
             onClick={() => window.history.back()}
             className="inline-flex items-center justify-center px-6 py-3 border-2 border-dental-teal text-dental-teal font-semibold rounded-lg hover:bg-dental-teal hover:text-white transition-colors"

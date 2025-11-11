@@ -100,6 +100,7 @@ class PerformanceMonitor {
         : data.rating === 'needs-improvement'
           ? '⚠️'
           : '❌'
+    // eslint-disable-next-line no-console
     console.log(
       `%c${emoji} ${data.name}`,
       `color: ${data.rating === 'good' ? 'green' : data.rating === 'needs-improvement' ? 'orange' : 'red'}; font-weight: bold;`,
@@ -150,12 +151,46 @@ class PerformanceMonitor {
   }
 
   private notifyPoorPerformance(metric: Metric) {
-    // Integration with error tracking
+    const performanceData = {
+      metric: metric.name,
+      value: metric.value,
+      threshold: this.thresholds[metric.name as keyof typeof this.thresholds],
+      url: window.location.href,
+      userAgent: navigator.userAgent,
+      timestamp: Date.now(),
+    }
+
+    // Integration with error tracking (Sentry)
     if (typeof window !== 'undefined' && (window as any).Sentry) {
       ;(window as any).Sentry.captureMessage(
         `Poor ${metric.name} performance: ${metric.value}ms`,
-        'warning'
+        {
+          level: 'warning',
+          tags: {
+            metric_name: metric.name,
+            metric_rating: 'poor',
+            environment: this.config.environment,
+          },
+          extra: performanceData,
+        }
       )
+    }
+
+    // Send alert to monitoring endpoint
+    if (this.config.analyticsEndpoint) {
+      fetch(`${this.config.analyticsEndpoint}/alerts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'performance_threshold_exceeded',
+          severity: 'warning',
+          ...performanceData,
+        }),
+      }).catch(err => {
+        if (this.config.enableLogging) {
+          console.error('Failed to send performance alert:', err)
+        }
+      })
     }
   }
 
@@ -181,6 +216,7 @@ class PerformanceMonitor {
       }
 
       if (this.config.enableLogging) {
+        // eslint-disable-next-line no-console
         console.table(pageLoadMetrics)
       }
 
@@ -258,6 +294,7 @@ class PerformanceMonitor {
     } catch (error) {
       // Long task observer not supported
       if (this.config.enableLogging) {
+        // eslint-disable-next-line no-console
         console.log('Long task observer not supported')
       }
     }
@@ -276,15 +313,94 @@ class PerformanceMonitor {
     const report = {
       timestamp: new Date().toISOString(),
       url: window.location.href,
+      environment: this.config.environment,
+      userAgent: navigator.userAgent,
+      connection: this.getConnectionInfo(),
+      deviceInfo: this.getDeviceInfo(),
       metrics: Object.entries(metrics).map(([name, metric]) => ({
         name,
         value: metric.value,
         rating: this.getRating(metric),
         delta: metric.delta,
+        threshold: this.thresholds[name as keyof typeof this.thresholds],
       })),
+      summary: this.getPerformanceSummary(),
     }
 
     return report
+  }
+
+  private getConnectionInfo() {
+    const connection = (navigator as any).connection
+    if (!connection) return null
+
+    return {
+      effectiveType: connection.effectiveType,
+      downlink: connection.downlink,
+      rtt: connection.rtt,
+      saveData: connection.saveData,
+    }
+  }
+
+  private getDeviceInfo() {
+    return {
+      screenWidth: window.screen.width,
+      screenHeight: window.screen.height,
+      devicePixelRatio: window.devicePixelRatio,
+      platform: navigator.platform,
+      hardwareConcurrency: navigator.hardwareConcurrency,
+      deviceMemory: (navigator as any).deviceMemory,
+    }
+  }
+
+  private getPerformanceSummary() {
+    const metrics = Array.from(this.metrics.values())
+    const goodCount = metrics.filter(m => this.getRating(m) === 'good').length
+    const needsImprovementCount = metrics.filter(
+      m => this.getRating(m) === 'needs-improvement'
+    ).length
+    const poorCount = metrics.filter(m => this.getRating(m) === 'poor').length
+
+    return {
+      total: metrics.length,
+      good: goodCount,
+      needsImprovement: needsImprovementCount,
+      poor: poorCount,
+      score:
+        metrics.length > 0 ? Math.round((goodCount / metrics.length) * 100) : 0,
+    }
+  }
+
+  // Real User Monitoring: Track user interactions
+  public trackInteraction(interactionType: string, details?: any) {
+    const interactionData = {
+      type: 'user_interaction',
+      interactionType,
+      timestamp: Date.now(),
+      url: window.location.href,
+      ...details,
+    }
+
+    if (this.config.enableLogging) {
+      // eslint-disable-next-line no-console
+      console.log('📊 User interaction:', interactionData)
+    }
+
+    this.sendToAnalytics(interactionData)
+  }
+
+  // Track JavaScript errors
+  public trackError(error: Error, context?: any) {
+    const errorData = {
+      type: 'javascript_error',
+      message: error.message,
+      stack: error.stack,
+      timestamp: Date.now(),
+      url: window.location.href,
+      ...context,
+    }
+
+    this.sendToAnalytics(errorData)
   }
 }
 

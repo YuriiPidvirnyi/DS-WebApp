@@ -7,13 +7,18 @@ export interface LoadingOverlayProps extends HTMLAttributes<HTMLDivElement> {
   message?: string
 }
 
-export default function LoadingOverlay({ show, message = 'Завантаження...', className, ...props }: LoadingOverlayProps) {
+export default function LoadingOverlay({
+  show,
+  message = 'Завантаження...',
+  className,
+  ...props
+}: LoadingOverlayProps) {
   if (!show) return null
   return (
     <div
       className={twMerge(
         'absolute inset-0 z-20 bg-white/70 backdrop-blur-[1px] flex items-center justify-center',
-        className,
+        className
       )}
       role="status"
       aria-live="polite"

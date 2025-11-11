@@ -23,10 +23,12 @@ const LazyImage: React.FC<LazyImageProps> = ({
   loading = 'lazy',
   placeholder = '/assets/images/gallery/gallery-placeholder.svg',
   onLoad,
-  onError
+  onError,
 }) => {
   const [imageSrc, setImageSrc] = useState<string>(placeholder)
-  const [imageStatus, setImageStatus] = useState<'loading' | 'loaded' | 'error'>('loading')
+  const [imageStatus, setImageStatus] = useState<
+    'loading' | 'loaded' | 'error'
+  >('loading')
   const imgRef = useRef<HTMLImageElement>(null)
   const observerRef = useRef<IntersectionObserver | null>(null)
 
@@ -37,8 +39,8 @@ const LazyImage: React.FC<LazyImageProps> = ({
     } else {
       // Use Intersection Observer for better control
       observerRef.current = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
+        entries => {
+          entries.forEach(entry => {
             if (entry.isIntersecting) {
               loadImage()
               if (observerRef.current && imgRef.current) {
@@ -64,13 +66,13 @@ const LazyImage: React.FC<LazyImageProps> = ({
 
   const loadImage = () => {
     const img = new Image()
-    
+
     img.onload = () => {
       setImageSrc(src)
       setImageStatus('loaded')
       onLoad?.()
     }
-    
+
     img.onerror = () => {
       if (fallback) {
         const fallbackImg = new Image()
@@ -90,7 +92,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
         onError?.()
       }
     }
-    
+
     img.src = src
   }
 
@@ -106,22 +108,28 @@ const LazyImage: React.FC<LazyImageProps> = ({
         className={`transition-opacity duration-300 ${
           imageStatus === 'loading' ? 'opacity-70' : 'opacity-100'
         } w-full h-full object-cover`}
-        style={{ 
-          aspectRatio: width && height ? `${width}/${height}` : undefined 
+        style={{
+          aspectRatio: width && height ? `${width}/${height}` : undefined,
         }}
       />
-      
+
       {/* Loading overlay */}
       {imageStatus === 'loading' && (
         <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
           <div className="flex space-x-1">
             <div className="w-2 h-2 bg-dental-teal rounded-full animate-pulse"></div>
-            <div className="w-2 h-2 bg-dental-teal rounded-full animate-pulse" style={{ animationDelay: '0.1s' }}></div>
-            <div className="w-2 h-2 bg-dental-teal rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+            <div
+              className="w-2 h-2 bg-dental-teal rounded-full animate-pulse"
+              style={{ animationDelay: '0.1s' }}
+            ></div>
+            <div
+              className="w-2 h-2 bg-dental-teal rounded-full animate-pulse"
+              style={{ animationDelay: '0.2s' }}
+            ></div>
           </div>
         </div>
       )}
-      
+
       {/* Error state */}
       {imageStatus === 'error' && (
         <div className="absolute inset-0 bg-gray-100 flex items-center justify-center text-gray-400 text-sm">

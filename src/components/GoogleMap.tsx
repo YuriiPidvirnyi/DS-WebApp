@@ -1,6 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 import { CONTACT_INFO } from '@/utils/constants'
 
+interface GoogleWindow extends Window {
+  google?: {
+    maps?: {
+      Map: new (
+        element: HTMLElement,
+        options: Record<string, unknown>
+      ) => unknown
+      Marker: new (options: Record<string, unknown>) => unknown
+    }
+  }
+}
+
 interface GoogleMapProps {
   lat?: number
   lng?: number
@@ -27,10 +39,12 @@ export default function GoogleMap({
     if (!apiKey) return // No key - we'll use iframe fallback
 
     // If script already added
-    const existing = document.querySelector<HTMLScriptElement>('script[data-google-maps]')
+    const existing = document.querySelector<HTMLScriptElement>(
+      'script[data-google-maps]'
+    )
     if (existing) {
       existing.addEventListener('load', () => setLoaded(true))
-      if ((window as any).google?.maps) setLoaded(true)
+      if ((window as GoogleWindow).google?.maps) setLoaded(true)
       return
     }
 
@@ -46,9 +60,12 @@ export default function GoogleMap({
   }, [apiKey])
 
   useEffect(() => {
-    if (!loaded || !mapRef.current || !(window as any).google?.maps) return
+    if (!loaded || !mapRef.current || !(window as GoogleWindow).google?.maps)
+      return
 
-    const { google } = window as any
+    const { google } = window as GoogleWindow
+    if (!google?.maps) return
+
     const position = { lat, lng }
     const map = new google.maps.Map(mapRef.current, {
       center: position,
@@ -57,7 +74,11 @@ export default function GoogleMap({
       mapTypeControl: false,
       streetViewControl: false,
       styles: [
-        { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+        {
+          featureType: 'poi',
+          elementType: 'labels',
+          stylers: [{ visibility: 'off' }],
+        },
         { featureType: 'transit', stylers: [{ visibility: 'off' }] },
       ],
     })
