@@ -102,13 +102,10 @@
     "storybook": "^10.0.1",
     "tailwindcss": "^3.3.6",
     "typescript": "^5.2.2",
-    "vite": "^7.1.12",
-    "vite-plugin-pwa": "^1.1.0",
+    "vite": "^5.4.11",
+    "vite-plugin-pwa": "^0.20.5",
     "vitest": "^3.2.4",
     "web-vitals": "^5.1.0"
-  },
-  "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "^4.28.0"
   },
   "keywords": [
     "dental-clinic",
