@@ -105,7 +105,8 @@
     "vite": "^7.1.12",
     "vite-plugin-pwa": "^1.1.0",
     "vitest": "^3.2.4",
-    "web-vitals": "^5.1.0"
+    "web-vitals": "^5.1.0",
+    "@rollup/rollup-linux-x64-gnu": "^4.28.0"
   },
   "keywords": [
     "dental-clinic",
@@ -120,8 +121,5 @@
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=9.0.0"
-  },
-  "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "^4.28.0"
   }
 }
