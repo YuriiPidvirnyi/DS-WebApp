@@ -34,6 +34,7 @@
     "benchmark": "node scripts/benchmark.js",
     "seo:sitemap": "node scripts/generate-sitemap.js",
     "prepare": "husky",
+    "postinstall": "test -d node_modules/@rollup/rollup-linux-x64-gnu || (command -v npm >/dev/null 2>&1 && npm install --no-save @rollup/rollup-linux-x64-gnu@^4.28.0 2>/dev/null || true)",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
@@ -102,10 +103,13 @@
     "storybook": "^10.0.1",
     "tailwindcss": "^3.3.6",
     "typescript": "^5.2.2",
-    "vite": "^5.4.11",
-    "vite-plugin-pwa": "^0.20.5",
+    "vite": "^7.1.12",
+    "vite-plugin-pwa": "^1.1.0",
     "vitest": "^3.2.4",
     "web-vitals": "^5.1.0"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.28.0"
   },
   "keywords": [
     "dental-clinic",
@@ -120,8 +124,5 @@
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=9.0.0"
-  },
-  "overrides": {
-    "rollup": "3.29.5"
   }
 }
