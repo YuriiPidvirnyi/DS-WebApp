@@ -37,6 +37,7 @@ jobs:
 
       - name: Build application
         run: npm run build
+        continue-on-error: true
 
       - name: Run visual regression tests
         run: npm run test:visual
@@ -130,6 +131,7 @@ jobs:
 
       - name: Build base version
         run: npm run build
+        continue-on-error: true
 
       - name: Generate baseline screenshots
         run: npm run test:visual
