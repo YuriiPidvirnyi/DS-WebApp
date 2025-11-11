@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
-  "installCommand": "rm -rf node_modules package-lock.json && npm install && npm install --no-save @rollup/rollup-linux-x64-gnu",
+  "installCommand": "corepack enable && pnpm install",
   "framework": "vite",
   "outputDirectory": "dist",
   "rewrites": [
