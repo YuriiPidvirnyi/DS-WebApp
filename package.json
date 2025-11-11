@@ -46,7 +46,7 @@
     "@sentry/tracing": "^7.120.4",
     "@types/dompurify": "^3.0.5",
     "axios": "^1.12.2",
-    "clsx": "^2.0.0",
+    "clsx": "^2.1.1",
     "dompurify": "^3.3.0",
     "hoist-non-react-statics": "^3.3.2",
     "i18next": "^25.6.1",
