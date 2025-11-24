@@ -95,7 +95,7 @@
     "express": "^5.1.0",
     "husky": "^9.1.7",
     "jsdom": "^27.0.1",
-    "lint-staged": "^16.2.6",
+    "lint-staged": "^16.2.7",
     "playwright": "^1.56.1",
     "postcss": "^8.4.31",
     "prettier": "^3.1.0",
