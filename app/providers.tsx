@@ -10,6 +10,7 @@ import LiveRegion from '@/components/ui/LiveRegion'
 import SVGFilters from '@/components/SVGFilters'
 import { AccessibilityPanel } from '@/components/AccessibilityPanel'
 import FloatingQuickActions from '@/components/FloatingQuickActions'
+import I18nProvider from './i18n-provider'
 import useAnalytics from '@/hooks/useAnalytics'
 import { useReminders } from '@/hooks/useReminders'
 import { initializeAnalytics } from '@/utils/analytics'
@@ -43,6 +44,7 @@ interface ClientProvidersProps {
 
 export default function ClientProviders({ children }: ClientProvidersProps) {
   return (
+    <I18nProvider>
     <ErrorBoundary>
       <AccessibilityProvider>
         <ToastProvider />
@@ -63,5 +65,6 @@ export default function ClientProviders({ children }: ClientProvidersProps) {
         </div>
       </AccessibilityProvider>
     </ErrorBoundary>
+    </I18nProvider>
   )
 }
