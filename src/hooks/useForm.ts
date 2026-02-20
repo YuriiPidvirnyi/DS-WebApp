@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, ChangeEvent, FormEvent } from 'react'
 
 interface UseFormOptions<T extends Record<string, unknown>> {

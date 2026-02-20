@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useCallback } from 'react'
 import { checkDueReminders, ScheduledReminder } from '@/services/reminders'
 import { showInfo } from '@/utils/toast'
