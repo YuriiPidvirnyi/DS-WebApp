@@ -4,6 +4,7 @@
  */
 import type * as SentryTypes from '@sentry/react'
 import type { Replay as ReplayType } from '@sentry/replay'
+import { isErrorTrackingAllowed } from './consent'
 
 // Lazy-loaded Sentry modules
 let Sentry: typeof SentryTypes | null = null
@@ -35,6 +36,7 @@ const loadSentry = async (): Promise<boolean> => {
  */
 export const initializeSentry = async (): Promise<void> => {
   if (typeof window === 'undefined') return
+  if (!isErrorTrackingAllowed()) return
 
   const dsn = import.meta.env.VITE_SENTRY_DSN
   const environment = import.meta.env.VITE_ENVIRONMENT || 'development'

@@ -242,6 +242,31 @@
       "day": "numeric"
     }
   },
+  "cookieConsent": {
+    "title": "Używamy plików cookie",
+    "description": "Używamy plików cookie do analityki i poprawy jakości naszych usług. Możesz wybrać, które kategorie plików cookie chcesz zezwolić.",
+    "privacyPolicyLink": "Polityka prywatności",
+    "acceptAll": "Zaakceptuj wszystko",
+    "rejectAll": "Odrzuć",
+    "customize": "Dostosuj",
+    "hideCustomize": "Ukryj",
+    "savePreferences": "Zapisz ustawienia",
+    "alwaysOn": "Zawsze włączone",
+    "categories": {
+      "necessary": {
+        "title": "Niezbędne",
+        "description": "Wymagane do prawidłowego działania strony. Nie można ich wyłączyć."
+      },
+      "analytics": {
+        "title": "Analityka",
+        "description": "Pomagają nam zrozumieć, jak odwiedzający korzystają ze strony (Google Analytics)."
+      },
+      "errorTracking": {
+        "title": "Śledzenie błędów",
+        "description": "Pomagają nam wykrywać i naprawiać problemy techniczne (Sentry)."
+      }
+    }
+  },
   "meta": {
     "title": "Dental Story - Nowoczesna klinika dentystyczna w Kijowie | Dzielnica Dniprowski",
     "description": "Profesjonalna klinika dentystyczna na ul. Akademika Korolova. Pełen zakres usług: leczenie, implanty, ortodoncja. Bezbolesne leczenie, nowoczesny sprzęt. Rezerwacja: +380 50 455 47 74",
