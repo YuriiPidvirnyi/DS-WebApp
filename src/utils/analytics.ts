@@ -2,6 +2,8 @@
  * Google Analytics 4 Integration Utility
  */
 
+import { isAnalyticsAllowed } from './consent'
+
 // Event categories
 export enum AnalyticsEventCategory {
   Engagement = 'engagement',
@@ -41,6 +43,7 @@ export enum BookingEvent {
 // Initialize Google Analytics
 export const initializeAnalytics = (): void => {
   if (typeof window === 'undefined') return
+  if (!isAnalyticsAllowed()) return
 
   // Check if GA ID exists in environment variables
   const gaId = import.meta.env.VITE_GOOGLE_ANALYTICS_ID

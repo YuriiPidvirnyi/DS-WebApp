@@ -14,6 +14,12 @@ import ErrorBoundary from './components/ErrorBoundary'
 import ToastProvider from './components/providers/ToastProvider'
 import { initializeAnalytics } from './utils/analytics'
 import { initializeSentry } from './utils/sentry'
+import {
+  hasConsented,
+  isAnalyticsAllowed,
+  isErrorTrackingAllowed,
+} from './utils/consent'
+import CookieConsent from './components/CookieConsent'
 import useAnalytics from './hooks/useAnalytics'
 import { useReminders } from './hooks/useReminders'
 import FloatingQuickActions from './components/FloatingQuickActions'
@@ -33,15 +39,17 @@ const NotFound = lazy(() => import('./pages/NotFound'))
 const Reviews = lazy(() => import('./pages/Reviews'))
 
 function App() {
-  // Initialize analytics and error tracking
+  // Initialize analytics and error tracking only if user has previously consented
   useEffect(() => {
+    if (!hasConsented()) return
+
     const initialize = async () => {
       try {
-        // Initialize analytics
-        initializeAnalytics()
+        if (isAnalyticsAllowed()) {
+          initializeAnalytics()
+        }
 
-        // Initialize error tracking only in production (lazy loaded)
-        if (import.meta.env.PROD) {
+        if (isErrorTrackingAllowed() && import.meta.env.PROD) {
           await initializeSentry()
         }
       } catch (error) {
@@ -101,6 +109,7 @@ function App() {
             <FloatingQuickActions />
           </div>
         </div>
+        <CookieConsent />
       </AccessibilityProvider>
     </ErrorBoundary>
   )
