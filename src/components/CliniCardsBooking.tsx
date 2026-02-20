@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState, useEffect } from 'react'
 import { Calendar, Clock, User, Phone, Mail, AlertCircle, CheckCircle } from 'lucide-react'
 import { getCliniCardsApi, type Schedule, type TimeSlot, type Appointment } from '../services/clinicardsApi'

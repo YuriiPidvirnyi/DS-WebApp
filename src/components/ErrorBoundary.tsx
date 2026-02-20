@@ -1,3 +1,5 @@
+'use client'
+
 import { Component, ErrorInfo, ReactNode } from 'react'
 import { AlertCircle, Home, RefreshCw, MessageCircle } from 'lucide-react'
 import { Button } from './ui'

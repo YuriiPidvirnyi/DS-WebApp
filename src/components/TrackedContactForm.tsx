@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import ContactForm from './ContactForm'
 import useAnalytics from '@/hooks/useAnalytics'

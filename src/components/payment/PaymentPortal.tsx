@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect, useCallback } from 'react'
 import { CreditCard, Building2, Plus, Trash2 } from 'lucide-react'
 import { Button, Input, Select } from '@/components/ui'
