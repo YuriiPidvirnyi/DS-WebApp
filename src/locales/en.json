@@ -242,6 +242,31 @@
       "day": "numeric"
     }
   },
+  "cookieConsent": {
+    "title": "We use cookies",
+    "description": "We use cookies for analytics and to improve the quality of our services. You can choose which categories of cookies to allow.",
+    "privacyPolicyLink": "Privacy Policy",
+    "acceptAll": "Accept All",
+    "rejectAll": "Reject",
+    "customize": "Customize",
+    "hideCustomize": "Hide",
+    "savePreferences": "Save Preferences",
+    "alwaysOn": "Always on",
+    "categories": {
+      "necessary": {
+        "title": "Necessary",
+        "description": "Required for the website to function properly. Cannot be disabled."
+      },
+      "analytics": {
+        "title": "Analytics",
+        "description": "Help us understand how visitors use the website (Google Analytics)."
+      },
+      "errorTracking": {
+        "title": "Error Tracking",
+        "description": "Help us detect and fix technical issues (Sentry)."
+      }
+    }
+  },
   "meta": {
     "title": "Dental Story - Modern Dental Clinic in Kyiv | Dniprovskyi District",
     "description": "Professional dental clinic on Akademika Korolova St. Full range of services: treatment, implants, orthodontics. Painless treatment, modern equipment. Booking: +380 50 455 47 74",
