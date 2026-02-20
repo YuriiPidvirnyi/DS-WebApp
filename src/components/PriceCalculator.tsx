@@ -195,13 +195,15 @@ export default function PriceCalculator() {
       })
       .join(', ')
 
-    // eslint-disable-next-line no-console
-    console.log('Запит на розрахунок:', {
-      name,
-      phone,
-      services: selectedItems,
-      total,
-    })
+    if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.log('Запит на розрахунок:', {
+        name,
+        phone,
+        services: selectedItems,
+        total,
+      })
+    }
     toast.success("Дякуємо! Ми зв'яжемося з вами найближчим часом")
 
     // Скидання форми

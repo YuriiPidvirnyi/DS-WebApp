@@ -100,13 +100,15 @@ class PerformanceMonitor {
         : data.rating === 'needs-improvement'
           ? '⚠️'
           : '❌'
-    // eslint-disable-next-line no-console
-    console.log(
-      `%c${emoji} ${data.name}`,
-      `color: ${data.rating === 'good' ? 'green' : data.rating === 'needs-improvement' ? 'orange' : 'red'}; font-weight: bold;`,
-      `${data.value.toFixed(2)}ms`,
-      `(${data.rating})`
-    )
+    if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.log(
+        `%c${emoji} ${data.name}`,
+        `color: ${data.rating === 'good' ? 'green' : data.rating === 'needs-improvement' ? 'orange' : 'red'}; font-weight: bold;`,
+        `${data.value.toFixed(2)}ms`,
+        `(${data.rating})`
+      )
+    }
   }
 
   private sendToAnalytics(data: any) {

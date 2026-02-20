@@ -195,10 +195,12 @@ export function measureChunkLoadTime(
       const endTime = performance.now()
       const loadTime = endTime - startTime
 
-      // eslint-disable-next-line no-console
-      console.log(
-        `[Code Splitting] Loaded ${chunkName} in ${loadTime.toFixed(2)}ms`
-      )
+      if (import.meta.env.DEV) {
+        // eslint-disable-next-line no-console
+        console.log(
+          `[Code Splitting] Loaded ${chunkName} in ${loadTime.toFixed(2)}ms`
+        )
+      }
 
       // Send to analytics
       if (typeof window !== 'undefined' && 'gtag' in window) {

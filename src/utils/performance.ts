@@ -127,14 +127,16 @@ class PerformanceMonitor {
         list.getEntries().forEach(entry => {
           if (entry.entryType === 'navigation') {
             const navEntry = entry as PerformanceNavigationTiming
-            // eslint-disable-next-line no-console
-            console.log('[Performance] Navigation timing:', {
-              domContentLoaded:
-                navEntry.domContentLoadedEventEnd -
-                navEntry.domContentLoadedEventStart,
-              domInteractive: navEntry.domInteractive - navEntry.fetchStart,
-              loadComplete: navEntry.loadEventEnd - navEntry.fetchStart,
-            })
+            if (import.meta.env.DEV) {
+              // eslint-disable-next-line no-console
+              console.log('[Performance] Navigation timing:', {
+                domContentLoaded:
+                  navEntry.domContentLoadedEventEnd -
+                  navEntry.domContentLoadedEventStart,
+                domInteractive: navEntry.domInteractive - navEntry.fetchStart,
+                loadComplete: navEntry.loadEventEnd - navEntry.fetchStart,
+              })
+            }
           }
         })
       })
