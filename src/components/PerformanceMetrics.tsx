@@ -14,13 +14,13 @@ export default function PerformanceMetrics() {
 
   const reportWebVitals = useCallback(async (metric: WebVitalsMetric) => {
     // Log to console in development (only poor metrics)
-    if (import.meta.env.DEV) {
+    if (process.env.NODE_ENV !== "production") {
       const thresholds: Record<string, number> = {
         LCP: 2500,
         FID: 100,
         CLS: 0.1,
         FCP: 1800,
-        TTFB: import.meta.env.DEV ? 5000 : 800, // Higher threshold for dev server
+        TTFB: process.env.NODE_ENV !== "production" ? 5000 : 800, // Higher threshold for dev server
         INP: 200,
       }
       const threshold = thresholds[metric.name]
@@ -34,7 +34,7 @@ export default function PerformanceMetrics() {
 
     // In production, we would send to analytics service
     // Example: sending to Google Analytics
-    if (import.meta.env.PROD) {
+    if (process.env.NODE_ENV === "production") {
       // Check if analytics is available
       if (window.gtag) {
         window.gtag('event', 'web_vitals', {

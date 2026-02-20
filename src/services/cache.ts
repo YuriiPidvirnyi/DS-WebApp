@@ -124,7 +124,7 @@ class CacheService {
 
     this.fetchAndCache(key, fetcher, options).catch(error => {
       // Keep stale data on refresh failure
-      if (import.meta.env.DEV) {
+      if (process.env.NODE_ENV !== "production") {
         console.warn(`Background refresh failed for ${key}:`, error)
       }
     })

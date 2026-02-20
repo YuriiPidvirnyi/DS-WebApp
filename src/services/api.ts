@@ -2,7 +2,7 @@ import type { ApiResponse } from '@/types'
 
 // API Base URL from environment variables
 const API_URL =
-  (import.meta.env?.VITE_API_URL as string | undefined) ||
+  process.env.NEXT_PUBLIC_API_URL ||
   'http://localhost:3001/api'
 
 /**

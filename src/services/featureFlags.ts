@@ -91,8 +91,8 @@ class FeatureFlagsService {
 
     // Load from environment variables
     defaultFlags.forEach(flag => {
-      const envKey = `VITE_FF_${flag.key}`
-      const envValue = import.meta.env[envKey]
+      const envKey = `NEXT_PUBLIC_FF_${flag.key}`
+      const envValue = process.env[envKey]
 
       if (envValue !== undefined) {
         flag.enabled = envValue === 'true' || envValue === '1'

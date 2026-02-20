@@ -86,7 +86,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     const errorCount = this.state.errorCount + 1
 
     // Report to Sentry in production
-    if (import.meta.env.PROD) {
+    if (process.env.NODE_ENV === "production") {
       try {
         captureException(error, {
           componentStack: errorInfo.componentStack,
@@ -178,7 +178,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
               над її виправленням.
             </p>
 
-            {import.meta.env.DEV && (
+            {process.env.NODE_ENV !== "production" && (
               <div className="mb-4 text-left">
                 <details className="border border-gray-300 rounded-md p-4">
                   <summary className="cursor-pointer text-sm text-gray-700 font-medium">
@@ -215,7 +215,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                 Спробувати ще раз
               </Button>
 
-              {import.meta.env.PROD && (
+              {process.env.NODE_ENV === "production" && (
                 <Button
                   onClick={this.handleReportFeedback}
                   variant="secondary"

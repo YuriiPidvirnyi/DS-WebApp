@@ -282,11 +282,11 @@ export function reportWebVitals(metric: {
  */
 export function setupMonitoring(): void {
   const config: MonitoringConfig = {
-    dsn: import.meta.env.VITE_SENTRY_DSN || '',
-    environment: import.meta.env.VITE_ENVIRONMENT || 'development',
-    release: import.meta.env.VITE_APP_VERSION,
-    tracesSampleRate: import.meta.env.PROD ? 0.1 : 1.0,
-    replaysSessionSampleRate: import.meta.env.PROD ? 0.1 : 1.0,
+    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN || '',
+    environment: process.env.NEXT_PUBLIC_ENVIRONMENT || 'development',
+    release: process.env.NEXT_PUBLIC_APP_VERSION,
+    tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
+    replaysSessionSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
     replaysOnErrorSampleRate: 1.0,
   }
 

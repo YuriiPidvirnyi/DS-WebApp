@@ -36,15 +36,15 @@ const loadSentry = async (): Promise<boolean> => {
 export const initializeSentry = async (): Promise<void> => {
   if (typeof window === 'undefined') return
 
-  const dsn = import.meta.env.VITE_SENTRY_DSN
-  const environment = import.meta.env.VITE_ENVIRONMENT || 'development'
+  const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN
+  const environment = process.env.NEXT_PUBLIC_ENVIRONMENT || 'development'
 
   // Do not initialize Sentry in development unless explicitly requested
   if (
     environment === 'development' &&
-    !import.meta.env.VITE_ENABLE_SENTRY_IN_DEV
+    !process.env.NEXT_PUBLIC_ENABLE_SENTRY_IN_DEV
   ) {
-    if (import.meta.env.DEV) {
+    if (process.env.NODE_ENV !== "production") {
       console.warn('Sentry disabled in development')
     }
     return
@@ -56,7 +56,7 @@ export const initializeSentry = async (): Promise<void> => {
     dsn.includes('YOUR_SENTRY_DSN') ||
     dsn === 'your_sentry_dsn_here'
   ) {
-    if (import.meta.env.DEV) {
+    if (process.env.NODE_ENV !== "production") {
       console.info('ℹ️ Sentry not configured (optional)')
     }
     return
@@ -122,7 +122,7 @@ export const initializeSentry = async (): Promise<void> => {
       maxBreadcrumbs: 50,
     })
 
-    if (import.meta.env.DEV) {
+    if (process.env.NODE_ENV !== "production") {
       console.warn('Sentry initialized')
     }
   } catch (error) {

@@ -36,7 +36,7 @@ export function addToQueue(
     queue.push(submission)
     saveQueue(queue)
 
-    if (import.meta.env.DEV) {
+    if (process.env.NODE_ENV !== "production") {
       // eslint-disable-next-line no-console
       console.log(`Added ${type} submission to offline queue`)
     }
@@ -251,12 +251,12 @@ export function initBackgroundSync(): void {
  */
 export function setupOnlineListener(): void {
   window.addEventListener('online', () => {
-    if (import.meta.env.DEV) {
+    if (process.env.NODE_ENV !== "production") {
       // eslint-disable-next-line no-console
       console.log('Back online! Syncing offline queue...')
     }
     syncQueue().then(result => {
-      if (import.meta.env.DEV) {
+      if (process.env.NODE_ENV !== "production") {
         // eslint-disable-next-line no-console
         console.log(
           `Synced ${result.synced} submissions, ${result.failed} failed`

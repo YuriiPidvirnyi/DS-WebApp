@@ -1,13 +1,12 @@
 // Контактна інформація клініки
-const ENV = import.meta.env
-const ENV_PHONE = ENV.VITE_PHONE_NUMBER || '+380682323838'
-const ENV_EMERGENCY_PHONE = ENV.VITE_EMERGENCY_PHONE || ENV_PHONE
-const ENV_EMAIL = ENV.VITE_EMAIL || 'info@dentalstory.ua'
+const ENV_PHONE = process.env.NEXT_PUBLIC_PHONE_NUMBER || '+380682323838'
+const ENV_EMERGENCY_PHONE = process.env.NEXT_PUBLIC_EMERGENCY_PHONE || ENV_PHONE
+const ENV_EMAIL = process.env.NEXT_PUBLIC_EMAIL || 'info@dentalstory.ua'
 const ENV_FB =
-  ENV.VITE_FACEBOOK_URL || 'https://www.facebook.com/dentalstoryylviv/'
+  process.env.NEXT_PUBLIC_FACEBOOK_URL || 'https://www.facebook.com/dentalstoryylviv/'
 const ENV_IG =
-  ENV.VITE_INSTAGRAM_URL || 'https://www.instagram.com/dentalstory_lviv/'
-const ENV_TG = ENV.VITE_TELEGRAM_URL || 'https://t.me/dentalstory'
+  process.env.NEXT_PUBLIC_INSTAGRAM_URL || 'https://www.instagram.com/dentalstory_lviv/'
+const ENV_TG = process.env.NEXT_PUBLIC_TELEGRAM_URL || 'https://t.me/dentalstory'
 
 export const CONTACT_INFO = {
   phone: ENV_PHONE,

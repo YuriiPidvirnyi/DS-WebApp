@@ -12,15 +12,15 @@ import { initSecurity } from './utils/security' // Initialize security
 initSecurity()
 
 // Initialize performance monitoring
-if (import.meta.env.PROD) {
+if (process.env.NODE_ENV === "production") {
   performanceMonitor.init()
 
   // Report performance data before page unload
   window.addEventListener('beforeunload', () => {
     const report = performanceMonitor.generateReport()
-    if (navigator.sendBeacon && import.meta.env.VITE_ANALYTICS_ENDPOINT) {
+    if (navigator.sendBeacon && process.env.NEXT_PUBLIC_ANALYTICS_ENDPOINT) {
       navigator.sendBeacon(
-        `${import.meta.env.VITE_ANALYTICS_ENDPOINT}/performance`,
+        `${process.env.NEXT_PUBLIC_ANALYTICS_ENDPOINT}/performance`,
         JSON.stringify(report)
       )
     }

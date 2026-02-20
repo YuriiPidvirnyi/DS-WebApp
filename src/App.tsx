@@ -41,7 +41,7 @@ function App() {
         initializeAnalytics()
 
         // Initialize error tracking only in production (lazy loaded)
-        if (import.meta.env.PROD) {
+        if (process.env.NODE_ENV === "production") {
           await initializeSentry()
         }
       } catch (error) {

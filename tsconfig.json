@@ -12,7 +12,12 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
+
+    /* Next.js requires jsx: preserve */
+    "jsx": "preserve",
+
+    /* Next.js plugin for type-safe routes */
+    "plugins": [{ "name": "next" }],
 
     /* Linting */
     "strict": true,
@@ -26,6 +31,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": ["src", "app", "next.config.ts", "middleware.ts"],
+  "exclude": ["node_modules"]
 }

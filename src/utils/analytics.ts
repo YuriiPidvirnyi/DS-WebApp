@@ -43,9 +43,9 @@ export const initializeAnalytics = (): void => {
   if (typeof window === 'undefined') return
 
   // Check if GA ID exists in environment variables
-  const gaId = import.meta.env.VITE_GOOGLE_ANALYTICS_ID
+  const gaId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
   if (!gaId) {
-    if (import.meta.env.DEV) {
+    if (process.env.NODE_ENV !== "production") {
       console.info('ℹ️ Google Analytics ID not configured (optional in dev)')
     }
     return
@@ -70,7 +70,7 @@ export const initializeAnalytics = (): void => {
       send_page_view: false, // We'll track page views manually with the router
     })
 
-    if (import.meta.env.DEV) {
+    if (process.env.NODE_ENV !== "production") {
       console.info('✅ Google Analytics initialized')
     }
   }

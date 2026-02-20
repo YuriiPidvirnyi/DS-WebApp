@@ -7,7 +7,7 @@ import axios, {
 
 // Base URL and timeouts
 const BASE_URL =
-  (import.meta.env.VITE_API_URL as string | undefined) ||
+  (process.env.NEXT_PUBLIC_API_URL as string | undefined) ||
   'http://localhost:3001/api'
 const TIMEOUT = 10_000
 
