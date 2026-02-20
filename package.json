@@ -120,7 +120,6 @@
   ],
   "author": "Dental Story",
   "license": "MIT",
-  "packageManager": "pnpm@9.15.0",
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=9.0.0"
