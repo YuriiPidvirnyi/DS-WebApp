@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client'
 import { HelmetProvider } from 'react-helmet-async'
 import { BrowserRouter as Router } from 'react-router-dom'
 import App from './App.tsx'
-import { registerSW } from 'virtual:pwa-register'
 import performanceMonitor from './services/performance'
 import './i18n/config' // Initialize i18n
 import { initSecurity } from './utils/security' // Initialize security
@@ -25,13 +24,6 @@ if (process.env.NODE_ENV === "production") {
       )
     }
   })
-}
-
-// Defer PWA registration to not block initial page load
-if ('requestIdleCallback' in window) {
-  requestIdleCallback(() => registerSW({ immediate: true }))
-} else {
-  setTimeout(() => registerSW({ immediate: true }), 2000)
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

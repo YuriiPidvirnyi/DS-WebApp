@@ -19,6 +19,14 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL || 'https://dentalstory.com.ua'
   ),
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Dental Story',
+  },
+  formatDetection: { telephone: false },
+  themeColor: '#AECED3',
   title: {
     default: 'Dental Story - Сучасна стоматологічна клініка у Львові | Сумська, 10',
     template: '%s | Dental Story',

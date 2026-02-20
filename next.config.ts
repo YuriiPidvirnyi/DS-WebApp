@@ -1,5 +1,72 @@
 import type { NextConfig } from 'next'
 import { withSentryConfig } from '@sentry/nextjs'
+import withPWA from '@ducanh2912/next-pwa'
+
+const withPWAConfig = withPWA({
+  dest: 'public',
+  cacheOnFrontEndNav: true,
+  aggressiveFrontEndNavCaching: true,
+  reloadOnOnline: true,
+  // Disable SW generation in development to keep fast refresh working
+  disable: process.env.NODE_ENV === 'development',
+  workboxOptions: {
+    disableDevLogs: true,
+    runtimeCaching: [
+      // Google Fonts — cache-first, 1 year
+      {
+        urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
+        handler: 'CacheFirst',
+        options: {
+          cacheName: 'google-fonts',
+          expiration: { maxEntries: 10, maxAgeSeconds: 365 * 24 * 60 * 60 },
+          cacheableResponse: { statuses: [0, 200] },
+        },
+      },
+      // Remote images (CliniCards CDN, clinic domain) — cache-first, 30 days
+      {
+        urlPattern:
+          /^https:\/\/(?:api\.cliniccards\.com|dentalstory\.com\.ua)\/.*/i,
+        handler: 'CacheFirst',
+        options: {
+          cacheName: 'remote-images',
+          expiration: { maxEntries: 60, maxAgeSeconds: 30 * 24 * 60 * 60 },
+          cacheableResponse: { statuses: [0, 200] },
+        },
+      },
+      // Internal /api/* routes — NetworkFirst, 24 h stale fallback
+      {
+        urlPattern: /^\/api\/.*/i,
+        handler: 'NetworkFirst',
+        options: {
+          cacheName: 'api-cache',
+          networkTimeoutSeconds: 10,
+          expiration: { maxEntries: 32, maxAgeSeconds: 24 * 60 * 60 },
+          cacheableResponse: { statuses: [0, 200] },
+        },
+      },
+      // Static assets (JS/CSS/images served by Next.js) — StaleWhileRevalidate
+      {
+        urlPattern: /\.(?:js|css|woff2?|png|jpg|jpeg|svg|webp|avif|ico)$/i,
+        handler: 'StaleWhileRevalidate',
+        options: {
+          cacheName: 'static-assets',
+          expiration: { maxEntries: 128, maxAgeSeconds: 7 * 24 * 60 * 60 },
+        },
+      },
+      // HTML pages — NetworkFirst with offline fallback
+      {
+        urlPattern: /^\/(?!api\/).*/i,
+        handler: 'NetworkFirst',
+        options: {
+          cacheName: 'pages-cache',
+          networkTimeoutSeconds: 10,
+          expiration: { maxEntries: 32, maxAgeSeconds: 24 * 60 * 60 },
+          cacheableResponse: { statuses: [0, 200] },
+        },
+      },
+    ],
+  },
+})
 
 const nextConfig: NextConfig = {
   // React strict mode for catching issues early
@@ -82,7 +149,7 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default withSentryConfig(nextConfig, {
+export default withSentryConfig(withPWAConfig(nextConfig), {
   // Suppress noisy Sentry CLI output during build
   silent: !process.env.CI,
 
