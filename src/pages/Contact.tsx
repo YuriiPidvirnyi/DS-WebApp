@@ -1,22 +1,15 @@
+'use client'
+
 import { Phone, Mail, MapPin, Clock } from 'lucide-react'
 import ContactForm from '@/components/ContactForm'
 import GoogleMap from '@/components/GoogleMap'
 import CallbackRequest from '@/components/CallbackRequest'
 import FAQ from '@/components/FAQ'
 import { CONTACT_INFO } from '@/utils/constants'
-import { Helmet } from 'react-helmet-async'
 
 const Contact = () => {
   return (
     <div className="py-16">
-      <Helmet>
-        <title>Контакти — Dental Story</title>
-        <meta
-          name="description"
-          content="Телефон, email, адреса та години роботи клініки. Швидкий зворотній дзвінок і карта Google."
-        />
-        <link rel="canonical" href="https://dentalstory.com.ua/contact" />
-      </Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">

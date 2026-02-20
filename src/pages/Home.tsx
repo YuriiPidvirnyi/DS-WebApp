@@ -1,9 +1,10 @@
-import { Link } from 'react-router-dom'
+'use client'
+
+import Link from 'next/link'
 import { Smile, Shield, Users, Award, ArrowRight } from 'lucide-react'
 import Testimonials from '@/components/Testimonials'
 import LazyImage from '@/components/ui/LazyImage'
 import images from '@/content/images.json'
-import { Helmet } from 'react-helmet-async'
 
 const Home = () => {
   const features = [
@@ -55,14 +56,6 @@ const Home = () => {
 
   return (
     <div>
-      <Helmet>
-        <title>Dental Story — Сучасна стоматологічна клініка в Києві</title>
-        <meta
-          name="description"
-          content="Професійне лікування зубів, імплантація, ортодонтія, естетична стоматологія. Запис онлайн або телефоном."
-        />
-        <link rel="canonical" href="https://dentalstory.com.ua/" />
-      </Helmet>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-slate-800 via-slate-700 to-dental-teal text-white py-24 overflow-hidden">
         {/* Background Pattern */}
@@ -97,7 +90,7 @@ const Home = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <Link
-                  to="/booking"
+                  href="/booking"
                   className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 inline-flex items-center justify-center"
                   data-track-id="cta_hero_booking"
                   data-track-category="hero"
@@ -107,7 +100,7 @@ const Home = () => {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
                 <Link
-                  to="/services"
+                  href="/services"
                   className="border-2 border-white text-white hover:bg-white hover:text-slate-800 px-8 py-4 rounded-xl font-semibold transition-all duration-200 text-center"
                 >
                   Наші послуги
@@ -249,7 +242,7 @@ const Home = () => {
                     </h3>
                     <p className="text-gray-600 mb-4">{service.description}</p>
                     <Link
-                      to="/services"
+                      href="/services"
                       className="text-dental-teal hover:text-teal-600 font-medium inline-flex items-center"
                     >
                       Дізнатися більше
@@ -263,7 +256,7 @@ const Home = () => {
 
           <div className="text-center mt-12">
             <Link
-              to="/services"
+              href="/services"
               className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-3 rounded-lg font-semibold transition-colors inline-flex items-center"
             >
               Всі послуги
@@ -311,7 +304,7 @@ const Home = () => {
                   </li>
                 </ul>
                 <Link
-                  to="/booking"
+                  href="/booking"
                   className="block w-full bg-gray-100 hover:bg-gray-200 text-gray-900 px-6 py-3 rounded-lg font-semibold transition-colors"
                 >
                   Записатися
@@ -352,7 +345,7 @@ const Home = () => {
                   </li>
                 </ul>
                 <Link
-                  to="/booking"
+                  href="/booking"
                   className="block w-full bg-teal-800 hover:bg-teal-900 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
                 >
                   Записатися
@@ -388,7 +381,7 @@ const Home = () => {
                   </li>
                 </ul>
                 <Link
-                  to="/booking"
+                  href="/booking"
                   className="block w-full bg-gray-100 hover:bg-gray-200 text-gray-900 px-6 py-3 rounded-lg font-semibold transition-colors"
                 >
                   Записатися
@@ -403,7 +396,7 @@ const Home = () => {
               методу лікування
             </p>
             <Link
-              to="/services"
+              href="/services"
               className="text-dental-teal hover:text-teal-600 font-semibold inline-flex items-center"
             >
               Переглянути всі ціни
@@ -427,7 +420,7 @@ const Home = () => {
             план лікування
           </p>
           <Link
-            to="/contact"
+            href="/contact"
             className="bg-white text-teal-800 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-200 transition-colors inline-flex items-center"
           >
             Записатися на прийом

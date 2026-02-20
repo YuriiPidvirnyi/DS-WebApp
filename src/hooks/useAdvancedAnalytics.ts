@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { usePathname } from 'next/navigation'
 import {
   initScrollTracking,
   initTimeTracking,
@@ -10,10 +10,10 @@ import {
  * Hook to initialize advanced analytics tracking on each page
  */
 export function useAdvancedAnalytics() {
-  const location = useLocation()
+  const pathname = usePathname()
 
   useEffect(() => {
-    const pageName = location.pathname
+    const pageName = pathname
 
     // Initialize scroll depth tracking
     const cleanupScroll = initScrollTracking(pageName)
@@ -30,7 +30,7 @@ export function useAdvancedAnalytics() {
       cleanupTime()
       cleanupClick()
     }
-  }, [location.pathname])
+  }, [pathname])
 }
 
 export default useAdvancedAnalytics

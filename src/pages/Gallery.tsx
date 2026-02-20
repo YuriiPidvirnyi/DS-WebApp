@@ -1,8 +1,9 @@
+'use client'
+
 import { useState } from 'react'
 import { X } from 'lucide-react'
 import type { GalleryImage } from '@/types'
 import galleryData from '@/content/gallery.json'
-import { Helmet } from 'react-helmet-async'
 
 // Local gallery data (replaces external Unsplash links). Drop real photos into public/assets/images and update src/content/gallery.json
 const galleryImages: GalleryImage[] = galleryData as unknown as GalleryImage[]
@@ -69,14 +70,6 @@ const Gallery = () => {
 
   return (
     <div className="py-16">
-      <Helmet>
-        <title>Галерея — Dental Story</title>
-        <meta
-          name="description"
-          content="Фото клініки, обладнання та результатів лікування. До/після згоди пацієнтів."
-        />
-        <link rel="canonical" href="https://dentalstory.com.ua/gallery" />
-      </Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">

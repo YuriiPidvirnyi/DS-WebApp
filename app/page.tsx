@@ -1,10 +1,13 @@
-// TODO (Phase 2): Migrate src/pages/Home.tsx content here
-// This is a scaffold placeholder for Phase 1
+import type { Metadata } from 'next'
+import Home from '@/pages/Home'
+
+export const metadata: Metadata = {
+  title: 'Dental Story — Сучасна стоматологічна клініка в Києві',
+  description:
+    'Професійне лікування зубів, імплантація, ортодонтія, естетична стоматологія. Запис онлайн або телефоном.',
+  alternates: { canonical: '/' },
+}
 
 export default function HomePage() {
-  return (
-    <main>
-      <p>Migration in progress — Phase 2 will replace this with Home page content.</p>
-    </main>
-  )
+  return <Home />
 }

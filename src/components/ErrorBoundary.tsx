@@ -1,7 +1,7 @@
 import { Component, ErrorInfo, ReactNode } from 'react'
 import { AlertCircle, Home, RefreshCw, MessageCircle } from 'lucide-react'
 import { Button } from './ui'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import { captureException } from '@/utils/sentry'
 
 interface ErrorBoundaryProps {
@@ -226,7 +226,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                 </Button>
               )}
 
-              <Link to="/">
+              <Link href="/">
                 <Button variant="outline" className="flex items-center">
                   <Home className="h-4 w-4 mr-2" />
                   Повернутися на головну

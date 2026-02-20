@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Check,
   HeartPulse,
@@ -8,11 +10,10 @@ import {
   Zap,
   Crown,
 } from 'lucide-react'
+import Link from 'next/link'
 import FAQAccordion from '@/components/FAQAccordion'
 import PriceCalculator from '@/components/PriceCalculator'
 import { ALL_FAQS } from '@/content/faqs'
-import { Helmet } from 'react-helmet-async'
-import { Link } from 'react-router-dom'
 
 const Services = () => {
   const services = [
@@ -92,14 +93,6 @@ const Services = () => {
 
   return (
     <div className="py-16">
-      <Helmet>
-        <title>Послуги — Dental Story</title>
-        <meta
-          name="description"
-          content="Терапевтична, хірургічна, ортопедична стоматологія, ортодонтія, естетика та дитяча стоматологія."
-        />
-        <link rel="canonical" href="https://dentalstory.com.ua/services" />
-      </Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
@@ -273,7 +266,7 @@ const Services = () => {
               план лікування, який підходить саме вам
             </p>
             <Link
-              to="/booking"
+              href="/booking"
               className="inline-block bg-white text-teal-800 px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
             >
               Записатися на консультацію

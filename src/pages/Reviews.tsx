@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -11,7 +13,6 @@ import StarRating from '@/components/StarRating'
 import { getReviews, createReview, type Review } from '@/services/reviews'
 import { withToast } from '@/utils/toast'
 import { CheckCircle } from 'lucide-react'
-import { Helmet } from 'react-helmet-async'
 
 export default function ReviewsPage() {
   const [loading, setLoading] = useState(true)
@@ -86,14 +87,6 @@ export default function ReviewsPage() {
 
   return (
     <div className="py-16">
-      <Helmet>
-        <title>Відгуки пацієнтів — Dental Story</title>
-        <meta
-          name="description"
-          content="Оцініть наш сервіс та прочитайте відгуки пацієнтів про лікування у Dental Story."
-        />
-        <link rel="canonical" href="https://dentalstory.com.ua/reviews" />
-      </Helmet>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">

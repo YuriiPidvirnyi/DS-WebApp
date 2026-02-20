@@ -1,14 +1,11 @@
-import { Link } from 'react-router-dom'
+'use client'
+
+import Link from 'next/link'
 import { Home, ArrowLeft } from 'lucide-react'
-import { Helmet } from 'react-helmet-async'
 
 const NotFound = () => {
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4">
-      <Helmet>
-        <title>404 — Сторінку не знайдено | Dental Story</title>
-        <meta name="robots" content="noindex" />
-      </Helmet>
       <div className="text-center max-w-2xl">
         {/* 404 Number */}
         <div className="mb-8">
@@ -29,7 +26,7 @@ const NotFound = () => {
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
-            to="/"
+            href="/"
             className="inline-flex items-center justify-center px-6 py-3 bg-teal-800 text-white font-semibold rounded-lg hover:bg-teal-900 transition-colors"
           >
             <Home className="h-5 w-5 mr-2" />
@@ -49,19 +46,19 @@ const NotFound = () => {
         <div className="mt-12 pt-8 border-t border-gray-200">
           <p className="text-sm text-gray-500 mb-4">Можливо, ви шукали:</p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link to="/services" className="text-dental-teal hover:underline">
+            <Link href="/services" className="text-dental-teal hover:underline">
               Послуги
             </Link>
             <span className="text-gray-300">•</span>
-            <Link to="/about" className="text-dental-teal hover:underline">
+            <Link href="/about" className="text-dental-teal hover:underline">
               Про нас
             </Link>
             <span className="text-gray-300">•</span>
-            <Link to="/gallery" className="text-dental-teal hover:underline">
+            <Link href="/gallery" className="text-dental-teal hover:underline">
               Галерея
             </Link>
             <span className="text-gray-300">•</span>
-            <Link to="/contact" className="text-dental-teal hover:underline">
+            <Link href="/contact" className="text-dental-teal hover:underline">
               Контакти
             </Link>
           </div>

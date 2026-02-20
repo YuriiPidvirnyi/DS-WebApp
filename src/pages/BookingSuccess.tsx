@@ -1,10 +1,12 @@
-import { useSearchParams, Link } from 'react-router-dom'
+'use client'
+
+import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import MicroFeedback from '@/components/MicroFeedback'
 import { useEffect, useMemo, useState } from 'react'
 import { createICSEvent, downloadICS } from '@/utils/calendar'
 import { CalendarPlus } from 'lucide-react'
 import ReminderSettings from '@/components/ReminderSettings'
-import { Helmet } from 'react-helmet-async'
 
 type BookingDetails = {
   id: string
@@ -16,7 +18,7 @@ type BookingDetails = {
 }
 
 export default function BookingSuccess() {
-  const [params] = useSearchParams()
+  const params = useSearchParams()
   const ref = params.get('ref')
   const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(
     null
@@ -58,17 +60,6 @@ export default function BookingSuccess() {
 
   return (
     <div className="py-16">
-      <Helmet>
-        <title>Запис створено — Dental Story</title>
-        <meta
-          name="description"
-          content="Дякуємо! Ми зв'яжемося для підтвердження запису. Додайте подію в календар та увімкніть нагадування."
-        />
-        <link
-          rel="canonical"
-          href="https://dentalstory.com.ua/booking/success"
-        />
-      </Helmet>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Дякуємо! Запис створено
@@ -142,13 +133,13 @@ export default function BookingSuccess() {
         </div>
         <div className="flex justify-center gap-3">
           <Link
-            to="/"
+            href="/"
             className="px-5 py-2 rounded-lg bg-dental-teal text-white"
           >
             На головну
           </Link>
           <Link
-            to="/booking"
+            href="/booking"
             className="px-5 py-2 rounded-lg bg-gray-100 text-gray-800"
           >
             Створити ще один запис

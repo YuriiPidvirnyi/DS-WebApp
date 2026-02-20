@@ -1,9 +1,11 @@
-// TODO (Phase 2): Migrate src/pages/NotFound.tsx content here
+import type { Metadata } from 'next'
+import NotFoundPage from '@/pages/NotFound'
+
+export const metadata: Metadata = {
+  title: '404 — Сторінку не знайдено | Dental Story',
+  robots: { index: false, follow: false },
+}
 
 export default function NotFound() {
-  return (
-    <main>
-      <h2>404 — Page Not Found</h2>
-    </main>
-  )
+  return <NotFoundPage />
 }

@@ -1,6 +1,11 @@
 import type { Metadata } from 'next'
 import { Plus_Jakarta_Sans } from 'next/font/google'
+import Script from 'next/script'
 import '../src/styles/globals.css'
+import ClientProviders from './providers'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import { StructuredData } from '@/components/StructuredData'
 
 // Replace Google Fonts <link> from index.html with next/font for self-hosting
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -51,6 +56,8 @@ export const metadata: Metadata = {
   },
 }
 
+const GA4_ID = process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID
+
 export default function RootLayout({
   children,
 }: {
@@ -59,18 +66,42 @@ export default function RootLayout({
   return (
     <html lang="uk" className={plusJakartaSans.variable}>
       <body>
-        {/*
-          TODO (Phase 2): Wrap with:
-          - ErrorBoundary
-          - AccessibilityProvider
-          - ToastProvider
-          - Header
-          - main
-          - Footer
-          - StructuredData
-          - GA4 script (next/script)
-        */}
-        {children}
+        {/* Organization JSON-LD structured data (server-rendered) */}
+        <StructuredData type="organization" />
+        <StructuredData type="localBusiness" />
+
+        {/* Google Analytics 4 */}
+        {GA4_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga4-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA4_ID}', { page_path: window.location.pathname });
+              `}
+            </Script>
+          </>
+        )}
+
+        <ClientProviders>
+          {/* Skip navigation link for accessibility */}
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-50 bg-dental-teal text-white px-4 py-2 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-white"
+          >
+            Перейти до основного вмісту
+          </a>
+          <Header />
+          <main id="main-content" className="flex-1" role="main">
+            {children}
+          </main>
+          <Footer />
+        </ClientProviders>
       </body>
     </html>
   )

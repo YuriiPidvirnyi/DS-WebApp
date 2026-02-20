@@ -1,6 +1,7 @@
+'use client'
+
 import { Award, Users, Clock, Heart } from 'lucide-react'
 import images from '@/content/images.json'
-import { Helmet } from 'react-helmet-async'
 
 const About = () => {
   const stats = [
@@ -82,14 +83,6 @@ const About = () => {
 
   return (
     <div className="py-16">
-      <Helmet>
-        <title>Про нас — Dental Story</title>
-        <meta
-          name="description"
-          content="Сучасна стоматологічна клініка: досвідчена команда, інноваційне обладнання, турбота про пацієнтів."
-        />
-        <link rel="canonical" href="https://dentalstory.com.ua/about" />
-      </Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <div className="text-center mb-16">

@@ -1,5 +1,7 @@
+'use client'
+
 import { useEffect, useCallback } from 'react'
-import { useLocation } from 'react-router-dom'
+import { usePathname } from 'next/navigation'
 
 // Interface for web vitals metrics
 interface WebVitalsMetric {
@@ -10,7 +12,7 @@ interface WebVitalsMetric {
 
 // This component silently monitors performance metrics
 export default function PerformanceMetrics() {
-  const location = useLocation()
+  const pathname = usePathname()
 
   const reportWebVitals = useCallback(async (metric: WebVitalsMetric) => {
     // Log to console in development (only poor metrics)
@@ -89,7 +91,7 @@ export default function PerformanceMetrics() {
     }
 
     registerWebVitals()
-  }, [location.pathname, reportWebVitals]) // Re-measure on route changes
+  }, [pathname, reportWebVitals]) // Re-measure on route changes
 
   return null // This component doesn't render anything
 }

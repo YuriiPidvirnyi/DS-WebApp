@@ -30,7 +30,7 @@ import {
   AnalyticsEventCategory,
   trackEvent,
 } from '@/utils/analytics'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 
 type BookingFormValues = z.infer<typeof appointmentSchema>
 
@@ -46,7 +46,7 @@ export default function BookingForm() {
     start: startCooldown,
   } = useSubmissionCooldown('booking_form', 60)
 
-  const navigate = useNavigate()
+  const router = useRouter()
   const {
     register,
     handleSubmit,
@@ -184,7 +184,7 @@ export default function BookingForm() {
     reset()
 
     // Navigate to success page with reference
-    navigate(`/booking/success?ref=${encodeURIComponent(appointmentId)}`)
+    router.push(`/booking/success?ref=${encodeURIComponent(appointmentId)}`)
   }
 
   // Simple 3-step UI

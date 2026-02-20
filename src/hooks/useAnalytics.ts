@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react'
-import { useLocation } from 'react-router-dom'
+import { usePathname } from 'next/navigation'
 import {
   trackPageView,
   trackEvent,
@@ -16,7 +16,7 @@ import {
  * Hook for tracking page views automatically and exposing other analytics functions
  */
 export const useAnalytics = () => {
-  const location = useLocation()
+  const pathname = usePathname()
 
   // Track page views automatically when the location changes
   useEffect(() => {
@@ -24,8 +24,8 @@ export const useAnalytics = () => {
     const pageTitle = document.title || 'Dental Story'
 
     // Track the page view
-    trackPageView(location.pathname, pageTitle)
-  }, [location.pathname])
+    trackPageView(pathname, pageTitle)
+  }, [pathname])
 
   // Utility function to track element clicks with proper event delegation
   const trackElementClicks = useCallback(() => {

@@ -1,4 +1,3 @@
-import { Helmet } from 'react-helmet-async'
 import { CONTACT_INFO, SITE_INFO } from '@/utils/constants'
 
 interface StructuredDataProps {
@@ -149,8 +148,9 @@ export const StructuredData = ({
   }
 
   return (
-    <Helmet>
-      <script type="application/ld+json">{JSON.stringify(getSchema())}</script>
-    </Helmet>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(getSchema()) }}
+    />
   )
 }

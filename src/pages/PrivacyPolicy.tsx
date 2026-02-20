@@ -1,27 +1,17 @@
-import { Link } from 'react-router-dom'
+'use client'
+
+import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { CONTACT_INFO, SITE_INFO } from '@/utils/constants'
-import { Helmet } from 'react-helmet-async'
 
 const PrivacyPolicy = () => {
   return (
     <div className="py-16">
-      <Helmet>
-        <title>Політика конфіденційності — Dental Story</title>
-        <meta
-          name="description"
-          content="Як ми збираємо, зберігаємо та обробляємо ваші персональні дані. Конфіденційність пацієнтів — наш пріоритет."
-        />
-        <link
-          rel="canonical"
-          href="https://dentalstory.com.ua/privacy-policy"
-        />
-      </Helmet>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <Link
-            to="/"
+            href="/"
             className="inline-flex items-center text-dental-teal hover:text-teal-600 mb-6"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
