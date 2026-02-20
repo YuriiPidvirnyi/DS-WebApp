@@ -74,12 +74,6 @@ export const StructuredData = ({
         opens: '09:00',
         closes: '18:00',
       },
-      {
-        '@type': 'OpeningHoursSpecification',
-        dayOfWeek: 'Sunday',
-        opens: '08:00',
-        closes: '22:00',
-      },
     ],
     priceRange: '$$',
     aggregateRating: {

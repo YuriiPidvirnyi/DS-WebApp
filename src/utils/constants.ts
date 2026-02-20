@@ -27,7 +27,7 @@ export const CONTACT_INFO = {
   workingHours: {
     weekdays: 'Пн-Пт: 09:00-21:00',
     saturday: 'Сб: 09:00-18:00',
-    sunday: 'Нд: 08:00-22:00',
+    sunday: 'Нд: Вихідний',
     timezone: 'EET (UTC+2)',
   },
   coordinates: {
