@@ -1,19 +1,11 @@
 import React, { ReactElement } from 'react'
 import { render, RenderOptions } from '@testing-library/react'
 import { vi, expect } from 'vitest'
-import { BrowserRouter } from 'react-router-dom'
-import { HelmetProvider } from 'react-helmet-async'
 import { AccessibilityProvider } from '@/components/AccessibilityProvider'
 
-// Mock providers for testing
+// Minimal test providers: next/navigation & next/image are mocked globally in setup.ts
 const TestProviders = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <HelmetProvider>
-      <BrowserRouter>
-        <AccessibilityProvider>{children}</AccessibilityProvider>
-      </BrowserRouter>
-    </HelmetProvider>
-  )
+  return <AccessibilityProvider>{children}</AccessibilityProvider>
 }
 
 // Custom render function that includes providers
