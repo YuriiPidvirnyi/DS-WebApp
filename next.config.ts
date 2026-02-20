@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next'
+import { withSentryConfig } from '@sentry/nextjs'
 
 const nextConfig: NextConfig = {
   // React strict mode for catching issues early
@@ -81,4 +82,18 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default nextConfig
+export default withSentryConfig(nextConfig, {
+  // Suppress noisy Sentry CLI output during build
+  silent: !process.env.CI,
+
+  // Disable source map upload unless SENTRY_AUTH_TOKEN is set
+  sourceMaps: {
+    disable: !process.env.SENTRY_AUTH_TOKEN,
+  },
+
+  // Automatically tree-shake Sentry logger statements
+  disableLogger: true,
+
+  // Tunnel Sentry requests through /monitoring to avoid ad-blockers
+  tunnelRoute: '/monitoring',
+})

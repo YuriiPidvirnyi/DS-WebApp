@@ -56,7 +56,7 @@ export const metadata: Metadata = {
   },
 }
 
-const GA4_ID = process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID
+const GA4_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
 
 export default function RootLayout({
   children,

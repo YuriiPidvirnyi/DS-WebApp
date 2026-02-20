@@ -5,6 +5,7 @@ import { AlertCircle, Home, RefreshCw, MessageCircle } from 'lucide-react'
 import { Button } from './ui'
 import Link from 'next/link'
 import { captureException } from '@/utils/sentry'
+// Sentry is initialised via sentry.client.config.ts — no manual init needed here
 
 interface ErrorBoundaryProps {
   children: ReactNode

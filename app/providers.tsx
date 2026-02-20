@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import { AccessibilityProvider } from '@/components/AccessibilityProvider'
 import ToastProvider from '@/components/providers/ToastProvider'
@@ -13,27 +13,14 @@ import FloatingQuickActions from '@/components/FloatingQuickActions'
 import I18nProvider from './i18n-provider'
 import useAnalytics from '@/hooks/useAnalytics'
 import { useReminders } from '@/hooks/useReminders'
-import { initializeAnalytics } from '@/utils/analytics'
-import { initializeSentry } from '@/utils/sentry'
 
 /** Initializes analytics, Sentry and registers page-view tracking */
 function AppInitializer() {
   useAnalytics()
   useReminders()
 
-  useEffect(() => {
-    const init = async () => {
-      try {
-        initializeAnalytics()
-        if (process.env.NODE_ENV === 'production') {
-          await initializeSentry()
-        }
-      } catch (err) {
-        console.warn('Failed to init analytics/sentry:', err)
-      }
-    }
-    init()
-  }, [])
+  // GA4 is loaded via next/script in app/layout.tsx
+  // Sentry is initialised via sentry.client.config.ts + instrumentation.ts
 
   return null
 }
