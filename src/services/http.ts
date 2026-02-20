@@ -5,10 +5,11 @@ import axios, {
   AxiosResponse,
 } from 'axios'
 
-// Base URL and timeouts
+// Base URL — defaults to the Next.js internal route prefix
+// Override with NEXT_PUBLIC_API_URL for external backends
 const BASE_URL =
   (process.env.NEXT_PUBLIC_API_URL as string | undefined) ||
-  'http://localhost:3001/api'
+  '/api'
 const TIMEOUT = 10_000
 
 // Simple in-memory cache for GET requests

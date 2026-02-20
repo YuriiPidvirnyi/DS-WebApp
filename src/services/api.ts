@@ -1,9 +1,10 @@
 import type { ApiResponse } from '@/types'
 
-// API Base URL from environment variables
+// API Base URL — defaults to the Next.js internal route prefix
+// Override with NEXT_PUBLIC_API_URL for external backends
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
-  'http://localhost:3001/api'
+  '/api'
 
 /**
  * Custom error class for API errors
