@@ -146,7 +146,7 @@ export default withSentryConfig(withPWAConfig(nextConfig), {
   silent: !process.env.CI,
 
   // Disable source map upload unless SENTRY_AUTH_TOKEN is set
-  sourceMaps: {
+  sourcemaps: {
     disable: !process.env.SENTRY_AUTH_TOKEN,
   },
 

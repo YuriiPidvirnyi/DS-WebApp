@@ -1,0 +1,246 @@
+{
+  "version": 3,
+  "pages404": true,
+  "appType": "app",
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ],
+      "regex": "^/assets(?:/(.*))(?:/)?$"
+    },
+    {
+      "source": "/sw.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/javascript; charset=utf-8"
+        }
+      ],
+      "regex": "^/sw\\.js(?:/)?$"
+    }
+  ],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [
+      {
+        "source": "/monitoring(/?)",
+        "has": [
+          {
+            "type": "query",
+            "key": "o",
+            "value": "(?<orgid>\\d*)"
+          },
+          {
+            "type": "query",
+            "key": "p",
+            "value": "(?<projectid>\\d*)"
+          },
+          {
+            "type": "query",
+            "key": "r",
+            "value": "(?<region>[a-z]{2})"
+          }
+        ],
+        "destination": "https://o:orgid.ingest.:region.sentry.io/api/:projectid/envelope/?hsts=0",
+        "regex": "^/monitoring(/?)(?:/)?$"
+      },
+      {
+        "source": "/monitoring(/?)",
+        "has": [
+          {
+            "type": "query",
+            "key": "o",
+            "value": "(?<orgid>\\d*)"
+          },
+          {
+            "type": "query",
+            "key": "p",
+            "value": "(?<projectid>\\d*)"
+          }
+        ],
+        "destination": "https://o:orgid.ingest.sentry.io/api/:projectid/envelope/?hsts=0",
+        "regex": "^/monitoring(/?)(?:/)?$"
+      }
+    ],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/api/appointments/[id]",
+      "regex": "^/api/appointments/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/appointments/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/patient/[id]",
+      "regex": "^/patient/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/patient/(?<nxtPid>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/about",
+      "regex": "^/about(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/about(?:/)?$"
+    },
+    {
+      "page": "/admin/patients",
+      "regex": "^/admin/patients(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/patients(?:/)?$"
+    },
+    {
+      "page": "/api/appointments",
+      "regex": "^/api/appointments(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/appointments(?:/)?$"
+    },
+    {
+      "page": "/api/appointments/slots",
+      "regex": "^/api/appointments/slots(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/appointments/slots(?:/)?$"
+    },
+    {
+      "page": "/api/contacts",
+      "regex": "^/api/contacts(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/contacts(?:/)?$"
+    },
+    {
+      "page": "/api/health",
+      "regex": "^/api/health(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/health(?:/)?$"
+    },
+    {
+      "page": "/booking",
+      "regex": "^/booking(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/booking(?:/)?$"
+    },
+    {
+      "page": "/booking/success",
+      "regex": "^/booking/success(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/booking/success(?:/)?$"
+    },
+    {
+      "page": "/contact",
+      "regex": "^/contact(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/contact(?:/)?$"
+    },
+    {
+      "page": "/gallery",
+      "regex": "^/gallery(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/gallery(?:/)?$"
+    },
+    {
+      "page": "/opengraph-image",
+      "regex": "^/opengraph\\-image(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/opengraph\\-image(?:/)?$"
+    },
+    {
+      "page": "/privacy-policy",
+      "regex": "^/privacy\\-policy(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/privacy\\-policy(?:/)?$"
+    },
+    {
+      "page": "/reviews",
+      "regex": "^/reviews(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/reviews(?:/)?$"
+    },
+    {
+      "page": "/robots.txt",
+      "regex": "^/robots\\.txt(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/robots\\.txt(?:/)?$"
+    },
+    {
+      "page": "/services",
+      "regex": "^/services(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/services(?:/)?$"
+    },
+    {
+      "page": "/sitemap.xml",
+      "regex": "^/sitemap\\.xml(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/sitemap\\.xml(?:/)?$"
+    },
+    {
+      "page": "/terms-of-service",
+      "regex": "^/terms\\-of\\-service(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/terms\\-of\\-service(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

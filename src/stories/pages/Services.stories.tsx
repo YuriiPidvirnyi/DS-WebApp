@@ -1,6 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { BrowserRouter } from 'react-router-dom'
-import Services from '@/pages/Services'
+import type { Meta, StoryObj } from '@storybook/nextjs'
+import Services from '@/views/Services'
 
 const meta = {
   title: 'Pages/Services',
@@ -9,13 +8,6 @@ const meta = {
     layout: 'fullscreen',
   },
   tags: ['autodocs'],
-  decorators: [
-    Story => (
-      <BrowserRouter>
-        <Story />
-      </BrowserRouter>
-    ),
-  ],
 } satisfies Meta<typeof Services>
 
 export default meta

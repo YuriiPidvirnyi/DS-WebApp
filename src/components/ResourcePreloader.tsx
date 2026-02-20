@@ -6,7 +6,7 @@ const ResourcePreloader = () => {
   useEffect(() => {
     try {
       // Only preload in production to avoid dev issues
-      if (!process.env.NODE_ENV === "production") {
+      if (process.env.NODE_ENV !== "production") {
         return
       }
 

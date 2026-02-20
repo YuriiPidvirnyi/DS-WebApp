@@ -1,5 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { BrowserRouter } from 'react-router-dom'
+import type { Meta, StoryObj } from '@storybook/nextjs'
 import BookingForm from '@/components/BookingForm'
 
 const meta = {
@@ -11,11 +10,9 @@ const meta = {
   tags: ['autodocs'],
   decorators: [
     Story => (
-      <BrowserRouter>
-        <div className="w-full max-w-4xl">
-          <Story />
-        </div>
-      </BrowserRouter>
+      <div className="w-full max-w-4xl">
+        <Story />
+      </div>
     ),
   ],
 } satisfies Meta<typeof BookingForm>

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs'
 import PriceCalculator from '@/components/PriceCalculator'
 import { Toaster } from 'react-hot-toast'
 

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Gallery from '@/pages/Gallery'
+import Gallery from '@/views/Gallery'
 import { generateBreadcrumbSchema } from '@/utils/seo'
 
 export const metadata: Metadata = {

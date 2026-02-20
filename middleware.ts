@@ -106,7 +106,7 @@ export function middleware(request: NextRequest): NextResponse {
   // --- Rate limiting: /api/* only (skip health endpoint) ---
   if (pathname.startsWith('/api/') && pathname !== '/api/health') {
     const ip = getClientIp(request)
-    const { allowed, remaining, resetAt } = checkRateLimit(ip, RATE_LIMIT_MAX_API)
+    const { allowed, remaining: _remaining, resetAt } = checkRateLimit(ip, RATE_LIMIT_MAX_API)
 
     if (!allowed) {
       return new NextResponse('Too Many Requests', {

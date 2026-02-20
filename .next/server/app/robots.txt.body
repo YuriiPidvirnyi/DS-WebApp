@@ -1,0 +1,7 @@
+User-Agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /patient/
+
+Sitemap: https://dentalstory.com.ua/sitemap.xml

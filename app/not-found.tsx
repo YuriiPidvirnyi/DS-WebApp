@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import NotFoundPage from '@/pages/NotFound'
+import NotFoundPage from '@/views/NotFound'
 
 export const metadata: Metadata = {
   title: '404 — Сторінку не знайдено | Dental Story',

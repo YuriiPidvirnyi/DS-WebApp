@@ -1,6 +1,6 @@
 'use client'
 
-import PatientManagement from '@/pages/admin/PatientManagement'
+import PatientManagement from '@/views/admin/PatientManagement'
 
 export default function AdminPatientsPage() {
   return <PatientManagement />

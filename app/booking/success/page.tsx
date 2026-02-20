@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
-import BookingSuccess from '@/pages/BookingSuccess'
+import BookingSuccess from '@/views/BookingSuccess'
 
 export const metadata: Metadata = {
   title: 'Запис створено — Dental Story',

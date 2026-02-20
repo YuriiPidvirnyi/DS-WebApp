@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import About from '@/pages/About'
+import About from '@/views/About'
 import { generateBreadcrumbSchema } from '@/utils/seo'
 
 export const metadata: Metadata = {

@@ -1,5 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { BrowserRouter } from 'react-router-dom'
+import type { Meta, StoryObj } from '@storybook/nextjs'
 import Footer from '@/components/Footer'
 
 const meta = {
@@ -9,13 +8,6 @@ const meta = {
     layout: 'fullscreen',
   },
   tags: ['autodocs'],
-  decorators: [
-    Story => (
-      <BrowserRouter>
-        <Story />
-      </BrowserRouter>
-    ),
-  ],
 } satisfies Meta<typeof Footer>
 
 export default meta

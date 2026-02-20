@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Contact from '@/pages/Contact'
+import Contact from '@/views/Contact'
 import { generateBreadcrumbSchema } from '@/utils/seo'
 
 export const metadata: Metadata = {

@@ -22,7 +22,7 @@ export default function PerformanceMetrics() {
         FID: 100,
         CLS: 0.1,
         FCP: 1800,
-        TTFB: process.env.NODE_ENV !== "production" ? 5000 : 800, // Higher threshold for dev server
+        TTFB: 5000, // Higher threshold for dev/test server (already inside non-production block)
         INP: 200,
       }
       const threshold = thresholds[metric.name]

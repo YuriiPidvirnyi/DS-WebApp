@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import TermsOfService from '@/pages/TermsOfService'
+import TermsOfService from '@/views/TermsOfService'
 
 export const metadata: Metadata = {
   title: 'Умови використання — Dental Story',

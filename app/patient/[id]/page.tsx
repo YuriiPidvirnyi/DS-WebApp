@@ -1,6 +1,6 @@
 'use client'
 
-import PatientDashboard from '@/pages/patient/PatientDashboard'
+import PatientDashboard from '@/views/patient/PatientDashboard'
 
 interface Props {
   params: { id: string }

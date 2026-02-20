@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Booking from '@/pages/Booking'
+import Booking from '@/views/Booking'
 import { generateBreadcrumbSchema } from '@/utils/seo'
 
 export const metadata: Metadata = {

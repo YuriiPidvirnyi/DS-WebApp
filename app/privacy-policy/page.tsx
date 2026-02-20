@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import PrivacyPolicy from '@/pages/PrivacyPolicy'
+import PrivacyPolicy from '@/views/PrivacyPolicy'
 
 export const metadata: Metadata = {
   title: 'Політика конфіденційності — Dental Story',

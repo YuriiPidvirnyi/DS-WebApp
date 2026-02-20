@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Services from '@/pages/Services'
+import Services from '@/views/Services'
 import { generateFAQSchema, generateBreadcrumbSchema } from '@/utils/seo'
 import { ALL_FAQS } from '@/content/faqs'
 
