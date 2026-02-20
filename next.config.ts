@@ -96,7 +96,7 @@ const nextConfig: NextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
 
-  // Security headers (migrated from vercel.json)
+  // Static asset cache headers — security headers are set by middleware.ts
   async headers() {
     return [
       {
@@ -108,20 +108,12 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // PWA service worker — must not be cached
       {
-        source: '/(.*)',
+        source: '/sw.js',
         headers: [
-          { key: 'X-Content-Type-Options', value: 'nosniff' },
-          { key: 'X-Frame-Options', value: 'DENY' },
-          { key: 'X-XSS-Protection', value: '1; mode=block' },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
-          {
-            key: 'Permissions-Policy',
-            value: 'geolocation=(), microphone=(), camera=()',
-          },
+          { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
+          { key: 'Content-Type', value: 'application/javascript; charset=utf-8' },
         ],
       },
     ]

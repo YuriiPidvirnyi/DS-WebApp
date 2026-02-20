@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Plus_Jakarta_Sans } from 'next/font/google'
 import Script from 'next/script'
+import { headers } from 'next/headers'
 import '../src/styles/globals.css'
 import ClientProviders from './providers'
 import Header from '@/components/Header'
@@ -66,11 +67,14 @@ export const metadata: Metadata = {
 
 const GA4_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  // Read CSP nonce injected by middleware — makes this layout dynamically rendered
+  const nonce = (await headers()).get('x-nonce') ?? ''
+
   return (
     <html lang="uk" className={plusJakartaSans.variable}>
       <body>
@@ -84,8 +88,9 @@ export default function RootLayout({
             <Script
               src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`}
               strategy="afterInteractive"
+              nonce={nonce}
             />
-            <Script id="ga4-init" strategy="afterInteractive">
+            <Script id="ga4-init" strategy="afterInteractive" nonce={nonce}>
               {`
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
