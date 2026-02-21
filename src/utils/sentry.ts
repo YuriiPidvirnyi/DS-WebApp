@@ -3,27 +3,19 @@
  * Uses dynamic imports to reduce bundle size in development
  */
 import type * as SentryTypes from '@sentry/react'
-import type { Replay as ReplayType } from '@sentry/replay'
 import { isErrorTrackingAllowed } from './consent'
 
-// Lazy-loaded Sentry modules
+// Lazy-loaded Sentry module
 let Sentry: typeof SentryTypes | null = null
-let Replay: typeof ReplayType | null = null
 
 /**
- * Dynamically load Sentry modules only when needed
+ * Dynamically load Sentry module only when needed
  */
 const loadSentry = async (): Promise<boolean> => {
   if (Sentry) return true // Already loaded
 
   try {
-    const [sentryModule, replayModule] = await Promise.all([
-      import('@sentry/react'),
-      import('@sentry/replay'),
-    ])
-
-    Sentry = sentryModule
-    Replay = replayModule.Replay
+    Sentry = await import('@sentry/react')
     return true
   } catch (error) {
     console.error('Failed to load Sentry:', error)
@@ -66,7 +58,7 @@ export const initializeSentry = async (): Promise<void> => {
 
   // Dynamically load Sentry only when needed
   const loaded = await loadSentry()
-  if (!loaded || !Sentry || !Replay) {
+  if (!loaded || !Sentry) {
     console.error('Failed to load Sentry modules')
     return
   }
@@ -76,11 +68,11 @@ export const initializeSentry = async (): Promise<void> => {
       dsn,
       environment,
       integrations: [
-        // Enable session replay to help reproduce user issues
-        new Replay({
+        // Enable session replay to help reproduce user issues (v10 API)
+        Sentry.replayIntegration({
           // Mask user inputs by default for privacy
           maskAllInputs: true,
-          maskTextSelector: '[data-mask]',
+          maskAllText: false,
           blockAllMedia: true,
         }),
       ],
