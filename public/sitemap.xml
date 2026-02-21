@@ -65,40 +65,4 @@
     <priority>0.3</priority>
     <xhtml:link rel="alternate" hreflang="uk" href="https://dentalstory.com.ua/terms-of-service" />
   </url>
-  <url>
-    <loc>https://dentalstory.com.ua/services/therapeutic</loc>
-    <lastmod>2026-02-20T18:37:32.822Z</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://dentalstory.com.ua/services/surgical</loc>
-    <lastmod>2026-02-20T18:37:32.822Z</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://dentalstory.com.ua/services/orthopedic</loc>
-    <lastmod>2026-02-20T18:37:32.822Z</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://dentalstory.com.ua/services/orthodontics</loc>
-    <lastmod>2026-02-20T18:37:32.822Z</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://dentalstory.com.ua/services/aesthetic</loc>
-    <lastmod>2026-02-20T18:37:32.822Z</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://dentalstory.com.ua/services/pediatric</loc>
-    <lastmod>2026-02-20T18:37:32.822Z</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
 </urlset>
