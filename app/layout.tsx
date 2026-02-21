@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Plus_Jakarta_Sans } from 'next/font/google'
 import Script from 'next/script'
 import { headers } from 'next/headers'
@@ -16,6 +16,10 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   display: 'swap',
 })
 
+export const viewport: Viewport = {
+  themeColor: '#AECED3',
+}
+
 export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL || 'https://dentalstory.com.ua'
@@ -27,9 +31,9 @@ export const metadata: Metadata = {
     title: 'Dental Story',
   },
   formatDetection: { telephone: false },
-  themeColor: '#AECED3',
   title: {
-    default: 'Dental Story - Сучасна стоматологічна клініка у Львові | Сумська, 10',
+    default:
+      'Dental Story - Сучасна стоматологічна клініка у Львові | Сумська, 10',
     template: '%s | Dental Story',
   },
   description:
