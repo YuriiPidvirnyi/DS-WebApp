@@ -4,8 +4,8 @@
   "description": "Modern webapp for Dental Story dental clinic",
   "type": "module",
   "scripts": {
-"dev": "next dev --webpack",
-    "build": "next build",
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint",
     "lint:eslint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 100",
