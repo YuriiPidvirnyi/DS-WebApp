@@ -1,5 +1,4 @@
-import http from './http'
-import { mockAPIResponse } from './api'
+import { api, mockAPIResponse } from './api'
 import type { ApiResponse } from '@/types'
 
 export type Review = {
@@ -18,8 +17,7 @@ export type Review = {
 // Fetch reviews (mocked backend)
 export async function getReviews(): Promise<ApiResponse<{ items: Review[] }>> {
   try {
-    const res = await http.get<ApiResponse<{ items: Review[] }>>('/reviews')
-    return res.data
+    return await api.get<ApiResponse<{ items: Review[] }>>('/reviews')
   } catch {
     // Mock some seed reviews
     const items: Review[] = [
@@ -50,11 +48,10 @@ export async function createReview(
   payload: Omit<Review, 'id' | 'createdAt'>
 ): Promise<ApiResponse<{ created: boolean; id: string }>> {
   try {
-    const res = await http.post<ApiResponse<{ created: boolean; id: string }>>(
+    return await api.post<ApiResponse<{ created: boolean; id: string }>>(
       '/reviews',
       payload
     )
-    return res.data
   } catch {
     return mockAPIResponse({ created: true, id: `rev-${Date.now()}` }, 500)
   }

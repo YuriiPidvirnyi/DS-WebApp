@@ -1,5 +1,4 @@
-import http from './http'
-import { mockAPIResponse } from './api'
+import { api, mockAPIResponse } from './api'
 import type { ApiResponse } from '@/types'
 
 // Types
@@ -30,10 +29,9 @@ export async function scheduleReminder(
   details: ReminderDetails
 ): Promise<ApiResponse<{ scheduled: boolean; reminderId: string }>> {
   try {
-    const res = await http.post<
+    return await api.post<
       ApiResponse<{ scheduled: boolean; reminderId: string }>
     >('/reminders/schedule', details)
-    return res.data
   } catch (error) {
     // Mock response on error or in development
     return mockAPIResponse(
@@ -50,10 +48,9 @@ export async function cancelReminder(
   reminderId: string
 ): Promise<ApiResponse<{ cancelled: boolean }>> {
   try {
-    const res = await http.delete<ApiResponse<{ cancelled: boolean }>>(
+    return await api.delete<ApiResponse<{ cancelled: boolean }>>(
       `/reminders/${reminderId}`
     )
-    return res.data
   } catch (error) {
     return mockAPIResponse({ cancelled: true }, 300)
   }
@@ -64,11 +61,10 @@ export async function updateReminderPreference(
   preference: ReminderPreference
 ): Promise<ApiResponse<{ updated: boolean }>> {
   try {
-    const res = await http.patch<ApiResponse<{ updated: boolean }>>(
+    return await api.patch<ApiResponse<{ updated: boolean }>>(
       `/appointments/${appointmentId}/reminder-preference`,
       { preference }
     )
-    return res.data
   } catch (error) {
     return mockAPIResponse({ updated: true }, 300)
   }

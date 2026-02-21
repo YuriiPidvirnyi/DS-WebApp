@@ -1,6 +1,5 @@
-import http from './http'
 import type { Appointment, AppointmentFormData, ApiResponse } from '@/types'
-import { mockAPIResponse } from './api'
+import { api, mockAPIResponse } from './api'
 
 const ENDPOINTS = {
   create: '/appointments',
@@ -17,11 +16,7 @@ export async function createAppointment(
   data: AppointmentFormData
 ): Promise<ApiResponse<Appointment>> {
   try {
-    const res = await http.post<ApiResponse<Appointment>>(
-      ENDPOINTS.create,
-      data
-    )
-    return res.data
+    return await api.post<ApiResponse<Appointment>>(ENDPOINTS.create, data)
   } catch (e) {
     // Fallback to mock in development/no-backend
     const appointment: Appointment = {
@@ -41,8 +36,7 @@ export async function getAppointment(
   id: string
 ): Promise<ApiResponse<Appointment>> {
   try {
-    const res = await http.get<ApiResponse<Appointment>>(ENDPOINTS.one(id))
-    return res.data
+    return await api.get<ApiResponse<Appointment>>(ENDPOINTS.one(id))
   } catch {
     throw new Error('Not implemented')
   }
@@ -55,8 +49,7 @@ export async function getAllAppointments(): Promise<
   ApiResponse<Appointment[]>
 > {
   try {
-    const res = await http.get<ApiResponse<Appointment[]>>(ENDPOINTS.list)
-    return res.data
+    return await api.get<ApiResponse<Appointment[]>>(ENDPOINTS.list)
   } catch {
     throw new Error('Not implemented')
   }
@@ -70,11 +63,9 @@ export async function updateAppointmentStatus(
   status: Appointment['status']
 ): Promise<ApiResponse<Appointment>> {
   try {
-    const res = await http.patch<ApiResponse<Appointment>>(
-      ENDPOINTS.status(id),
-      { status }
-    )
-    return res.data
+    return await api.patch<ApiResponse<Appointment>>(ENDPOINTS.status(id), {
+      status,
+    })
   } catch {
     throw new Error('Not implemented')
   }
@@ -87,8 +78,7 @@ export async function cancelAppointment(
   id: string
 ): Promise<ApiResponse<void>> {
   try {
-    const res = await http.delete<ApiResponse<void>>(ENDPOINTS.one(id))
-    return res.data
+    return await api.delete<ApiResponse<void>>(ENDPOINTS.one(id))
   } catch {
     throw new Error('Not implemented')
   }
@@ -102,10 +92,11 @@ export async function getAvailableSlots(
   doctorId?: string
 ): Promise<ApiResponse<string[]>> {
   try {
-    const res = await http.get<ApiResponse<string[]>>(ENDPOINTS.slots, {
-      params: { date, doctorId },
-    })
-    return res.data
+    const params = new URLSearchParams({ date })
+    if (doctorId) params.set('doctorId', doctorId)
+    return await api.get<ApiResponse<string[]>>(
+      `${ENDPOINTS.slots}?${params.toString()}`
+    )
   } catch {
     // Mock data fallback
     const slots = [
