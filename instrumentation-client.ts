@@ -3,6 +3,8 @@ import * as Sentry from '@sentry/nextjs'
 const dsn = process.env.SENTRY_DSN
 const environment = process.env.NEXT_PUBLIC_ENVIRONMENT ?? 'production'
 
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart
+
 if (dsn) {
   Sentry.init({
     dsn,
