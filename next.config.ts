@@ -150,9 +150,6 @@ export default withSentryConfig(withPWAConfig(nextConfig), {
     disable: !process.env.SENTRY_AUTH_TOKEN,
   },
 
-  // Automatically tree-shake Sentry logger statements
-  disableLogger: true,
-
   // Tunnel Sentry requests through /monitoring to avoid ad-blockers
   tunnelRoute: '/monitoring',
 })
