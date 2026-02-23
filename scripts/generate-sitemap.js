@@ -27,16 +27,6 @@ const STATIC_PAGES = [
   { url: '/terms-of-service', changefreq: 'yearly', priority: 0.3 },
 ]
 
-// Service categories (can be fetched from database in production)
-const SERVICE_CATEGORIES = [
-  'therapeutic',
-  'surgical',
-  'orthopedic',
-  'orthodontics',
-  'aesthetic',
-  'pediatric',
-]
-
 /**
  * Format date to W3C datetime format
  */
@@ -68,16 +58,6 @@ function generateSitemap() {
     // Add alternate language links (for future i18n)
     xml += `    <xhtml:link rel="alternate" hreflang="uk" href="${SITE_URL}${page.url}" />\n`
 
-    xml += '  </url>\n'
-  })
-
-  // Add service category pages (if implemented)
-  SERVICE_CATEGORIES.forEach(category => {
-    xml += '  <url>\n'
-    xml += `    <loc>${SITE_URL}/services/${category}</loc>\n`
-    xml += `    <lastmod>${lastmod}</lastmod>\n`
-    xml += `    <changefreq>monthly</changefreq>\n`
-    xml += `    <priority>0.6</priority>\n`
     xml += '  </url>\n'
   })
 
