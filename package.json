@@ -60,7 +60,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.10.2",
+    "@axe-core/playwright": "^4.11.1",
     "@chromatic-com/storybook": "^4.1.2",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
