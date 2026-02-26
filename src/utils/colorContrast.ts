@@ -86,7 +86,6 @@ export function getAccessibleColor(
   const bgLuminance = getLuminance(bgRgb.r, bgRgb.g, bgRgb.b)
   const shouldDarken = bgLuminance > 0.5
 
-  let adjustedColor = baseColor
   const step = shouldDarken ? -10 : 10
 
   for (let i = 0; i < 20; i++) {
@@ -94,10 +93,10 @@ export function getAccessibleColor(
     const newG = Math.max(0, Math.min(255, baseRgb.g + step * i))
     const newB = Math.max(0, Math.min(255, baseRgb.b + step * i))
 
-    adjustedColor = `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`
+    const candidate = `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`
 
-    if (meetsWCAGContrast(adjustedColor, backgroundColor, level)) {
-      return adjustedColor
+    if (meetsWCAGContrast(candidate, backgroundColor, level)) {
+      return candidate
     }
   }
 

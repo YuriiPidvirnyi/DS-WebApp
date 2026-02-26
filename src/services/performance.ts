@@ -293,7 +293,7 @@ class PerformanceMonitor {
 
     try {
       observer.observe({ entryTypes: ['longtask'] })
-    } catch (error) {
+    } catch (_error) {
       // Long task observer not supported
       if (this.config.enableLogging) {
         // eslint-disable-next-line no-console

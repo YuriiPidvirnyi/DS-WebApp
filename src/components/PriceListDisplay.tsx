@@ -87,13 +87,10 @@ export const PriceListDisplay: React.FC<PriceListDisplayProps> = ({
     // Sort items within each category
     filtered.forEach(category => {
       category.items.sort((a, b) => {
-        let comparison = 0
-
-        if (sortBy === 'name') {
-          comparison = a.name.localeCompare(b.name, 'uk-UA')
-        } else {
-          comparison = a.price - b.price
-        }
+        const comparison =
+          sortBy === 'name'
+            ? a.name.localeCompare(b.name, 'uk-UA')
+            : a.price - b.price
 
         return sortOrder === 'asc' ? comparison : -comparison
       })

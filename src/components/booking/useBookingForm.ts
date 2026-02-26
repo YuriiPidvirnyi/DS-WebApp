@@ -221,11 +221,12 @@ export function useBookingForm() {
         })
         // Track booking complete
         try {
-          window.gtag &&
+          if (window.gtag) {
             window.gtag('event', BookingEvent.BookingComplete, {
               appointment_id: res.data.id,
               service: data.service,
             })
+          }
         } catch {
           // Analytics may fail silently
         }

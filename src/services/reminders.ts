@@ -32,7 +32,7 @@ export async function scheduleReminder(
     return await api.post<
       ApiResponse<{ scheduled: boolean; reminderId: string }>
     >('/reminders/schedule', details)
-  } catch (error) {
+  } catch (_error) {
     // Mock response on error or in development
     return mockAPIResponse(
       {
@@ -51,7 +51,7 @@ export async function cancelReminder(
     return await api.delete<ApiResponse<{ cancelled: boolean }>>(
       `/reminders/${reminderId}`
     )
-  } catch (error) {
+  } catch (_error) {
     return mockAPIResponse({ cancelled: true }, 300)
   }
 }
@@ -65,7 +65,7 @@ export async function updateReminderPreference(
       `/appointments/${appointmentId}/reminder-preference`,
       { preference }
     )
-  } catch (error) {
+  } catch (_error) {
     return mockAPIResponse({ updated: true }, 300)
   }
 }
@@ -125,7 +125,7 @@ export function getLocalReminders(): ScheduledReminder[] {
     const stored = localStorage.getItem(REMINDERS_KEY)
     if (!stored) return []
     return JSON.parse(stored)
-  } catch (error) {
+  } catch (_error) {
     return []
   }
 }
@@ -160,7 +160,7 @@ export function checkDueReminders(): ScheduledReminder[] {
     }
 
     return due
-  } catch (error) {
+  } catch (_error) {
     return []
   }
 }
