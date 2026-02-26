@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import type { FAQCategory } from '@/content/faqs'
 import { ChevronDown } from 'lucide-react'

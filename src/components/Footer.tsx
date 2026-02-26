@@ -1,5 +1,7 @@
+'use client'
+
 import { memo } from 'react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import { Phone, Mail, MapPin, Clock } from 'lucide-react'
 import { CONTACT_INFO, SITE_INFO } from '@/utils/constants'
 import NewsletterSubscribe from '@/components/NewsletterSubscribe'
@@ -65,7 +67,7 @@ const Footer = memo(() => {
               <ul className="space-y-2">
                 <li>
                   <Link
-                    to="/"
+                    href="/"
                     className="text-gray-300 hover:text-dental-teal transition-colors"
                   >
                     Головна
@@ -73,7 +75,7 @@ const Footer = memo(() => {
                 </li>
                 <li>
                   <Link
-                    to="/services"
+                    href="/services"
                     className="text-gray-300 hover:text-dental-teal transition-colors"
                   >
                     Послуги
@@ -81,7 +83,7 @@ const Footer = memo(() => {
                 </li>
                 <li>
                   <Link
-                    to="/about"
+                    href="/about"
                     className="text-gray-300 hover:text-dental-teal transition-colors"
                   >
                     Про нас
@@ -89,7 +91,7 @@ const Footer = memo(() => {
                 </li>
                 <li>
                   <Link
-                    to="/gallery"
+                    href="/gallery"
                     className="text-gray-300 hover:text-dental-teal transition-colors"
                   >
                     Галерея
@@ -97,7 +99,7 @@ const Footer = memo(() => {
                 </li>
                 <li>
                   <Link
-                    to="/contact"
+                    href="/contact"
                     className="text-gray-300 hover:text-dental-teal transition-colors"
                   >
                     Контакти
@@ -165,13 +167,13 @@ const Footer = memo(() => {
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link
-                to="/privacy-policy"
+                href="/privacy-policy"
                 className="text-gray-300 hover:text-dental-teal text-sm transition-colors"
               >
                 Політика конфіденційності
               </Link>
               <Link
-                to="/terms-of-service"
+                href="/terms-of-service"
                 className="text-gray-300 hover:text-dental-teal text-sm transition-colors"
               >
                 Умови використання

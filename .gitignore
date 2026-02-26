@@ -8,6 +8,11 @@ yarn-error.log*
 dist/
 build/
 
+# Next.js
+.next/
+out/
+next-env.d.ts
+
 # Environment variables
 .env
 .env.local
@@ -48,7 +53,7 @@ playwright-report/
 # TypeScript cache
 *.tsbuildinfo
 
-# Vite
+# Vite (legacy)
 .vite/
 *storybook.log
 storybook-static

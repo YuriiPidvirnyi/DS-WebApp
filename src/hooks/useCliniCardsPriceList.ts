@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect, useCallback } from 'react'
 import { getCliniCardsApi, type PriceItem } from '../services/clinicardsApi'
 import { monitoring } from '../services/monitoring'

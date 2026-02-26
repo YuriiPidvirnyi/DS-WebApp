@@ -408,9 +408,9 @@ class PerformanceMonitor {
 
 // Singleton instance
 const performanceMonitor = new PerformanceMonitor({
-  environment: import.meta.env.MODE as any,
-  enableLogging: import.meta.env.DEV,
-  sampleRate: import.meta.env.DEV ? 1.0 : 0.1,
+  environment: process.env.NODE_ENV as any,
+  enableLogging: process.env.NODE_ENV !== "production",
+  sampleRate: process.env.NODE_ENV !== "production" ? 1.0 : 0.1,
 })
 
 export default performanceMonitor

@@ -1,10 +1,12 @@
+'use client'
+
 import { useEffect } from 'react'
 
 const ResourcePreloader = () => {
   useEffect(() => {
     try {
       // Only preload in production to avoid dev issues
-      if (!import.meta.env.PROD) {
+      if (process.env.NODE_ENV !== "production") {
         return
       }
 
@@ -34,13 +36,13 @@ const ResourcePreloader = () => {
           link.href = href
           document.head.appendChild(link)
         } catch (error) {
-          if (import.meta.env.DEV) {
+          if (process.env.NODE_ENV !== "production") {
             console.warn('Failed to create DNS prefetch link for:', href, error)
           }
         }
       })
     } catch (error) {
-      if (import.meta.env.DEV) {
+      if (process.env.NODE_ENV !== "production") {
         console.warn('ResourcePreloader failed:', error)
       }
     }

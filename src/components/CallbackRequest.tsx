@@ -1,3 +1,5 @@
+'use client'
+
 import { useForm, type Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input, Button } from '@/components/ui'

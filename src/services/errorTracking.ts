@@ -31,7 +31,7 @@ class ErrorTracker {
         environment: this.config.environment,
         release:
           this.config.release ||
-          `dental-story@${import.meta.env.VITE_APP_VERSION || '1.0.0'}`,
+          `dental-story@${process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0'}`,
 
         // Integration configuration
         integrations: [
@@ -139,7 +139,7 @@ class ErrorTracker {
         attachStacktrace: true,
 
         // Source maps
-        dist: import.meta.env.VITE_BUILD_ID,
+        dist: process.env.NEXT_PUBLIC_BUILD_ID,
       })
 
       this.initialized = true
@@ -315,11 +315,11 @@ class ErrorTracker {
 
 // Create singleton instance
 const errorTracker = new ErrorTracker({
-  dsn: import.meta.env.VITE_SENTRY_DSN || '',
-  environment: import.meta.env.MODE,
-  release: import.meta.env.VITE_APP_VERSION,
-  tracesSampleRate: import.meta.env.DEV ? 1.0 : 0.1,
-  replaysSessionSampleRate: import.meta.env.DEV ? 1.0 : 0.1,
+  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN || '',
+  environment: process.env.NODE_ENV,
+  release: process.env.NEXT_PUBLIC_APP_VERSION,
+  tracesSampleRate: process.env.NODE_ENV !== "production" ? 1.0 : 0.1,
+  replaysSessionSampleRate: process.env.NODE_ENV !== "production" ? 1.0 : 0.1,
   replaysOnErrorSampleRate: 1.0,
 })
 

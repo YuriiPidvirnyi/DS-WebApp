@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { useAccessibility } from '@/hooks/useAccessibility'
 import { Settings, Maximize, Minimize } from 'lucide-react'

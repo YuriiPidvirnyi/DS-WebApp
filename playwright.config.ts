@@ -19,7 +19,7 @@ export default defineConfig({
     ['json', { outputFile: 'test-results/results.json' }],
   ],
   use: {
-    baseURL: 'http://localhost:4173',
+    baseURL: 'http://localhost:3000',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -47,8 +47,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run preview:e2e',
-    url: 'http://localhost:4173',
+    // Requires a prior `next build`; test:e2e script handles that
+    command: 'npm run start',
+    url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
     stdout: 'ignore',

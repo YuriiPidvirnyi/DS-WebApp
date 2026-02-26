@@ -1,5 +1,7 @@
+'use client'
+
 import { useEffect, useCallback } from 'react'
-import { useLocation } from 'react-router-dom'
+import { usePathname } from 'next/navigation'
 
 // Interface for web vitals metrics
 interface WebVitalsMetric {
@@ -10,17 +12,17 @@ interface WebVitalsMetric {
 
 // This component silently monitors performance metrics
 export default function PerformanceMetrics() {
-  const location = useLocation()
+  const pathname = usePathname()
 
   const reportWebVitals = useCallback(async (metric: WebVitalsMetric) => {
     // Log to console in development (only poor metrics)
-    if (import.meta.env.DEV) {
+    if (process.env.NODE_ENV !== "production") {
       const thresholds: Record<string, number> = {
         LCP: 2500,
         FID: 100,
         CLS: 0.1,
         FCP: 1800,
-        TTFB: import.meta.env.DEV ? 5000 : 800, // Higher threshold for dev server
+        TTFB: 5000, // Higher threshold for dev/test server (already inside non-production block)
         INP: 200,
       }
       const threshold = thresholds[metric.name]
@@ -34,7 +36,7 @@ export default function PerformanceMetrics() {
 
     // In production, we would send to analytics service
     // Example: sending to Google Analytics
-    if (import.meta.env.PROD) {
+    if (process.env.NODE_ENV === "production") {
       // Check if analytics is available
       if (window.gtag) {
         window.gtag('event', 'web_vitals', {
@@ -89,7 +91,7 @@ export default function PerformanceMetrics() {
     }
 
     registerWebVitals()
-  }, [location.pathname, reportWebVitals]) // Re-measure on route changes
+  }, [pathname, reportWebVitals]) // Re-measure on route changes
 
   return null // This component doesn't render anything
 }

@@ -2,6 +2,54 @@ import '@testing-library/jest-dom'
 import { cleanup } from '@testing-library/react'
 import { afterEach, beforeAll, vi } from 'vitest'
 
+// ---------------------------------------------------------------------------
+// Global module mocks (applied before every test file)
+// ---------------------------------------------------------------------------
+
+// next/navigation — replaces react-router-dom hooks
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    refresh: vi.fn(),
+  }),
+  usePathname: () => '/',
+  useSearchParams: () => ({
+    get: vi.fn().mockReturnValue(null),
+    getAll: vi.fn().mockReturnValue([]),
+    has: vi.fn().mockReturnValue(false),
+    toString: vi.fn().mockReturnValue(''),
+    entries: vi.fn().mockReturnValue([]),
+  }),
+  useParams: () => ({}),
+  redirect: vi.fn(),
+  notFound: vi.fn(),
+  permanentRedirect: vi.fn(),
+}))
+
+// next/image — render as a plain <img> in jsdom
+vi.mock('next/image', () => ({
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  default: ({ src, alt, width, height, className, style, priority, ...rest }: Record<string, unknown>) => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const React = require('react')
+    return React.createElement('img', { src, alt, width, height, className, style, ...rest })
+  },
+}))
+
+// next/link — render as a plain <a> in jsdom (Next.js 13+ does this natively, but ensure it)
+vi.mock('next/link', () => ({
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  default: ({ href, children, className, ...rest }: Record<string, unknown>) => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const React = require('react')
+    return React.createElement('a', { href, className, ...rest }, children)
+  },
+}))
+
 // Clean up after each test case
 afterEach(() => {
   cleanup()

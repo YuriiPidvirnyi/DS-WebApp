@@ -1,18 +1,31 @@
-import React, { useState, useRef, useEffect } from 'react'
+'use client'
+
+import { useState } from 'react'
+import Image from 'next/image'
 
 interface LazyImageProps {
   src: string
+  /** Shown if src fails to load */
   fallback?: string
   alt: string
   className?: string
   width?: number
   height?: number
+  /** 'eager' maps to priority on next/image */
   loading?: 'lazy' | 'eager'
+  /** Kept for API compatibility — next/image uses blurDataURL internally */
   placeholder?: string
   onLoad?: () => void
   onError?: () => void
+  fill?: boolean
+  sizes?: string
 }
 
+/**
+ * Lazy-loading image backed by next/image.
+ * next/image automatically handles lazy loading, WebP/AVIF conversion,
+ * responsive srcsets and CLS prevention.
+ */
 const LazyImage: React.FC<LazyImageProps> = ({
   src,
   fallback,
@@ -21,120 +34,47 @@ const LazyImage: React.FC<LazyImageProps> = ({
   width,
   height,
   loading = 'lazy',
-  placeholder = '/assets/images/gallery/gallery-placeholder.svg',
   onLoad,
   onError,
+  fill = false,
+  sizes,
 }) => {
-  const [imageSrc, setImageSrc] = useState<string>(placeholder)
-  const [imageStatus, setImageStatus] = useState<
-    'loading' | 'loaded' | 'error'
-  >('loading')
-  const imgRef = useRef<HTMLImageElement>(null)
-  const observerRef = useRef<IntersectionObserver | null>(null)
+  const [hasError, setHasError] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(false)
 
-  useEffect(() => {
-    // Only start loading if we're using native lazy loading or the image is in viewport
-    if (loading === 'eager') {
-      loadImage()
-    } else {
-      // Use Intersection Observer for better control
-      observerRef.current = new IntersectionObserver(
-        entries => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              loadImage()
-              if (observerRef.current && imgRef.current) {
-                observerRef.current.unobserve(imgRef.current)
-              }
-            }
-          })
-        },
-        { threshold: 0.1, rootMargin: '50px' }
-      )
-
-      if (imgRef.current) {
-        observerRef.current.observe(imgRef.current)
-      }
-    }
-
-    return () => {
-      if (observerRef.current && imgRef.current) {
-        observerRef.current.unobserve(imgRef.current)
-      }
-    }
-  }, [src, loading])
-
-  const loadImage = () => {
-    const img = new Image()
-
-    img.onload = () => {
-      setImageSrc(src)
-      setImageStatus('loaded')
-      onLoad?.()
-    }
-
-    img.onerror = () => {
-      if (fallback) {
-        const fallbackImg = new Image()
-        fallbackImg.onload = () => {
-          setImageSrc(fallback)
-          setImageStatus('loaded')
-        }
-        fallbackImg.onerror = () => {
-          setImageSrc(placeholder)
-          setImageStatus('error')
-          onError?.()
-        }
-        fallbackImg.src = fallback
-      } else {
-        setImageSrc(placeholder)
-        setImageStatus('error')
-        onError?.()
-      }
-    }
-
-    img.src = src
-  }
+  const displaySrc = hasError && fallback ? fallback : src
 
   return (
     <div className={`relative overflow-hidden ${className}`}>
-      <img
-        ref={imgRef}
-        src={imageSrc}
-        alt={alt}
-        width={width}
-        height={height}
-        loading={loading}
-        className={`transition-opacity duration-300 ${
-          imageStatus === 'loading' ? 'opacity-70' : 'opacity-100'
-        } w-full h-full object-cover`}
-        style={{
-          aspectRatio: width && height ? `${width}/${height}` : undefined,
-        }}
-      />
-
-      {/* Loading overlay */}
-      {imageStatus === 'loading' && (
+      {!isLoaded && !hasError && (
         <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
           <div className="flex space-x-1">
-            <div className="w-2 h-2 bg-dental-teal rounded-full animate-pulse"></div>
-            <div
-              className="w-2 h-2 bg-dental-teal rounded-full animate-pulse"
-              style={{ animationDelay: '0.1s' }}
-            ></div>
-            <div
-              className="w-2 h-2 bg-dental-teal rounded-full animate-pulse"
-              style={{ animationDelay: '0.2s' }}
-            ></div>
+            <div className="w-2 h-2 bg-dental-teal rounded-full animate-pulse" />
+            <div className="w-2 h-2 bg-dental-teal rounded-full animate-pulse" style={{ animationDelay: '0.1s' }} />
+            <div className="w-2 h-2 bg-dental-teal rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
           </div>
         </div>
       )}
 
-      {/* Error state */}
-      {imageStatus === 'error' && (
+      {hasError && !fallback ? (
         <div className="absolute inset-0 bg-gray-100 flex items-center justify-center text-gray-400 text-sm">
           Зображення недоступне
         </div>
+      ) : (
+        <Image
+          src={displaySrc}
+          alt={alt}
+          width={fill ? undefined : (width ?? 800)}
+          height={fill ? undefined : (height ?? 600)}
+          fill={fill}
+          sizes={sizes ?? (fill ? '100vw' : undefined)}
+          priority={loading === 'eager'}
+          onLoad={() => { setIsLoaded(true); onLoad?.() }}
+          onError={() => { if (!hasError) setHasError(true); onError?.() }}
+          className={`transition-opacity duration-300 ${
+            isLoaded ? 'opacity-100' : 'opacity-70'
+          } w-full h-full object-cover`}
+        />
       )}
     </div>
   )

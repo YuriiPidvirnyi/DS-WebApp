@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { ThumbsUp, ThumbsDown, Send } from 'lucide-react'
 import { useForm } from 'react-hook-form'

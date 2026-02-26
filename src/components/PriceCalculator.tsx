@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { Calculator, Send } from 'lucide-react'
 import toast from 'react-hot-toast'
