@@ -124,15 +124,12 @@ export const useCliniCardsPriceList = (options: UsePriceListOptions = {}) => {
 
       return categories
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error'
-
       monitoring.trackError(error as Error, 'error', {
         context: 'useCliniCardsPriceList.fetchPriceList',
         endpoint: '/price-list',
       })
 
-      throw new Error(errorMessage)
+      throw error
     }
   }, [])
 

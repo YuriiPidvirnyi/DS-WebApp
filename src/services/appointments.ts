@@ -17,7 +17,7 @@ export async function createAppointment(
 ): Promise<ApiResponse<Appointment>> {
   try {
     return await api.post<ApiResponse<Appointment>>(ENDPOINTS.create, data)
-  } catch (e) {
+  } catch (_e) {
     // Fallback to mock in development/no-backend
     const appointment: Appointment = {
       ...data,

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { type ReactElement, useState, useEffect, useRef } from 'react'
 
 interface OptimizedImageProps {
   src: string
@@ -34,12 +34,12 @@ export function OptimizedImage({
   sizes,
   onLoad,
   onError,
-}: OptimizedImageProps): JSX.Element {
+}: OptimizedImageProps): ReactElement {
   const [isLoaded, setIsLoaded] = useState(false)
   const [isInView, setIsInView] = useState(priority)
   const [hasError, setHasError] = useState(false)
   const imgRef = useRef<HTMLImageElement>(null)
-  const observerRef = useRef<IntersectionObserver>()
+  const observerRef = useRef<IntersectionObserver>(null)
 
   // Intersection Observer for lazy loading
   useEffect(() => {
