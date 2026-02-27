@@ -7,6 +7,7 @@ import '../src/styles/globals.css'
 import ClientProviders from './providers'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import ChatWidget from '@/components/ChatWidget'
 import { StructuredData } from '@/components/StructuredData'
 
 // Replace Google Fonts <link> from index.html with next/font for self-hosting
@@ -119,6 +120,7 @@ export default async function RootLayout({
             {children}
           </main>
           <Footer />
+          <ChatWidget />
         </ClientProviders>
         <Analytics />
       </body>
