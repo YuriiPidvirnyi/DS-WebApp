@@ -32,20 +32,38 @@ vi.mock('next/navigation', () => ({
 
 // next/image — render as a plain <img> in jsdom
 vi.mock('next/image', () => ({
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  default: ({ src, alt, width, height, className, style, priority, ...rest }: Record<string, unknown>) => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const React = require('react')
-    return React.createElement('img', { src, alt, width, height, className, style, ...rest })
+  default: ({
+    src,
+    alt,
+    width,
+    height,
+    className,
+    style,
+    _priority,
+    ...rest
+  }: Record<string, unknown>) => {
+    const React = require('react') // eslint-disable-line @typescript-eslint/no-require-imports
+    return React.createElement('img', {
+      src,
+      alt,
+      width,
+      height,
+      className,
+      style,
+      ...rest,
+    })
   },
 }))
 
 // next/link — render as a plain <a> in jsdom (Next.js 13+ does this natively, but ensure it)
 vi.mock('next/link', () => ({
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  default: ({ href, children, className, ...rest }: Record<string, unknown>) => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const React = require('react')
+  default: ({
+    href,
+    children,
+    className,
+    ...rest
+  }: Record<string, unknown>) => {
+    const React = require('react') // eslint-disable-line @typescript-eslint/no-require-imports
     return React.createElement('a', { href, className, ...rest }, children)
   },
 }))

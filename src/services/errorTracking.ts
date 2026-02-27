@@ -143,7 +143,7 @@ class ErrorTracker {
       })
 
       this.initialized = true
-      if (import.meta.env.DEV) {
+      if (process.env.NODE_ENV === 'development') {
         // eslint-disable-next-line no-console
         console.log('Sentry initialized successfully')
       }
@@ -318,8 +318,8 @@ const errorTracker = new ErrorTracker({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN || '',
   environment: process.env.NODE_ENV,
   release: process.env.NEXT_PUBLIC_APP_VERSION,
-  tracesSampleRate: process.env.NODE_ENV !== "production" ? 1.0 : 0.1,
-  replaysSessionSampleRate: process.env.NODE_ENV !== "production" ? 1.0 : 0.1,
+  tracesSampleRate: process.env.NODE_ENV !== 'production' ? 1.0 : 0.1,
+  replaysSessionSampleRate: process.env.NODE_ENV !== 'production' ? 1.0 : 0.1,
   replaysOnErrorSampleRate: 1.0,
 })
 

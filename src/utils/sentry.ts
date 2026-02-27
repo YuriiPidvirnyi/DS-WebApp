@@ -48,7 +48,7 @@ export const captureException = (
 ): void => {
   try {
     Sentry.captureException(error, { extra: context })
-  } catch (e) {
+  } catch (_e) {
     console.error('captureException failed, logging locally:', error)
   }
 }

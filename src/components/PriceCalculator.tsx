@@ -197,7 +197,7 @@ export default function PriceCalculator() {
       })
       .join(', ')
 
-    if (import.meta.env.DEV) {
+    if (process.env.NODE_ENV === 'development') {
       // eslint-disable-next-line no-console
       console.log('Запит на розрахунок:', {
         name,

@@ -100,7 +100,7 @@ class PerformanceMonitor {
         : data.rating === 'needs-improvement'
           ? '⚠️'
           : '❌'
-    if (import.meta.env.DEV) {
+    if (process.env.NODE_ENV === 'development') {
       // eslint-disable-next-line no-console
       console.log(
         `%c${emoji} ${data.name}`,
@@ -409,8 +409,8 @@ class PerformanceMonitor {
 // Singleton instance
 const performanceMonitor = new PerformanceMonitor({
   environment: process.env.NODE_ENV as any,
-  enableLogging: process.env.NODE_ENV !== "production",
-  sampleRate: process.env.NODE_ENV !== "production" ? 1.0 : 0.1,
+  enableLogging: process.env.NODE_ENV !== 'production',
+  sampleRate: process.env.NODE_ENV !== 'production' ? 1.0 : 0.1,
 })
 
 export default performanceMonitor

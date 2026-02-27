@@ -20,7 +20,6 @@ if (dsn) {
     integrations: [
       Sentry.replayIntegration({
         maskAllInputs: true,
-        maskTextSelector: '[data-mask]',
         blockAllMedia: true,
       }),
     ],
