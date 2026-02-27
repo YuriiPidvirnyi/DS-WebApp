@@ -16,13 +16,24 @@ const languages: Language[] = [
   { code: 'pl', name: 'Polski', flag: '🇵🇱' },
 ]
 
+// Default language to use during SSR to avoid hydration mismatch
+const DEFAULT_LANGUAGE = languages[0] // Ukrainian
+
 export default function LanguageSwitcher() {
   const { i18n } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const currentLanguage =
-    languages.find(lang => lang.code === i18n.language) || languages[0]
+  // Set mounted to true after hydration to avoid mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Use default language during SSR, actual language after hydration
+  const currentLanguage = mounted
+    ? languages.find(lang => lang.code === i18n.language) || DEFAULT_LANGUAGE
+    : DEFAULT_LANGUAGE
 
   const handleLanguageChange = (langCode: string) => {
     i18n.changeLanguage(langCode)
@@ -88,29 +99,30 @@ export default function LanguageSwitcher() {
           aria-orientation="vertical"
           aria-labelledby="language-menu"
         >
-          {languages.map(language => (
-            <button
-              key={language.code}
-              onClick={() => handleLanguageChange(language.code)}
-              className={`w-full flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${
-                language.code === i18n.language
-                  ? 'text-dental-teal font-semibold'
-                  : 'text-gray-700'
-              }`}
-              role="menuitem"
-            >
-              <span className="flex items-center space-x-2">
-                <span className="text-lg">{language.flag}</span>
-                <span>{language.name}</span>
-              </span>
-              {language.code === i18n.language && (
-                <Check
-                  className="h-4 w-4 text-dental-teal"
-                  aria-hidden="true"
-                />
-              )}
-            </button>
-          ))}
+          {languages.map(language => {
+            const isActive = language.code === currentLanguage.code
+            return (
+              <button
+                key={language.code}
+                onClick={() => handleLanguageChange(language.code)}
+                className={`w-full flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${
+                  isActive ? 'text-dental-teal font-semibold' : 'text-gray-700'
+                }`}
+                role="menuitem"
+              >
+                <span className="flex items-center space-x-2">
+                  <span className="text-lg">{language.flag}</span>
+                  <span>{language.name}</span>
+                </span>
+                {isActive && (
+                  <Check
+                    className="h-4 w-4 text-dental-teal"
+                    aria-hidden="true"
+                  />
+                )}
+              </button>
+            )
+          })}
         </div>
       )}
     </div>
