@@ -72,6 +72,9 @@ const nextConfig: NextConfig = {
   // React strict mode for catching issues early
   reactStrictMode: true,
 
+  // Allow preview tools accessing via 127.0.0.1 in dev
+  allowedDevOrigins: ['127.0.0.1'],
+
   // Output as standalone for optimized Docker/Vercel deployment
   // output: 'standalone', // Uncomment if deploying via Docker
 
