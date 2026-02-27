@@ -19,19 +19,13 @@ This comprehensive audit covers all aspects of the Dental Story dental clinic we
 **Severity:** Critical  
 **Impact:** 8,484ms LCP/FCP - complete page re-render on client
 
-**Root Cause:** The i18n singleton instance was being shared across SSR requests, with language state persisting between requests. Additionally, the LanguageSwitcher was reading `i18n.language` which differed between server and client.
+**Root Cause:** The LanguageSwitcher component was causing hydration mismatches because only Ukrainian language is actually implemented. The component was reading `i18n.language` which differed between server and client renders due to the i18n singleton persisting state across SSR requests.
 
-**Fixes Applied:**
-- Changed i18n to use `i18next.createInstance()` instead of global singleton
-- Removed `LanguageDetector` - language detection now happens post-hydration
-- Added `suppressHydrationWarning` to language display element
-- Created `initializeLanguage()` function called via useEffect after mount
-- Added `mounted` state pattern to LanguageSwitcher
+**Fix Applied:**
+- **Removed LanguageSwitcher from Header** - Since only Ukrainian is implemented, the language switcher is unnecessary and was the root cause of hydration failures.
 
 **Files Modified:**
-- `src/i18n/config.ts`
-- `app/i18n-provider.tsx`
-- `src/components/LanguageSwitcher.tsx`
+- `src/components/Header.tsx` - Removed LanguageSwitcher import and usage
 
 ### 1.2 Date/Time Hydration Issues
 
@@ -257,13 +251,15 @@ src/
 
 ## 8. i18n Assessment
 
-### 8.1 Supported Languages
+### 8.1 Current Implementation
 
 | Language | Code | Status |
 |----------|------|--------|
-| Ukrainian | uk | Primary (eagerly loaded) |
-| English | en | Lazy loaded |
-| Polish | pl | Lazy loaded |
+| Ukrainian | uk | **Only language currently active** |
+| English | en | Translation files exist but UI switcher removed |
+| Polish | pl | Translation files exist but UI switcher removed |
+
+**Note:** The LanguageSwitcher was removed from the Header because it was causing hydration mismatches and only Ukrainian is needed for the current deployment. Translation files for EN and PL are preserved for future multi-language support.
 
 ### 8.2 Translation Coverage
 
@@ -275,9 +271,9 @@ src/
 ### 8.3 i18n Architecture
 
 - i18next with react-i18next
-- Lazy loading for non-default languages (~20KB saved)
-- Cookie-based language persistence
-- Middleware locale detection (post-hydration)
+- Ukrainian loaded eagerly
+- EN/PL lazy-loaded (not currently accessible via UI)
+- Infrastructure ready for multi-language when needed
 
 ---
 
@@ -366,11 +362,17 @@ src/
 
 | File | Change |
 |------|--------|
-| `src/i18n/config.ts` | Fixed singleton issue, removed LanguageDetector |
-| `app/i18n-provider.tsx` | Added post-hydration language init |
-| `src/components/LanguageSwitcher.tsx` | Added suppressHydrationWarning |
-| `app/admin/page.tsx` | Fixed Date hydration |
-| `src/components/admin/AppointmentManager.tsx` | Fixed Date hydration |
+| `src/components/Header.tsx` | Removed LanguageSwitcher (only Ukrainian implemented) |
+| `app/admin/page.tsx` | Fixed Date hydration issue |
+| `src/components/admin/AppointmentManager.tsx` | Fixed Date hydration issue |
+| `src/views/Home.tsx` | Fixed TypeScript type assertion |
+| `app/error.tsx` | Added error boundary page |
+| `app/global-error.tsx` | Enhanced global error handling |
+| `app/booking/error.tsx` | Added booking-specific error page |
+| `app/admin/error.tsx` | Added admin-specific error page |
+| `src/locales/uk.json` | Added 129 new translation keys |
+| `src/locales/en.json` | Added 129 new translation keys |
+| `src/locales/pl.json` | Added 129 new translation keys |
 
 ---
 
