@@ -29,15 +29,25 @@ export function useReminders() {
     }
   }, [])
 
-  // Run reminder check on load and every 5 minutes
+  // Run reminder check on load (deferred) and every 5 minutes.
+  // Initial check deferred via requestIdleCallback to avoid blocking
+  // the main thread during hydration.
   useEffect(() => {
-    // Initial check
-    checkReminders()
-
-    // Set up interval
-    const interval = setInterval(checkReminders, 5 * 60 * 1000)
-
-    return () => clearInterval(interval)
+    if ('requestIdleCallback' in window) {
+      const id = requestIdleCallback(() => checkReminders())
+      const interval = setInterval(checkReminders, 5 * 60 * 1000)
+      return () => {
+        cancelIdleCallback(id)
+        clearInterval(interval)
+      }
+    } else {
+      const timeout = setTimeout(() => checkReminders(), 3000)
+      const interval = setInterval(checkReminders, 5 * 60 * 1000)
+      return () => {
+        clearTimeout(timeout)
+        clearInterval(interval)
+      }
+    }
   }, [checkReminders])
 
   return { checkReminders }
