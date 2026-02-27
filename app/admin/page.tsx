@@ -92,11 +92,14 @@ export default function AdminDashboard() {
   const [chartData, setChartData] = useState<ChartData[]>(mockChartData)
   const [serviceData, setServiceData] = useState<ServiceData[]>(mockServiceData)
   const [isLoading, setIsLoading] = useState(true)
+  const [lastUpdated, setLastUpdated] = useState<string>('')
 
   useEffect(() => {
     // Simulate loading
     const timer = setTimeout(() => {
       setIsLoading(false)
+      // Set time after mount to avoid hydration mismatch
+      setLastUpdated(new Date().toLocaleTimeString())
     }, 500)
     return () => clearTimeout(timer)
   }, [])
@@ -167,7 +170,7 @@ export default function AdminDashboard() {
         </div>
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <Clock className="w-4 h-4" />
-          Last updated: {new Date().toLocaleTimeString()}
+          Last updated: {lastUpdated || '--:--:--'}
         </div>
       </div>
 

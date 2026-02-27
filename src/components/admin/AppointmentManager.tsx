@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Calendar,
   Clock,
@@ -49,6 +49,12 @@ export const AppointmentManager: React.FC = () => {
     'all' | 'pending' | 'confirmed' | 'cancelled' | 'completed'
   >('all')
   const [searchTerm, setSearchTerm] = useState('')
+  const [todayDate, setTodayDate] = useState<string>('')
+
+  // Set today's date after mount to avoid hydration mismatch
+  useEffect(() => {
+    setTodayDate(new Date().toISOString().split('T')[0])
+  }, [])
 
   const filteredAppointments = appointments.filter(apt => {
     const matchesFilter = filter === 'all' || apt.status === filter
@@ -89,9 +95,9 @@ export const AppointmentManager: React.FC = () => {
     total: appointments.length,
     pending: appointments.filter(a => a.status === 'pending').length,
     confirmed: appointments.filter(a => a.status === 'confirmed').length,
-    today: appointments.filter(
-      a => a.date === new Date().toISOString().split('T')[0]
-    ).length,
+    today: todayDate
+      ? appointments.filter(a => a.date === todayDate).length
+      : 0,
   }
 
   return (
