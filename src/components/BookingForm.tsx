@@ -8,6 +8,7 @@ import {
   BookingSummary,
   useBookingForm,
 } from '@/components/booking'
+import { useCSRF } from '@/hooks/useCSRF'
 
 /**
  * Multi-step booking form (3 steps):
@@ -19,6 +20,7 @@ import {
  * Each step is rendered by a dedicated step component.
  */
 export default function BookingForm() {
+  const { token: csrfToken } = useCSRF()
   const {
     form,
     step,
@@ -68,6 +70,9 @@ export default function BookingForm() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* CSRF Token - hidden input for form protection */}
+        <input type="hidden" name="_csrf" value={csrfToken} />
+        
         {/* Progress stepper */}
         <div className="flex items-center gap-2 mb-2">
           {[0, 1, 2].map(i => (

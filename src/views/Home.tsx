@@ -67,22 +67,18 @@ const Home = () => {
     {
       title: 'Терапевтична стоматологія',
       description: 'Лікування карієсу, пульпіту, періодонтиту',
-      image: '/api/placeholder/300/200',
     },
     {
       title: 'Хірургічна стоматологія',
       description: 'Видалення зубів, імплантація, пародонтологія',
-      image: '/api/placeholder/300/200',
     },
     {
       title: 'Ортопедична стоматологія',
       description: 'Протезування, коронки, мости, вінири',
-      image: '/api/placeholder/300/200',
     },
     {
       title: 'Ортодонтія',
       description: 'Виправлення прикусу, брекети, елайнери',
-      image: '/api/placeholder/300/200',
     },
   ]
 
@@ -249,7 +245,7 @@ const Home = () => {
             {services.map((service, index) => {
               const svc = typedImages.services?.[index]
               const bg =
-                svc?.src || '/assets/images/gallery/gallery-placeholder.svg'
+                svc?.src || '/assets/images/services/dental-cleaning.jpg'
               return (
                 <div
                   key={index}

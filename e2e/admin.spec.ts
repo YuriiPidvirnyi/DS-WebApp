@@ -1,15 +1,62 @@
 import { test, expect } from '@playwright/test'
 
+// Helper function to login to admin
+async function loginAsAdmin(page: import('@playwright/test').Page) {
+  await page.goto('/admin/login')
+  await page.fill('input[type="email"]', 'admin@dentalstory.ua')
+  await page.fill('input[type="password"]', 'Admin123!')
+  await page.click('button[type="submit"]')
+  await page.waitForURL('/admin')
+}
+
+test.describe('Admin Authentication', () => {
+  test('should redirect to login when not authenticated', async ({ page }) => {
+    await page.goto('/admin')
+    await expect(page).toHaveURL(/\/admin\/login/)
+  })
+
+  test('should display login form', async ({ page }) => {
+    await page.goto('/admin/login')
+    await expect(page.getByRole('heading', { name: /Вхід в систему/i })).toBeVisible()
+    await expect(page.locator('input[type="email"]')).toBeVisible()
+    await expect(page.locator('input[type="password"]')).toBeVisible()
+    await expect(page.getByRole('button', { name: /Увійти/i })).toBeVisible()
+  })
+
+  test('should show error for invalid credentials', async ({ page }) => {
+    await page.goto('/admin/login')
+    await page.fill('input[type="email"]', 'wrong@email.com')
+    await page.fill('input[type="password"]', 'wrongpassword')
+    await page.click('button[type="submit"]')
+    await expect(page.locator('text=/Невірний email або пароль/i')).toBeVisible()
+  })
+
+  test('should login successfully with valid credentials', async ({ page }) => {
+    await loginAsAdmin(page)
+    await expect(page).toHaveURL('/admin')
+    await expect(page.getByRole('heading', { name: /Dashboard/i })).toBeVisible()
+  })
+
+  test('should toggle password visibility', async ({ page }) => {
+    await page.goto('/admin/login')
+    const passwordInput = page.locator('input[type="password"]')
+    const toggleButton = page.getByRole('button', { name: /показати пароль|приховати пароль/i })
+    
+    await expect(passwordInput).toHaveAttribute('type', 'password')
+    await toggleButton.click()
+    await expect(passwordInput).toHaveAttribute('type', 'text')
+    await toggleButton.click()
+    await expect(passwordInput).toHaveAttribute('type', 'password')
+  })
+})
+
 test.describe('Admin Dashboard', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/admin')
+    await loginAsAdmin(page)
   })
 
   test('should display dashboard with stats cards', async ({ page }) => {
-    // Check that the dashboard title is visible
     await expect(page.getByRole('heading', { name: /Dashboard/i })).toBeVisible()
-
-    // Verify stats cards are present
     await expect(page.getByText(/Total Appointments/i)).toBeVisible()
     await expect(page.getByText(/Today's Appointments/i)).toBeVisible()
     await expect(page.getByText(/Total Patients/i)).toBeVisible()
@@ -17,7 +64,6 @@ test.describe('Admin Dashboard', () => {
   })
 
   test('should display sidebar navigation', async ({ page }) => {
-    // Check sidebar navigation items
     await expect(page.getByRole('link', { name: /Dashboard/i })).toBeVisible()
     await expect(page.getByRole('link', { name: /Appointments/i })).toBeVisible()
     await expect(page.getByRole('link', { name: /Patients/i })).toBeVisible()
@@ -27,19 +73,15 @@ test.describe('Admin Dashboard', () => {
 
   test('should highlight active navigation item', async ({ page }) => {
     const dashboardLink = page.getByRole('link', { name: /Dashboard/i }).first()
-    
-    // Dashboard should be active on /admin
     await expect(dashboardLink).toHaveClass(/bg-dental-teal/)
   })
 
   test('should navigate to patients page', async ({ page }) => {
     await page.getByRole('link', { name: /Patients/i }).click()
-    
     await expect(page).toHaveURL(/\/admin\/patients/)
   })
 
   test('should display charts on dashboard', async ({ page }) => {
-    // Check for chart sections
     await expect(page.getByText(/Weekly Appointments/i)).toBeVisible()
     await expect(page.getByText(/Weekly Revenue/i)).toBeVisible()
     await expect(page.getByText(/Popular Services/i)).toBeVisible()
@@ -47,8 +89,6 @@ test.describe('Admin Dashboard', () => {
 
   test('should display today\'s schedule', async ({ page }) => {
     await expect(page.getByText(/Today's Schedule/i)).toBeVisible()
-    
-    // Check for appointment entries
     const scheduleSection = page.locator('text=Today\'s Schedule').locator('..')
     await expect(scheduleSection).toBeVisible()
   })
@@ -61,13 +101,7 @@ test.describe('Admin Dashboard', () => {
   })
 
   test('should have responsive mobile menu', async ({ page }) => {
-    // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 })
-    
-    // Sidebar should be hidden on mobile
-    const sidebar = page.locator('.lg\\:fixed.lg\\:inset-y-0')
-    
-    // Mobile menu button should be visible
     const menuButton = page.getByRole('button').filter({ has: page.locator('svg') }).first()
     await expect(menuButton).toBeVisible()
   })
@@ -76,25 +110,24 @@ test.describe('Admin Dashboard', () => {
     await expect(page.getByText(/System Online/i)).toBeVisible()
   })
 
-  test('should have back to site link', async ({ page }) => {
-    const backLink = page.getByRole('link', { name: /Back to Site/i })
-    await expect(backLink).toBeVisible()
-    await expect(backLink).toHaveAttribute('href', '/')
+  test('should logout successfully', async ({ page }) => {
+    await page.getByRole('button', { name: /Вийти/i }).click()
+    await expect(page).toHaveURL(/\/admin\/login/)
   })
 })
 
 test.describe('Admin Dashboard - Data Display', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsAdmin(page)
+  })
+
   test('should display trend indicators', async ({ page }) => {
-    await page.goto('/admin')
-    
-    // Check for percentage indicators with arrows
     const trendIndicators = page.locator('text=/%/')
     const count = await trendIndicators.count()
     expect(count).toBeGreaterThan(0)
   })
 
-  test('should load dashboard without errors', async ({ page }) => {
-    // Listen for console errors
+  test('should load dashboard without critical errors', async ({ page }) => {
     const errors: string[] = []
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
@@ -102,23 +135,11 @@ test.describe('Admin Dashboard - Data Display', () => {
       }
     })
 
-    await page.goto('/admin')
     await page.waitForLoadState('networkidle')
 
-    // Filter out expected errors (like hydration warnings in dev)
     const criticalErrors = errors.filter(
       (e) => !e.includes('hydration') && !e.includes('Minified React error')
     )
     expect(criticalErrors).toHaveLength(0)
-  })
-})
-
-test.describe('Admin Dashboard - Error Handling', () => {
-  test('should show error page on critical failure', async ({ page }) => {
-    // Navigate to a route that should trigger admin error boundary
-    await page.goto('/admin/nonexistent-page')
-    
-    // Should show 404 or error page
-    // The exact behavior depends on your routing setup
   })
 })

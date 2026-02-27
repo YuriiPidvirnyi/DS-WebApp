@@ -6,6 +6,7 @@ import { useRef } from 'react'
 import { Send, CheckCircle } from 'lucide-react'
 import { Input, Textarea, Button } from './ui'
 import { useSubmissionCooldown } from '@/hooks/useSubmissionCooldown'
+import { useCSRF } from '@/hooks/useCSRF'
 import {
   contactFormSchema,
   type ContactFormData,
@@ -24,6 +25,7 @@ interface ContactFormProps {
 
 export default function ContactForm({ onSuccess }: ContactFormProps) {
   const turnstileRef = useRef<TurnstileRef>(null)
+  const { token: csrfToken, getHeaders: getCSRFHeaders } = useCSRF()
   const {
     isCoolingDown,
     remainingSec,
@@ -135,6 +137,8 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
           errors?.message?.message}
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* CSRF Token - hidden input for form protection */}
+        <input type="hidden" name="_csrf" value={csrfToken} />
         <div>
           <label
             htmlFor="name"

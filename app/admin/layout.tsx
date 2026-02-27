@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard,
   Calendar,
@@ -16,6 +16,7 @@ import {
   LogOut,
   ChevronRight,
 } from 'lucide-react'
+import { AdminAuthProvider, useAdminAuth } from '@/contexts/AdminAuthContext'
 
 interface NavItem {
   name: string
@@ -33,19 +34,48 @@ const navigation: NavItem[] = [
   { name: 'Settings', href: '/admin/settings', icon: <Settings className="w-5 h-5" /> },
 ]
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
+  const { user, isLoading, isAuthenticated, logout } = useAdminAuth()
 
   const isActive = (href: string) => {
     if (href === '/admin') {
       return pathname === '/admin'
     }
     return pathname.startsWith(href)
+  }
+
+  // Don't apply auth protection to login page
+  const isLoginPage = pathname === '/admin/login'
+
+  // Show loading state
+  if (isLoading && !isLoginPage) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-dental-teal border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-500">Завантаження...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Redirect to login if not authenticated (except on login page)
+  if (!isAuthenticated && !isLoginPage) {
+    router.push('/admin/login')
+    return null
+  }
+
+  // Render login page without the admin layout
+  if (isLoginPage) {
+    return <>{children}</>
+  }
+
+  const handleLogout = async () => {
+    await logout()
+    router.push('/admin/login')
   }
 
   return (
@@ -126,13 +156,24 @@ export default function AdminLayout({
               </Link>
             ))}
           </nav>
-          <div className="p-4 border-t">
+          <div className="p-4 border-t space-y-2">
+            {user && (
+              <div className="px-4 py-2 text-sm text-gray-600">
+                {user.email}
+              </div>
+            )}
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+            >
+              <LogOut className="w-5 h-5" />
+              Вийти
+            </button>
             <Link
               href="/"
               className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
             >
-              <LogOut className="w-5 h-5" />
-              Back to Site
+              ← На сайт
             </Link>
           </div>
         </div>
@@ -173,5 +214,13 @@ export default function AdminLayout({
         </main>
       </div>
     </div>
+  )
+}
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <AdminAuthProvider>
+      <AdminLayoutContent>{children}</AdminLayoutContent>
+    </AdminAuthProvider>
   )
 }

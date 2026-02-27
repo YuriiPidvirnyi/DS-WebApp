@@ -181,7 +181,7 @@ const About = () => {
               const photo = teamPhotos[doctor.name]
               const fallback =
                 photo?.fallback ||
-                '/assets/images/gallery/gallery-placeholder.svg'
+                '/assets/images/gallery/dental-team.jpg'
               return (
                 <div
                   key={index}
@@ -260,7 +260,7 @@ const About = () => {
                     <img
                       src={
                         eq.src ||
-                        '/assets/images/gallery/gallery-placeholder.svg'
+                        '/assets/images/gallery/dental-equipment.jpg'
                       }
                       onError={e => {
                         const img = e.currentTarget as HTMLImageElement
@@ -268,7 +268,7 @@ const About = () => {
                           img.dataset.fallback = '1'
                           img.src =
                             eq.fallback ||
-                            '/assets/images/gallery/gallery-placeholder.svg'
+                            '/assets/images/gallery/dental-equipment.jpg'
                         }
                       }}
                       alt={eq.alt || eq.title || 'Обладнання стоматології'}
