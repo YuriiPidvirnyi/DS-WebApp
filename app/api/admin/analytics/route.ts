@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { getCachedData, invalidateCache, CACHE_KEYS, CACHE_TTL } from '@/lib/redis'
 
 export interface AnalyticsData {
   stats: {
@@ -37,19 +38,9 @@ export interface AnalyticsData {
  * In production, this would fetch from a database.
  * Currently returns mock data for demonstration.
  */
-export async function GET(request: Request) {
-  try {
-    // Check for admin authorization (in production, use proper auth)
-    const authHeader = request.headers.get('authorization')
-    
-    // For now, we'll allow access without auth for demo purposes
-    // In production, uncomment and implement proper auth:
-    // if (!authHeader || !isValidAdminToken(authHeader)) {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    // }
-
-    // Mock analytics data
-    const analyticsData: AnalyticsData = {
+// Function to generate analytics data (would fetch from DB in production)
+function generateAnalyticsData(): AnalyticsData {
+  return {
       stats: {
         totalAppointments: 1248,
         todayAppointments: 12,
@@ -84,6 +75,17 @@ export async function GET(request: Request) {
         { id: 5, patient: 'Dmytro Lysenko', service: 'Extraction', time: '17:00', status: 'confirmed' },
       ],
     }
+}
+
+export async function GET() {
+  try {
+    // Use Redis caching for analytics data (5 minute TTL)
+    const cacheKey = CACHE_KEYS.ANALYTICS
+    const analyticsData = await getCachedData(
+      cacheKey,
+      generateAnalyticsData,
+      CACHE_TTL.ANALYTICS
+    )
 
     return NextResponse.json(analyticsData)
   } catch (error) {
@@ -107,7 +109,8 @@ export async function POST(request: Request) {
     // Handle different analytics actions
     switch (action) {
       case 'refresh':
-        // In production, this would trigger a cache refresh
+        // Invalidate the analytics cache to force refresh
+        await invalidateCache(CACHE_KEYS.ANALYTICS)
         return NextResponse.json({ success: true, message: 'Analytics refreshed' })
       
       case 'export':

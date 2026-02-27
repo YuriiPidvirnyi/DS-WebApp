@@ -378,6 +378,14 @@ src/
 | `public/assets/images/services/*.jpg` | NEW - 4 generated service images |
 | `public/assets/images/gallery/*.jpg` | NEW - 5 generated gallery images |
 | `public/assets/images/about/*.jpg` | NEW - 1 generated clinic image |
+| `src/lib/redis.ts` | NEW - Upstash Redis caching utility |
+| `app/api/appointments/slots/route.ts` | Added Redis caching for slots |
+| `app/api/admin/analytics/route.ts` | Added Redis caching for analytics |
+| `public/openapi.json` | NEW - OpenAPI 3.0 specification |
+| `app/api-docs/page.tsx` | NEW - Swagger UI documentation page |
+| `src/services/__tests__/appointments.test.ts` | NEW - Appointments service tests |
+| `src/services/__tests__/contacts.test.ts` | NEW - Contacts service tests |
+| `src/lib/__tests__/redis.test.ts` | NEW - Redis utility tests |
 
 ---
 
@@ -396,9 +404,9 @@ src/
 - [x] Fix TypeScript `as any` in Home.tsx - DONE
 
 ### Low Priority
-- [ ] Add Redis caching for production
-- [ ] Create OpenAPI documentation
-- [ ] Add more unit tests for services
+- [x] Add Redis caching for production - DONE (Upstash integration)
+- [x] Create OpenAPI documentation - DONE (/api-docs, /openapi.json)
+- [x] Add more unit tests for services - DONE (appointments, contacts, redis)
 
 ---
 

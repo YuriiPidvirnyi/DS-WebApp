@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAvailableSlots, CliniCardsError } from '@/lib/clinicards-client'
+import { getCachedData, CACHE_KEYS, CACHE_TTL } from '@/lib/redis'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
-
-// Revalidation period for slot data (5 minutes)
-export const revalidate = 300
 
 /** GET /api/appointments/slots?date=YYYY-MM-DD&doctorId= */
 export async function GET(request: NextRequest) {
@@ -21,9 +19,15 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const data = await getAvailableSlots(doctorId, date)
+    // Use Redis caching for slot data
+    const cacheKey = `${CACHE_KEYS.SLOTS}:${doctorId}:${date}`
+    const data = await getCachedData(
+      cacheKey,
+      () => getAvailableSlots(doctorId, date),
+      CACHE_TTL.SLOTS
+    )
     
-    // Add cache headers for slot data (short cache, as slots change frequently)
+    // Add cache headers for slot data
     const response = NextResponse.json({ success: true, data })
     response.headers.set(
       'Cache-Control',
