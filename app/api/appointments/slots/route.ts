@@ -4,6 +4,9 @@ import { getAvailableSlots, CliniCardsError } from '@/lib/clinicards-client'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
+// Revalidation period for slot data (5 minutes)
+export const revalidate = 300
+
 /** GET /api/appointments/slots?date=YYYY-MM-DD&doctorId= */
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl
@@ -19,7 +22,14 @@ export async function GET(request: NextRequest) {
 
   try {
     const data = await getAvailableSlots(doctorId, date)
-    return NextResponse.json({ success: true, data })
+    
+    // Add cache headers for slot data (short cache, as slots change frequently)
+    const response = NextResponse.json({ success: true, data })
+    response.headers.set(
+      'Cache-Control',
+      'public, s-maxage=60, stale-while-revalidate=300'
+    )
+    return response
   } catch (error) {
     if (error instanceof CliniCardsError) {
       return NextResponse.json(

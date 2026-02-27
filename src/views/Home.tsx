@@ -1,10 +1,23 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { Smile, Shield, Users, Award, ArrowRight } from 'lucide-react'
-import Testimonials from '@/components/Testimonials'
 import LazyImage from '@/components/ui/LazyImage'
 import images from '@/content/images.json'
+
+// Dynamic imports for better code splitting - Testimonials is below the fold
+const Testimonials = dynamic(() => import('@/components/Testimonials'), {
+  loading: () => (
+    <div className="py-20 bg-gray-50 animate-pulse">
+      <div className="max-w-7xl mx-auto px-4 text-center">
+        <div className="h-8 bg-gray-200 rounded w-64 mx-auto mb-4"></div>
+        <div className="h-4 bg-gray-200 rounded w-96 mx-auto"></div>
+      </div>
+    </div>
+  ),
+  ssr: true,
+})
 
 const Home = () => {
   const features = [

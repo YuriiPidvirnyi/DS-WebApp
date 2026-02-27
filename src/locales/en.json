@@ -271,5 +271,134 @@
     "title": "Dental Story - Modern Dental Clinic in Lviv | Sumska St., 10",
     "description": "Professional dental clinic at Sumska St., 10. Full range of services: treatment, implants, orthodontics. Painless treatment, modern equipment. Booking: 068 232 38 38",
     "keywords": "dentist Lviv, dentist Sumska, dental clinic Lviv, dental treatment, dental implants, braces, teeth whitening, Dental Story"
+  },
+  "errors": {
+    "global": {
+      "title": "Critical Error",
+      "description": "Unfortunately, a serious error occurred. We are working on fixing it.",
+      "retry": "Try Again",
+      "goHome": "Go Home"
+    },
+    "page": {
+      "title": "Oops, something went wrong!",
+      "description": "An error occurred while displaying this page. We are already working on fixing it.",
+      "retry": "Try Again",
+      "report": "Report Issue",
+      "goHome": "Go Home",
+      "thankYou": "Thank you for reporting! Our team has received the information about the issue.",
+      "technicalInfo": "Technical information for developers"
+    },
+    "booking": {
+      "title": "Booking Error",
+      "description": "Unfortunately, an error occurred while loading the booking form. Please try again or call us directly.",
+      "callUs": "Call Us"
+    },
+    "admin": {
+      "title": "Admin Panel Error",
+      "description": "An error occurred in the admin panel. Try refreshing the page or logging in again.",
+      "refresh": "Refresh Page",
+      "loginAgain": "Log In Again",
+      "backToSite": "Return to Site"
+    }
+  },
+  "booking": {
+    "title": "Online Dental Appointment",
+    "description": "Book your dental appointment online. Choose a convenient time and doctor.",
+    "steps": {
+      "service": "Service",
+      "personal": "Personal Info",
+      "summary": "Confirmation"
+    },
+    "selectService": "Select Service",
+    "selectDate": "Select Date",
+    "selectTime": "Select Time",
+    "noSlotsAvailable": "No slots available for this date",
+    "confirmBooking": "Confirm Booking",
+    "bookingSuccess": "Booking successful!",
+    "bookingSuccessDescription": "We will contact you to confirm your appointment."
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Dashboard",
+      "welcome": "Welcome to Admin Panel",
+      "totalAppointments": "Total Appointments",
+      "todayAppointments": "Today's Appointments",
+      "pendingAppointments": "Pending Confirmation",
+      "completedAppointments": "Completed",
+      "recentActivity": "Recent Activity",
+      "appointmentsChart": "Appointments Chart",
+      "popularServices": "Popular Services",
+      "revenue": "Revenue"
+    },
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "appointments": "Appointments",
+      "patients": "Patients",
+      "services": "Services",
+      "reviews": "Reviews",
+      "analytics": "Analytics",
+      "settings": "Settings"
+    },
+    "login": {
+      "title": "Admin Login",
+      "email": "Email",
+      "password": "Password",
+      "login": "Log In",
+      "forgotPassword": "Forgot Password?",
+      "invalidCredentials": "Invalid email or password"
+    }
+  },
+  "pricing": {
+    "title": "Transparent Pricing",
+    "subtitle": "No hidden fees. All prices are fixed and agreed upon before treatment begins",
+    "basicExam": {
+      "title": "Basic Examination",
+      "price": "Free",
+      "features": ["Doctor Consultation", "Oral Cavity Examination", "Treatment Plan"]
+    },
+    "professionalHygiene": {
+      "title": "Professional Hygiene",
+      "price": "from 800 UAH",
+      "popular": "Popular",
+      "features": ["Ultrasonic Cleaning", "Teeth Polishing", "Fluoridation", "Care Recommendations"]
+    },
+    "comprehensiveDiagnostics": {
+      "title": "Comprehensive Diagnostics",
+      "price": "from 1200 UAH",
+      "features": ["3D Jaw Scan", "Detailed Consultation", "Treatment Plan", "10% Discount on Treatment"]
+    },
+    "disclaimer": "*Final cost depends on case complexity and chosen treatment method",
+    "viewAllPrices": "View All Prices"
+  },
+  "features": {
+    "comfortableTreatment": {
+      "title": "Comfortable Treatment",
+      "description": "Modern anesthesia methods and comfortable atmosphere"
+    },
+    "safetySterility": {
+      "title": "Safety & Sterility",
+      "description": "Adhering to the highest hygiene and safety standards"
+    },
+    "experiencedDoctors": {
+      "title": "Experienced Doctors",
+      "description": "Team of qualified dentists with years of experience"
+    },
+    "modernEquipment": {
+      "title": "Modern Equipment",
+      "description": "Latest technologies for precise diagnosis and treatment"
+    }
+  },
+  "stats": {
+    "patientsServed": "Patients Served",
+    "satisfactionRate": "Satisfaction Rate",
+    "yearsExperience": "Years Experience",
+    "freeConsultation": "Free consultation for new patients",
+    "workingNow": "Open Now",
+    "qualityGuarantee": "Quality Guarantee"
+  },
+  "hero": {
+    "badge": "Modern Dentistry",
+    "bookConsultation": "Book Consultation",
+    "ourServices": "Our Services"
   }
 }
