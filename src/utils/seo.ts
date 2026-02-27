@@ -1,5 +1,6 @@
 /**
- * SEO utilities for structured data, meta tags, and sitemap generation
+ * SEO utilities for structured data and meta tags
+ * Note: sitemap and robots.txt are handled by app/sitemap.ts and app/robots.ts
  */
 
 export interface Organization {
@@ -161,128 +162,6 @@ export function generateFAQSchema(
       },
     })),
   }
-}
-
-/**
- * Inject JSON-LD script into head
- */
-export function injectStructuredData(schema: Record<string, unknown>): void {
-  if (typeof document === 'undefined') return
-
-  const script = document.createElement('script')
-  script.type = 'application/ld+json'
-  script.text = JSON.stringify(schema)
-  document.head.appendChild(script)
-}
-
-/**
- * Generate sitemap URLs
- */
-export interface SitemapURL {
-  loc: string
-  lastmod?: string
-  changefreq?:
-    | 'always'
-    | 'hourly'
-    | 'daily'
-    | 'weekly'
-    | 'monthly'
-    | 'yearly'
-    | 'never'
-  priority?: number
-}
-
-export function generateSitemap(): SitemapURL[] {
-  const baseUrl = 'https://dentalstory.com.ua'
-  const now = new Date().toISOString().split('T')[0]
-
-  return [
-    {
-      loc: `${baseUrl}/`,
-      lastmod: now,
-      changefreq: 'daily',
-      priority: 1.0,
-    },
-    {
-      loc: `${baseUrl}/services`,
-      lastmod: now,
-      changefreq: 'weekly',
-      priority: 0.9,
-    },
-    {
-      loc: `${baseUrl}/booking`,
-      lastmod: now,
-      changefreq: 'daily',
-      priority: 0.9,
-    },
-    {
-      loc: `${baseUrl}/about`,
-      lastmod: now,
-      changefreq: 'monthly',
-      priority: 0.7,
-    },
-    {
-      loc: `${baseUrl}/gallery`,
-      lastmod: now,
-      changefreq: 'weekly',
-      priority: 0.6,
-    },
-    {
-      loc: `${baseUrl}/contact`,
-      lastmod: now,
-      changefreq: 'monthly',
-      priority: 0.8,
-    },
-    {
-      loc: `${baseUrl}/reviews`,
-      lastmod: now,
-      changefreq: 'weekly',
-      priority: 0.7,
-    },
-  ]
-}
-
-/**
- * Generate sitemap XML
- */
-export function generateSitemapXML(urls: SitemapURL[]): string {
-  const urlsXML = urls
-    .map(
-      url => `
-  <url>
-    <loc>${url.loc}</loc>
-    ${url.lastmod ? `<lastmod>${url.lastmod}</lastmod>` : ''}
-    ${url.changefreq ? `<changefreq>${url.changefreq}</changefreq>` : ''}
-    ${url.priority !== undefined ? `<priority>${url.priority}</priority>` : ''}
-  </url>`
-    )
-    .join('')
-
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urlsXML}
-</urlset>`
-}
-
-/**
- * Generate robots.txt content
- */
-export function generateRobotsTxt(): string {
-  return `# https://www.robotstxt.org/robotstxt.html
-User-agent: *
-Allow: /
-
-# Sitemaps
-Sitemap: https://dentalstory.com.ua/sitemap.xml
-
-# Disallow paths
-Disallow: /admin
-Disallow: /api
-Disallow: /*.json$
-Disallow: /*?*
-
-# Crawl-delay
-Crawl-delay: 1`
 }
 
 /**

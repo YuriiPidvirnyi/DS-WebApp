@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState } from 'react'
 import { Star, CheckCircle, XCircle, AlertCircle, Clock } from 'lucide-react'
 

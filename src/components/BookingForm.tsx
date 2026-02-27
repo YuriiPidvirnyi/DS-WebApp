@@ -1,3 +1,5 @@
+'use client'
+
 import { Button, LoadingOverlay } from '@/components/ui'
 import Turnstile from '@/components/Turnstile'
 import {

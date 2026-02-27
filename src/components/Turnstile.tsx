@@ -1,3 +1,5 @@
+'use client'
+
 import {
   useEffect,
   useRef,
@@ -34,7 +36,7 @@ const Turnstile = forwardRef<TurnstileRef, TurnstileProps>(function Turnstile(
   const [ready, setReady] = useState(false)
   const [token, setToken] = useState<string>('')
   const widgetIdRef = useRef<string | null>(null)
-  const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY as string | undefined
 
   // Expose methods for parents
   useImperativeHandle(ref, () => ({

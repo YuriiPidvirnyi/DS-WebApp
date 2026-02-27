@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useState, useRef } from 'react'
 import { useForm, type Resolver, type FieldPath } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -22,7 +24,7 @@ import {
   AnalyticsEventCategory,
   trackEvent,
 } from '@/utils/analytics'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 
 export type BookingFormValues = z.infer<typeof appointmentSchema>
 
@@ -61,7 +63,7 @@ export function useBookingForm() {
     start: startCooldown,
   } = useSubmissionCooldown('booking_form', 60)
 
-  const navigate = useNavigate()
+  const router = useRouter()
 
   // --- React Hook Form ---
   const form = useForm<BookingFormValues>({
@@ -262,7 +264,7 @@ export function useBookingForm() {
     reset()
 
     // Navigate to success page
-    navigate(`/booking/success?ref=${encodeURIComponent(appointmentId)}`)
+    router.push(`/booking/success?ref=${encodeURIComponent(appointmentId)}`)
   }
 
   return {

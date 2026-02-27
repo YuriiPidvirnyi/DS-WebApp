@@ -34,10 +34,12 @@ export async function verifyTurnstileToken(
   }
 
   // Check if Turnstile is enabled in the environment
-  const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY as
+    | string
+    | undefined
   if (!siteKey) {
     // If no site key is configured, we'll simulate a successful response
-    if (import.meta.env.DEV) {
+    if (process.env.NODE_ENV === 'development') {
       // eslint-disable-next-line no-console
       console.log('Turnstile verification skipped (no site key configured)')
     }

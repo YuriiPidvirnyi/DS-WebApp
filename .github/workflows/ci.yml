@@ -22,9 +22,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: |
-          npm ci --include=optional
-          npm install --no-save @rollup/rollup-linux-x64-gnu
+        run: npm ci --legacy-peer-deps
 
       - name: Run ESLint
         run: npm run lint
@@ -50,9 +48,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: |
-          npm ci --include=optional
-          npm install --no-save @rollup/rollup-linux-x64-gnu
+        run: npm ci --legacy-peer-deps
 
       - name: Run unit tests
         run: npm run test:run
@@ -85,17 +81,13 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: |
-          npm ci --include=optional
-          npm install --no-save @rollup/rollup-linux-x64-gnu
+        run: npm ci --legacy-peer-deps
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
       - name: Build application
         run: npm run build
-        env:
-          VITE_ENVIRONMENT: production
 
       - name: Run E2E tests
         run: npx playwright test
@@ -125,32 +117,17 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: |
-          npm ci --include=optional
-          npm install --no-save @rollup/rollup-linux-x64-gnu
+        run: npm ci --legacy-peer-deps
 
       - name: Build for production
         run: npm run build
-        env:
-          VITE_ENVIRONMENT: production
-
-      - name: Check performance budgets
-        run: npm run perf:check
-        continue-on-error: false
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist/
-          retention-days: 7
 
       - name: Check bundle size
         run: |
           echo "## Bundle Size Report" >> $GITHUB_STEP_SUMMARY
-          echo "\\\" >> $GITHUB_STEP_SUMMARY
-          du -sh dist/* | sort -h >> $GITHUB_STEP_SUMMARY
-          echo "\\\" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          du -sh .next/ >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
   security-audit:
     name: Security Audit
@@ -172,93 +149,3 @@ jobs:
       - name: Check for outdated dependencies
         run: npm outdated
         continue-on-error: true
-
-  # Deployment job (only on main branch)
-  deploy:
-    name: Deploy to Production
-    runs-on: ubuntu-latest
-    needs: [build, e2e-tests]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    environment:
-      name: production
-      url: ${{ steps.deploy.outputs.deploy-url }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist/
-
-      - name: Deploy to Netlify
-        id: deploy
-        uses: nwtgck/actions-netlify@v3
-        with:
-          publish-dir: './dist'
-          production-branch: main
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: 'Deploy from GitHub Actions - ${{ github.event.head_commit.message }}'
-          enable-pull-request-comment: true
-          enable-commit-comment: true
-          overwrites-pull-request-comment: true
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        timeout-minutes: 5
-
-      - name: Comment deployment URL
-        if: success()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.repos.createCommitComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              commit_sha: context.sha,
-              body: `✅ Successfully deployed to production:\n🌐 ${{ steps.deploy.outputs.deploy-url }}`
-            })
-        #   with:
-        #     publish-dir: './dist'
-        #     production-deploy: true
-        #   env:
-        #     NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-        #     NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-
-  # Performance monitoring
-  lighthouse:
-    name: Lighthouse Performance Check
-    runs-on: ubuntu-latest
-    needs: [build]
-    if: github.event_name == 'pull_request'
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: |
-          npm ci --include=optional
-          npm install --no-save @rollup/rollup-linux-x64-gnu
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist/
-
-      - name: Run Lighthouse CI
-        run: |
-          npm install -g @lhci/cli
-          lhci autorun || echo "Lighthouse CI failed, continuing..."
-        continue-on-error: true
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}

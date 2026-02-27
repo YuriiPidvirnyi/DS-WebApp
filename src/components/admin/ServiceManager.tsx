@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState } from 'react'
 import { Plus, Edit, Trash2, DollarSign, Clock } from 'lucide-react'
 

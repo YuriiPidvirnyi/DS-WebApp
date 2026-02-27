@@ -88,8 +88,8 @@
   ],
   "services": [
     {
-      "src": "/assets/images/services/therapeutic.webp",
-      "fallback": "/assets/images/services/therapeutic.jpg",
+      "src": "/assets/images/services/service-placeholder.svg",
+      "fallback": "/assets/images/services/service-placeholder.svg",
       "alt": "Терапевтична стоматологія - лікування карієсу та пульпіту",
       "title": "Терапевтична стоматологія",
       "category": "Терапевтична стоматологія",
@@ -97,8 +97,8 @@
       "height": 800
     },
     {
-      "src": "/assets/images/services/surgical.webp",
-      "fallback": "/assets/images/services/surgical.jpg",
+      "src": "/assets/images/services/service-placeholder.svg",
+      "fallback": "/assets/images/services/service-placeholder.svg",
       "alt": "Хірургічна стоматологія - імплантація та видалення зубів",
       "title": "Хірургічна стоматологія",
       "category": "Хірургічна стоматологія",
@@ -106,8 +106,8 @@
       "height": 800
     },
     {
-      "src": "/assets/images/services/prosthetics.webp",
-      "fallback": "/assets/images/services/prosthetics.jpg",
+      "src": "/assets/images/services/service-placeholder.svg",
+      "fallback": "/assets/images/services/service-placeholder.svg",
       "alt": "Ортопедична стоматологія - протезування та коронки",
       "title": "Ортопедична стоматологія",
       "category": "Ортопедична стоматологія",
@@ -115,8 +115,8 @@
       "height": 800
     },
     {
-      "src": "/assets/images/services/orthodontics.webp",
-      "fallback": "/assets/images/services/orthodontics.jpg",
+      "src": "/assets/images/services/service-placeholder.svg",
+      "fallback": "/assets/images/services/service-placeholder.svg",
       "alt": "Ортодонтія - брекети та виправлення прикусу",
       "title": "Ортодонтія",
       "category": "Ортодонтія",

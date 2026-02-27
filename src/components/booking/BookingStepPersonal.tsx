@@ -1,3 +1,5 @@
+'use client'
+
 import { type UseFormReturn } from 'react-hook-form'
 import { Input } from '@/components/ui'
 import { formatPhoneNumber } from '@/utils/validationSchemas'

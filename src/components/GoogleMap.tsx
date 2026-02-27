@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useRef, useState } from 'react'
 import { CONTACT_INFO } from '@/utils/constants'
 
@@ -33,7 +35,7 @@ export default function GoogleMap({
 }: GoogleMapProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const [loaded, setLoaded] = useState(false)
-  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string | undefined
 
   useEffect(() => {
     if (!apiKey) return // No key - we'll use iframe fallback

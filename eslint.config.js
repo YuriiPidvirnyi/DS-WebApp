@@ -3,12 +3,13 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
+import nextPlugin from '@next/eslint-plugin-next'
 
 export default tseslint.config(
   // Global ignores
   {
     ignores: [
-      'dist/**',
+      '.next/**',
       'node_modules/**',
       'coverage/**',
       'test-results/**',
@@ -36,20 +37,32 @@ export default tseslint.config(
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
+      '@next/next': nextPlugin,
     },
     rules: {
       // React hooks rules
       'react-hooks/exhaustive-deps': 'warn',
       'react-hooks/rules-of-hooks': 'error',
 
-      // React refresh
+      // React refresh — allow Next.js page/layout exports
       'react-refresh/only-export-components': [
         'warn',
         {
           allowConstantExport: true,
-          allowExportNames: ['loader', 'action', 'meta'],
+          allowExportNames: [
+            'metadata',
+            'generateMetadata',
+            'generateStaticParams',
+            'viewport',
+            'dynamic',
+            'revalidate',
+          ],
         },
       ],
+
+      // Next.js recommended rules
+      ...nextPlugin.configs.recommended.rules,
+      ...nextPlugin.configs['core-web-vitals'].rules,
 
       // Stricter TypeScript rules
       '@typescript-eslint/no-explicit-any': 'warn',
@@ -69,6 +82,14 @@ export default tseslint.config(
       'no-useless-escape': 'warn',
       'prefer-const': 'error',
       'prefer-rest-params': 'warn',
+    },
+  },
+
+  // App Router files — disable react-refresh (server components + metadata exports)
+  {
+    files: ['app/**/*.tsx', 'app/**/*.ts'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
     },
   },
 
@@ -97,12 +118,7 @@ export default tseslint.config(
 
   // Service and util files with complex types
   {
-    files: [
-      'src/services/**/*.ts',
-      'src/utils/**/*.ts',
-      'src/hooks/useFormAutosave.ts',
-      'src/hooks/useLocale.ts',
-    ],
+    files: ['src/services/**/*.ts', 'src/utils/**/*.ts'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
     },
@@ -116,8 +132,8 @@ export default tseslint.config(
       'src/components/AccessibilityProvider.tsx',
       'src/components/ui/LiveRegion.tsx',
       'src/components/ui/LazyImage.tsx',
-      'src/pages/Home.tsx',
-      'src/pages/Reviews.tsx',
+      'src/views/Home.tsx',
+      'src/views/Reviews.tsx',
       'src/utils/apiCache.ts',
     ],
     rules: {

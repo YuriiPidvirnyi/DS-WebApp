@@ -1,8 +1,11 @@
+'use client'
+
 import { Component, ErrorInfo, ReactNode } from 'react'
 import { AlertCircle, Home, RefreshCw, MessageCircle } from 'lucide-react'
 import { Button } from './ui'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import { captureException } from '@/utils/sentry'
+// Sentry is initialised via sentry.client.config.ts — no manual init needed here
 
 interface ErrorBoundaryProps {
   children: ReactNode
@@ -86,7 +89,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     const errorCount = this.state.errorCount + 1
 
     // Report to Sentry in production
-    if (import.meta.env.PROD) {
+    if (process.env.NODE_ENV === "production") {
       try {
         captureException(error, {
           componentStack: errorInfo.componentStack,
@@ -178,7 +181,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
               над її виправленням.
             </p>
 
-            {import.meta.env.DEV && (
+            {process.env.NODE_ENV !== "production" && (
               <div className="mb-4 text-left">
                 <details className="border border-gray-300 rounded-md p-4">
                   <summary className="cursor-pointer text-sm text-gray-700 font-medium">
@@ -215,7 +218,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                 Спробувати ще раз
               </Button>
 
-              {import.meta.env.PROD && (
+              {process.env.NODE_ENV === "production" && (
                 <Button
                   onClick={this.handleReportFeedback}
                   variant="secondary"
@@ -226,7 +229,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                 </Button>
               )}
 
-              <Link to="/">
+              <Link href="/">
                 <Button variant="outline" className="flex items-center">
                   <Home className="h-4 w-4 mr-2" />
                   Повернутися на головну

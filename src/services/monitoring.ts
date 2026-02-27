@@ -331,10 +331,10 @@ class MonitoringService {
 
   // Send data to backend
   private async sendToEndpoint(endpoint: string, data: unknown): Promise<void> {
-    if (!import.meta.env.VITE_MONITORING_ENDPOINT) return
+    if (!process.env.NEXT_PUBLIC_MONITORING_ENDPOINT) return
 
     try {
-      await fetch(`${import.meta.env.VITE_MONITORING_ENDPOINT}${endpoint}`, {
+      await fetch(`${process.env.NEXT_PUBLIC_MONITORING_ENDPOINT}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -373,6 +373,6 @@ class MonitoringService {
 export const monitoring = new MonitoringService()
 
 // Initialize session recording in production
-if (import.meta.env.PROD) {
+if (process.env.NODE_ENV === "production") {
   monitoring.startSessionRecording()
 }

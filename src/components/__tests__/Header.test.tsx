@@ -3,14 +3,13 @@ import { render, screen } from '@/test/test-utils'
 import userEvent from '@testing-library/user-event'
 import Header from '../Header'
 
-// Mock react-router-dom
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom')
-  return {
-    ...actual,
-    useLocation: () => ({ pathname: '/' }),
-  }
-})
+// Mock next/navigation (usePathname drives active-link highlighting in Header)
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), prefetch: vi.fn(), back: vi.fn() }),
+  usePathname: () => '/',
+  useSearchParams: () => ({ get: vi.fn().mockReturnValue(null) }),
+  useParams: () => ({}),
+}))
 
 describe('Header', () => {
   beforeEach(() => {

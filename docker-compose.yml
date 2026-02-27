@@ -10,13 +10,13 @@ services:
       - '3000:3000'
     volumes:
       - ./src:/app/src
+      - ./app:/app/app
       - ./public:/app/public
-      - ./index.html:/app/index.html
-      - ./vite.config.ts:/app/vite.config.ts
+      - ./next.config.ts:/app/next.config.ts
     environment:
       - NODE_ENV=development
-      - VITE_API_URL=http://backend:3001/api
-      - VITE_ENVIRONMENT=development
+      - NEXT_PUBLIC_API_URL=http://backend:3001/api
+      - NEXT_PUBLIC_ENVIRONMENT=development
     depends_on:
       - backend
     networks:

@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { BrowserRouter } from 'react-router-dom'
+import type { Meta, StoryObj } from '@storybook/nextjs'
 import Header from '@/components/Header'
 
+// @storybook/nextjs provides next/navigation mocks automatically — no BrowserRouter needed
 const meta = {
   title: 'Layout/Header',
   component: Header,
@@ -9,13 +9,6 @@ const meta = {
     layout: 'fullscreen',
   },
   tags: ['autodocs'],
-  decorators: [
-    Story => (
-      <BrowserRouter>
-        <Story />
-      </BrowserRouter>
-    ),
-  ],
 } satisfies Meta<typeof Header>
 
 export default meta

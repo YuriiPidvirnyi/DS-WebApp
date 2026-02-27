@@ -1,3 +1,5 @@
+'use client'
+
 import { type UseFormReturn } from 'react-hook-form'
 import { Input, Select, Textarea, LoadingOverlay } from '@/components/ui'
 import EditableField from './EditableField'

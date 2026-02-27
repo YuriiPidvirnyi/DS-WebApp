@@ -74,8 +74,8 @@
     @apply bg-dental-teal text-white;
   }
 
-  /* Reduce motion for users who prefer it */
-  @media (prefers-reduced-motion: reduce), .reduced-motion {
+  /* Reduce motion for users who prefer it (OS-level) */
+  @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
@@ -84,6 +84,16 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+  }
+
+  /* Reduce motion via .reduced-motion class (JS-driven accessibility toggle) */
+  .reduced-motion *,
+  .reduced-motion *::before,
+  .reduced-motion *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 
   /* High contrast mode */

@@ -1,3 +1,5 @@
+'use client'
+
 import { type UseFormReturn } from 'react-hook-form'
 import { Input, Select, LoadingOverlay } from '@/components/ui'
 import { SERVICES, DOCTORS, type BookingFormValues } from './useBookingForm'

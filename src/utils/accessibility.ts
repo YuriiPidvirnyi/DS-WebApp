@@ -332,7 +332,7 @@ export function initAccessibility(): void {
   liveRegionManager.createRegion('main-announcements', 'polite')
 
   // Log accessibility preferences
-  if (import.meta.env.DEV) {
+  if (process.env.NODE_ENV !== "production") {
     // eslint-disable-next-line no-console
     console.log('Accessibility preferences:', {
       reducedMotion: prefersReducedMotion(),

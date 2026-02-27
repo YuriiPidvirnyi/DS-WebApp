@@ -11,7 +11,8 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-const SITE_URL = process.env.VITE_SITE_URL || 'https://www.dentalstory.com.ua'
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || 'https://www.dentalstory.com.ua'
 const OUTPUT_PATH = path.join(__dirname, '../public/sitemap.xml')
 
 // Static pages configuration

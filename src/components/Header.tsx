@@ -1,5 +1,8 @@
+'use client'
+
 import { useState, useCallback, useMemo, memo } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Menu, X, Phone, Mail } from 'lucide-react'
 import { CONTACT_INFO } from '@/utils/constants'
 import Logo from '@/components/ui/Logo'
@@ -7,7 +10,7 @@ import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 const Header = memo(() => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const location = useLocation()
+  const pathname = usePathname()
 
   // Memoize navigation array to prevent recreating on every render
   const navigation = useMemo(
@@ -23,8 +26,8 @@ const Header = memo(() => {
 
   // Memoize isActive function
   const isActive = useCallback(
-    (path: string) => location.pathname === path,
-    [location.pathname]
+    (path: string) => pathname === path,
+    [pathname]
   )
 
   // Memoize handlers
@@ -99,7 +102,7 @@ const Header = memo(() => {
           {/* Logo */}
           <div className="flex items-center">
             <Link
-              to="/"
+              href="/"
               aria-label="Dental Story - на головну"
               className="shrink-0"
             >
@@ -116,7 +119,7 @@ const Header = memo(() => {
             {navigation.map(item => (
               <Link
                 key={item.name}
-                to={item.href}
+                href={item.href}
                 className={`text-gray-700 hover:text-dental-blue transition-colors duration-200 font-medium ${
                   isActive(item.href)
                     ? 'text-dental-blue border-b-2 border-dental-blue'
@@ -132,7 +135,7 @@ const Header = memo(() => {
           <div className="hidden md:flex items-center space-x-4">
             <LanguageSwitcher />
             <Link
-              to="/booking"
+              href="/booking"
               className="bg-teal-800 hover:bg-teal-900 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
               data-track-id="cta_book_now"
               data-track-category="navigation"
@@ -173,7 +176,7 @@ const Header = memo(() => {
             {navigation.map(item => (
               <Link
                 key={item.name}
-                to={item.href}
+                href={item.href}
                 className={`block px-3 py-2 rounded-lg text-gray-700 hover:text-dental-blue hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-dental-teal focus:ring-inset transition-colors duration-200 ${
                   isActive(item.href)
                     ? 'text-dental-blue bg-blue-50 font-semibold'
@@ -188,7 +191,7 @@ const Header = memo(() => {
             ))}
             <div className="px-3 mt-4">
               <Link
-                to="/booking"
+                href="/booking"
                 className="block px-6 py-4 min-h-[48px] bg-teal-800 hover:bg-teal-900 text-white rounded-xl text-center font-bold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
                 onClick={closeMenu}
                 data-track-id="cta_book_now_mobile"

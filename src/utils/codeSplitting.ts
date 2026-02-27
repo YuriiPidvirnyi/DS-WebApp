@@ -141,13 +141,13 @@ export function lazyWithIntersection<T extends ComponentType>(
  * Bundle splitting recommendations for route-based code splitting
  */
 export const ROUTE_COMPONENTS = {
-  Home: () => retryImport(() => import('../pages/Home')),
-  Services: () => retryImport(() => import('../pages/Services')),
-  Booking: () => retryImport(() => import('../pages/Booking')),
-  Gallery: () => retryImport(() => import('../pages/Gallery')),
-  About: () => retryImport(() => import('../pages/About')),
-  Contact: () => retryImport(() => import('../pages/Contact')),
-  Reviews: () => retryImport(() => import('../pages/Reviews')),
+  Home: () => retryImport(() => import('../views/Home')),
+  Services: () => retryImport(() => import('../views/Services')),
+  Booking: () => retryImport(() => import('../views/Booking')),
+  Gallery: () => retryImport(() => import('../views/Gallery')),
+  About: () => retryImport(() => import('../views/About')),
+  Contact: () => retryImport(() => import('../views/Contact')),
+  Reviews: () => retryImport(() => import('../views/Reviews')),
 }
 
 /**
@@ -195,7 +195,7 @@ export function measureChunkLoadTime(
       const endTime = performance.now()
       const loadTime = endTime - startTime
 
-      if (import.meta.env.DEV) {
+      if (process.env.NODE_ENV === 'development') {
         // eslint-disable-next-line no-console
         console.log(
           `[Code Splitting] Loaded ${chunkName} in ${loadTime.toFixed(2)}ms`

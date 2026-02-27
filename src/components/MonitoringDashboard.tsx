@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState, useEffect } from 'react'
 import { Activity, AlertCircle, Clock, Zap, Database } from 'lucide-react'
 import { monitoring } from '../services/monitoring'

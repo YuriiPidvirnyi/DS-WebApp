@@ -20,7 +20,7 @@ const CookieConsent = () => {
       if (analytics) {
         initializeAnalytics()
       }
-      if (errorTracking && import.meta.env.PROD) {
+      if (errorTracking && process.env.NODE_ENV === 'production') {
         initializeSentry()
       }
     },

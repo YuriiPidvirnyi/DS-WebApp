@@ -1,9 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook } from '@testing-library/react'
-import { BrowserRouter } from 'react-router-dom'
 import { useAnalytics } from '../useAnalytics'
 import * as analytics from '@/utils/analytics'
-import type { ReactNode } from 'react'
 
 // Mock analytics utilities
 vi.mock('@/utils/analytics', () => ({
@@ -43,11 +41,7 @@ describe('useAnalytics', () => {
   })
 
   it('tracks page view on mount', () => {
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <BrowserRouter>{children}</BrowserRouter>
-    )
-
-    renderHook(() => useAnalytics(), { wrapper })
+    renderHook(() => useAnalytics())
 
     expect(analytics.trackPageView).toHaveBeenCalledWith(
       '/',
@@ -56,11 +50,7 @@ describe('useAnalytics', () => {
   })
 
   it('returns tracking functions', () => {
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <BrowserRouter>{children}</BrowserRouter>
-    )
-
-    const { result } = renderHook(() => useAnalytics(), { wrapper })
+    const { result } = renderHook(() => useAnalytics())
 
     expect(result.current).toHaveProperty('trackPageView')
     expect(result.current).toHaveProperty('trackLink')
@@ -70,11 +60,7 @@ describe('useAnalytics', () => {
   })
 
   it('trackLink calls trackOutboundLink', () => {
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <BrowserRouter>{children}</BrowserRouter>
-    )
-
-    const { result } = renderHook(() => useAnalytics(), { wrapper })
+    const { result } = renderHook(() => useAnalytics())
 
     result.current.trackLink('https://example.com', 'Example Link')
 
@@ -85,11 +71,7 @@ describe('useAnalytics', () => {
   })
 
   it('trackForm calls trackFormSubmission', () => {
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <BrowserRouter>{children}</BrowserRouter>
-    )
-
-    const { result } = renderHook(() => useAnalytics(), { wrapper })
+    const { result } = renderHook(() => useAnalytics())
 
     result.current.trackForm('contact_form', true, { name: 'John' })
 
@@ -101,11 +83,7 @@ describe('useAnalytics', () => {
   })
 
   it('trackAppointment calls trackBooking', () => {
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <BrowserRouter>{children}</BrowserRouter>
-    )
-
-    const { result } = renderHook(() => useAnalytics(), { wrapper })
+    const { result } = renderHook(() => useAnalytics())
 
     result.current.trackAppointment('booking_complete' as unknown as any, {
       service: 'Cleaning',
@@ -117,11 +95,7 @@ describe('useAnalytics', () => {
   })
 
   it('track calls trackEvent with custom data', () => {
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <BrowserRouter>{children}</BrowserRouter>
-    )
-
-    const { result } = renderHook(() => useAnalytics(), { wrapper })
+    const { result } = renderHook(() => useAnalytics())
 
     result.current.track('custom_event', 'engagement' as unknown as any, {
       foo: 'bar',
@@ -135,11 +109,7 @@ describe('useAnalytics', () => {
   })
 
   it('exposes event and category constants', () => {
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <BrowserRouter>{children}</BrowserRouter>
-    )
-
-    const { result } = renderHook(() => useAnalytics(), { wrapper })
+    const { result } = renderHook(() => useAnalytics())
 
     expect(result.current.events).toBeDefined()
     expect(result.current.events.EngagementEvent).toBeDefined()
