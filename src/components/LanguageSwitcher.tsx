@@ -88,6 +88,7 @@ export default function LanguageSwitcher() {
       >
         <Globe className="h-5 w-5 text-gray-600" aria-hidden="true" />
         <span className="text-sm font-medium text-gray-700">
+          {/* Always show UK flag during SSR and initial render for consistency */}
           {currentLanguage.flag} {currentLanguage.code.toUpperCase()}
         </span>
       </button>
