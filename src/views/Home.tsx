@@ -6,6 +6,25 @@ import { Smile, Shield, Users, Award, ArrowRight } from 'lucide-react'
 import LazyImage from '@/components/ui/LazyImage'
 import images from '@/content/images.json'
 
+// Type for service images from images.json
+interface ServiceImage {
+  src: string
+  fallback?: string
+  alt: string
+  title: string
+  category: string
+  width: number
+  height: number
+}
+
+// Type for the images JSON structure
+interface ImagesData {
+  services?: ServiceImage[]
+  [key: string]: unknown
+}
+
+const typedImages = images as ImagesData
+
 // Dynamic imports for better code splitting - Testimonials is below the fold
 const Testimonials = dynamic(() => import('@/components/Testimonials'), {
   loading: () => (
@@ -228,7 +247,7 @@ const Home = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {services.map((service, index) => {
-              const svc = (images as any).services?.[index]
+              const svc = typedImages.services?.[index]
               const bg =
                 svc?.src || '/assets/images/gallery/gallery-placeholder.svg'
               return (

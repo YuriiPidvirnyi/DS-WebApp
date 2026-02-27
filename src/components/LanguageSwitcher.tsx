@@ -87,8 +87,8 @@ export default function LanguageSwitcher() {
         aria-haspopup="true"
       >
         <Globe className="h-5 w-5 text-gray-600" aria-hidden="true" />
-        <span className="text-sm font-medium text-gray-700">
-          {/* Always show UK flag during SSR and initial render for consistency */}
+        {/* suppressHydrationWarning: Language may differ between SSR and client due to user preferences */}
+        <span className="text-sm font-medium text-gray-700" suppressHydrationWarning>
           {currentLanguage.flag} {currentLanguage.code.toUpperCase()}
         </span>
       </button>

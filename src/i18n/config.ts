@@ -1,6 +1,6 @@
 'use client'
 
-import i18n from 'i18next'
+import i18next from 'i18next'
 import { initReactI18next } from 'react-i18next'
 
 // Eagerly load only the default language (Ukrainian) — 95%+ of visitors.
@@ -16,6 +16,10 @@ const resources = {
 
 // Check if we're in the browser
 const isBrowser = typeof window !== 'undefined'
+
+// Create a fresh i18n instance to avoid singleton pollution between SSR requests.
+// This ensures each request starts with a clean slate.
+const i18n = i18next.createInstance()
 
 // Initialize i18n WITHOUT language detector to avoid hydration mismatch.
 // Language detection happens AFTER hydration in initializeLanguage().
