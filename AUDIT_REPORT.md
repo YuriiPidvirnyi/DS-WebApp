@@ -386,6 +386,7 @@ src/
 | `src/services/__tests__/appointments.test.ts` | NEW - Appointments service tests |
 | `src/services/__tests__/contacts.test.ts` | NEW - Contacts service tests |
 | `src/lib/__tests__/redis.test.ts` | NEW - Redis utility tests |
+| `src/utils/__tests__/security.test.ts` | NEW - Security utility tests |
 
 ---
 
