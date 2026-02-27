@@ -6,7 +6,7 @@ const ResourcePreloader = () => {
   useEffect(() => {
     try {
       // Only preload in production to avoid dev issues
-      if (process.env.NODE_ENV !== "production") {
+      if (process.env.NODE_ENV !== 'production') {
         return
       }
 
@@ -14,7 +14,7 @@ const ResourcePreloader = () => {
       // It loads fast enough without preloading
 
       // Preload next likely page
-      const prefetchPages = ['/services', '/booking', '/contact']
+      const prefetchPages = ['/booking']
 
       prefetchPages.forEach(href => {
         const link = document.createElement('link')
@@ -36,13 +36,13 @@ const ResourcePreloader = () => {
           link.href = href
           document.head.appendChild(link)
         } catch (error) {
-          if (process.env.NODE_ENV !== "production") {
+          if (process.env.NODE_ENV !== 'production') {
             console.warn('Failed to create DNS prefetch link for:', href, error)
           }
         }
       })
     } catch (error) {
-      if (process.env.NODE_ENV !== "production") {
+      if (process.env.NODE_ENV !== 'production') {
         console.warn('ResourcePreloader failed:', error)
       }
     }

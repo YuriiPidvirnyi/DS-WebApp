@@ -1,18 +1,38 @@
 'use client'
 
 import { type ReactNode } from 'react'
+import dynamic from 'next/dynamic'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import { AccessibilityProvider } from '@/components/AccessibilityProvider'
 import ToastProvider from '@/components/providers/ToastProvider'
-import PerformanceMetrics from '@/components/PerformanceMetrics'
-import ResourcePreloader from '@/components/ResourcePreloader'
 import LiveRegion from '@/components/ui/LiveRegion'
-import SVGFilters from '@/components/SVGFilters'
-import { AccessibilityPanel } from '@/components/AccessibilityPanel'
-import FloatingQuickActions from '@/components/FloatingQuickActions'
 import I18nProvider from './i18n-provider'
 import useAnalytics from '@/hooks/useAnalytics'
 import { useReminders } from '@/hooks/useReminders'
+
+// Lazy-load non-critical components to reduce TBT on initial page load
+const PerformanceMetrics = dynamic(
+  () => import('@/components/PerformanceMetrics'),
+  { ssr: false }
+)
+const ResourcePreloader = dynamic(
+  () => import('@/components/ResourcePreloader'),
+  { ssr: false }
+)
+const SVGFilters = dynamic(() => import('@/components/SVGFilters'), {
+  ssr: false,
+})
+const AccessibilityPanel = dynamic(
+  () =>
+    import('@/components/AccessibilityPanel').then(m => ({
+      default: m.AccessibilityPanel,
+    })),
+  { ssr: false }
+)
+const FloatingQuickActions = dynamic(
+  () => import('@/components/FloatingQuickActions'),
+  { ssr: false }
+)
 
 /** Initializes analytics, Sentry and registers page-view tracking */
 function AppInitializer() {
@@ -32,26 +52,24 @@ interface ClientProvidersProps {
 export default function ClientProviders({ children }: ClientProvidersProps) {
   return (
     <I18nProvider>
-    <ErrorBoundary>
-      <AccessibilityProvider>
-        <ToastProvider />
-        <PerformanceMetrics />
-        <ResourcePreloader />
-        <LiveRegion />
-        <SVGFilters />
-        <AccessibilityPanel />
-        <AppInitializer />
-        <div className="min-h-screen flex flex-col">
-          {children}
-        </div>
-        {/* Floating quick actions rendered outside main flow */}
-        <div className="fixed inset-0 pointer-events-none">
-          <div className="pointer-events-auto">
-            <FloatingQuickActions />
+      <ErrorBoundary>
+        <AccessibilityProvider>
+          <ToastProvider />
+          <PerformanceMetrics />
+          <ResourcePreloader />
+          <LiveRegion />
+          <SVGFilters />
+          <AccessibilityPanel />
+          <AppInitializer />
+          <div className="min-h-screen flex flex-col">{children}</div>
+          {/* Floating quick actions rendered outside main flow */}
+          <div className="fixed inset-0 pointer-events-none">
+            <div className="pointer-events-auto">
+              <FloatingQuickActions />
+            </div>
           </div>
-        </div>
-      </AccessibilityProvider>
-    </ErrorBoundary>
+        </AccessibilityProvider>
+      </ErrorBoundary>
     </I18nProvider>
   )
 }

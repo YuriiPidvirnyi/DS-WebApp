@@ -13,16 +13,13 @@ if (dsn) {
     // Performance monitoring
     tracesSampleRate: environment === 'production' ? 0.2 : 0,
 
-    // Session Replay
-    replaysSessionSampleRate: 0.1, // 10% of sessions
-    replaysOnErrorSampleRate: 1.0, // 100% of sessions with errors
+    // Session Replay — sample rates configure when replays are captured.
+    // The actual replay integration is lazy-loaded below to reduce TBT.
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1.0,
 
-    integrations: [
-      Sentry.replayIntegration({
-        maskAllInputs: true,
-        blockAllMedia: true,
-      }),
-    ],
+    // Start without replay — lazy-loaded after idle (see below)
+    integrations: [],
 
     // Only report from production domains
     allowUrls: [
@@ -48,4 +45,27 @@ if (dsn) {
 
     maxBreadcrumbs: 50,
   })
+
+  // Lazy-load Session Replay after the browser is idle to avoid blocking
+  // the main thread during page load (~100KB payload).
+  if (typeof window !== 'undefined') {
+    const loadReplay = () => {
+      Sentry.lazyLoadIntegration('replayIntegration').then(
+        replayIntegration => {
+          Sentry.addIntegration(
+            replayIntegration({
+              maskAllInputs: true,
+              blockAllMedia: true,
+            })
+          )
+        }
+      )
+    }
+
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(loadReplay)
+    } else {
+      setTimeout(loadReplay, 3000)
+    }
+  }
 }

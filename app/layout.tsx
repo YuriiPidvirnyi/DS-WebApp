@@ -11,7 +11,7 @@ import { StructuredData } from '@/components/StructuredData'
 // Replace Google Fonts <link> from index.html with next/font for self-hosting
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
+  weight: ['400', '600', '700'],
   variable: '--font-plus-jakarta-sans',
   display: 'swap',
 })

@@ -4,21 +4,14 @@ import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
 
-// Import translations
+// Eagerly load only the default language (Ukrainian) — 95%+ of visitors.
+// English and Polish are lazy-loaded on demand when the user switches.
 import ukTranslations from '../locales/uk.json'
-import enTranslations from '../locales/en.json'
-import plTranslations from '../locales/pl.json'
 
-// Resources for i18n
+// Resources — start with only Ukrainian pre-loaded
 const resources = {
   uk: {
     translation: ukTranslations,
-  },
-  en: {
-    translation: enTranslations,
-  },
-  pl: {
-    translation: plTranslations,
   },
 }
 
@@ -50,5 +43,31 @@ i18n
       useSuspense: false, // Disable suspense mode for compatibility
     },
   })
+
+// Lazy-load non-default language bundles on demand.
+// This saves ~20KB from the initial client bundle.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const lazyLocaleLoaders: Record<string, () => Promise<{ default: any }>> = {
+  en: () => import('../locales/en.json'),
+  pl: () => import('../locales/pl.json'),
+}
+
+i18n.on('languageChanged', async (lng: string) => {
+  if (lng !== 'uk' && !i18n.hasResourceBundle(lng, 'translation')) {
+    const loader = lazyLocaleLoaders[lng]
+    if (loader) {
+      const mod = await loader()
+      i18n.addResourceBundle(lng, 'translation', mod.default, true, true)
+    }
+  }
+})
+
+// If the detected language is not Ukrainian, load it immediately
+const detectedLng = i18n.language
+if (detectedLng && detectedLng !== 'uk' && lazyLocaleLoaders[detectedLng]) {
+  lazyLocaleLoaders[detectedLng]().then(mod => {
+    i18n.addResourceBundle(detectedLng, 'translation', mod.default, true, true)
+  })
+}
 
 export default i18n
