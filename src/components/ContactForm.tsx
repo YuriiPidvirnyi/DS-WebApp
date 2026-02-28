@@ -105,20 +105,20 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">
+    <div className="bg-card rounded-2xl shadow-lg border border-border p-8">
+      <h2 className="text-2xl font-bold text-foreground mb-6">
         Зв'язатися з нами
       </h2>
 
       {isSubmitSuccessful && (
-        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+        <div className="mb-6 p-4 bg-primary/10 border border-primary/20 rounded-xl">
           <div className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+            <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-semibold text-green-900 mb-1">
+              <h4 className="font-semibold text-foreground mb-1">
                 Повідомлення успішно надіслано!
               </h4>
-              <p className="text-sm text-green-700">
+              <p className="text-sm text-muted-foreground">
                 Дякуємо за звернення. Ми зв'яжемося з вами найближчим часом.
               </p>
             </div>
@@ -142,7 +142,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         <div>
           <label
             htmlFor="name"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-foreground mb-1"
           >
             Ім'я та прізвище *
           </label>
@@ -159,7 +159,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         <div>
           <label
             htmlFor="phone"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-foreground mb-1"
           >
             Номер телефону *
           </label>
@@ -182,7 +182,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-foreground mb-1"
           >
             Email *
           </label>
@@ -200,7 +200,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         <div>
           <label
             htmlFor="message"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-foreground mb-1"
           >
             Повідомлення *
           </label>
@@ -220,20 +220,20 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
             <input
               id="consent"
               type="checkbox"
-              className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"
+              className="w-4 h-4 border border-input rounded bg-background focus:ring-2 focus:ring-primary"
               disabled={isSubmitting}
               {...register('consent')}
             />
           </div>
           <label
             htmlFor="consent"
-            className="ml-2 text-sm font-medium text-gray-700"
+            className="ml-2 text-sm font-medium text-foreground"
           >
             Я даю згоду на обробку моїх персональних даних *
           </label>
         </div>
         {errors.consent && (
-          <p className="text-sm text-red-600 mt-1">{errors.consent.message}</p>
+          <p className="text-sm text-destructive mt-1">{errors.consent.message}</p>
         )}
 
         <Turnstile ref={turnstileRef} className="mb-4" />
@@ -251,7 +251,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
             : 'Надіслати повідомлення'}
         </Button>
 
-        <p className="text-sm text-gray-500 text-center">
+        <p className="text-sm text-muted-foreground text-center">
           * Обов'язкові поля. Ми зв'яжемося з вами найближчим часом.
         </p>
       </form>

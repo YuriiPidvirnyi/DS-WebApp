@@ -7,7 +7,6 @@ import { ArrowRight, Phone, CheckCircle2, Star } from 'lucide-react'
 import { SITE_INFO } from '@/utils/constants'
 
 export default function HeroSection() {
-  const { t } = useTranslation()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {

@@ -62,8 +62,8 @@ export default function CallbackRequest() {
   }
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm">
-      <h3 className="text-lg font-bold text-gray-900 mb-4">
+    <div className="bg-card rounded-2xl p-6 border border-border shadow-sm">
+      <h3 className="text-lg font-bold text-foreground mb-4">
         Швидкий зворотний дзвінок
       </h3>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -83,7 +83,7 @@ export default function CallbackRequest() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <select
             aria-label="Зручний час для дзвінка"
-            className="px-4 py-3 border rounded-lg"
+            className="px-4 py-3 border border-input bg-background text-foreground rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
             {...register('preferredTime')}
           >
             <option value="any">Будь-коли</option>
@@ -101,10 +101,10 @@ export default function CallbackRequest() {
           <input
             id="cb-consent"
             type="checkbox"
-            className="mt-1"
+            className="mt-1 w-4 h-4 text-primary border-input rounded focus:ring-primary"
             {...register('consent')}
           />
-          <label htmlFor="cb-consent" className="text-xs text-gray-600">
+          <label htmlFor="cb-consent" className="text-xs text-muted-foreground">
             Погоджуюся на обробку персональних даних
           </label>
         </div>
@@ -113,7 +113,7 @@ export default function CallbackRequest() {
         </Button>
         {isSubmitSuccessful && (
           <div className="mt-2">
-            <p className="text-xs text-green-600 mb-1">
+            <p className="text-xs text-primary mb-1">
               Дякуємо! Ми зателефонуємо найближчим часом.
             </p>
             <MicroFeedback form="callback" compact />

@@ -104,34 +104,34 @@ export default function SignUpPage() {
   const { strength, label, color } = passwordStrength()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-teal-50 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <h1 className="text-3xl font-bold text-slate-900">
-              Dental<span className="text-teal-600">Story</span>
+            <h1 className="text-3xl font-bold text-foreground">
+              Dental<span className="text-primary">Story</span>
             </h1>
           </Link>
-          <p className="mt-2 text-slate-600">Створення облікового запису</p>
+          <p className="mt-2 text-muted-foreground">Створення облікового запису</p>
         </div>
 
         {/* Sign Up Form */}
-        <div className="bg-white rounded-2xl shadow-soft p-8">
+        <div className="bg-card rounded-2xl shadow-soft border border-border p-8">
           <form onSubmit={handleSignUp} className="space-y-5">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+              <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-xl text-sm">
                 {error}
               </div>
             )}
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-slate-700 mb-2">
+                <label htmlFor="firstName" className="block text-sm font-medium text-foreground mb-2">
                   Ім'я
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <input
                     id="firstName"
                     name="firstName"
@@ -140,12 +140,12 @@ export default function SignUpPage() {
                     onChange={handleChange}
                     placeholder="Олександр"
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                    className="w-full pl-10 pr-4 py-3 border border-input bg-background text-foreground rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                   />
                 </div>
               </div>
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-slate-700 mb-2">
+                <label htmlFor="lastName" className="block text-sm font-medium text-foreground mb-2">
                   Прізвище
                 </label>
                 <input
@@ -156,18 +156,18 @@ export default function SignUpPage() {
                   onChange={handleChange}
                   placeholder="Коваленко"
                   required
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-input bg-background text-foreground rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-slate-700 mb-2">
+              <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">
                 Телефон
               </label>
               <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-                <span className="absolute left-10 top-1/2 -translate-y-1/2 text-slate-500">+380</span>
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <span className="absolute left-10 top-1/2 -translate-y-1/2 text-muted-foreground">+380</span>
                 <input
                   id="phone"
                   name="phone"
@@ -177,17 +177,17 @@ export default function SignUpPage() {
                   placeholder="67 123 45 67"
                   required
                   maxLength={13}
-                  className="w-full pl-20 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  className="w-full pl-20 pr-4 py-3 border border-input bg-background text-foreground rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <input
                   id="email"
                   name="email"
@@ -196,17 +196,17 @@ export default function SignUpPage() {
                   onChange={handleChange}
                   placeholder="your@email.com"
                   required
-                  className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-input bg-background text-foreground rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
                 Пароль
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <input
                   id="password"
                   name="password"
@@ -215,12 +215,12 @@ export default function SignUpPage() {
                   onChange={handleChange}
                   placeholder="Мінімум 8 символів"
                   required
-                  className="w-full pl-10 pr-12 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-12 py-3 border border-input bg-background text-foreground rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
@@ -231,21 +231,21 @@ export default function SignUpPage() {
                     {[1, 2, 3, 4].map((i) => (
                       <div
                         key={i}
-                        className={`h-1 flex-1 rounded-full ${i <= strength ? color : 'bg-slate-200'}`}
+                        className={`h-1 flex-1 rounded-full ${i <= strength ? color : 'bg-muted'}`}
                       />
                     ))}
                   </div>
-                  <p className="text-xs text-slate-500">{label}</p>
+                  <p className="text-xs text-muted-foreground">{label}</p>
                 </div>
               )}
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700 mb-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-foreground mb-2">
                 Підтвердження пароля
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
@@ -254,10 +254,10 @@ export default function SignUpPage() {
                   onChange={handleChange}
                   placeholder="Повторіть пароль"
                   required
-                  className="w-full pl-10 pr-12 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-12 py-3 border border-input bg-background text-foreground rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                 />
                 {formData.confirmPassword && formData.password === formData.confirmPassword && (
-                  <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500" />
+                  <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-primary" />
                 )}
               </div>
             </div>
@@ -267,15 +267,15 @@ export default function SignUpPage() {
                 type="checkbox"
                 checked={agreeToTerms}
                 onChange={(e) => setAgreeToTerms(e.target.checked)}
-                className="mt-1 w-4 h-4 text-teal-600 border-slate-300 rounded focus:ring-teal-500"
+                className="mt-1 w-4 h-4 text-primary border-input rounded focus:ring-primary"
               />
-              <span className="text-sm text-slate-600">
+              <span className="text-sm text-muted-foreground">
                 Я погоджуюся з{' '}
-                <Link href="/terms" className="text-teal-600 hover:text-teal-700">
+                <Link href="/terms" className="text-primary hover:text-primary/80">
                   умовами використання
                 </Link>{' '}
                 та{' '}
-                <Link href="/privacy" className="text-teal-600 hover:text-teal-700">
+                <Link href="/privacy" className="text-primary hover:text-primary/80">
                   політикою конфіденційності
                 </Link>
               </span>
@@ -284,10 +284,10 @@ export default function SignUpPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 px-4 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
                   Зареєструватися
@@ -298,9 +298,9 @@ export default function SignUpPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-slate-600">
+            <p className="text-muted-foreground">
               Вже маєте акаунт?{' '}
-              <Link href="/auth/login" className="text-teal-600 hover:text-teal-700 font-semibold">
+              <Link href="/auth/login" className="text-primary hover:text-primary/80 font-semibold">
                 Увійти
               </Link>
             </p>

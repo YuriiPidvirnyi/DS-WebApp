@@ -80,10 +80,10 @@ export default function LanguageSwitcher({
           <span key={lang.code} className="flex items-center">
             <button
               onClick={() => handleLanguageChange(lang.code)}
-              className={`px-2 py-1 text-sm font-medium rounded transition-colors ${
+              className={`px-2 py-1 text-sm font-medium rounded-lg transition-colors ${
                 mounted && lang.code === i18n.language
-                  ? 'text-teal-600 bg-teal-50'
-                  : 'text-slate-600 hover:text-teal-600 hover:bg-slate-50'
+                  ? 'text-primary bg-primary/10'
+                  : 'text-muted-foreground hover:text-primary hover:bg-muted'
               }`}
               aria-label={`Switch to ${lang.name}`}
             >
@@ -91,7 +91,7 @@ export default function LanguageSwitcher({
               <span className="ml-1">{lang.code.toUpperCase()}</span>
             </button>
             {index < languages.length - 1 && (
-              <span className="text-slate-300 mx-0.5">|</span>
+              <span className="text-border mx-0.5">|</span>
             )}
           </span>
         ))}
@@ -104,7 +104,7 @@ export default function LanguageSwitcher({
     <div ref={dropdownRef} className={`relative ${className}`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 hover:text-teal-600 hover:bg-slate-50 rounded-lg transition-colors"
+        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors"
         aria-expanded={isOpen}
         aria-haspopup="listbox"
         aria-label="Select language"
@@ -120,7 +120,7 @@ export default function LanguageSwitcher({
 
       {isOpen && (
         <div
-          className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-2 z-50"
+          className="absolute right-0 top-full mt-2 w-48 bg-card rounded-xl shadow-lg border border-border py-2 z-50"
           role="listbox"
         >
           {languages.map(lang => {
@@ -129,8 +129,8 @@ export default function LanguageSwitcher({
               <button
                 key={lang.code}
                 onClick={() => handleLanguageChange(lang.code)}
-                className={`w-full flex items-center justify-between px-4 py-2.5 text-left hover:bg-slate-50 transition-colors ${
-                  isActive ? 'bg-teal-50' : ''
+                className={`w-full flex items-center justify-between px-4 py-2.5 text-left hover:bg-muted transition-colors ${
+                  isActive ? 'bg-primary/10' : ''
                 }`}
                 role="option"
                 aria-selected={isActive}
@@ -138,13 +138,13 @@ export default function LanguageSwitcher({
                 <div className="flex items-center gap-3">
                   <span className="text-lg">{lang.flag}</span>
                   <div>
-                    <div className={`font-medium ${isActive ? 'text-teal-600' : 'text-slate-900'}`}>
+                    <div className={`font-medium ${isActive ? 'text-primary' : 'text-foreground'}`}>
                       {lang.nativeName}
                     </div>
-                    <div className="text-xs text-slate-500">{lang.name}</div>
+                    <div className="text-xs text-muted-foreground">{lang.name}</div>
                   </div>
                 </div>
-                {isActive && <Check className="w-4 h-4 text-teal-600" />}
+                {isActive && <Check className="w-4 h-4 text-primary" />}
               </button>
             )
           })}
