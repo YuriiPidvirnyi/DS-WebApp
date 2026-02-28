@@ -1,5 +1,6 @@
 import Image from 'next/image'
 
+// Logo component - uses SVG files from /assets/images/logo/
 interface LogoProps {
   variant?: 'default' | 'white'
   size?: 'sm' | 'md' | 'lg'
