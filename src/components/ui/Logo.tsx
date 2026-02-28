@@ -21,20 +21,22 @@ export default function Logo({
   className = '',
 }: LogoProps) {
   const { width, height } = LOGO_SIZES[size]
-  // Both variants use the same logo, white variant uses CSS filter
-  const src = '/assets/images/logo/logo.svg'
+  const src = variant === 'white' 
+    ? '/assets/images/logo/logo.svg'
+    : '/assets/images/logo/logo-mark-teal.svg'
 
   return (
-    <Image
-      src={src}
-      alt="Dental Story"
-      width={width}
-      height={height}
-      className={[
-        variant === 'white' ? 'brightness-0 invert' : '',
-        className
-      ].filter(Boolean).join(' ')}
-      priority
-    />
+    <div 
+      className={`relative flex-shrink-0 ${className}`}
+      style={{ width, height }}
+    >
+      <Image
+        src={src}
+        alt="Dental Story"
+        fill
+        className={`object-contain ${variant === 'white' ? 'brightness-0 invert' : ''}`}
+        priority
+      />
+    </div>
   )
 }
