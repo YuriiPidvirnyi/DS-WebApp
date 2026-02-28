@@ -20,19 +20,20 @@ export default function Logo({
   size = 'md',
   className = '',
 }: LogoProps) {
-  const dimensions = LOGO_SIZES[size]
-  const src = variant === 'white' 
-    ? '/assets/images/logo/logo.svg'
-    : '/assets/images/logo/logo-mark-teal.svg'
+  const { width, height } = LOGO_SIZES[size]
+  // Both variants use the same logo, white variant uses CSS filter
+  const src = '/assets/images/logo/logo.svg'
 
   return (
     <Image
       src={src}
       alt="Dental Story"
-      width={dimensions.width}
-      height={dimensions.height}
-      style={{ width: 'auto', height: 'auto' }}
-      className={[variant === 'white' ? 'brightness-0 invert' : '', className].filter(Boolean).join(' ')}
+      width={width}
+      height={height}
+      className={[
+        variant === 'white' ? 'brightness-0 invert' : '',
+        className
+      ].filter(Boolean).join(' ')}
       priority
     />
   )
