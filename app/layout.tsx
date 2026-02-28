@@ -10,7 +10,6 @@ import Footer from '@/components/Footer'
 import ClientWidgets from '@/components/ClientWidgets'
 import { StructuredData } from '@/components/StructuredData'
 
-// Font configuration for the dental clinic website
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
   weight: ['400', '600', '700'],
@@ -19,7 +18,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 })
 
 export const viewport: Viewport = {
-  themeColor: '#AECED3',
+  themeColor: '#0D9488',
 }
 
 export const metadata: Metadata = {
@@ -78,17 +77,14 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  // Read CSP nonce injected by middleware — makes this layout dynamically rendered
   const nonce = (await headers()).get('x-nonce') ?? ''
 
   return (
     <html lang="uk" className={plusJakartaSans.variable}>
-      <body>
-        {/* Organization JSON-LD structured data (server-rendered) */}
+      <body className="font-sans antialiased">
         <StructuredData type="organization" />
         <StructuredData type="localBusiness" />
 
-        {/* Google Analytics 4 */}
         {GA4_ID && (
           <>
             <Script
@@ -108,10 +104,9 @@ export default async function RootLayout({
         )}
 
         <ClientProviders>
-          {/* Skip navigation link for accessibility - This is on layout level so not translated dynamically */}
           <a
             href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-50 bg-dental-teal text-white px-4 py-2 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-white"
+            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-50 bg-teal-600 text-white px-4 py-2 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-white"
           >
             Skip to main content
           </a>
