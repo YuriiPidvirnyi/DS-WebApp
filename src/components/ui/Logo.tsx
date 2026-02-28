@@ -1,61 +1,35 @@
 'use client'
 
-import { useState } from 'react'
-import Image from 'next/image'
-
 interface LogoProps {
   variant?: 'default' | 'white'
   size?: 'sm' | 'md' | 'lg'
   className?: string
 }
 
-const sizeClasses = {
-  sm: 'text-lg',
-  md: 'text-xl',
-  lg: 'text-2xl',
+const sizeConfig = {
+  sm: { icon: 'w-7 h-7', iconText: 'text-xs', text: 'text-base' },
+  md: { icon: 'w-8 h-8 sm:w-9 sm:h-9', iconText: 'text-sm', text: 'text-lg sm:text-xl' },
+  lg: { icon: 'w-10 h-10 sm:w-11 sm:h-11', iconText: 'text-base', text: 'text-xl sm:text-2xl' },
 }
 
-const Logo = ({
+export default function Logo({
   variant = 'default',
   size = 'md',
   className = '',
-}: LogoProps) => {
-  const [imgError, setImgError] = useState(false)
+}: LogoProps) {
+  const config = sizeConfig[size]
   const textColor = variant === 'white' ? 'text-white' : 'text-foreground'
-
-  const src =
-    variant === 'default'
-      ? '/assets/images/logo/logo-mark-teal.svg'
-      : '/assets/images/logo/logo-mark-tight.svg'
-
-  // Use text-based logo as fallback or primary
-  if (imgError) {
-    return (
-      <div className={`flex items-center gap-2 ${className}`}>
-        <div className={`w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-xl flex items-center justify-center`}>
-          <span className="text-primary-foreground font-bold text-sm sm:text-base">DS</span>
-        </div>
-        <span className={`font-bold ${sizeClasses[size]} ${textColor}`}>
-          Dental Story
-        </span>
-      </div>
-    )
-  }
+  const iconBg = variant === 'white' ? 'bg-white/20' : 'bg-primary'
+  const iconText = variant === 'white' ? 'text-white' : 'text-primary-foreground'
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <Image
-        src={src}
-        alt="Dental Story"
-        width={size === 'lg' ? 180 : size === 'md' ? 150 : 120}
-        height={size === 'lg' ? 48 : size === 'md' ? 40 : 32}
-        className="object-contain"
-        style={{ width: 'auto', height: 'auto' }}
-        onError={() => setImgError(true)}
-        priority
-      />
+      <div className={`${config.icon} ${iconBg} rounded-lg flex items-center justify-center flex-shrink-0`}>
+        <span className={`${iconText} font-bold ${config.iconText}`}>DS</span>
+      </div>
+      <span className={`font-bold tracking-tight ${config.text} ${textColor}`}>
+        Dental<span className="text-primary">Story</span>
+      </span>
     </div>
   )
 }
-
-export default Logo
