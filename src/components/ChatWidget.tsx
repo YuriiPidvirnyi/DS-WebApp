@@ -7,7 +7,7 @@ interface Message {
   id: string
   type: 'user' | 'bot'
   text: string
-  timestamp: Date
+  timestamp: number // Store as timestamp number to avoid Date serialization issues
 }
 
 // Quick reply options
@@ -27,20 +27,35 @@ const botResponses: Record<string, string> = {
   default: 'Дякуємо за ваше повідомлення! Наш менеджер зв\'яжеться з вами найближчим часом. Для швидкого зв\'язку телефонуйте: +380 44 123 45 67',
 }
 
+// Format timestamp for display - only call on client
+function formatTime(timestamp: number): string {
+  return new Date(timestamp).toLocaleTimeString('uk-UA', {
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false)
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      type: 'bot',
-      text: 'Вітаємо в Dental Story! Чим можемо допомогти?',
-      timestamp: new Date(),
-    },
-  ])
+  const [mounted, setMounted] = useState(false)
+  const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // Initialize messages only on client to avoid hydration mismatch with timestamps
+  useEffect(() => {
+    setMounted(true)
+    setMessages([
+      {
+        id: '1',
+        type: 'bot',
+        text: 'Вітаємо в Dental Story! Чим можемо допомогти?',
+        timestamp: Date.now(),
+      },
+    ])
+  }, [])
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -59,7 +74,7 @@ export default function ChatWidget() {
       id: Date.now().toString(),
       type,
       text,
-      timestamp: new Date(),
+      timestamp: Date.now(),
     }
     setMessages((prev) => [...prev, newMessage])
   }
@@ -93,6 +108,11 @@ export default function ChatWidget() {
       e.preventDefault()
       handleSend()
     }
+  }
+
+  // Don't render anything on server to avoid hydration mismatch with timestamps
+  if (!mounted) {
+    return null
   }
 
   return (
@@ -170,10 +190,7 @@ export default function ChatWidget() {
                     message.type === 'user' ? 'text-white/60' : 'text-slate-400'
                   }`}
                 >
-                  {message.timestamp.toLocaleTimeString('uk-UA', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
+                  {formatTime(message.timestamp)}
                 </p>
               </div>
             </div>
