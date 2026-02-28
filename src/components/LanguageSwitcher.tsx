@@ -17,6 +17,9 @@ const languages: Language[] = [
   { code: 'pl', name: 'Polish', nativeName: 'Polski', flag: '🇵🇱' },
 ]
 
+// Default language for SSR - must match server render
+const DEFAULT_LANG = languages[0]
+
 interface LanguageSwitcherProps {
   variant?: 'dropdown' | 'inline'
   showFlag?: boolean
@@ -32,9 +35,18 @@ export default function LanguageSwitcher({
 }: LanguageSwitcherProps) {
   const { i18n } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0]
+  // Prevent hydration mismatch by only showing actual language after mount
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Use default language on server, actual language only after hydration
+  const currentLanguage = mounted 
+    ? (languages.find(lang => lang.code === i18n.language) || DEFAULT_LANG)
+    : DEFAULT_LANG
 
   const handleLanguageChange = useCallback((langCode: string) => {
     i18n.changeLanguage(langCode)
@@ -81,6 +93,7 @@ export default function LanguageSwitcher({
   }, [isOpen])
 
   if (variant === 'inline') {
+    const activeCode = mounted ? i18n.language : DEFAULT_LANG.code
     return (
       <div className={`flex items-center gap-1 ${className}`}>
         {languages.map((lang, index) => (
@@ -88,12 +101,12 @@ export default function LanguageSwitcher({
             <button
               onClick={() => handleLanguageChange(lang.code)}
               className={`px-2 py-1 text-sm font-medium rounded transition-colors ${
-                lang.code === i18n.language
+                lang.code === activeCode
                   ? 'text-teal-600 bg-teal-50'
                   : 'text-slate-600 hover:text-teal-600 hover:bg-slate-50'
               }`}
               aria-label={`Switch to ${lang.name}`}
-              aria-current={lang.code === i18n.language ? 'true' : undefined}
+              aria-current={lang.code === activeCode ? 'true' : undefined}
             >
               {showFlag && <span className="mr-1">{lang.flag}</span>}
               {lang.code.toUpperCase()}
@@ -130,30 +143,33 @@ export default function LanguageSwitcher({
           role="listbox"
           aria-label="Available languages"
         >
-          {languages.map(lang => (
-            <button
-              key={lang.code}
-              onClick={() => handleLanguageChange(lang.code)}
-              className={`w-full flex items-center justify-between px-4 py-2.5 text-left hover:bg-slate-50 transition-colors ${
-                lang.code === i18n.language ? 'bg-teal-50' : ''
-              }`}
-              role="option"
-              aria-selected={lang.code === i18n.language}
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-lg">{lang.flag}</span>
-                <div>
-                  <div className={`font-medium ${lang.code === i18n.language ? 'text-teal-600' : 'text-slate-900'}`}>
-                    {lang.nativeName}
+          {languages.map(lang => {
+            const isActive = lang.code === currentLanguage.code
+            return (
+              <button
+                key={lang.code}
+                onClick={() => handleLanguageChange(lang.code)}
+                className={`w-full flex items-center justify-between px-4 py-2.5 text-left hover:bg-slate-50 transition-colors ${
+                  isActive ? 'bg-teal-50' : ''
+                }`}
+                role="option"
+                aria-selected={isActive}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-lg">{lang.flag}</span>
+                  <div>
+                    <div className={`font-medium ${isActive ? 'text-teal-600' : 'text-slate-900'}`}>
+                      {lang.nativeName}
+                    </div>
+                    <div className="text-xs text-slate-500">{lang.name}</div>
                   </div>
-                  <div className="text-xs text-slate-500">{lang.name}</div>
                 </div>
-              </div>
-              {lang.code === i18n.language && (
-                <Check className="w-4 h-4 text-teal-600" />
-              )}
-            </button>
-          ))}
+                {isActive && (
+                  <Check className="w-4 h-4 text-teal-600" />
+                )}
+              </button>
+            )
+          })}
         </div>
       )}
     </div>
