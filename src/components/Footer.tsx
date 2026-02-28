@@ -63,14 +63,15 @@ const Footer = memo(() => {
           </div>
 
           {/* Quick links */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">{t('footer.navigation')}</h3>
-            <nav aria-label={t('accessibility.siteNavigation')}>
+          <div suppressHydrationWarning>
+            <h3 className="text-lg font-semibold mb-4" suppressHydrationWarning>{t('footer.navigation')}</h3>
+            <nav aria-label="Site navigation">
               <ul className="space-y-2">
                 <li>
                   <Link
                     href="/"
                     className="text-gray-300 hover:text-dental-teal transition-colors"
+                    suppressHydrationWarning
                   >
                     {t('navigation.home')}
                   </Link>
@@ -79,6 +80,7 @@ const Footer = memo(() => {
                   <Link
                     href="/services"
                     className="text-gray-300 hover:text-dental-teal transition-colors"
+                    suppressHydrationWarning
                   >
                     {t('navigation.services')}
                   </Link>
@@ -87,6 +89,7 @@ const Footer = memo(() => {
                   <Link
                     href="/about"
                     className="text-gray-300 hover:text-dental-teal transition-colors"
+                    suppressHydrationWarning
                   >
                     {t('navigation.about')}
                   </Link>
@@ -95,6 +98,7 @@ const Footer = memo(() => {
                   <Link
                     href="/gallery"
                     className="text-gray-300 hover:text-dental-teal transition-colors"
+                    suppressHydrationWarning
                   >
                     {t('navigation.gallery')}
                   </Link>
@@ -103,6 +107,7 @@ const Footer = memo(() => {
                   <Link
                     href="/contact"
                     className="text-gray-300 hover:text-dental-teal transition-colors"
+                    suppressHydrationWarning
                   >
                     {t('navigation.contact')}
                   </Link>
@@ -111,6 +116,7 @@ const Footer = memo(() => {
                   <Link
                     href="/symptom-checker"
                     className="text-gray-300 hover:text-dental-teal transition-colors flex items-center gap-1"
+                    suppressHydrationWarning
                   >
                     {t('ai.symptomChecker.title')}
                     <span className="text-xs bg-purple-500 text-white px-1.5 py-0.5 rounded">AI</span>
@@ -121,8 +127,8 @@ const Footer = memo(() => {
           </div>
 
           {/* Contact info */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">{t('footer.contacts')}</h3>
+          <div suppressHydrationWarning>
+            <h3 className="text-lg font-semibold mb-4" suppressHydrationWarning>{t('footer.contacts')}</h3>
             <ul className="space-y-3">
               <li className="flex items-center space-x-2">
                 <Phone
@@ -173,19 +179,21 @@ const Footer = memo(() => {
 
         <div className="border-t border-gray-800 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-300 text-sm">
+            <p className="text-gray-300 text-sm" suppressHydrationWarning>
               {t('footer.copyright')}
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link
                 href="/privacy-policy"
                 className="text-gray-300 hover:text-dental-teal text-sm transition-colors"
+                suppressHydrationWarning
               >
                 {t('navigation.privacyPolicy')}
               </Link>
               <Link
                 href="/terms-of-service"
                 className="text-gray-300 hover:text-dental-teal text-sm transition-colors"
+                suppressHydrationWarning
               >
                 {t('navigation.termsOfService')}
               </Link>

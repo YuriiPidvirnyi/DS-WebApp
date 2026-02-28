@@ -17,20 +17,15 @@ const languages: Language[] = [
   { code: 'pl', name: 'Polish', nativeName: 'Polski', flag: '🇵🇱' },
 ]
 
-// Default language for SSR - must match server render
 const DEFAULT_LANG = languages[0]
 
 interface LanguageSwitcherProps {
   variant?: 'dropdown' | 'inline'
-  showFlag?: boolean
-  showNativeName?: boolean
   className?: string
 }
 
 export default function LanguageSwitcher({
   variant = 'dropdown',
-  showFlag = true,
-  showNativeName = true,
   className = '',
 }: LanguageSwitcherProps) {
   const { i18n } = useTranslation()
@@ -38,64 +33,47 @@ export default function LanguageSwitcher({
   const [mounted, setMounted] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  // Prevent hydration mismatch - wait for client-side language detection to complete
   useEffect(() => {
-    // Small delay to let i18n language detection settle
-    const timer = setTimeout(() => setMounted(true), 50)
-    return () => clearTimeout(timer)
+    setMounted(true)
   }, [])
 
-  // Always use Ukrainian (DEFAULT_LANG) until mounted to match SSR
-  const currentLanguage = mounted 
-    ? (languages.find(lang => lang.code === i18n.language) || DEFAULT_LANG)
+  // Get current language - only use actual language after mount
+  const currentLang = mounted 
+    ? languages.find(lang => lang.code === i18n.language) || DEFAULT_LANG
     : DEFAULT_LANG
 
   const handleLanguageChange = useCallback((langCode: string) => {
     i18n.changeLanguage(langCode)
     setIsOpen(false)
-    
-    // Update HTML lang attribute
     if (typeof document !== 'undefined') {
       document.documentElement.lang = langCode
     }
   }, [i18n])
 
-  // Close dropdown on outside click
+  // Close on outside click
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+    if (!isOpen) return
+    const handleClick = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setIsOpen(false)
       }
     }
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
   }, [isOpen])
 
   // Close on Escape
   useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsOpen(false)
-      }
+    if (!isOpen) return
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false)
     }
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape)
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape)
-    }
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
   }, [isOpen])
 
+  // Inline variant
   if (variant === 'inline') {
-    const activeCode = mounted ? i18n.language : DEFAULT_LANG.code
     return (
       <div className={`flex items-center gap-1 ${className}`}>
         {languages.map((lang, index) => (
@@ -103,15 +81,14 @@ export default function LanguageSwitcher({
             <button
               onClick={() => handleLanguageChange(lang.code)}
               className={`px-2 py-1 text-sm font-medium rounded transition-colors ${
-                lang.code === activeCode
+                mounted && lang.code === i18n.language
                   ? 'text-teal-600 bg-teal-50'
                   : 'text-slate-600 hover:text-teal-600 hover:bg-slate-50'
               }`}
               aria-label={`Switch to ${lang.name}`}
-              aria-current={lang.code === activeCode ? 'true' : undefined}
             >
-              {showFlag && <span className="mr-1">{lang.flag}</span>}
-              {lang.code.toUpperCase()}
+              <span suppressHydrationWarning>{lang.flag}</span>
+              <span className="ml-1">{lang.code.toUpperCase()}</span>
             </button>
             {index < languages.length - 1 && (
               <span className="text-slate-300 mx-0.5">|</span>
@@ -122,6 +99,7 @@ export default function LanguageSwitcher({
     )
   }
 
+  // Dropdown variant
   return (
     <div ref={dropdownRef} className={`relative ${className}`}>
       <button
@@ -132,21 +110,21 @@ export default function LanguageSwitcher({
         aria-label="Select language"
       >
         <Globe className="w-4 h-4" />
-        {showFlag && <span>{currentLanguage.flag}</span>}
-        <span className="hidden sm:inline">
-          {showNativeName ? currentLanguage.nativeName : currentLanguage.code.toUpperCase()}
+        {/* Suppress hydration warning on dynamic content */}
+        <span suppressHydrationWarning>{currentLang.flag}</span>
+        <span className="hidden sm:inline" suppressHydrationWarning>
+          {currentLang.nativeName}
         </span>
         <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
         <div
-          className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+          className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-2 z-50"
           role="listbox"
-          aria-label="Available languages"
         >
           {languages.map(lang => {
-            const isActive = lang.code === currentLanguage.code
+            const isActive = mounted && lang.code === i18n.language
             return (
               <button
                 key={lang.code}
@@ -166,9 +144,7 @@ export default function LanguageSwitcher({
                     <div className="text-xs text-slate-500">{lang.name}</div>
                   </div>
                 </div>
-                {isActive && (
-                  <Check className="w-4 h-4 text-teal-600" />
-                )}
+                {isActive && <Check className="w-4 h-4 text-teal-600" />}
               </button>
             )
           })}

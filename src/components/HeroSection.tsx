@@ -120,16 +120,16 @@ export default function HeroSection() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
               </span>
-              <span className="text-sm font-medium text-teal-800">{t('stats.workingNow')}</span>
+              <span className="text-sm font-medium text-teal-800" suppressHydrationWarning>{t('stats.workingNow')}</span>
             </div>
 
             {/* Main headline */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 leading-[1.1] mb-6 tracking-tight text-balance">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 leading-[1.1] mb-6 tracking-tight text-balance" suppressHydrationWarning>
               {t('home.hero.title')}
             </h1>
 
             {/* Subheadline */}
-            <p className="text-xl text-slate-600 leading-relaxed mb-10 max-w-lg">
+            <p className="text-xl text-slate-600 leading-relaxed mb-10 max-w-lg" suppressHydrationWarning>
               {t('home.hero.description')}
             </p>
 
@@ -138,6 +138,7 @@ export default function HeroSection() {
               <Link
                 href="/booking"
                 className="group inline-flex items-center justify-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-slate-900/20 hover:-translate-y-0.5"
+                suppressHydrationWarning
               >
                 <Phone className="h-5 w-5" />
                 {t('hero.bookConsultation')}
@@ -146,6 +147,7 @@ export default function HeroSection() {
               <Link
                 href="/services"
                 className="group inline-flex items-center justify-center gap-3 bg-white hover:bg-slate-50 text-slate-900 px-8 py-4 rounded-2xl font-semibold text-lg border-2 border-slate-200 transition-all duration-300 hover:border-slate-300"
+                suppressHydrationWarning
               >
                 <Play className="h-5 w-5" />
                 {t('hero.ourServices')}
@@ -153,18 +155,18 @@ export default function HeroSection() {
             </div>
 
             {/* Trust indicators */}
-            <div className="flex flex-wrap items-center gap-6 text-sm text-slate-500">
+            <div className="flex flex-wrap items-center gap-6 text-sm text-slate-500" suppressHydrationWarning>
               <div className="flex items-center gap-2">
                 <Shield className="h-5 w-5 text-teal-600" />
-                <span>{t('stats.qualityGuarantee')}</span>
+                <span suppressHydrationWarning>{t('stats.qualityGuarantee')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Award className="h-5 w-5 text-teal-600" />
-                <span>{t('features.experiencedDoctors.title')}</span>
+                <span suppressHydrationWarning>{t('features.experiencedDoctors.title')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Star className="h-5 w-5 text-teal-600" />
-                <span>{t('features.modernEquipment.title')}</span>
+                <span suppressHydrationWarning>{t('features.modernEquipment.title')}</span>
               </div>
             </div>
           </div>
@@ -212,7 +214,7 @@ export default function HeroSection() {
                       <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center">
                         <Users className="h-5 w-5 text-teal-600" />
                       </div>
-                      <span className="text-slate-600 font-medium">{t('stats.patientsServed')}</span>
+                      <span className="text-slate-600 font-medium" suppressHydrationWarning>{t('stats.patientsServed')}</span>
                     </div>
                     <span className="text-2xl font-bold text-slate-900">{patientsCount.toLocaleString()}+</span>
                   </div>
@@ -225,7 +227,7 @@ export default function HeroSection() {
                       <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center">
                         <Star className="h-5 w-5 text-teal-600" />
                       </div>
-                      <span className="text-slate-600 font-medium">{t('stats.satisfactionRate')}</span>
+                      <span className="text-slate-600 font-medium" suppressHydrationWarning>{t('stats.satisfactionRate')}</span>
                     </div>
                     <span className="text-2xl font-bold text-slate-900">{satisfactionCount}%</span>
                   </div>
@@ -238,7 +240,7 @@ export default function HeroSection() {
                       <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center">
                         <Award className="h-5 w-5 text-teal-600" />
                       </div>
-                      <span className="text-slate-600 font-medium">{t('stats.yearsExperience')}</span>
+                      <span className="text-slate-600 font-medium" suppressHydrationWarning>{t('stats.yearsExperience')}</span>
                     </div>
                     <span className="text-2xl font-bold text-slate-900">{yearsCount}+</span>
                   </div>
@@ -246,7 +248,7 @@ export default function HeroSection() {
 
                 {/* Special offer */}
                 <div className="mt-8 p-4 bg-gradient-to-r from-teal-500 to-teal-600 rounded-2xl text-white text-center">
-                  <p className="font-semibold">{t('stats.freeConsultation')}</p>
+                  <p className="font-semibold" suppressHydrationWarning>{t('stats.freeConsultation')}</p>
                 </div>
               </div>
             </div>

@@ -140,13 +140,14 @@ const Header = memo(() => {
           >
             {navigation.map(item => (
               <Link
-                key={item.name}
+                key={item.href}
                 href={item.href}
                 className={`text-gray-700 hover:text-dental-blue transition-colors duration-200 font-medium ${
                   isActive(item.href)
                     ? 'text-dental-blue border-b-2 border-dental-blue'
                     : ''
                 }`}
+                suppressHydrationWarning
               >
                 {item.name}
               </Link>
@@ -162,7 +163,7 @@ const Header = memo(() => {
                 className="flex items-center gap-2 text-slate-600 hover:text-teal-600 transition-colors"
               >
                 <User className="w-5 h-5" />
-                <span>{t('admin.sidebar.dashboard')}</span>
+                <span suppressHydrationWarning>{t('admin.sidebar.dashboard')}</span>
               </Link>
             ) : (
               <Link
@@ -170,7 +171,7 @@ const Header = memo(() => {
                 className="flex items-center gap-2 text-slate-600 hover:text-teal-600 transition-colors"
               >
                 <LogIn className="w-5 h-5" />
-                <span>{t('admin.login.login')}</span>
+                <span suppressHydrationWarning>{t('admin.login.login')}</span>
               </Link>
             )}
             <Link
@@ -179,6 +180,7 @@ const Header = memo(() => {
               data-track-id="cta_book_now"
               data-track-category="navigation"
               data-track-label="header_cta"
+              suppressHydrationWarning
             >
               {t('buttons.bookAppointment')}
             </Link>
@@ -214,7 +216,7 @@ const Header = memo(() => {
           >
             {navigation.map(item => (
               <Link
-                key={item.name}
+                key={item.href}
                 href={item.href}
                 className={`block px-3 py-2 rounded-lg text-gray-700 hover:text-dental-blue hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-dental-teal focus:ring-inset transition-colors duration-200 ${
                   isActive(item.href)
@@ -224,6 +226,7 @@ const Header = memo(() => {
                 onClick={closeMenu}
                 onKeyDown={handleNavKeyDown}
                 tabIndex={0}
+                suppressHydrationWarning
               >
                 {item.name}
               </Link>
@@ -237,6 +240,7 @@ const Header = memo(() => {
                 data-track-id="cta_book_now_mobile"
                 data-track-category="navigation"
                 data-track-label="mobile_cta"
+                suppressHydrationWarning
               >
                 {t('buttons.bookAppointment')}
               </Link>
