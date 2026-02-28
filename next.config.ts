@@ -4,11 +4,11 @@ import withPWA from '@ducanh2912/next-pwa'
 
 const withPWAConfig = withPWA({
   dest: 'public',
-  cacheOnFrontEndNav: false,
-  aggressiveFrontEndNavCaching: false,
+  cacheOnFrontEndNav: true,
+  aggressiveFrontEndNavCaching: true,
   reloadOnOnline: true,
-  // Disable SW in all environments for now to prevent hydration mismatches
-  disable: true,
+  // Disable SW generation in development to keep fast refresh working
+  disable: process.env.NODE_ENV === 'development',
   workboxOptions: {
     disableDevLogs: true,
     runtimeCaching: [
@@ -53,12 +53,15 @@ const withPWAConfig = withPWA({
           expiration: { maxEntries: 128, maxAgeSeconds: 7 * 24 * 60 * 60 },
         },
       },
-      // HTML pages — NetworkOnly to prevent stale content
+      // HTML pages — NetworkFirst with offline fallback
       {
         urlPattern: /^\/(?!api\/).*/i,
-        handler: 'NetworkOnly',
+        handler: 'NetworkFirst',
         options: {
           cacheName: 'pages-cache',
+          networkTimeoutSeconds: 10,
+          expiration: { maxEntries: 32, maxAgeSeconds: 24 * 60 * 60 },
+          cacheableResponse: { statuses: [0, 200] },
         },
       },
     ],
@@ -173,16 +176,6 @@ const nextConfig: NextConfig = {
           {
             key: 'Cache-Control',
             value: 'public, max-age=86400, stale-while-revalidate=604800',
-          },
-        ],
-      },
-      // HTML pages — no cache to prevent hydration mismatches
-      {
-        source: '/((?!api|_next|assets).*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'no-cache, no-store, must-revalidate',
           },
         ],
       },
