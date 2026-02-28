@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Plus_Jakarta_Sans } from 'next/font/google'
+import { Nunito } from 'next/font/google'
 import Script from 'next/script'
 import { headers } from 'next/headers'
 import { Analytics } from '@vercel/analytics/next'
@@ -11,11 +11,11 @@ import ChatWidget from '@/components/ChatWidget'
 import AIAssistant from '@/components/AIAssistant'
 import { StructuredData } from '@/components/StructuredData'
 
-// Replace Google Fonts <link> from index.html with next/font for self-hosting
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ['latin'],
-  weight: ['400', '600', '700'],
-  variable: '--font-plus-jakarta-sans',
+// Nunito - заокруглений шрифт, схожий на Stolzl з брендбуку
+const nunito = Nunito({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-nunito',
   display: 'swap',
 })
 
@@ -83,7 +83,7 @@ export default async function RootLayout({
   const nonce = (await headers()).get('x-nonce') ?? ''
 
   return (
-    <html lang="uk" className={plusJakartaSans.variable}>
+    <html lang="uk" className={nunito.variable}>
       <body>
         {/* Organization JSON-LD structured data (server-rendered) */}
         <StructuredData type="organization" />

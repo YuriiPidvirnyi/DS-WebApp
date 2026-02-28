@@ -58,14 +58,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     const stateStyles = error
       ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-      : 'border-gray-300 focus:border-dental-teal focus:ring-dental-teal'
+      : 'border-dental-secondary focus:border-dental-primary focus:ring-dental-primary'
 
     return (
       <div className={fullWidth ? 'w-full' : ''}>
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="block text-sm font-medium text-dental-text mb-2"
           >
             {label}
             {props.required && <span className="text-red-500 ml-1">*</span>}
@@ -107,7 +107,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
 
         {!error && helperText && (
-          <p id={`${inputId}-helper`} className="mt-2 text-sm text-gray-500">
+          <p id={`${inputId}-helper`} className="mt-2 text-sm text-dental-muted">
             {helperText}
           </p>
         )}
@@ -139,14 +139,14 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 
     const stateStyles = error
       ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-      : 'border-gray-300 focus:border-dental-teal focus:ring-dental-teal'
+      : 'border-dental-secondary focus:border-dental-primary focus:ring-dental-primary'
 
     return (
       <div className={fullWidth ? 'w-full' : ''}>
         {label && (
           <label
             htmlFor={textareaId}
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="block text-sm font-medium text-dental-text mb-2"
           >
             {label}
             {props.required && <span className="text-red-500 ml-1">*</span>}
@@ -184,7 +184,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         )}
 
         {!error && helperText && (
-          <p id={`${textareaId}-helper`} className="mt-2 text-sm text-gray-500">
+          <p id={`${textareaId}-helper`} className="mt-2 text-sm text-dental-muted">
             {helperText}
           </p>
         )}
@@ -225,14 +225,14 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
 
     const stateStyles = error
       ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-      : 'border-gray-300 focus:border-dental-teal focus:ring-dental-teal'
+      : 'border-dental-secondary focus:border-dental-primary focus:ring-dental-primary'
 
     return (
       <div className={fullWidth ? 'w-full' : ''}>
         {label && (
           <label
             htmlFor={selectId}
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="block text-sm font-medium text-dental-text mb-2"
           >
             {label}
             {props.required && <span className="text-red-500 ml-1">*</span>}
@@ -272,7 +272,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         )}
 
         {!error && helperText && (
-          <p id={`${selectId}-helper`} className="mt-2 text-sm text-gray-500">
+          <p id={`${selectId}-helper`} className="mt-2 text-sm text-dental-muted">
             {helperText}
           </p>
         )}

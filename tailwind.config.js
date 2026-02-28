@@ -4,22 +4,28 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Dental Story Brand Colors (from brandbook)
         dental: {
-          primary: '#AECED3', // HEX #AECED3 - основний блакитний з brandbook
-          secondary: '#D1CAC0', // HEX #D1CAC0 - бежевий з brandbook
+          primary: '#AECED3', // HEX #AECED3 - основний блакитний
+          secondary: '#D1CAC0', // HEX #D1CAC0 - бежевий/кремовий
           white: '#FFFFFF', // HEX #FFFFFF - білий
-          // RGB значення для CSS custom properties
-          'primary-rgb': '174, 206, 211',
-          'secondary-rgb': '209, 202, 192',
+          // Відтінки primary
+          'primary-dark': '#7BA8B0', // Темніший відтінок для hover
+          'primary-darker': '#5A8A94', // Ще темніший для акцентів
+          'primary-light': '#C5DDE1', // Світліший відтінок
+          // Темні кольори для тексту
+          'dark': '#2C3E42', // Темний на основі primary для заголовків
+          'text': '#4A5E63', // Основний текст
+          'muted': '#6B8388', // Вторинний текст
         },
         // Для сумісності зі старим кодом
         'dental-blue': '#AECED3',
-        'dental-teal': '#14b8a6', // Updated to a more vibrant teal
+        'dental-teal': '#AECED3', // Замінено на брендовий колір
         'dental-green': '#AECED3',
       },
       fontFamily: {
-        sans: ['var(--font-plus-jakarta-sans)', 'Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
-        heading: ['var(--font-plus-jakarta-sans)', 'Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-nunito)', 'Nunito', 'system-ui', 'sans-serif'],
+        heading: ['var(--font-nunito)', 'Nunito', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         // Enhanced type scale for better hierarchy
@@ -54,7 +60,7 @@ export default {
         'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
         'soft-lg': '0 10px 40px -15px rgba(0, 0, 0, 0.1)',
         'soft-xl': '0 20px 60px -20px rgba(0, 0, 0, 0.15)',
-        'glow-teal': '0 0 30px -5px rgba(20, 184, 166, 0.3)',
+        'glow-brand': '0 0 30px -5px rgba(174, 206, 211, 0.5)',
       },
       animation: {
         'float': 'float 4s ease-in-out infinite',

@@ -45,11 +45,11 @@ export default function BookingForm() {
 
   return (
     <div className="bg-white rounded-2xl shadow-lg p-8 relative">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Запис на прийом</h2>
+      <h2 className="text-2xl font-bold text-dental-dark mb-6">Запис на прийом</h2>
 
       {isSubmitSuccessful && (
-        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-          <p className="text-green-800">
+        <div className="mb-6 p-4 bg-dental-primary/10 border border-dental-primary/30 rounded-lg">
+          <p className="text-dental-primary-darker">
             Заявку успішно надіслано! Ми підтвердимо час прийому найближчим
             часом.
           </p>
@@ -78,7 +78,7 @@ export default function BookingForm() {
           {[0, 1, 2].map(i => (
             <div
               key={i}
-              className={`h-2 flex-1 rounded-full ${i <= step ? 'bg-dental-teal' : 'bg-gray-200'}`}
+              className={`h-2 flex-1 rounded-full ${i <= step ? 'bg-dental-primary' : 'bg-dental-secondary/50'}`}
             />
           ))}
         </div>

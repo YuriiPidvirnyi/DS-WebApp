@@ -23,12 +23,12 @@ export const Button = ({
     'inline-flex items-center justify-center font-semibold rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
 
   const variantStyles = {
-    primary: 'bg-teal-800 text-white hover:bg-teal-900 focus:ring-teal-800',
+    primary: 'bg-dental-primary-darker text-white hover:bg-dental-dark focus:ring-dental-primary',
     secondary:
-      'bg-dental-blue text-white hover:bg-blue-600 focus:ring-dental-blue',
+      'bg-dental-primary text-dental-dark hover:bg-dental-primary-dark focus:ring-dental-primary',
     outline:
-      'border-2 border-dental-teal text-dental-teal hover:bg-dental-teal hover:text-white focus:ring-dental-teal',
-    ghost: 'text-dental-teal hover:bg-dental-teal/10 focus:ring-dental-teal',
+      'border-2 border-dental-primary text-dental-primary-darker hover:bg-dental-primary hover:text-dental-dark focus:ring-dental-primary',
+    ghost: 'text-dental-primary-darker hover:bg-dental-primary/10 focus:ring-dental-primary',
   }
 
   const sizeStyles = {

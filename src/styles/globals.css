@@ -109,21 +109,21 @@
 
 @layer base {
   :root {
-    /* Dental Story brand colors */
+    /* Dental Story brand colors (from brandbook) */
     --dental-primary: 174, 206, 211; /* #AECED3 */
     --dental-secondary: 209, 202, 192; /* #D1CAC0 */
     --dental-white: 255, 255, 255; /* #FFFFFF */
-
-    /* CMYK values for reference */
-    --dental-primary-cmyk: 31, 8, 14, 0;
-    --dental-secondary-cmyk: 18, 17, 22, 0;
-
-    /* Modern teal accent */
-    --dental-teal: 20, 184, 166; /* #14b8a6 */
+    
+    /* Derived colors */
+    --dental-primary-dark: 123, 168, 176; /* #7BA8B0 */
+    --dental-dark: 44, 62, 66; /* #2C3E42 */
+    --dental-text: 74, 94, 99; /* #4A5E63 */
+    --dental-muted: 107, 131, 136; /* #6B8388 */
   }
 
   body {
-    @apply bg-white text-slate-900 font-sans antialiased;
+    @apply bg-white font-sans antialiased;
+    color: #4A5E63; /* dental-text */
     font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -133,7 +133,8 @@
   /* Modern heading styles */
   h1, h2, h3, h4, h5, h6 {
     font-family: theme('fontFamily.heading');
-    @apply text-slate-900 font-bold tracking-tight;
+    color: #2C3E42; /* dental-dark */
+    @apply font-bold tracking-tight;
     text-wrap: balance;
   }
 
@@ -159,7 +160,8 @@
 
   /* Paragraph and body text */
   p {
-    @apply text-slate-600 leading-relaxed;
+    color: #6B8388; /* dental-muted */
+    @apply leading-relaxed;
   }
 
   /* Better link styles */
@@ -169,13 +171,15 @@
 
   /* Focus visible styles for accessibility */
   *:focus-visible {
-    @apply outline-none ring-2 ring-dental-teal ring-offset-2;
+    @apply outline-none ring-2 ring-offset-2;
+    --tw-ring-color: #AECED3; /* dental-primary */
   }
 
   /* Improved focus styles for interactive elements */
   a:focus-visible,
   button:focus-visible {
-    @apply ring-2 ring-dental-teal ring-offset-2 outline-none;
+    @apply ring-2 ring-offset-2 outline-none;
+    --tw-ring-color: #AECED3; /* dental-primary */
   }
 
   /* Remove outline for mouse users but keep for keyboard users */
@@ -195,7 +199,8 @@
 
   /* Ensure sufficient color contrast */
   ::selection {
-    @apply bg-dental-teal text-white;
+    background-color: #AECED3; /* dental-primary */
+    color: #2C3E42; /* dental-dark */
   }
 
   /* Reduce motion for users who prefer it (OS-level) */

@@ -11,7 +11,7 @@ import Logo from '@/components/ui/Logo'
 const Footer = memo(() => {
   const { t } = useTranslation()
   return (
-    <footer className="bg-gray-900 text-white" role="contentinfo">
+    <footer className="bg-dental-dark text-white" role="contentinfo">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo and description */}
@@ -20,13 +20,13 @@ const Footer = memo(() => {
               <Logo variant="white" size="md" />
               <span className="sr-only">Dental Story</span>
             </div>
-            <p className="text-gray-300 mb-4">{SITE_INFO.description}</p>
+            <p className="text-dental-secondary mb-4">{SITE_INFO.description}</p>
             <div className="flex space-x-4" aria-label="Соціальні мережі">
               <a
                 href={CONTACT_INFO.social.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-300 hover:text-dental-teal transition-colors"
+                className="text-dental-secondary hover:text-dental-primary transition-colors"
                 aria-label="Facebook"
               >
                 Facebook
@@ -35,7 +35,7 @@ const Footer = memo(() => {
                 href={CONTACT_INFO.social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-300 hover:text-dental-teal transition-colors"
+                className="text-dental-secondary hover:text-dental-primary transition-colors"
                 aria-label="Instagram"
               >
                 Instagram
@@ -44,7 +44,7 @@ const Footer = memo(() => {
                 href={CONTACT_INFO.social.telegram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-300 hover:text-dental-teal transition-colors"
+                className="text-dental-secondary hover:text-dental-primary transition-colors"
                 aria-label="Telegram"
               >
                 Telegram
@@ -53,7 +53,7 @@ const Footer = memo(() => {
 
             <div className="mt-6">
               <h4 className="text-sm font-semibold mb-2">Підписка на новини</h4>
-              <p className="text-xs text-gray-400 mb-3">
+              <p className="text-xs text-dental-muted mb-3">
                 Отримуйте акції та корисні поради від наших лікарів
               </p>
               <div className="max-w-sm">
@@ -70,7 +70,7 @@ const Footer = memo(() => {
                 <li>
                   <Link
                     href="/"
-                    className="text-gray-300 hover:text-dental-teal transition-colors"
+                    className="text-dental-secondary hover:text-dental-primary transition-colors"
                   >
                     {t('navigation.home')}
                   </Link>
@@ -78,7 +78,7 @@ const Footer = memo(() => {
                 <li>
                   <Link
                     href="/services"
-                    className="text-gray-300 hover:text-dental-teal transition-colors"
+                    className="text-dental-secondary hover:text-dental-primary transition-colors"
                   >
                     {t('navigation.services')}
                   </Link>
@@ -86,7 +86,7 @@ const Footer = memo(() => {
                 <li>
                   <Link
                     href="/about"
-                    className="text-gray-300 hover:text-dental-teal transition-colors"
+                    className="text-dental-secondary hover:text-dental-primary transition-colors"
                   >
                     {t('navigation.about')}
                   </Link>
@@ -94,7 +94,7 @@ const Footer = memo(() => {
                 <li>
                   <Link
                     href="/gallery"
-                    className="text-gray-300 hover:text-dental-teal transition-colors"
+                    className="text-dental-secondary hover:text-dental-primary transition-colors"
                   >
                     {t('navigation.gallery')}
                   </Link>
@@ -102,7 +102,7 @@ const Footer = memo(() => {
                 <li>
                   <Link
                     href="/contact"
-                    className="text-gray-300 hover:text-dental-teal transition-colors"
+                    className="text-dental-secondary hover:text-dental-primary transition-colors"
                   >
                     {t('navigation.contact')}
                   </Link>
@@ -110,10 +110,10 @@ const Footer = memo(() => {
                 <li>
                   <Link
                     href="/symptom-checker"
-                    className="text-gray-300 hover:text-dental-teal transition-colors flex items-center gap-1"
+                    className="text-dental-secondary hover:text-dental-primary transition-colors flex items-center gap-1"
                   >
                     {t('ai.symptomChecker.title')}
-                    <span className="text-xs bg-purple-500 text-white px-1.5 py-0.5 rounded">AI</span>
+                    <span className="text-xs bg-dental-primary text-dental-dark px-1.5 py-0.5 rounded">AI</span>
                   </Link>
                 </li>
               </ul>
@@ -126,31 +126,31 @@ const Footer = memo(() => {
             <ul className="space-y-3">
               <li className="flex items-center space-x-2">
                 <Phone
-                  className="h-4 w-4 text-dental-teal"
+                  className="h-4 w-4 text-dental-primary"
                   aria-hidden="true"
                 />
                 <a
                   href={`tel:${CONTACT_INFO.phoneRaw}`}
-                  className="text-gray-300 hover:text-dental-teal transition-colors"
+                  className="text-dental-secondary hover:text-dental-primary transition-colors"
                 >
                   {CONTACT_INFO.phone}
                 </a>
               </li>
               <li className="flex items-center space-x-2">
-                <Mail className="h-4 w-4 text-dental-teal" aria-hidden="true" />
+                <Mail className="h-4 w-4 text-dental-primary" aria-hidden="true" />
                 <a
                   href={`mailto:${CONTACT_INFO.email}`}
-                  className="text-gray-300 hover:text-dental-teal transition-colors"
+                  className="text-dental-secondary hover:text-dental-primary transition-colors"
                 >
                   {CONTACT_INFO.email}
                 </a>
               </li>
               <li className="flex items-start space-x-2">
                 <MapPin
-                  className="h-4 w-4 text-dental-teal mt-1"
+                  className="h-4 w-4 text-dental-primary mt-1"
                   aria-hidden="true"
                 />
-                <address className="text-gray-300 not-italic">
+                <address className="text-dental-secondary not-italic">
                   {CONTACT_INFO.address.full}
                   <br />
                   {CONTACT_INFO.address.postalCode}
@@ -158,10 +158,10 @@ const Footer = memo(() => {
               </li>
               <li className="flex items-start space-x-2">
                 <Clock
-                  className="h-4 w-4 text-dental-teal mt-1"
+                  className="h-4 w-4 text-dental-primary mt-1"
                   aria-hidden="true"
                 />
-                <div className="text-gray-300">
+                <div className="text-dental-secondary">
                   <div>{CONTACT_INFO.workingHours.weekdays}</div>
                   <div>{CONTACT_INFO.workingHours.saturday}</div>
                   <div>{CONTACT_INFO.workingHours.sunday}</div>
@@ -171,21 +171,21 @@ const Footer = memo(() => {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8">
+        <div className="border-t border-dental-muted/30 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-300 text-sm">
+            <p className="text-dental-muted text-sm">
               {t('footer.copyright')}
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link
                 href="/privacy-policy"
-                className="text-gray-300 hover:text-dental-teal text-sm transition-colors"
+                className="text-dental-secondary hover:text-dental-primary text-sm transition-colors"
               >
                 {t('navigation.privacyPolicy')}
               </Link>
               <Link
                 href="/terms-of-service"
-                className="text-gray-300 hover:text-dental-teal text-sm transition-colors"
+                className="text-dental-secondary hover:text-dental-primary text-sm transition-colors"
               >
                 {t('navigation.termsOfService')}
               </Link>
