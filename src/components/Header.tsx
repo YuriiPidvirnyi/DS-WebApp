@@ -46,7 +46,7 @@ const Header = memo(() => {
   const closeMenu = useCallback(() => setIsMenuOpen(false), [])
 
   return (
-    <header role="banner" className="sticky top-0 z-50">
+    <header role="banner" className="sticky top-0 z-50" suppressHydrationWarning>
       {/* Top info bar */}
       <div className="hidden md:block bg-primary/5 border-b border-primary/10">
         <div className="container-custom">
@@ -57,9 +57,9 @@ const Header = memo(() => {
                 className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-medium"
               >
                 <Phone className="h-4 w-4 text-primary" />
-                {CONTACT_INFO.phone}
+                <span suppressHydrationWarning>{CONTACT_INFO.phone}</span>
               </a>
-              <span className="flex items-center gap-2 text-muted-foreground">
+              <span className="flex items-center gap-2 text-muted-foreground" suppressHydrationWarning>
                 <Clock className="h-4 w-4 text-primary/70" />
                 {CONTACT_INFO.workingHours.weekdays}
               </span>
@@ -72,11 +72,10 @@ const Header = memo(() => {
       </div>
 
       {/* Main header */}
-      <div className={`transition-all duration-300 ${
-        scrolled 
-          ? 'bg-background/95 backdrop-blur-md shadow-md' 
-          : 'bg-background'
-      }`}>
+      <div 
+        className={`transition-all duration-300 ${scrolled ? 'bg-background/95 backdrop-blur-md shadow-md' : 'bg-background'}`}
+        suppressHydrationWarning
+      >
         <div className="container-custom">
           <div className="flex justify-between items-center h-16 lg:h-20">
             {/* Logo */}
