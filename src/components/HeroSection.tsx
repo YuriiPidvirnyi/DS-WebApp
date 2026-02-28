@@ -1,24 +1,15 @@
-'use client'
-
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Phone, CheckCircle2, Star } from 'lucide-react'
 import { SITE_INFO } from '@/utils/constants'
 
+const benefits = [
+  'Безкоштовна консультація',
+  'Сучасне обладнання',
+  'Досвідчені лікарі',
+]
+
 export default function HeroSection() {
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const benefits = [
-    'Безкоштовна консультація',
-    'Сучасне обладнання',
-    'Досвідчені лікарі',
-  ]
-
   return (
     <section className="relative min-h-[calc(100vh-4rem)] flex items-center bg-gradient-to-br from-background via-background to-muted/30 overflow-hidden">
       {/* Decorative background elements */}
@@ -30,7 +21,7 @@ export default function HeroSection() {
       <div className="container-custom relative z-10 py-8 sm:py-12 lg:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Content */}
-          <div className={`space-y-6 lg:space-y-8 order-2 lg:order-1 transition-all duration-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          <div className="space-y-6 lg:space-y-8 order-2 lg:order-1 animate-fade-in">
             {/* Rating badge */}
             <div className="inline-flex items-center gap-2 bg-card border border-border px-4 py-2 rounded-full shadow-sm">
               <div className="flex items-center gap-0.5">
@@ -102,7 +93,7 @@ export default function HeroSection() {
           </div>
 
           {/* Image */}
-          <div className={`relative order-1 lg:order-2 transition-all duration-700 delay-200 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          <div className="relative order-1 lg:order-2 animate-fade-in animation-delay-200">
             <div className="relative aspect-[4/3] lg:aspect-[4/5] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
               <Image
                 src="/images/hero-dental.jpg"

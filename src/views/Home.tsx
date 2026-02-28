@@ -1,7 +1,4 @@
-'use client'
-
 import Link from 'next/link'
-import Image from 'next/image'
 import { Smile, Shield, Users, Award, ArrowRight, Sparkles, Phone } from 'lucide-react'
 import HeroSection from '@/components/HeroSection'
 
