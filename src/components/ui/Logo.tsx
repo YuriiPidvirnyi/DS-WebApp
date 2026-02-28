@@ -50,6 +50,7 @@ const Logo = ({
         width={size === 'lg' ? 180 : size === 'md' ? 150 : 120}
         height={size === 'lg' ? 48 : size === 'md' ? 40 : 32}
         className="object-contain"
+        style={{ width: 'auto', height: 'auto' }}
         onError={() => setImgError(true)}
         priority
       />

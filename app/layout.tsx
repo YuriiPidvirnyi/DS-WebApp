@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from 'next'
 import { Plus_Jakarta_Sans } from 'next/font/google'
 import Script from 'next/script'
+import { Suspense } from 'react'
 import { headers } from 'next/headers'
-import { Analytics } from '@vercel/analytics/next'
+import { Analytics } from '@vercel/analytics/react'
 import '../src/styles/globals.css'
 import ClientProviders from './providers'
 import Header from '@/components/Header'
@@ -117,7 +118,9 @@ export default async function RootLayout({
           <Footer />
           <ClientWidgets />
         </ClientProviders>
-        <Analytics />
+        <Suspense fallback={null}>
+          <Analytics />
+        </Suspense>
       </body>
     </html>
   )
