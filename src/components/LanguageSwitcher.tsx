@@ -38,12 +38,14 @@ export default function LanguageSwitcher({
   const [mounted, setMounted] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  // Prevent hydration mismatch by only showing actual language after mount
+  // Prevent hydration mismatch - wait for client-side language detection to complete
   useEffect(() => {
-    setMounted(true)
+    // Small delay to let i18n language detection settle
+    const timer = setTimeout(() => setMounted(true), 50)
+    return () => clearTimeout(timer)
   }, [])
 
-  // Use default language on server, actual language only after hydration
+  // Always use Ukrainian (DEFAULT_LANG) until mounted to match SSR
   const currentLanguage = mounted 
     ? (languages.find(lang => lang.code === i18n.language) || DEFAULT_LANG)
     : DEFAULT_LANG
