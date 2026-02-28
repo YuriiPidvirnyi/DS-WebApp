@@ -10,7 +10,7 @@ import Footer from '@/components/Footer'
 import ClientWidgets from '@/components/ClientWidgets'
 import { StructuredData } from '@/components/StructuredData'
 
-// Replace Google Fonts <link> from index.html with next/font for self-hosting
+// Font configuration for the dental clinic website
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
   weight: ['400', '600', '700'],
