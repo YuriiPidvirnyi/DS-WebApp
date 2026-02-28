@@ -27,6 +27,7 @@ export default function Logo({
     <div 
       className={`flex-shrink-0 ${className}`}
       style={{ width: config.width, height: config.height }}
+      suppressHydrationWarning
     >
       <Image
         src={logoSrc}
@@ -35,6 +36,7 @@ export default function Logo({
         height={config.height}
         className={`w-full h-full object-contain ${variant === 'white' ? 'brightness-0 invert' : ''}`}
         priority
+        suppressHydrationWarning
       />
     </div>
   )
