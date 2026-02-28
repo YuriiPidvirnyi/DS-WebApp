@@ -406,5 +406,34 @@
     "uk": "Українська",
     "en": "English",
     "pl": "Polski"
+  },
+  "ai": {
+    "assistant": "Asystent AI",
+    "openAssistant": "Otwórz asystenta AI",
+    "close": "Zamknij",
+    "online": "Online",
+    "welcome": "Cześć! Jestem Twoim wirtualnym asystentem",
+    "welcomeDescription": "Pomogę w pytaniach o usługi, ceny, rezerwacje lub ocenę objawów",
+    "inputPlaceholder": "Napisz wiadomość...",
+    "callUs": "Lub zadzwoń",
+    "quickActions": {
+      "services": "Usługi i ceny",
+      "symptoms": "Sprawdź objawy",
+      "booking": "Umów wizytę",
+      "hours": "Godziny pracy"
+    },
+    "symptomChecker": {
+      "title": "Sprawdzanie objawów",
+      "description": "Opisz swoje objawy, aby uzyskać wstępną ocenę",
+      "disclaimer": "To nie jest diagnoza medyczna",
+      "selectSymptoms": "Wybierz objawy",
+      "painLevel": "Poziom bólu",
+      "duration": "Czas trwania",
+      "analyze": "Analizuj",
+      "result": "Wynik analizy",
+      "urgency": "Pilność",
+      "possibleCauses": "Możliwe przyczyny",
+      "recommendation": "Zalecenie"
+    }
   }
 }

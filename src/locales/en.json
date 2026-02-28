@@ -406,5 +406,34 @@
     "uk": "Українська",
     "en": "English",
     "pl": "Polski"
+  },
+  "ai": {
+    "assistant": "AI Assistant",
+    "openAssistant": "Open AI assistant",
+    "close": "Close",
+    "online": "Online",
+    "welcome": "Hello! I'm your virtual assistant",
+    "welcomeDescription": "I can help with questions about services, prices, booking, or symptom assessment",
+    "inputPlaceholder": "Type a message...",
+    "callUs": "Or call us",
+    "quickActions": {
+      "services": "Services & Prices",
+      "symptoms": "Symptom Check",
+      "booking": "Book Appointment",
+      "hours": "Working Hours"
+    },
+    "symptomChecker": {
+      "title": "Symptom Checker",
+      "description": "Describe your symptoms for a preliminary assessment",
+      "disclaimer": "This is not a medical diagnosis",
+      "selectSymptoms": "Select symptoms",
+      "painLevel": "Pain level",
+      "duration": "Duration",
+      "analyze": "Analyze",
+      "result": "Analysis result",
+      "urgency": "Urgency",
+      "possibleCauses": "Possible causes",
+      "recommendation": "Recommendation"
+    }
   }
 }

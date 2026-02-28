@@ -107,6 +107,15 @@ const Footer = memo(() => {
                     {t('navigation.contact')}
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    href="/symptom-checker"
+                    className="text-gray-300 hover:text-dental-teal transition-colors flex items-center gap-1"
+                  >
+                    {t('ai.symptomChecker.title')}
+                    <span className="text-xs bg-purple-500 text-white px-1.5 py-0.5 rounded">AI</span>
+                  </Link>
+                </li>
               </ul>
             </nav>
           </div>

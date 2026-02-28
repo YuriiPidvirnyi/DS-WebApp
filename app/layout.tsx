@@ -8,6 +8,7 @@ import ClientProviders from './providers'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ChatWidget from '@/components/ChatWidget'
+import AIAssistant from '@/components/AIAssistant'
 import { StructuredData } from '@/components/StructuredData'
 
 // Replace Google Fonts <link> from index.html with next/font for self-hosting
@@ -121,6 +122,7 @@ export default async function RootLayout({
           </main>
           <Footer />
           <ChatWidget />
+          <AIAssistant />
         </ClientProviders>
         <Analytics />
       </body>

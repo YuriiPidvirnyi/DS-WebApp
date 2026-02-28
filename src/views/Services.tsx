@@ -13,6 +13,7 @@ import {
 import Link from 'next/link'
 import FAQAccordion from '@/components/FAQAccordion'
 import PriceCalculator from '@/components/PriceCalculator'
+import SmartRecommendations from '@/components/SmartRecommendations'
 import { ALL_FAQS } from '@/content/faqs'
 
 const Services = () => {
@@ -99,11 +100,13 @@ const Services = () => {
           <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
             Наші послуги
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
             Повний спектр стоматологічних послуг для всієї родини. Ми
             використовуємо найсучасніші технології та матеріали для досягнення
             найкращих результатів лікування.
           </p>
+          {/* AI Service Finder */}
+          <SmartRecommendations />
         </div>
 
         {/* Services Grid */}
