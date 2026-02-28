@@ -44,14 +44,13 @@ export default function BookingForm() {
   } = form
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-8 relative">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Запис на прийом</h2>
+    <div className="relative">
+      <h2 className="text-xl font-semibold text-foreground mb-6">Оберіть деталі візиту</h2>
 
       {isSubmitSuccessful && (
-        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-          <p className="text-green-800">
-            Заявку успішно надіслано! Ми підтвердимо час прийому найближчим
-            часом.
+        <div className="mb-6 p-4 bg-primary/10 border border-primary/20 rounded-xl">
+          <p className="text-primary font-medium">
+            Заявку успішно надіслано! Ми підтвердимо час прийому найближчим часом.
           </p>
         </div>
       )}
@@ -74,11 +73,11 @@ export default function BookingForm() {
         <input type="hidden" name="_csrf" value={csrfToken} />
         
         {/* Progress stepper */}
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center gap-2 mb-6">
           {[0, 1, 2].map(i => (
             <div
               key={i}
-              className={`h-2 flex-1 rounded-full ${i <= step ? 'bg-dental-teal' : 'bg-gray-200'}`}
+              className={`h-1.5 flex-1 rounded-full transition-colors ${i <= step ? 'bg-primary' : 'bg-muted'}`}
             />
           ))}
         </div>
@@ -115,9 +114,9 @@ export default function BookingForm() {
         )}
 
         {/* Navigation buttons */}
-        <div className="flex justify-between gap-3">
+        <div className="flex justify-between gap-3 pt-4">
           {step > 0 ? (
-            <Button type="button" onClick={back} disabled={isSubmitting}>
+            <Button type="button" onClick={back} disabled={isSubmitting} className="btn-secondary">
               Назад
             </Button>
           ) : (
@@ -125,7 +124,7 @@ export default function BookingForm() {
           )}
 
           {step < 2 ? (
-            <Button type="button" onClick={next} disabled={isSubmitting}>
+            <Button type="button" onClick={next} disabled={isSubmitting} className="btn-primary">
               Далі
             </Button>
           ) : (
@@ -134,6 +133,7 @@ export default function BookingForm() {
               size="lg"
               disabled={isSubmitting || isCoolingDown}
               isLoading={isSubmitting}
+              className="btn-primary"
             >
               {isCoolingDown ? `Зачекайте ${remainingSec} с` : 'Записатися'}
             </Button>

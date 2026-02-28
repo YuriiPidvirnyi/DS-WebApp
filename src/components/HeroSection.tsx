@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useTranslation } from 'react-i18next'
-import { ArrowRight, Phone, CheckCircle2 } from 'lucide-react'
+import { ArrowRight, Phone, CheckCircle2, Star } from 'lucide-react'
+import { SITE_INFO } from '@/utils/constants'
 
 export default function HeroSection() {
   const { t } = useTranslation()
@@ -14,61 +16,52 @@ export default function HeroSection() {
   }, [])
 
   const benefits = [
-    { text: 'Безкоштовна консультація', key: 'consultation' },
-    { text: 'Сучасне обладнання', key: 'equipment' },
-    { text: 'Досвідчені лікарі', key: 'doctors' },
+    'Безкоштовна консультація',
+    'Сучасне обладнання',
+    'Досвідчені лікарі',
   ]
 
   return (
-    <section className="relative min-h-[85vh] flex items-center bg-background overflow-hidden">
-      {/* Subtle background pattern */}
-      <div className="absolute inset-0 opacity-[0.02]" aria-hidden="true">
-        <div 
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`,
-            backgroundSize: '32px 32px',
-          }}
-        />
+    <section className="relative min-h-[calc(100vh-4rem)] flex items-center bg-gradient-to-br from-background via-background to-muted/30 overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div className="absolute top-20 right-1/4 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-1/4 w-96 h-96 bg-primary/3 rounded-full blur-3xl" />
       </div>
 
-      {/* Gradient accent */}
-      <div 
-        className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/5 to-transparent pointer-events-none"
-        aria-hidden="true"
-      />
-
-      <div className="container-custom relative z-10 py-12 sm:py-16 lg:py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+      <div className="container-custom relative z-10 py-8 sm:py-12 lg:py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Content */}
-          <div className={`space-y-6 sm:space-y-8 transition-all duration-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 sm:px-4 py-1.5 sm:py-2 rounded-full">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
-              </span>
-              <span className="text-xs sm:text-sm font-medium" suppressHydrationWarning>
-                {t('stats.workingNow')}
-              </span>
+          <div className={`space-y-6 lg:space-y-8 order-2 lg:order-1 transition-all duration-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            {/* Rating badge */}
+            <div className="inline-flex items-center gap-2 bg-card border border-border px-4 py-2 rounded-full shadow-sm">
+              <div className="flex items-center gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                ))}
+              </div>
+              <span className="text-sm font-medium text-foreground">{SITE_INFO.rating}</span>
+              <span className="text-sm text-muted-foreground">({SITE_INFO.reviewCount} відгуків)</span>
             </div>
 
             {/* Headline */}
-            <div className="space-y-3 sm:space-y-4">
-              <h1 className="text-foreground" suppressHydrationWarning>
-                {t('home.hero.title')}
+            <div className="space-y-4">
+              <h1 className="text-foreground leading-[1.1]" suppressHydrationWarning>
+                Сучасна стоматологія{' '}
+                <span className="text-primary">у центрі Львова</span>
               </h1>
-              <p className="text-responsive-base max-w-xl" suppressHydrationWarning>
-                {t('home.hero.description')}
+              <p className="text-lg sm:text-xl text-muted-foreground max-w-lg leading-relaxed" suppressHydrationWarning>
+                Ваша історія красивої та здорової посмішки починається тут. 
+                Професійна команда, передові технології, індивідуальний підхід.
               </p>
             </div>
 
             {/* Benefits */}
-            <ul className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-x-6 sm:gap-y-2">
-              {benefits.map((benefit) => (
-                <li key={benefit.key} className="flex items-center gap-2 text-sm sm:text-base text-muted-foreground">
-                  <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
-                  <span>{benefit.text}</span>
+            <ul className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-x-6">
+              {benefits.map((benefit, i) => (
+                <li key={i} className="flex items-center gap-2 text-muted-foreground">
+                  <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+                  <span className="text-sm sm:text-base">{benefit}</span>
                 </li>
               ))}
             </ul>
@@ -77,76 +70,70 @@ export default function HeroSection() {
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2">
               <Link
                 href="/booking"
-                className="btn-primary text-sm sm:text-base px-5 sm:px-8 py-3 sm:py-4"
-                suppressHydrationWarning
+                className="btn-primary text-base px-6 sm:px-8 py-3.5 sm:py-4 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30"
               >
-                <Phone className="h-4 w-4 sm:h-5 sm:w-5" />
-                {t('hero.bookConsultation')}
-                <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
+                <Phone className="h-5 w-5" />
+                <span>Записатися на прийом</span>
+                <ArrowRight className="h-5 w-5" />
               </Link>
               <Link
                 href="/services"
-                className="btn-secondary text-sm sm:text-base px-5 sm:px-8 py-3 sm:py-4"
-                suppressHydrationWarning
+                className="btn-secondary text-base px-6 sm:px-8 py-3.5 sm:py-4"
               >
-                {t('hero.ourServices')}
+                Наші послуги
               </Link>
             </div>
 
-            {/* Trust indicators */}
-            <div className="flex flex-wrap items-center gap-4 sm:gap-8 pt-4 sm:pt-6 border-t border-border">
-              <div className="text-center">
-                <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-foreground">5000+</p>
-                <p className="text-xs sm:text-sm text-muted-foreground">Пацієнтів</p>
+            {/* Stats row */}
+            <div className="flex flex-wrap items-center gap-6 sm:gap-10 pt-6 border-t border-border">
+              <div>
+                <p className="text-2xl sm:text-3xl font-bold text-foreground">5000+</p>
+                <p className="text-sm text-muted-foreground">Задоволених пацієнтів</p>
               </div>
-              <div className="w-px h-8 sm:h-10 bg-border hidden sm:block" />
-              <div className="text-center">
-                <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-foreground">10+</p>
-                <p className="text-xs sm:text-sm text-muted-foreground">Років досвіду</p>
+              <div className="hidden sm:block w-px h-12 bg-border" />
+              <div>
+                <p className="text-2xl sm:text-3xl font-bold text-foreground">10+</p>
+                <p className="text-sm text-muted-foreground">Років досвіду</p>
               </div>
-              <div className="w-px h-8 sm:h-10 bg-border hidden sm:block" />
-              <div className="text-center">
-                <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-foreground">4.9</p>
-                <p className="text-xs sm:text-sm text-muted-foreground">Google рейтинг</p>
+              <div className="hidden sm:block w-px h-12 bg-border" />
+              <div>
+                <p className="text-2xl sm:text-3xl font-bold text-foreground">98%</p>
+                <p className="text-sm text-muted-foreground">Рекомендують нас</p>
               </div>
             </div>
           </div>
 
-          {/* Image/Visual */}
-          <div className={`relative transition-all duration-700 delay-200 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            <div className="relative aspect-[4/3] sm:aspect-square lg:aspect-[4/5] rounded-2xl sm:rounded-3xl overflow-hidden bg-gradient-to-br from-primary/10 to-primary/5">
-              {/* Placeholder for clinic image */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center space-y-4 p-6 sm:p-8">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 mx-auto bg-primary/10 rounded-2xl flex items-center justify-center">
-                    <svg className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-lg sm:text-xl font-semibold text-foreground">Dental Story</p>
-                    <p className="text-sm sm:text-base text-muted-foreground">Сучасна стоматологія</p>
-                  </div>
-                </div>
-              </div>
+          {/* Image */}
+          <div className={`relative order-1 lg:order-2 transition-all duration-700 delay-200 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <div className="relative aspect-[4/3] lg:aspect-[4/5] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
+              <Image
+                src="/images/hero-dental.jpg"
+                alt="Dental Story - сучасна стоматологічна клініка у Львові"
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+              {/* Overlay gradient */}
+              <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 via-transparent to-transparent" />
+            </div>
 
-              {/* Floating card */}
-              <div className="absolute bottom-3 left-3 right-3 sm:bottom-6 sm:left-6 sm:right-6 bg-background/95 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg border border-border">
-                <div className="flex items-center gap-3 sm:gap-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="font-medium text-foreground text-sm sm:text-base truncate">Безкоштовна консультація</p>
-                    <p className="text-xs sm:text-sm text-muted-foreground truncate">Для нових пацієнтів</p>
-                  </div>
+            {/* Floating card */}
+            <div className="absolute -bottom-4 -left-4 sm:bottom-6 sm:-left-6 bg-card rounded-xl sm:rounded-2xl p-4 shadow-xl border border-border max-w-[200px] sm:max-w-[240px]">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground text-sm sm:text-base">Безкоштовно</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Перша консультація</p>
                 </div>
               </div>
             </div>
 
             {/* Decorative elements */}
-            <div className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-primary/10 rounded-2xl -z-10" aria-hidden="true" />
-            <div className="absolute -bottom-3 -left-3 sm:-bottom-4 sm:-left-4 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-secondary rounded-xl -z-10" aria-hidden="true" />
+            <div className="absolute -top-4 -right-4 w-20 h-20 sm:w-24 sm:h-24 bg-primary/10 rounded-2xl -z-10" aria-hidden="true" />
+            <div className="absolute -bottom-4 right-1/4 w-16 h-16 sm:w-20 sm:h-20 bg-primary/5 rounded-xl -z-10" aria-hidden="true" />
           </div>
         </div>
       </div>
