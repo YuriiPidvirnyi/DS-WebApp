@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-// Logo component - uses SVG files from /assets/images/logo/
+// Logo component - DO NOT MODIFY without user permission
 interface LogoProps {
   variant?: 'default' | 'white'
   size?: 'sm' | 'md' | 'lg'
@@ -24,14 +24,18 @@ export default function Logo({
     : '/assets/images/logo/logo-mark-teal.svg'
 
   return (
-    <Image
-      src={logoSrc}
-      alt="Dental Story"
-      width={config.width}
-      height={config.height}
-      style={{ width: 'auto', height: 'auto' }}
-      className={variant === 'white' ? 'brightness-0 invert' : ''}
-      priority
-    />
+    <div 
+      className={`flex-shrink-0 ${className}`}
+      style={{ width: config.width, height: config.height }}
+    >
+      <Image
+        src={logoSrc}
+        alt="Dental Story"
+        width={config.width}
+        height={config.height}
+        className={`w-full h-full object-contain ${variant === 'white' ? 'brightness-0 invert' : ''}`}
+        priority
+      />
+    </div>
   )
 }

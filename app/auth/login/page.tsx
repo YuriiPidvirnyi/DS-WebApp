@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react'
+import Logo from '@/components/ui/Logo'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -44,12 +45,10 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-block">
-            <h1 className="text-3xl font-bold text-foreground">
-              Dental<span className="text-primary">Story</span>
-            </h1>
+          <Link href="/" className="inline-flex justify-center">
+            <Logo variant="default" size="lg" />
           </Link>
-          <p className="mt-2 text-muted-foreground">Вхід до особистого кабінету</p>
+          <p className="mt-4 text-muted-foreground">Вхід до особистого кабінету</p>
         </div>
 
         {/* Login Form */}
