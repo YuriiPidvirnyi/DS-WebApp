@@ -109,13 +109,13 @@ const Footer = memo(() => {
               </li>
               <li className="flex gap-2 sm:gap-3">
                 <MapPin className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                <address className="text-background/70 not-italic text-sm sm:text-base">
+                <address className="text-background/70 not-italic text-sm sm:text-base" suppressHydrationWarning>
                   {CONTACT_INFO.address.full}
                 </address>
               </li>
               <li className="flex gap-2 sm:gap-3">
                 <Clock className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                <div className="text-background/70 text-sm sm:text-base">
+                <div className="text-background/70 text-sm sm:text-base" suppressHydrationWarning>
                   <p>{CONTACT_INFO.workingHours.weekdays}</p>
                   <p>{CONTACT_INFO.workingHours.saturday}</p>
                 </div>

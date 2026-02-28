@@ -32,7 +32,7 @@ export default function Logo({
       width={dimensions.width}
       height={dimensions.height}
       style={{ width: 'auto', height: 'auto' }}
-      className={variant === 'white' ? `brightness-0 invert ${className}` : className}
+      className={[variant === 'white' ? 'brightness-0 invert' : '', className].filter(Boolean).join(' ')}
       priority
     />
   )
