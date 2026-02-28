@@ -1,100 +1,44 @@
-/* Google Fonts are linked in index.html: DM Sans (400/500/600) and Rubik (400/500/600/700) */
-/* Using web fonts only; custom local Stolzl font removed to avoid missing assets */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Modern animations for hero section */
+/* ========================================
+   DENTAL STORY - PROFESSIONAL DESIGN SYSTEM
+   ======================================== */
+
+/* Modern animations */
 @keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-12px);
-  }
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
 }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
+.animate-float { animation: float 4s ease-in-out infinite; }
+.animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
+.animate-scale-in { animation: scaleIn 0.4s ease-out forwards; }
+.animate-slide-in-left { animation: slideInLeft 0.5s ease-out forwards; }
+.animate-slide-in-right { animation: slideInRight 0.5s ease-out forwards; }
 
-.animate-float {
-  animation: float 4s ease-in-out infinite;
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out forwards;
-}
-
-.animate-scale-in {
-  animation: scaleIn 0.5s ease-out forwards;
-}
-
-.animate-slide-in-left {
-  animation: slideInLeft 0.6s ease-out forwards;
-}
-
-.animate-slide-in-right {
-  animation: slideInRight 0.6s ease-out forwards;
-}
-
-.animate-shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite;
-}
-
-/* Accessibility class for screen readers only */
+/* Accessibility */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -109,100 +53,90 @@
 
 @layer base {
   :root {
-    /* Dental Story brand colors */
-    --dental-primary: 174, 206, 211; /* #AECED3 */
-    --dental-secondary: 209, 202, 192; /* #D1CAC0 */
-    --dental-white: 255, 255, 255; /* #FFFFFF */
+    /* Premium color palette - clean and professional */
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    
+    --primary: 173 58% 39%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    
+    --accent: 173 58% 39%;
+    --accent-foreground: 0 0% 100%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 173 58% 39%;
+    
+    --radius: 0.75rem;
 
-    /* CMYK values for reference */
-    --dental-primary-cmyk: 31, 8, 14, 0;
-    --dental-secondary-cmyk: 18, 17, 22, 0;
-
-    /* Modern teal accent */
-    --dental-teal: 20, 184, 166; /* #14b8a6 */
+    /* Dental brand colors */
+    --dental-primary: 174 206 211;
+    --dental-secondary: 209 202 192;
+    --dental-teal: 20 184 166;
   }
 
-  body {
-    @apply bg-white text-slate-900 font-sans antialiased;
-    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
-    text-rendering: optimizeLegibility;
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Modern heading styles */
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: 'kern' 1, 'liga' 1;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Typography - Clean and readable */
   h1, h2, h3, h4, h5, h6 {
-    font-family: theme('fontFamily.heading');
-    @apply text-slate-900 font-bold tracking-tight;
+    @apply text-foreground font-semibold tracking-tight;
     text-wrap: balance;
   }
 
-  h1 {
-    @apply text-4xl md:text-5xl lg:text-6xl leading-[1.1];
-    letter-spacing: -0.02em;
-  }
+  h1 { @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight; }
+  h2 { @apply text-2xl sm:text-3xl md:text-4xl leading-tight; }
+  h3 { @apply text-xl sm:text-2xl md:text-3xl leading-snug; }
+  h4 { @apply text-lg sm:text-xl md:text-2xl leading-snug; }
 
-  h2 {
-    @apply text-3xl md:text-4xl lg:text-5xl leading-[1.15];
-    letter-spacing: -0.02em;
-  }
-
-  h3 {
-    @apply text-2xl md:text-3xl leading-[1.2];
-    letter-spacing: -0.01em;
-  }
-
-  h4 {
-    @apply text-xl md:text-2xl leading-[1.3];
-    letter-spacing: -0.01em;
-  }
-
-  /* Paragraph and body text */
   p {
-    @apply text-slate-600 leading-relaxed;
+    @apply text-muted-foreground leading-relaxed;
   }
 
-  /* Better link styles */
-  a {
-    @apply transition-colors duration-200;
-  }
-
-  /* Focus visible styles for accessibility */
+  /* Focus styles for accessibility */
   *:focus-visible {
-    @apply outline-none ring-2 ring-dental-teal ring-offset-2;
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
 
-  /* Improved focus styles for interactive elements */
-  a:focus-visible,
-  button:focus-visible {
-    @apply ring-2 ring-dental-teal ring-offset-2 outline-none;
-  }
-
-  /* Remove outline for mouse users but keep for keyboard users */
   *:focus:not(:focus-visible) {
     outline: none;
   }
 
-  /* Smooth scroll behavior */
-  html {
-    scroll-behavior: smooth;
-  }
-
-  /* Skip to content link (hidden until focused) */
-  .skip-to-content {
-    @apply sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-dental-teal focus:text-white focus:px-4 focus:py-2 focus:rounded;
-  }
-
-  /* Ensure sufficient color contrast */
   ::selection {
-    @apply bg-dental-teal text-white;
+    @apply bg-primary text-primary-foreground;
   }
 
-  /* Reduce motion for users who prefer it (OS-level) */
+  /* Reduced motion */
   @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
+    *, *::before, *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
@@ -210,81 +144,79 @@
     }
   }
 
-  /* Reduce motion via .reduced-motion class (JS-driven accessibility toggle) */
-  .reduced-motion *,
-  .reduced-motion *::before,
-  .reduced-motion *::after {
+  .reduced-motion *, .reduced-motion *::before, .reduced-motion *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  }
+}
+
+@layer components {
+  /* Professional card styles */
+  .card-elevated {
+    @apply bg-card rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow duration-300;
   }
 
-  /* High contrast mode */
-  .high-contrast {
-    --text-main: #ffffff;
-    --text-secondary: #ffffff;
-    --bg-main: #000000;
-    --bg-secondary: #333333;
-    --accent-color: #ffff00;
+  /* Button variants */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:opacity-90 active:scale-[0.98];
   }
 
-  .high-contrast body {
-    background-color: var(--bg-main) !important;
-    color: var(--text-main) !important;
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 bg-secondary text-secondary-foreground px-6 py-3 rounded-xl font-medium border border-border transition-all duration-200 hover:bg-muted active:scale-[0.98];
   }
 
-  .high-contrast a,
-  .high-contrast button:not([disabled]) {
-    color: var(--accent-color) !important;
-    background-color: var(--bg-main) !important;
-    border-color: var(--accent-color) !important;
-    outline-color: var(--accent-color) !important;
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 text-foreground px-4 py-2 rounded-lg font-medium transition-colors duration-200 hover:bg-muted;
   }
 
-  .high-contrast input,
-  .high-contrast textarea,
-  .high-contrast select {
-    color: var(--text-main) !important;
-    background-color: var(--bg-secondary) !important;
-    border-color: var(--text-main) !important;
+  /* Section spacing */
+  .section-padding {
+    @apply py-16 sm:py-20 md:py-24 lg:py-32;
   }
 
-  /* Font size utilities */
-  .font-size-normal {
-    /* default size, no changes needed */
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 
-  .font-size-larger {
-    font-size: 1.25em !important;
-    line-height: 1.5 !important;
+  /* Responsive text */
+  .text-responsive-sm { @apply text-sm sm:text-base; }
+  .text-responsive-base { @apply text-base sm:text-lg; }
+  .text-responsive-lg { @apply text-lg sm:text-xl md:text-2xl; }
+  .text-responsive-xl { @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl; }
+
+  /* Grid layouts */
+  .grid-responsive-2 { @apply grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6; }
+  .grid-responsive-3 { @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8; }
+  .grid-responsive-4 { @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6; }
+}
+
+@layer utilities {
+  /* Glass morphism */
+  .glass {
+    @apply bg-white/80 backdrop-blur-lg border border-white/20;
   }
 
-  .font-size-largest {
-    font-size: 1.5em !important;
-    line-height: 1.7 !important;
+  /* Gradient backgrounds */
+  .gradient-primary {
+    @apply bg-gradient-to-br from-primary to-primary/80;
   }
 
-  /* Color blindness simulation filters */
-  .protanopia {
-    filter: url('#protanopia-filter');
+  .gradient-subtle {
+    @apply bg-gradient-to-br from-background via-background to-muted/30;
   }
 
-  .deuteranopia {
-    filter: url('#deuteranopia-filter');
+  /* Interactive states */
+  .interactive {
+    @apply transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-[0.98];
   }
 
-  .tritanopia {
-    filter: url('#tritanopia-filter');
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
-
-  /* Adding focus indicators for keyboard navigation */
-  a:focus-visible,
-  button:focus-visible,
-  input:focus-visible,
-  select:focus-visible,
-  textarea:focus-visible {
-    outline: 3px solid #2563eb !important;
-    outline-offset: 2px !important;
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }

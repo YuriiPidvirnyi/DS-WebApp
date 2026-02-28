@@ -4,7 +4,7 @@ import { useState, useCallback, useMemo, memo, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
-import { Menu, X, Phone, Mail, User, LogIn } from 'lucide-react'
+import { Menu, X, Phone, User, LogIn } from 'lucide-react'
 import { CONTACT_INFO } from '@/utils/constants'
 import Logo from '@/components/ui/Logo'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
@@ -15,137 +15,81 @@ const Header = memo(() => {
   const { t } = useTranslation()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [user, setUser] = useState<SupabaseUser | null>(null)
+  const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
+
+  // Track scroll for header style
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // Check auth state
   useEffect(() => {
     const supabase = createClient()
-    
-    // Get initial user
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user)
-    })
-
-    // Listen for auth changes
+    supabase.auth.getUser().then(({ data: { user } }) => setUser(user))
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
     })
-
     return () => subscription.unsubscribe()
   }, [])
 
-  // Memoize navigation array - recreate when language changes
-  const navigation = useMemo(
-    () => [
-      { name: t('navigation.home'), href: '/' },
-      { name: t('navigation.services'), href: '/services' },
-      { name: t('navigation.about'), href: '/about' },
-      { name: t('navigation.gallery'), href: '/gallery' },
-      { name: t('navigation.contact'), href: '/contact' },
-    ],
-    [t]
-  )
+  const navigation = useMemo(() => [
+    { name: t('navigation.home'), href: '/' },
+    { name: t('navigation.services'), href: '/services' },
+    { name: t('navigation.about'), href: '/about' },
+    { name: t('navigation.gallery'), href: '/gallery' },
+    { name: t('navigation.contact'), href: '/contact' },
+  ], [t])
 
-  // Memoize isActive function
-  const isActive = useCallback(
-    (path: string) => pathname === path,
-    [pathname]
-  )
-
-  // Memoize handlers
+  const isActive = useCallback((path: string) => pathname === path, [pathname])
   const toggleMenu = useCallback(() => setIsMenuOpen(prev => !prev), [])
   const closeMenu = useCallback(() => setIsMenuOpen(false), [])
-  const handleMenuKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      setIsMenuOpen(prev => !prev)
-    }
-  }, [])
-  const handleNavKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      setIsMenuOpen(false)
-    }
-  }, [])
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50" role="banner">
-      {/* Top bar */}
-      <div
-        className="bg-slate-800 text-white py-2.5"
-        role="complementary"
-        aria-label="Контактна інформація"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center text-sm">
-            <div className="flex items-center space-x-6">
-              <div className="flex items-center space-x-1.5">
-                <Phone
-                  className="h-4 w-4 text-dental-teal"
-                  aria-hidden="true"
-                />
-                <a
-                  href={`tel:${CONTACT_INFO.phoneRaw}`}
-                  className="hover:text-dental-teal font-semibold tracking-wide transition-colors"
-                  data-track-id="call_click"
-                  data-track-category="outbound"
-                  data-track-label="header_phone"
-                  data-track-prop-destination={CONTACT_INFO.phoneRaw}
-                >
-                  {CONTACT_INFO.phone}
-                </a>
-              </div>
-              <div className="flex items-center space-x-1.5">
-                <Mail className="h-4 w-4 text-dental-teal" aria-hidden="true" />
-                <a
-                  href={`mailto:${CONTACT_INFO.email}`}
-                  className="hover:text-dental-teal font-semibold tracking-wide transition-colors"
-                  data-track-id="email_click"
-                  data-track-category="outbound"
-                  data-track-label="header_email"
-                  data-track-prop-destination={CONTACT_INFO.email}
-                >
-                  {CONTACT_INFO.email}
-                </a>
-              </div>
-            </div>
-            <div className="hidden md:block text-gray-300">
-              <span className="font-medium">
-                {CONTACT_INFO.workingHours.weekdays} |{' '}
-                {CONTACT_INFO.workingHours.saturday}
-              </span>
-            </div>
+    <header 
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        scrolled ? 'bg-background/95 backdrop-blur-md shadow-sm' : 'bg-background'
+      }`}
+      role="banner"
+    >
+      {/* Top bar - hidden on mobile */}
+      <div className="hidden sm:block bg-foreground text-background py-2">
+        <div className="container-custom">
+          <div className="flex justify-between items-center text-xs sm:text-sm">
+            <a
+              href={`tel:${CONTACT_INFO.phoneRaw}`}
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            >
+              <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <span className="font-medium">{CONTACT_INFO.phone}</span>
+            </a>
+            <span className="text-background/70">
+              {CONTACT_INFO.workingHours.weekdays}
+            </span>
           </div>
         </div>
       </div>
 
       {/* Main header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
+      <div className="container-custom">
+        <div className="flex justify-between items-center h-14 sm:h-16 lg:h-18">
           {/* Logo */}
-          <div className="flex items-center">
-            <Link
-              href="/"
-              aria-label="Dental Story - на головну"
-              className="shrink-0"
-            >
-              <Logo variant="default" size="md" />
-            </Link>
-          </div>
+          <Link href="/" aria-label="Dental Story - на головну" className="flex-shrink-0">
+            <Logo variant="default" size="md" />
+          </Link>
 
           {/* Desktop navigation */}
-          <nav
-            className="hidden md:flex space-x-8"
-            role="navigation"
-            aria-label="Основна навігація"
-          >
+          <nav className="hidden lg:flex items-center gap-1" role="navigation">
             {navigation.map(item => (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-gray-700 hover:text-dental-blue transition-colors duration-200 font-medium ${
+                className={`px-3 xl:px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   isActive(item.href)
-                    ? 'text-dental-blue border-b-2 border-dental-blue'
-                    : ''
+                    ? 'text-primary bg-primary/5'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                 }`}
                 suppressHydrationWarning
               >
@@ -154,98 +98,79 @@ const Header = memo(() => {
             ))}
           </nav>
 
-          {/* CTA & Auth & Language */}
-          <div className="hidden md:flex items-center space-x-4">
+          {/* Desktop actions */}
+          <div className="hidden lg:flex items-center gap-2 xl:gap-4">
             <LanguageSwitcher variant="dropdown" />
+            
             {user ? (
               <Link
                 href="/cabinet"
-                className="flex items-center gap-2 text-slate-600 hover:text-teal-600 transition-colors"
+                className="btn-ghost text-sm"
               >
-                <User className="w-5 h-5" />
-                <span suppressHydrationWarning>{t('admin.sidebar.dashboard')}</span>
+                <User className="h-4 w-4" />
+                <span suppressHydrationWarning className="hidden xl:inline">{t('admin.sidebar.dashboard')}</span>
               </Link>
             ) : (
               <Link
                 href="/auth/login"
-                className="flex items-center gap-2 text-slate-600 hover:text-teal-600 transition-colors"
+                className="btn-ghost text-sm"
               >
-                <LogIn className="w-5 h-5" />
-                <span suppressHydrationWarning>{t('admin.login.login')}</span>
+                <LogIn className="h-4 w-4" />
+                <span suppressHydrationWarning className="hidden xl:inline">{t('admin.login.login')}</span>
               </Link>
             )}
-            <Link
-              href="/booking"
-              className="bg-teal-800 hover:bg-teal-900 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
-              data-track-id="cta_book_now"
-              data-track-category="navigation"
-              data-track-label="header_cta"
-              suppressHydrationWarning
-            >
+            
+            <Link href="/booking" className="btn-primary text-sm px-4 xl:px-6 py-2.5" suppressHydrationWarning>
               {t('buttons.bookAppointment')}
             </Link>
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button
-              onClick={toggleMenu}
-              onKeyDown={handleMenuKeyDown}
-              className="p-2 text-gray-700 hover:text-dental-blue focus:outline-none focus:ring-2 focus:ring-dental-teal focus:ring-offset-2 rounded-lg"
-              aria-label={isMenuOpen ? t('accessibility.closeMenu') : t('accessibility.openMenu')}
-              aria-expanded={isMenuOpen}
-              aria-controls="mobile-menu"
-            >
-              {isMenuOpen ? (
-                <X className="h-6 w-6" aria-hidden="true" />
-              ) : (
-                <Menu className="h-6 w-6" aria-hidden="true" />
-              )}
-            </button>
-          </div>
+          <button
+            onClick={toggleMenu}
+            className="lg:hidden p-2 -mr-2 text-foreground hover:bg-muted rounded-lg transition-colors"
+            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isMenuOpen}
+          >
+            {isMenuOpen ? <X className="h-5 w-5 sm:h-6 sm:w-6" /> : <Menu className="h-5 w-5 sm:h-6 sm:w-6" />}
+          </button>
         </div>
       </div>
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="md:hidden" id="mobile-menu">
-          <div
-            className="px-2 pt-2 pb-3 space-y-1 bg-white border-t shadow-lg"
-            role="navigation"
-            aria-label="Мобільне меню"
-          >
+        <div className="lg:hidden border-t border-border bg-background">
+          <nav className="container-custom py-4 space-y-1">
             {navigation.map(item => (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`block px-3 py-2 rounded-lg text-gray-700 hover:text-dental-blue hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-dental-teal focus:ring-inset transition-colors duration-200 ${
-                  isActive(item.href)
-                    ? 'text-dental-blue bg-blue-50 font-semibold'
-                    : ''
-                }`}
                 onClick={closeMenu}
-                onKeyDown={handleNavKeyDown}
-                tabIndex={0}
+                className={`block px-4 py-3 rounded-xl text-base font-medium transition-colors ${
+                  isActive(item.href)
+                    ? 'text-primary bg-primary/5'
+                    : 'text-foreground hover:bg-muted'
+                }`}
                 suppressHydrationWarning
               >
                 {item.name}
               </Link>
             ))}
-            <div className="px-3 pt-4 border-t border-slate-100">
-              <LanguageSwitcher variant="inline" className="mb-4 justify-center" />
+            
+            <div className="pt-4 mt-4 border-t border-border space-y-3">
+              <LanguageSwitcher variant="inline" className="justify-center" />
+              
               <Link
                 href="/booking"
-                className="block px-6 py-4 min-h-[48px] bg-teal-800 hover:bg-teal-900 text-white rounded-xl text-center font-bold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
                 onClick={closeMenu}
-                data-track-id="cta_book_now_mobile"
-                data-track-category="navigation"
-                data-track-label="mobile_cta"
+                className="btn-primary w-full justify-center py-3.5 text-base"
                 suppressHydrationWarning
               >
+                <Phone className="h-5 w-5" />
                 {t('buttons.bookAppointment')}
               </Link>
             </div>
-          </div>
+          </nav>
         </div>
       )}
     </header>
@@ -253,5 +178,4 @@ const Header = memo(() => {
 })
 
 Header.displayName = 'Header'
-
 export default Header
