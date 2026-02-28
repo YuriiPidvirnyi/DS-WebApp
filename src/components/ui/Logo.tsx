@@ -26,18 +26,14 @@ export default function Logo({
     : '/assets/images/logo/logo-mark-teal.svg'
 
   return (
-    <span 
-      className={`inline-flex flex-shrink-0 ${className}`.trim()}
-      style={{ width: dimensions.width, height: dimensions.height }}
-    >
-      <Image
-        src={src}
-        alt="Dental Story"
-        width={dimensions.width}
-        height={dimensions.height}
-        className={`w-full h-full object-contain ${variant === 'white' ? 'brightness-0 invert' : ''}`.trim()}
-        priority
-      />
-    </span>
+    <Image
+      src={src}
+      alt="Dental Story"
+      width={dimensions.width}
+      height={dimensions.height}
+      style={{ width: 'auto', height: 'auto' }}
+      className={variant === 'white' ? `brightness-0 invert ${className}` : className}
+      priority
+    />
   )
 }
