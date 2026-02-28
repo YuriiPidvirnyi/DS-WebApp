@@ -2,14 +2,16 @@ import type { Metadata, Viewport } from 'next'
 import { Plus_Jakarta_Sans } from 'next/font/google'
 import Script from 'next/script'
 import { headers } from 'next/headers'
+import { Analytics } from '@vercel/analytics/next'
 import '../src/styles/globals.css'
 import ClientProviders from './providers'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import ClientWidgets from '@/components/ClientWidgets'
+import ChatWidget from '@/components/ChatWidget'
+import AIAssistant from '@/components/AIAssistant'
 import { StructuredData } from '@/components/StructuredData'
 
-// Google Font for the dental clinic
+// Replace Google Fonts <link> from index.html with next/font for self-hosting
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
   weight: ['400', '600', '700'],
@@ -18,7 +20,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 })
 
 export const viewport: Viewport = {
-  themeColor: '#0D9488',
+  themeColor: '#AECED3',
 }
 
 export const metadata: Metadata = {
@@ -34,13 +36,13 @@ export const metadata: Metadata = {
   formatDetection: { telephone: false },
   title: {
     default:
-      'Dental Story - Сучасна стоматологічна клініка у Львові | вул. Дорошенка, 35',
+      'Dental Story - Сучасна стоматологічна клініка у Львові | Сумська, 10',
     template: '%s | Dental Story',
   },
   description:
-    'Професійна стоматологічна клініка у центрі Львова на вул. Дорошенка, 35. Повний спектр послуг: лікування, імплантація, ортодонтія. Безболісне лікування, сучасне обладнання. Запис +380 68 232 38 38',
+    'Професійна стоматологічна клініка на вул. Сумська, 10. Повний спектр послуг: лікування, імплантація, ортодонтія. Безболісне лікування, сучасне обладнання. Запис 068 232 38 38',
   keywords:
-    'стоматологія Львів, стоматолог Дорошенка, стоматологічна клініка Львів, лікування зубів, імплантація зубів, брекети, відбілювання зубів, Dental Story',
+    'стоматологія Львів, стоматолог Сумська, стоматологічна клініка Львів, лікування зубів, імплантація зубів, брекети, відбілювання зубів, Dental Story',
   authors: [{ name: 'Dental Story' }],
   robots: { index: true, follow: true },
   openGraph: {
@@ -48,13 +50,13 @@ export const metadata: Metadata = {
     url: 'https://dentalstory.com.ua/',
     title: 'Dental Story - Сучасна стоматологічна клініка у Львові',
     description:
-      'Професійна стоматологічна клініка у центрі Львова на вул. Дорошенка, 35. Безболісне лікування, сучасні технології. Запис: +380 68 232 38 38',
+      'Професійна стоматологічна клініка на вул. Сумська, 10. Безболісне лікування, сучасні технології. Запис: 068 232 38 38',
     images: [
       {
-        url: '/images/hero-dental.jpg',
+        url: '/assets/images/og/og-image.svg',
         width: 1200,
         height: 630,
-        type: 'image/jpeg',
+        type: 'image/svg+xml',
         alt: 'Dental Story - Сучасна стоматологічна клініка у Львові',
       },
     ],
@@ -65,8 +67,8 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Dental Story - Сучасна стоматологічна клініка у Львові',
     description:
-      'Професійна стоматологічна клініка на вул. Дорошенка, 35. Безболісне лікування. Тел: +380 68 232 38 38',
-    images: ['/images/hero-dental.jpg'],
+      'Професійна стоматологічна клініка на Сумська, 10. Безболісне лікування. Тел: 068 232 38 38',
+    images: ['/assets/images/og/og-image.svg'],
   },
 }
 
@@ -77,14 +79,17 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  // Read CSP nonce injected by middleware — makes this layout dynamically rendered
   const nonce = (await headers()).get('x-nonce') ?? ''
 
   return (
     <html lang="uk" className={plusJakartaSans.variable}>
-      <body className="font-sans antialiased">
+      <body>
+        {/* Organization JSON-LD structured data (server-rendered) */}
         <StructuredData type="organization" />
         <StructuredData type="localBusiness" />
 
+        {/* Google Analytics 4 */}
         {GA4_ID && (
           <>
             <Script
@@ -104,9 +109,10 @@ export default async function RootLayout({
         )}
 
         <ClientProviders>
+          {/* Skip navigation link for accessibility - This is on layout level so not translated dynamically */}
           <a
             href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-50 bg-teal-600 text-white px-4 py-2 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-white"
+            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-50 bg-dental-teal text-white px-4 py-2 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-white"
           >
             Skip to main content
           </a>
@@ -115,8 +121,10 @@ export default async function RootLayout({
             {children}
           </main>
           <Footer />
-          <ClientWidgets />
+          <ChatWidget />
+          <AIAssistant />
         </ClientProviders>
+        <Analytics />
       </body>
     </html>
   )

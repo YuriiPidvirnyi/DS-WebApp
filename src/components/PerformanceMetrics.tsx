@@ -15,11 +15,23 @@ export default function PerformanceMetrics() {
   const pathname = usePathname()
 
   const reportWebVitals = useCallback(async (metric: WebVitalsMetric) => {
-    // Skip logging in development - dev environment has inherent overhead
-    // from HMR, source maps, compilation, i18n loading, etc.
-    // Focus on production metrics only
+    // Log to console in development (only poor metrics)
     if (process.env.NODE_ENV !== "production") {
-      return // Don't log dev metrics - they are not representative
+      const thresholds: Record<string, number> = {
+        LCP: 2500,
+        FID: 100,
+        CLS: 0.1,
+        FCP: 1800,
+        TTFB: 5000, // Higher threshold for dev/test server (already inside non-production block)
+        INP: 200,
+      }
+      const threshold = thresholds[metric.name]
+      if (threshold && metric.value > threshold * 1.5) {
+        console.warn(
+          `⚠️ Poor ${metric.name}: ${metric.value.toFixed(0)}ms`,
+          metric
+        )
+      }
     }
 
     // In production, we would send to analytics service

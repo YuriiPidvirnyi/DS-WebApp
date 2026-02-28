@@ -9,14 +9,14 @@ const NotFound = () => {
       <div className="text-center max-w-2xl">
         {/* 404 Number */}
         <div className="mb-8">
-          <h1 className="text-9xl font-bold text-primary">404</h1>
+          <h1 className="text-9xl font-bold text-dental-teal">404</h1>
         </div>
 
         {/* Message */}
-        <h2 className="text-3xl font-bold text-foreground mb-4">
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">
           Сторінку не знайдено
         </h2>
-        <p className="text-xl text-muted-foreground mb-8">
+        <p className="text-xl text-gray-600 mb-8">
           На жаль, сторінка, яку ви шукаєте, не існує або була переміщена.
         </p>
 
@@ -27,38 +27,38 @@ const NotFound = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/"
-            className="btn-primary"
+            className="inline-flex items-center justify-center px-6 py-3 bg-teal-800 text-white font-semibold rounded-lg hover:bg-teal-900 transition-colors"
           >
-            <Home className="h-5 w-5" />
+            <Home className="h-5 w-5 mr-2" />
             На головну
           </Link>
 
           <button
             onClick={() => window.history.back()}
-            className="btn-secondary"
+            className="inline-flex items-center justify-center px-6 py-3 border-2 border-dental-teal text-dental-teal font-semibold rounded-lg hover:bg-dental-teal hover:text-white transition-colors"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-5 w-5 mr-2" />
             Повернутись назад
           </button>
         </div>
 
         {/* Quick Links */}
-        <div className="mt-12 pt-8 border-t border-border">
-          <p className="text-sm text-muted-foreground mb-4">Можливо, ви шукали:</p>
+        <div className="mt-12 pt-8 border-t border-gray-200">
+          <p className="text-sm text-gray-500 mb-4">Можливо, ви шукали:</p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link href="/services" className="text-primary hover:underline">
+            <Link href="/services" className="text-dental-teal hover:underline">
               Послуги
             </Link>
-            <span className="text-border">•</span>
-            <Link href="/about" className="text-primary hover:underline">
+            <span className="text-gray-300">•</span>
+            <Link href="/about" className="text-dental-teal hover:underline">
               Про нас
             </Link>
-            <span className="text-border">•</span>
-            <Link href="/gallery" className="text-primary hover:underline">
+            <span className="text-gray-300">•</span>
+            <Link href="/gallery" className="text-dental-teal hover:underline">
               Галерея
             </Link>
-            <span className="text-border">•</span>
-            <Link href="/contact" className="text-primary hover:underline">
+            <span className="text-gray-300">•</span>
+            <Link href="/contact" className="text-dental-teal hover:underline">
               Контакти
             </Link>
           </div>

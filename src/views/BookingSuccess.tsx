@@ -59,63 +59,63 @@ export default function BookingSuccess() {
   }
 
   return (
-    <div className="section-padding">
-      <div className="container-custom max-w-3xl text-center">
-        <h1 className="text-foreground mb-4">
+    <div className="py-16">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Дякуємо! Запис створено
         </h1>
-        <p className="text-muted-foreground mb-6">
+        <p className="text-gray-600 mb-6">
           Ми зв'яжемося з вами для підтвердження найближчим часом.
         </p>
 
         {/* Appointment details */}
-        <div className="card-elevated p-6 mb-6 mx-auto max-w-md text-left">
-          <h2 className="text-lg font-medium text-foreground mb-4">
+        <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6 mx-auto max-w-md">
+          <h2 className="text-lg font-medium text-gray-900 mb-3">
             Деталі запису
           </h2>
-          <div className="space-y-3 text-sm">
-            <p className="text-muted-foreground flex items-center gap-2">
+          <div className="space-y-2 text-sm">
+            <p className="text-gray-500 flex items-center gap-2">
               Номер запису:{' '}
-              <span className="font-mono font-medium text-foreground">{ref}</span>
+              <span className="font-mono font-medium text-gray-900">{ref}</span>
               <button
                 onClick={async () => {
                   try {
                     await navigator.clipboard.writeText(ref || '')
                   } catch {}
                 }}
-                className="text-xs px-2 py-0.5 border border-border rounded-lg hover:bg-muted transition-colors"
+                className="text-xs px-2 py-0.5 border border-gray-300 rounded hover:bg-gray-50"
               >
                 Копіювати
               </button>
             </p>
             {bookingDetails && (
               <>
-                <p className="text-muted-foreground">
+                <p className="text-gray-500">
                   Послуга:{' '}
-                  <span className="font-medium text-foreground">
+                  <span className="font-medium text-gray-900">
                     {bookingDetails.service}
                   </span>
                 </p>
                 {bookingDetails.date && (
-                  <p className="text-muted-foreground">
+                  <p className="text-gray-500">
                     Дата:{' '}
-                    <span className="font-medium text-foreground">
+                    <span className="font-medium text-gray-900">
                       {bookingDetails.date}
                     </span>
                   </p>
                 )}
                 {bookingDetails.time && (
-                  <p className="text-muted-foreground">
+                  <p className="text-gray-500">
                     Час:{' '}
-                    <span className="font-medium text-foreground">
+                    <span className="font-medium text-gray-900">
                       {bookingDetails.time}
                     </span>
                   </p>
                 )}
                 {bookingDetails.name && (
-                  <p className="text-muted-foreground">
+                  <p className="text-gray-500">
                     Ім'я:{' '}
-                    <span className="font-medium text-foreground">
+                    <span className="font-medium text-gray-900">
                       {bookingDetails.name}
                     </span>
                   </p>
@@ -131,23 +131,23 @@ export default function BookingSuccess() {
             <ReminderSettings />
           </div>
         </div>
-        <div className="flex flex-wrap justify-center gap-3">
+        <div className="flex justify-center gap-3">
           <Link
             href="/"
-            className="btn-primary"
+            className="px-5 py-2 rounded-lg bg-dental-teal text-white"
           >
             На головну
           </Link>
           <Link
             href="/booking"
-            className="btn-secondary"
+            className="px-5 py-2 rounded-lg bg-gray-100 text-gray-800"
           >
             Створити ще один запис
           </Link>
           {canCreateEvent && (
             <button
               onClick={handleAddToCalendar}
-              className="btn-secondary inline-flex items-center gap-2"
+              className="px-5 py-2 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 inline-flex items-center gap-2"
             >
               <CalendarPlus className="h-5 w-5" /> Додати в календар
             </button>

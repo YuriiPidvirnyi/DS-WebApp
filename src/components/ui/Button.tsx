@@ -20,13 +20,15 @@ export const Button = ({
   ...props
 }: ButtonProps) => {
   const baseStyles =
-    'inline-flex items-center justify-center gap-2 font-medium rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]'
+    'inline-flex items-center justify-center font-semibold rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
 
   const variantStyles = {
-    primary: 'bg-primary text-primary-foreground hover:opacity-90',
-    secondary: 'bg-secondary text-secondary-foreground border border-border hover:bg-muted',
-    outline: 'border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground',
-    ghost: 'text-foreground hover:bg-muted',
+    primary: 'bg-teal-800 text-white hover:bg-teal-900 focus:ring-teal-800',
+    secondary:
+      'bg-dental-blue text-white hover:bg-blue-600 focus:ring-dental-blue',
+    outline:
+      'border-2 border-dental-teal text-dental-teal hover:bg-dental-teal hover:text-white focus:ring-dental-teal',
+    ghost: 'text-dental-teal hover:bg-dental-teal/10 focus:ring-dental-teal',
   }
 
   const sizeStyles = {

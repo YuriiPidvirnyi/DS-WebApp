@@ -1,42 +1,37 @@
-import Image from 'next/image'
-
-// Logo component - DO NOT MODIFY without user permission
-// Uses SVG files from /public/assets/images/logo/
-
 interface LogoProps {
   variant?: 'default' | 'white'
   size?: 'sm' | 'md' | 'lg'
   className?: string
 }
 
-const LOGO_SIZES = {
-  sm: { width: 100, height: 40 },
-  md: { width: 140, height: 56 },
-  lg: { width: 180, height: 72 },
-} as const
-
-export default function Logo({
+const Logo = ({
   variant = 'default',
   size = 'md',
   className = '',
-}: LogoProps) {
-  const { width, height } = LOGO_SIZES[size]
-  const src = variant === 'white' 
-    ? '/assets/images/logo/logo.svg'
-    : '/assets/images/logo/logo-mark-teal.svg'
+}: LogoProps) => {
+  const sizeClasses: Record<NonNullable<LogoProps['size']>, string> = {
+    sm: 'w-32 h-10',
+    md: 'w-48 h-12',
+    lg: 'w-56 h-14',
+  }
+
+  const src =
+    variant === 'default'
+      ? '/assets/images/logo/logo-mark-teal.svg'
+      : '/assets/images/logo/logo-mark-tight.svg'
+
+  const filterClass = ''
 
   return (
-    <div 
-      className={`relative flex-shrink-0 ${className}`}
-      style={{ width, height }}
-    >
-      <Image
-        src={src}
-        alt="Dental Story"
-        fill
-        className={`object-contain ${variant === 'white' ? 'brightness-0 invert' : ''}`}
-        priority
-      />
-    </div>
+    <img
+      src={src}
+      alt="Dental Story"
+      className={`${sizeClasses[size]} ${filterClass} object-contain ${className}`}
+      loading="eager"
+      width={224}
+      height={48}
+    />
   )
 }
+
+export default Logo

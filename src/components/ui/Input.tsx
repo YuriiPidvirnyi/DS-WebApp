@@ -54,18 +54,18 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const inputId = id || label?.toLowerCase().replace(/\s+/g, '-')
 
     const baseStyles =
-      'px-4 py-3 border rounded-xl bg-background text-foreground transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+      'px-4 py-3 border rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0'
 
     const stateStyles = error
-      ? 'border-destructive focus:border-destructive'
-      : 'border-input hover:border-muted-foreground/50 focus:border-primary'
+      ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+      : 'border-gray-300 focus:border-dental-teal focus:ring-dental-teal'
 
     return (
       <div className={fullWidth ? 'w-full' : ''}>
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-sm font-medium text-foreground mb-2"
+            className="block text-sm font-medium text-gray-700 mb-2"
           >
             {label}
             {props.required && <span className="text-red-500 ml-1">*</span>}
@@ -99,7 +99,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {error && (
           <p
             id={`${inputId}-error`}
-            className="mt-2 text-sm text-destructive"
+            className="mt-2 text-sm text-red-600"
             role="alert"
           >
             {error}
@@ -107,7 +107,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
 
         {!error && helperText && (
-          <p id={`${inputId}-helper`} className="mt-2 text-sm text-muted-foreground">
+          <p id={`${inputId}-helper`} className="mt-2 text-sm text-gray-500">
             {helperText}
           </p>
         )}
@@ -135,18 +135,18 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     const textareaId = id || label?.toLowerCase().replace(/\s+/g, '-')
 
     const baseStyles =
-      'px-4 py-3 border rounded-xl bg-background text-foreground transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-vertical'
+      'px-4 py-3 border rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 resize-vertical'
 
     const stateStyles = error
-      ? 'border-destructive focus:border-destructive'
-      : 'border-input hover:border-muted-foreground/50 focus:border-primary'
+      ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+      : 'border-gray-300 focus:border-dental-teal focus:ring-dental-teal'
 
     return (
       <div className={fullWidth ? 'w-full' : ''}>
         {label && (
           <label
             htmlFor={textareaId}
-            className="block text-sm font-medium text-foreground mb-2"
+            className="block text-sm font-medium text-gray-700 mb-2"
           >
             {label}
             {props.required && <span className="text-red-500 ml-1">*</span>}
@@ -176,7 +176,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         {error && (
           <p
             id={`${textareaId}-error`}
-            className="mt-2 text-sm text-destructive"
+            className="mt-2 text-sm text-red-600"
             role="alert"
           >
             {error}
@@ -184,7 +184,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         )}
 
         {!error && helperText && (
-          <p id={`${textareaId}-helper`} className="mt-2 text-sm text-muted-foreground">
+          <p id={`${textareaId}-helper`} className="mt-2 text-sm text-gray-500">
             {helperText}
           </p>
         )}
@@ -221,18 +221,18 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     const selectId = id || label?.toLowerCase().replace(/\s+/g, '-')
 
     const baseStyles =
-      'px-4 py-3 border rounded-xl bg-background text-foreground transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+      'px-4 py-3 border rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 bg-white'
 
     const stateStyles = error
-      ? 'border-destructive focus:border-destructive'
-      : 'border-input hover:border-muted-foreground/50 focus:border-primary'
+      ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+      : 'border-gray-300 focus:border-dental-teal focus:ring-dental-teal'
 
     return (
       <div className={fullWidth ? 'w-full' : ''}>
         {label && (
           <label
             htmlFor={selectId}
-            className="block text-sm font-medium text-foreground mb-2"
+            className="block text-sm font-medium text-gray-700 mb-2"
           >
             {label}
             {props.required && <span className="text-red-500 ml-1">*</span>}
@@ -264,7 +264,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {error && (
           <p
             id={`${selectId}-error`}
-            className="mt-2 text-sm text-destructive"
+            className="mt-2 text-sm text-red-600"
             role="alert"
           >
             {error}
@@ -272,7 +272,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         )}
 
         {!error && helperText && (
-          <p id={`${selectId}-helper`} className="mt-2 text-sm text-muted-foreground">
+          <p id={`${selectId}-helper`} className="mt-2 text-sm text-gray-500">
             {helperText}
           </p>
         )}

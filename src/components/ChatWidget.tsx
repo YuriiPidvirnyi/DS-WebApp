@@ -7,7 +7,7 @@ interface Message {
   id: string
   type: 'user' | 'bot'
   text: string
-  timestamp: number // Store as timestamp number to avoid Date serialization issues
+  timestamp: Date
 }
 
 // Quick reply options
@@ -20,42 +20,27 @@ const quickReplies = [
 
 // Bot responses based on actions
 const botResponses: Record<string, string> = {
-  booking: 'Щоб записатися на прийом, перейдіть на сторінку бронювання або зателефонуйте нам за номером +380 68 232 38 38. Ми працюємо Пн-Пт 9:00-20:00, Сб 10:00-17:00.',
-  prices: 'Ознайомитися з цінами можна на сторінці "Послуги". Перша консультація - безкоштовна!',
-  hours: 'Ми працюємо:\n• Пн-Пт: 09:00 - 20:00\n• Сб: 10:00 - 17:00\n• Нд: вихідний',
-  contact: 'Наші контакти:\n• Телефон: +380 68 232 38 38\n• Email: info@dentalstory.ua\n• Адреса: вул. Дорошенка, 35, Львів',
-  default: 'Дякуємо за ваше повідомлення! Наш менеджер зв\'яжеться з вами найближчим часом. Для швидкого зв\'язку телефонуйте: +380 68 232 38 38',
-}
-
-// Format timestamp for display - only call on client
-function formatTime(timestamp: number): string {
-  return new Date(timestamp).toLocaleTimeString('uk-UA', {
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  booking: 'Щоб записатися на прийом, перейдіть на сторінку бронювання або зателефонуйте нам за номером +380 44 123 45 67. Ми працюємо щодня з 9:00 до 20:00.',
+  prices: 'Ознайомитися з цінами на послуги можна на сторінці "Послуги". Безкоштовна консультація для нових пацієнтів!',
+  hours: 'Ми працюємо:\n• Пн-Пт: 9:00 - 20:00\n• Сб: 10:00 - 18:00\n• Нд: вихідний',
+  contact: 'Наші контакти:\n• Телефон: +380 44 123 45 67\n• Email: info@dentalstory.ua\n• Адреса: вул. Хрещатик 1, Київ',
+  default: 'Дякуємо за ваше повідомлення! Наш менеджер зв\'яжеться з вами найближчим часом. Для швидкого зв\'язку телефонуйте: +380 44 123 45 67',
 }
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false)
-  const [mounted, setMounted] = useState(false)
-  const [messages, setMessages] = useState<Message[]>([])
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '1',
+      type: 'bot',
+      text: 'Вітаємо в Dental Story! Чим можемо допомогти?',
+      timestamp: new Date(),
+    },
+  ])
   const [inputValue, setInputValue] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-
-  // Initialize messages only on client to avoid hydration mismatch with timestamps
-  useEffect(() => {
-    setMounted(true)
-    setMessages([
-      {
-        id: '1',
-        type: 'bot',
-        text: 'Вітаємо в Dental Story! Чим можемо допомогти?',
-        timestamp: Date.now(),
-      },
-    ])
-  }, [])
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -74,7 +59,7 @@ export default function ChatWidget() {
       id: Date.now().toString(),
       type,
       text,
-      timestamp: Date.now(),
+      timestamp: new Date(),
     }
     setMessages((prev) => [...prev, newMessage])
   }
@@ -108,11 +93,6 @@ export default function ChatWidget() {
       e.preventDefault()
       handleSend()
     }
-  }
-
-  // Don't render anything on server to avoid hydration mismatch with timestamps
-  if (!mounted) {
-    return null
   }
 
   return (
@@ -165,7 +145,7 @@ export default function ChatWidget() {
             </div>
             <div className="flex items-center gap-1">
               <Phone className="h-4 w-4" />
-              <span>+380 68 232 38 38</span>
+              <span>+380 44 123 45 67</span>
             </div>
           </div>
         </div>
@@ -190,7 +170,10 @@ export default function ChatWidget() {
                     message.type === 'user' ? 'text-white/60' : 'text-slate-400'
                   }`}
                 >
-                  {formatTime(message.timestamp)}
+                  {message.timestamp.toLocaleTimeString('uk-UA', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
                 </p>
               </div>
             </div>

@@ -1,254 +1,284 @@
 'use client'
 
-import Image from 'next/image'
-import Link from 'next/link'
-import { Award, Users, Clock, Heart, ArrowRight, Check, GraduationCap } from 'lucide-react'
-import { SITE_INFO } from '@/utils/constants'
-
-const stats = [
-  { number: '5+', label: 'Років досвіду' },
-  { number: '5000+', label: 'Задоволених пацієнтів' },
-  { number: '10+', label: 'Спеціалістів' },
-  { number: '98%', label: 'Рекомендують нас' },
-]
-
-const team = [
-  {
-    name: 'Др. Олена Іванова',
-    position: 'Головний лікар',
-    specialty: 'Стоматолог-терапевт',
-    experience: '15 років досвіду',
-    education: 'НМУ ім. Богомольця',
-  },
-  {
-    name: 'Др. Микола Петренко',
-    position: 'Стоматолог-хірург',
-    specialty: 'Імплантолог',
-    experience: '12 років досвіду',
-    education: 'УМСА, Полтава',
-  },
-  {
-    name: 'Др. Марія Коваленко',
-    position: 'Стоматолог-ортодонт',
-    specialty: 'Брекети та елайнери',
-    experience: '8 років досвіду',
-    education: 'НМУ ім. Богомольця',
-  },
-]
-
-const values = [
-  {
-    icon: Heart,
-    title: 'Турбота',
-    description: 'Індивідуальний підхід та комфорт кожного пацієнта',
-  },
-  {
-    icon: Award,
-    title: 'Якість',
-    description: 'Використовуємо тільки сертифіковані матеріали',
-  },
-  {
-    icon: Users,
-    title: 'Команда',
-    description: 'Злагоджена робота досвідчених спеціалістів',
-  },
-  {
-    icon: Clock,
-    title: 'Пунктуальність',
-    description: 'Поважаємо ваш час - прийоми без затримок',
-  },
-]
-
-const equipment = [
-  'Цифрова рентген-діагностика',
-  '3D-томографія (КЛКТ)',
-  'Лазерна стоматологія',
-  'CAD/CAM система протезування',
-  'Ультразвукове чищення',
-  'Мікроскоп для ендодонтії',
-]
+import { Award, Users, Clock, Heart } from 'lucide-react'
+import images from '@/content/images.json'
 
 const About = () => {
+  const stats = [
+    { number: '10+', label: 'Років досвіду' },
+    { number: '5000+', label: 'Задоволених пацієнтів' },
+    { number: '15+', label: 'Спеціалістів' },
+    { number: '98%', label: 'Позитивних відгуків' },
+  ]
+
+  const team = [
+    {
+      name: 'Др. Олена Іванова',
+      position: 'Головний лікар, стоматолог-терапевт',
+      experience: '15 років досвіду',
+      education: 'НМУ ім. Богомольця, спеціалізація в ендодонтії',
+    },
+    {
+      name: 'Др. Микола Петренко',
+      position: 'Стоматолог-хірург, імплантолог',
+      experience: '12 років досвіду',
+      education: 'УМСА, сертифікат по імплантології (Німеччина)',
+    },
+    {
+      name: 'Др. Марія Коваленко',
+      position: 'Стоматолог-ортодонт',
+      experience: '8 років досвіду',
+      education: 'НМУ ім. Богомольця, спеціалізація в ортодонтії',
+    },
+  ]
+
+  // Map photos from images.json to team members by name
+  type TeamPhoto = {
+    title: string
+    src?: string
+    fallback?: string
+    alt?: string
+  }
+  type EquipmentPhoto = {
+    src?: string
+    fallback?: string
+    alt?: string
+    title?: string
+  }
+  const data = images as unknown as {
+    team?: TeamPhoto[]
+    equipment?: EquipmentPhoto[]
+  }
+  const teamPhotos: Record<
+    string,
+    { src?: string; fallback?: string; alt?: string }
+  > = {}
+  data.team?.forEach(p => {
+    teamPhotos[p.title] = { src: p.src, fallback: p.fallback, alt: p.alt }
+  })
+
+  const values = [
+    {
+      icon: <Heart className="h-8 w-8 text-dental-teal" />,
+      title: 'Турбота про пацієнтів',
+      description:
+        'Індивідуальний підхід та комфорт кожного пацієнта - наш пріоритет',
+    },
+    {
+      icon: <Award className="h-8 w-8 text-dental-teal" />,
+      title: 'Професіоналізм',
+      description: 'Висококваліфіковані лікарі з багаторічним досвідом',
+    },
+    {
+      icon: <Users className="h-8 w-8 text-dental-teal" />,
+      title: 'Командна робота',
+      description: 'Злагоджена команда спеціалістів для найкращих результатів',
+    },
+    {
+      icon: <Clock className="h-8 w-8 text-dental-teal" />,
+      title: 'Пунктуальність',
+      description: 'Поважаємо ваш час - прийоми за розкладом без затримок',
+    },
+  ]
+
   return (
-    <div className="section-padding">
-      <div className="container-custom">
+    <div className="py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <span className="inline-block text-sm font-semibold text-primary tracking-wider uppercase mb-4">
-            Про клініку
-          </span>
-          <h1 className="mb-4">
-            {SITE_INFO.name} — {SITE_INFO.tagline}
+          <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+            Про нашу клініку
           </h1>
-          <p className="text-responsive-base max-w-3xl mx-auto">
-            Сучасна стоматологічна клініка у центрі Львова, яка поєднує
-            професіоналізм, інноваційні технології та індивідуальний підхід.
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Dental Story - це сучасна стоматологічна клініка, яка поєднує
+            професіоналізм, інноваційні технології та індивідуальний підхід до
+            кожного пацієнта.
           </p>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16 lg:mb-24">
-          {stats.map((stat, i) => (
-            <div key={i} className="card-elevated p-6 text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-foreground mb-1">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
+          {stats.map((stat, index) => (
+            <div key={index} className="text-center">
+              <div className="text-4xl lg:text-5xl font-bold text-slate-800 mb-2">
                 {stat.number}
               </div>
-              <div className="text-sm text-muted-foreground">{stat.label}</div>
+              <div className="text-gray-600 font-medium">{stat.label}</div>
             </div>
           ))}
         </div>
 
-        {/* Our Story + Image */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center mb-16 lg:mb-24">
+        {/* Our Story */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
           <div className="space-y-6">
-            <h2>Наша історія</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              Клініка Dental Story відкрила свої двері у 2020 році з метою надання
-              якісної стоматологічної допомоги мешканцям Львова. За роки роботи 
-              ми допомогли тисячам пацієнтів відновити здоров'я зубів та 
-              отримати красиву посмішку.
+            <h2 className="text-3xl font-bold text-gray-900">Наша історія</h2>
+            <p className="text-gray-600 leading-relaxed">
+              Клініка Dental Story була заснована в 2014 році з метою надання
+              якісної стоматологічної допомоги з використанням найсучасніших
+              технологій. Наша команда об'єднує досвідчених лікарів, які
+              постійно підвищують свою кваліфікацію та слідкують за новітніми
+              тенденціями в стоматології.
             </p>
-            <p className="text-muted-foreground leading-relaxed">
-              Наша команда об'єднує досвідчених лікарів, які постійно підвищують 
-              кваліфікацію та слідкують за новітніми тенденціями в стоматології. 
-              Ми використовуємо тільки сертифіковане обладнання та матеріали 
-              від провідних світових виробників.
+            <p className="text-gray-600 leading-relaxed">
+              Ми пишаємося тим, що за роки роботи допомогли тисячам пацієнтів
+              відновити здоров'я зубів та красиву посмішку. Наша філософія
+              базується на принципах довіри, професіоналізму та індивідуального
+              підходу до кожного пацієнта.
             </p>
-            <Link href="/services" className="btn-primary inline-flex">
-              Наші послуги
-              <ArrowRight className="h-5 w-5" />
-            </Link>
           </div>
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
-            <Image
-              src="/images/hero-dental.jpg"
-              alt="Інтер'єр клініки Dental Story"
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 50vw"
-            />
+          <div className="bg-gradient-to-br from-dental-blue/10 to-dental-teal/10 rounded-2xl p-8 flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-6xl mb-4">🦷</div>
+              <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+                Dental Story
+              </h3>
+              <p className="text-gray-600">Ваша посмішка - наша місія</p>
+            </div>
           </div>
         </div>
 
         {/* Values */}
-        <div className="mb-16 lg:mb-24">
-          <div className="text-center mb-10">
-            <h2 className="mb-3">Наші цінності</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Принципи, якими ми керуємося в щоденній роботі
+        <div className="mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Наші цінності
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Принципи, якими ми керуємося в щоденній роботі та відносинах з
+              пацієнтами
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {values.map((value) => {
-              const Icon = value.icon
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {values.map((value, index) => (
+              <div
+                key={index}
+                className="text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="flex justify-center mb-4">{value.icon}</div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  {value.title}
+                </h3>
+                <p className="text-gray-600">{value.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Team */}
+        <div className="mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Наша команда
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Досвідчені лікарі з вищою освітою та міжнародними сертифікатами
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {team.map((doctor, index) => {
+              const photo = teamPhotos[doctor.name]
+              const fallback =
+                photo?.fallback ||
+                '/assets/images/gallery/dental-team.jpg'
               return (
-                <div key={value.title} className="card-elevated p-6 text-center">
-                  <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <Icon className="h-7 w-7 text-primary" />
+                <div
+                  key={index}
+                  className="bg-white rounded-xl shadow-lg p-8 text-center hover:shadow-xl transition-shadow"
+                >
+                  <div className="w-24 h-24 rounded-full mx-auto mb-6 overflow-hidden bg-dental-blue/20">
+                    <img
+                      src={photo?.src || fallback}
+                      onError={e => {
+                        const img = e.currentTarget as HTMLImageElement
+                        if (img.src !== window.location.origin + fallback)
+                          img.src = fallback
+                      }}
+                      alt={photo?.alt || doctor.name}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">
-                    {value.title}
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    {doctor.name}
                   </h3>
-                  <p className="text-sm text-muted-foreground">{value.description}</p>
+                  <p className="text-teal-800 font-medium mb-2">
+                    {doctor.position}
+                  </p>
+                  <p className="text-gray-600 text-sm mb-3">
+                    {doctor.experience}
+                  </p>
+                  <p className="text-gray-500 text-sm">{doctor.education}</p>
                 </div>
               )
             })}
           </div>
         </div>
 
-        {/* Team */}
-        <div className="mb-16 lg:mb-24">
-          <div className="text-center mb-10">
-            <h2 className="mb-3">Наша команда</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Досвідчені лікарі з вищою медичною освітою
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {team.map((doctor) => (
-              <div key={doctor.name} className="card-elevated p-6">
-                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl font-bold text-primary">
-                    {doctor.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+        {/* Equipment */}
+        <div className="bg-gray-50 rounded-2xl p-8 lg:p-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">
+                Сучасне обладнання
+              </h2>
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-dental-teal rounded-full mr-3"></div>
+                  <span className="text-gray-700">
+                    Цифрова рентген-діагностика
                   </span>
                 </div>
-                <div className="text-center">
-                  <h3 className="text-lg font-semibold text-foreground mb-1">
-                    {doctor.name}
-                  </h3>
-                  <p className="text-primary font-medium text-sm mb-1">
-                    {doctor.position}
-                  </p>
-                  <p className="text-muted-foreground text-sm mb-3">
-                    {doctor.specialty}
-                  </p>
-                  <div className="pt-3 border-t border-border space-y-2">
-                    <p className="text-xs text-muted-foreground flex items-center justify-center gap-1.5">
-                      <Clock className="h-3.5 w-3.5" />
-                      {doctor.experience}
-                    </p>
-                    <p className="text-xs text-muted-foreground flex items-center justify-center gap-1.5">
-                      <GraduationCap className="h-3.5 w-3.5" />
-                      {doctor.education}
-                    </p>
-                  </div>
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-dental-teal rounded-full mr-3"></div>
+                  <span className="text-gray-700">3D-томографія</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-dental-teal rounded-full mr-3"></div>
+                  <span className="text-gray-700">Лазерна стоматологія</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-dental-teal rounded-full mr-3"></div>
+                  <span className="text-gray-700">
+                    CAD/CAM система для протезування
+                  </span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-dental-teal rounded-full mr-3"></div>
+                  <span className="text-gray-700">Ультразвукове чищення</span>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Equipment */}
-        <div className="bg-muted rounded-3xl p-8 lg:p-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            <div>
-              <h2 className="mb-4">Сучасне обладнання</h2>
-              <p className="text-muted-foreground mb-6">
-                Використовуємо передові технології для точної діагностики 
-                та ефективного лікування.
-              </p>
-              <ul className="space-y-3">
-                {equipment.map((item, i) => (
-                  <li key={i} className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Check className="h-3.5 w-3.5 text-primary" />
-                    </div>
-                    <span className="text-foreground">{item}</span>
-                  </li>
+            </div>
+            <div className="rounded-2xl">
+              <div className="grid grid-cols-2 gap-4">
+                {data.equipment?.slice(0, 4).map((eq, idx) => (
+                  <div
+                    key={idx}
+                    className="aspect-[3/2] overflow-hidden rounded-xl bg-white"
+                  >
+                    <img
+                      src={
+                        eq.src ||
+                        '/assets/images/gallery/dental-equipment.jpg'
+                      }
+                      onError={e => {
+                        const img = e.currentTarget as HTMLImageElement
+                        if (!img.dataset.fallback) {
+                          img.dataset.fallback = '1'
+                          img.src =
+                            eq.fallback ||
+                            '/assets/images/gallery/dental-equipment.jpg'
+                        }
+                      }}
+                      alt={eq.alt || eq.title || 'Обладнання стоматології'}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
-            <div className="relative aspect-video lg:aspect-[4/3] rounded-2xl overflow-hidden">
-              <Image
-                src="/images/hero-dental.jpg"
-                alt="Сучасне стоматологічне обладнання"
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* CTA */}
-        <div className="mt-16 lg:mt-24 text-center">
-          <div className="bg-foreground rounded-3xl p-8 lg:p-12">
-            <h2 className="text-2xl sm:text-3xl font-semibold text-background mb-4">
-              Готові познайомитися?
-            </h2>
-            <p className="text-background/70 mb-8 max-w-2xl mx-auto">
-              Запишіться на безкоштовну консультацію та переконайтеся в якості 
-              наших послуг особисто
-            </p>
-            <Link
-              href="/booking"
-              className="btn-primary bg-background text-foreground hover:bg-background/90"
-            >
-              Записатися на прийом
-              <ArrowRight className="h-5 w-5" />
-            </Link>
           </div>
         </div>
       </div>

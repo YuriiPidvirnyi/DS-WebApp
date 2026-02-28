@@ -1,303 +1,403 @@
+'use client'
+
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { Smile, Shield, Users, Award, ArrowRight, Sparkles, Phone } from 'lucide-react'
+import { Smile, Shield, Users, Award, ArrowRight } from 'lucide-react'
+import LazyImage from '@/components/ui/LazyImage'
 import HeroSection from '@/components/HeroSection'
+import AnimatedCard, { AnimatedSection } from '@/components/ui/AnimatedCard'
+import { useScrollAnimation, useStaggeredAnimation } from '@/hooks/useScrollAnimation'
+import BeforeAfterGallery from '@/components/BeforeAfterGallery'
+import VideoTestimonials from '@/components/VideoTestimonials'
+import images from '@/content/images.json'
 
-const features = [
-  {
-    icon: Smile,
-    title: 'Комфортне лікування',
-    description: 'Сучасні методи знеболювання та затишна атмосфера',
-  },
-  {
-    icon: Shield,
-    title: 'Безпека та стерильність',
-    description: 'Найвищі стандарти гігієни та безпеки пацієнтів',
-  },
-  {
-    icon: Users,
-    title: 'Досвідчені лікарі',
-    description: 'Команда кваліфікованих спеціалістів з досвідом 10+ років',
-  },
-  {
-    icon: Award,
-    title: 'Сучасне обладнання',
-    description: 'Новітні технології для точної діагностики',
-  },
-]
+// Type for service images from images.json
+interface ServiceImage {
+  src: string
+  fallback?: string
+  alt: string
+  title: string
+  category: string
+  width: number
+  height: number
+}
 
-const services = [
-  {
-    title: 'Терапевтична стоматологія',
-    description: 'Лікування карієсу, пульпіту, періодонтиту',
-    price: 'від 600₴',
-  },
-  {
-    title: 'Хірургічна стоматологія',
-    description: 'Видалення зубів, імплантація, пародонтологія',
-    price: 'від 800₴',
-  },
-  {
-    title: 'Ортопедична стоматологія',
-    description: 'Протезування, коронки, мости, вінири',
-    price: 'від 2500₴',
-  },
-  {
-    title: 'Ортодонтія',
-    description: 'Виправлення прикусу, брекети, елайнери',
-    price: 'від 15000₴',
-  },
-  {
-    title: 'Професійна гігієна',
-    description: 'Ультразвукове чищення, полірування, фторування',
-    price: 'від 800₴',
-  },
-  {
-    title: 'Естетична стоматологія',
-    description: 'Відбілювання, вінири, реставрація',
-    price: 'від 1200₴',
-  },
-]
+// Type for the images JSON structure
+interface ImagesData {
+  services?: ServiceImage[]
+  [key: string]: unknown
+}
 
-export default function Home() {
+const typedImages = images as ImagesData
+
+// Dynamic imports for better code splitting - Testimonials is below the fold
+const Testimonials = dynamic(() => import('@/components/Testimonials'), {
+  loading: () => (
+    <div className="py-20 bg-gray-50 animate-pulse">
+      <div className="max-w-7xl mx-auto px-4 text-center">
+        <div className="h-8 bg-gray-200 rounded w-64 mx-auto mb-4"></div>
+        <div className="h-4 bg-gray-200 rounded w-96 mx-auto"></div>
+      </div>
+    </div>
+  ),
+  ssr: true,
+})
+
+const Home = () => {
+  // Scroll animation hooks
+  const { ref: featuresRef, isVisible: featuresVisible } = useScrollAnimation()
+  const { ref: servicesRef, isVisible: servicesVisible, getStaggerDelay: getServicesDelay } = useStaggeredAnimation(4, { staggerDelay: 150 })
+  const { ref: pricingRef, isVisible: pricingVisible } = useScrollAnimation()
+  const { ref: ctaRef, isVisible: ctaVisible } = useScrollAnimation()
+
+  const features = [
+    {
+      icon: <Smile className="h-14 w-14 text-dental-teal" />,
+      title: 'Комфортне лікування',
+      description: 'Сучасні методи знеболювання та комфортна атмосфера',
+    },
+    {
+      icon: <Shield className="h-14 w-14 text-dental-teal" />,
+      title: 'Безпека та стерильність',
+      description: 'Дотримання найвищих стандартів гігієни та безпеки',
+    },
+    {
+      icon: <Users className="h-14 w-14 text-dental-teal" />,
+      title: 'Досвідчені лікарі',
+      description:
+        'Команда кваліфікованих стоматологів з багаторічним досвідом',
+    },
+    {
+      icon: <Award className="h-14 w-14 text-dental-teal" />,
+      title: 'Сучасне обладнання',
+      description: 'Новітні технології для точної діагностики та лікування',
+    },
+  ]
+
+  const services = [
+    {
+      title: 'Терапевтична стоматологія',
+      description: 'Лікування карієсу, пульпіту, періодонтиту',
+    },
+    {
+      title: 'Хірургічна стоматологія',
+      description: 'Видалення зубів, імплантація, пародонтологія',
+    },
+    {
+      title: 'Ортопедична стоматологія',
+      description: 'Протезування, коронки, мости, вінири',
+    },
+    {
+      title: 'Ортодонтія',
+      description: 'Виправлення прикусу, брекети, елайнери',
+    },
+  ]
+
   return (
-    <div className="flex flex-col">
-      {/* Hero Section */}
+    <div>
+      {/* Modern Animated Hero Section */}
       <HeroSection />
 
       {/* Features Section */}
-      <section className="section-padding bg-muted/30">
-        <div className="container-custom">
-          <div className="text-center mb-12 lg:mb-16">
-            <span className="inline-block text-sm font-semibold text-primary tracking-wider uppercase mb-3">
+      <section ref={featuresRef} className="py-24 bg-gradient-to-b from-slate-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AnimatedSection isVisible={featuresVisible} className="text-center mb-16">
+            <span className="inline-block text-sm font-semibold text-teal-600 tracking-wider uppercase mb-4">
               Наші переваги
             </span>
-            <h2 className="mb-4">Чому пацієнти обирають нас</h2>
-            <p className="text-responsive-base max-w-2xl mx-auto">
-              Поєднуємо професіоналізм, сучасні технології та індивідуальний підхід
+            <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6 leading-tight">
+              Чому пацієнти обирають нас
+            </h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+              Ми поєднуємо професіоналізм, сучасні технології та індивідуальний
+              підхід для досягнення найкращих результатів
             </p>
-          </div>
+          </AnimatedSection>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, i) => (
-              <div
-                key={i}
-                className="card-elevated p-6 text-center group hover:border-primary/20"
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => (
+              <AnimatedCard
+                key={index}
+                hoverEffect="lift"
+                delay={index * 100}
+                isVisible={featuresVisible}
+                className="text-center p-8 border border-slate-100"
               >
-                <div className="w-14 h-14 mx-auto mb-4 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                  <feature.icon className="h-7 w-7 text-primary" />
+                <div className="flex justify-center mb-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl flex items-center justify-center">
+                    {feature.icon}
+                  </div>
                 </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">
+                <h3 className="text-xl font-bold text-slate-900 mb-3">
                   {feature.title}
                 </h3>
-                <p className="text-sm text-muted-foreground">
-                  {feature.description}
-                </p>
-              </div>
+                <p className="text-slate-600 leading-relaxed">{feature.description}</p>
+              </AnimatedCard>
             ))}
           </div>
         </div>
       </section>
 
       {/* Services Section */}
-      <section className="section-padding">
-        <div className="container-custom">
-          <div className="text-center mb-12 lg:mb-16">
-            <span className="inline-block text-sm font-semibold text-primary tracking-wider uppercase mb-3">
+      <section ref={servicesRef} className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AnimatedSection isVisible={servicesVisible} className="text-center mb-16">
+            <span className="inline-block text-sm font-semibold text-teal-600 tracking-wider uppercase mb-4">
               Послуги
             </span>
-            <h2 className="mb-4">Повний спектр стоматологічних послуг</h2>
-            <p className="text-responsive-base max-w-2xl mx-auto">
+            <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6 leading-tight">
+              Повний спектр послуг
+            </h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
               Від профілактики до складних операцій - все для здоров'я вашої посмішки
             </p>
-          </div>
+          </AnimatedSection>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((service, i) => (
-              <div
-                key={i}
-                className="card-elevated p-6 group hover:border-primary/20"
-              >
-                <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
-                  {service.title}
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {service.description}
-                </p>
-                <div className="flex items-center justify-between pt-4 border-t border-border">
-                  <span className="font-semibold text-primary">{service.price}</span>
-                  <Link
-                    href="/services"
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1"
-                  >
-                    Детальніше
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center mt-10">
-            <Link href="/services" className="btn-primary">
-              Всі послуги та ціни
-              <ArrowRight className="h-5 w-5" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* AI Feature Highlight */}
-      <section className="section-padding bg-gradient-to-br from-primary/5 via-background to-primary/5">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">
-                <Sparkles className="h-4 w-4" />
-                Новинка
-              </div>
-              <h2>AI-асистент для перевірки симптомів</h2>
-              <p className="text-responsive-base">
-                Опишіть свої симптоми нашому AI-асистенту і отримайте попередню оцінку 
-                стану та рекомендації щодо візиту до лікаря. Працює 24/7.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Link href="/symptom-checker" className="btn-primary">
-                  <Sparkles className="h-5 w-5" />
-                  Перевірити симптоми
-                </Link>
-                <Link href="/about" className="btn-secondary">
-                  Дізнатися більше
-                </Link>
-              </div>
-            </div>
-            <div className="relative">
-              <div className="aspect-square max-w-md mx-auto lg:max-w-none relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 rounded-3xl" />
-                <div className="absolute inset-4 bg-card rounded-2xl shadow-xl border border-border p-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-                        <Sparkles className="h-5 w-5 text-primary-foreground" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-foreground">Dental AI</p>
-                        <p className="text-xs text-muted-foreground">Онлайн</p>
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="bg-muted rounded-xl p-3 max-w-[80%]">
-                        <p className="text-sm text-muted-foreground">
-                          Привіт! Я AI-асистент Dental Story. Опишіть, що вас турбує.
-                        </p>
-                      </div>
-                      <div className="bg-primary rounded-xl p-3 max-w-[80%] ml-auto">
-                        <p className="text-sm text-primary-foreground">
-                          Болить зуб при жуванні...
-                        </p>
-                      </div>
-                      <div className="bg-muted rounded-xl p-3 max-w-[80%]">
-                        <p className="text-sm text-muted-foreground">
-                          Це може бути ознакою карієсу або тріщини емалі. Рекомендую 
-                          записатися на огляд найближчим часом.
-                        </p>
-                      </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {services.map((service, index) => {
+              const svc = typedImages.services?.[index]
+              const bg =
+                svc?.src || '/assets/images/services/dental-cleaning.jpg'
+              return (
+                <AnimatedCard
+                  key={index}
+                  hoverEffect="glow"
+                  delay={index * 150}
+                  isVisible={servicesVisible}
+                  className="overflow-hidden border border-slate-100 group"
+                >
+                  <div className="h-56 relative overflow-hidden">
+                    <LazyImage
+                      src={svc?.src || bg}
+                      fallback={svc?.fallback}
+                      alt={
+                        svc?.alt || `${service.title} - стоматологічна послуга`
+                      }
+                      className="absolute inset-0 transition-transform duration-500 group-hover:scale-105"
+                      width={1200}
+                      height={800}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent" />
+                    <div className="absolute bottom-4 left-6 right-6">
+                      <h3 className="text-2xl font-bold text-white mb-1">
+                        {service.title}
+                      </h3>
                     </div>
                   </div>
+                  <div className="p-6">
+                    <p className="text-slate-600 mb-4 leading-relaxed">{service.description}</p>
+                    <Link
+                      href="/services"
+                      className="inline-flex items-center text-teal-600 hover:text-teal-700 font-semibold group/link"
+                    >
+                      Дізнатися більше
+                      <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/link:translate-x-1" />
+                    </Link>
+                  </div>
+                </AnimatedCard>
+              )
+            })}
+          </div>
+
+          <AnimatedSection isVisible={servicesVisible} delay={600} className="text-center mt-12">
+            <Link
+              href="/services"
+              className="inline-flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-slate-900/20 hover:-translate-y-0.5"
+            >
+              Переглянути всі послуги
+              <ArrowRight className="h-5 w-5" />
+            </Link>
+          </AnimatedSection>
+        </div>
+      </section>
+
+      {/* Before/After Gallery */}
+      <BeforeAfterGallery />
+
+      {/* Pricing Section */}
+      <section ref={pricingRef} className="py-24 bg-gradient-to-b from-slate-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AnimatedSection isVisible={pricingVisible} className="text-center mb-16">
+            <span className="inline-block text-sm font-semibold text-teal-600 tracking-wider uppercase mb-4">
+              Ціни
+            </span>
+            <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6 leading-tight">
+              Прозоре ціноутворення
+            </h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+              Без прихованих доплат. Всі ціни фіксовані та узгоджуються перед початком лікування
+            </p>
+          </AnimatedSection>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {/* Basic Package */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 relative hover:shadow-lg transition-shadow">
+              <div className="text-center">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  Базовий огляд
+                </h3>
+                <div className="text-4xl font-bold text-teal-800 mb-6">
+                  Безкоштовно
                 </div>
+                <ul className="space-y-3 text-gray-600 mb-8">
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
+                    Консультація лікаря
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
+                    Огляд ротової порожнини
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
+                    План лікування
+                  </li>
+                </ul>
+                <Link
+                  href="/booking"
+                  className="block w-full bg-gray-100 hover:bg-gray-200 text-gray-900 px-6 py-3 rounded-lg font-semibold transition-colors"
+                >
+                  Записатися
+                </Link>
+              </div>
+            </div>
+
+            {/* Professional Package */}
+            <div className="bg-white rounded-2xl shadow-lg border-2 border-dental-teal p-8 relative transform scale-105 hover:shadow-xl transition-all">
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <span className="bg-teal-800 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                  Популярний
+                </span>
+              </div>
+              <div className="text-center">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  Професійна гігієна
+                </h3>
+                <div className="text-4xl font-bold text-teal-800 mb-6">
+                  від 800₴
+                </div>
+                <ul className="space-y-3 text-gray-600 mb-8">
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
+                    Ультразвукове чищення
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
+                    Полірування зубів
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
+                    Фторування
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
+                    Рекомендації по догляду
+                  </li>
+                </ul>
+                <Link
+                  href="/booking"
+                  className="block w-full bg-teal-800 hover:bg-teal-900 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                >
+                  Записатися
+                </Link>
+              </div>
+            </div>
+
+            {/* Premium Package */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 relative hover:shadow-lg transition-shadow">
+              <div className="text-center">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  Комплексна діагностика
+                </h3>
+                <div className="text-4xl font-bold text-teal-800 mb-6">
+                  від 1200₴
+                </div>
+                <ul className="space-y-3 text-gray-600 mb-8">
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
+                    3D знімок щелеп
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
+                    Детальна консультація
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
+                    План лікування
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
+                    Знижка 10% на лікування
+                  </li>
+                </ul>
+                <Link
+                  href="/booking"
+                  className="block w-full bg-gray-100 hover:bg-gray-200 text-gray-900 px-6 py-3 rounded-lg font-semibold transition-colors"
+                >
+                  Записатися
+                </Link>
               </div>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Pricing Section */}
-      <section className="section-padding">
-        <div className="container-custom">
-          <div className="text-center mb-12 lg:mb-16">
-            <span className="inline-block text-sm font-semibold text-primary tracking-wider uppercase mb-3">
-              Ціни
-            </span>
-            <h2 className="mb-4">Прозоре ціноутворення</h2>
-            <p className="text-responsive-base max-w-2xl mx-auto">
-              Без прихованих доплат. Всі ціни узгоджуються перед початком лікування
+          <div className="text-center mt-12">
+            <p className="text-gray-600 mb-4">
+              *Остаточна вартість залежить від складності випадку та обраного
+              методу лікування
             </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {/* Basic */}
-            <div className="card-elevated p-6 text-center">
-              <h3 className="text-xl font-semibold text-foreground mb-2">Базовий огляд</h3>
-              <div className="text-3xl font-bold text-primary mb-4">Безкоштовно</div>
-              <ul className="space-y-2 text-sm text-muted-foreground mb-6">
-                <li>Консультація лікаря</li>
-                <li>Огляд ротової порожнини</li>
-                <li>План лікування</li>
-              </ul>
-              <Link href="/booking" className="btn-secondary w-full justify-center">
-                Записатися
-              </Link>
-            </div>
-
-            {/* Popular */}
-            <div className="card-elevated p-6 text-center border-2 border-primary relative">
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold">
-                Популярний
-              </span>
-              <h3 className="text-xl font-semibold text-foreground mb-2">Професійна гігієна</h3>
-              <div className="text-3xl font-bold text-primary mb-4">від 800₴</div>
-              <ul className="space-y-2 text-sm text-muted-foreground mb-6">
-                <li>Ультразвукове чищення</li>
-                <li>Полірування зубів</li>
-                <li>Фторування</li>
-                <li>Рекомендації по догляду</li>
-              </ul>
-              <Link href="/booking" className="btn-primary w-full justify-center">
-                Записатися
-              </Link>
-            </div>
-
-            {/* Premium */}
-            <div className="card-elevated p-6 text-center">
-              <h3 className="text-xl font-semibold text-foreground mb-2">Комплексна діагностика</h3>
-              <div className="text-3xl font-bold text-primary mb-4">від 1200₴</div>
-              <ul className="space-y-2 text-sm text-muted-foreground mb-6">
-                <li>3D знімок щелеп</li>
-                <li>Детальна консультація</li>
-                <li>План лікування</li>
-                <li>Знижка 10% на лікування</li>
-              </ul>
-              <Link href="/booking" className="btn-secondary w-full justify-center">
-                Записатися
-              </Link>
-            </div>
+            <Link
+              href="/services"
+              className="text-dental-teal hover:text-teal-600 font-semibold inline-flex items-center"
+            >
+              Переглянути всі ціни
+              <ArrowRight className="ml-1 h-4 w-4" />
+            </Link>
           </div>
         </div>
       </section>
+
+      {/* Video Testimonials Section */}
+      <VideoTestimonials />
+
+      {/* Text Testimonials Section */}
+      <Testimonials />
 
       {/* CTA Section */}
-      <section className="section-padding bg-foreground text-background">
-        <div className="container-custom text-center">
-          <h2 className="text-background mb-4">Готові до красивої посмішки?</h2>
-          <p className="text-background/70 text-responsive-base max-w-2xl mx-auto mb-8">
-            Запишіться на безкоштовну консультацію та отримайте індивідуальний план лікування
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/booking"
-              className="inline-flex items-center justify-center gap-2 bg-background text-foreground px-6 sm:px-8 py-3.5 rounded-xl font-medium hover:bg-background/90 transition-colors"
-            >
-              <Phone className="h-5 w-5" />
-              Записатися на прийом
-            </Link>
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center gap-2 border-2 border-background/30 text-background px-6 sm:px-8 py-3.5 rounded-xl font-medium hover:bg-background/10 transition-colors"
-            >
-              Зв'язатися з нами
-            </Link>
-          </div>
+      <section ref={ctaRef} className="py-24 bg-gradient-to-br from-slate-900 via-slate-800 to-teal-900 text-white relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl" />
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl" />
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <AnimatedSection isVisible={ctaVisible} animation="fadeUp">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+              Готові до красивої посмішки?
+            </h2>
+            <p className="text-xl text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
+              Запишіться на безкоштовну консультацію та отримайте індивідуальний план лікування
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/booking"
+                className="inline-flex items-center justify-center gap-3 bg-white hover:bg-slate-100 text-slate-900 px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-white/20 hover:-translate-y-0.5"
+              >
+                Записатися на прийом
+                <ArrowRight className="h-5 w-5" />
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center gap-3 bg-transparent hover:bg-white/10 text-white px-8 py-4 rounded-2xl font-semibold text-lg border-2 border-white/30 transition-all duration-300"
+              >
+                Зв'язатися з нами
+              </Link>
+            </div>
+          </AnimatedSection>
         </div>
       </section>
     </div>
   )
 }
+
+export default Home

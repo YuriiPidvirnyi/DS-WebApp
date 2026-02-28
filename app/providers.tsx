@@ -62,8 +62,12 @@ export default function ClientProviders({ children }: ClientProvidersProps) {
           <AccessibilityPanel />
           <AppInitializer />
           <div className="min-h-screen flex flex-col">{children}</div>
-          {/* Floating quick actions - positioned without blocking scroll */}
-          <FloatingQuickActions />
+          {/* Floating quick actions rendered outside main flow */}
+          <div className="fixed inset-0 pointer-events-none">
+            <div className="pointer-events-auto">
+              <FloatingQuickActions />
+            </div>
+          </div>
         </AccessibilityProvider>
       </ErrorBoundary>
     </I18nProvider>

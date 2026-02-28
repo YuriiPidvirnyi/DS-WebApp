@@ -16,22 +16,22 @@ export const CONTACT_INFO = {
   email: ENV_EMAIL,
   privacyEmail: 'privacy@dentalstory.ua',
   address: {
-    street: 'вул. Дорошенка, 35',
-    district: 'Галицький район',
+    street: 'вулиця Сумська, 10',
+    district: 'Львівська область',
     city: 'Львів',
-    postalCode: '79000',
-    full: 'вул. Дорошенка, 35, Львів',
-    fullWithPostal: '79000, вул. Дорошенка, 35, Львів',
+    postalCode: '79034',
+    full: 'вулиця Сумська, 10, Львів, Львівська область',
+    fullWithPostal: '79034, вулиця Сумська, 10, Львів, Львівська область',
   },
   workingHours: {
-    weekdays: 'Пн-Пт: 09:00-20:00',
-    saturday: 'Сб: 10:00-17:00',
+    weekdays: 'Пн-Пт: 09:00-21:00',
+    saturday: 'Сб: 09:00-18:00',
     sunday: 'Нд: Вихідний',
     timezone: 'EET (UTC+2)',
   },
   coordinates: {
-    lat: 49.8419,
-    lng: 24.0316,
+    lat: 49.8124,
+    lng: 24.0368,
   },
   social: {
     facebook: ENV_FB,
@@ -39,7 +39,6 @@ export const CONTACT_INFO = {
     telegram: ENV_TG,
     viber: ENV_PHONE,
   },
-  googleMapsEmbed: 'https://maps.app.goo.gl/6CNarQSYFyQjrUHG8',
 }
 
 // Навігація
@@ -55,14 +54,14 @@ export const NAVIGATION = [
 export const SITE_INFO = {
   name: 'Dental Story',
   description:
-    'Сучасна стоматологічна клініка у центрі Львова. Повний спектр послуг: лікування, імплантація, ортодонтія, відбілювання зубів. Досвідчені лікарі, безболісне лікування, сучасне обладнання.',
-  tagline: 'Ваша історія красивої посмішки',
+    'Сучасна стоматологічна клініка у Львові. Повний спектр послуг: лікування, імплантація, ортодонтія, відбілювання зубів. Досвідчені лікарі, безболісне лікування.',
+  tagline: 'Ваша посмішка - наша місія',
   url: 'https://dentalstory.com.ua',
-  foundedYear: 2020,
-  googleMaps: 'https://maps.app.goo.gl/6CNarQSYFyQjrUHG8',
+  foundedYear: 2024,
+  googleMaps: 'https://maps.app.goo.gl/gprGw94tfAJH7xFSA',
   businessType: 'Стоматологічна клініка',
-  rating: 5.0,
-  reviewCount: 47,
+  rating: 4.7,
+  reviewCount: 71,
   services: [
     'Терапевтична стоматологія',
     'Хірургічна стоматологія',
@@ -70,8 +69,6 @@ export const SITE_INFO = {
     'Ортодонтія',
     'Естетична стоматологія',
     'Дитяча стоматологія',
-    'Імплантація',
-    'Професійна гігієна',
   ],
 }
 

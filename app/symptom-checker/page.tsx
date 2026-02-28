@@ -340,7 +340,7 @@ export default function SymptomCheckerPage() {
                     {overallUrgency === 'emergency' || overallUrgency === 'high' ? (
                       <span className="font-semibold">
                         {lang === 'uk' 
-                          ? 'На основі ваших симпт��мів рекомендуємо негайно звернутися до лікаря!'
+                          ? 'На основі ваших симптомів рекомендуємо негайно звернутися до лікаря!'
                           : lang === 'pl'
                           ? 'Na podstawie objawów zalecamy natychmiastową wizytę u lekarza!'
                           : 'Based on your symptoms, we recommend seeing a doctor immediately!'
@@ -363,7 +363,7 @@ export default function SymptomCheckerPage() {
               {(overallUrgency === 'emergency' || overallUrgency === 'high') && (
                 <div className="mt-4 flex flex-col sm:flex-row gap-3">
                   <a
-                    href="tel:+380682323838"
+                    href="tel:+380671234567"
                     className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-colors"
                   >
                     <Phone className="w-5 h-5" />

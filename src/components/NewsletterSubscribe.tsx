@@ -57,15 +57,15 @@ export default function NewsletterSubscribe() {
         <input
           id="newsletter-consent"
           type="checkbox"
-          className="mt-1 accent-primary"
+          className="mt-1"
           {...register('consent')}
         />
-        <label htmlFor="newsletter-consent" className="text-xs text-background/70">
+        <label htmlFor="newsletter-consent" className="text-xs text-gray-300">
           Погоджуюся отримувати новини та акції на email
         </label>
       </div>
       {isSubmitSuccessful && (
-        <div className="text-xs text-primary">
+        <div className="text-xs text-green-400">
           <p>Дякуємо! Ви підписані.</p>
           <div className="mt-1">
             <MicroFeedback form="newsletter" compact />

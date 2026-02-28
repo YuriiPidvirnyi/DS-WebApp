@@ -3,158 +3,191 @@
 import { memo } from 'react'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
-import { Phone, Mail, MapPin, Clock, ArrowUpRight } from 'lucide-react'
+import { Phone, Mail, MapPin, Clock } from 'lucide-react'
 import { CONTACT_INFO, SITE_INFO } from '@/utils/constants'
 import NewsletterSubscribe from '@/components/NewsletterSubscribe'
 import Logo from '@/components/ui/Logo'
 
 const Footer = memo(() => {
   const { t } = useTranslation()
-  
-  const quickLinks = [
-    { href: '/', label: t('navigation.home') },
-    { href: '/services', label: t('navigation.services') },
-    { href: '/about', label: t('navigation.about') },
-    { href: '/gallery', label: t('navigation.gallery') },
-    { href: '/contact', label: t('navigation.contact') },
-  ]
-
-  const socialLinks = [
-    { href: CONTACT_INFO.social.facebook, label: 'Facebook' },
-    { href: CONTACT_INFO.social.instagram, label: 'Instagram' },
-    { href: CONTACT_INFO.social.telegram, label: 'Telegram' },
-  ]
-
   return (
-    <footer className="bg-foreground text-background" role="contentinfo">
-      <div className="container-custom py-12 sm:py-16 lg:py-20">
-        {/* Main grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-          {/* Brand column */}
-          <div className="sm:col-span-2 lg:col-span-1 space-y-4 sm:space-y-6">
-            <Logo variant="white" size="md" />
-            <p className="text-background/70 text-sm sm:text-base leading-relaxed max-w-xs">
-              {SITE_INFO.description}
-            </p>
-            <div className="flex gap-4">
-              {socialLinks.map(link => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-background/60 hover:text-background transition-colors text-sm font-medium"
-                >
-                  {link.label}
-                </a>
-              ))}
+    <footer className="bg-gray-900 text-white" role="contentinfo">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Logo and description */}
+          <div className="col-span-1 md:col-span-2">
+            <div className="mb-4">
+              <Logo variant="white" size="md" />
+              <span className="sr-only">Dental Story</span>
+            </div>
+            <p className="text-gray-300 mb-4">{SITE_INFO.description}</p>
+            <div className="flex space-x-4" aria-label="Соціальні мережі">
+              <a
+                href={CONTACT_INFO.social.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-300 hover:text-dental-teal transition-colors"
+                aria-label="Facebook"
+              >
+                Facebook
+              </a>
+              <a
+                href={CONTACT_INFO.social.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-300 hover:text-dental-teal transition-colors"
+                aria-label="Instagram"
+              >
+                Instagram
+              </a>
+              <a
+                href={CONTACT_INFO.social.telegram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-300 hover:text-dental-teal transition-colors"
+                aria-label="Telegram"
+              >
+                Telegram
+              </a>
+            </div>
+
+            <div className="mt-6">
+              <h4 className="text-sm font-semibold mb-2">Підписка на новини</h4>
+              <p className="text-xs text-gray-400 mb-3">
+                Отримуйте акції та корисні поради від наших лікарів
+              </p>
+              <div className="max-w-sm">
+                <NewsletterSubscribe />
+              </div>
             </div>
           </div>
 
-          {/* Navigation */}
+          {/* Quick links */}
           <div>
-            <h3 className="font-semibold text-base sm:text-lg mb-4 sm:mb-6" suppressHydrationWarning>
-              {t('footer.navigation')}
-            </h3>
-            <nav>
-              <ul className="space-y-2 sm:space-y-3">
-                {quickLinks.map(link => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-background/70 hover:text-background transition-colors text-sm sm:text-base"
-                      suppressHydrationWarning
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
+            <h3 className="text-lg font-semibold mb-4">{t('footer.navigation')}</h3>
+            <nav aria-label={t('accessibility.siteNavigation')}>
+              <ul className="space-y-2">
+                <li>
+                  <Link
+                    href="/"
+                    className="text-gray-300 hover:text-dental-teal transition-colors"
+                  >
+                    {t('navigation.home')}
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/services"
+                    className="text-gray-300 hover:text-dental-teal transition-colors"
+                  >
+                    {t('navigation.services')}
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/about"
+                    className="text-gray-300 hover:text-dental-teal transition-colors"
+                  >
+                    {t('navigation.about')}
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/gallery"
+                    className="text-gray-300 hover:text-dental-teal transition-colors"
+                  >
+                    {t('navigation.gallery')}
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/contact"
+                    className="text-gray-300 hover:text-dental-teal transition-colors"
+                  >
+                    {t('navigation.contact')}
+                  </Link>
+                </li>
                 <li>
                   <Link
                     href="/symptom-checker"
-                    className="inline-flex items-center gap-2 text-background/70 hover:text-background transition-colors text-sm sm:text-base"
-                    suppressHydrationWarning
+                    className="text-gray-300 hover:text-dental-teal transition-colors flex items-center gap-1"
                   >
                     {t('ai.symptomChecker.title')}
-                    <span className="text-[10px] sm:text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-medium">AI</span>
+                    <span className="text-xs bg-purple-500 text-white px-1.5 py-0.5 rounded">AI</span>
                   </Link>
                 </li>
               </ul>
             </nav>
           </div>
 
-          {/* Contact */}
+          {/* Contact info */}
           <div>
-            <h3 className="font-semibold text-base sm:text-lg mb-4 sm:mb-6" suppressHydrationWarning>
-              {t('footer.contacts')}
-            </h3>
-            <ul className="space-y-3 sm:space-y-4">
-              <li>
+            <h3 className="text-lg font-semibold mb-4">{t('footer.contacts')}</h3>
+            <ul className="space-y-3">
+              <li className="flex items-center space-x-2">
+                <Phone
+                  className="h-4 w-4 text-dental-teal"
+                  aria-hidden="true"
+                />
                 <a
                   href={`tel:${CONTACT_INFO.phoneRaw}`}
-                  className="flex items-center gap-2 sm:gap-3 text-background/70 hover:text-background transition-colors group"
+                  className="text-gray-300 hover:text-dental-teal transition-colors"
                 >
-                  <Phone className="h-4 w-4 text-primary flex-shrink-0" />
-                  <span className="text-sm sm:text-base">{CONTACT_INFO.phone}</span>
+                  {CONTACT_INFO.phone}
                 </a>
               </li>
-              <li>
+              <li className="flex items-center space-x-2">
+                <Mail className="h-4 w-4 text-dental-teal" aria-hidden="true" />
                 <a
                   href={`mailto:${CONTACT_INFO.email}`}
-                  className="flex items-center gap-2 sm:gap-3 text-background/70 hover:text-background transition-colors"
+                  className="text-gray-300 hover:text-dental-teal transition-colors"
                 >
-                  <Mail className="h-4 w-4 text-primary flex-shrink-0" />
-                  <span className="text-sm sm:text-base">{CONTACT_INFO.email}</span>
+                  {CONTACT_INFO.email}
                 </a>
               </li>
-              <li className="flex gap-2 sm:gap-3">
-                <MapPin className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                <address className="text-background/70 not-italic text-sm sm:text-base" suppressHydrationWarning>
+              <li className="flex items-start space-x-2">
+                <MapPin
+                  className="h-4 w-4 text-dental-teal mt-1"
+                  aria-hidden="true"
+                />
+                <address className="text-gray-300 not-italic">
                   {CONTACT_INFO.address.full}
+                  <br />
+                  {CONTACT_INFO.address.postalCode}
                 </address>
               </li>
-              <li className="flex gap-2 sm:gap-3">
-                <Clock className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                <div className="text-background/70 text-sm sm:text-base" suppressHydrationWarning>
-                  <p>{CONTACT_INFO.workingHours.weekdays}</p>
-                  <p>{CONTACT_INFO.workingHours.saturday}</p>
+              <li className="flex items-start space-x-2">
+                <Clock
+                  className="h-4 w-4 text-dental-teal mt-1"
+                  aria-hidden="true"
+                />
+                <div className="text-gray-300">
+                  <div>{CONTACT_INFO.workingHours.weekdays}</div>
+                  <div>{CONTACT_INFO.workingHours.saturday}</div>
+                  <div>{CONTACT_INFO.workingHours.sunday}</div>
                 </div>
               </li>
             </ul>
           </div>
-
-          {/* Newsletter */}
-          <div>
-            <h3 className="font-semibold text-base sm:text-lg mb-4 sm:mb-6">Новини та акції</h3>
-            <p className="text-background/70 text-sm mb-4">
-              Отримуйте корисні поради від наших лікарів
-            </p>
-            <NewsletterSubscribe />
-          </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-background/10">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p className="text-background/50 text-xs sm:text-sm text-center sm:text-left" suppressHydrationWarning>
+        <div className="border-t border-gray-800 mt-8 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <p className="text-gray-300 text-sm">
               {t('footer.copyright')}
             </p>
-            <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+            <div className="flex space-x-6 mt-4 md:mt-0">
               <Link
                 href="/privacy-policy"
-                className="text-background/50 hover:text-background text-xs sm:text-sm transition-colors inline-flex items-center gap-1"
-                suppressHydrationWarning
+                className="text-gray-300 hover:text-dental-teal text-sm transition-colors"
               >
                 {t('navigation.privacyPolicy')}
-                <ArrowUpRight className="h-3 w-3" />
               </Link>
               <Link
                 href="/terms-of-service"
-                className="text-background/50 hover:text-background text-xs sm:text-sm transition-colors inline-flex items-center gap-1"
-                suppressHydrationWarning
+                className="text-gray-300 hover:text-dental-teal text-sm transition-colors"
               >
                 {t('navigation.termsOfService')}
-                <ArrowUpRight className="h-3 w-3" />
               </Link>
             </div>
           </div>
@@ -165,4 +198,5 @@ const Footer = memo(() => {
 })
 
 Footer.displayName = 'Footer'
+
 export default Footer
