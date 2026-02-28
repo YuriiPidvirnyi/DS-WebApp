@@ -6,7 +6,6 @@ import { Analytics } from '@vercel/analytics/next'
 import '../src/styles/globals.css'
 import ClientProviders from './providers'
 import Header from '@/components/Header'
-import Footer from '@/components/Footer'
 import { StructuredData } from '@/components/StructuredData'
 
 // Replace Google Fonts <link> from index.html with next/font for self-hosting
@@ -87,15 +86,15 @@ export default async function RootLayout({
         <StructuredData type="organization" />
         <StructuredData type="localBusiness" />
 
-        {/* Google Analytics 4 */}
+        {/* Google Analytics 4 — lazyOnload to avoid blocking hydration */}
         {GA4_ID && (
           <>
             <Script
               src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`}
-              strategy="afterInteractive"
+              strategy="lazyOnload"
               nonce={nonce}
             />
-            <Script id="ga4-init" strategy="afterInteractive" nonce={nonce}>
+            <Script id="ga4-init" strategy="lazyOnload" nonce={nonce}>
               {`
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
@@ -118,7 +117,6 @@ export default async function RootLayout({
           <main id="main-content" className="flex-1" role="main">
             {children}
           </main>
-          <Footer />
         </ClientProviders>
         <Analytics />
       </body>

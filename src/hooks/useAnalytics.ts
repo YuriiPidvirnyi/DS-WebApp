@@ -20,13 +20,19 @@ import {
 export const useAnalytics = () => {
   const pathname = usePathname()
 
-  // Track page views automatically when the location changes
+  // Track page views — deferred to avoid blocking main thread during hydration
   useEffect(() => {
-    // Get the document title or a default value
-    const pageTitle = document.title || 'Dental Story'
-
-    // Track the page view
-    trackPageView(pathname, pageTitle)
+    const run = () => {
+      const pageTitle = document.title || 'Dental Story'
+      trackPageView(pathname, pageTitle)
+    }
+    if ('requestIdleCallback' in window) {
+      const id = requestIdleCallback(run)
+      return () => cancelIdleCallback(id)
+    } else {
+      const id = setTimeout(run, 2000)
+      return () => clearTimeout(id)
+    }
   }, [pathname])
 
   // Utility function to track element clicks with proper event delegation
@@ -83,9 +89,26 @@ export const useAnalytics = () => {
     }
   }, [])
 
-  // Initialize click tracking
+  // Initialize click tracking — deferred to reduce TBT
   useEffect(() => {
-    return trackElementClicks()
+    let cleanup: (() => void) | undefined
+    if ('requestIdleCallback' in window) {
+      const id = requestIdleCallback(() => {
+        cleanup = trackElementClicks()
+      })
+      return () => {
+        cancelIdleCallback(id)
+        cleanup?.()
+      }
+    } else {
+      const id = setTimeout(() => {
+        cleanup = trackElementClicks()
+      }, 2000)
+      return () => {
+        clearTimeout(id)
+        cleanup?.()
+      }
+    }
   }, [trackElementClicks])
 
   // Outbound link tracking

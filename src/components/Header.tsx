@@ -2,11 +2,19 @@
 
 import { useState, useCallback, useMemo, memo } from 'react'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
 import { Menu, X, Phone, Mail } from 'lucide-react'
 import { CONTACT_INFO } from '@/utils/constants'
 import Logo from '@/components/ui/Logo'
-import LanguageSwitcher from '@/components/LanguageSwitcher'
+
+// Lazy-load LanguageSwitcher — the only i18n consumer.
+// This defers the entire i18next + react-i18next chain (~30-50KB)
+// from the initial hydration path.
+const LanguageSwitcher = dynamic(
+  () => import('@/components/LanguageSwitcher'),
+  { ssr: false, loading: () => <div className="w-20 h-10" /> }
+)
 
 const Header = memo(() => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -25,10 +33,7 @@ const Header = memo(() => {
   )
 
   // Memoize isActive function
-  const isActive = useCallback(
-    (path: string) => pathname === path,
-    [pathname]
-  )
+  const isActive = useCallback((path: string) => pathname === path, [pathname])
 
   // Memoize handlers
   const toggleMenu = useCallback(() => setIsMenuOpen(prev => !prev), [])
