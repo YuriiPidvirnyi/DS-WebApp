@@ -1,18 +1,14 @@
 import type { Metadata, Viewport } from 'next'
 import { Plus_Jakarta_Sans } from 'next/font/google'
 import Script from 'next/script'
-import dynamic from 'next/dynamic'
 import { headers } from 'next/headers'
 import { Analytics } from '@vercel/analytics/next'
 import '../src/styles/globals.css'
 import ClientProviders from './providers'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import ClientWidgets from '@/components/ClientWidgets'
 import { StructuredData } from '@/components/StructuredData'
-
-// Dynamic imports for client-only components to avoid hydration issues with timestamps
-const ChatWidget = dynamic(() => import('@/components/ChatWidget'), { ssr: false })
-const AIAssistant = dynamic(() => import('@/components/AIAssistant'), { ssr: false })
 
 // Replace Google Fonts <link> from index.html with next/font for self-hosting
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -124,8 +120,7 @@ export default async function RootLayout({
             {children}
           </main>
           <Footer />
-          <ChatWidget />
-          <AIAssistant />
+          <ClientWidgets />
         </ClientProviders>
         <Analytics />
       </body>
