@@ -1,4 +1,4 @@
-'use client'
+import Image from 'next/image'
 
 interface LogoProps {
   variant?: 'default' | 'white'
@@ -7,9 +7,9 @@ interface LogoProps {
 }
 
 const sizeConfig = {
-  sm: { icon: 'w-7 h-7', iconText: 'text-xs', text: 'text-base' },
-  md: { icon: 'w-8 h-8 sm:w-9 sm:h-9', iconText: 'text-sm', text: 'text-lg sm:text-xl' },
-  lg: { icon: 'w-10 h-10 sm:w-11 sm:h-11', iconText: 'text-base', text: 'text-xl sm:text-2xl' },
+  sm: { width: 100, height: 40 },
+  md: { width: 140, height: 56 },
+  lg: { width: 180, height: 72 },
 }
 
 export default function Logo({
@@ -18,18 +18,18 @@ export default function Logo({
   className = '',
 }: LogoProps) {
   const config = sizeConfig[size]
-  const textColor = variant === 'white' ? 'text-white' : 'text-foreground'
-  const iconBg = variant === 'white' ? 'bg-white/20' : 'bg-primary'
-  const iconText = variant === 'white' ? 'text-white' : 'text-primary-foreground'
+  const logoSrc = variant === 'white' 
+    ? '/assets/images/logo/logo.svg'
+    : '/assets/images/logo/logo-mark-teal.svg'
 
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      <div className={`${config.icon} ${iconBg} rounded-lg flex items-center justify-center flex-shrink-0`}>
-        <span className={`${iconText} font-bold ${config.iconText}`}>DS</span>
-      </div>
-      <span className={`font-bold tracking-tight ${config.text} ${textColor}`}>
-        Dental<span className="text-primary">Story</span>
-      </span>
-    </div>
+    <Image
+      src={logoSrc}
+      alt="Dental Story"
+      width={config.width}
+      height={config.height}
+      className={`h-auto ${variant === 'white' ? 'brightness-0 invert' : ''} ${className}`}
+      priority
+    />
   )
 }
