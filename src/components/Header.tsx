@@ -15,14 +15,23 @@ const Header = memo(() => {
   const { t } = useTranslation()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [user, setUser] = useState<SupabaseUser | null>(null)
+  const [mounted, setMounted] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
 
+  // Track mount state to avoid hydration mismatch
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
     const handleScroll = () => setScrolled(window.scrollY > 10)
+    // Check initial scroll position
+    handleScroll()
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [mounted])
 
   useEffect(() => {
     const supabase = createClient()
@@ -72,10 +81,7 @@ const Header = memo(() => {
       </div>
 
       {/* Main header */}
-      <div 
-        className={`transition-all duration-300 ${scrolled ? 'bg-background/95 backdrop-blur-md shadow-md' : 'bg-background'}`}
-        suppressHydrationWarning
-      >
+      <div className={`transition-all duration-300 bg-background ${mounted && scrolled ? 'bg-background/95 backdrop-blur-md shadow-md' : ''}`}>
         <div className="container-custom">
           <div className="flex justify-between items-center h-16 lg:h-20">
             {/* Logo */}
