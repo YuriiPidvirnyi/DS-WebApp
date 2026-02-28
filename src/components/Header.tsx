@@ -1,15 +1,35 @@
 'use client'
 
-import { useState, useCallback, useMemo, memo } from 'react'
+import { useState, useCallback, useMemo, memo, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Phone, Mail } from 'lucide-react'
+import { Menu, X, Phone, Mail, User, LogIn } from 'lucide-react'
 import { CONTACT_INFO } from '@/utils/constants'
 import Logo from '@/components/ui/Logo'
+import { createClient } from '@/lib/supabase/client'
+import type { User as SupabaseUser } from '@supabase/supabase-js'
 
 const Header = memo(() => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [user, setUser] = useState<SupabaseUser | null>(null)
   const pathname = usePathname()
+
+  // Check auth state
+  useEffect(() => {
+    const supabase = createClient()
+    
+    // Get initial user
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user)
+    })
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   // Memoize navigation array to prevent recreating on every render
   const navigation = useMemo(
@@ -130,8 +150,25 @@ const Header = memo(() => {
             ))}
           </nav>
 
-          {/* CTA */}
+          {/* CTA & Auth */}
           <div className="hidden md:flex items-center space-x-4">
+            {user ? (
+              <Link
+                href="/cabinet"
+                className="flex items-center gap-2 text-slate-600 hover:text-teal-600 transition-colors"
+              >
+                <User className="w-5 h-5" />
+                <span>Кабінет</span>
+              </Link>
+            ) : (
+              <Link
+                href="/auth/login"
+                className="flex items-center gap-2 text-slate-600 hover:text-teal-600 transition-colors"
+              >
+                <LogIn className="w-5 h-5" />
+                <span>Увійти</span>
+              </Link>
+            )}
             <Link
               href="/booking"
               className="bg-teal-800 hover:bg-teal-900 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
@@ -139,7 +176,7 @@ const Header = memo(() => {
               data-track-category="navigation"
               data-track-label="header_cta"
             >
-              Записатись на прийом
+              Записатись
             </Link>
           </div>
 
