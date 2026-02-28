@@ -28,7 +28,8 @@ export default function Logo({
       alt="Dental Story"
       width={config.width}
       height={config.height}
-      className={`h-auto ${variant === 'white' ? 'brightness-0 invert' : ''} ${className}`}
+      style={{ width: 'auto', height: 'auto' }}
+      className={variant === 'white' ? 'brightness-0 invert' : ''}
       priority
     />
   )
