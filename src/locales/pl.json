@@ -400,5 +400,11 @@
     "badge": "Nowoczesna stomatologia",
     "bookConsultation": "Umów konsultację",
     "ourServices": "Nasze usługi"
+  },
+  "language": {
+    "select": "Wybierz język",
+    "uk": "Українська",
+    "en": "English",
+    "pl": "Polski"
   }
 }

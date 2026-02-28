@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
+import { useTranslation } from 'react-i18next'
 import { ArrowRight, Play, Shield, Award, Users, Star, Phone } from 'lucide-react'
 
 // Animated counter hook
@@ -68,6 +69,7 @@ function FloatingElement({
 }
 
 export default function HeroSection() {
+  const { t } = useTranslation()
   const [mounted, setMounted] = useState(false)
   const { count: patientsCount, ref: patientsRef } = useCounter(5000, 2500)
   const { count: satisfactionCount, ref: satisfactionRef } = useCounter(98, 2000)
@@ -118,22 +120,17 @@ export default function HeroSection() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
               </span>
-              <span className="text-sm font-medium text-teal-800">Працюємо зараз</span>
+              <span className="text-sm font-medium text-teal-800">{t('stats.workingNow')}</span>
             </div>
 
             {/* Main headline */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 leading-[1.1] mb-6 tracking-tight">
-              <span className="block">Сучасна</span>
-              <span className="block">стоматологія</span>
-              <span className="block bg-gradient-to-r from-teal-600 to-teal-500 bg-clip-text text-transparent">
-                для вас
-              </span>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 leading-[1.1] mb-6 tracking-tight text-balance">
+              {t('home.hero.title')}
             </h1>
 
             {/* Subheadline */}
             <p className="text-xl text-slate-600 leading-relaxed mb-10 max-w-lg">
-              Професійна стоматологічна допомога з використанням найсучасніших
-              технологій та індивідуальним підходом до кожного пацієнта.
+              {t('home.hero.description')}
             </p>
 
             {/* CTA buttons */}
@@ -143,15 +140,15 @@ export default function HeroSection() {
                 className="group inline-flex items-center justify-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-slate-900/20 hover:-translate-y-0.5"
               >
                 <Phone className="h-5 w-5" />
-                Записатися
+                {t('hero.bookConsultation')}
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
-                href="/about"
+                href="/services"
                 className="group inline-flex items-center justify-center gap-3 bg-white hover:bg-slate-50 text-slate-900 px-8 py-4 rounded-2xl font-semibold text-lg border-2 border-slate-200 transition-all duration-300 hover:border-slate-300"
               >
                 <Play className="h-5 w-5" />
-                Про клініку
+                {t('hero.ourServices')}
               </Link>
             </div>
 
@@ -159,15 +156,15 @@ export default function HeroSection() {
             <div className="flex flex-wrap items-center gap-6 text-sm text-slate-500">
               <div className="flex items-center gap-2">
                 <Shield className="h-5 w-5 text-teal-600" />
-                <span>Гарантія якості</span>
+                <span>{t('stats.qualityGuarantee')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Award className="h-5 w-5 text-teal-600" />
-                <span>Сертифіковані лікарі</span>
+                <span>{t('features.experiencedDoctors.title')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Star className="h-5 w-5 text-teal-600" />
-                <span>Найкращі матеріали</span>
+                <span>{t('features.modernEquipment.title')}</span>
               </div>
             </div>
           </div>
@@ -215,7 +212,7 @@ export default function HeroSection() {
                       <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center">
                         <Users className="h-5 w-5 text-teal-600" />
                       </div>
-                      <span className="text-slate-600 font-medium">Задоволених пацієнтів</span>
+                      <span className="text-slate-600 font-medium">{t('stats.patientsServed')}</span>
                     </div>
                     <span className="text-2xl font-bold text-slate-900">{patientsCount.toLocaleString()}+</span>
                   </div>
@@ -228,7 +225,7 @@ export default function HeroSection() {
                       <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center">
                         <Star className="h-5 w-5 text-teal-600" />
                       </div>
-                      <span className="text-slate-600 font-medium">Відсоток задоволених</span>
+                      <span className="text-slate-600 font-medium">{t('stats.satisfactionRate')}</span>
                     </div>
                     <span className="text-2xl font-bold text-slate-900">{satisfactionCount}%</span>
                   </div>
@@ -241,7 +238,7 @@ export default function HeroSection() {
                       <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center">
                         <Award className="h-5 w-5 text-teal-600" />
                       </div>
-                      <span className="text-slate-600 font-medium">Років досвіду</span>
+                      <span className="text-slate-600 font-medium">{t('stats.yearsExperience')}</span>
                     </div>
                     <span className="text-2xl font-bold text-slate-900">{yearsCount}+</span>
                   </div>
@@ -249,7 +246,7 @@ export default function HeroSection() {
 
                 {/* Special offer */}
                 <div className="mt-8 p-4 bg-gradient-to-r from-teal-500 to-teal-600 rounded-2xl text-white text-center">
-                  <p className="font-semibold">Безкоштовна консультація для нових пацієнтів</p>
+                  <p className="font-semibold">{t('stats.freeConsultation')}</p>
                 </div>
               </div>
             </div>

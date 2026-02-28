@@ -400,5 +400,11 @@
     "badge": "Modern Dentistry",
     "bookConsultation": "Book Consultation",
     "ourServices": "Our Services"
+  },
+  "language": {
+    "select": "Select language",
+    "uk": "Українська",
+    "en": "English",
+    "pl": "Polski"
   }
 }
