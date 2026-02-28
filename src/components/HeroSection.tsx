@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useTranslation } from 'react-i18next'
 import { ArrowRight, Phone, CheckCircle2, Star } from 'lucide-react'
 import { SITE_INFO } from '@/utils/constants'
 
