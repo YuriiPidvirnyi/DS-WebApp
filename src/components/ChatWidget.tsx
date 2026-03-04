@@ -27,20 +27,34 @@ const botResponses: Record<string, string> = {
   default: 'Дякуємо за ваше повідомлення! Наш менеджер зв\'яжеться з вами найближчим часом. Для швидкого зв\'язку телефонуйте: +380 44 123 45 67',
 }
 
+// Format time safely for SSR (avoid hydration mismatch)
+function formatTime(date: Date): string {
+  const hours = date.getHours().toString().padStart(2, '0')
+  const minutes = date.getMinutes().toString().padStart(2, '0')
+  return `${hours}:${minutes}`
+}
+
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false)
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      type: 'bot',
-      text: 'Вітаємо в Dental Story! Чим можемо допомогти?',
-      timestamp: new Date(),
-    },
-  ])
+  const [mounted, setMounted] = useState(false)
+  const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // Initialize messages only on client to avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+    setMessages([
+      {
+        id: '1',
+        type: 'bot',
+        text: 'Вітаємо в Dental Story! Чим можемо допомогти?',
+        timestamp: new Date(),
+      },
+    ])
+  }, [])
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -93,6 +107,18 @@ export default function ChatWidget() {
       e.preventDefault()
       handleSend()
     }
+  }
+
+  // Don't render until mounted to avoid hydration mismatch
+  if (!mounted) {
+    return (
+      <button
+        className="fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full shadow-lg shadow-teal-500/30 flex items-center justify-center text-white"
+        aria-label="Відкрити чат"
+      >
+        <MessageCircle className="h-7 w-7" />
+      </button>
+    )
   }
 
   return (
@@ -170,10 +196,7 @@ export default function ChatWidget() {
                     message.type === 'user' ? 'text-white/60' : 'text-slate-400'
                   }`}
                 >
-                  {message.timestamp.toLocaleTimeString('uk-UA', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
+                  {formatTime(message.timestamp)}
                 </p>
               </div>
             </div>
