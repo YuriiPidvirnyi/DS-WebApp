@@ -83,7 +83,7 @@ export default async function RootLayout({
   const nonce = (await headers()).get('x-nonce') ?? ''
 
   return (
-    <html lang="uk" className={nunito.variable}>
+    <html lang="uk" className={nunito.variable} data-scroll-behavior="smooth">
       <body>
         {/* Organization JSON-LD structured data (server-rendered) */}
         <StructuredData type="organization" />
