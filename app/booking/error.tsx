@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { Calendar, AlertCircle, RefreshCw, Phone, Home } from 'lucide-react'
 import Link from 'next/link'
 import { captureException } from '@/utils/sentry'
-import { CLINIC_PHONE } from '@/utils/constants'
+import { CONTACT_INFO } from '@/utils/constants'
 
 interface ErrorProps {
   error: Error & { digest?: string }
@@ -63,11 +63,11 @@ export default function BookingError({ error, reset }: ErrorProps) {
           </button>
 
           <a
-            href={`tel:${CLINIC_PHONE.replace(/\s/g, '')}`}
+            href={`tel:${CONTACT_INFO.phoneRaw}`}
             className="inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors"
           >
             <Phone className="h-4 w-4 mr-2" />
-            Зателефонувати: {CLINIC_PHONE}
+            Зателефонувати: {CONTACT_INFO.phone}
           </a>
 
           <Link
