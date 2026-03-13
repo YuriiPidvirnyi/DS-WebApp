@@ -187,8 +187,8 @@
     outline: none;
   }
 
-  /* Smooth scroll behavior */
-  html {
+  /* Smooth scroll behavior — scoped to data attribute per Next.js requirement */
+  html[data-scroll-behavior="smooth"] {
     scroll-behavior: smooth;
   }
 
