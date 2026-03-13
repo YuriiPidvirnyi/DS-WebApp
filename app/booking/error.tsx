@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { Calendar, AlertCircle, RefreshCw, Phone, Home } from 'lucide-react'
 import Link from 'next/link'
 import { captureException } from '@/utils/sentry'
+// Using CONTACT_INFO for phone display
 import { CONTACT_INFO } from '@/utils/constants'
 
 interface ErrorProps {
