@@ -11,7 +11,7 @@ import ChatWidget from '@/components/ChatWidget'
 import AIAssistant from '@/components/AIAssistant'
 import { StructuredData } from '@/components/StructuredData'
 
-// Nunito - заокруглений шрифт, схожий на Stolzl з брендбуку
+// Nunito - заокруглений шрифт, схожий на Stolzl з брендбуку (Dental Story brandbook)
 const nunito = Nunito({
   subsets: ['latin', 'cyrillic'],
   weight: ['400', '500', '600', '700'],
