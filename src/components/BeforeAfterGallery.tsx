@@ -48,7 +48,7 @@ const cases: BeforeAfterCase[] = [
 ]
 
 // Before/After Slider Component
-function ComparisonSlider({ beforeImage, afterImage }: { beforeImage: string; afterImage: string }) {
+function ComparisonSlider({ beforeImage, afterImage, t }: { beforeImage: string; afterImage: string; t: (key: string) => string }) {
   const [sliderPosition, setSliderPosition] = useState(50)
   const [isDragging, setIsDragging] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -181,6 +181,7 @@ export default function BeforeAfterGallery() {
               <ComparisonSlider
                 beforeImage={currentCase.beforeImage}
                 afterImage={currentCase.afterImage}
+                t={t}
               />
               
               {/* Navigation arrows */}
