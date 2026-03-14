@@ -141,8 +141,8 @@ class PerformanceMonitor {
     metric: Metric,
     rating: 'good' | 'needs-improvement' | 'poor'
   ) {
-    if (rating === 'poor') {
-      // Alert for poor performance
+    if (rating === 'poor' && this.config.environment === 'production') {
+      // Only alert for poor performance in production
       console.warn(`Poor ${metric.name} performance detected:`, metric.value)
 
       // Could trigger alerts or notifications

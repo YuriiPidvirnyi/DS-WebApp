@@ -86,7 +86,8 @@ class PerformanceMonitor {
       rating = 'poor'
     }
 
-    if (rating === 'poor') {
+    // Only log poor performance warnings in production and when enabled
+    if (rating === 'poor' && process.env.NODE_ENV === 'production') {
       console.warn(
         `[Performance] ${metric.name} is poor: ${metric.value.toFixed(2)}ms (threshold: ${threshold.needsImprovement}ms)`
       )
