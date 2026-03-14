@@ -4,28 +4,71 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Dental Story Brand Colors (from brandbook)
+        // Dental Story Brand Colors - Full 13-color system from audit
         dental: {
-          primary: '#AECED3', // HEX #AECED3 - основний блакитний
-          secondary: '#D1CAC0', // HEX #D1CAC0 - бежевий/кремовий
-          white: '#FFFFFF', // HEX #FFFFFF - білий
-          // Відтінки primary
-          'primary-dark': '#7BA8B0', // Темніший відтінок для hover
-          'primary-darker': '#5A8A94', // Ще темніший для акцентів
-          'primary-light': '#C5DDE1', // Світліший відтінок
-          // Темні кольори для тексту
-          'dark': '#2C3E42', // Темний на основі primary для заголовків
-          'text': '#4A5E63', // Основний текст
-          'muted': '#6B8388', // Вторинний текст
+          // PRIMARY PALETTE (from brandbook)
+          primary: '#AECED3',      // Soft Teal - main brand color
+          secondary: '#D1CAC0',    // Warm Sand - warmth/comfort
+          white: '#FFFFFF',        // Pure White - cleanliness
+          
+          // PRIMARY TINTS & SHADES
+          'primary-50': '#F0F7F8',   // Lightest tint - backgrounds
+          'primary-100': '#E1EFF1',  // Very light - hover states
+          'primary-200': '#C5DDE1',  // Light - cards
+          'primary-300': '#AECED3',  // Base primary
+          'primary-400': '#8FBAC1',  // Slightly darker
+          'primary-500': '#7BA8B0',  // Medium - hover
+          'primary-600': '#5A8A94',  // Dark - active states
+          'primary-700': '#4A7078',  // Darker - text on light
+          'primary-800': '#3A565C',  // Very dark
+          'primary-900': '#2A3C40',  // Darkest
+          
+          // SECONDARY TINTS
+          'secondary-50': '#FAF9F7',
+          'secondary-100': '#F5F3F0',
+          'secondary-200': '#EBE7E1',
+          'secondary-300': '#D1CAC0',  // Base secondary
+          'secondary-400': '#B8AFA3',
+          'secondary-500': '#9F9486',
+          
+          // FUNCTIONAL COLORS
+          success: '#4CAF50',        // Green - confirmations
+          'success-light': '#E8F5E9',
+          warning: '#FF9800',        // Amber - caution
+          'warning-light': '#FFF3E0',
+          error: '#EF5350',          // Coral - errors (softer than red)
+          'error-light': '#FFEBEE',
+          info: '#2196F3',           // Blue - information
+          'info-light': '#E3F2FD',
+          
+          // TEXT COLORS
+          dark: '#2C3E42',           // Headings
+          text: '#4A5E63',           // Body text
+          muted: '#6B8388',          // Secondary text
+          'text-light': '#8FA3A8',   // Placeholder text
+          
+          // LEGACY ALIASES
+          'primary-dark': '#7BA8B0',
+          'primary-darker': '#5A8A94',
+          'primary-light': '#C5DDE1',
         },
-        // Для сумісності зі старим кодом
+        // Backward compatibility
         'dental-blue': '#AECED3',
-        'dental-teal': '#AECED3', // Замінено на брендовий колір
+        'dental-teal': '#AECED3',
         'dental-green': '#AECED3',
       },
       fontFamily: {
         sans: ['var(--font-nunito)', 'Nunito', 'system-ui', 'sans-serif'],
         heading: ['var(--font-nunito)', 'Nunito', 'system-ui', 'sans-serif'],
+        body: ['var(--font-roboto)', 'Roboto', 'system-ui', 'sans-serif'],
+      },
+      fontWeight: {
+        light: '300',
+        normal: '400',
+        medium: '500',
+        semibold: '600',
+        bold: '700',
+        extrabold: '800',
       },
       fontSize: {
         // Enhanced type scale for better hierarchy

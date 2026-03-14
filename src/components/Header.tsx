@@ -71,7 +71,7 @@ const Header = memo(() => {
     <header className="bg-white shadow-sm sticky top-0 z-50" role="banner">
       {/* Top bar */}
       <div
-        className="bg-dental-dark text-white py-2.5"
+        className="bg-dental-primary-900 text-white py-2.5"
         role="complementary"
         aria-label="Контактна інформація"
       >
@@ -80,12 +80,12 @@ const Header = memo(() => {
             <div className="flex items-center space-x-6">
               <div className="flex items-center space-x-1.5">
                 <Phone
-                  className="h-4 w-4 text-dental-primary"
+                  className="h-4 w-4 text-dental-primary-300"
                   aria-hidden="true"
                 />
                 <a
                   href={`tel:${CONTACT_INFO.phoneRaw}`}
-                  className="hover:text-dental-primary font-semibold tracking-wide transition-colors"
+                  className="hover:text-dental-primary-200 font-semibold tracking-wide transition-colors"
                   data-track-id="call_click"
                   data-track-category="outbound"
                   data-track-label="header_phone"
@@ -95,10 +95,10 @@ const Header = memo(() => {
                 </a>
               </div>
               <div className="flex items-center space-x-1.5">
-                <Mail className="h-4 w-4 text-dental-primary" aria-hidden="true" />
+                <Mail className="h-4 w-4 text-dental-primary-300" aria-hidden="true" />
                 <a
                   href={`mailto:${CONTACT_INFO.email}`}
-                  className="hover:text-dental-primary font-semibold tracking-wide transition-colors"
+                  className="hover:text-dental-primary-200 font-semibold tracking-wide transition-colors"
                   data-track-id="email_click"
                   data-track-category="outbound"
                   data-track-label="header_email"
@@ -142,9 +142,9 @@ const Header = memo(() => {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`text-dental-text hover:text-dental-primary-dark transition-colors duration-200 font-medium ${
+                className={`text-dental-text hover:text-dental-primary-600 transition-colors duration-200 font-medium ${
                   isActive(item.href)
-                    ? 'text-dental-primary-dark border-b-2 border-dental-primary'
+                    ? 'text-dental-primary-600 border-b-2 border-dental-primary-400'
                     : ''
                 }`}
               >
@@ -159,7 +159,7 @@ const Header = memo(() => {
             {user ? (
               <Link
                 href="/cabinet"
-                className="flex items-center gap-2 text-dental-text hover:text-dental-primary-dark transition-colors"
+                className="flex items-center gap-2 text-dental-text hover:text-dental-primary-600 transition-colors"
               >
                 <User className="w-5 h-5" />
                 <span>{t('admin.sidebar.dashboard')}</span>
@@ -167,7 +167,7 @@ const Header = memo(() => {
             ) : (
               <Link
                 href="/auth/login"
-                className="flex items-center gap-2 text-dental-text hover:text-dental-primary-dark transition-colors"
+                className="flex items-center gap-2 text-dental-text hover:text-dental-primary-600 transition-colors"
               >
                 <LogIn className="w-5 h-5" />
                 <span>{t('admin.login.login')}</span>
@@ -175,7 +175,7 @@ const Header = memo(() => {
             )}
             <Link
               href="/booking"
-              className="bg-dental-primary-darker hover:bg-dental-dark text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
+              className="bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
               data-track-id="cta_book_now"
               data-track-category="navigation"
               data-track-label="header_cta"
@@ -189,7 +189,7 @@ const Header = memo(() => {
             <button
               onClick={toggleMenu}
               onKeyDown={handleMenuKeyDown}
-              className="p-2 text-dental-text hover:text-dental-primary-dark focus:outline-none focus:ring-2 focus:ring-dental-primary focus:ring-offset-2 rounded-lg"
+              className="p-2 text-dental-text hover:text-dental-primary-600 focus:outline-none focus:ring-2 focus:ring-dental-primary-400 focus:ring-offset-2 rounded-lg"
               aria-label={isMenuOpen ? t('accessibility.closeMenu') : t('accessibility.openMenu')}
               aria-expanded={isMenuOpen}
               aria-controls="mobile-menu"
@@ -216,9 +216,9 @@ const Header = memo(() => {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`block px-3 py-2 rounded-lg text-dental-text hover:text-dental-primary-dark hover:bg-dental-primary/10 focus:outline-none focus:ring-2 focus:ring-dental-primary focus:ring-inset transition-colors duration-200 ${
+                className={`block px-3 py-2 rounded-lg text-dental-text hover:text-dental-primary-600 hover:bg-dental-primary-50 focus:outline-none focus:ring-2 focus:ring-dental-primary-400 focus:ring-inset transition-colors duration-200 ${
                   isActive(item.href)
-                    ? 'text-dental-primary-dark bg-dental-primary/10 font-semibold'
+                    ? 'text-dental-primary-600 bg-dental-primary-50 font-semibold'
                     : ''
                 }`}
                 onClick={closeMenu}
@@ -228,11 +228,11 @@ const Header = memo(() => {
                 {item.name}
               </Link>
             ))}
-            <div className="px-3 pt-4 border-t border-dental-secondary/30">
+            <div className="px-3 pt-4 border-t border-dental-secondary-200">
               <LanguageSwitcher variant="inline" className="mb-4 justify-center" />
               <Link
                 href="/booking"
-                className="block px-6 py-4 min-h-[48px] bg-dental-primary-darker hover:bg-dental-dark text-white rounded-xl text-center font-bold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+                className="block px-6 py-4 min-h-[48px] bg-dental-primary-600 hover:bg-dental-primary-700 text-white rounded-xl text-center font-bold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
                 onClick={closeMenu}
                 data-track-id="cta_book_now_mobile"
                 data-track-category="navigation"

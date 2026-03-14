@@ -109,31 +109,69 @@
 
 @layer base {
   :root {
-    /* Dental Story brand colors (from brandbook) */
-    --dental-primary: 174, 206, 211; /* #AECED3 */
-    --dental-secondary: 209, 202, 192; /* #D1CAC0 */
-    --dental-white: 255, 255, 255; /* #FFFFFF */
+    /* Dental Story Brand Colors - Full 13-color system */
     
-    /* Derived colors */
-    --dental-primary-dark: 123, 168, 176; /* #7BA8B0 */
-    --dental-dark: 44, 62, 66; /* #2C3E42 */
-    --dental-text: 74, 94, 99; /* #4A5E63 */
-    --dental-muted: 107, 131, 136; /* #6B8388 */
+    /* Primary palette */
+    --dental-primary: #AECED3;
+    --dental-secondary: #D1CAC0;
+    --dental-white: #FFFFFF;
+    
+    /* Primary tints & shades */
+    --dental-primary-50: #F0F7F8;
+    --dental-primary-100: #E1EFF1;
+    --dental-primary-200: #C5DDE1;
+    --dental-primary-300: #AECED3;
+    --dental-primary-400: #8FBAC1;
+    --dental-primary-500: #7BA8B0;
+    --dental-primary-600: #5A8A94;
+    --dental-primary-700: #4A7078;
+    --dental-primary-800: #3A565C;
+    --dental-primary-900: #2A3C40;
+    
+    /* Secondary tints */
+    --dental-secondary-50: #FAF9F7;
+    --dental-secondary-100: #F5F3F0;
+    --dental-secondary-200: #EBE7E1;
+    --dental-secondary-300: #D1CAC0;
+    --dental-secondary-400: #B8AFA3;
+    --dental-secondary-500: #9F9486;
+    
+    /* Functional colors */
+    --dental-success: #4CAF50;
+    --dental-success-light: #E8F5E9;
+    --dental-warning: #FF9800;
+    --dental-warning-light: #FFF3E0;
+    --dental-error: #EF5350;
+    --dental-error-light: #FFEBEE;
+    --dental-info: #2196F3;
+    --dental-info-light: #E3F2FD;
+    
+    /* Text colors */
+    --dental-dark: #2C3E42;
+    --dental-text: #4A5E63;
+    --dental-muted: #6B8388;
+    --dental-text-light: #8FA3A8;
+    
+    /* Legacy RGB values for rgba() usage */
+    --dental-primary-rgb: 174, 206, 211;
+    --dental-secondary-rgb: 209, 202, 192;
+    --dental-dark-rgb: 44, 62, 66;
   }
 
   body {
-    @apply bg-white font-sans antialiased;
-    color: #4A5E63; /* dental-text */
+    @apply bg-white antialiased;
+    font-family: var(--font-roboto), system-ui, sans-serif;
+    color: var(--dental-text);
     font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Modern heading styles */
+  /* Modern heading styles - Nunito for headings */
   h1, h2, h3, h4, h5, h6 {
-    font-family: theme('fontFamily.heading');
-    color: #2C3E42; /* dental-dark */
+    font-family: var(--font-nunito), system-ui, sans-serif;
+    color: var(--dental-dark);
     @apply font-bold tracking-tight;
     text-wrap: balance;
   }
@@ -160,8 +198,14 @@
 
   /* Paragraph and body text */
   p {
-    color: #6B8388; /* dental-muted */
+    color: var(--dental-muted);
     @apply leading-relaxed;
+  }
+  
+  /* Strong/bold text in body */
+  strong, b {
+    color: var(--dental-text);
+    @apply font-semibold;
   }
 
   /* Better link styles */

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Nunito } from 'next/font/google'
+import { Nunito, Roboto } from 'next/font/google'
 import Script from 'next/script'
 import { headers } from 'next/headers'
 import { Analytics } from '@vercel/analytics/next'
@@ -11,11 +11,19 @@ import ChatWidget from '@/components/ChatWidget'
 import AIAssistant from '@/components/AIAssistant'
 import { StructuredData } from '@/components/StructuredData'
 
-// Nunito - заокруглений шрифт, схожий на Stolzl з брендбуку (Dental Story brandbook)
+// Nunito - заокруглений шрифт для заголовків (схожий на Stolzl з брендбуку)
 const nunito = Nunito({
   subsets: ['latin', 'cyrillic'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['300', '400', '500', '600', '700', '800'],
   variable: '--font-nunito',
+  display: 'swap',
+})
+
+// Roboto - чистий шрифт для основного тексту з повною Cyrillic підтримкою
+const roboto = Roboto({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['300', '400', '500', '700'],
+  variable: '--font-roboto',
   display: 'swap',
 })
 
@@ -83,7 +91,7 @@ export default async function RootLayout({
   const nonce = (await headers()).get('x-nonce') ?? ''
 
   return (
-    <html lang="uk" className={nunito.variable} data-scroll-behavior="smooth">
+    <html lang="uk" className={`${nunito.variable} ${roboto.variable}`} data-scroll-behavior="smooth">
       <body>
         {/* Organization JSON-LD structured data (server-rendered) */}
         <StructuredData type="organization" />
