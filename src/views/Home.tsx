@@ -241,7 +241,7 @@ const Home = () => {
                   {t('pricing.basicExam.price')}
                 </div>
                 <ul className="space-y-3 text-gray-600 mb-8">
-                  {(t('pricing.basicExam.features') as string[]).map((feature: string, idx: number) => (
+                  {(t('pricing.basicExam.features', { returnObjects: true }) as string[]).map((feature: string, idx: number) => (
                     <li key={idx} className="flex items-center">
                       <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
                       {feature}
@@ -272,7 +272,7 @@ const Home = () => {
                   {t('pricing.professionalHygiene.price')}
                 </div>
                 <ul className="space-y-3 text-gray-600 mb-8">
-                  {(t('pricing.professionalHygiene.features') as string[]).map((feature: string, idx: number) => (
+                  {(t('pricing.professionalHygiene.features', { returnObjects: true }) as string[]).map((feature: string, idx: number) => (
                     <li key={idx} className="flex items-center">
                       <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
                       {feature}
@@ -298,7 +298,7 @@ const Home = () => {
                   {t('pricing.comprehensiveDiagnostics.price')}
                 </div>
                 <ul className="space-y-3 text-gray-600 mb-8">
-                  {(t('pricing.comprehensiveDiagnostics.features') as string[]).map((feature: string, idx: number) => (
+                  {(t('pricing.comprehensiveDiagnostics.features', { returnObjects: true }) as string[]).map((feature: string, idx: number) => (
                     <li key={idx} className="flex items-center">
                       <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
                       {feature}
