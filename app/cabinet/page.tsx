@@ -121,8 +121,8 @@ export default function CabinetPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-teal-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-dental-secondary-50 flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-dental-primary-500 border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -130,21 +130,21 @@ export default function CabinetPage() {
   const displayName = profile?.first_name || user?.user_metadata?.first_name || 'Пацієнт'
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-dental-secondary-50">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200">
+      <header className="bg-white border-b border-dental-secondary-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/" className="text-2xl font-bold text-slate-900">
-              Dental<span className="text-teal-600">Story</span>
+            <Link href="/" className="text-2xl font-bold text-dental-dark">
+              Dental<span className="text-dental-primary-600">Story</span>
             </Link>
             <div className="flex items-center gap-4">
-              <span className="text-slate-600 hidden sm:block">
+              <span className="text-dental-muted hidden sm:block">
                 {user?.email}
               </span>
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors"
+                className="flex items-center gap-2 text-dental-muted hover:text-dental-dark transition-colors"
               >
                 <LogOut className="w-5 h-5" />
                 <span className="hidden sm:inline">Вийти</span>
@@ -157,10 +157,10 @@ export default function CabinetPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">
+          <h1 className="text-3xl font-bold text-dental-dark mb-2">
             Вітаємо, {displayName}!
           </h1>
-          <p className="text-slate-600">
+          <p className="text-dental-muted">
             Ваш особистий кабінет пацієнта Dental Story
           </p>
         </div>
@@ -171,12 +171,12 @@ export default function CabinetPage() {
             {/* Quick Book */}
             <Link
               href="/booking"
-              className="block bg-gradient-to-br from-teal-500 to-teal-600 text-white rounded-2xl p-6 hover:from-teal-600 hover:to-teal-700 transition-all shadow-lg hover:shadow-xl"
+              className="block bg-gradient-to-br from-dental-primary-500 to-dental-primary-600 text-white rounded-2xl p-6 hover:from-dental-primary-600 hover:to-dental-primary-700 transition-all shadow-lg hover:shadow-xl"
             >
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-semibold mb-1">Записатися на прийом</h3>
-                  <p className="text-teal-100 text-sm">Оберіть зручний час</p>
+                  <p className="text-dental-primary-100 text-sm">Оберіть зручний час</p>
                 </div>
                 <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                   <Plus className="w-6 h-6" />
@@ -187,23 +187,23 @@ export default function CabinetPage() {
             {/* Profile Card */}
             <div className="bg-white rounded-2xl p-6 shadow-soft">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-slate-900">Мій профіль</h3>
-                <Link href="/cabinet/profile" className="text-teal-600 hover:text-teal-700 text-sm">
+                <h3 className="font-semibold text-dental-dark">Мій профіль</h3>
+                <Link href="/cabinet/profile" className="text-dental-primary-600 hover:text-dental-primary-700 text-sm">
                   Редагувати
                 </Link>
               </div>
               
               <div className="space-y-3">
-                <div className="flex items-center gap-3 text-slate-600">
-                  <User className="w-5 h-5 text-slate-400" />
+                <div className="flex items-center gap-3 text-dental-muted">
+                  <User className="w-5 h-5 text-dental-secondary-400" />
                   <span>{profile?.first_name} {profile?.last_name}</span>
                 </div>
-                <div className="flex items-center gap-3 text-slate-600">
-                  <Phone className="w-5 h-5 text-slate-400" />
+                <div className="flex items-center gap-3 text-dental-muted">
+                  <Phone className="w-5 h-5 text-dental-secondary-400" />
                   <span>{profile?.phone || 'Не вказано'}</span>
                 </div>
-                <div className="flex items-center gap-3 text-slate-600">
-                  <Mail className="w-5 h-5 text-slate-400" />
+                <div className="flex items-center gap-3 text-dental-muted">
+                  <Mail className="w-5 h-5 text-dental-secondary-400" />
                   <span>{user?.email}</span>
                 </div>
               </div>
@@ -213,39 +213,39 @@ export default function CabinetPage() {
             <div className="bg-white rounded-2xl shadow-soft overflow-hidden">
               <Link
                 href="/cabinet/appointments"
-                className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors border-b border-slate-100"
+                className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors border-b border-dental-secondary-100"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center">
-                    <Calendar className="w-5 h-5 text-teal-600" />
+                  <div className="w-10 h-10 bg-dental-primary-100 rounded-xl flex items-center justify-center">
+                    <Calendar className="w-5 h-5 text-dental-primary-600" />
                   </div>
-                  <span className="font-medium text-slate-900">Мої записи</span>
+                  <span className="font-medium text-dental-dark">Мої записи</span>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-400" />
+                <ChevronRight className="w-5 h-5 text-dental-muted" />
               </Link>
               <Link
                 href="/cabinet/history"
-                className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors border-b border-slate-100"
+                className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors border-b border-dental-secondary-100"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
                     <FileText className="w-5 h-5 text-blue-600" />
                   </div>
-                  <span className="font-medium text-slate-900">Історія лікування</span>
+                  <span className="font-medium text-dental-dark">Історія лікування</span>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-400" />
+                <ChevronRight className="w-5 h-5 text-dental-muted" />
               </Link>
               <Link
                 href="/cabinet/reviews"
-                className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors"
+                className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
                     <Star className="w-5 h-5 text-yellow-600" />
                   </div>
-                  <span className="font-medium text-slate-900">Мої відгуки</span>
+                  <span className="font-medium text-dental-dark">Мої відгуки</span>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-400" />
+                <ChevronRight className="w-5 h-5 text-dental-muted" />
               </Link>
             </div>
           </div>
@@ -253,50 +253,50 @@ export default function CabinetPage() {
           {/* Right Column - Appointments */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-soft">
-              <div className="flex items-center justify-between p-6 border-b border-slate-100">
-                <h3 className="font-semibold text-slate-900">Останні записи</h3>
-                <Link href="/cabinet/appointments" className="text-teal-600 hover:text-teal-700 text-sm">
+              <div className="flex items-center justify-between p-6 border-b border-dental-secondary-100">
+                <h3 className="font-semibold text-dental-dark">Останні записи</h3>
+                <Link href="/cabinet/appointments" className="text-dental-primary-600 hover:text-dental-primary-700 text-sm">
                   Всі записи
                 </Link>
               </div>
 
               {appointments.length === 0 ? (
                 <div className="p-8 text-center">
-                  <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Calendar className="w-8 h-8 text-slate-400" />
+                  <div className="w-16 h-16 bg-dental-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Calendar className="w-8 h-8 text-dental-muted" />
                   </div>
-                  <h4 className="font-medium text-slate-900 mb-2">Записів поки немає</h4>
-                  <p className="text-slate-500 mb-4">Запишіться на прийом до наших спеціалістів</p>
+                  <h4 className="font-medium text-dental-dark mb-2">Записів поки немає</h4>
+                  <p className="text-dental-muted mb-4">Запишіться на прийом до наших спеціалістів</p>
                   <Link
                     href="/booking"
-                    className="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-xl font-medium transition-colors"
+                    className="inline-flex items-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-4 py-2 rounded-xl font-medium transition-colors"
                   >
                     <Plus className="w-4 h-4" />
                     Записатися
                   </Link>
                 </div>
               ) : (
-                <div className="divide-y divide-slate-100">
+                <div className="divide-y divide-dental-secondary-100">
                   {appointments.map((apt) => (
-                    <div key={apt.id} className="p-4 hover:bg-slate-50 transition-colors">
+                    <div key={apt.id} className="p-4 hover:bg-dental-secondary-50 transition-colors">
                       <div className="flex items-start justify-between">
                         <div className="flex gap-4">
-                          <div className="w-14 h-14 bg-teal-50 rounded-xl flex flex-col items-center justify-center">
-                            <span className="text-lg font-bold text-teal-600">
+                          <div className="w-14 h-14 bg-dental-primary-50 rounded-xl flex flex-col items-center justify-center">
+                            <span className="text-lg font-bold text-dental-primary-600">
                               {new Date(apt.appointment_date).getDate()}
                             </span>
-                            <span className="text-xs text-teal-500">
+                            <span className="text-xs text-dental-primary-500">
                               {new Date(apt.appointment_date).toLocaleDateString('uk-UA', { month: 'short' })}
                             </span>
                           </div>
                           <div>
-                            <h4 className="font-medium text-slate-900">
+                            <h4 className="font-medium text-dental-dark">
                               {apt.services?.name_uk || 'Консультація'}
                             </h4>
-                            <p className="text-sm text-slate-500">
+                            <p className="text-sm text-dental-muted">
                               {apt.doctors?.last_name} {apt.doctors?.first_name}
                             </p>
-                            <div className="flex items-center gap-2 mt-1 text-sm text-slate-500">
+                            <div className="flex items-center gap-2 mt-1 text-sm text-dental-muted">
                               <Clock className="w-4 h-4" />
                               {apt.appointment_time.slice(0, 5)}
                             </div>
@@ -305,7 +305,7 @@ export default function CabinetPage() {
                         <div className="text-right">
                           {getStatusBadge(apt.status)}
                           {apt.services?.price_uah && (
-                            <p className="text-sm text-slate-600 mt-2">
+                            <p className="text-sm text-dental-muted mt-2">
                               {apt.services.price_uah.toLocaleString('uk-UA')} грн
                             </p>
                           )}

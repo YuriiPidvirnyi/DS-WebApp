@@ -40,16 +40,16 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-teal-50 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-dental-secondary-50 to-dental-primary-50 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <h1 className="text-3xl font-bold text-slate-900">
-              Dental<span className="text-teal-600">Story</span>
+            <h1 className="text-3xl font-bold text-dental-dark">
+              Dental<span className="text-dental-primary-600">Story</span>
             </h1>
           </Link>
-          <p className="mt-2 text-slate-600">Вхід до особистого кабінету</p>
+          <p className="mt-2 text-dental-muted">Вхід до особистого кабінету</p>
         </div>
 
         {/* Login Form */}
@@ -62,11 +62,11 @@ export default function LoginPage() {
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-dental-dark mb-2">
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-dental-muted" />
                 <input
                   id="email"
                   type="email"
@@ -74,17 +74,17 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
                   required
-                  className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-dental-primary-500 focus:border-transparent transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-dental-dark mb-2">
                 Пароль
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-dental-muted" />
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
@@ -92,12 +92,12 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Введіть пароль"
                   required
-                  className="w-full pl-10 pr-12 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-12 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-dental-primary-500 focus:border-transparent transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-dental-muted hover:text-dental-dark"
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
@@ -106,10 +106,10 @@ export default function LoginPage() {
 
             <div className="flex items-center justify-between">
               <label className="flex items-center">
-                <input type="checkbox" className="w-4 h-4 text-teal-600 border-slate-300 rounded focus:ring-teal-500" />
-                <span className="ml-2 text-sm text-slate-600">Запам'ятати мене</span>
+                <input type="checkbox" className="w-4 h-4 text-dental-primary-600 border-dental-secondary-300 rounded focus:ring-dental-primary-500" />
+                <span className="ml-2 text-sm text-dental-muted">Запам'ятати мене</span>
               </label>
-              <Link href="/auth/forgot-password" className="text-sm text-teal-600 hover:text-teal-700">
+              <Link href="/auth/forgot-password" className="text-sm text-dental-primary-600 hover:text-dental-primary-700">
                 Забули пароль?
               </Link>
             </div>
@@ -117,7 +117,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-dental-primary-600 hover:bg-dental-primary-700 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -131,9 +131,9 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-slate-600">
+            <p className="text-dental-muted">
               Ще не маєте акаунту?{' '}
-              <Link href="/auth/sign-up" className="text-teal-600 hover:text-teal-700 font-semibold">
+              <Link href="/auth/sign-up" className="text-dental-primary-600 hover:text-dental-primary-700 font-semibold">
                 Зареєструватися
               </Link>
             </p>
@@ -141,7 +141,7 @@ export default function LoginPage() {
         </div>
 
         {/* Benefits */}
-        <div className="mt-8 text-center text-sm text-slate-500">
+        <div className="mt-8 text-center text-sm text-dental-muted">
           <p>Переваги особистого кабінету:</p>
           <ul className="mt-2 space-y-1">
             <li>Історія візитів та лікування</li>
