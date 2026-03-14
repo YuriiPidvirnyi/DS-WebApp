@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
+// Revalidate every 120 seconds - doctors list doesn't change often
+export const revalidate = 120
+
 export async function GET() {
   try {
     const supabase = await createClient()

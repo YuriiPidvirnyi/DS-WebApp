@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
+// Revalidate every 60 seconds for fresh data
+export const revalidate = 60
+
 export async function GET() {
   try {
     const supabase = await createClient()

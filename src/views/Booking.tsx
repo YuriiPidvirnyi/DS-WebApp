@@ -1,7 +1,22 @@
 'use client'
 
 import { useTranslation } from 'react-i18next'
-import BookingForm from '@/components/BookingForm'
+import dynamic from 'next/dynamic'
+import { Suspense } from 'react'
+
+// Dynamically import heavy BookingForm component with loading fallback
+const BookingForm = dynamic(() => import('@/components/BookingForm'), {
+  loading: () => (
+    <div className="bg-white rounded-lg shadow-sm p-8">
+      <div className="space-y-4">
+        <div className="h-8 bg-gradient-to-r from-dental-primary-100 to-dental-primary-50 rounded animate-pulse" />
+        <div className="h-12 bg-gradient-to-r from-dental-primary-100 to-dental-primary-50 rounded animate-pulse" />
+        <div className="h-12 bg-gradient-to-r from-dental-primary-100 to-dental-primary-50 rounded animate-pulse" />
+      </div>
+    </div>
+  ),
+  ssr: false, // Prevent hydration mismatch with form hooks
+})
 
 export default function BookingPage() {
   const { t } = useTranslation()
@@ -17,7 +32,9 @@ export default function BookingPage() {
             {t('booking.subtitle')}
           </p>
         </div>
-        <BookingForm />
+        <Suspense fallback={<div className="h-96 bg-dental-primary-50 rounded animate-pulse" />}>
+          <BookingForm />
+        </Suspense>
       </div>
     </div>
   )
