@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 import { AnimatedSection } from '@/components/ui/AnimatedCard'
@@ -149,6 +150,7 @@ function ComparisonSlider({ beforeImage, afterImage }: { beforeImage: string; af
 }
 
 export default function BeforeAfterGallery() {
+  const { t } = useTranslation()
   const [activeCase, setActiveCase] = useState(0)
   const { ref, isVisible } = useScrollAnimation()
 
