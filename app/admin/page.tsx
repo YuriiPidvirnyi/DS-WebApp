@@ -179,28 +179,28 @@ export default function AdminDashboard() {
     badge?: string
   }) => {
     const content = (
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow">
+      <div className="bg-white rounded-xl shadow-sm p-6 border border-dental-secondary-200 hover:shadow-md transition-shadow">
         <div className="flex items-center justify-between">
           <div className={`p-3 rounded-lg ${iconBg}`}>
             <Icon className="w-6 h-6 text-white" />
           </div>
           {badge && (
-            <span className="bg-red-100 text-red-700 text-xs font-medium px-2 py-1 rounded-full">
+            <span className="bg-dental-error-light text-dental-error text-xs font-medium px-2 py-1 rounded-full">
               {badge}
             </span>
           )}
           {trend !== undefined && (
-            <div className="flex items-center gap-1 text-sm font-medium text-green-600">
+            <div className="flex items-center gap-1 text-sm font-medium text-dental-success">
               <ArrowUpRight className="w-4 h-4" />
               {trend}%
             </div>
           )}
         </div>
         <div className="mt-4">
-          <p className="text-3xl font-bold text-gray-900">
+          <p className="text-3xl font-bold text-dental-dark">
             {typeof value === 'number' ? value.toLocaleString('uk-UA') : value}
           </p>
-          <p className="text-sm text-gray-500 mt-1">{title}</p>
+          <p className="text-sm text-dental-text-light mt-1">{title}</p>
         </div>
       </div>
     )
@@ -221,31 +221,31 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-dental-primary-50">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200">
+      <header className="bg-white border-b border-dental-secondary-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">
-                Dental<span className="text-teal-600">Story</span> Admin
+              <h1 className="text-2xl font-bold text-dental-dark">
+                Dental<span className="text-dental-primary-600">Story</span> Admin
               </h1>
-              <p className="text-sm text-slate-500">Панель керування клінікою</p>
+              <p className="text-sm text-dental-text-light">Панель керування клінікою</p>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-sm text-gray-500">
+              <div className="flex items-center gap-2 text-sm text-dental-text-light">
                 <Clock className="w-4 h-4" />
                 Оновлено: {lastUpdated}
               </div>
               <Link
                 href="/admin/settings"
-                className="p-2 text-slate-500 hover:text-slate-700 transition-colors"
+                className="p-2 text-dental-text-light hover:text-dental-primary-600 transition-colors"
               >
                 <Settings className="w-5 h-5" />
               </Link>
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors"
+                className="flex items-center gap-2 text-dental-text hover:text-dental-primary-600 transition-colors"
               >
                 <LogOut className="w-5 h-5" />
                 <span className="hidden sm:inline">Вийти</span>
@@ -262,7 +262,7 @@ export default function AdminDashboard() {
             title="Всього записів"
             value={stats?.totalAppointments || 0}
             icon={Calendar}
-            iconBg="bg-teal-500"
+            iconBg="bg-dental-primary-500"
             href="/admin/appointments"
             badge={stats?.pendingAppointments ? `${stats.pendingAppointments} нових` : undefined}
           />
@@ -270,14 +270,14 @@ export default function AdminDashboard() {
             title="Сьогодні"
             value={stats?.todayAppointments || 0}
             icon={Clock}
-            iconBg="bg-blue-500"
+            iconBg="bg-dental-info"
             href="/admin/appointments?filter=today"
           />
           <StatCard
             title="Звернень"
             value={stats?.unreadContacts || 0}
             icon={MessageSquare}
-            iconBg="bg-purple-500"
+            iconBg="bg-dental-warning"
             href="/admin/contacts"
             badge={stats?.unreadContacts ? 'нові' : undefined}
           />
@@ -285,7 +285,7 @@ export default function AdminDashboard() {
             title="Відгуків на модерації"
             value={stats?.pendingReviews || 0}
             icon={Star}
-            iconBg="bg-yellow-500"
+            iconBg="bg-dental-success"
             href="/admin/reviews"
           />
         </div>
@@ -293,43 +293,43 @@ export default function AdminDashboard() {
         {/* Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Today's Appointments */}
-          <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-6 border border-dental-secondary-200">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Записи на сьогодні</h2>
-              <Link href="/admin/appointments?filter=today" className="text-sm text-teal-600 hover:text-teal-700">
+              <h2 className="text-lg font-semibold text-dental-dark">Записи на сьогодні</h2>
+              <Link href="/admin/appointments?filter=today" className="text-sm text-dental-primary-600 hover:text-dental-primary-700">
                 Всі записи
               </Link>
             </div>
             {todayAppointments.length === 0 ? (
               <div className="py-12 text-center">
-                <Calendar className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-500">На сьогодні записів немає</p>
+                <Calendar className="w-12 h-12 text-dental-secondary-300 mx-auto mb-3" />
+                <p className="text-dental-text-light">На сьогодні записів немає</p>
               </div>
             ) : (
               <div className="space-y-3">
                 {todayAppointments.map((apt) => (
                   <div
                     key={apt.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-dental-primary-50 rounded-lg"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center">
-                        <Users className="w-5 h-5 text-teal-600" />
+                      <div className="w-10 h-10 rounded-full bg-dental-primary-100 flex items-center justify-center">
+                        <Users className="w-5 h-5 text-dental-primary-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{apt.patient_name}</p>
-                        <p className="text-sm text-gray-500">{apt.services?.name_uk || 'Консультація'}</p>
+                        <p className="font-medium text-dental-dark">{apt.patient_name}</p>
+                        <p className="text-sm text-dental-text-light">{apt.services?.name_uk || 'Консультація'}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium text-gray-900">{apt.appointment_time.slice(0, 5)}</p>
+                      <p className="font-medium text-dental-dark">{apt.appointment_time.slice(0, 5)}</p>
                       <span
                         className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${
                           apt.status === 'confirmed'
-                            ? 'bg-green-100 text-green-700'
+                            ? 'bg-dental-success-light text-dental-success'
                             : apt.status === 'completed'
-                            ? 'bg-slate-100 text-slate-700'
-                            : 'bg-yellow-100 text-yellow-700'
+                            ? 'bg-dental-secondary-100 text-dental-text-light'
+                            : 'bg-dental-warning-light text-dental-warning'
                         }`}
                       >
                         {apt.status === 'confirmed' ? (
@@ -348,12 +348,12 @@ export default function AdminDashboard() {
           </div>
 
           {/* Services Distribution */}
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Категорії послуг</h2>
+          <div className="bg-white rounded-xl shadow-sm p-6 border border-dental-secondary-200">
+            <h2 className="text-lg font-semibold text-dental-dark mb-4">Категорії послуг</h2>
             {serviceStats.length === 0 ? (
               <div className="py-12 text-center">
-                <TrendingUp className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-500">Немає даних</p>
+                <TrendingUp className="w-12 h-12 text-dental-secondary-300 mx-auto mb-3" />
+                <p className="text-dental-text-light">Немає даних</p>
               </div>
             ) : (
               <>
@@ -376,7 +376,7 @@ export default function AdminDashboard() {
                       <Tooltip
                         contentStyle={{
                           backgroundColor: '#fff',
-                          border: '1px solid #e5e7eb',
+                          border: `1px solid ${`var(--color-dental-secondary-200)`}`,
                           borderRadius: '8px',
                         }}
                       />
@@ -391,9 +391,9 @@ export default function AdminDashboard() {
                           className="w-3 h-3 rounded-full"
                           style={{ backgroundColor: service.color }}
                         />
-                        <span className="text-gray-600">{service.name}</span>
+                        <span className="text-dental-text-light">{service.name}</span>
                       </div>
-                      <span className="font-medium text-gray-900">{service.value}%</span>
+                      <span className="font-medium text-dental-dark">{service.value}%</span>
                     </div>
                   ))}
                 </div>
@@ -404,28 +404,28 @@ export default function AdminDashboard() {
 
         {/* Quick Links */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <Link href="/admin/appointments" className="bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl p-4 text-white hover:from-teal-600 hover:to-teal-700 transition-all">
+          <Link href="/admin/appointments" className="bg-gradient-to-br from-dental-primary-500 to-dental-primary-600 rounded-xl p-4 text-white hover:from-dental-primary-600 hover:to-dental-primary-700 transition-all">
             <div className="flex items-center gap-2 mb-2">
               <Calendar className="w-5 h-5" />
               <span className="text-sm font-medium opacity-90">Записи</span>
             </div>
             <p className="text-2xl font-bold">{stats?.totalAppointments}</p>
           </Link>
-          <Link href="/admin/doctors" className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white hover:from-blue-600 hover:to-blue-700 transition-all">
+          <Link href="/admin/doctors" className="bg-gradient-to-br from-dental-info to-dental-info-dark rounded-xl p-4 text-white hover:from-dental-info-dark hover:to-dental-info-darker transition-all">
             <div className="flex items-center gap-2 mb-2">
               <Users className="w-5 h-5" />
               <span className="text-sm font-medium opacity-90">Лікарі</span>
             </div>
             <p className="text-2xl font-bold">{stats?.totalDoctors}</p>
           </Link>
-          <Link href="/admin/services" className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 text-white hover:from-purple-600 hover:to-purple-700 transition-all">
+          <Link href="/admin/services" className="bg-gradient-to-br from-dental-warning to-dental-warning-dark rounded-xl p-4 text-white hover:from-dental-warning-dark hover:to-dental-warning-darker transition-all">
             <div className="flex items-center gap-2 mb-2">
               <TrendingUp className="w-5 h-5" />
               <span className="text-sm font-medium opacity-90">Послуги</span>
             </div>
             <p className="text-lg font-bold">Прайс-лист</p>
           </Link>
-          <Link href="/admin/contacts" className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl p-4 text-white hover:from-orange-600 hover:to-orange-700 transition-all">
+          <Link href="/admin/contacts" className="bg-gradient-to-br from-dental-success to-dental-success-dark rounded-xl p-4 text-white hover:from-dental-success-dark hover:to-dental-success-darker transition-all">
             <div className="flex items-center gap-2 mb-2">
               <MessageSquare className="w-5 h-5" />
               <span className="text-sm font-medium opacity-90">Звернення</span>

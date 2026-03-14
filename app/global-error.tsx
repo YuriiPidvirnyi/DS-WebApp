@@ -1,145 +1,93 @@
 'use client'
 
-import * as Sentry from '@sentry/nextjs'
 import { useEffect } from 'react'
+import { AlertTriangle } from 'lucide-react'
+import { captureException } from '@/utils/sentry'
 
 interface GlobalErrorProps {
   error: Error & { digest?: string }
   reset: () => void
 }
 
-/**
- * Global error boundary for React render errors in the App Router.
- * Required by @sentry/nextjs for capturing errors from Server Components.
- * https://nextjs.org/docs/app/api-reference/file-conventions/error#global-errorjs
- */
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
   useEffect(() => {
-    Sentry.captureException(error)
+    captureException(error, {
+      tags: {
+        errorBoundary: 'global',
+        critical: 'true',
+      },
+      extra: {
+        digest: error.digest,
+      },
+    })
   }, [error])
 
-  const isDev = process.env.NODE_ENV !== 'production'
-
   return (
-    <html lang="uk">
-      <body>
-        <div
-          style={{
-            minHeight: '100vh',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '2rem',
-            textAlign: 'center',
-            fontFamily: 'system-ui, -apple-system, sans-serif',
-            backgroundColor: '#f9fafb',
-          }}
-        >
-          <div style={{ maxWidth: '32rem' }}>
-            {/* Error Icon */}
-            <svg
-              style={{ width: '5rem', height: '5rem', margin: '0 auto 1.5rem', color: '#ef4444' }}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              />
-            </svg>
+    <html lang="uk" className="scroll-smooth">
+      <body className="bg-dental-error-light">
+        <div className="min-h-screen flex items-center justify-center px-4">
+          <div className="max-w-md w-full text-center">
+            {/* Critical Error Icon */}
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 bg-dental-error rounded-full flex items-center justify-center">
+                <AlertTriangle className="w-10 h-10 text-white" />
+              </div>
+            </div>
 
-            <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', marginBottom: '0.75rem', color: '#111827' }}>
+            {/* Error Message */}
+            <h1 className="text-3xl font-bold text-dental-dark mb-4">
               Критична помилка
             </h1>
-            <p style={{ color: '#6b7280', marginBottom: '2rem', fontSize: '1.125rem' }}>
-              На жаль, виникла серйозна помилка. Ми працюємо над її виправленням.
+            <p className="text-dental-muted mb-6 leading-relaxed">
+              На жаль, виникла серйозна помилка при завантаженні сайту. Будь ласка, спробуйте перезавантажити сторінку.
             </p>
 
-            {isDev && error.message && (
-              <details
-                style={{
-                  marginBottom: '1.5rem',
-                  textAlign: 'left',
-                  border: '1px solid #fecaca',
-                  borderRadius: '0.5rem',
-                  padding: '1rem',
-                  backgroundColor: '#fef2f2',
-                }}
-              >
-                <summary style={{ cursor: 'pointer', fontSize: '0.875rem', fontWeight: '500', color: '#b91c1c' }}>
-                  Технічна інформація
-                </summary>
-                <pre
-                  style={{
-                    fontSize: '0.75rem',
-                    color: '#991b1b',
-                    overflow: 'auto',
-                    maxHeight: '8rem',
-                    marginTop: '0.5rem',
-                    whiteSpace: 'pre-wrap',
-                    wordBreak: 'break-word',
-                  }}
-                >
-                  {error.message}
-                </pre>
-                {error.digest && (
-                  <p style={{ fontSize: '0.75rem', color: '#dc2626', marginTop: '0.5rem' }}>
-                    Digest: {error.digest}
-                  </p>
-                )}
-              </details>
+            {error.digest && (
+              <div className="mb-6 p-4 bg-white rounded-lg border border-dental-error-light">
+                <p className="text-xs text-dental-text-light font-mono break-all">
+                  ID: {error.digest}
+                </p>
+              </div>
             )}
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {/* Dev Info */}
+            {process.env.NODE_ENV !== 'production' && (
+              <div className="mb-6 p-4 bg-dental-warning-light rounded-lg text-left border border-dental-warning">
+                <p className="text-sm font-bold text-dental-warning mb-2">Помилка (розробка):</p>
+                <pre className="text-xs bg-white p-3 rounded overflow-auto max-h-32 text-dental-text border border-dental-warning font-mono">
+                  {error.message}
+                  {error.stack && `\n\n${error.stack}`}
+                </pre>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="space-y-3">
               <button
                 onClick={reset}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '0.875rem 2rem',
-                  background: '#0d9488',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '0.5rem',
-                  cursor: 'pointer',
-                  fontSize: '1rem',
-                  fontWeight: '600',
-                  transition: 'background-color 0.2s',
-                }}
-                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0f766e')}
-                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#0d9488')}
+                className="w-full px-6 py-3 bg-dental-primary-600 hover:bg-dental-primary-700 text-white font-semibold rounded-lg transition-colors"
               >
-                Спробувати ще раз
+                Перезавантажити сторінку
               </button>
-
               <a
                 href="/"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '0.875rem 2rem',
-                  background: 'white',
-                  color: '#374151',
-                  border: '2px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  cursor: 'pointer',
-                  fontSize: '1rem',
-                  fontWeight: '600',
-                  textDecoration: 'none',
-                  transition: 'background-color 0.2s',
-                }}
-                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#f3f4f6')}
-                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'white')}
+                className="block px-6 py-3 bg-white hover:bg-dental-primary-50 text-dental-primary-600 font-semibold rounded-lg border-2 border-dental-primary-200 transition-colors"
               >
                 На головну
               </a>
+            </div>
+
+            {/* Support Info */}
+            <div className="mt-8 p-4 bg-white rounded-lg border border-dental-secondary-200">
+              <p className="text-sm text-dental-muted">
+                Проблема не розв'язується?{' '}
+                <a
+                  href="mailto:support@dentalstory.ua"
+                  className="font-semibold text-dental-primary-600 hover:underline"
+                >
+                  Напишіть нам
+                </a>
+              </p>
             </div>
           </div>
         </div>
