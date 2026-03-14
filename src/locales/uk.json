@@ -95,6 +95,17 @@
       "surgery": "Хірургія"
     }
   },
+  "caseStudies": {
+    "results": "Результати",
+    "beforeAfter": "До та після лікування",
+    "description": "Реальні результати наших пацієнтів. Перетягніть повзунок, щоб порівняти.",
+    "duration": "Тривалість лікування",
+    "procedureType": "Тип процедури"
+  },
+  "labels": {
+    "before": "До",
+    "after": "Після"
+  },
   "gallery": {
     "categories": {
       "all": "Всі фото",
@@ -240,7 +251,10 @@
     "contactInfo": "Контактна інформація",
     "siteNavigation": "Навігація по сайту",
     "openMenu": "Відкрити меню",
-    "closeMenu": "Закрити меню"
+    "closeMenu": "Закрити меню",
+    "prevCase": "Попередній випадок",
+    "nextCase": "Наступний випадок",
+    "goToCase": "Перейти до випадку"
   },
   "dateFormat": {
     "locale": "uk-UA",
