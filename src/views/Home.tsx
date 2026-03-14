@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { Smile, Shield, Users, Award, ArrowRight } from 'lucide-react'
-import { useTranslation } from '@/hooks/useTranslation'
+import { useTranslation } from 'react-i18next'
 import LazyImage from '@/components/ui/LazyImage'
 import HeroSection from '@/components/HeroSection'
 import AnimatedCard, { AnimatedSection } from '@/components/ui/AnimatedCard'

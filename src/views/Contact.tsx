@@ -1,7 +1,7 @@
 'use client'
 
 import { Phone, Mail, MapPin, Clock } from 'lucide-react'
-import { useTranslation } from '@/hooks/useTranslation'
+import { useTranslation } from 'react-i18next'
 import ContactForm from '@/components/ContactForm'
 import GoogleMap from '@/components/GoogleMap'
 import CallbackRequest from '@/components/CallbackRequest'

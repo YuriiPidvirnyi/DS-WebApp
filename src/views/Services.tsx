@@ -11,7 +11,7 @@ import {
   Crown,
 } from 'lucide-react'
 import Link from 'next/link'
-import { useTranslation } from '@/hooks/useTranslation'
+import { useTranslation } from 'react-i18next'
 import FAQAccordion from '@/components/FAQAccordion'
 import PriceCalculator from '@/components/PriceCalculator'
 import SmartRecommendations from '@/components/SmartRecommendations'
