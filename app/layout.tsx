@@ -11,6 +11,7 @@ import ChatWidget from '@/components/ChatWidget'
 import AIAssistant from '@/components/AIAssistant'
 import { StructuredData } from '@/components/StructuredData'
 
+// Dental Story Typography System
 // Nunito - заокруглений шрифт для заголовків (схожий на Stolzl з брендбуку)
 const nunito = Nunito({
   subsets: ['latin', 'cyrillic'],
