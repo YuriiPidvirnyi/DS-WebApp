@@ -80,12 +80,12 @@ const Header = memo(() => {
             <div className="flex items-center space-x-6">
               <div className="flex items-center space-x-1.5">
                 <Phone
-                  className="h-4 w-4 text-dental-primary-300"
+                  className="h-4 w-4 text-dental-secondary"
                   aria-hidden="true"
                 />
                 <a
                   href={`tel:${CONTACT_INFO.phoneRaw}`}
-                  className="hover:text-dental-primary-200 font-semibold tracking-wide transition-colors"
+                  className="hover:text-white font-semibold tracking-wide transition-colors"
                   data-track-id="call_click"
                   data-track-category="outbound"
                   data-track-label="header_phone"
@@ -95,10 +95,10 @@ const Header = memo(() => {
                 </a>
               </div>
               <div className="flex items-center space-x-1.5">
-                <Mail className="h-4 w-4 text-dental-primary-300" aria-hidden="true" />
+                <Mail className="h-4 w-4 text-dental-secondary" aria-hidden="true" />
                 <a
                   href={`mailto:${CONTACT_INFO.email}`}
-                  className="hover:text-dental-primary-200 font-semibold tracking-wide transition-colors"
+                  className="hover:text-white font-semibold tracking-wide transition-colors"
                   data-track-id="email_click"
                   data-track-category="outbound"
                   data-track-label="header_email"

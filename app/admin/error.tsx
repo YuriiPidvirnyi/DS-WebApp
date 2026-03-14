@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { Shield, AlertCircle, RefreshCw, LogOut } from 'lucide-react'
+import { AlertCircle, RotateCcw, Home } from 'lucide-react'
 import Link from 'next/link'
 import { captureException } from '@/utils/sentry'
 
@@ -12,71 +12,62 @@ interface ErrorProps {
 
 export default function AdminError({ error, reset }: ErrorProps) {
   useEffect(() => {
-    if (process.env.NODE_ENV === 'production') {
-      captureException(error, { context: 'admin', digest: error.digest })
-    }
-    console.error('Admin panel error:', error)
+    captureException(error, {
+      tags: {
+        context: 'admin',
+      },
+      extra: {
+        digest: error.digest,
+      },
+    })
   }, [error])
 
   return (
-    <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center bg-gray-50">
-      <div className="max-w-lg bg-white rounded-xl shadow-lg p-8">
-        <div className="relative mx-auto mb-6 w-20 h-20">
-          <Shield
-            className="h-20 w-20 text-gray-400"
-            aria-hidden="true"
-          />
-          <AlertCircle
-            className="h-8 w-8 text-red-500 absolute -bottom-1 -right-1 bg-white rounded-full"
-            aria-hidden="true"
-          />
+    <div className="min-h-screen bg-dental-primary-50 flex items-center justify-center p-4">
+      <div className="max-w-md w-full">
+        <div className="flex justify-center mb-6">
+          <div className="w-16 h-16 bg-dental-error-light rounded-full flex items-center justify-center">
+            <AlertCircle className="w-8 h-8 text-dental-error" />
+          </div>
         </div>
-        
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          Помилка адмін-панелі
-        </h1>
-        <p className="text-gray-600 mb-6">
-          Виникла помилка в адміністративній панелі. Спробуйте оновити сторінку або увійти знову.
-        </p>
+
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-dental-dark mb-2">
+            Помилка адмін-панелі
+          </h1>
+          <p className="text-dental-muted mb-4">
+            Виникла помилка при завантаженні адміністративної панелі.
+          </p>
+          {error.digest && (
+            <p className="text-xs text-dental-text-light font-mono bg-white px-3 py-2 rounded-lg break-all border border-dental-secondary-200">
+              Error ID: {error.digest}
+            </p>
+          )}
+        </div>
 
         {process.env.NODE_ENV !== 'production' && (
-          <div className="mb-4 text-left">
-            <details className="border border-red-200 rounded-md p-4 bg-red-50">
-              <summary className="cursor-pointer text-sm text-red-700 font-medium">
-                Технічна інформація
-              </summary>
-              <pre className="text-xs text-red-800 overflow-auto max-h-32 mt-2">
-                {error.message}
-              </pre>
-              {error.digest && (
-                <p className="text-xs text-red-600 mt-2">Digest: {error.digest}</p>
-              )}
-            </details>
+          <div className="mb-6 p-4 bg-dental-warning-light rounded-lg border border-dental-warning">
+            <p className="text-sm font-semibold text-dental-warning mb-2">Деталі помилки:</p>
+            <pre className="text-xs text-dental-text bg-white p-3 rounded overflow-auto max-h-32 border border-dental-warning font-mono">
+              {error.message}
+            </pre>
           </div>
         )}
 
-        <div className="flex flex-col gap-3">
+        <div className="space-y-3">
           <button
             onClick={reset}
-            className="inline-flex items-center justify-center px-6 py-3 bg-dental-teal text-white font-semibold rounded-lg hover:bg-dental-teal/90 transition-colors"
+            className="w-full inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
           >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Оновити сторінку
+            <RotateCcw className="w-4 h-4" />
+            Спробувати ще раз
           </button>
-
           <Link
-            href="/admin/login"
-            className="inline-flex items-center justify-center px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition-colors"
+            href="/admin"
+            className="w-full inline-flex items-center justify-center gap-2 bg-white hover:bg-dental-primary-50 text-dental-primary-600 px-6 py-3 rounded-lg font-medium border-2 border-dental-primary-200 transition-colors"
           >
-            <LogOut className="h-4 w-4 mr-2" />
-            Увійти знову
-          </Link>
-
-          <Link
-            href="/"
-            className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
-          >
-            Повернутися на сайт
+            <Home className="w-4 h-4" />
+            На панель управління
           </Link>
         </div>
       </div>

@@ -139,12 +139,16 @@
     /* Functional colors */
     --dental-success: #4CAF50;
     --dental-success-light: #E8F5E9;
+    --dental-success-dark: #388E3C;
     --dental-warning: #FF9800;
     --dental-warning-light: #FFF3E0;
+    --dental-warning-dark: #F57C00;
     --dental-error: #EF5350;
     --dental-error-light: #FFEBEE;
+    --dental-error-dark: #C62828;
     --dental-info: #2196F3;
     --dental-info-light: #E3F2FD;
+    --dental-info-dark: #1565C0;
     
     /* Text colors */
     --dental-dark: #2C3E42;

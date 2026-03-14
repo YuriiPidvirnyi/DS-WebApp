@@ -34,12 +34,16 @@ export default {
           // FUNCTIONAL COLORS
           success: '#4CAF50',        // Green - confirmations
           'success-light': '#E8F5E9',
+          'success-dark': '#388E3C',
           warning: '#FF9800',        // Amber - caution
           'warning-light': '#FFF3E0',
+          'warning-dark': '#F57C00',
           error: '#EF5350',          // Coral - errors (softer than red)
           'error-light': '#FFEBEE',
+          'error-dark': '#C62828',
           info: '#2196F3',           // Blue - information
           'info-light': '#E3F2FD',
+          'info-dark': '#1565C0',
           
           // TEXT COLORS
           dark: '#2C3E42',           // Headings
