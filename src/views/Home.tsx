@@ -241,7 +241,10 @@ const Home = () => {
                   {t('pricing.basicExam.price')}
                 </div>
                 <ul className="space-y-3 text-dental-muted mb-8">
-                  {(t('pricing.basicExam.features', { returnObjects: true }) as string[]).map((feature: string, idx: number) => (
+                  {(Array.isArray(t('pricing.basicExam.features', { returnObjects: true })) 
+                    ? t('pricing.basicExam.features', { returnObjects: true }) as string[]
+                    : ['Консультація лікаря', 'Огляд ротової порожнини', 'План лікування']
+                  ).map((feature: string, idx: number) => (
                     <li key={idx} className="flex items-center">
                       <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
                       {feature}
@@ -272,7 +275,10 @@ const Home = () => {
                   {t('pricing.professionalHygiene.price')}
                 </div>
                 <ul className="space-y-3 text-dental-muted mb-8">
-                  {(t('pricing.professionalHygiene.features', { returnObjects: true }) as string[]).map((feature: string, idx: number) => (
+                  {(Array.isArray(t('pricing.professionalHygiene.features', { returnObjects: true }))
+                    ? t('pricing.professionalHygiene.features', { returnObjects: true }) as string[]
+                    : ['Ультразвукове чищення', 'Полірування зубів', 'Фторування', 'Рекомендації по догляду']
+                  ).map((feature: string, idx: number) => (
                     <li key={idx} className="flex items-center">
                       <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
                       {feature}
@@ -298,7 +304,10 @@ const Home = () => {
                   {t('pricing.comprehensiveDiagnostics.price')}
                 </div>
                 <ul className="space-y-3 text-dental-muted mb-8">
-                  {(t('pricing.comprehensiveDiagnostics.features', { returnObjects: true }) as string[]).map((feature: string, idx: number) => (
+                  {(Array.isArray(t('pricing.comprehensiveDiagnostics.features', { returnObjects: true }))
+                    ? t('pricing.comprehensiveDiagnostics.features', { returnObjects: true }) as string[]
+                    : ['3D знімок щелеп', 'Детальна консультація', 'План лікування', 'Знижка 10% на лікування']
+                  ).map((feature: string, idx: number) => (
                     <li key={idx} className="flex items-center">
                       <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
                       {feature}
