@@ -108,7 +108,7 @@ const Home = () => {
               {t('home.features.title')}
             </span>
             <h2 id="features-heading" className="text-4xl lg:text-5xl font-bold text-dental-dark mb-6 leading-tight">
-              Чому пацієнти обирають нас
+              {t('home.features.title')}
             </h2>
             <p className="text-xl text-dental-muted max-w-3xl mx-auto leading-relaxed">
               {t('home.features.subtitle')}
@@ -147,10 +147,10 @@ const Home = () => {
               {t('navigation.services')}
             </span>
             <h2 id="services-heading" className="text-4xl lg:text-5xl font-bold text-dental-dark mb-6 leading-tight">
-              Повний спектр послуг
+              {t('home.services.title')}
             </h2>
             <p className="text-xl text-dental-muted max-w-3xl mx-auto leading-relaxed">
-              Від профілактики до складних операцій - все для здоров&#39;я вашої посмішки
+              {t('home.services.subtitle')}
             </p>
           </AnimatedSection>
 
@@ -223,7 +223,7 @@ const Home = () => {
               {t('pricing.title')}
             </span>
             <h2 id="pricing-heading" className="text-4xl lg:text-5xl font-bold text-dental-dark mb-6 leading-tight">
-              Прозоре ціноутворення
+              {t('home.pricing.title')}
             </h2>
             <p className="text-xl text-dental-muted max-w-3xl mx-auto leading-relaxed">
               {t('pricing.subtitle')}
