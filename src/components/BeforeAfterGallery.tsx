@@ -102,9 +102,9 @@ function ComparisonSlider({ beforeImage, afterImage }: { beforeImage: string; af
           className="w-full h-full object-cover"
           draggable={false}
         />
-        <div className="absolute top-4 right-4 bg-teal-500 text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1.5">
+        <div className="absolute top-4 right-4 bg-dental-primary-500 text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1.5">
           <Sparkles className="h-4 w-4" />
-          Після
+          {t('labels.after')}
         </div>
       </div>
 
@@ -120,8 +120,8 @@ function ComparisonSlider({ beforeImage, afterImage }: { beforeImage: string; af
           style={{ width: containerRef.current?.offsetWidth || '100%' }}
           draggable={false}
         />
-        <div className="absolute top-4 left-4 bg-slate-700 text-white px-3 py-1.5 rounded-full text-sm font-medium">
-          До
+        <div className="absolute top-4 left-4 bg-dental-primary-900 text-white px-3 py-1.5 rounded-full text-sm font-medium">
+          {t('labels.before')}
         </div>
       </div>
 
@@ -161,14 +161,14 @@ export default function BeforeAfterGallery() {
     <section ref={ref} className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <AnimatedSection isVisible={isVisible} className="text-center mb-16">
-          <span className="inline-block text-sm font-semibold text-teal-600 tracking-wider uppercase mb-4">
-            Результати
+          <span className="inline-block text-sm font-semibold text-dental-primary-600 tracking-wider uppercase mb-4">
+            {t('caseStudies.results')}
           </span>
-          <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6 leading-tight">
-            До та після лікування
+          <h2 className="text-4xl lg:text-5xl font-bold text-dental-dark mb-6 leading-tight">
+            {t('caseStudies.beforeAfter')}
           </h2>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-            Реальні результати наших пацієнтів. Перетягніть повзунок, щоб порівняти.
+          <p className="text-xl text-dental-muted max-w-3xl mx-auto leading-relaxed">
+            {t('caseStudies.description')}
           </p>
         </AnimatedSection>
 
@@ -185,19 +185,19 @@ export default function BeforeAfterGallery() {
               <div className="absolute -left-4 top-1/2 transform -translate-y-1/2 z-20">
                 <button
                   onClick={prevCase}
-                  className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-slate-50 transition-colors"
-                  aria-label="Попередній випадок"
+                  className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-dental-secondary-50 transition-colors"
+                  aria-label={t('accessibility.prevCase')}
                 >
-                  <ChevronLeft className="h-6 w-6 text-slate-700" />
+                  <ChevronLeft className="h-6 w-6 text-dental-dark" />
                 </button>
               </div>
               <div className="absolute -right-4 top-1/2 transform -translate-y-1/2 z-20">
                 <button
                   onClick={nextCase}
-                  className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-slate-50 transition-colors"
-                  aria-label="Наступний випадок"
+                  className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-dental-secondary-50 transition-colors"
+                  aria-label={t('accessibility.nextCase')}
                 >
-                  <ChevronRight className="h-6 w-6 text-slate-700" />
+                  <ChevronRight className="h-6 w-6 text-dental-dark" />
                 </button>
               </div>
             </div>
@@ -205,25 +205,25 @@ export default function BeforeAfterGallery() {
             {/* Case details */}
             <div className="lg:pl-8">
               <div className="mb-6">
-                <span className="inline-block bg-teal-50 text-teal-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
+                <span className="inline-block bg-dental-primary-50 text-dental-primary-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
                   {currentCase.treatment}
                 </span>
-                <h3 className="text-3xl font-bold text-slate-900 mb-3">
+                <h3 className="text-3xl font-bold text-dental-dark mb-3">
                   {currentCase.title}
                 </h3>
-                <p className="text-lg text-slate-600 leading-relaxed">
+                <p className="text-lg text-dental-muted leading-relaxed">
                   {currentCase.description}
                 </p>
               </div>
 
               <div className="flex items-center gap-8 mb-8">
                 <div>
-                  <p className="text-sm text-slate-500 mb-1">Тривалість лікування</p>
-                  <p className="text-xl font-bold text-slate-900">{currentCase.duration}</p>
+                  <p className="text-sm text-dental-muted mb-1">{t('caseStudies.duration')}</p>
+                  <p className="text-xl font-bold text-dental-dark">{currentCase.duration}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-slate-500 mb-1">Тип процедури</p>
-                  <p className="text-xl font-bold text-slate-900">{currentCase.treatment}</p>
+                  <p className="text-sm text-dental-muted mb-1">{t('caseStudies.procedureType')}</p>
+                  <p className="text-xl font-bold text-dental-dark">{currentCase.treatment}</p>
                 </div>
               </div>
 
@@ -235,10 +235,10 @@ export default function BeforeAfterGallery() {
                     onClick={() => setActiveCase(index)}
                     className={`w-3 h-3 rounded-full transition-all duration-300 ${
                       index === activeCase
-                        ? 'w-8 bg-teal-500'
-                        : 'bg-slate-300 hover:bg-slate-400'
+                        ? 'w-8 bg-dental-primary-500'
+                        : 'bg-dental-secondary-300 hover:bg-dental-secondary-400'
                     }`}
-                    aria-label={`Перейти до випадку ${index + 1}`}
+                    aria-label={`${t('accessibility.goToCase')} ${index + 1}`}
                   />
                 ))}
               </div>

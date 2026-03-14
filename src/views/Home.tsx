@@ -34,10 +34,10 @@ const typedImages = images as ImagesData
 // Dynamic imports for better code splitting - Testimonials is below the fold
 const Testimonials = dynamic(() => import('@/components/Testimonials'), {
   loading: () => (
-    <div className="py-20 bg-gray-50 animate-pulse">
+    <div className="py-20 bg-dental-secondary-50 animate-pulse">
       <div className="max-w-7xl mx-auto px-4 text-center">
-        <div className="h-8 bg-gray-200 rounded w-64 mx-auto mb-4"></div>
-        <div className="h-4 bg-gray-200 rounded w-96 mx-auto"></div>
+        <div className="h-8 bg-dental-secondary-200 rounded w-64 mx-auto mb-4"></div>
+        <div className="h-4 bg-dental-secondary-200 rounded w-96 mx-auto"></div>
       </div>
     </div>
   ),
@@ -101,16 +101,16 @@ const Home = () => {
       <HeroSection />
 
       {/* Features Section */}
-      <section ref={featuresRef} className="py-24 bg-gradient-to-b from-slate-50 to-white">
+      <section ref={featuresRef} role="region" aria-labelledby="features-heading" className="py-24 bg-gradient-to-b from-dental-secondary-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection isVisible={featuresVisible} className="text-center mb-16">
-            <span className="inline-block text-sm font-semibold text-teal-600 tracking-wider uppercase mb-4">
+            <span className="inline-block text-sm font-semibold text-dental-primary-600 tracking-wider uppercase mb-4">
               {t('home.features.title')}
             </span>
-            <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6 leading-tight">
+            <h2 id="features-heading" className="text-4xl lg:text-5xl font-bold text-dental-dark mb-6 leading-tight">
               Чому пацієнти обирають нас
             </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-dental-muted max-w-3xl mx-auto leading-relaxed">
               {t('home.features.subtitle')}
             </p>
           </AnimatedSection>
@@ -122,17 +122,17 @@ const Home = () => {
                 hoverEffect="lift"
                 delay={index * 100}
                 isVisible={featuresVisible}
-                className="text-center p-8 border border-slate-100"
+                className="text-center p-8 border border-dental-secondary-200"
               >
                 <div className="flex justify-center mb-6">
                   <div className="w-16 h-16 bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl flex items-center justify-center">
                     {feature.icon}
                   </div>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-3">
+                <h3 className="text-xl font-bold text-dental-dark mb-3">
                   {feature.title}
                 </h3>
-                <p className="text-slate-600 leading-relaxed">{feature.description}</p>
+                <p className="text-dental-muted leading-relaxed">{feature.description}</p>
               </AnimatedCard>
             ))}
           </div>
@@ -140,16 +140,16 @@ const Home = () => {
       </section>
 
       {/* Services Section */}
-      <section ref={servicesRef} className="py-24 bg-white">
+      <section ref={servicesRef} role="region" aria-labelledby="services-heading" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection isVisible={servicesVisible} className="text-center mb-16">
-            <span className="inline-block text-sm font-semibold text-teal-600 tracking-wider uppercase mb-4">
+            <span className="inline-block text-sm font-semibold text-dental-primary-600 tracking-wider uppercase mb-4">
               {t('navigation.services')}
             </span>
-            <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6 leading-tight">
+            <h2 id="services-heading" className="text-4xl lg:text-5xl font-bold text-dental-dark mb-6 leading-tight">
               Повний спектр послуг
             </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-dental-muted max-w-3xl mx-auto leading-relaxed">
               Від профілактики до складних операцій - все для здоров&#39;я вашої посмішки
             </p>
           </AnimatedSection>
@@ -165,7 +165,7 @@ const Home = () => {
                   hoverEffect="glow"
                   delay={index * 150}
                   isVisible={servicesVisible}
-                  className="overflow-hidden border border-slate-100 group"
+                  className="overflow-hidden border border-dental-secondary-200 group"
                 >
                   <div className="h-56 relative overflow-hidden">
                     <LazyImage
@@ -186,10 +186,10 @@ const Home = () => {
                     </div>
                   </div>
                   <div className="p-6">
-                    <p className="text-slate-600 mb-4 leading-relaxed">{service.description}</p>
+                    <p className="text-dental-muted mb-4 leading-relaxed">{service.description}</p>
                     <Link
                       href="/services"
-                      className="inline-flex items-center text-teal-600 hover:text-teal-700 font-semibold group/link"
+                      className="inline-flex items-center text-dental-primary-600 hover:text-dental-primary-700 font-semibold group/link"
                     >
                       {t('buttons.learnMore')}
                       <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/link:translate-x-1" />
@@ -203,7 +203,7 @@ const Home = () => {
           <AnimatedSection isVisible={servicesVisible} delay={600} className="text-center mt-12">
             <Link
               href="/services"
-              className="inline-flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-slate-900/20 hover:-translate-y-0.5"
+              className="inline-flex items-center gap-3 bg-dental-primary-900 hover:bg-dental-primary-800 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-dental-primary-900/20 hover:-translate-y-0.5"
             >
               {t('buttons.allServices')}
               <ArrowRight className="h-5 w-5" />
@@ -216,31 +216,31 @@ const Home = () => {
       <BeforeAfterGallery />
 
       {/* Pricing Section */}
-      <section ref={pricingRef} className="py-24 bg-gradient-to-b from-slate-50 to-white">
+      <section ref={pricingRef} role="region" aria-labelledby="pricing-heading" className="py-24 bg-gradient-to-b from-dental-secondary-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection isVisible={pricingVisible} className="text-center mb-16">
-            <span className="inline-block text-sm font-semibold text-teal-600 tracking-wider uppercase mb-4">
+            <span className="inline-block text-sm font-semibold text-dental-primary-600 tracking-wider uppercase mb-4">
               {t('pricing.title')}
             </span>
-            <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6 leading-tight">
+            <h2 id="pricing-heading" className="text-4xl lg:text-5xl font-bold text-dental-dark mb-6 leading-tight">
               Прозоре ціноутворення
             </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-dental-muted max-w-3xl mx-auto leading-relaxed">
               {t('pricing.subtitle')}
             </p>
           </AnimatedSection>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {/* Basic Package */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 relative hover:shadow-lg transition-shadow">
+            <div className="bg-white rounded-2xl shadow-sm border border-dental-secondary-200 p-8 relative hover:shadow-lg transition-shadow">
               <div className="text-center">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                <h3 className="text-2xl font-bold text-dental-dark mb-2">
                   {t('pricing.basicExam.title')}
                 </h3>
-                <div className="text-4xl font-bold text-teal-800 mb-6">
+                <div className="text-4xl font-bold text-dental-primary-700 mb-6">
                   {t('pricing.basicExam.price')}
                 </div>
-                <ul className="space-y-3 text-gray-600 mb-8">
+                <ul className="space-y-3 text-dental-muted mb-8">
                   {(t('pricing.basicExam.features', { returnObjects: true }) as string[]).map((feature: string, idx: number) => (
                     <li key={idx} className="flex items-center">
                       <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
@@ -250,7 +250,7 @@ const Home = () => {
                 </ul>
                 <Link
                   href="/booking"
-                  className="block w-full bg-gray-100 hover:bg-gray-200 text-gray-900 px-6 py-3 rounded-lg font-semibold transition-colors"
+                  className="block w-full bg-dental-secondary-100 hover:bg-dental-secondary-200 text-dental-dark px-6 py-3 rounded-lg font-semibold transition-colors"
                 >
                   {t('buttons.bookAppointment')}
                 </Link>
@@ -258,20 +258,20 @@ const Home = () => {
             </div>
 
             {/* Professional Package */}
-            <div className="bg-white rounded-2xl shadow-lg border-2 border-dental-teal p-8 relative transform scale-105 hover:shadow-xl transition-all">
+            <div className="bg-white rounded-2xl shadow-lg border-2 border-dental-primary-600 p-8 relative transform scale-105 hover:shadow-xl transition-all">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <span className="bg-teal-800 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                <span className="bg-dental-primary-700 text-white px-4 py-2 rounded-full text-sm font-semibold">
                   {t('pricing.professionalHygiene.popular')}
                 </span>
               </div>
               <div className="text-center">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                <h3 className="text-2xl font-bold text-dental-dark mb-2">
                   {t('pricing.professionalHygiene.title')}
                 </h3>
-                <div className="text-4xl font-bold text-teal-800 mb-6">
+                <div className="text-4xl font-bold text-dental-primary-700 mb-6">
                   {t('pricing.professionalHygiene.price')}
                 </div>
-                <ul className="space-y-3 text-gray-600 mb-8">
+                <ul className="space-y-3 text-dental-muted mb-8">
                   {(t('pricing.professionalHygiene.features', { returnObjects: true }) as string[]).map((feature: string, idx: number) => (
                     <li key={idx} className="flex items-center">
                       <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
@@ -281,7 +281,7 @@ const Home = () => {
                 </ul>
                 <Link
                   href="/booking"
-                  className="block w-full bg-teal-800 hover:bg-teal-900 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                  className="block w-full bg-dental-primary-700 hover:bg-dental-primary-800 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
                 >
                   {t('buttons.bookAppointment')}
                 </Link>
@@ -289,15 +289,15 @@ const Home = () => {
             </div>
 
             {/* Premium Package */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 relative hover:shadow-lg transition-shadow">
+            <div className="bg-white rounded-2xl shadow-sm border border-dental-secondary-200 p-8 relative hover:shadow-lg transition-shadow">
               <div className="text-center">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                <h3 className="text-2xl font-bold text-dental-dark mb-2">
                   {t('pricing.comprehensiveDiagnostics.title')}
                 </h3>
-                <div className="text-4xl font-bold text-teal-800 mb-6">
+                <div className="text-4xl font-bold text-dental-primary-700 mb-6">
                   {t('pricing.comprehensiveDiagnostics.price')}
                 </div>
-                <ul className="space-y-3 text-gray-600 mb-8">
+                <ul className="space-y-3 text-dental-muted mb-8">
                   {(t('pricing.comprehensiveDiagnostics.features', { returnObjects: true }) as string[]).map((feature: string, idx: number) => (
                     <li key={idx} className="flex items-center">
                       <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
@@ -307,7 +307,7 @@ const Home = () => {
                 </ul>
                 <Link
                   href="/booking"
-                  className="block w-full bg-gray-100 hover:bg-gray-200 text-gray-900 px-6 py-3 rounded-lg font-semibold transition-colors"
+                  className="block w-full bg-dental-secondary-100 hover:bg-dental-secondary-200 text-dental-dark px-6 py-3 rounded-lg font-semibold transition-colors"
                 >
                   {t('buttons.bookAppointment')}
                 </Link>
@@ -316,12 +316,12 @@ const Home = () => {
           </div>
 
           <div className="text-center mt-12">
-            <p className="text-gray-600 mb-4">
+            <p className="text-dental-muted mb-4">
               {t('pricing.disclaimer')}
             </p>
             <Link
               href="/services"
-              className="text-dental-teal hover:text-teal-600 font-semibold inline-flex items-center"
+              className="text-dental-teal hover:text-dental-primary-600 font-semibold inline-flex items-center"
             >
               {t('pricing.viewAllPrices')}
               <ArrowRight className="ml-1 h-4 w-4" />
@@ -337,25 +337,25 @@ const Home = () => {
       <Testimonials />
 
       {/* CTA Section */}
-      <section ref={ctaRef} className="py-24 bg-gradient-to-br from-slate-900 via-slate-800 to-teal-900 text-white relative overflow-hidden">
+      <section ref={ctaRef} role="region" aria-labelledby="cta-heading" className="py-24 bg-gradient-to-br from-dental-primary-900 via-dental-primary-800 to-dental-primary-950 text-white relative overflow-hidden">
         {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl" />
-          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl" />
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-dental-primary-500/10 rounded-full blur-3xl" />
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-dental-primary-500/10 rounded-full blur-3xl" />
         </div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <AnimatedSection isVisible={ctaVisible} animation="fadeUp">
-            <h2 className="text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+            <h2 id="cta-heading" className="text-4xl lg:text-5xl font-bold mb-6 leading-tight">
               {t('home.cta.title')}
             </h2>
-            <p className="text-xl text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xl text-dental-secondary mb-10 max-w-2xl mx-auto leading-relaxed">
               {t('home.cta.description')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/booking"
-                className="inline-flex items-center justify-center gap-3 bg-white hover:bg-slate-100 text-slate-900 px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-white/20 hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-3 bg-white hover:bg-slate-100 text-dental-dark px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-white/20 hover:-translate-y-0.5"
               >
                 {t('buttons.bookAppointment')}
                 <ArrowRight className="h-5 w-5" />
