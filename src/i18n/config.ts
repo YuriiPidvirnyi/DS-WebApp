@@ -69,25 +69,25 @@ i18n.on('languageChanged', async (lng: string) => {
 /**
  * Initialize language detection AFTER hydration.
  * This prevents hydration mismatch by ensuring SSR and initial client render
- * both use 'uk', then we switch to the user's preferred language.
+ * both use 'uk', then we switch to the user's preferred language if they've chosen one.
+ * 
+ * Only respects stored language preference (localStorage), not browser language.
+ * Default is always Ukrainian.
  */
 export function initializeLanguage() {
   if (!isBrowser) return
 
-  // Check localStorage first, then navigator
+  // Check localStorage for explicit language choice
+  // Only load other languages if user has previously selected them
   const storedLng = localStorage.getItem('i18nextLng')
-  const browserLng = navigator.language?.split('-')[0]
   
-  const detectedLng = storedLng || 
-    (['uk', 'en', 'pl'].includes(browserLng) ? browserLng : null)
-
-  if (detectedLng && detectedLng !== 'uk') {
-    // Load the language bundle and switch
-    const loader = lazyLocaleLoaders[detectedLng]
+  if (storedLng && storedLng !== 'uk' && ['en', 'pl'].includes(storedLng)) {
+    // Load the language bundle and switch only if user explicitly chose it before
+    const loader = lazyLocaleLoaders[storedLng]
     if (loader) {
       loader().then(mod => {
-        i18n.addResourceBundle(detectedLng, 'translation', mod.default, true, true)
-        i18n.changeLanguage(detectedLng)
+        i18n.addResourceBundle(storedLng, 'translation', mod.default, true, true)
+        i18n.changeLanguage(storedLng)
       })
     }
   }
