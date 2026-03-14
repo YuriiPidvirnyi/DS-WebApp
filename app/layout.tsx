@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Nunito, Roboto } from 'next/font/google'
+import { Nunito, Rubik } from 'next/font/google'
 import Script from 'next/script'
 import { headers } from 'next/headers'
 import { Analytics } from '@vercel/analytics/next'
@@ -20,11 +20,11 @@ const nunito = Nunito({
   display: 'swap',
 })
 
-// Roboto - чистий шрифт для основного тексту з повною Cyrillic підтримкою
-const roboto = Roboto({
+// Rubik - м'який заокруглений шрифт для основного тексту з повною Cyrillic підтримкою
+const rubik = Rubik({
   subsets: ['latin', 'cyrillic'],
-  weight: ['300', '400', '500', '700'],
-  variable: '--font-roboto',
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-rubik',
   display: 'swap',
 })
 
@@ -92,7 +92,7 @@ export default async function RootLayout({
   const nonce = (await headers()).get('x-nonce') ?? ''
 
   return (
-    <html lang="uk" className={`${nunito.variable} ${roboto.variable}`} data-scroll-behavior="smooth">
+    <html lang="uk" className={`${nunito.variable} ${rubik.variable}`} data-scroll-behavior="smooth">
       <body>
         {/* Organization JSON-LD structured data (server-rendered) */}
         <StructuredData type="organization" />

@@ -64,7 +64,7 @@ export default {
       fontFamily: {
         sans: ['var(--font-nunito)', 'Nunito', 'system-ui', 'sans-serif'],
         heading: ['var(--font-nunito)', 'Nunito', 'system-ui', 'sans-serif'],
-        body: ['var(--font-roboto)', 'Roboto', 'system-ui', 'sans-serif'],
+        body: ['var(--font-rubik)', 'Rubik', 'system-ui', 'sans-serif'],
       },
       fontWeight: {
         light: '300',
