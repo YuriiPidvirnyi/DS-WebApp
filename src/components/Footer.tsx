@@ -31,27 +31,27 @@ const Footer = memo(() => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-dental-secondary hover:text-dental-primary transition-colors text-sm"
-                aria-label="Facebook"
+                aria-label={t('social.facebook')}
               >
-                Facebook
+                {t('social.facebook')}
               </a>
               <a
                 href={CONTACT_INFO.social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-dental-secondary hover:text-dental-primary transition-colors text-sm"
-                aria-label="Instagram"
+                aria-label={t('social.instagram')}
               >
-                Instagram
+                {t('social.instagram')}
               </a>
               <a
                 href={CONTACT_INFO.social.telegram}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-dental-secondary hover:text-dental-primary transition-colors text-sm"
-                aria-label="Telegram"
+                aria-label={t('social.telegram')}
               >
-                Telegram
+                {t('social.telegram')}
               </a>
             </div>
           </div>

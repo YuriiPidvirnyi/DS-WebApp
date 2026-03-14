@@ -8,6 +8,11 @@
     "privacyPolicy": "Політика конфіденційності",
     "termsOfService": "Умови використання"
   },
+  "social": {
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "telegram": "Telegram"
+  },
   "common": {
     "phone": "Телефон",
     "email": "Email",
