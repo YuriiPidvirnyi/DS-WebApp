@@ -113,10 +113,10 @@ export default function ChatWidget() {
   if (!mounted) {
     return (
       <button
-        className="fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full shadow-lg shadow-teal-500/30 flex items-center justify-center text-white"
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-gradient-to-br from-dental-primary-500 to-dental-primary-600 rounded-full shadow-lg shadow-dental-primary-500/30 flex items-center justify-center text-white"
         aria-label="Відкрити чат"
       >
-        <MessageCircle className="h-7 w-7" />
+        <MessageCircle className="h-6 w-6" />
       </button>
     )
   }
@@ -126,26 +126,24 @@ export default function ChatWidget() {
       {/* Chat bubble button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full shadow-lg shadow-teal-500/30 flex items-center justify-center text-white hover:from-teal-600 hover:to-teal-700 transition-all duration-300 hover:scale-105 ${
+        className={`fixed bottom-6 right-6 z-50 w-14 h-14 bg-gradient-to-br from-dental-primary-500 to-dental-primary-600 rounded-full shadow-lg shadow-dental-primary-500/30 flex items-center justify-center text-white hover:from-dental-primary-600 hover:to-dental-primary-700 transition-all duration-300 hover:scale-105 ${
           isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'
         }`}
         aria-label="Відкрити чат"
       >
-        <MessageCircle className="h-7 w-7" />
-        {/* Notification dot */}
-        <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full border-2 border-white animate-pulse" />
+        <MessageCircle className="h-6 w-6" />
       </button>
 
       {/* Chat window */}
       <div
-        className={`fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] bg-white rounded-2xl shadow-2xl shadow-slate-200/50 border border-slate-200 overflow-hidden transition-all duration-300 ${
+        className={`fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] bg-white rounded-2xl shadow-2xl shadow-dental-secondary-200/50 border border-dental-secondary-200 overflow-hidden transition-all duration-300 ${
           isOpen
             ? 'opacity-100 translate-y-0 scale-100'
             : 'opacity-0 translate-y-4 scale-95 pointer-events-none'
         }`}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-teal-600 to-teal-500 text-white p-4">
+        <div className="bg-gradient-to-r from-dental-primary-600 to-dental-primary-500 text-white p-4">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
@@ -177,7 +175,7 @@ export default function ChatWidget() {
         </div>
 
         {/* Messages */}
-        <div className="h-80 overflow-y-auto p-4 space-y-4 bg-slate-50">
+        <div className="h-80 overflow-y-auto p-4 space-y-4 bg-dental-secondary-50">
           {messages.map((message) => (
             <div
               key={message.id}
@@ -186,14 +184,14 @@ export default function ChatWidget() {
               <div
                 className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                   message.type === 'user'
-                    ? 'bg-teal-500 text-white rounded-br-md'
-                    : 'bg-white text-slate-700 shadow-sm rounded-bl-md'
+                    ? 'bg-dental-primary-500 text-white rounded-br-md'
+                    : 'bg-white text-dental-dark shadow-sm rounded-bl-md'
                 }`}
               >
                 <p className="text-sm whitespace-pre-line">{message.text}</p>
                 <p
                   className={`text-xs mt-1 ${
-                    message.type === 'user' ? 'text-white/60' : 'text-slate-400'
+                    message.type === 'user' ? 'text-white/60' : 'text-dental-muted'
                   }`}
                 >
                   {formatTime(message.timestamp)}
@@ -205,11 +203,11 @@ export default function ChatWidget() {
           {/* Typing indicator */}
           {isTyping && (
             <div className="flex justify-start">
-              <div className="bg-white text-slate-700 shadow-sm rounded-2xl rounded-bl-md px-4 py-3">
+              <div className="bg-white text-dental-dark shadow-sm rounded-2xl rounded-bl-md px-4 py-3">
                 <div className="flex items-center gap-1">
-                  <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  <span className="w-2 h-2 bg-dental-muted rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-2 h-2 bg-dental-muted rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-2 h-2 bg-dental-muted rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
               </div>
             </div>
@@ -220,14 +218,14 @@ export default function ChatWidget() {
 
         {/* Quick replies */}
         {messages.length < 3 && (
-          <div className="p-3 bg-white border-t border-slate-100">
-            <p className="text-xs text-slate-500 mb-2">Швидкі відповіді:</p>
+          <div className="p-3 bg-white border-t border-dental-secondary-100">
+            <p className="text-xs text-dental-muted mb-2">Швидкі відповіді:</p>
             <div className="flex flex-wrap gap-2">
               {quickReplies.map((reply) => (
                 <button
                   key={reply.action}
                   onClick={() => handleQuickReply(reply.action)}
-                  className="text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full transition-colors"
+                  className="text-sm bg-dental-secondary-100 hover:bg-dental-secondary-200 text-dental-dark px-3 py-1.5 rounded-full transition-colors"
                 >
                   {reply.text}
                 </button>
@@ -237,7 +235,7 @@ export default function ChatWidget() {
         )}
 
         {/* Input */}
-        <div className="p-3 bg-white border-t border-slate-100">
+        <div className="p-3 bg-white border-t border-dental-secondary-100">
           <div className="flex items-center gap-2">
             <input
               ref={inputRef}
@@ -246,12 +244,12 @@ export default function ChatWidget() {
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Напишіть повідомлення..."
-              className="flex-1 bg-slate-100 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="flex-1 bg-dental-secondary-100 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
             />
             <button
               onClick={handleSend}
               disabled={!inputValue.trim()}
-              className="w-10 h-10 bg-teal-500 hover:bg-teal-600 disabled:bg-slate-300 text-white rounded-full flex items-center justify-center transition-colors"
+              className="w-10 h-10 bg-dental-primary-500 hover:bg-dental-primary-600 disabled:bg-dental-secondary-300 text-white rounded-full flex items-center justify-center transition-colors"
               aria-label="Надіслати"
             >
               <Send className="h-5 w-5" />

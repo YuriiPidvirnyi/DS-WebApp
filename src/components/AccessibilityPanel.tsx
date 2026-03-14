@@ -53,7 +53,7 @@ export function AccessibilityPanel() {
 
   return (
     <div
-      className="fixed bottom-6 right-6 z-40"
+      className="fixed bottom-6 left-6 z-40"
       role="region"
       aria-label="Налаштування доступності"
     >
@@ -65,7 +65,7 @@ export function AccessibilityPanel() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="a11y-panel-title"
-          className="absolute bottom-16 right-0 w-72 bg-white rounded-2xl shadow-2xl border border-dental-secondary-200 overflow-hidden"
+          className="absolute bottom-16 left-0 w-72 bg-white rounded-2xl shadow-2xl border border-dental-secondary-200 overflow-hidden"
         >
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-dental-secondary-200 bg-dental-primary-50">

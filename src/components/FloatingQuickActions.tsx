@@ -32,20 +32,20 @@ export default function FloatingQuickActions() {
 
   return (
     <div
-      className="fixed z-50 right-4 bottom-4 md:right-6 md:bottom-6"
+      className="fixed z-50 left-4 bottom-20 md:left-6 md:bottom-20"
       aria-live="polite"
     >
       {/* Panel */}
       {open && (
         <div
-          className="mb-3 rounded-xl shadow-lg bg-white border border-gray-200 p-3 w-64"
+          className="mb-3 rounded-xl shadow-lg bg-white border border-dental-secondary-200 p-3 w-64"
           role="dialog"
           aria-label="Швидкі дії"
         >
           <div className="space-y-2">
             <a
               href={links.tel}
-              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-900"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-dental-secondary-50 text-dental-dark"
               data-track-id="quick_call"
               data-track-category="navigation"
               data-track-label="floating_call"
@@ -53,7 +53,7 @@ export default function FloatingQuickActions() {
               <Phone className="h-5 w-5 text-dental-teal" />
               <div>
                 <div className="text-sm font-medium">Подзвонити</div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-dental-muted">
                   {CONTACT_INFO.phone}
                 </div>
               </div>
@@ -63,7 +63,7 @@ export default function FloatingQuickActions() {
               href={links.tg}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-900"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-dental-secondary-50 text-dental-dark"
               data-track-id="quick_telegram"
               data-track-category="navigation"
               data-track-label="floating_telegram"
@@ -71,13 +71,13 @@ export default function FloatingQuickActions() {
               <Send className="h-5 w-5 text-dental-teal" />
               <div>
                 <div className="text-sm font-medium">Написати в Telegram</div>
-                <div className="text-xs text-gray-500">Відповімо швидко</div>
+                <div className="text-xs text-dental-muted">Відповімо швидко</div>
               </div>
             </a>
 
             <a
               href={links.viber}
-              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-900"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-dental-secondary-50 text-dental-dark"
               data-track-id="quick_viber"
               data-track-category="navigation"
               data-track-label="floating_viber"
@@ -85,7 +85,7 @@ export default function FloatingQuickActions() {
               <MessageCircle className="h-5 w-5 text-dental-teal" />
               <div>
                 <div className="text-sm font-medium">Написати у Viber</div>
-                <div className="text-xs text-gray-500">Зручне листування</div>
+                <div className="text-xs text-dental-muted">Зручне листування</div>
               </div>
             </a>
 
@@ -93,7 +93,7 @@ export default function FloatingQuickActions() {
               href={links.maps}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-900"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-dental-secondary-50 text-dental-dark"
               data-track-id="quick_directions"
               data-track-category="navigation"
               data-track-label="floating_directions"
@@ -101,7 +101,7 @@ export default function FloatingQuickActions() {
               <Navigation className="h-5 w-5 text-dental-teal" />
               <div>
                 <div className="text-sm font-medium">Маршрут до клініки</div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-dental-muted">
                   Відкрити в Google Maps
                 </div>
               </div>
@@ -109,7 +109,7 @@ export default function FloatingQuickActions() {
 
             <a
               href="/booking"
-              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-dental-teal/10 bg-dental-teal/5 text-gray-900 border border-dental-teal/20"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-dental-teal/10 bg-dental-teal/5 text-dental-dark border border-dental-teal/20"
               data-track-id="quick_booking"
               data-track-category="navigation"
               data-track-label="floating_booking"
@@ -117,18 +117,18 @@ export default function FloatingQuickActions() {
               <Calendar className="h-5 w-5 text-dental-teal" />
               <div>
                 <div className="text-sm font-medium">Записатися на прийом</div>
-                <div className="text-xs text-gray-500">Онлайн-запис</div>
+                <div className="text-xs text-dental-muted">Онлайн-запис</div>
               </div>
             </a>
 
-            <div className="border-t border-gray-200 my-2"></div>
+            <div className="border-t border-dental-secondary-200 my-2"></div>
 
             <div className="flex items-center justify-around px-3 py-2">
               <a
                 href={links.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 hover:text-pink-500 transition-colors"
+                className="p-2 rounded-lg hover:bg-dental-secondary-100 text-dental-muted hover:text-pink-500 transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram className="h-5 w-5" />
@@ -137,7 +137,7 @@ export default function FloatingQuickActions() {
                 href={links.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 hover:text-blue-600 transition-colors"
+                className="p-2 rounded-lg hover:bg-dental-secondary-100 text-dental-muted hover:text-blue-600 transition-colors"
                 aria-label="Facebook"
               >
                 <Facebook className="h-5 w-5" />
@@ -153,7 +153,7 @@ export default function FloatingQuickActions() {
         aria-expanded={open}
         aria-label={open ? 'Закрити швидкі дії' : 'Відкрити швидкі дії'}
         onClick={() => setOpen(v => !v)}
-        className="rounded-full shadow-lg bg-teal-800 hover:bg-teal-900 text-white w-14 h-14 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-800"
+        className="rounded-full shadow-lg bg-dental-primary-800 hover:bg-dental-primary-900 text-white w-14 h-14 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-800"
         data-track-id="quick_actions_toggle"
         data-track-category="engagement"
       >
