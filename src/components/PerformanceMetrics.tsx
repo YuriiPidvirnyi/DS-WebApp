@@ -17,13 +17,14 @@ export default function PerformanceMetrics() {
   const reportWebVitals = useCallback(async (metric: WebVitalsMetric) => {
     // Log to console in development (only poor metrics)
     if (process.env.NODE_ENV !== "production") {
+      // Higher thresholds for dev mode - compilation adds significant overhead
       const thresholds: Record<string, number> = {
-        LCP: 2500,
-        FID: 100,
-        CLS: 0.1,
-        FCP: 1800,
-        TTFB: 5000, // Higher threshold for dev/test server (already inside non-production block)
-        INP: 200,
+        LCP: 4000,
+        FID: 200,
+        CLS: 0.25,
+        FCP: 5000, // Dev server is slow due to on-the-fly compilation
+        TTFB: 8000, // Higher threshold for dev/test server
+        INP: 400,
       }
       const threshold = thresholds[metric.name]
       if (threshold && metric.value > threshold * 1.5) {
