@@ -86,15 +86,9 @@ export default function LanguageSwitcher({
     }
   }, [isOpen])
 
-  // Show skeleton until mounted to prevent hydration mismatch
-  if (!isMounted) {
-    return (
-      <div className={`flex items-center gap-2 px-3 py-2 ${className}`}>
-        <Globe className="w-4 h-4 text-dental-muted" />
-        <span className="w-16 h-4 bg-dental-secondary-100 rounded animate-pulse" />
-      </div>
-    )
-  }
+  // Default language for SSR - always use 'uk' to match server
+  const defaultLang = languages[0]
+  const displayLang = isMounted ? currentLanguage : defaultLang
 
   if (variant === 'inline') {
     return (
@@ -104,12 +98,12 @@ export default function LanguageSwitcher({
             <button
               onClick={() => handleLanguageChange(lang.code)}
               className={`px-2 py-1 text-sm font-medium rounded transition-colors ${
-                lang.code === i18n.language
+                lang.code === displayLang.code
                   ? 'text-dental-primary-600 bg-dental-primary-50'
                   : 'text-dental-muted hover:text-dental-primary-600 hover:bg-dental-secondary-50'
               }`}
               aria-label={`Switch to ${lang.name}`}
-              aria-current={lang.code === i18n.language ? 'true' : undefined}
+              aria-current={lang.code === displayLang.code ? 'true' : undefined}
             >
               {showFlag && <span className="mr-1">{lang.flag}</span>}
               {lang.code.toUpperCase()}
@@ -133,9 +127,9 @@ export default function LanguageSwitcher({
         aria-label="Select language"
       >
         <Globe className="w-4 h-4" />
-        {showFlag && <span>{currentLanguage.flag}</span>}
+        {showFlag && <span>{displayLang.flag}</span>}
         <span className="hidden sm:inline">
-          {showNativeName ? currentLanguage.nativeName : currentLanguage.code.toUpperCase()}
+          {showNativeName ? displayLang.nativeName : displayLang.code.toUpperCase()}
         </span>
         <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
@@ -151,21 +145,21 @@ export default function LanguageSwitcher({
               key={lang.code}
               onClick={() => handleLanguageChange(lang.code)}
               className={`w-full flex items-center justify-between px-4 py-2.5 text-left hover:bg-dental-secondary-50 transition-colors ${
-                lang.code === i18n.language ? 'bg-dental-primary-50' : ''
+                lang.code === displayLang.code ? 'bg-dental-primary-50' : ''
               }`}
               role="option"
-              aria-selected={lang.code === i18n.language}
+              aria-selected={lang.code === displayLang.code}
             >
               <div className="flex items-center gap-3">
                 <span className="text-lg">{lang.flag}</span>
                 <div>
-                  <div className={`font-medium ${lang.code === i18n.language ? 'text-dental-primary-600' : 'text-dental-dark'}`}>
+                  <div className={`font-medium ${lang.code === displayLang.code ? 'text-dental-primary-600' : 'text-dental-dark'}`}>
                     {lang.nativeName}
                   </div>
                   <div className="text-xs text-dental-muted">{lang.name}</div>
                 </div>
               </div>
-              {lang.code === i18n.language && (
+              {lang.code === displayLang.code && (
                 <Check className="w-4 h-4 text-dental-primary-600" />
               )}
             </button>
