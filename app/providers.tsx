@@ -78,16 +78,6 @@ export default function ClientProviders({ children }: ClientProvidersProps) {
             </DraggableWrapper>
             <AppInitializer />
             {children}
-            {/* Floating quick actions */}
-            <DraggableWrapper
-              storageKey="fab-quick-actions-v2"
-              label="Швидкі дії"
-              className="fixed bottom-24 left-6 z-50"
-            >
-              <FloatingQuickActions />
-            </DraggableWrapper>
-            {/* Drag mode toggle button */}
-            <DragModeToggle />
           </DragModeProvider>
         </AccessibilityProvider>
       </ErrorBoundary>
