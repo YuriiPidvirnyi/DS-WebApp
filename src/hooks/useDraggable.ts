@@ -39,8 +39,6 @@ export function useDraggable({ storageKey, enabled }: UseDraggableOptions) {
     }
   }, [storageKey])
 
-
-
   const startDrag = useCallback((clientX: number, clientY: number) => {
     if (!enabled || !elementRef.current) return
 
