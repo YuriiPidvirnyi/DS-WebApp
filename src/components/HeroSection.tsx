@@ -82,14 +82,7 @@ export default function HeroSection() {
   return (
     <section className="relative min-h-[95vh] flex items-center overflow-hidden bg-white">
       {/* Subtle background pattern */}
-      <div className="absolute inset-0 opacity-40 pointer-events-none">
-        <div 
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at 20% 50%, rgba(94, 156, 160, 0.08) 0%, transparent 50%),
-                              radial-gradient(circle at 80% 80%, rgba(94, 156, 160, 0.05) 0%, transparent 50%)`,
-          }}
-        />
+      <div className="absolute inset-0 opacity-40 pointer-events-none bg-gradient-radial-dental">
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
