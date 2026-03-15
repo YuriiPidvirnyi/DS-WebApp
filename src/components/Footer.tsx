@@ -3,14 +3,14 @@
 import { memo } from 'react'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
-import { Phone, Mail, MapPin, Facebook, Instagram, Send } from 'lucide-react'
+import { Phone, Mail, MapPin, Clock, Facebook, Instagram, Send } from 'lucide-react'
 import { CONTACT_INFO, SITE_INFO } from '@/utils/constants'
 import NewsletterSubscribe from '@/components/NewsletterSubscribe'
 import Logo from '@/components/ui/Logo'
 
 const Footer = memo(() => {
   const { t } = useTranslation()
-  
+
   const navLinks = [
     { href: '/', label: t('navigation.home') },
     { href: '/services', label: t('navigation.services') },
@@ -21,25 +21,63 @@ const Footer = memo(() => {
 
   return (
     <footer className="bg-dental-primary-900 text-white" role="contentinfo">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Main grid: 4 equal columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-          
-          {/* Column 1: Logo & Socials */}
-          <div>
-            <div className="mb-6">
-              <Logo variant="white" size="sm" />
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-14">
+        {/*
+          Layout: 3 columns
+          Left  (5/12) — Logo, description, socials, contact
+          Mid   (3/12) — Navigation + Working hours
+          Right (4/12) — Newsletter CTA
+        */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8">
+
+          {/* LEFT — Brand + Contact */}
+          <div className="lg:col-span-5 flex flex-col gap-8">
+            {/* Logo + description */}
+            <div>
+              <div className="mb-4">
+                <Logo variant="white" size="sm" />
+              </div>
+              <p className="text-white/60 text-sm leading-relaxed max-w-sm">
+                {SITE_INFO.description}
+              </p>
             </div>
-            <p className="text-dental-secondary/75 text-sm leading-relaxed mb-8">
-              {SITE_INFO.description}
-            </p>
-            <div className="flex items-center gap-3">
+
+            {/* Contact details */}
+            <ul className="space-y-3">
+              <li>
+                <a
+                  href={`tel:${CONTACT_INFO.phoneRaw}`}
+                  className="flex items-center gap-3 text-white/70 hover:text-white transition-colors text-sm group"
+                >
+                  <Phone className="w-4 h-4 flex-shrink-0 text-dental-primary-400 group-hover:text-dental-primary-300" />
+                  {CONTACT_INFO.phone}
+                </a>
+              </li>
+              <li>
+                <a
+                  href={`mailto:${CONTACT_INFO.email}`}
+                  className="flex items-center gap-3 text-white/70 hover:text-white transition-colors text-sm group"
+                >
+                  <Mail className="w-4 h-4 flex-shrink-0 text-dental-primary-400 group-hover:text-dental-primary-300" />
+                  {CONTACT_INFO.email}
+                </a>
+              </li>
+              <li className="flex items-start gap-3 text-sm text-white/70">
+                <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5 text-dental-primary-400" />
+                <address className="not-italic leading-relaxed">
+                  {CONTACT_INFO.address.street}, {CONTACT_INFO.address.city}, {CONTACT_INFO.address.postalCode}
+                </address>
+              </li>
+            </ul>
+
+            {/* Social links */}
+            <div className="flex items-center gap-2">
               <a
                 href={CONTACT_INFO.social.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-white/15 hover:bg-dental-primary-500 flex items-center justify-center transition-colors"
                 aria-label="Facebook"
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-dental-primary-500 flex items-center justify-center transition-colors"
               >
                 <Facebook className="w-4 h-4" />
               </a>
@@ -47,8 +85,8 @@ const Footer = memo(() => {
                 href={CONTACT_INFO.social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-white/15 hover:bg-dental-primary-500 flex items-center justify-center transition-colors"
                 aria-label="Instagram"
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-dental-primary-500 flex items-center justify-center transition-colors"
               >
                 <Instagram className="w-4 h-4" />
               </a>
@@ -56,124 +94,104 @@ const Footer = memo(() => {
                 href={CONTACT_INFO.social.telegram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-white/15 hover:bg-dental-primary-500 flex items-center justify-center transition-colors"
                 aria-label="Telegram"
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-dental-primary-500 flex items-center justify-center transition-colors"
               >
                 <Send className="w-4 h-4" />
               </a>
             </div>
           </div>
 
-          {/* Column 2: Navigation */}
-          <div>
-            <h4 className="font-semibold text-white mb-6 text-base">Навігація</h4>
-            <nav aria-label={t('accessibility.siteNavigation')}>
-              <ul className="space-y-3">
-                {navLinks.map(link => (
-                  <li key={link.href}>
+          {/* MIDDLE — Navigation + Hours */}
+          <div className="lg:col-span-3 flex flex-col gap-8">
+            {/* Navigation */}
+            <div>
+              <h4 className="text-white font-semibold text-sm mb-4">Навігація</h4>
+              <nav aria-label={t('accessibility.siteNavigation')}>
+                <ul className="space-y-2.5">
+                  {navLinks.map(link => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="text-white/60 hover:text-white transition-colors text-sm"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                  <li>
                     <Link
-                      href={link.href}
-                      className="text-dental-secondary/75 hover:text-white transition-colors text-sm"
+                      href="/symptom-checker"
+                      className="text-white/60 hover:text-white transition-colors text-sm inline-flex items-center gap-2"
                     >
-                      {link.label}
+                      {t('ai.symptomChecker.title')}
+                      <span className="text-[10px] bg-dental-primary-500 text-white px-1.5 py-0.5 rounded font-semibold leading-none">
+                        AI
+                      </span>
                     </Link>
                   </li>
-                ))}
-                <li>
-                  <Link
-                    href="/symptom-checker"
-                    className="text-dental-secondary/75 hover:text-white transition-colors text-sm inline-flex items-center gap-2"
-                  >
-                    {t('ai.symptomChecker.title')}
-                    <span className="text-[10px] bg-dental-primary-500 text-white px-1.5 py-0.5 rounded font-semibold">
-                      AI
-                    </span>
-                  </Link>
+                </ul>
+              </nav>
+            </div>
+
+            {/* Working hours */}
+            <div>
+              <h4 className="text-white font-semibold text-sm mb-4 flex items-center gap-2">
+                <Clock className="w-4 h-4 text-dental-primary-400" />
+                Режим роботи
+              </h4>
+              <ul className="space-y-2 text-sm">
+                <li className="flex justify-between gap-4">
+                  <span className="text-white/50">Пн–Пт</span>
+                  <span className="text-white/80 font-medium tabular-nums">{CONTACT_INFO.workingHours.weekdays.replace('Пн-Пт: ', '')}</span>
+                </li>
+                <li className="flex justify-between gap-4">
+                  <span className="text-white/50">Сб</span>
+                  <span className="text-white/80 font-medium tabular-nums">{CONTACT_INFO.workingHours.saturday.replace('Сб: ', '')}</span>
+                </li>
+                <li className="flex justify-between gap-4">
+                  <span className="text-white/50">Нд</span>
+                  <span className="text-white/50 font-medium">{CONTACT_INFO.workingHours.sunday.replace('Нд: ', '')}</span>
                 </li>
               </ul>
-            </nav>
+            </div>
           </div>
 
-          {/* Column 3: Contact Info */}
-          <div>
-            <h4 className="font-semibold text-white mb-6 text-base">Контакти</h4>
-            <ul className="space-y-4">
-              <li>
-                <a
-                  href={`tel:${CONTACT_INFO.phoneRaw}`}
-                  className="flex items-center gap-3 text-dental-secondary/75 hover:text-white transition-colors group text-sm"
-                >
-                  <Phone className="w-4 h-4 group-hover:text-dental-primary-400 flex-shrink-0" />
-                  <span>{CONTACT_INFO.phone}</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`mailto:${CONTACT_INFO.email}`}
-                  className="flex items-center gap-3 text-dental-secondary/75 hover:text-white transition-colors group text-sm"
-                >
-                  <Mail className="w-4 h-4 group-hover:text-dental-primary-400 flex-shrink-0" />
-                  <span className="break-all">{CONTACT_INFO.email}</span>
-                </a>
-              </li>
-              <li className="flex items-start gap-3 text-sm">
-                <MapPin className="w-4 h-4 text-dental-secondary/75 flex-shrink-0 mt-0.5" />
-                <address className="text-dental-secondary/75 not-italic leading-relaxed">
-                  {CONTACT_INFO.address.street}<br />
-                  {CONTACT_INFO.address.city}<br />
-                  {CONTACT_INFO.address.postalCode}
-                </address>
-              </li>
-            </ul>
+          {/* RIGHT — Newsletter */}
+          <div className="lg:col-span-4">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 h-full flex flex-col justify-center">
+              <h4 className="text-white font-semibold text-base mb-2">
+                Будьте в курсі новин
+              </h4>
+              <p className="text-white/60 text-sm leading-relaxed mb-6">
+                Отримуйте акції, поради лікарів та новини клініки прямо на пошту.
+              </p>
+              <NewsletterSubscribe />
+            </div>
           </div>
 
-          {/* Column 4: Hours */}
-          <div>
-            <h4 className="font-semibold text-white mb-6 text-base">Режим роботи</h4>
-            <ul className="space-y-3 text-sm">
-              <li>
-                <div className="text-dental-secondary/60 text-xs font-medium mb-1">Пн-Пт</div>
-                <div className="text-dental-secondary/80">{CONTACT_INFO.workingHours.weekdays}</div>
-              </li>
-              <li>
-                <div className="text-dental-secondary/60 text-xs font-medium mb-1">Сб</div>
-                <div className="text-dental-secondary/80">{CONTACT_INFO.workingHours.saturday}</div>
-              </li>
-              <li>
-                <div className="text-dental-secondary/60 text-xs font-medium mb-1">Нд</div>
-                <div className="text-dental-secondary/70">{CONTACT_INFO.workingHours.sunday}</div>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Newsletter */}
-        <div className="pt-12 border-t border-white/10">
-          <h4 className="font-semibold text-white mb-3 text-base">Підписка на новини</h4>
-          <p className="text-dental-secondary/75 text-sm mb-6 max-w-md">
-            Отримуйте акції та корисні поради від наших лікарів
-          </p>
-          <div className="max-w-md">
-            <NewsletterSubscribe />
-          </div>
         </div>
       </div>
 
-      {/* Bottom */}
-      <div className="border-t border-white/10 bg-black/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm">
-            <p className="text-dental-secondary/60">
-              {t('footer.copyright')}
-            </p>
-            <div className="flex items-center gap-6 text-dental-secondary/60 text-xs">
-              <Link href="/privacy-policy" className="hover:text-white transition-colors">
-                {t('navigation.privacyPolicy')}
-              </Link>
-              <Link href="/terms-of-service" className="hover:text-white transition-colors">
-                {t('navigation.termsOfService')}
-              </Link>
-            </div>
+      {/* Bottom bar */}
+      <div className="border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-white/40 text-xs">
+            {t('footer.copyright')}
+          </p>
+          <div className="flex items-center gap-5">
+            <Link
+              href="/privacy-policy"
+              className="text-white/40 hover:text-white/80 text-xs transition-colors"
+            >
+              {t('navigation.privacyPolicy')}
+            </Link>
+            <Link
+              href="/terms-of-service"
+              className="text-white/40 hover:text-white/80 text-xs transition-colors"
+            >
+              {t('navigation.termsOfService')}
+            </Link>
           </div>
         </div>
       </div>
