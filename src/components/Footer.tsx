@@ -3,7 +3,7 @@
 import { memo } from 'react'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
-import { Phone, Mail, MapPin, Clock, Facebook, Instagram, Send } from 'lucide-react'
+import { Phone, Mail, MapPin, Facebook, Instagram, Send } from 'lucide-react'
 import { CONTACT_INFO, SITE_INFO } from '@/utils/constants'
 import NewsletterSubscribe from '@/components/NewsletterSubscribe'
 import Logo from '@/components/ui/Logo'
