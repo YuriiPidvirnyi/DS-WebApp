@@ -21,56 +21,18 @@ const Footer = memo(() => {
 
   return (
     <footer className="bg-dental-primary-900 text-white" role="contentinfo">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-14">
-        {/*
-          Layout: 3 columns
-          Left  (5/12) — Logo, description, socials, contact
-          Mid   (3/12) — Navigation + Working hours
-          Right (4/12) — Newsletter CTA
-        */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16">
+        {/* 4 equal columns for balanced layout */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
 
-          {/* LEFT — Brand + Contact */}
-          <div className="lg:col-span-5 flex flex-col gap-8">
-            {/* Logo + description */}
-            <div>
-              <div className="mb-4">
-                <Logo variant="white" size="sm" />
-              </div>
-              <p className="text-white/60 text-sm leading-relaxed max-w-sm">
-                {SITE_INFO.description}
-              </p>
+          {/* Column 1: Logo + Description + Socials */}
+          <div className="col-span-2 md:col-span-1">
+            <div className="mb-5">
+              <Logo variant="white" size="sm" />
             </div>
-
-            {/* Contact details */}
-            <ul className="space-y-3">
-              <li>
-                <a
-                  href={`tel:${CONTACT_INFO.phoneRaw}`}
-                  className="flex items-center gap-3 text-white/70 hover:text-white transition-colors text-sm group"
-                >
-                  <Phone className="w-4 h-4 flex-shrink-0 text-dental-primary-400 group-hover:text-dental-primary-300" />
-                  {CONTACT_INFO.phone}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`mailto:${CONTACT_INFO.email}`}
-                  className="flex items-center gap-3 text-white/70 hover:text-white transition-colors text-sm group"
-                >
-                  <Mail className="w-4 h-4 flex-shrink-0 text-dental-primary-400 group-hover:text-dental-primary-300" />
-                  {CONTACT_INFO.email}
-                </a>
-              </li>
-              <li className="flex items-start gap-3 text-sm text-white/70">
-                <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5 text-dental-primary-400" />
-                <address className="not-italic leading-relaxed">
-                  {CONTACT_INFO.address.street}, {CONTACT_INFO.address.city}, {CONTACT_INFO.address.postalCode}
-                </address>
-              </li>
-            </ul>
-
-            {/* Social links */}
+            <p className="text-white/60 text-sm leading-relaxed mb-6">
+              Сучасна стоматологічна клініка у Львові з повним спектром послуг.
+            </p>
             <div className="flex items-center gap-2">
               <a
                 href={CONTACT_INFO.social.facebook}
@@ -102,72 +64,82 @@ const Footer = memo(() => {
             </div>
           </div>
 
-          {/* MIDDLE — Navigation + Hours */}
-          <div className="lg:col-span-3 flex flex-col gap-8">
-            {/* Navigation */}
-            <div>
-              <h4 className="text-white font-semibold text-sm mb-4">Навігація</h4>
-              <nav aria-label={t('accessibility.siteNavigation')}>
-                <ul className="space-y-2.5">
-                  {navLinks.map(link => (
-                    <li key={link.href}>
-                      <Link
-                        href={link.href}
-                        className="text-white/60 hover:text-white transition-colors text-sm"
-                      >
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                  <li>
+          {/* Column 2: Navigation */}
+          <div>
+            <h4 className="text-white font-semibold text-sm mb-4">Навігація</h4>
+            <nav aria-label={t('accessibility.siteNavigation')}>
+              <ul className="space-y-2.5">
+                {navLinks.map(link => (
+                  <li key={link.href}>
                     <Link
-                      href="/symptom-checker"
-                      className="text-white/60 hover:text-white transition-colors text-sm inline-flex items-center gap-2"
+                      href={link.href}
+                      className="text-white/60 hover:text-white transition-colors text-sm"
                     >
-                      {t('ai.symptomChecker.title')}
-                      <span className="text-[10px] bg-dental-primary-500 text-white px-1.5 py-0.5 rounded font-semibold leading-none">
-                        AI
-                      </span>
+                      {link.label}
                     </Link>
                   </li>
-                </ul>
-              </nav>
-            </div>
-
-            {/* Working hours */}
-            <div>
-              <h4 className="text-white font-semibold text-sm mb-4 flex items-center gap-2">
-                <Clock className="w-4 h-4 text-dental-primary-400" />
-                Режим роботи
-              </h4>
-              <ul className="space-y-2 text-sm">
-                <li className="flex justify-between gap-4">
-                  <span className="text-white/50">Пн–Пт</span>
-                  <span className="text-white/80 font-medium tabular-nums">{CONTACT_INFO.workingHours.weekdays.replace('Пн-Пт: ', '')}</span>
-                </li>
-                <li className="flex justify-between gap-4">
-                  <span className="text-white/50">Сб</span>
-                  <span className="text-white/80 font-medium tabular-nums">{CONTACT_INFO.workingHours.saturday.replace('Сб: ', '')}</span>
-                </li>
-                <li className="flex justify-between gap-4">
-                  <span className="text-white/50">Нд</span>
-                  <span className="text-white/50 font-medium">{CONTACT_INFO.workingHours.sunday.replace('Нд: ', '')}</span>
+                ))}
+                <li>
+                  <Link
+                    href="/symptom-checker"
+                    className="text-white/60 hover:text-white transition-colors text-sm inline-flex items-center gap-2"
+                  >
+                    {t('ai.symptomChecker.title')}
+                    <span className="text-[10px] bg-dental-primary-500 text-white px-1.5 py-0.5 rounded font-semibold leading-none">
+                      AI
+                    </span>
+                  </Link>
                 </li>
               </ul>
-            </div>
+            </nav>
           </div>
 
-          {/* RIGHT — Newsletter */}
-          <div className="lg:col-span-4">
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 h-full flex flex-col justify-center">
-              <h4 className="text-white font-semibold text-base mb-2">
-                Будьте в курсі новин
-              </h4>
-              <p className="text-white/60 text-sm leading-relaxed mb-6">
-                Отримуйте акції, поради лікарів та новини клініки прямо на пошту.
-              </p>
-              <NewsletterSubscribe />
-            </div>
+          {/* Column 3: Contact + Hours */}
+          <div>
+            <h4 className="text-white font-semibold text-sm mb-4">Контакти</h4>
+            <ul className="space-y-3 mb-6">
+              <li>
+                <a
+                  href={`tel:${CONTACT_INFO.phoneRaw}`}
+                  className="flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm"
+                >
+                  <Phone className="w-4 h-4 text-dental-primary-400" />
+                  {CONTACT_INFO.phone}
+                </a>
+              </li>
+              <li>
+                <a
+                  href={`mailto:${CONTACT_INFO.email}`}
+                  className="flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm"
+                >
+                  <Mail className="w-4 h-4 text-dental-primary-400" />
+                  {CONTACT_INFO.email}
+                </a>
+              </li>
+              <li className="flex items-start gap-2 text-sm text-white/60">
+                <MapPin className="w-4 h-4 text-dental-primary-400 mt-0.5 flex-shrink-0" />
+                <span>{CONTACT_INFO.address.street}, {CONTACT_INFO.address.city}</span>
+              </li>
+            </ul>
+            
+            <h4 className="text-white font-semibold text-sm mb-3 flex items-center gap-2">
+              <Clock className="w-4 h-4 text-dental-primary-400" />
+              Режим роботи
+            </h4>
+            <ul className="space-y-1.5 text-sm text-white/60">
+              <li>Пн-Пт: 09:00-21:00</li>
+              <li>Сб: 09:00-18:00</li>
+              <li className="text-white/40">Нд: Вихідний</li>
+            </ul>
+          </div>
+
+          {/* Column 4: Newsletter */}
+          <div>
+            <h4 className="text-white font-semibold text-sm mb-4">Підписка</h4>
+            <p className="text-white/60 text-sm leading-relaxed mb-4">
+              Отримуйте акції та поради від наших лікарів
+            </p>
+            <NewsletterSubscribe />
           </div>
 
         </div>
