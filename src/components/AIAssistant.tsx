@@ -110,7 +110,7 @@ export default function AIAssistant() {
   return (
     <>
       {/* Floating button with enhanced styling */}
-      <div className={`fixed bottom-24 right-6 z-40 group ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} transition-all duration-300`}>
+      <div className={`fixed bottom-24 left-6 z-40 group ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} transition-all duration-300`}>
         <button
           onClick={() => setIsOpen(true)}
           className="relative w-14 h-14 bg-gradient-to-br from-dental-primary-600 to-dental-primary-700 hover:from-dental-primary-700 hover:to-dental-primary-800 text-white rounded-full shadow-lg hover:shadow-xl hover:shadow-dental-primary-500/30 hover:scale-110 transition-all duration-300 flex items-center justify-center"
@@ -122,15 +122,15 @@ export default function AIAssistant() {
         </button>
         
         {/* Tooltip */}
-        <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-dental-dark text-white text-sm font-medium rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+        <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-dental-dark text-white text-sm font-medium rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
           {t('ai.assistant')}
-          <span className="absolute left-full top-1/2 -translate-y-1/2 border-8 border-transparent border-l-dental-dark" />
+          <span className="absolute right-full top-1/2 -translate-y-1/2 border-8 border-transparent border-r-dental-dark" />
         </div>
       </div>
 
       {/* Chat window */}
       <div
-        className={`fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-3rem)] transition-all duration-300 ${
+        className={`fixed bottom-6 left-6 z-50 w-[380px] max-w-[calc(100vw-3rem)] transition-all duration-300 ${
           isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'
         }`}
       >

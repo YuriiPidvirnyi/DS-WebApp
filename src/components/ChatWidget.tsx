@@ -124,7 +124,7 @@ export default function ChatWidget() {
   return (
     <>
       {/* Chat bubble button with tooltip */}
-      <div className={`fixed bottom-6 right-6 z-50 group ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} transition-all duration-300`}>
+      <div className={`fixed bottom-6 left-6 z-50 group ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} transition-all duration-300`}>
         <button
           onClick={() => setIsOpen(true)}
           className="relative w-14 h-14 bg-gradient-to-br from-dental-primary-500 to-dental-primary-600 rounded-full shadow-lg shadow-dental-primary-500/30 flex items-center justify-center text-white hover:from-dental-primary-600 hover:to-dental-primary-700 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-dental-primary-500/40"
@@ -135,15 +135,15 @@ export default function ChatWidget() {
           <MessageCircle className="h-6 w-6 relative z-10" />
         </button>
         {/* Tooltip */}
-        <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-dental-dark text-white text-sm font-medium rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
+        <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-dental-dark text-white text-sm font-medium rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
           Онлайн-чат
-          <span className="absolute left-full top-1/2 -translate-y-1/2 border-8 border-transparent border-l-dental-dark" />
+          <span className="absolute right-full top-1/2 -translate-y-1/2 border-8 border-transparent border-r-dental-dark" />
         </div>
       </div>
 
       {/* Chat window */}
       <div
-        className={`fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] bg-white rounded-2xl shadow-2xl shadow-dental-secondary-200/50 border border-dental-secondary-200 overflow-hidden transition-all duration-300 ${
+        className={`fixed bottom-6 left-6 z-50 w-96 max-w-[calc(100vw-3rem)] bg-white rounded-2xl shadow-2xl shadow-dental-secondary-200/50 border border-dental-secondary-200 overflow-hidden transition-all duration-300 ${
           isOpen
             ? 'opacity-100 translate-y-0 scale-100'
             : 'opacity-0 translate-y-4 scale-95 pointer-events-none'
