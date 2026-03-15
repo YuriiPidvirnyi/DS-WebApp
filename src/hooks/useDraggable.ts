@@ -140,10 +140,12 @@ export function useDraggable({ storageKey, defaultPosition, enabled }: UseDragga
     }
   }, [defaultPosition, storageKey])
 
-  // Compute inline style: use fixed pixel position when dragged, else use null (CSS handles it)
-  const style = hasMoved
-    ? { position: 'fixed' as const, left: position.x, top: position.y, bottom: 'auto', right: 'auto' }
-    : undefined
+  // Compute inline style: use fixed pixel position only when dragged
+  // When not dragged, style is undefined so className positioning takes over
+  const style = 
+    isDragging || hasMoved
+      ? { position: 'fixed' as const, left: `${position.x}px`, top: `${position.y}px`, bottom: 'auto', right: 'auto' }
+      : undefined
 
   return {
     elementRef,
