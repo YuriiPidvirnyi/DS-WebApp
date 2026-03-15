@@ -169,58 +169,65 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* Right column - Clean stats grid */}
-          <div className={`relative transition-all duration-1000 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            {/* Stats grid - horizontal layout 1x4 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+          {/* Right column - Stats grid with 2x2 layout */}
+          <div className={`transition-all duration-1000 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <div className="grid grid-cols-2 gap-4">
               {/* Patients */}
               <div 
                 ref={patientsRef}
-                className="bg-white rounded-2xl p-6 shadow-lg shadow-dental-secondary-200/50 border border-dental-secondary-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center"
+                className="bg-white rounded-2xl p-5 shadow-md border border-dental-secondary-100 hover:shadow-lg transition-all duration-300"
               >
-                <div className="w-12 h-12 bg-gradient-to-br from-dental-primary-100 to-dental-primary-50 rounded-xl flex items-center justify-center mx-auto mb-3">
-                  <Users className="h-6 w-6 text-dental-primary-600" />
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-dental-primary-50 rounded-lg flex items-center justify-center">
+                    <Users className="h-5 w-5 text-dental-primary-600" />
+                  </div>
                 </div>
-                <p className="text-3xl font-bold text-dental-dark mb-1">{patientsCount.toLocaleString()}+</p>
-                <p className="text-dental-muted text-sm font-medium">Пацієнтів</p>
+                <p className="text-2xl font-bold text-dental-dark">{patientsCount.toLocaleString()}+</p>
+                <p className="text-dental-muted text-sm">Пацієнтів</p>
               </div>
 
               {/* Satisfaction */}
               <div 
                 ref={satisfactionRef}
-                className="bg-white rounded-2xl p-6 shadow-lg shadow-dental-secondary-200/50 border border-dental-secondary-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center"
+                className="bg-white rounded-2xl p-5 shadow-md border border-dental-secondary-100 hover:shadow-lg transition-all duration-300"
               >
-                <div className="w-12 h-12 bg-gradient-to-br from-dental-primary-100 to-dental-primary-50 rounded-xl flex items-center justify-center mx-auto mb-3">
-                  <Star className="h-6 w-6 text-dental-primary-600" />
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-dental-primary-50 rounded-lg flex items-center justify-center">
+                    <Star className="h-5 w-5 text-dental-primary-600" />
+                  </div>
                 </div>
-                <p className="text-3xl font-bold text-dental-dark mb-1">{satisfactionCount}%</p>
-                <p className="text-dental-muted text-sm font-medium">Задоволених</p>
+                <p className="text-2xl font-bold text-dental-dark">{satisfactionCount}%</p>
+                <p className="text-dental-muted text-sm">Задоволених</p>
               </div>
 
               {/* Experience */}
               <div 
                 ref={yearsRef}
-                className="bg-white rounded-2xl p-6 shadow-lg shadow-dental-secondary-200/50 border border-dental-secondary-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center"
+                className="bg-white rounded-2xl p-5 shadow-md border border-dental-secondary-100 hover:shadow-lg transition-all duration-300"
               >
-                <div className="w-12 h-12 bg-gradient-to-br from-dental-primary-100 to-dental-primary-50 rounded-xl flex items-center justify-center mx-auto mb-3">
-                  <Award className="h-6 w-6 text-dental-primary-600" />
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-dental-primary-50 rounded-lg flex items-center justify-center">
+                    <Award className="h-5 w-5 text-dental-primary-600" />
+                  </div>
                 </div>
-                <p className="text-3xl font-bold text-dental-dark mb-1">{yearsCount}+</p>
-                <p className="text-dental-muted text-sm font-medium">Років досвіду</p>
+                <p className="text-2xl font-bold text-dental-dark">{yearsCount}+</p>
+                <p className="text-dental-muted text-sm">Років досвіду</p>
               </div>
 
-              {/* Free consultation - accent card */}
+              {/* Free consultation */}
               <Link
                 href="/booking"
-                className="bg-gradient-to-br from-dental-primary-500 to-dental-primary-600 rounded-2xl p-6 shadow-lg shadow-dental-primary-500/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-center items-center group text-center"
+                className="bg-gradient-to-br from-dental-primary-500 to-dental-primary-600 rounded-2xl p-5 shadow-md hover:shadow-lg transition-all duration-300 group"
               >
-                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-3">
-                  <Phone className="h-6 w-6 text-white" />
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                    <Phone className="h-5 w-5 text-white" />
+                  </div>
                 </div>
-                <p className="text-white font-semibold text-sm leading-tight">Безкоштовна консультація</p>
-                <p className="text-white/80 text-xs mt-2 inline-flex items-center justify-center gap-1">
-                  Для нових пацієнтів
-                  <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+                <p className="text-lg font-bold text-white">Безкоштовно</p>
+                <p className="text-white/80 text-sm flex items-center gap-1">
+                  Консультація
+                  <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
                 </p>
               </Link>
             </div>
