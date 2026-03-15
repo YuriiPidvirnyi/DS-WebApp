@@ -13,7 +13,7 @@ export default function DragModeToggle() {
         onClick={toggleDragMode}
         aria-label={dragModeEnabled ? 'Вимкнути режим переміщення' : 'Увімкнути режим переміщення кнопок'}
         title={dragModeEnabled ? 'Вимкнути режим переміщення' : 'Перемістити кнопки'}
-        className={`fixed bottom-6 right-6 z-[100] w-10 h-10 rounded-full shadow-md flex items-center justify-center transition-all duration-300
+        className={`fixed bottom-44 right-6 z-[100] w-10 h-10 rounded-full shadow-md flex items-center justify-center transition-all duration-300
           ${dragModeEnabled
             ? 'bg-dental-primary-600 text-white shadow-dental-primary-500/30 scale-110'
             : 'bg-white border border-dental-secondary-200 text-dental-muted hover:text-dental-primary-600 hover:border-dental-primary-300 hover:shadow-lg'

@@ -70,9 +70,9 @@ export default function ClientProviders({ children }: ClientProvidersProps) {
             <LiveRegion />
             <SVGFilters />
             <DraggableWrapper
-              storageKey="fab-accessibility"
+              storageKey="fab-accessibility-v2"
               label="Доступність"
-              className="fixed bottom-44 left-6 z-40"
+              className="fixed bottom-6 left-6 z-40"
             >
               <AccessibilityPanel />
             </DraggableWrapper>
@@ -80,9 +80,9 @@ export default function ClientProviders({ children }: ClientProvidersProps) {
             {children}
             {/* Floating quick actions */}
             <DraggableWrapper
-              storageKey="fab-quick-actions"
+              storageKey="fab-quick-actions-v2"
               label="Швидкі дії"
-              className="fixed bottom-56 left-6 z-50"
+              className="fixed bottom-24 left-6 z-50"
             >
               <FloatingQuickActions />
             </DraggableWrapper>
