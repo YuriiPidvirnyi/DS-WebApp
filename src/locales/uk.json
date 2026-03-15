@@ -234,7 +234,7 @@
   },
   "footer": {
     "description": "Сучасна стоматологічна клініка, що надає повний спектр послуг з догляду за здоров'ям ваших зубів. Професійні лікарі, новітнє обладнання та індивідуальний підхід до кожного пацієнта.",
-    "navigation": "Навігація",
+    "navigation": "Навігаці��",
     "contacts": "Контакти",
     "copyright": "© 2024 Dental Story. Усі права захищені.",
     "workingHours": {
@@ -411,13 +411,17 @@
       "description": "Новітні технології для точної діагностики та лікування"
     }
   },
-  "stats": {
-    "patientsServed": "Пацієнтів обслужено",
-    "satisfactionRate": "Відсоток задоволених",
-    "yearsExperience": "Досвід роботи",
-    "freeConsultation": "Безкоштовна консультація для нових пацієнтів",
-    "workingNow": "Працюємо зараз",
-    "qualityGuarantee": "Гарантія якості"
+"stats": {
+  "patientsServed": "Пацієнтів обслужено",
+  "patients": "Пацієнтів",
+  "satisfactionRate": "Відсоток задоволених",
+  "satisfiedPatients": "Задоволених",
+  "yearsExperience": "Років досвіду",
+  "freeConsultation": "Безкоштовна консультація для нових пацієнтів",
+  "freeConsultationShort": "Безкоштовна консультація",
+  "forNewPatients": "Для нових пацієнтів",
+  "workingNow": "Працюємо зараз",
+  "qualityGuarantee": "Гарантія якості"
   },
   "hero": {
     "badge": "Сучасна стоматологія",

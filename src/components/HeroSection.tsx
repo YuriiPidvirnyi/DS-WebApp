@@ -169,85 +169,70 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* Right column - Stats cards with floating animation */}
+          {/* Right column - Clean stats grid */}
           <div className={`relative transition-all duration-1000 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            {/* Main stats card */}
             <div className="relative">
-              {/* Floating decorative elements */}
-              <FloatingElement delay={0} className="absolute -top-6 -left-6 z-10">
-                <div className="w-16 h-16 bg-gradient-to-br from-dental-primary-400 to-dental-primary-500 rounded-2xl shadow-lg shadow-dental-primary-400/30 flex items-center justify-center">
-                  <span className="text-2xl">✨</span>
+              {/* Subtle floating accent */}
+              <FloatingElement delay={0} className="absolute -top-4 -right-4 z-10">
+                <div className="w-10 h-10 bg-gradient-to-br from-dental-primary-400 to-dental-primary-500 rounded-xl shadow-lg shadow-dental-primary-400/20 flex items-center justify-center">
+                  <Star className="h-5 w-5 text-white fill-white" />
                 </div>
               </FloatingElement>
 
-              <FloatingElement delay={0.5} className="absolute -bottom-4 -right-4 z-10">
-                <div className="w-14 h-14 bg-gradient-to-br from-dental-primary-700 to-dental-primary-800 rounded-xl shadow-lg flex items-center justify-center">
-                  <span className="text-xl">🦷</span>
-                </div>
-              </FloatingElement>
-
-              <FloatingElement delay={1} className="absolute top-1/2 -right-8 transform -translate-y-1/2 z-10">
-                <div className="w-12 h-12 bg-white rounded-xl shadow-lg border border-dental-secondary-200 flex items-center justify-center">
-                  <Star className="h-6 w-6 text-amber-400 fill-amber-400" />
-                </div>
-              </FloatingElement>
-
-              {/* Stats card */}
-              <div className="bg-white rounded-3xl shadow-2xl shadow-dental-secondary-300/50 border border-dental-secondary-200 p-8 lg:p-10">
-                <div className="text-center mb-8">
-                  <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-dental-primary-100 to-dental-primary-50 rounded-2xl mb-4">
-                    <span className="text-4xl">🏥</span>
+              {/* Stats grid - 2x2 layout */}
+              <div className="grid grid-cols-2 gap-4">
+                {/* Patients */}
+                <div 
+                  ref={patientsRef}
+                  className="bg-white rounded-2xl p-6 shadow-lg shadow-dental-secondary-200/50 border border-dental-secondary-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                >
+                  <div className="w-12 h-12 bg-gradient-to-br from-dental-primary-100 to-dental-primary-50 rounded-xl flex items-center justify-center mb-4">
+                    <Users className="h-6 w-6 text-dental-primary-600" />
                   </div>
-                  <h3 className="text-2xl font-bold text-dental-dark">Dental Story</h3>
-                  <p className="text-dental-muted mt-1">Сучасна стоматологічна клініка</p>
+                  <p className="text-4xl font-bold text-dental-dark mb-1">{patientsCount.toLocaleString()}+</p>
+                  <p className="text-dental-muted text-sm">{t('stats.patients')}</p>
                 </div>
 
-                <div className="space-y-6">
-                  {/* Stats items */}
-                  <div 
-                    ref={patientsRef}
-                    className="flex items-center justify-between p-4 bg-dental-primary-50 rounded-2xl transition-all duration-300 hover:bg-dental-primary-100"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-dental-primary-200 rounded-xl flex items-center justify-center">
-                        <Users className="h-5 w-5 text-dental-primary-700" />
-                      </div>
-                      <span className="text-dental-text font-medium">{t('stats.patientsServed')}</span>
-                    </div>
-                    <span className="text-2xl font-bold text-dental-dark">{patientsCount.toLocaleString()}+</span>
+                {/* Satisfaction */}
+                <div 
+                  ref={satisfactionRef}
+                  className="bg-white rounded-2xl p-6 shadow-lg shadow-dental-secondary-200/50 border border-dental-secondary-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                >
+                  <div className="w-12 h-12 bg-gradient-to-br from-dental-primary-100 to-dental-primary-50 rounded-xl flex items-center justify-center mb-4">
+                    <Star className="h-6 w-6 text-dental-primary-600" />
                   </div>
-
-                  <div 
-                    ref={satisfactionRef}
-                    className="flex items-center justify-between p-4 bg-dental-primary-50 rounded-2xl transition-all duration-300 hover:bg-dental-primary-100"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-dental-primary-200 rounded-xl flex items-center justify-center">
-                        <Star className="h-5 w-5 text-dental-primary-700" />
-                      </div>
-                      <span className="text-dental-text font-medium">{t('stats.satisfactionRate')}</span>
-                    </div>
-                    <span className="text-2xl font-bold text-dental-dark">{satisfactionCount}%</span>
-                  </div>
-
-                  <div 
-                    ref={yearsRef}
-                    className="flex items-center justify-between p-4 bg-dental-primary-50 rounded-2xl transition-all duration-300 hover:bg-dental-primary-100"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-dental-primary-200 rounded-xl flex items-center justify-center">
-                        <Award className="h-5 w-5 text-dental-primary-700" />
-                      </div>
-                      <span className="text-dental-text font-medium">{t('stats.yearsExperience')}</span>
-                    </div>
-                    <span className="text-2xl font-bold text-dental-dark">{yearsCount}+</span>
-                  </div>
+                  <p className="text-4xl font-bold text-dental-dark mb-1">{satisfactionCount}%</p>
+                  <p className="text-dental-muted text-sm">{t('stats.satisfiedPatients')}</p>
                 </div>
 
-                {/* Special offer */}
-                <div className="mt-8 p-4 bg-gradient-to-r from-dental-primary-500 to-dental-primary-600 rounded-2xl text-white text-center">
-                  <p className="font-semibold">{t('stats.freeConsultation')}</p>
+                {/* Experience */}
+                <div 
+                  ref={yearsRef}
+                  className="bg-white rounded-2xl p-6 shadow-lg shadow-dental-secondary-200/50 border border-dental-secondary-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                >
+                  <div className="w-12 h-12 bg-gradient-to-br from-dental-primary-100 to-dental-primary-50 rounded-xl flex items-center justify-center mb-4">
+                    <Award className="h-6 w-6 text-dental-primary-600" />
+                  </div>
+                  <p className="text-4xl font-bold text-dental-dark mb-1">{yearsCount}+</p>
+                  <p className="text-dental-muted text-sm">{t('stats.yearsExperience')}</p>
                 </div>
+
+                {/* Free consultation - accent card */}
+                <Link
+                  href="/booking"
+                  className="bg-gradient-to-br from-dental-primary-500 to-dental-primary-600 rounded-2xl p-6 shadow-lg shadow-dental-primary-500/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group"
+                >
+                  <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
+                    <Phone className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-white font-semibold text-lg leading-tight">{t('stats.freeConsultationShort')}</p>
+                    <p className="text-white/80 text-sm mt-1 flex items-center gap-1">
+                      {t('stats.forNewPatients')}
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </p>
+                  </div>
+                </Link>
               </div>
             </div>
           </div>

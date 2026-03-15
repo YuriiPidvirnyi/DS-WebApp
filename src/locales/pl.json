@@ -390,9 +390,13 @@
   },
   "stats": {
     "patientsServed": "Obsłużonych pacjentów",
+    "patients": "Pacjentów",
     "satisfactionRate": "Wskaźnik zadowolenia",
+    "satisfiedPatients": "Zadowolonych",
     "yearsExperience": "Lat doświadczenia",
     "freeConsultation": "Bezpłatna konsultacja dla nowych pacjentów",
+    "freeConsultationShort": "Bezpłatna konsultacja",
+    "forNewPatients": "Dla nowych pacjentów",
     "workingNow": "Teraz otwarte",
     "qualityGuarantee": "Gwarancja jakości"
   },

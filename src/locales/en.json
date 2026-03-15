@@ -390,9 +390,13 @@
   },
   "stats": {
     "patientsServed": "Patients Served",
+    "patients": "Patients",
     "satisfactionRate": "Satisfaction Rate",
+    "satisfiedPatients": "Satisfied",
     "yearsExperience": "Years Experience",
     "freeConsultation": "Free consultation for new patients",
+    "freeConsultationShort": "Free Consultation",
+    "forNewPatients": "For new patients",
     "workingNow": "Open Now",
     "qualityGuarantee": "Quality Guarantee"
   },
