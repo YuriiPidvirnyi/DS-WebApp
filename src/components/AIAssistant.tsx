@@ -109,19 +109,24 @@ export default function AIAssistant() {
 
   return (
     <>
-      {/* Floating button */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className={`fixed bottom-24 right-6 z-40 w-14 h-14 bg-gradient-to-br from-dental-primary-600 to-dental-primary-700 hover:from-dental-primary-700 hover:to-dental-primary-800 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group ${isOpen ? 'scale-0' : 'scale-100'}`}
-        aria-label={t('ai.openAssistant')}
-      >
-        <Bot className="w-6 h-6" />
+      {/* Floating button with enhanced styling */}
+      <div className={`fixed bottom-24 right-6 z-40 group ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} transition-all duration-300`}>
+        <button
+          onClick={() => setIsOpen(true)}
+          className="relative w-14 h-14 bg-gradient-to-br from-dental-primary-600 to-dental-primary-700 hover:from-dental-primary-700 hover:to-dental-primary-800 text-white rounded-full shadow-lg hover:shadow-xl hover:shadow-dental-primary-500/30 hover:scale-110 transition-all duration-300 flex items-center justify-center"
+          aria-label={t('ai.openAssistant')}
+        >
+          {/* Subtle glow effect */}
+          <span className="absolute inset-0 rounded-full bg-gradient-to-br from-dental-primary-400 to-dental-primary-600 opacity-0 group-hover:opacity-30 blur-md transition-opacity duration-300" />
+          <Bot className="w-6 h-6 relative z-10 group-hover:animate-bounce" style={{ animationDuration: '1s' }} />
+        </button>
         
         {/* Tooltip */}
-        <span className="absolute right-full mr-3 px-3 py-2 bg-dental-dark text-white text-sm rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+        <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-dental-dark text-white text-sm font-medium rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
           {t('ai.assistant')}
-        </span>
-      </button>
+          <span className="absolute left-full top-1/2 -translate-y-1/2 border-8 border-transparent border-l-dental-dark" />
+        </div>
+      </div>
 
       {/* Chat window */}
       <div

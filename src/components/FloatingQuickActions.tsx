@@ -147,22 +147,34 @@ export default function FloatingQuickActions() {
         </div>
       )}
 
-      {/* FAB */}
-      <button
-        type="button"
-        aria-expanded={open}
-        aria-label={open ? 'Закрити швидкі дії' : 'Відкрити швидкі дії'}
-        onClick={() => setOpen(v => !v)}
-        className="rounded-full shadow-lg bg-dental-primary-800 hover:bg-dental-primary-900 text-white w-14 h-14 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-800"
-        data-track-id="quick_actions_toggle"
-        data-track-category="engagement"
-      >
-        {open ? (
-          <X className="h-7 w-7" aria-hidden="true" />
-        ) : (
-          <Plus className="h-7 w-7" aria-hidden="true" />
+      {/* FAB with tooltip */}
+      <div className="relative group">
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-label={open ? 'Закрити швидкі дії' : 'Відкрити швидкі дії'}
+          onClick={() => setOpen(v => !v)}
+          className="relative rounded-full shadow-lg bg-gradient-to-br from-dental-primary-600 to-dental-primary-700 hover:from-dental-primary-700 hover:to-dental-primary-800 text-white w-14 h-14 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-500 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-dental-primary-500/30"
+          data-track-id="quick_actions_toggle"
+          data-track-category="engagement"
+        >
+          <span className={`absolute inset-0 rounded-full bg-dental-primary-400 animate-ping opacity-20 ${open ? 'hidden' : ''}`} />
+          <span className={`transition-transform duration-300 ${open ? 'rotate-45' : 'rotate-0'}`}>
+            {open ? (
+              <X className="h-6 w-6" aria-hidden="true" />
+            ) : (
+              <Plus className="h-6 w-6" aria-hidden="true" />
+            )}
+          </span>
+        </button>
+        {/* Tooltip */}
+        {!open && (
+          <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-dental-dark text-white text-sm font-medium rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
+            Швидкі дії
+            <span className="absolute right-full top-1/2 -translate-y-1/2 border-8 border-transparent border-r-dental-dark" />
+          </div>
         )}
-      </button>
+      </div>
     </div>
   )
 }

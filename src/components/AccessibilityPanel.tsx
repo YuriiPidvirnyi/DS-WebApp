@@ -221,9 +221,9 @@ export function AccessibilityPanel() {
         aria-expanded={isOpen}
         aria-controls="a11y-panel"
         aria-label={isOpen ? 'Закрити панель доступності' : 'Відкрити панель доступності'}
-        className="group flex items-center gap-2 bg-dental-primary-700 text-white pl-3 pr-4 h-11 rounded-full shadow-lg hover:bg-dental-primary-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-dental-primary-500 focus-visible:ring-offset-2 transition-all duration-200"
+        className="group flex items-center gap-2 bg-gradient-to-br from-dental-primary-600 to-dental-primary-700 text-white pl-3 pr-4 h-11 rounded-full shadow-lg hover:from-dental-primary-700 hover:to-dental-primary-800 hover:shadow-xl hover:shadow-dental-primary-500/30 hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-dental-primary-500 focus-visible:ring-offset-2 transition-all duration-300"
       >
-        <Accessibility className="h-5 w-5 shrink-0" />
+        <Accessibility className="h-5 w-5 shrink-0 group-hover:animate-pulse" />
         <span className="text-sm font-medium">Доступність</span>
       </button>
     </div>
