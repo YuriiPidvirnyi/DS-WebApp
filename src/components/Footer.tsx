@@ -78,66 +78,66 @@ const Footer = memo(() => {
             </div>
           </div>
 
-          {/* RIGHT: Working hours on top, then navigation + contacts below */}
-          <div className="flex flex-col gap-8">
-            {/* Working hours — top */}
+          {/* RIGHT: Navigation (left) | Hours + Contacts (right) */}
+          <div className="grid grid-cols-2 gap-8">
+            {/* Navigation */}
             <div>
-              <h4 className="text-white font-semibold text-sm mb-4 flex items-center gap-2">
-                <Clock className="w-4 h-4 text-dental-primary-400" />
-                Режим роботи
-              </h4>
-              <ul className="space-y-2 text-sm">
-                <li className="flex justify-between gap-4">
-                  <span className="text-white/50">Пн-Пт</span>
-                  <span className="text-white/80 tabular-nums">09:00-21:00</span>
-                </li>
-                <li className="flex justify-between gap-4">
-                  <span className="text-white/50">Сб</span>
-                  <span className="text-white/80 tabular-nums">09:00-18:00</span>
-                </li>
-                <li className="flex justify-between gap-4">
-                  <span className="text-white/50">Нд</span>
-                  <span className="text-white/40">Вихідний</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Navigation + Contacts — below in 2 columns */}
-            <div className="grid grid-cols-2 gap-8">
-              {/* Navigation */}
-              <div>
-                <h4 className="text-white font-semibold text-sm mb-4">Навігація</h4>
-                <nav aria-label={t('accessibility.siteNavigation')}>
-                  <ul className="space-y-2.5">
-                    {navLinks.map(link => (
-                      <li key={link.href}>
-                        <Link
-                          href={link.href}
-                          className="text-white/60 hover:text-white transition-colors text-sm"
-                        >
-                          {link.label}
-                        </Link>
-                      </li>
-                    ))}
-                    <li>
+              <h4 className="text-white font-semibold text-sm mb-4">Навігація</h4>
+              <nav aria-label={t('accessibility.siteNavigation')}>
+                <ul className="space-y-2.5">
+                  {navLinks.map(link => (
+                    <li key={link.href}>
                       <Link
-                        href="/symptom-checker"
-                        className="text-white/60 hover:text-white transition-colors text-sm inline-flex items-center gap-2"
+                        href={link.href}
+                        className="text-white/60 hover:text-white transition-colors text-sm"
                       >
-                        {t('ai.symptomChecker.title')}
-                        <span className="text-[10px] bg-dental-primary-500 text-white px-1.5 py-0.5 rounded font-semibold leading-none">
-                          AI
-                        </span>
+                        {link.label}
                       </Link>
                     </li>
-                  </ul>
-                </nav>
+                  ))}
+                  <li>
+                    <Link
+                      href="/symptom-checker"
+                      className="text-white/60 hover:text-white transition-colors text-sm inline-flex items-center gap-2"
+                    >
+                      {t('ai.symptomChecker.title')}
+                      <span className="text-[10px] bg-dental-primary-500 text-white px-1.5 py-0.5 rounded font-semibold leading-none">
+                        AI
+                      </span>
+                    </Link>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+
+            {/* Hours + Contacts stacked vertically */}
+            <div className="flex flex-col gap-6">
+              {/* Working hours — top */}
+              <div>
+                <h4 className="text-white font-semibold text-sm mb-3 flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-dental-primary-400" />
+                  Режим роботи
+                </h4>
+                <ul className="space-y-1.5 text-sm">
+                  <li className="flex justify-between gap-4">
+                    <span className="text-white/50">Пн-Пт</span>
+                    <span className="text-white/80 tabular-nums">09:00-21:00</span>
+                  </li>
+                  <li className="flex justify-between gap-4">
+                    <span className="text-white/50">Сб</span>
+                    <span className="text-white/80 tabular-nums">09:00-18:00</span>
+                  </li>
+                  <li className="flex justify-between gap-4">
+                    <span className="text-white/50">Нд</span>
+                    <span className="text-white/40">Вихідний</span>
+                  </li>
+                </ul>
               </div>
 
-              {/* Contacts */}
+              {/* Contacts — below */}
               <div>
-                <h4 className="text-white font-semibold text-sm mb-4">Контакти</h4>
-                <ul className="space-y-3">
+                <h4 className="text-white font-semibold text-sm mb-3">Контакти</h4>
+                <ul className="space-y-2.5">
                   <li>
                     <a
                       href={`tel:${CONTACT_INFO.phoneRaw}`}
