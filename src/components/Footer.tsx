@@ -83,7 +83,6 @@ const Footer = memo(() => {
               <NewsletterSubscribe />
             </div>
           </div>
-          </div>
 
           {/* RIGHT: Navigation (left) | Hours + Contacts (right) */}
           <div className="grid grid-cols-2 gap-8 lg:gap-12">
