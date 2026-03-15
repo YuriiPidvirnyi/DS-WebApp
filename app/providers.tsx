@@ -9,6 +9,7 @@ import LiveRegion from '@/components/ui/LiveRegion'
 import I18nProvider from './i18n-provider'
 import useAnalytics from '@/hooks/useAnalytics'
 import { useReminders } from '@/hooks/useReminders'
+import { DragModeProvider } from '@/context/DragModeContext'
 
 // Lazy-load non-critical components to reduce TBT on initial page load
 const PerformanceMetrics = dynamic(
@@ -33,6 +34,14 @@ const FloatingQuickActions = dynamic(
   () => import('@/components/FloatingQuickActions'),
   { ssr: false }
 )
+const DragModeToggle = dynamic(
+  () => import('@/components/DragModeToggle'),
+  { ssr: false }
+)
+const DraggableWrapper = dynamic(
+  () => import('@/components/DraggableWrapper'),
+  { ssr: false }
+)
 
 /** Initializes analytics, Sentry and registers page-view tracking */
 function AppInitializer() {
@@ -54,20 +63,34 @@ export default function ClientProviders({ children }: ClientProvidersProps) {
     <I18nProvider>
       <ErrorBoundary>
         <AccessibilityProvider>
-          <ToastProvider />
-          <PerformanceMetrics />
-          <ResourcePreloader />
-          <LiveRegion />
-          <SVGFilters />
-          <AccessibilityPanel />
-          <AppInitializer />
-          {children}
-          {/* Floating quick actions rendered outside main flow */}
-          <div className="fixed inset-0 pointer-events-none">
-            <div className="pointer-events-auto">
+          <DragModeProvider>
+            <ToastProvider />
+            <PerformanceMetrics />
+            <ResourcePreloader />
+            <LiveRegion />
+            <SVGFilters />
+            <DraggableWrapper
+              storageKey="fab-accessibility"
+              defaultPosition={{ x: 24, y: -1 }}
+              label="Доступність"
+              className="fixed bottom-44 left-6 z-40"
+            >
+              <AccessibilityPanel />
+            </DraggableWrapper>
+            <AppInitializer />
+            {children}
+            {/* Floating quick actions */}
+            <DraggableWrapper
+              storageKey="fab-quick-actions"
+              defaultPosition={{ x: 24, y: -1 }}
+              label="Швидкі дії"
+              className="fixed bottom-56 left-6 z-50"
+            >
               <FloatingQuickActions />
-            </div>
-          </div>
+            </DraggableWrapper>
+            {/* Drag mode toggle button */}
+            <DragModeToggle />
+          </DragModeProvider>
         </AccessibilityProvider>
       </ErrorBoundary>
     </I18nProvider>

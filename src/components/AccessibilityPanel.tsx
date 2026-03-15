@@ -53,7 +53,7 @@ export function AccessibilityPanel() {
 
   return (
     <div
-      className="fixed bottom-44 left-6 z-40"
+      className="relative"
       role="region"
       aria-label="Налаштування доступності"
     >

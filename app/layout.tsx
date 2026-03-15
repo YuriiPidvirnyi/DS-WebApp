@@ -7,8 +7,7 @@ import '../src/styles/globals.css'
 import ClientProviders from './providers'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import ChatWidget from '@/components/ChatWidget'
-import AIAssistant from '@/components/AIAssistant'
+import ClientFloatingButtons from '@/components/ClientFloatingButtons'
 import { StructuredData } from '@/components/StructuredData'
 
 // Dental Story Typography System
@@ -131,8 +130,7 @@ export default async function RootLayout({
               {children}
             </main>
             <Footer />
-            <ChatWidget />
-            <AIAssistant />
+            <ClientFloatingButtons />
           </div>
         </ClientProviders>
         <Analytics />
