@@ -32,7 +32,7 @@ export default function FloatingQuickActions() {
 
   return (
     <div
-      className="fixed z-50 left-4 bottom-20 md:left-6 md:bottom-20"
+      className="fixed z-50 left-4 bottom-56 md:left-6 md:bottom-56"
       aria-live="polite"
     >
       {/* Panel */}
