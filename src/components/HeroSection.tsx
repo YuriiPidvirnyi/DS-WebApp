@@ -124,12 +124,12 @@ export default function HeroSection() {
             </div>
 
             {/* Main headline */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-dental-dark leading-[1.1] mb-6 tracking-tight text-balance">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-dental-dark leading-[1.1] mb-6 tracking-tight text-balance" suppressHydrationWarning>
               {t('home.hero.title')}
             </h1>
 
             {/* Subheadline */}
-            <p className="text-xl text-dental-text leading-relaxed mb-10 max-w-lg">
+            <p className="text-xl text-dental-text leading-relaxed mb-10 max-w-lg" suppressHydrationWarning>
               {t('home.hero.description')}
             </p>
 

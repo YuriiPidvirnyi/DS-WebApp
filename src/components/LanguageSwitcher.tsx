@@ -32,7 +32,13 @@ export default function LanguageSwitcher({
 }: LanguageSwitcherProps) {
   const { i18n } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Prevent hydration mismatch by only rendering dynamic content after mount
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0]
 
@@ -79,6 +85,16 @@ export default function LanguageSwitcher({
       document.removeEventListener('keydown', handleEscape)
     }
   }, [isOpen])
+
+  // Show skeleton until mounted to prevent hydration mismatch
+  if (!isMounted) {
+    return (
+      <div className={`flex items-center gap-2 px-3 py-2 ${className}`}>
+        <Globe className="w-4 h-4 text-dental-muted" />
+        <span className="w-16 h-4 bg-dental-secondary-100 rounded animate-pulse" />
+      </div>
+    )
+  }
 
   if (variant === 'inline') {
     return (
