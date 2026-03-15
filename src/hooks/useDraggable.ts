@@ -9,16 +9,21 @@ export interface Position {
 
 interface UseDraggableOptions {
   storageKey: string
-  defaultPosition: Position
   enabled: boolean
 }
 
-export function useDraggable({ storageKey, defaultPosition, enabled }: UseDraggableOptions) {
-  const [position, setPosition] = useState<Position>(defaultPosition)
+export function useDraggable({ storageKey, enabled }: UseDraggableOptions) {
+  // null = not moved yet, use CSS className for positioning
+  const [position, setPosition] = useState<Position | null>(null)
   const [isDragging, setIsDragging] = useState(false)
-  const [hasMoved, setHasMoved] = useState(false)
-  const dragStartRef = useRef<{ mouseX: number; mouseY: number; posX: number; posY: number } | null>(null)
   const elementRef = useRef<HTMLDivElement>(null)
+  // Store latest position in a ref so onEnd closure always sees fresh value
+  const positionRef = useRef<Position | null>(null)
+
+  // Sync ref with state
+  useEffect(() => {
+    positionRef.current = position
+  }, [position])
 
   // Load saved position from localStorage on mount
   useEffect(() => {
@@ -28,130 +33,126 @@ export function useDraggable({ storageKey, defaultPosition, enabled }: UseDragga
       if (saved) {
         const parsed = JSON.parse(saved) as Position
         setPosition(parsed)
-        setHasMoved(true)
       }
     } catch {
       // ignore
     }
   }, [storageKey, enabled])
 
-  // Reset to default when disabled
+  // Reset to CSS-driven position when drag mode is disabled
   useEffect(() => {
     if (!enabled) {
-      setPosition(defaultPosition)
-      setHasMoved(false)
+      setPosition(null)
     }
-  }, [enabled, defaultPosition])
+  }, [enabled])
 
-  const onMouseDown = useCallback((e: React.MouseEvent) => {
-    if (!enabled) return
-    e.preventDefault()
-    dragStartRef.current = {
-      mouseX: e.clientX,
-      mouseY: e.clientY,
-      posX: position.x,
-      posY: position.y,
+  const startDrag = useCallback((clientX: number, clientY: number) => {
+    if (!enabled || !elementRef.current) return
+
+    // Get the element's CURRENT position in the viewport
+    const rect = elementRef.current.getBoundingClientRect()
+
+    // Store drag start: mouse coords + element's top-left in viewport
+    const startData = {
+      mouseX: clientX,
+      mouseY: clientY,
+      elX: rect.left,
+      elY: rect.top,
     }
+
     setIsDragging(true)
-  }, [enabled, position])
-
-  const onTouchStart = useCallback((e: React.TouchEvent) => {
-    if (!enabled) return
-    const touch = e.touches[0]
-    dragStartRef.current = {
-      mouseX: touch.clientX,
-      mouseY: touch.clientY,
-      posX: position.x,
-      posY: position.y,
-    }
-    setIsDragging(true)
-  }, [enabled, position])
-
-  useEffect(() => {
-    if (!isDragging) return
+    // Immediately fix the element at its current visual position
+    const initial = { x: rect.left, y: rect.top }
+    setPosition(initial)
+    positionRef.current = initial
 
     const onMouseMove = (e: MouseEvent) => {
-      if (!dragStartRef.current) return
-      const dx = e.clientX - dragStartRef.current.mouseX
-      const dy = e.clientY - dragStartRef.current.mouseY
-      const newX = dragStartRef.current.posX + dx
-      const newY = dragStartRef.current.posY + dy
-
-      // Clamp within viewport
+      const dx = e.clientX - startData.mouseX
+      const dy = e.clientY - startData.mouseY
       const el = elementRef.current
       const w = el?.offsetWidth ?? 60
       const h = el?.offsetHeight ?? 60
-      const clampedX = Math.max(8, Math.min(window.innerWidth - w - 8, newX))
-      const clampedY = Math.max(8, Math.min(window.innerHeight - h - 8, newY))
-
-      setPosition({ x: clampedX, y: clampedY })
-      setHasMoved(true)
+      const newX = Math.max(8, Math.min(window.innerWidth - w - 8, startData.elX + dx))
+      const newY = Math.max(8, Math.min(window.innerHeight - h - 8, startData.elY + dy))
+      const next = { x: newX, y: newY }
+      setPosition(next)
+      positionRef.current = next
     }
 
     const onTouchMove = (e: TouchEvent) => {
-      if (!dragStartRef.current) return
       const touch = e.touches[0]
-      const dx = touch.clientX - dragStartRef.current.mouseX
-      const dy = touch.clientY - dragStartRef.current.mouseY
-      const newX = dragStartRef.current.posX + dx
-      const newY = dragStartRef.current.posY + dy
-
+      const dx = touch.clientX - startData.mouseX
+      const dy = touch.clientY - startData.mouseY
       const el = elementRef.current
       const w = el?.offsetWidth ?? 60
       const h = el?.offsetHeight ?? 60
-      const clampedX = Math.max(8, Math.min(window.innerWidth - w - 8, newX))
-      const clampedY = Math.max(8, Math.min(window.innerHeight - h - 8, newY))
-
-      setPosition({ x: clampedX, y: clampedY })
-      setHasMoved(true)
+      const newX = Math.max(8, Math.min(window.innerWidth - w - 8, startData.elX + dx))
+      const newY = Math.max(8, Math.min(window.innerHeight - h - 8, startData.elY + dy))
+      const next = { x: newX, y: newY }
+      setPosition(next)
+      positionRef.current = next
     }
 
     const onEnd = () => {
       setIsDragging(false)
-      dragStartRef.current = null
-      // Save to localStorage
+      // Save latest position using ref (not stale closure)
       try {
-        localStorage.setItem(storageKey, JSON.stringify(position))
+        if (positionRef.current) {
+          localStorage.setItem(storageKey, JSON.stringify(positionRef.current))
+        }
       } catch {
         // ignore
       }
+      window.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('mouseup', onEnd)
+      window.removeEventListener('touchmove', onTouchMove)
+      window.removeEventListener('touchend', onEnd)
     }
 
     window.addEventListener('mousemove', onMouseMove)
     window.addEventListener('mouseup', onEnd)
     window.addEventListener('touchmove', onTouchMove, { passive: true })
     window.addEventListener('touchend', onEnd)
+  }, [enabled, storageKey])
 
-    return () => {
-      window.removeEventListener('mousemove', onMouseMove)
-      window.removeEventListener('mouseup', onEnd)
-      window.removeEventListener('touchmove', onTouchMove)
-      window.removeEventListener('touchend', onEnd)
-    }
-  }, [isDragging, position, storageKey])
+  const onMouseDown = useCallback((e: React.MouseEvent) => {
+    if (!enabled) return
+    e.preventDefault()
+    startDrag(e.clientX, e.clientY)
+  }, [enabled, startDrag])
+
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
+    if (!enabled) return
+    const touch = e.touches[0]
+    startDrag(touch.clientX, touch.clientY)
+  }, [enabled, startDrag])
 
   const resetPosition = useCallback(() => {
-    setPosition(defaultPosition)
-    setHasMoved(false)
+    setPosition(null)
+    positionRef.current = null
     try {
       localStorage.removeItem(storageKey)
     } catch {
       // ignore
     }
-  }, [defaultPosition, storageKey])
+  }, [storageKey])
 
-  // Compute inline style: use fixed pixel position only when dragged
-  // When not dragged, style is undefined so className positioning takes over
-  const style = 
-    isDragging || hasMoved
-      ? { position: 'fixed' as const, left: `${position.x}px`, top: `${position.y}px`, bottom: 'auto', right: 'auto' }
-      : undefined
+  // Style: fixed pixel position when moved, undefined otherwise (CSS className takes over)
+  const style: React.CSSProperties | undefined = position
+    ? {
+        position: 'fixed',
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+        bottom: 'auto',
+        right: 'auto',
+      }
+    : undefined
 
   return {
     elementRef,
     style,
     isDragging,
-    hasMoved,
+    hasMoved: position !== null,
     onMouseDown,
     onTouchStart,
     resetPosition,

@@ -71,7 +71,6 @@ export default function ClientProviders({ children }: ClientProvidersProps) {
             <SVGFilters />
             <DraggableWrapper
               storageKey="fab-accessibility"
-              defaultPosition={{ x: 24, y: 176 }}
               label="Доступність"
               className="fixed bottom-44 left-6 z-40"
             >
@@ -82,7 +81,6 @@ export default function ClientProviders({ children }: ClientProvidersProps) {
             {/* Floating quick actions */}
             <DraggableWrapper
               storageKey="fab-quick-actions"
-              defaultPosition={{ x: 24, y: 224 }}
               label="Швидкі дії"
               className="fixed bottom-56 left-6 z-50"
             >
