@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import {
   Phone,
   Navigation,
@@ -16,6 +16,27 @@ import { CONTACT_INFO, SITE_INFO } from '@/utils/constants'
 
 export default function FloatingQuickActions() {
   const [open, setOpen] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  // Close on click outside
+  useEffect(() => {
+    if (!open) return
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [open])
+
+  // Close on Escape
+  useEffect(() => {
+    if (!open) return
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false) }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [open])
 
   const links = useMemo(() => {
     const tel = `tel:${CONTACT_INFO.phoneRaw}`
@@ -32,6 +53,7 @@ export default function FloatingQuickActions() {
 
   return (
     <div
+      ref={containerRef}
       className="relative"
       aria-live="polite"
     >

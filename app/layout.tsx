@@ -117,7 +117,7 @@ export default async function RootLayout({
         )}
 
         <ClientProviders>
-          <div className="min-h-screen flex flex-col">
+          <div className="min-h-screen flex flex-col" suppressHydrationWarning>
             {/* Skip navigation link for accessibility - This is on layout level so not translated dynamically */}
             <a
               href="#main-content"

@@ -64,6 +64,7 @@ export default function AIAssistant() {
   const [input, setInput] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const { messages, sendMessage, status, setMessages } = useChat({
     transport: new DefaultChatTransport({ 
@@ -107,8 +108,28 @@ export default function AIAssistant() {
     setInput('')
   }
 
+  // Close on click outside
+  useEffect(() => {
+    if (!isOpen) return
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        handleClose()
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [isOpen])
+
+  // Close on Escape
+  useEffect(() => {
+    if (!isOpen) return
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') handleClose() }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [isOpen])
+
   return (
-    <>
+    <div ref={containerRef} className="relative">
       {/* Floating button with enhanced styling */}
       <div className={`group ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} transition-all duration-300`}>
         <button
@@ -130,7 +151,7 @@ export default function AIAssistant() {
 
       {/* Chat window */}
       <div
-        className={`absolute bottom-16 left-0 z-50 w-[380px] max-w-[calc(100vw-3rem)] transition-all duration-300 ${
+        className={`absolute bottom-16 right-0 z-50 w-[380px] max-w-[calc(100vw-3rem)] transition-all duration-300 ${
           isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'
         }`}
       >
@@ -258,6 +279,6 @@ export default function AIAssistant() {
           </form>
         </div>
       </div>
-    </>
+    </div>
   )
 }

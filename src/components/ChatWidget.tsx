@@ -42,6 +42,7 @@ export default function ChatWidget() {
   const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   // Initialize messages only on client to avoid hydration mismatch
   useEffect(() => {
@@ -66,6 +67,26 @@ export default function ChatWidget() {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 100)
     }
+  }, [isOpen])
+
+  // Close on click outside
+  useEffect(() => {
+    if (!isOpen) return
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [isOpen])
+
+  // Close on Escape
+  useEffect(() => {
+    if (!isOpen) return
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setIsOpen(false) }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
   }, [isOpen])
 
   const addMessage = (text: string, type: 'user' | 'bot') => {
@@ -122,7 +143,7 @@ export default function ChatWidget() {
   }
 
   return (
-    <>
+    <div ref={containerRef} className="relative">
       {/* Chat bubble button with tooltip */}
       <div className={`group ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} transition-all duration-300`}>
         <button
@@ -143,7 +164,7 @@ export default function ChatWidget() {
 
       {/* Chat window */}
       <div
-        className={`absolute bottom-16 left-0 z-50 w-96 max-w-[calc(100vw-3rem)] bg-white rounded-2xl shadow-2xl shadow-dental-secondary-200/50 border border-dental-secondary-200 overflow-hidden transition-all duration-300 ${
+        className={`absolute bottom-16 right-0 z-50 w-96 max-w-[calc(100vw-3rem)] bg-white rounded-2xl shadow-2xl shadow-dental-secondary-200/50 border border-dental-secondary-200 overflow-hidden transition-all duration-300 ${
           isOpen
             ? 'opacity-100 translate-y-0 scale-100'
             : 'opacity-0 translate-y-4 scale-95 pointer-events-none'
@@ -264,6 +285,6 @@ export default function ChatWidget() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
