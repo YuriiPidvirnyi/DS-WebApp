@@ -40,19 +40,19 @@ const Footer = memo(() => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
 
           {/* LEFT: Logo + description + socials + newsletter */}
-          <div>
+          <div className="flex flex-col h-full">
             {/* Logo + description */}
-            <div className="mb-8">
-              <div className="mb-5">
+            <div className="mb-6">
+              <div className="mb-4">
                 <Logo variant="white" size="sm" />
               </div>
               <p className="text-white/60 text-sm leading-relaxed">
-                Сучасна стоматологічна клініка у Львові з повним спектром послуг.
+                {SITE_INFO.description}
               </p>
             </div>
 
             {/* Socials */}
-            <div className="flex items-center flex-wrap gap-2 mb-6">
+            <div className="flex items-center flex-wrap gap-1.5 mb-5">
               {[
                 { href: CONTACT_INFO.social.facebook, label: 'Facebook', icon: <Facebook className="w-4 h-4" /> },
                 { href: CONTACT_INFO.social.instagram, label: 'Instagram', icon: <Instagram className="w-4 h-4" /> },
@@ -60,7 +60,7 @@ const Footer = memo(() => {
                 { href: CONTACT_INFO.social.whatsapp, label: 'WhatsApp', icon: <WhatsAppIcon /> },
                 { href: CONTACT_INFO.social.twitter, label: 'Twitter / X', icon: <Twitter className="w-4 h-4" /> },
                 { href: CONTACT_INFO.social.tiktok, label: 'TikTok', icon: <TikTokIcon /> },
-              ].map(({ href, label, icon }) => (
+              ].map(({ href, label, icon }) => href ? (
                 <a
                   key={label}
                   href={href}
@@ -71,11 +71,11 @@ const Footer = memo(() => {
                 >
                   {icon}
                 </a>
-              ))}
+              ) : null)}
             </div>
 
             {/* Newsletter */}
-            <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4 mt-auto">
               <h4 className="text-white font-semibold text-sm mb-1">Підписка на новини</h4>
               <p className="text-white/60 text-xs leading-relaxed mb-3">
                 Отримуйте акції та поради від наших лікарів
@@ -83,12 +83,13 @@ const Footer = memo(() => {
               <NewsletterSubscribe />
             </div>
           </div>
+          </div>
 
           {/* RIGHT: Navigation (left) | Hours + Contacts (right) */}
-          <div className="grid grid-cols-2 gap-8">
+          <div className="grid grid-cols-2 gap-8 lg:gap-12">
             {/* Navigation */}
-            <div>
-              <h4 className="text-white font-semibold text-sm mb-4">Навігація</h4>
+            <div className="flex flex-col">
+              <h4 className="text-white font-semibold text-sm mb-4 h-fit">Навігація</h4>
               <nav aria-label={t('accessibility.siteNavigation')}>
                 <ul className="space-y-2.5">
                   {navLinks.map(link => (
@@ -117,14 +118,14 @@ const Footer = memo(() => {
             </div>
 
             {/* Hours + Contacts stacked vertically */}
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-5">
               {/* Working hours — top */}
               <div>
                 <h4 className="text-white font-semibold text-sm mb-3 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-dental-primary-400" />
+                  <Clock className="w-4 h-4 flex-shrink-0 text-dental-primary-400" />
                   Режим роботи
                 </h4>
-                <ul className="space-y-1.5 text-sm">
+                <ul className="space-y-1.5 text-sm ml-6">
                   <li className="flex justify-between gap-4">
                     <span className="text-white/50">Пн-Пт</span>
                     <span className="text-white/80 tabular-nums">09:00-21:00</span>
@@ -143,7 +144,7 @@ const Footer = memo(() => {
               {/* Contacts — below */}
               <div>
                 <h4 className="text-white font-semibold text-sm mb-3">Контакти</h4>
-                <ul className="space-y-2.5">
+                <ul className="space-y-2 ml-6">
                   <li>
                     <a
                       href={`tel:${CONTACT_INFO.phoneRaw}`}
