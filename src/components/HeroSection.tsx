@@ -108,154 +108,116 @@ export default function HeroSection() {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          {/* Left column - Text content */}
-          <div className={`transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            {/* Badge */}
-            <div 
-              className="inline-flex items-center gap-2 bg-dental-primary-50 border border-dental-primary-200 px-4 py-2 rounded-full mb-8 transition-all duration-700"
-              style={{ transitionDelay: '200ms' }}
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-dental-primary-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-dental-primary-500"></span>
-              </span>
-              <span className="text-sm font-medium text-dental-primary-700">{t('stats.workingNow')}</span>
-            </div>
-
-            {/* Main headline */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-dental-dark leading-[1.1] mb-6 tracking-tight text-balance" suppressHydrationWarning>
-              {t('home.hero.title')}
-            </h1>
-
-            {/* Subheadline */}
-            <p className="text-xl text-dental-text leading-relaxed mb-10 max-w-lg" suppressHydrationWarning>
-              {t('home.hero.description')}
-            </p>
-
-            {/* CTA buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <Link
-                href="/booking"
-                className="group inline-flex items-center justify-center gap-3 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-dental-primary-600/20 hover:-translate-y-0.5"
-              >
-                <Phone className="h-5 w-5" />
-                {t('hero.bookConsultation')}
-                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Link>
-              <Link
-                href="/services"
-                className="group inline-flex items-center justify-center gap-3 bg-white hover:bg-dental-primary-50 text-dental-primary-700 px-8 py-4 rounded-2xl font-semibold text-lg border-2 border-dental-secondary-300 transition-all duration-300 hover:border-dental-primary-400"
-              >
-                <Play className="h-5 w-5" />
-                {t('hero.ourServices')}
-              </Link>
-            </div>
-
-            {/* Trust indicators */}
-            <div className="flex flex-wrap items-center gap-6 text-sm text-dental-muted">
-              <div className="flex items-center gap-2">
-                <Shield className="h-5 w-5 text-dental-primary-500" />
-                <span>{t('stats.qualityGuarantee')}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Award className="h-5 w-5 text-dental-primary-500" />
-                <span>{t('features.experiencedDoctors.title')}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Star className="h-5 w-5 text-dental-primary-500" />
-                <span>{t('features.modernEquipment.title')}</span>
-              </div>
-            </div>
+        {/* Hero content */}
+        <div className={`max-w-3xl mx-auto text-center transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 bg-dental-primary-50 border border-dental-primary-200 px-4 py-2 rounded-full mb-8">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-dental-primary-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-dental-primary-500"></span>
+            </span>
+            <span className="text-sm font-medium text-dental-primary-700">{t('stats.workingNow')}</span>
           </div>
 
-          {/* Right column - Stats grid with 2x2 layout */}
-          <div className={`transition-all duration-1000 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <div className="grid grid-cols-2 gap-4">
-              {/* Patients */}
-              <div 
-                ref={patientsRef}
-                className="bg-white rounded-2xl p-5 shadow-md border border-dental-secondary-100 hover:shadow-lg transition-all duration-300"
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-dental-primary-50 rounded-lg flex items-center justify-center">
-                    <Users className="h-5 w-5 text-dental-primary-600" />
-                  </div>
-                </div>
-                <p className="text-2xl font-bold text-dental-dark">{patientsCount.toLocaleString()}+</p>
-                <p className="text-dental-muted text-sm">Пацієнтів</p>
-              </div>
+          {/* Main headline */}
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-dental-dark leading-[1.1] mb-6 tracking-tight text-balance" suppressHydrationWarning>
+            {t('home.hero.title')}
+          </h1>
 
-              {/* Satisfaction */}
-              <div 
-                ref={satisfactionRef}
-                className="bg-white rounded-2xl p-5 shadow-md border border-dental-secondary-100 hover:shadow-lg transition-all duration-300"
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-dental-primary-50 rounded-lg flex items-center justify-center">
-                    <Star className="h-5 w-5 text-dental-primary-600" />
-                  </div>
-                </div>
-                <p className="text-2xl font-bold text-dental-dark">{satisfactionCount}%</p>
-                <p className="text-dental-muted text-sm">Задоволених</p>
-              </div>
+          {/* Subheadline */}
+          <p className="text-lg md:text-xl text-dental-text leading-relaxed mb-10 max-w-2xl mx-auto" suppressHydrationWarning>
+            {t('home.hero.description')}
+          </p>
 
-              {/* Experience */}
-              <div 
-                ref={yearsRef}
-                className="bg-white rounded-2xl p-5 shadow-md border border-dental-secondary-100 hover:shadow-lg transition-all duration-300"
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-dental-primary-50 rounded-lg flex items-center justify-center">
-                    <Award className="h-5 w-5 text-dental-primary-600" />
-                  </div>
-                </div>
-                <p className="text-2xl font-bold text-dental-dark">{yearsCount}+</p>
-                <p className="text-dental-muted text-sm">Років досвіду</p>
-              </div>
-
-              {/* Free consultation */}
-              <Link
-                href="/booking"
-                className="bg-gradient-to-br from-dental-primary-500 to-dental-primary-600 rounded-2xl p-5 shadow-md hover:shadow-lg transition-all duration-300 group"
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                    <Phone className="h-5 w-5 text-white" />
-                  </div>
-                </div>
-                <p className="text-lg font-bold text-white">Безкоштовно</p>
-                <p className="text-white/80 text-sm flex items-center gap-1">
-                  Консультація
-                  <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
-                </p>
-              </Link>
-            </div>
+          {/* CTA buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+            <Link
+              href="/booking"
+              className="group inline-flex items-center justify-center gap-3 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-dental-primary-600/20 hover:-translate-y-0.5"
+            >
+              <Phone className="h-5 w-5" />
+              {t('hero.bookConsultation')}
+              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </Link>
+            <Link
+              href="/services"
+              className="group inline-flex items-center justify-center gap-3 bg-white hover:bg-dental-primary-50 text-dental-primary-700 px-8 py-4 rounded-2xl font-semibold text-lg border-2 border-dental-secondary-300 transition-all duration-300 hover:border-dental-primary-400"
+            >
+              <Play className="h-5 w-5" />
+              {t('hero.ourServices')}
+            </Link>
           </div>
         </div>
 
-        {/* Logos/Trust bar */}
-        <div 
-          className={`mt-20 pt-12 border-t border-dental-secondary-200 transition-all duration-1000 delay-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-        >
-          <p className="text-center text-sm text-dental-muted mb-6">Нам довіряють пацієнти по всій Україні</p>
-          <div className="flex flex-wrap justify-center items-center gap-8 text-dental-muted">
-            <div className="flex items-center gap-2">
-              <Shield className="h-6 w-6" />
-              <span className="font-semibold">ISO 9001</span>
+        {/* Stats row - horizontal layout */}
+        <div className={`transition-all duration-1000 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {/* Patients */}
+            <div 
+              ref={patientsRef}
+              className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-dental-secondary-100 text-center hover:shadow-md hover:bg-white transition-all duration-300"
+            >
+              <div className="w-12 h-12 bg-dental-primary-50 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <Users className="h-6 w-6 text-dental-primary-600" />
+              </div>
+              <p className="text-3xl font-bold text-dental-dark">{patientsCount.toLocaleString()}+</p>
+              <p className="text-dental-muted text-sm mt-1">Пацієнтів</p>
             </div>
-            <div className="flex items-center gap-2">
-              <Award className="h-6 w-6" />
-              <span className="font-semibold">Ліцензована клініка</span>
+
+            {/* Satisfaction */}
+            <div 
+              ref={satisfactionRef}
+              className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-dental-secondary-100 text-center hover:shadow-md hover:bg-white transition-all duration-300"
+            >
+              <div className="w-12 h-12 bg-dental-primary-50 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <Star className="h-6 w-6 text-dental-primary-600" />
+              </div>
+              <p className="text-3xl font-bold text-dental-dark">{satisfactionCount}%</p>
+              <p className="text-dental-muted text-sm mt-1">Задоволених</p>
             </div>
-            <div className="flex items-center gap-2">
-              <Star className="h-6 w-6" />
-              <span className="font-semibold">4.9 Google</span>
+
+            {/* Experience */}
+            <div 
+              ref={yearsRef}
+              className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-dental-secondary-100 text-center hover:shadow-md hover:bg-white transition-all duration-300"
+            >
+              <div className="w-12 h-12 bg-dental-primary-50 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <Award className="h-6 w-6 text-dental-primary-600" />
+              </div>
+              <p className="text-3xl font-bold text-dental-dark">{yearsCount}+</p>
+              <p className="text-dental-muted text-sm mt-1">Років досвіду</p>
             </div>
-            <div className="flex items-center gap-2">
-              <Users className="h-6 w-6" />
-              <span className="font-semibold">Сімейна стоматологія</span>
-            </div>
+
+            {/* Free consultation */}
+            <Link
+              href="/booking"
+              className="bg-gradient-to-br from-dental-primary-500 to-dental-primary-600 rounded-2xl p-6 shadow-sm text-center hover:shadow-md hover:from-dental-primary-600 hover:to-dental-primary-700 transition-all duration-300 group"
+            >
+              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <Phone className="h-6 w-6 text-white" />
+              </div>
+              <p className="text-xl font-bold text-white">Безкоштовна</p>
+              <p className="text-white/90 text-sm mt-1 flex items-center justify-center gap-1">
+                консультація
+                <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
+              </p>
+            </Link>
+          </div>
+        </div>
+
+        {/* Trust indicators */}
+        <div className={`mt-12 flex flex-wrap justify-center items-center gap-6 text-sm text-dental-muted transition-all duration-1000 delay-500 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+          <div className="flex items-center gap-2">
+            <Shield className="h-5 w-5 text-dental-primary-500" />
+            <span>Гарантія якості</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Award className="h-5 w-5 text-dental-primary-500" />
+            <span>Досвідчені лікарі</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Star className="h-5 w-5 text-dental-primary-500" />
+            <span>Сучасне обладнання</span>
           </div>
         </div>
       </div>
