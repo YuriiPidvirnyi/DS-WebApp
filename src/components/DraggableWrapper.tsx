@@ -26,7 +26,7 @@ export default function DraggableWrapper({
   return (
     <div
       ref={elementRef}
-      style={style}
+      style={dragModeEnabled && hasMoved ? style : undefined}
       className={`${className} ${isDragging ? 'z-[9999] cursor-grabbing select-none' : ''}`}
     >
       {/* Drag handle overlay — visible only in drag mode */}
