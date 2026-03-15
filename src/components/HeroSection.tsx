@@ -109,14 +109,17 @@ export default function HeroSection() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         {/* Hero content */}
-        <div className={`max-w-3xl mx-auto text-center transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <div 
+          className="max-w-3xl mx-auto text-center transition-all duration-1000"
+          style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translateY(0)' : 'translateY(2rem)' }}
+        >
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-dental-primary-50 border border-dental-primary-200 px-4 py-2 rounded-full mb-8">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-dental-primary-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-dental-primary-500"></span>
             </span>
-            <span className="text-sm font-medium text-dental-primary-700">{t('stats.workingNow')}</span>
+            <span className="text-sm font-medium text-dental-primary-700" suppressHydrationWarning>{t('stats.workingNow')}</span>
           </div>
 
           {/* Main headline */}
@@ -150,7 +153,10 @@ export default function HeroSection() {
         </div>
 
         {/* Stats row - horizontal layout */}
-        <div className={`transition-all duration-1000 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <div 
+          className="transition-all duration-1000 delay-300"
+          style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translateY(0)' : 'translateY(2rem)' }}
+        >
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
             {/* Patients */}
             <div 
@@ -206,7 +212,10 @@ export default function HeroSection() {
         </div>
 
         {/* Trust indicators */}
-        <div className={`mt-12 flex flex-wrap justify-center items-center gap-6 text-sm text-dental-muted transition-all duration-1000 delay-500 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+        <div 
+          className="mt-12 flex flex-wrap justify-center items-center gap-6 text-sm text-dental-muted transition-all duration-1000 delay-500"
+          style={{ opacity: mounted ? 1 : 0 }}
+        >
           <div className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-dental-primary-500" />
             <span>Гарантія якості</span>
