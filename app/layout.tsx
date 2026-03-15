@@ -116,23 +116,23 @@ export default async function RootLayout({
           </>
         )}
 
-        <ClientProviders>
-          <div className="min-h-screen flex flex-col" suppressHydrationWarning>
-            {/* Skip navigation link for accessibility - This is on layout level so not translated dynamically */}
-            <a
-              href="#main-content"
-              className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-50 bg-dental-teal text-white px-4 py-2 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-white"
-            >
-              Skip to main content
-            </a>
+        <div className="min-h-screen flex flex-col">
+          {/* Skip navigation link for accessibility */}
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-50 bg-dental-teal text-white px-4 py-2 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-white"
+          >
+            Skip to main content
+          </a>
+          <ClientProviders>
             <Header />
             <main id="main-content" className="flex-1" role="main">
               {children}
             </main>
             <Footer />
             <ClientFloatingButtons />
-          </div>
-        </ClientProviders>
+          </ClientProviders>
+        </div>
         <Analytics />
       </body>
     </html>
