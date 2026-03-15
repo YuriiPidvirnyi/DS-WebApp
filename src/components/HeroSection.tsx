@@ -80,9 +80,9 @@ export default function HeroSection() {
   }, [])
 
   return (
-    <section className="relative min-h-[95vh] flex items-center overflow-hidden bg-white">
+    <section className="relative min-h-[95vh] flex items-center overflow-hidden bg-white" suppressHydrationWarning>
       {/* Subtle background pattern */}
-      <div className="absolute inset-0 opacity-40 pointer-events-none bg-gradient-radial-dental">
+      <div className="absolute inset-0 opacity-40 pointer-events-none bg-gradient-radial-dental" suppressHydrationWarning>
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
