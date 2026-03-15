@@ -39,15 +39,7 @@ export function useDraggable({ storageKey, enabled }: UseDraggableOptions) {
     }
   }, [storageKey])
 
-  // When drag mode enabled/disabled, show or hide the dragged position
-  // But DON'T clear localStorage - keep it saved
-  useEffect(() => {
-    if (!enabled && position !== null) {
-      // When drag mode turns OFF, keep position in ref but don't show it (className takes over)
-      // But only hide if it's actually been moved, not just loaded from storage
-    }
-    // When drag mode turns ON, position is already loaded from localStorage
-  }, [enabled, position])
+
 
   const startDrag = useCallback((clientX: number, clientY: number) => {
     if (!enabled || !elementRef.current) return
