@@ -30,10 +30,6 @@ const AccessibilityPanel = dynamic(
     })),
   { ssr: false }
 )
-const FloatingQuickActions = dynamic(
-  () => import('@/components/FloatingQuickActions'),
-  { ssr: false }
-)
 const DragModeToggle = dynamic(
   () => import('@/components/DragModeToggle'),
   { ssr: false }
@@ -69,13 +65,17 @@ export default function ClientProviders({ children }: ClientProvidersProps) {
             <ResourcePreloader />
             <LiveRegion />
             <SVGFilters />
-            <DraggableWrapper
-              storageKey="fab-accessibility-v2"
-              label="Доступність"
-              className="fixed bottom-6 left-6 z-40"
-            >
-              <AccessibilityPanel />
-            </DraggableWrapper>
+            {/* Left cluster: Accessibility + Move button side by side */}
+            <div className="fixed bottom-6 left-6 z-40 flex items-center gap-2">
+              <DraggableWrapper
+                storageKey="fab-accessibility-v3"
+                label="Доступність"
+                className=""
+              >
+                <AccessibilityPanel />
+              </DraggableWrapper>
+              <DragModeToggle />
+            </div>
             <AppInitializer />
             {children}
           </DragModeProvider>

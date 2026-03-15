@@ -9,17 +9,13 @@ const FloatingQuickActions = dynamic(
   () => import('./FloatingQuickActions'),
   { ssr: false }
 )
-const DragModeToggle = dynamic(
-  () => import('./DragModeToggle'),
-  { ssr: false }
-)
 
 export default function ClientFloatingButtons() {
   return (
     <>
-      {/* Right side: Chat, AI Assistant, Quick Actions, Move button */}
+      {/* Right column (bottom → top): Chat, AI, Quick Actions */}
       <DraggableWrapper
-        storageKey="fab-chat-v2"
+        storageKey="fab-chat-v3"
         label="Чат"
         className="fixed bottom-6 right-6 z-50"
       >
@@ -27,7 +23,7 @@ export default function ClientFloatingButtons() {
       </DraggableWrapper>
 
       <DraggableWrapper
-        storageKey="fab-ai-assistant-v2"
+        storageKey="fab-ai-v3"
         label="AI Асистент"
         className="fixed bottom-24 right-6 z-40"
       >
@@ -35,15 +31,12 @@ export default function ClientFloatingButtons() {
       </DraggableWrapper>
 
       <DraggableWrapper
-        storageKey="fab-quick-actions-v2"
+        storageKey="fab-quick-v3"
         label="Швидкі дії"
-        className="fixed bottom-44 right-6 z-50"
+        className="fixed bottom-44 right-6 z-40"
       >
         <FloatingQuickActions />
       </DraggableWrapper>
-
-      {/* Move button - right side above Quick Actions */}
-      <DragModeToggle />
     </>
   )
 }
