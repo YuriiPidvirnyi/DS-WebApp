@@ -22,50 +22,64 @@ const Footer = memo(() => {
   return (
     <footer className="bg-dental-primary-900 text-white" role="contentinfo">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16">
-        {/* Two halves: left (logo+nav) | right (newsletter top, contacts+hours bottom) */}
+        {/* 2 main columns: left (logo+nav) | right (contacts+hours) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
 
-          {/* LEFT HALF: Logo + description + socials + navigation */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-            {/* Logo + description + socials */}
-            <div>
+          {/* LEFT: Logo + description + socials + newsletter */}
+          <div>
+            {/* Logo + description */}
+            <div className="mb-8">
               <div className="mb-5">
                 <Logo variant="white" size="sm" />
               </div>
-              <p className="text-white/60 text-sm leading-relaxed mb-6">
+              <p className="text-white/60 text-sm leading-relaxed">
                 Сучасна стоматологічна клініка у Львові з повним спектром послуг.
               </p>
-              <div className="flex items-center gap-2">
-                <a
-                  href={CONTACT_INFO.social.facebook}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Facebook"
-                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-dental-primary-500 flex items-center justify-center transition-colors"
-                >
-                  <Facebook className="w-4 h-4" />
-                </a>
-                <a
-                  href={CONTACT_INFO.social.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Instagram"
-                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-dental-primary-500 flex items-center justify-center transition-colors"
-                >
-                  <Instagram className="w-4 h-4" />
-                </a>
-                <a
-                  href={CONTACT_INFO.social.telegram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Telegram"
-                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-dental-primary-500 flex items-center justify-center transition-colors"
-                >
-                  <Send className="w-4 h-4" />
-                </a>
-              </div>
             </div>
 
+            {/* Socials */}
+            <div className="flex items-center gap-2 mb-8">
+              <a
+                href={CONTACT_INFO.social.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-dental-primary-500 flex items-center justify-center transition-colors"
+              >
+                <Facebook className="w-4 h-4" />
+              </a>
+              <a
+                href={CONTACT_INFO.social.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-dental-primary-500 flex items-center justify-center transition-colors"
+              >
+                <Instagram className="w-4 h-4" />
+              </a>
+              <a
+                href={CONTACT_INFO.social.telegram}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Telegram"
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-dental-primary-500 flex items-center justify-center transition-colors"
+              >
+                <Send className="w-4 h-4" />
+              </a>
+            </div>
+
+            {/* Newsletter */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-5">
+              <h4 className="text-white font-semibold text-sm mb-2">Підписка на новини</h4>
+              <p className="text-white/60 text-xs leading-relaxed mb-4">
+                Отримуйте акції та поради від наших лікарів
+              </p>
+              <NewsletterSubscribe />
+            </div>
+          </div>
+
+          {/* RIGHT: Navigation + Contacts + Hours */}
+          <div className="grid grid-cols-2 gap-8">
             {/* Navigation */}
             <div>
               <h4 className="text-white font-semibold text-sm mb-4">Навігація</h4>
@@ -95,77 +109,59 @@ const Footer = memo(() => {
                 </ul>
               </nav>
             </div>
-          </div>
 
-          {/* RIGHT HALF: Newsletter on top, contacts + hours below */}
-          <div className="flex flex-col gap-8">
-            {/* Newsletter — top */}
+            {/* Contacts */}
             <div>
-              <h4 className="text-white font-semibold text-sm mb-1">Підписка на новини</h4>
-              <p className="text-white/60 text-sm leading-relaxed mb-4">
-                Отримуйте акції та поради від наших лікарів
-              </p>
-              <NewsletterSubscribe />
+              <h4 className="text-white font-semibold text-sm mb-4">Контакти</h4>
+              <ul className="space-y-3">
+                <li>
+                  <a
+                    href={`tel:${CONTACT_INFO.phoneRaw}`}
+                    className="flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm"
+                  >
+                    <Phone className="w-4 h-4 flex-shrink-0 text-dental-primary-400" />
+                    {CONTACT_INFO.phone}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`mailto:${CONTACT_INFO.email}`}
+                    className="flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm"
+                  >
+                    <Mail className="w-4 h-4 flex-shrink-0 text-dental-primary-400" />
+                    {CONTACT_INFO.email}
+                  </a>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-white/60">
+                  <MapPin className="w-4 h-4 flex-shrink-0 text-dental-primary-400 mt-0.5" />
+                  <address className="not-italic leading-relaxed">
+                    {CONTACT_INFO.address.street},<br />
+                    {CONTACT_INFO.address.city}
+                  </address>
+                </li>
+              </ul>
             </div>
 
-            {/* Divider */}
-            <div className="border-t border-white/10" />
-
-            {/* Contacts + Hours — bottom, side by side */}
-            <div className="grid grid-cols-2 gap-8">
-              {/* Contacts */}
-              <div>
-                <h4 className="text-white font-semibold text-sm mb-4">Контакти</h4>
-                <ul className="space-y-3">
-                  <li>
-                    <a
-                      href={`tel:${CONTACT_INFO.phoneRaw}`}
-                      className="flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm"
-                    >
-                      <Phone className="w-4 h-4 flex-shrink-0 text-dental-primary-400" />
-                      {CONTACT_INFO.phone}
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href={`mailto:${CONTACT_INFO.email}`}
-                      className="flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm"
-                    >
-                      <Mail className="w-4 h-4 flex-shrink-0 text-dental-primary-400" />
-                      {CONTACT_INFO.email}
-                    </a>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm text-white/60">
-                    <MapPin className="w-4 h-4 flex-shrink-0 text-dental-primary-400 mt-0.5" />
-                    <address className="not-italic leading-relaxed">
-                      {CONTACT_INFO.address.street},<br />
-                      {CONTACT_INFO.address.city}
-                    </address>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Working hours */}
-              <div>
-                <h4 className="text-white font-semibold text-sm mb-4 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-dental-primary-400" />
-                  Режим роботи
-                </h4>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex justify-between gap-4">
-                    <span className="text-white/50">Пн-Пт</span>
-                    <span className="text-white/80 tabular-nums">09:00-21:00</span>
-                  </li>
-                  <li className="flex justify-between gap-4">
-                    <span className="text-white/50">Сб</span>
-                    <span className="text-white/80 tabular-nums">09:00-18:00</span>
-                  </li>
-                  <li className="flex justify-between gap-4">
-                    <span className="text-white/50">Нд</span>
-                    <span className="text-white/40">Вихідний</span>
-                  </li>
-                </ul>
-              </div>
+            {/* Working hours */}
+            <div className="col-span-2">
+              <h4 className="text-white font-semibold text-sm mb-4 flex items-center gap-2">
+                <Clock className="w-4 h-4 text-dental-primary-400" />
+                Режим роботи
+              </h4>
+              <ul className="space-y-2 text-sm">
+                <li className="flex justify-between gap-4">
+                  <span className="text-white/50">Пн-Пт</span>
+                  <span className="text-white/80 tabular-nums">09:00-21:00</span>
+                </li>
+                <li className="flex justify-between gap-4">
+                  <span className="text-white/50">Сб</span>
+                  <span className="text-white/80 tabular-nums">09:00-18:00</span>
+                </li>
+                <li className="flex justify-between gap-4">
+                  <span className="text-white/50">Нд</span>
+                  <span className="text-white/40">Вихідний</span>
+                </li>
+              </ul>
             </div>
           </div>
 
