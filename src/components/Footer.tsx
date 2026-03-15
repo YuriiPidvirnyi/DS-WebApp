@@ -78,72 +78,10 @@ const Footer = memo(() => {
             </div>
           </div>
 
-          {/* RIGHT: Navigation + Contacts + Hours */}
-          <div className="grid grid-cols-2 gap-8">
-            {/* Navigation */}
+          {/* RIGHT: Working hours on top, then navigation + contacts below */}
+          <div className="flex flex-col gap-8">
+            {/* Working hours — top */}
             <div>
-              <h4 className="text-white font-semibold text-sm mb-4">Навігація</h4>
-              <nav aria-label={t('accessibility.siteNavigation')}>
-                <ul className="space-y-2.5">
-                  {navLinks.map(link => (
-                    <li key={link.href}>
-                      <Link
-                        href={link.href}
-                        className="text-white/60 hover:text-white transition-colors text-sm"
-                      >
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                  <li>
-                    <Link
-                      href="/symptom-checker"
-                      className="text-white/60 hover:text-white transition-colors text-sm inline-flex items-center gap-2"
-                    >
-                      {t('ai.symptomChecker.title')}
-                      <span className="text-[10px] bg-dental-primary-500 text-white px-1.5 py-0.5 rounded font-semibold leading-none">
-                        AI
-                      </span>
-                    </Link>
-                  </li>
-                </ul>
-              </nav>
-            </div>
-
-            {/* Contacts */}
-            <div>
-              <h4 className="text-white font-semibold text-sm mb-4">Контакти</h4>
-              <ul className="space-y-3">
-                <li>
-                  <a
-                    href={`tel:${CONTACT_INFO.phoneRaw}`}
-                    className="flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm"
-                  >
-                    <Phone className="w-4 h-4 flex-shrink-0 text-dental-primary-400" />
-                    {CONTACT_INFO.phone}
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href={`mailto:${CONTACT_INFO.email}`}
-                    className="flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm"
-                  >
-                    <Mail className="w-4 h-4 flex-shrink-0 text-dental-primary-400" />
-                    {CONTACT_INFO.email}
-                  </a>
-                </li>
-                <li className="flex items-start gap-2 text-sm text-white/60">
-                  <MapPin className="w-4 h-4 flex-shrink-0 text-dental-primary-400 mt-0.5" />
-                  <address className="not-italic leading-relaxed">
-                    {CONTACT_INFO.address.street},<br />
-                    {CONTACT_INFO.address.city}
-                  </address>
-                </li>
-              </ul>
-            </div>
-
-            {/* Working hours */}
-            <div className="col-span-2">
               <h4 className="text-white font-semibold text-sm mb-4 flex items-center gap-2">
                 <Clock className="w-4 h-4 text-dental-primary-400" />
                 Режим роботи
@@ -162,6 +100,71 @@ const Footer = memo(() => {
                   <span className="text-white/40">Вихідний</span>
                 </li>
               </ul>
+            </div>
+
+            {/* Navigation + Contacts — below in 2 columns */}
+            <div className="grid grid-cols-2 gap-8">
+              {/* Navigation */}
+              <div>
+                <h4 className="text-white font-semibold text-sm mb-4">Навігація</h4>
+                <nav aria-label={t('accessibility.siteNavigation')}>
+                  <ul className="space-y-2.5">
+                    {navLinks.map(link => (
+                      <li key={link.href}>
+                        <Link
+                          href={link.href}
+                          className="text-white/60 hover:text-white transition-colors text-sm"
+                        >
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                    <li>
+                      <Link
+                        href="/symptom-checker"
+                        className="text-white/60 hover:text-white transition-colors text-sm inline-flex items-center gap-2"
+                      >
+                        {t('ai.symptomChecker.title')}
+                        <span className="text-[10px] bg-dental-primary-500 text-white px-1.5 py-0.5 rounded font-semibold leading-none">
+                          AI
+                        </span>
+                      </Link>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+
+              {/* Contacts */}
+              <div>
+                <h4 className="text-white font-semibold text-sm mb-4">Контакти</h4>
+                <ul className="space-y-3">
+                  <li>
+                    <a
+                      href={`tel:${CONTACT_INFO.phoneRaw}`}
+                      className="flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm"
+                    >
+                      <Phone className="w-4 h-4 flex-shrink-0 text-dental-primary-400" />
+                      {CONTACT_INFO.phone}
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href={`mailto:${CONTACT_INFO.email}`}
+                      className="flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm"
+                    >
+                      <Mail className="w-4 h-4 flex-shrink-0 text-dental-primary-400" />
+                      {CONTACT_INFO.email}
+                    </a>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm text-white/60">
+                    <MapPin className="w-4 h-4 flex-shrink-0 text-dental-primary-400 mt-0.5" />
+                    <address className="not-italic leading-relaxed">
+                      {CONTACT_INFO.address.street},<br />
+                      {CONTACT_INFO.address.city}
+                    </address>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
 
