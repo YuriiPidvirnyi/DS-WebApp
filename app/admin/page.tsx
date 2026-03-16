@@ -44,7 +44,7 @@ interface Appointment {
   patient_name: string
   appointment_time: string
   status: string
-  services: { name_uk: string } | null
+  services: { name_uk: string }[] | null
 }
 
 interface ServiceStat {
