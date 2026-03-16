@@ -107,7 +107,7 @@ const analyzeSymptomsTool = tool({
     painLevel: z.number().min(1).max(10).nullable().describe('Pain level from 1-10 if mentioned'),
     duration: z.string().nullable().describe('How long the symptoms have been present'),
   }),
-  execute: async ({ symptoms, painLevel, duration }) => {
+  execute: async ({ symptoms, painLevel }) => {
     // Map symptoms to potential conditions and urgency
     const symptomAnalysis: Record<string, { conditions: string[], urgency: string, recommendation: string }> = {
       'біль': { conditions: ['Карієс', 'Пульпіт', 'Періодонтит'], urgency: 'середня', recommendation: 'Рекомендуємо записатися на огляд протягом 1-2 днів' },
