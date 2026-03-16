@@ -291,10 +291,10 @@ export default function CabinetPage() {
                           </div>
                           <div>
                             <h4 className="font-medium text-dental-dark">
-                              {apt.services?.name_uk || 'Консультація'}
+                              {apt.services?.[0]?.name_uk || 'Консультація'}
                             </h4>
                             <p className="text-sm text-dental-muted">
-                              {apt.doctors?.last_name} {apt.doctors?.first_name}
+                              {apt.doctors?.[0]?.last_name} {apt.doctors?.[0]?.first_name}
                             </p>
                             <div className="flex items-center gap-2 mt-1 text-sm text-dental-muted">
                               <Clock className="w-4 h-4" />
@@ -304,9 +304,9 @@ export default function CabinetPage() {
                         </div>
                         <div className="text-right">
                           {getStatusBadge(apt.status)}
-                          {apt.services?.price_uah && (
+                          {apt.services?.[0]?.price_uah && (
                             <p className="text-sm text-dental-muted mt-2">
-                              {apt.services.price_uah.toLocaleString('uk-UA')} грн
+                              {apt.services[0].price_uah.toLocaleString('uk-UA')} грн
                             </p>
                           )}
                         </div>
