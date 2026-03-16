@@ -317,7 +317,7 @@ export default function AdminDashboard() {
                       </div>
                       <div>
                         <p className="font-medium text-dental-dark">{apt.patient_name}</p>
-                        <p className="text-sm text-dental-text-light">{apt.services?.name_uk || 'Консультація'}</p>
+                        <p className="text-sm text-dental-text-light">{apt.services?.[0]?.name_uk || 'Консультація'}</p>
                       </div>
                     </div>
                     <div className="text-right">
