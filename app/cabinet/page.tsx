@@ -75,7 +75,7 @@ export default function CabinetPage() {
         .eq('patient_id', user.id)
         .order('appointment_date', { ascending: false })
         .limit(5)
-      setAppointments(appointmentsData || [])
+      setAppointments((appointmentsData as Appointment[]) || [])
 
       setLoading(false)
     }
