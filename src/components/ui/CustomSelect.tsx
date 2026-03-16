@@ -128,8 +128,8 @@ export function CustomSelect({
           role="listbox"
           aria-label={ariaLabel ?? label}
           className={clsx(
-            'absolute left-0 right-0 z-50 bg-white border border-dental-primary-400 border-t-0 rounded-b-lg shadow-lg overflow-hidden',
-            'max-h-52 overflow-y-auto'
+            'absolute left-0 right-0 z-50 bg-white border border-dental-primary-400 border-t-0 rounded-b-lg shadow-lg',
+            'max-h-60 overflow-y-auto py-1'
           )}
         >
           {options.map(option => {
@@ -144,7 +144,7 @@ export function CustomSelect({
                   setIsOpen(false)
                 }}
                 className={clsx(
-                  'px-3 py-2 text-sm cursor-pointer transition-colors duration-150 select-none',
+                  'px-3 py-2.5 text-sm cursor-pointer transition-colors duration-150 select-none',
                   isSelected
                     ? 'bg-dental-primary-600 text-white font-medium'
                     : 'text-dental-dark hover:bg-dental-primary-50 hover:text-dental-primary-700'

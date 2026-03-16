@@ -121,7 +121,11 @@ export default function LanguageSwitcher({
     <div ref={dropdownRef} className={`relative ${className}`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-dental-muted hover:text-dental-primary-600 hover:bg-dental-secondary-50 rounded-lg transition-colors"
+        className={`flex items-center gap-2 px-3 py-2 text-sm font-medium text-dental-muted hover:text-dental-primary-600 transition-colors border border-transparent ${
+          isOpen 
+            ? 'rounded-t-lg border-dental-primary-400 border-b-transparent bg-white' 
+            : 'rounded-lg hover:bg-dental-secondary-50'
+        }`}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
         aria-label="Select language"
@@ -136,7 +140,7 @@ export default function LanguageSwitcher({
 
       {isOpen && (
         <div
-          className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-dental-secondary-100 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+          className="absolute right-0 top-full w-48 bg-white rounded-b-lg shadow-lg border border-dental-primary-400 border-t-0 py-1 z-50"
           role="listbox"
           aria-label="Available languages"
         >
@@ -144,8 +148,10 @@ export default function LanguageSwitcher({
             <button
               key={lang.code}
               onClick={() => handleLanguageChange(lang.code)}
-              className={`w-full flex items-center justify-between px-4 py-2.5 text-left hover:bg-dental-secondary-50 transition-colors ${
-                lang.code === displayLang.code ? 'bg-dental-primary-50' : ''
+              className={`w-full flex items-center justify-between px-4 py-2.5 text-left transition-colors ${
+                lang.code === displayLang.code 
+                  ? 'bg-dental-primary-600 text-white' 
+                  : 'hover:bg-dental-primary-50 hover:text-dental-primary-700'
               }`}
               role="option"
               aria-selected={lang.code === displayLang.code}
@@ -153,14 +159,14 @@ export default function LanguageSwitcher({
               <div className="flex items-center gap-3">
                 <span className="text-lg">{lang.flag}</span>
                 <div>
-                  <div className={`font-medium ${lang.code === displayLang.code ? 'text-dental-primary-600' : 'text-dental-dark'}`}>
+                  <div className={`font-medium ${lang.code === displayLang.code ? 'text-white' : 'text-dental-dark'}`}>
                     {lang.nativeName}
                   </div>
-                  <div className="text-xs text-dental-muted">{lang.name}</div>
+                  <div className={`text-xs ${lang.code === displayLang.code ? 'text-white/80' : 'text-dental-muted'}`}>{lang.name}</div>
                 </div>
               </div>
               {lang.code === displayLang.code && (
-                <Check className="w-4 h-4 text-dental-primary-600" />
+                <Check className="w-4 h-4 text-white" />
               )}
             </button>
           ))}
