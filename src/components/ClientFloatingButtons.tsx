@@ -54,7 +54,7 @@ export default function ClientFloatingButtons() {
           
           {/* Panel container - centered on mobile, bottom-right on desktop */}
           <div className="fixed z-50 inset-x-4 bottom-24 sm:inset-auto sm:bottom-24 sm:right-6 sm:w-72">
-            <AccessibilityPanel defaultOpen={true} />
+            <AccessibilityPanel defaultOpen={true} hideToggle={true} />
           </div>
         </>
       )}
