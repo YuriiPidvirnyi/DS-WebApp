@@ -25,7 +25,7 @@ interface ContactFormProps {
 
 export default function ContactForm({ onSuccess }: ContactFormProps) {
   const turnstileRef = useRef<TurnstileRef>(null)
-  const { token: csrfToken, getHeaders: getCSRFHeaders } = useCSRF()
+  const { token: csrfToken } = useCSRF()
   const {
     isCoolingDown,
     remainingSec,
