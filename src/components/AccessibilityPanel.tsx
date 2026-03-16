@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useAccessibility } from '@/hooks/useAccessibility'
 import { Accessibility, Minus, Plus, RotateCcw, X } from 'lucide-react'
+import { CustomSelect } from '@/components/ui/CustomSelect'
 
 interface AccessibilityPanelProps {
   defaultOpen?: boolean
@@ -194,25 +195,22 @@ export function AccessibilityPanel({ defaultOpen = false }: AccessibilityPanelPr
               <p className="text-sm font-medium text-dental-dark mb-2">
                 Сприйняття кольорів
               </p>
-              <select
+              <CustomSelect
                 value={colorBlindnessMode}
-                onChange={e =>
+                onChange={val =>
                   setColorBlindnessMode(
-                    e.target.value as
-                      | 'normal'
-                      | 'protanopia'
-                      | 'deuteranopia'
-                      | 'tritanopia'
+                    val as 'normal' | 'protanopia' | 'deuteranopia' | 'tritanopia'
                   )
                 }
-                className="w-full px-3 py-2 text-sm text-dental-dark border border-dental-secondary-200 rounded-lg bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-dental-primary-500"
+                options={[
+                  { value: 'normal',       label: 'Звичайний режим' },
+                  { value: 'protanopia',   label: 'Протанопія (червоний)' },
+                  { value: 'deuteranopia', label: 'Дейтеранопія (зелений)' },
+                  { value: 'tritanopia',   label: 'Тританопія (синій)' },
+                ]}
+                fullWidth
                 aria-label="Режим сприйняття кольорів"
-              >
-                <option value="normal">Звичайний режим</option>
-                <option value="protanopia">Протанопія (червоний)</option>
-                <option value="deuteranopia">Дейтеранопія (зелений)</option>
-                <option value="tritanopia">Тританопія (синій)</option>
-              </select>
+              />
             </div>
           </div>
         </div>
