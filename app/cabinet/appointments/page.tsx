@@ -19,8 +19,8 @@ interface Appointment {
   appointment_time: string
   status: string
   notes: string | null
-  doctors: { first_name: string; last_name: string; specialization: string } | null
-  services: { name_uk: string; price_uah: number; duration_minutes: number } | null
+  doctors: { first_name: string; last_name: string; specialization: string }[]
+  services: { name_uk: string; price_uah: number; duration_minutes: number }[]
 }
 
 export default function AppointmentsPage() {
@@ -210,22 +210,22 @@ export default function AppointmentsPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold text-slate-900 mb-1">
-                          {apt.services?.name_uk || 'Консультація'}
+                          {apt.services?.[0]?.name_uk || 'Консультація'}
                         </h3>
                         <p className="text-sm text-slate-500 mb-2">
-                          {apt.doctors?.last_name} {apt.doctors?.first_name} - {apt.doctors?.specialization}
+                          {apt.doctors?.[0]?.last_name} {apt.doctors?.[0]?.first_name} - {apt.doctors?.[0]?.specialization}
                         </p>
                         <div className="flex items-center gap-4 text-sm text-slate-500">
                           <div className="flex items-center gap-1">
                             <Clock className="w-4 h-4" />
                             {apt.appointment_time.slice(0, 5)}
                           </div>
-                          {apt.services?.duration_minutes && (
-                            <span>{apt.services.duration_minutes} хв</span>
+                          {apt.services?.[0]?.duration_minutes && (
+                            <span>{apt.services[0].duration_minutes} хв</span>
                           )}
-                          {apt.services?.price_uah && apt.services.price_uah > 0 && (
+                          {apt.services?.[0]?.price_uah && apt.services[0].price_uah > 0 && (
                             <span className="font-medium text-slate-700">
-                              {apt.services.price_uah.toLocaleString('uk-UA')} грн
+                              {apt.services[0].price_uah.toLocaleString('uk-UA')} грн
                             </span>
                           )}
                         </div>
