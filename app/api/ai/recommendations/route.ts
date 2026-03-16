@@ -85,6 +85,6 @@ Be helpful and professional. Do not diagnose - only recommend services based on 
 
   return Response.json({
     success: true,
-    recommendations: result.object,
+    recommendations: result.output,
   })
 }
