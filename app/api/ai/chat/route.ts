@@ -142,6 +142,7 @@ const analyzeSymptomsTool = tool({
 })
 
 // Booking helper tool
+// Booking helper tool for appointment assistance
 const bookingHelperTool = tool({
   description: 'Help user with booking information. Use when user wants to make an appointment.',
   inputSchema: z.object({
@@ -173,7 +174,7 @@ const tools = {
   bookingHelper: bookingHelperTool,
 }
 
-const systemPrompt = `Ви - віртуальний асистент стоматологічної клініки "Dental Story" у Львові, Україна.
+const systemPrompt = `Ви - віртуальний асистент стоматологіч��ої клініки "Dental Story" у Львові, Україна.
 
 ВАШІ МОЖЛИВОСТІ:
 - Відповідати на питання про послуги та ціни (використовуйте getServices)
