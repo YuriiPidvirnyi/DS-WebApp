@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
-import { Phone, Send, MessageCircle, Calendar, Bot, MessageSquare, X, Menu } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { Phone, Send, MessageCircle, Calendar, Bot, MessageSquare, X, Plus } from 'lucide-react'
+import Link from 'next/link'
 import { CONTACT_INFO } from '@/utils/constants'
 
 interface RadialMenuProps {
@@ -9,11 +10,14 @@ interface RadialMenuProps {
   onOpenAI?: () => void
 }
 
+const RADIUS = 80
+const START_ANGLE = -120
+const END_ANGLE = -30
+
 export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [activeIndex, setActiveIndex] = useState(-1)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const itemsRef = useRef<(HTMLElement | null)[]>([])
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   const tel = `tel:${CONTACT_INFO.phoneRaw}`
   const tg = CONTACT_INFO.social?.telegram || 'https://t.me/'
@@ -21,136 +25,140 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
   const viber = `viber://chat?number=%2B${viberNum}`
 
   const items = [
-    { id: 'phone', icon: Phone, label: 'Зателефонувати', href: tel, color: '#10B981' },
-    { id: 'book', icon: Calendar, label: 'Записатися', href: '/booking', color: '#2A7B72' },
-    { id: 'ai', icon: Bot, label: 'AI Асистент', action: onOpenAI, color: '#8B5CF6' },
-    { id: 'chat', icon: MessageSquare, label: 'Чат', action: onOpenChat, color: '#3B82F6' },
-    { id: 'tg', icon: Send, label: 'Telegram', href: tg, external: true, color: '#0EA5E9' },
-    { id: 'viber', icon: MessageCircle, label: 'Viber', href: viber, color: '#7C3AED' },
+    { id: 'phone', icon: Phone, label: 'Зателефонувати', href: tel, bg: 'bg-emerald-500 hover:bg-emerald-600' },
+    { id: 'book', icon: Calendar, label: 'Записатися', href: '/booking', bg: 'bg-teal-600 hover:bg-teal-700' },
+    { id: 'ai', icon: Bot, label: 'AI Асистент', onClick: onOpenAI, bg: 'bg-violet-500 hover:bg-violet-600' },
+    { id: 'chat', icon: MessageSquare, label: 'Онлайн чат', onClick: onOpenChat, bg: 'bg-blue-500 hover:bg-blue-600' },
+    { id: 'tg', icon: Send, label: 'Telegram', href: tg, external: true, bg: 'bg-sky-500 hover:bg-sky-600' },
+    { id: 'viber', icon: MessageCircle, label: 'Viber', href: viber, bg: 'bg-purple-500 hover:bg-purple-600' },
   ]
 
-  // Close on outside click
-  useEffect(() => {
-    if (!isOpen) return
-    const handle = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setIsOpen(false)
-        setActiveIndex(-1)
-      }
-    }
-    const t = setTimeout(() => document.addEventListener('mousedown', handle), 0)
-    return () => { clearTimeout(t); document.removeEventListener('mousedown', handle) }
-  }, [isOpen])
+  const angleStep = (END_ANGLE - START_ANGLE) / (items.length - 1)
 
-  // Keyboard
-  useEffect(() => {
-    if (!isOpen) return
-    const handle = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') { setIsOpen(false); setActiveIndex(-1) }
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-        e.preventDefault()
-        setActiveIndex(i => { const n = (i + 1) % items.length; itemsRef.current[n]?.focus(); return n })
-      }
-      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-        e.preventDefault()
-        setActiveIndex(i => { const n = i <= 0 ? items.length - 1 : i - 1; itemsRef.current[n]?.focus(); return n })
-      }
-    }
-    document.addEventListener('keydown', handle)
-    return () => document.removeEventListener('keydown', handle)
-  }, [isOpen, items.length])
-
-  const toggle = useCallback(() => {
-    setIsOpen(o => !o)
-    setActiveIndex(-1)
-  }, [])
-
-  const handleClick = useCallback((item: typeof items[0]) => {
-    if (item.action) item.action()
-    setIsOpen(false)
-  }, [])
-
-  // Arc layout: 6 items in upper-left quadrant, radius 85px
-  const getPos = (i: number) => {
-    const angle = -150 + i * 20 // -150 to -50 degrees
+  const getPosition = (index: number) => {
+    const angle = START_ANGLE + index * angleStep
     const rad = (angle * Math.PI) / 180
-    return { x: Math.cos(rad) * 85, y: Math.sin(rad) * 85 }
+    return {
+      x: Math.cos(rad) * RADIUS,
+      y: Math.sin(rad) * RADIUS,
+    }
   }
 
-  return (
-    <div ref={containerRef} className="fixed bottom-6 right-6 z-50" role="navigation" aria-label="Швидкі дії">
-      {/* Backdrop */}
-      <div
-        className={`fixed inset-0 bg-black/30 transition-opacity duration-200 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-        aria-hidden="true"
-        onClick={() => setIsOpen(false)}
-      />
+  useEffect(() => {
+    if (!isOpen) return
 
-      {/* Label tooltip */}
-      {isOpen && activeIndex >= 0 && (
-        <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs font-medium px-2.5 py-1 rounded-md shadow-lg whitespace-nowrap z-20">
-          {items[activeIndex].label}
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false)
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('keydown', handleEscape)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [isOpen])
+
+  const handleItemClick = (item: typeof items[0]) => {
+    if (item.onClick) {
+      item.onClick()
+    }
+    setIsOpen(false)
+  }
+
+  const hoveredItem = items.find(i => i.id === hoveredId)
+
+  return (
+    <div ref={menuRef} className="fixed bottom-6 right-6 z-50">
+      {/* Backdrop */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm -z-10"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Tooltip */}
+      {isOpen && hoveredItem && (
+        <div className="absolute bottom-20 right-0 bg-gray-900 text-white text-sm px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap">
+          {hoveredItem.label}
         </div>
       )}
 
       {/* Menu items */}
-      <div className="absolute bottom-0 right-0" role="menu" aria-hidden={!isOpen}>
-        {items.map((item, i) => {
-          const { x, y } = getPos(i)
-          const Icon = item.icon
-          const props = {
-            role: 'menuitem' as const,
-            tabIndex: isOpen ? 0 : -1,
-            'aria-label': item.label,
-            onFocus: () => setActiveIndex(i),
-            onMouseEnter: () => setActiveIndex(i),
-            onMouseLeave: () => setActiveIndex(-1),
-            ref: (el: HTMLElement | null) => { itemsRef.current[i] = el },
-            className: `absolute bottom-0 right-0 w-11 h-11 rounded-full flex items-center justify-center text-white shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`,
-            style: {
-              backgroundColor: item.color,
-              transform: isOpen ? `translate(${x}px, ${y}px)` : 'translate(0,0) scale(0)',
-              transitionDelay: isOpen ? `${i * 30}ms` : '0ms',
-            },
+      {items.map((item, index) => {
+        const { x, y } = getPosition(index)
+        const Icon = item.icon
+        
+        const buttonClass = `absolute w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg 
+          transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2
+          ${item.bg} ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-0 pointer-events-none'}`
+        
+        const style = {
+          bottom: 4,
+          right: 4,
+          transform: isOpen ? `translate(${x}px, ${y}px)` : 'translate(0, 0)',
+          transitionDelay: isOpen ? `${index * 50}ms` : '0ms',
+        }
+
+        const commonProps = {
+          className: buttonClass,
+          style,
+          onMouseEnter: () => setHoveredId(item.id),
+          onMouseLeave: () => setHoveredId(null),
+          'aria-label': item.label,
+        }
+
+        if (item.href) {
+          if (item.external || item.href.startsWith('tel:') || item.href.startsWith('viber:')) {
+            return (
+              <a
+                key={item.id}
+                href={item.href}
+                target={item.external ? '_blank' : undefined}
+                rel={item.external ? 'noopener noreferrer' : undefined}
+                onClick={() => setIsOpen(false)}
+                {...commonProps}
+              >
+                <Icon className="w-5 h-5" />
+              </a>
+            )
           }
-
-          return item.href ? (
-            <a
-              key={item.id}
-              href={item.href}
-              target={item.external ? '_blank' : undefined}
-              rel={item.external ? 'noopener noreferrer' : undefined}
-              onClick={() => !item.external && setIsOpen(false)}
-              {...props}
-            >
+          return (
+            <Link key={item.id} href={item.href} onClick={() => setIsOpen(false)} {...commonProps}>
               <Icon className="w-5 h-5" />
-            </a>
-          ) : (
-            <button key={item.id} type="button" onClick={() => handleClick(item)} {...props}>
-              <Icon className="w-5 h-5" />
-            </button>
+            </Link>
           )
-        })}
-      </div>
+        }
 
-      {/* Main button */}
+        return (
+          <button key={item.id} type="button" onClick={() => handleItemClick(item)} {...commonProps}>
+            <Icon className="w-5 h-5" />
+          </button>
+        )
+      })}
+
+      {/* Main toggle button */}
       <button
         type="button"
-        onClick={toggle}
+        onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
-        aria-haspopup="menu"
-        aria-label={isOpen ? 'Закрити меню' : 'Відкрити меню дій'}
-        className={`relative w-14 h-14 rounded-full shadow-xl flex items-center justify-center text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-500 z-10 ${
-          isOpen ? 'bg-gray-800' : 'bg-dental-primary-500 hover:bg-dental-primary-600'
-        }`}
+        aria-label={isOpen ? 'Закрити меню' : 'Відкрити меню швидких дій'}
+        className={`relative w-14 h-14 rounded-full shadow-xl flex items-center justify-center text-white 
+          transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500
+          ${isOpen ? 'bg-gray-700 rotate-45' : 'bg-teal-600 hover:bg-teal-700'}`}
       >
-        {!isOpen && <span className="absolute inset-0 rounded-full bg-dental-primary-400 animate-ping opacity-20" />}
-        {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        {!isOpen && (
+          <span className="absolute inset-0 rounded-full bg-teal-400 animate-ping opacity-25" />
+        )}
+        {isOpen ? <X className="w-6 h-6 -rotate-45" /> : <Plus className="w-7 h-7" />}
       </button>
-
-      <div className="sr-only" aria-live="polite">
-        {isOpen ? 'Меню відкрито. Стрілки для навігації, Escape для закриття.' : ''}
-      </div>
     </div>
   )
 }
