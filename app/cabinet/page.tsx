@@ -23,8 +23,8 @@ interface Appointment {
   appointment_date: string
   appointment_time: string
   status: string
-  doctors: { first_name: string; last_name: string; specialization: string } | null
-  services: { name_uk: string; price_uah: number } | null
+  doctors: { first_name: string; last_name: string; specialization: string }[] | null
+  services: { name_uk: string; price_uah: number }[] | null
 }
 
 interface PatientProfile {
