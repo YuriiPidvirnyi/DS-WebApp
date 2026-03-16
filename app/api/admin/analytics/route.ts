@@ -39,7 +39,7 @@ export interface AnalyticsData {
  * Currently returns mock data for demonstration.
  */
 // Function to generate analytics data (would fetch from DB in production)
-function generateAnalyticsData(): AnalyticsData {
+async function generateAnalyticsData(): Promise<AnalyticsData> {
   return {
       stats: {
         totalAppointments: 1248,
