@@ -57,9 +57,13 @@ const quickActionPrompts: Record<string, Record<string, string>> = {
   },
 }
 
-export default function AIAssistant() {
+interface AIAssistantProps {
+  onClose?: () => void
+}
+
+export default function AIAssistant({ onClose }: AIAssistantProps) {
   const { t, i18n } = useTranslation()
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(!onClose) // Auto-open if controlled externally
   const [input, setInput] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -105,6 +109,7 @@ export default function AIAssistant() {
     setIsOpen(false)
     setMessages([])
     setInput('')
+    onClose?.()
   }
 
   // Close on click outside
@@ -127,30 +132,35 @@ export default function AIAssistant() {
     return () => document.removeEventListener('keydown', handler)
   }, [isOpen])
 
+  // When controlled externally (onClose provided), don't show trigger button
+  const isControlled = !!onClose
+
   return (
     <div ref={containerRef} className="relative">
-      {/* Floating button with enhanced styling */}
-      <div className={`group ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} transition-all duration-300`}>
-        <button
-          onClick={() => setIsOpen(true)}
-          className="relative w-14 h-14 bg-gradient-to-br from-dental-primary-600 to-dental-primary-700 hover:from-dental-primary-700 hover:to-dental-primary-800 text-white rounded-full shadow-lg hover:shadow-xl hover:shadow-dental-primary-500/30 hover:scale-110 transition-all duration-300 flex items-center justify-center"
-          aria-label={t('ai.openAssistant')}
-        >
-          {/* Subtle glow effect */}
-          <span className="absolute inset-0 rounded-full bg-gradient-to-br from-dental-primary-400 to-dental-primary-600 opacity-0 group-hover:opacity-30 blur-md transition-opacity duration-300" />
-          <Bot className="w-6 h-6 relative z-10 group-hover:animate-bounce" style={{ animationDuration: '1s' }} />
-        </button>
-        
-        {/* Tooltip */}
-        <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-dental-dark text-white text-sm font-medium rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-          {t('ai.assistant')}
-          <span className="absolute right-full top-1/2 -translate-y-1/2 border-8 border-transparent border-r-dental-dark" />
+      {/* Floating button with enhanced styling - only show when not controlled externally */}
+      {!isControlled && (
+        <div className={`group ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} transition-all duration-300`}>
+          <button
+            onClick={() => setIsOpen(true)}
+            className="relative w-14 h-14 bg-gradient-to-br from-dental-primary-600 to-dental-primary-700 hover:from-dental-primary-700 hover:to-dental-primary-800 text-white rounded-full shadow-lg hover:shadow-xl hover:shadow-dental-primary-500/30 hover:scale-110 transition-all duration-300 flex items-center justify-center"
+            aria-label={t('ai.openAssistant')}
+          >
+            {/* Subtle glow effect */}
+            <span className="absolute inset-0 rounded-full bg-gradient-to-br from-dental-primary-400 to-dental-primary-600 opacity-0 group-hover:opacity-30 blur-md transition-opacity duration-300" />
+            <Bot className="w-6 h-6 relative z-10 group-hover:animate-bounce" style={{ animationDuration: '1s' }} />
+          </button>
+          
+          {/* Tooltip */}
+          <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-dental-dark text-white text-sm font-medium rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+            {t('ai.assistant')}
+            <span className="absolute right-full top-1/2 -translate-y-1/2 border-8 border-transparent border-r-dental-dark" />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Chat window */}
       <div
-        className={`absolute bottom-16 right-0 z-50 w-[380px] max-w-[calc(100vw-3rem)] transition-all duration-300 ${
+        className={`${isControlled ? '' : 'absolute bottom-16 right-0'} z-50 w-[380px] max-w-[calc(100vw-3rem)] transition-all duration-300 ${
           isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'
         }`}
       >

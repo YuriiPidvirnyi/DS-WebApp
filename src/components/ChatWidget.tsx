@@ -34,8 +34,12 @@ function formatTime(date: Date): string {
   return `${hours}:${minutes}`
 }
 
-export default function ChatWidget() {
-  const [isOpen, setIsOpen] = useState(false)
+interface ChatWidgetProps {
+  onClose?: () => void
+}
+
+export default function ChatWidget({ onClose }: ChatWidgetProps) {
+  const [isOpen, setIsOpen] = useState(!onClose) // Auto-open if controlled externally
   const [mounted, setMounted] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState('')
@@ -142,29 +146,34 @@ export default function ChatWidget() {
     )
   }
 
+  // When controlled externally (onClose provided), don't show trigger button
+  const isControlled = !!onClose
+
   return (
     <div ref={containerRef} className="relative">
-      {/* Chat bubble button with tooltip */}
-      <div className={`group ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} transition-all duration-300`}>
-        <button
-          onClick={() => setIsOpen(true)}
-          className="relative w-14 h-14 bg-gradient-to-br from-dental-primary-500 to-dental-primary-600 rounded-full shadow-lg shadow-dental-primary-500/30 flex items-center justify-center text-white hover:from-dental-primary-600 hover:to-dental-primary-700 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-dental-primary-500/40"
-          aria-label="Відкрити чат"
-        >
-          {/* Pulse ring */}
-          <span className="absolute inset-0 rounded-full bg-dental-primary-400 animate-ping opacity-25" />
-          <MessageCircle className="h-6 w-6 relative z-10" />
-        </button>
-        {/* Tooltip */}
-        <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-dental-dark text-white text-sm font-medium rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
-          Онлайн-чат
-          <span className="absolute right-full top-1/2 -translate-y-1/2 border-8 border-transparent border-r-dental-dark" />
+      {/* Chat bubble button with tooltip - only show when not controlled externally */}
+      {!isControlled && (
+        <div className={`group ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} transition-all duration-300`}>
+          <button
+            onClick={() => setIsOpen(true)}
+            className="relative w-14 h-14 bg-gradient-to-br from-dental-primary-500 to-dental-primary-600 rounded-full shadow-lg shadow-dental-primary-500/30 flex items-center justify-center text-white hover:from-dental-primary-600 hover:to-dental-primary-700 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-dental-primary-500/40"
+            aria-label="Відкрити чат"
+          >
+            {/* Pulse ring */}
+            <span className="absolute inset-0 rounded-full bg-dental-primary-400 animate-ping opacity-25" />
+            <MessageCircle className="h-6 w-6 relative z-10" />
+          </button>
+          {/* Tooltip */}
+          <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-dental-dark text-white text-sm font-medium rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
+            Онлайн-чат
+            <span className="absolute right-full top-1/2 -translate-y-1/2 border-8 border-transparent border-r-dental-dark" />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Chat window */}
       <div
-        className={`absolute bottom-16 right-0 z-50 w-96 max-w-[calc(100vw-3rem)] bg-white rounded-2xl shadow-2xl shadow-dental-secondary-200/50 border border-dental-secondary-200 overflow-hidden transition-all duration-300 ${
+        className={`${isControlled ? '' : 'absolute bottom-16 right-0'} z-50 w-96 max-w-[calc(100vw-3rem)] bg-white rounded-2xl shadow-2xl shadow-dental-secondary-200/50 border border-dental-secondary-200 overflow-hidden transition-all duration-300 ${
           isOpen
             ? 'opacity-100 translate-y-0 scale-100'
             : 'opacity-0 translate-y-4 scale-95 pointer-events-none'
@@ -183,7 +192,10 @@ export default function ChatWidget() {
               </div>
             </div>
             <button
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                setIsOpen(false)
+                onClose?.()
+              }}
               className="w-8 h-8 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
               aria-label="Закрити чат"
             >

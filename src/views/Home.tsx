@@ -47,7 +47,7 @@ const Testimonials = dynamic(() => import('@/components/Testimonials'), {
 const Home = () => {
   const { t } = useTranslation()
   
-  // Scroll animation hooks
+  // Scroll animation hooks for page sections
   const { ref: featuresRef, isVisible: featuresVisible } = useScrollAnimation()
   const { ref: servicesRef, isVisible: servicesVisible } = useStaggeredAnimation({ staggerDelay: 150 })
   const { ref: pricingRef, isVisible: pricingVisible } = useScrollAnimation()
