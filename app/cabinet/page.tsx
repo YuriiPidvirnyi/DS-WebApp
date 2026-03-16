@@ -90,6 +90,7 @@ export default function CabinetPage() {
     router.refresh()
   }
 
+  // Get status badge styling and label
   const getStatusBadge = (status: string) => {
     const styles: Record<string, string> = {
       pending: 'bg-yellow-100 text-yellow-700',
