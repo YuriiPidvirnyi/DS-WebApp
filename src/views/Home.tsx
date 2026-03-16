@@ -49,7 +49,7 @@ const Home = () => {
   
   // Scroll animation hooks
   const { ref: featuresRef, isVisible: featuresVisible } = useScrollAnimation()
-  const { ref: servicesRef, isVisible: servicesVisible } = useStaggeredAnimation(4, { staggerDelay: 150 })
+  const { ref: servicesRef, isVisible: servicesVisible } = useStaggeredAnimation({ staggerDelay: 150 })
   const { ref: pricingRef, isVisible: pricingVisible } = useScrollAnimation()
   const { ref: ctaRef, isVisible: ctaVisible } = useScrollAnimation()
 
