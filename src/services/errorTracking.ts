@@ -1,3 +1,4 @@
+// Sentry error tracking service for Next.js
 import * as Sentry from '@sentry/nextjs'
 
 interface ErrorTrackingConfig {
