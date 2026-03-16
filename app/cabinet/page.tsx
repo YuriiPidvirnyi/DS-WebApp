@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 
+// Appointment data from Supabase with joined relations
 interface Appointment {
   id: string
   appointment_date: string
