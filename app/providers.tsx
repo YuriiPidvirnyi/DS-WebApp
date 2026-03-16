@@ -1,5 +1,6 @@
 'use client'
 
+// Client-side providers for the application
 import { type ReactNode } from 'react'
 import dynamic from 'next/dynamic'
 import ErrorBoundary from '@/components/ErrorBoundary'
