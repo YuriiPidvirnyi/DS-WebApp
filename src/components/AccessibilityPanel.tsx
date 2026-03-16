@@ -4,8 +4,12 @@ import { useState, useRef, useEffect } from 'react'
 import { useAccessibility } from '@/hooks/useAccessibility'
 import { Accessibility, Minus, Plus, RotateCcw, X } from 'lucide-react'
 
-export function AccessibilityPanel() {
-  const [isOpen, setIsOpen] = useState(false)
+interface AccessibilityPanelProps {
+  defaultOpen?: boolean
+}
+
+export function AccessibilityPanel({ defaultOpen = false }: AccessibilityPanelProps) {
+  const [isOpen, setIsOpen] = useState(defaultOpen)
   const panelRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 

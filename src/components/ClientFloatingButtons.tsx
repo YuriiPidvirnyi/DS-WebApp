@@ -2,42 +2,50 @@
 
 import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
+import { useDragMode } from '@/context/DragModeContext'
 
 const RadialMenu = dynamic(() => import('./RadialMenu'), { ssr: false })
 const ChatWidget = dynamic(() => import('./ChatWidget'), { ssr: false })
 const AIAssistant = dynamic(() => import('./AIAssistant'), { ssr: false })
+const AccessibilityPanel = dynamic(() => import('./AccessibilityPanel').then(m => ({ default: m.AccessibilityPanel })), { ssr: false })
 
 export default function ClientFloatingButtons() {
   const [mounted, setMounted] = useState(false)
   const [chatOpen, setChatOpen] = useState(false)
   const [aiOpen, setAiOpen] = useState(false)
+  const [accessibilityOpen, setAccessibilityOpen] = useState(false)
+  const { toggleDragMode } = useDragMode()
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  // Render nothing on server to prevent hydration mismatch
   if (!mounted) return null
 
   return (
     <>
-      {/* Radial menu - unified access point for all actions */}
-      <RadialMenu 
+      <RadialMenu
         onOpenChat={() => setChatOpen(true)}
         onOpenAI={() => setAiOpen(true)}
+        onOpenAccessibility={() => setAccessibilityOpen(true)}
+        onToggleDragMode={toggleDragMode}
       />
 
-      {/* Chat widget - opens when triggered from radial menu */}
       {chatOpen && (
         <div className="fixed bottom-24 right-6 z-50">
           <ChatWidget onClose={() => setChatOpen(false)} />
         </div>
       )}
 
-      {/* AI Assistant - opens when triggered from radial menu */}
       {aiOpen && (
         <div className="fixed bottom-24 right-6 z-50">
           <AIAssistant onClose={() => setAiOpen(false)} />
+        </div>
+      )}
+
+      {accessibilityOpen && (
+        <div className="fixed bottom-24 right-6 z-50">
+          <AccessibilityPanel defaultOpen={true} />
         </div>
       )}
     </>
