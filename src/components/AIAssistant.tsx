@@ -5,7 +5,6 @@ import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport } from 'ai'
 import { useTranslation } from 'react-i18next'
 import { 
-  MessageSquare, 
   X, 
   Send, 
   Bot, 
