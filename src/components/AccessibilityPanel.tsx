@@ -61,7 +61,7 @@ export function AccessibilityPanel({ defaultOpen = false }: AccessibilityPanelPr
       role="region"
       aria-label="Налаштування доступності"
     >
-      {/* Panel - adaptive positioning */}
+      {/* Panel - when defaultOpen (controlled externally), no absolute positioning */}
       {isOpen && (
         <div
           id="a11y-panel"
@@ -69,14 +69,7 @@ export function AccessibilityPanel({ defaultOpen = false }: AccessibilityPanelPr
           role="dialog"
           aria-modal="true"
           aria-labelledby="a11y-panel-title"
-          className="absolute bottom-16 left-0 max-w-72 w-full mx-auto bg-white rounded-2xl shadow-2xl border border-dental-secondary-200 overflow-y-auto max-h-96"
-          style={{
-            // Ensure panel stays within viewport
-            maxWidth: 'min(288px, calc(100vw - 2rem))',
-            transform: 'translateX(-50%) translateX(50%)',
-            left: 'auto',
-            right: 'auto'
-          }}
+          className={`${defaultOpen ? '' : 'absolute bottom-16 right-0'} w-full sm:w-72 bg-white rounded-2xl shadow-2xl border border-dental-secondary-200 overflow-y-auto max-h-[70vh] sm:max-h-96`}
         >
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-dental-secondary-200 bg-dental-primary-50">
