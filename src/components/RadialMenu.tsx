@@ -12,7 +12,7 @@ import {
   Bot,
   MessageSquare,
   X,
-  Menu,
+  Plus,
 } from 'lucide-react'
 import { CONTACT_INFO, SITE_INFO } from '@/utils/constants'
 
@@ -23,7 +23,8 @@ interface RadialMenuItem {
   description?: string
   href?: string
   onClick?: () => void
-  color: string
+  bgColor: string
+  hoverColor: string
   external?: boolean
 }
 
@@ -35,19 +36,17 @@ interface RadialMenuProps {
 export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [focusedIndex, setFocusedIndex] = useState(-1)
+  const [hoveredIndex, setHoveredIndex] = useState(-1)
   const containerRef = useRef<HTMLDivElement>(null)
   const menuItemsRef = useRef<(HTMLAnchorElement | HTMLButtonElement | null)[]>([])
   const triggerRef = useRef<HTMLButtonElement>(null)
 
-  // Menu items configuration
+  // Menu items configuration - reduced to 6 main actions for cleaner UI
   const menuItems: RadialMenuItem[] = useMemo(() => {
     const tel = `tel:${CONTACT_INFO.phoneRaw}`
     const tg = CONTACT_INFO.social?.telegram || 'https://t.me/'
     const viberNum = CONTACT_INFO.social?.viber?.replace(/\D/g, '') || CONTACT_INFO.phoneRaw.replace(/\D/g, '')
     const viber = `viber://chat?number=%2B${viberNum.replace(/^\+/, '')}`
-    const maps = SITE_INFO.googleMaps
-    const instagram = CONTACT_INFO.social?.instagram || ''
-    const facebook = CONTACT_INFO.social?.facebook || ''
 
     return [
       {
@@ -56,31 +55,35 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
         label: 'Подзвонити',
         description: CONTACT_INFO.phone,
         href: tel,
-        color: 'bg-green-500 hover:bg-green-600 text-white',
+        bgColor: 'bg-emerald-500',
+        hoverColor: 'hover:bg-emerald-600',
       },
       {
         id: 'booking',
         icon: <Calendar className="w-5 h-5" />,
         label: 'Записатися',
-        description: 'Онлайн-запис',
+        description: 'Онлайн-запис на прийом',
         href: '/booking',
-        color: 'bg-dental-primary-500 hover:bg-dental-primary-600 text-white',
+        bgColor: 'bg-dental-primary-500',
+        hoverColor: 'hover:bg-dental-primary-600',
       },
       {
         id: 'ai',
         icon: <Bot className="w-5 h-5" />,
         label: 'AI Асистент',
-        description: 'Запитайте AI',
+        description: 'Отримайте відповіді миттєво',
         onClick: onOpenAI,
-        color: 'bg-purple-500 hover:bg-purple-600 text-white',
+        bgColor: 'bg-violet-500',
+        hoverColor: 'hover:bg-violet-600',
       },
       {
         id: 'chat',
         icon: <MessageSquare className="w-5 h-5" />,
-        label: 'Чат',
-        description: 'Напишіть нам',
+        label: 'Онлайн чат',
+        description: 'Напишіть нам повідомлення',
         onClick: onOpenChat,
-        color: 'bg-blue-500 hover:bg-blue-600 text-white',
+        bgColor: 'bg-blue-500',
+        hoverColor: 'hover:bg-blue-600',
       },
       {
         id: 'telegram',
@@ -89,7 +92,8 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
         description: 'Швидка відповідь',
         href: tg,
         external: true,
-        color: 'bg-sky-500 hover:bg-sky-600 text-white',
+        bgColor: 'bg-sky-500',
+        hoverColor: 'hover:bg-sky-600',
       },
       {
         id: 'viber',
@@ -97,45 +101,20 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
         label: 'Viber',
         description: 'Зручне листування',
         href: viber,
-        color: 'bg-violet-500 hover:bg-violet-600 text-white',
-      },
-      {
-        id: 'maps',
-        icon: <Navigation className="w-5 h-5" />,
-        label: 'Маршрут',
-        description: 'Google Maps',
-        href: maps,
-        external: true,
-        color: 'bg-red-500 hover:bg-red-600 text-white',
-      },
-      {
-        id: 'instagram',
-        icon: <Instagram className="w-5 h-5" />,
-        label: 'Instagram',
-        href: instagram,
-        external: true,
-        color: 'bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 text-white',
-      },
-      {
-        id: 'facebook',
-        icon: <Facebook className="w-5 h-5" />,
-        label: 'Facebook',
-        href: facebook,
-        external: true,
-        color: 'bg-blue-600 hover:bg-blue-700 text-white',
+        bgColor: 'bg-purple-500',
+        hoverColor: 'hover:bg-purple-600',
       },
     ]
   }, [onOpenAI, onOpenChat])
 
-  // Calculate position for each item in radial layout
+  // Calculate position for each item in arc layout
   const getItemPosition = useCallback((index: number, total: number) => {
-    // Fan opens upward and to the left from bottom-right position
-    const startAngle = -180 // Start from left
-    const endAngle = -90 // End at top
-    const angleRange = endAngle - startAngle
-    const angleStep = angleRange / (total - 1)
+    // Arc from bottom-left (-135deg) to top (-90deg) to right side (-45deg)
+    const startAngle = -150
+    const endAngle = -30
+    const angleStep = (endAngle - startAngle) / (total - 1)
     const angle = startAngle + (index * angleStep)
-    const radius = 100 // Distance from center
+    const radius = 90 // Distance from center
     
     const radians = (angle * Math.PI) / 180
     const x = Math.cos(radians) * radius
@@ -151,6 +130,7 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsOpen(false)
         setFocusedIndex(-1)
+        setHoveredIndex(-1)
       }
     }
     document.addEventListener('mousedown', handler)
@@ -166,6 +146,7 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
         case 'Escape':
           setIsOpen(false)
           setFocusedIndex(-1)
+          setHoveredIndex(-1)
           triggerRef.current?.focus()
           break
         case 'ArrowUp':
@@ -196,33 +177,20 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
           setFocusedIndex(menuItems.length - 1)
           menuItemsRef.current[menuItems.length - 1]?.focus()
           break
-        case 'Tab':
-          // Allow tab to cycle through items
-          if (!e.shiftKey && focusedIndex === menuItems.length - 1) {
-            e.preventDefault()
-            setFocusedIndex(0)
-            menuItemsRef.current[0]?.focus()
-          } else if (e.shiftKey && focusedIndex === 0) {
-            e.preventDefault()
-            setFocusedIndex(menuItems.length - 1)
-            menuItemsRef.current[menuItems.length - 1]?.focus()
-          }
-          break
       }
     }
 
     document.addEventListener('keydown', handler)
     return () => document.removeEventListener('keydown', handler)
-  }, [isOpen, focusedIndex, menuItems.length])
+  }, [isOpen, menuItems.length])
 
   // Focus first item when menu opens
   useEffect(() => {
     if (isOpen) {
       setFocusedIndex(0)
-      // Small delay to allow animation to start
       setTimeout(() => {
         menuItemsRef.current[0]?.focus()
-      }, 100)
+      }, 150)
     }
   }, [isOpen])
 
@@ -230,6 +198,7 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
     setIsOpen(prev => !prev)
     if (isOpen) {
       setFocusedIndex(-1)
+      setHoveredIndex(-1)
     }
   }
 
@@ -240,6 +209,9 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
     }
   }
 
+  // Get active item for tooltip display
+  const activeItem = hoveredIndex >= 0 ? menuItems[hoveredIndex] : (focusedIndex >= 0 ? menuItems[focusedIndex] : null)
+
   return (
     <div 
       ref={containerRef} 
@@ -247,16 +219,62 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
       role="navigation"
       aria-label="Швидкі дії"
     >
+      {/* Background overlay when open */}
+      <div 
+        className={`fixed inset-0 bg-black/20 backdrop-blur-sm transition-opacity duration-300 -z-10 ${
+          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+        aria-hidden="true"
+      />
+
+      {/* Central tooltip card - shows active item info */}
+      <div 
+        className={`absolute bottom-20 right-0 w-48 transition-all duration-200 ${
+          isOpen && activeItem ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
+        }`}
+        aria-hidden="true"
+      >
+        <div className="bg-white rounded-xl shadow-xl border border-slate-200 p-3">
+          <div className="font-semibold text-slate-900 text-sm">{activeItem?.label}</div>
+          {activeItem?.description && (
+            <div className="text-xs text-slate-500 mt-0.5">{activeItem.description}</div>
+          )}
+        </div>
+      </div>
+
       {/* Radial menu items */}
       <div 
-        className={`absolute bottom-0 right-0 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        className={`absolute bottom-0 right-0 transition-opacity duration-200 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         role="menu"
         aria-hidden={!isOpen}
       >
         {menuItems.map((item, index) => {
           const { x, y } = getItemPosition(index, menuItems.length)
-          const delay = index * 30 // Stagger animation
+          const delay = index * 40
+          const isActive = hoveredIndex === index || focusedIndex === index
           
+          const buttonClasses = `
+            flex items-center justify-center w-12 h-12 rounded-full shadow-lg
+            text-white transition-all duration-200
+            focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-slate-900
+            ${item.bgColor} ${item.hoverColor}
+            ${isOpen ? 'scale-100' : 'scale-0'}
+            ${isActive ? 'scale-110 ring-2 ring-white ring-offset-2' : ''}
+          `
+          
+          const commonProps = {
+            role: 'menuitem' as const,
+            tabIndex: isOpen ? 0 : -1,
+            'aria-label': `${item.label}${item.description ? ` - ${item.description}` : ''}`,
+            onFocus: () => setFocusedIndex(index),
+            onBlur: () => setFocusedIndex(-1),
+            onMouseEnter: () => setHoveredIndex(index),
+            onMouseLeave: () => setHoveredIndex(-1),
+            style: {
+              transitionDelay: isOpen ? `${delay}ms` : '0ms',
+            },
+          }
+
           return (
             <div
               key={item.id}
@@ -266,44 +284,14 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
                 transitionDelay: isOpen ? `${delay}ms` : '0ms',
               }}
             >
-              {/* Tooltip */}
-              <div 
-                className={`absolute right-full mr-3 top-1/2 -translate-y-1/2 whitespace-nowrap transition-opacity duration-200 ${
-                  focusedIndex === index || isOpen ? 'opacity-100' : 'opacity-0'
-                }`}
-                aria-hidden="true"
-              >
-                <div className="bg-dental-dark text-white text-sm px-3 py-2 rounded-lg shadow-lg">
-                  <div className="font-medium">{item.label}</div>
-                  {item.description && (
-                    <div className="text-xs text-white/70">{item.description}</div>
-                  )}
-                  <span className="absolute left-full top-1/2 -translate-y-1/2 border-8 border-transparent border-l-dental-dark" />
-                </div>
-              </div>
-
-              {/* Menu item button/link */}
               {item.href ? (
                 <a
                   ref={el => { menuItemsRef.current[index] = el }}
                   href={item.href}
                   target={item.external ? '_blank' : undefined}
                   rel={item.external ? 'noopener noreferrer' : undefined}
-                  role="menuitem"
-                  tabIndex={isOpen ? 0 : -1}
-                  aria-label={`${item.label}${item.description ? ` - ${item.description}` : ''}`}
-                  className={`
-                    flex items-center justify-center w-12 h-12 rounded-full shadow-lg
-                    transition-all duration-200 transform
-                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-500
-                    ${item.color}
-                    ${isOpen ? 'scale-100' : 'scale-0'}
-                    hover:scale-110
-                  `}
-                  style={{
-                    transitionDelay: isOpen ? `${delay}ms` : '0ms',
-                  }}
-                  onFocus={() => setFocusedIndex(index)}
+                  className={buttonClasses}
+                  {...commonProps}
                 >
                   {item.icon}
                 </a>
@@ -311,22 +299,9 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
                 <button
                   ref={el => { menuItemsRef.current[index] = el }}
                   type="button"
-                  role="menuitem"
-                  tabIndex={isOpen ? 0 : -1}
-                  aria-label={`${item.label}${item.description ? ` - ${item.description}` : ''}`}
                   onClick={() => handleItemClick(item)}
-                  className={`
-                    flex items-center justify-center w-12 h-12 rounded-full shadow-lg
-                    transition-all duration-200 transform
-                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-500
-                    ${item.color}
-                    ${isOpen ? 'scale-100' : 'scale-0'}
-                    hover:scale-110
-                  `}
-                  style={{
-                    transitionDelay: isOpen ? `${delay}ms` : '0ms',
-                  }}
-                  onFocus={() => setFocusedIndex(index)}
+                  className={buttonClasses}
+                  {...commonProps}
                 >
                   {item.icon}
                 </button>
@@ -346,13 +321,13 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
         aria-label={isOpen ? 'Закрити меню швидких дій' : 'Відкрити меню швидких дій'}
         className={`
           relative flex items-center justify-center w-14 h-14 rounded-full
-          shadow-lg transition-all duration-300 transform
+          shadow-xl transition-all duration-300
           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-500
           ${isOpen 
-            ? 'bg-dental-dark hover:bg-dental-dark/90 rotate-0' 
+            ? 'bg-slate-800 hover:bg-slate-700' 
             : 'bg-gradient-to-br from-dental-primary-500 to-dental-primary-600 hover:from-dental-primary-600 hover:to-dental-primary-700'
           }
-          hover:scale-105
+          hover:scale-105 active:scale-95
         `}
       >
         {/* Pulse animation when closed */}
@@ -360,11 +335,11 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
           <span className="absolute inset-0 rounded-full bg-dental-primary-400 animate-ping opacity-20" />
         )}
         
-        <span className={`text-white transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'}`}>
+        <span className={`text-white transition-transform duration-300 ${isOpen ? 'rotate-45' : 'rotate-0'}`}>
           {isOpen ? (
             <X className="w-6 h-6" aria-hidden="true" />
           ) : (
-            <Menu className="w-6 h-6" aria-hidden="true" />
+            <Plus className="w-6 h-6" aria-hidden="true" />
           )}
         </span>
       </button>
