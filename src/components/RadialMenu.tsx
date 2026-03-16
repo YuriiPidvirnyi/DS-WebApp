@@ -1,27 +1,8 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
-import {
-  Phone,
-  Send,
-  MessageCircle,
-  Calendar,
-  Bot,
-  MessageSquare,
-  X,
-  Plus,
-} from 'lucide-react'
+import { useState, useRef, useEffect, useCallback } from 'react'
+import { Phone, Send, MessageCircle, Calendar, Bot, MessageSquare, X, Menu } from 'lucide-react'
 import { CONTACT_INFO } from '@/utils/constants'
-
-interface MenuItem {
-  id: string
-  icon: React.ReactNode
-  label: string
-  href?: string
-  onClick?: () => void
-  bgColor: string
-  external?: boolean
-}
 
 interface RadialMenuProps {
   onOpenChat?: () => void
@@ -30,320 +11,145 @@ interface RadialMenuProps {
 
 export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [focusedIndex, setFocusedIndex] = useState(-1)
-  const [hoveredIndex, setHoveredIndex] = useState(-1)
+  const [activeIndex, setActiveIndex] = useState(-1)
   const containerRef = useRef<HTMLDivElement>(null)
-  const menuItemsRef = useRef<(HTMLAnchorElement | HTMLButtonElement | null)[]>([])
-  const triggerRef = useRef<HTMLButtonElement>(null)
+  const itemsRef = useRef<(HTMLElement | null)[]>([])
 
-  // Menu items configuration - 6 items arranged in a fan
-  const menuItems: MenuItem[] = useMemo(() => {
-    const tel = `tel:${CONTACT_INFO.phoneRaw}`
-    const tg = CONTACT_INFO.social?.telegram || 'https://t.me/'
-    const viberNum = CONTACT_INFO.social?.viber?.replace(/\D/g, '') || CONTACT_INFO.phoneRaw.replace(/\D/g, '')
-    const viber = `viber://chat?number=%2B${viberNum.replace(/^\+/, '')}`
+  const tel = `tel:${CONTACT_INFO.phoneRaw}`
+  const tg = CONTACT_INFO.social?.telegram || 'https://t.me/'
+  const viberNum = (CONTACT_INFO.social?.viber || CONTACT_INFO.phoneRaw).replace(/\D/g, '')
+  const viber = `viber://chat?number=%2B${viberNum}`
 
-    return [
-      {
-        id: 'phone',
-        icon: <Phone className="w-5 h-5" />,
-        label: 'Подзвонити',
-        href: tel,
-        bgColor: 'bg-emerald-500 hover:bg-emerald-600',
-      },
-      {
-        id: 'booking',
-        icon: <Calendar className="w-5 h-5" />,
-        label: 'Записатися',
-        href: '/booking',
-        bgColor: 'bg-dental-primary-500 hover:bg-dental-primary-600',
-      },
-      {
-        id: 'ai',
-        icon: <Bot className="w-5 h-5" />,
-        label: 'AI Асистент',
-        onClick: onOpenAI,
-        bgColor: 'bg-violet-500 hover:bg-violet-600',
-      },
-      {
-        id: 'chat',
-        icon: <MessageSquare className="w-5 h-5" />,
-        label: 'Онлайн-чат',
-        onClick: onOpenChat,
-        bgColor: 'bg-blue-500 hover:bg-blue-600',
-      },
-      {
-        id: 'telegram',
-        icon: <Send className="w-5 h-5" />,
-        label: 'Telegram',
-        href: tg,
-        external: true,
-        bgColor: 'bg-sky-500 hover:bg-sky-600',
-      },
-      {
-        id: 'viber',
-        icon: <MessageCircle className="w-5 h-5" />,
-        label: 'Viber',
-        href: viber,
-        bgColor: 'bg-purple-600 hover:bg-purple-700',
-      },
-    ]
-  }, [onOpenAI, onOpenChat])
+  const items = [
+    { id: 'phone', icon: Phone, label: 'Зателефонувати', href: tel, color: '#10B981' },
+    { id: 'book', icon: Calendar, label: 'Записатися', href: '/booking', color: '#2A7B72' },
+    { id: 'ai', icon: Bot, label: 'AI Асистент', action: onOpenAI, color: '#8B5CF6' },
+    { id: 'chat', icon: MessageSquare, label: 'Чат', action: onOpenChat, color: '#3B82F6' },
+    { id: 'tg', icon: Send, label: 'Telegram', href: tg, external: true, color: '#0EA5E9' },
+    { id: 'viber', icon: MessageCircle, label: 'Viber', href: viber, color: '#7C3AED' },
+  ]
 
-  // Calculate position for each item in a fan/arc pattern
-  const getItemPosition = useCallback((index: number, total: number) => {
-    // Fan spans from -135 degrees to -45 degrees (upper-left quadrant arc)
-    const startAngle = -135
-    const endAngle = -45
-    const angleStep = (endAngle - startAngle) / (total - 1)
-    const angle = startAngle + (index * angleStep)
-    const angleRad = (angle * Math.PI) / 180
-    const radius = 100 // Distance from center
-
-    return {
-      x: Math.cos(angleRad) * radius,
-      y: Math.sin(angleRad) * radius,
-      angle,
-    }
-  }, [])
-
-  // Close menu on click outside
+  // Close on outside click
   useEffect(() => {
     if (!isOpen) return
-
-    const handleClickOutside = (e: MouseEvent) => {
+    const handle = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsOpen(false)
-        setFocusedIndex(-1)
-        setHoveredIndex(-1)
+        setActiveIndex(-1)
       }
     }
-
-    // Small delay to prevent closing on same click that opened
-    const timeoutId = setTimeout(() => {
-      document.addEventListener('click', handleClickOutside)
-    }, 10)
-
-    return () => {
-      clearTimeout(timeoutId)
-      document.removeEventListener('click', handleClickOutside)
-    }
+    const t = setTimeout(() => document.addEventListener('mousedown', handle), 0)
+    return () => { clearTimeout(t); document.removeEventListener('mousedown', handle) }
   }, [isOpen])
 
-  // Keyboard navigation
+  // Keyboard
   useEffect(() => {
     if (!isOpen) return
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      switch (e.key) {
-        case 'Escape':
-          e.preventDefault()
-          setIsOpen(false)
-          setFocusedIndex(-1)
-          triggerRef.current?.focus()
-          break
-        case 'ArrowLeft':
-        case 'ArrowUp':
-          e.preventDefault()
-          setFocusedIndex(prev => {
-            const newIndex = prev <= 0 ? menuItems.length - 1 : prev - 1
-            menuItemsRef.current[newIndex]?.focus()
-            return newIndex
-          })
-          break
-        case 'ArrowRight':
-        case 'ArrowDown':
-          e.preventDefault()
-          setFocusedIndex(prev => {
-            const newIndex = prev >= menuItems.length - 1 ? 0 : prev + 1
-            menuItemsRef.current[newIndex]?.focus()
-            return newIndex
-          })
-          break
-        case 'Home':
-          e.preventDefault()
-          setFocusedIndex(0)
-          menuItemsRef.current[0]?.focus()
-          break
-        case 'End':
-          e.preventDefault()
-          setFocusedIndex(menuItems.length - 1)
-          menuItemsRef.current[menuItems.length - 1]?.focus()
-          break
+    const handle = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { setIsOpen(false); setActiveIndex(-1) }
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault()
+        setActiveIndex(i => { const n = (i + 1) % items.length; itemsRef.current[n]?.focus(); return n })
+      }
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault()
+        setActiveIndex(i => { const n = i <= 0 ? items.length - 1 : i - 1; itemsRef.current[n]?.focus(); return n })
       }
     }
+    document.addEventListener('keydown', handle)
+    return () => document.removeEventListener('keydown', handle)
+  }, [isOpen, items.length])
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, menuItems.length])
-
-  // Focus first item when menu opens
-  useEffect(() => {
-    if (isOpen) {
-      const timer = setTimeout(() => {
-        setFocusedIndex(0)
-        menuItemsRef.current[0]?.focus()
-      }, 150)
-      return () => clearTimeout(timer)
-    }
-  }, [isOpen])
-
-  const handleToggle = useCallback(() => {
-    setIsOpen(prev => !prev)
-    setFocusedIndex(-1)
-    setHoveredIndex(-1)
+  const toggle = useCallback(() => {
+    setIsOpen(o => !o)
+    setActiveIndex(-1)
   }, [])
 
-  const handleItemClick = useCallback((item: MenuItem) => {
-    if (item.onClick) {
-      item.onClick()
-    }
+  const handleClick = useCallback((item: typeof items[0]) => {
+    if (item.action) item.action()
     setIsOpen(false)
-    setFocusedIndex(-1)
-    setHoveredIndex(-1)
   }, [])
 
-  // Get active label to display
-  const activeLabel = hoveredIndex >= 0 
-    ? menuItems[hoveredIndex].label 
-    : focusedIndex >= 0 
-      ? menuItems[focusedIndex].label 
-      : null
+  // Arc layout: 6 items in upper-left quadrant, radius 85px
+  const getPos = (i: number) => {
+    const angle = -150 + i * 20 // -150 to -50 degrees
+    const rad = (angle * Math.PI) / 180
+    return { x: Math.cos(rad) * 85, y: Math.sin(rad) * 85 }
+  }
 
   return (
-    <div
-      ref={containerRef}
-      className="fixed bottom-6 right-6 z-50"
-      role="navigation"
-      aria-label="Швидкі дії"
-    >
-      {/* Backdrop overlay when open */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm -z-10 transition-opacity duration-300"
-          aria-hidden="true"
-        />
+    <div ref={containerRef} className="fixed bottom-6 right-6 z-50" role="navigation" aria-label="Швидкі дії">
+      {/* Backdrop */}
+      <div
+        className={`fixed inset-0 bg-black/30 transition-opacity duration-200 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        aria-hidden="true"
+        onClick={() => setIsOpen(false)}
+      />
+
+      {/* Label tooltip */}
+      {isOpen && activeIndex >= 0 && (
+        <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs font-medium px-2.5 py-1 rounded-md shadow-lg whitespace-nowrap z-20">
+          {items[activeIndex].label}
+        </div>
       )}
 
-      {/* Active item label - positioned above the trigger */}
-      <div
-        className={`absolute bottom-20 right-0 transition-all duration-200 ${
-          activeLabel ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
-        }`}
-      >
-        <div className="bg-slate-900 text-white text-sm font-medium px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap">
-          {activeLabel}
-        </div>
-      </div>
-
-      {/* Radial menu items */}
-      <div
-        role="menu"
-        aria-label="Швидкі дії"
-        aria-hidden={!isOpen}
-        className="absolute bottom-0 right-0"
-      >
-        {menuItems.map((item, index) => {
-          const { x, y } = getItemPosition(index, menuItems.length)
-          const delay = index * 40 // Staggered animation delay
-
-          const buttonClasses = `
-            absolute bottom-0 right-0 w-12 h-12 rounded-full
-            flex items-center justify-center text-white
-            shadow-lg transition-all duration-300
-            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white
-            ${item.bgColor}
-            ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}
-          `
-
-          const style = {
-            transform: isOpen 
-              ? `translate(${x}px, ${y}px) scale(1)` 
-              : 'translate(0, 0) scale(0)',
-            transitionDelay: isOpen ? `${delay}ms` : '0ms',
-          }
-
-          const commonProps = {
+      {/* Menu items */}
+      <div className="absolute bottom-0 right-0" role="menu" aria-hidden={!isOpen}>
+        {items.map((item, i) => {
+          const { x, y } = getPos(i)
+          const Icon = item.icon
+          const props = {
             role: 'menuitem' as const,
             tabIndex: isOpen ? 0 : -1,
             'aria-label': item.label,
-            onMouseEnter: () => setHoveredIndex(index),
-            onMouseLeave: () => setHoveredIndex(-1),
-            onFocus: () => setFocusedIndex(index),
-            onBlur: () => setFocusedIndex(-1),
+            onFocus: () => setActiveIndex(i),
+            onMouseEnter: () => setActiveIndex(i),
+            onMouseLeave: () => setActiveIndex(-1),
+            ref: (el: HTMLElement | null) => { itemsRef.current[i] = el },
+            className: `absolute bottom-0 right-0 w-11 h-11 rounded-full flex items-center justify-center text-white shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`,
+            style: {
+              backgroundColor: item.color,
+              transform: isOpen ? `translate(${x}px, ${y}px)` : 'translate(0,0) scale(0)',
+              transitionDelay: isOpen ? `${i * 30}ms` : '0ms',
+            },
           }
 
           return item.href ? (
             <a
               key={item.id}
-              ref={el => { menuItemsRef.current[index] = el }}
               href={item.href}
               target={item.external ? '_blank' : undefined}
               rel={item.external ? 'noopener noreferrer' : undefined}
-              className={buttonClasses}
-              style={style}
               onClick={() => !item.external && setIsOpen(false)}
-              {...commonProps}
+              {...props}
             >
-              {item.icon}
+              <Icon className="w-5 h-5" />
             </a>
           ) : (
-            <button
-              key={item.id}
-              ref={el => { menuItemsRef.current[index] = el }}
-              type="button"
-              onClick={() => handleItemClick(item)}
-              className={buttonClasses}
-              style={style}
-              {...commonProps}
-            >
-              {item.icon}
+            <button key={item.id} type="button" onClick={() => handleClick(item)} {...props}>
+              <Icon className="w-5 h-5" />
             </button>
           )
         })}
       </div>
 
-      {/* Main trigger button */}
+      {/* Main button */}
       <button
-        ref={triggerRef}
         type="button"
-        onClick={handleToggle}
+        onClick={toggle}
         aria-expanded={isOpen}
         aria-haspopup="menu"
-        aria-label={isOpen ? 'Закрити меню швидких дій' : 'Відкрити меню швидких дій'}
-        className={`
-          relative flex items-center justify-center w-14 h-14 rounded-full
-          shadow-xl transition-all duration-300 z-10
-          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-500
-          ${isOpen
-            ? 'bg-slate-800 hover:bg-slate-700 rotate-0'
-            : 'bg-gradient-to-br from-dental-primary-500 to-dental-primary-600 hover:from-dental-primary-600 hover:to-dental-primary-700'
-          }
-          hover:scale-105 active:scale-95
-        `}
+        aria-label={isOpen ? 'Закрити меню' : 'Відкрити меню дій'}
+        className={`relative w-14 h-14 rounded-full shadow-xl flex items-center justify-center text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-500 z-10 ${
+          isOpen ? 'bg-gray-800' : 'bg-dental-primary-500 hover:bg-dental-primary-600'
+        }`}
       >
-        {/* Pulse animation when closed */}
-        {!isOpen && (
-          <span className="absolute inset-0 rounded-full bg-dental-primary-400 animate-ping opacity-20" />
-        )}
-
-        <span
-          className={`text-white transition-transform duration-300 ${isOpen ? 'rotate-45' : 'rotate-0'}`}
-        >
-          {isOpen ? (
-            <X className="w-6 h-6" aria-hidden="true" />
-          ) : (
-            <Plus className="w-6 h-6" aria-hidden="true" />
-          )}
-        </span>
+        {!isOpen && <span className="absolute inset-0 rounded-full bg-dental-primary-400 animate-ping opacity-20" />}
+        {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
 
-      {/* Screen reader instructions */}
       <div className="sr-only" aria-live="polite">
-        {isOpen
-          ? 'Меню швидких дій відкрито. Використовуйте стрілки для навігації, Enter для вибору, Escape для закриття.'
-          : ''
-        }
+        {isOpen ? 'Меню відкрито. Стрілки для навігації, Escape для закриття.' : ''}
       </div>
     </div>
   )
