@@ -3,20 +3,19 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import {
   Phone,
-  Navigation,
   Send,
   MessageCircle,
   Calendar,
-  Instagram,
-  Facebook,
   Bot,
   MessageSquare,
   X,
   Plus,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
-import { CONTACT_INFO, SITE_INFO } from '@/utils/constants'
+import { CONTACT_INFO } from '@/utils/constants'
 
-interface RadialMenuItem {
+interface MenuItem {
   id: string
   icon: React.ReactNode
   label: string
@@ -35,14 +34,17 @@ interface RadialMenuProps {
 
 export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [focusedIndex, setFocusedIndex] = useState(-1)
-  const [hoveredIndex, setHoveredIndex] = useState(-1)
+  const [focusedIndex, setFocusedIndex] = useState(0)
+  const [scrollIndex, setScrollIndex] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
   const menuItemsRef = useRef<(HTMLAnchorElement | HTMLButtonElement | null)[]>([])
   const triggerRef = useRef<HTMLButtonElement>(null)
 
-  // Menu items configuration - reduced to 6 main actions for cleaner UI
-  const menuItems: RadialMenuItem[] = useMemo(() => {
+  const VISIBLE_ITEMS = 4 // Number of visible items at once
+
+  // Menu items configuration
+  const menuItems: MenuItem[] = useMemo(() => {
     const tel = `tel:${CONTACT_INFO.phoneRaw}`
     const tg = CONTACT_INFO.social?.telegram || 'https://t.me/'
     const viberNum = CONTACT_INFO.social?.viber?.replace(/\D/g, '') || CONTACT_INFO.phoneRaw.replace(/\D/g, '')
@@ -62,7 +64,7 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
         id: 'booking',
         icon: <Calendar className="w-5 h-5" />,
         label: 'Записатися',
-        description: 'Онлайн-запис на прийом',
+        description: 'Онлайн-запис',
         href: '/booking',
         bgColor: 'bg-dental-primary-500',
         hoverColor: 'hover:bg-dental-primary-600',
@@ -71,7 +73,7 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
         id: 'ai',
         icon: <Bot className="w-5 h-5" />,
         label: 'AI Асистент',
-        description: 'Отримайте відповіді миттєво',
+        description: 'Запитайте AI',
         onClick: onOpenAI,
         bgColor: 'bg-violet-500',
         hoverColor: 'hover:bg-violet-600',
@@ -79,8 +81,8 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
       {
         id: 'chat',
         icon: <MessageSquare className="w-5 h-5" />,
-        label: 'Онлайн чат',
-        description: 'Напишіть нам повідомлення',
+        label: 'Чат',
+        description: 'Напишіть нам',
         onClick: onOpenChat,
         bgColor: 'bg-blue-500',
         hoverColor: 'hover:bg-blue-600',
@@ -107,110 +109,117 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
     ]
   }, [onOpenAI, onOpenChat])
 
-  // Calculate position for each item in arc layout
-  const getItemPosition = useCallback((index: number, total: number) => {
-    // Arc from bottom-left (-135deg) to top (-90deg) to right side (-45deg)
-    const startAngle = -150
-    const endAngle = -30
-    const angleStep = (endAngle - startAngle) / (total - 1)
-    const angle = startAngle + (index * angleStep)
-    const radius = 90 // Distance from center
-    
-    const radians = (angle * Math.PI) / 180
-    const x = Math.cos(radians) * radius
-    const y = Math.sin(radians) * radius
-    
-    return { x, y, angle }
-  }, [])
+  const maxScrollIndex = Math.max(0, menuItems.length - VISIBLE_ITEMS)
 
   // Close menu on click outside
   useEffect(() => {
     if (!isOpen) return
-    const handler = (e: MouseEvent) => {
+    
+    const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsOpen(false)
-        setFocusedIndex(-1)
-        setHoveredIndex(-1)
+        setFocusedIndex(0)
+        setScrollIndex(0)
       }
     }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
+    
+    // Use setTimeout to prevent immediate close on the same click that opens
+    const timeoutId = setTimeout(() => {
+      document.addEventListener('mousedown', handleClickOutside)
+    }, 0)
+    
+    return () => {
+      clearTimeout(timeoutId)
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
   }, [isOpen])
 
-  // Keyboard navigation
+  // Close on Escape
   useEffect(() => {
     if (!isOpen) return
 
-    const handler = (e: KeyboardEvent) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
         case 'Escape':
+          e.preventDefault()
           setIsOpen(false)
-          setFocusedIndex(-1)
-          setHoveredIndex(-1)
+          setFocusedIndex(0)
+          setScrollIndex(0)
           triggerRef.current?.focus()
           break
-        case 'ArrowUp':
         case 'ArrowLeft':
           e.preventDefault()
-          setFocusedIndex(prev => {
-            const newIndex = prev <= 0 ? menuItems.length - 1 : prev - 1
-            menuItemsRef.current[newIndex]?.focus()
-            return newIndex
-          })
+          if (focusedIndex > 0) {
+            setFocusedIndex(prev => prev - 1)
+            if (focusedIndex - 1 < scrollIndex) {
+              setScrollIndex(prev => Math.max(0, prev - 1))
+            }
+            menuItemsRef.current[focusedIndex - 1]?.focus()
+          }
           break
-        case 'ArrowDown':
         case 'ArrowRight':
           e.preventDefault()
-          setFocusedIndex(prev => {
-            const newIndex = prev >= menuItems.length - 1 ? 0 : prev + 1
-            menuItemsRef.current[newIndex]?.focus()
-            return newIndex
-          })
+          if (focusedIndex < menuItems.length - 1) {
+            setFocusedIndex(prev => prev + 1)
+            if (focusedIndex + 1 >= scrollIndex + VISIBLE_ITEMS) {
+              setScrollIndex(prev => Math.min(maxScrollIndex, prev + 1))
+            }
+            menuItemsRef.current[focusedIndex + 1]?.focus()
+          }
           break
         case 'Home':
           e.preventDefault()
           setFocusedIndex(0)
+          setScrollIndex(0)
           menuItemsRef.current[0]?.focus()
           break
         case 'End':
           e.preventDefault()
           setFocusedIndex(menuItems.length - 1)
+          setScrollIndex(maxScrollIndex)
           menuItemsRef.current[menuItems.length - 1]?.focus()
           break
       }
     }
 
-    document.addEventListener('keydown', handler)
-    return () => document.removeEventListener('keydown', handler)
-  }, [isOpen, menuItems.length])
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, focusedIndex, scrollIndex, menuItems.length, maxScrollIndex])
 
   // Focus first item when menu opens
   useEffect(() => {
     if (isOpen) {
-      setFocusedIndex(0)
       setTimeout(() => {
         menuItemsRef.current[0]?.focus()
-      }, 150)
+      }, 100)
     }
   }, [isOpen])
 
   const handleToggle = () => {
     setIsOpen(prev => !prev)
     if (isOpen) {
-      setFocusedIndex(-1)
-      setHoveredIndex(-1)
+      setFocusedIndex(0)
+      setScrollIndex(0)
     }
   }
 
-  const handleItemClick = (item: RadialMenuItem) => {
+  const handleItemClick = (item: MenuItem) => {
     if (item.onClick) {
       item.onClick()
       setIsOpen(false)
     }
   }
 
-  // Get active item for tooltip display
-  const activeItem = hoveredIndex >= 0 ? menuItems[hoveredIndex] : (focusedIndex >= 0 ? menuItems[focusedIndex] : null)
+  const scrollLeft = () => {
+    setScrollIndex(prev => Math.max(0, prev - 1))
+  }
+
+  const scrollRight = () => {
+    setScrollIndex(prev => Math.min(maxScrollIndex, prev + 1))
+  }
+
+  const canScrollLeft = scrollIndex > 0
+  const canScrollRight = scrollIndex < maxScrollIndex
 
   return (
     <div 
@@ -219,96 +228,119 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
       role="navigation"
       aria-label="Швидкі дії"
     >
-      {/* Background overlay when open */}
+      {/* Carousel menu container */}
       <div 
-        className={`fixed inset-0 bg-black/20 backdrop-blur-sm transition-opacity duration-300 -z-10 ${
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        className={`absolute bottom-16 right-0 transition-all duration-300 ease-out ${
+          isOpen 
+            ? 'opacity-100 translate-y-0 pointer-events-auto' 
+            : 'opacity-0 translate-y-4 pointer-events-none'
         }`}
-        aria-hidden="true"
-      />
-
-      {/* Central tooltip card - shows active item info */}
-      <div 
-        className={`absolute bottom-20 right-0 w-48 transition-all duration-200 ${
-          isOpen && activeItem ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
-        }`}
-        aria-hidden="true"
       >
-        <div className="bg-white rounded-xl shadow-xl border border-slate-200 p-3">
-          <div className="font-semibold text-slate-900 text-sm">{activeItem?.label}</div>
-          {activeItem?.description && (
-            <div className="text-xs text-slate-500 mt-0.5">{activeItem.description}</div>
+        <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-3 flex items-center gap-2">
+          {/* Left scroll button */}
+          {menuItems.length > VISIBLE_ITEMS && (
+            <button
+              type="button"
+              onClick={scrollLeft}
+              disabled={!canScrollLeft}
+              aria-label="Прокрутити вліво"
+              className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                canScrollLeft 
+                  ? 'bg-slate-100 hover:bg-slate-200 text-slate-700' 
+                  : 'bg-slate-50 text-slate-300 cursor-not-allowed'
+              }`}
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+          )}
+
+          {/* Menu items carousel */}
+          <div 
+            ref={menuRef}
+            className="overflow-hidden"
+            style={{ width: `${VISIBLE_ITEMS * 72}px` }}
+          >
+            <div 
+              role="menu"
+              aria-label="Швидкі дії"
+              className="flex gap-2 transition-transform duration-300 ease-out"
+              style={{ transform: `translateX(-${scrollIndex * 72}px)` }}
+            >
+              {menuItems.map((item, index) => {
+                const isActive = focusedIndex === index
+                
+                const buttonClasses = `
+                  flex flex-col items-center justify-center w-16 h-16 rounded-xl
+                  text-white transition-all duration-200 flex-shrink-0
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400
+                  ${item.bgColor} ${item.hoverColor}
+                  ${isActive ? 'ring-2 ring-offset-2 ring-slate-400 scale-105' : ''}
+                `
+                
+                const commonProps = {
+                  role: 'menuitem' as const,
+                  tabIndex: isOpen ? 0 : -1,
+                  'aria-label': `${item.label}${item.description ? ` - ${item.description}` : ''}`,
+                  onFocus: () => setFocusedIndex(index),
+                }
+
+                const content = (
+                  <>
+                    {item.icon}
+                    <span className="text-[10px] font-medium mt-1 leading-tight text-center">
+                      {item.label}
+                    </span>
+                  </>
+                )
+
+                return item.href ? (
+                  <a
+                    key={item.id}
+                    ref={el => { menuItemsRef.current[index] = el }}
+                    href={item.href}
+                    target={item.external ? '_blank' : undefined}
+                    rel={item.external ? 'noopener noreferrer' : undefined}
+                    className={buttonClasses}
+                    {...commonProps}
+                  >
+                    {content}
+                  </a>
+                ) : (
+                  <button
+                    key={item.id}
+                    ref={el => { menuItemsRef.current[index] = el }}
+                    type="button"
+                    onClick={() => handleItemClick(item)}
+                    className={buttonClasses}
+                    {...commonProps}
+                  >
+                    {content}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Right scroll button */}
+          {menuItems.length > VISIBLE_ITEMS && (
+            <button
+              type="button"
+              onClick={scrollRight}
+              disabled={!canScrollRight}
+              aria-label="Прокрутити вправо"
+              className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                canScrollRight 
+                  ? 'bg-slate-100 hover:bg-slate-200 text-slate-700' 
+                  : 'bg-slate-50 text-slate-300 cursor-not-allowed'
+              }`}
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
           )}
         </div>
-      </div>
 
-      {/* Radial menu items */}
-      <div 
-        className={`absolute bottom-0 right-0 transition-opacity duration-200 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-        role="menu"
-        aria-hidden={!isOpen}
-      >
-        {menuItems.map((item, index) => {
-          const { x, y } = getItemPosition(index, menuItems.length)
-          const delay = index * 40
-          const isActive = hoveredIndex === index || focusedIndex === index
-          
-          const buttonClasses = `
-            flex items-center justify-center w-12 h-12 rounded-full shadow-lg
-            text-white transition-all duration-200
-            focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-slate-900
-            ${item.bgColor} ${item.hoverColor}
-            ${isOpen ? 'scale-100' : 'scale-0'}
-            ${isActive ? 'scale-110 ring-2 ring-white ring-offset-2' : ''}
-          `
-          
-          const commonProps = {
-            role: 'menuitem' as const,
-            tabIndex: isOpen ? 0 : -1,
-            'aria-label': `${item.label}${item.description ? ` - ${item.description}` : ''}`,
-            onFocus: () => setFocusedIndex(index),
-            onBlur: () => setFocusedIndex(-1),
-            onMouseEnter: () => setHoveredIndex(index),
-            onMouseLeave: () => setHoveredIndex(-1),
-            style: {
-              transitionDelay: isOpen ? `${delay}ms` : '0ms',
-            },
-          }
-
-          return (
-            <div
-              key={item.id}
-              className="absolute bottom-0 right-0 transition-all duration-300 ease-out"
-              style={{
-                transform: isOpen ? `translate(${x}px, ${y}px)` : 'translate(0, 0)',
-                transitionDelay: isOpen ? `${delay}ms` : '0ms',
-              }}
-            >
-              {item.href ? (
-                <a
-                  ref={el => { menuItemsRef.current[index] = el }}
-                  href={item.href}
-                  target={item.external ? '_blank' : undefined}
-                  rel={item.external ? 'noopener noreferrer' : undefined}
-                  className={buttonClasses}
-                  {...commonProps}
-                >
-                  {item.icon}
-                </a>
-              ) : (
-                <button
-                  ref={el => { menuItemsRef.current[index] = el }}
-                  type="button"
-                  onClick={() => handleItemClick(item)}
-                  className={buttonClasses}
-                  {...commonProps}
-                >
-                  {item.icon}
-                </button>
-              )}
-            </div>
-          )
-        })}
+        {/* Arrow pointing to trigger */}
+        <div className="absolute -bottom-2 right-5 w-4 h-4 bg-white border-r border-b border-slate-200 transform rotate-45" />
       </div>
 
       {/* Main trigger button */}
