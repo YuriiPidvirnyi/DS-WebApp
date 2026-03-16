@@ -160,6 +160,7 @@ const bookingHelperTool = tool({
       ],
       phone: '+380 67 123 45 67',
       note: serviceType ? `Для послуги "${serviceType}" рекомендую попередню консультацію` : null,
+      preferredDate: preferredDate || null,
     }
   },
 })
