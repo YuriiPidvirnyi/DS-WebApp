@@ -1,4 +1,5 @@
-import * as Sentry from '@sentry/react'
+// Sentry error tracking service for Next.js
+import * as Sentry from '@sentry/nextjs'
 
 interface ErrorTrackingConfig {
   dsn: string

@@ -1,0 +1,547 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Dental Story API",
+    "description": "API for the Dental Story dental clinic website. Provides endpoints for appointments, contact forms, and admin analytics.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Dental Story Support",
+      "email": "support@dentalstory.ua"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://dentalstory.ua",
+      "description": "Production server"
+    },
+    {
+      "url": "http://localhost:3000",
+      "description": "Development server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Appointments",
+      "description": "Appointment booking and management"
+    },
+    {
+      "name": "Contact",
+      "description": "Contact form submissions"
+    },
+    {
+      "name": "Admin",
+      "description": "Admin dashboard and analytics"
+    },
+    {
+      "name": "Health",
+      "description": "Health check endpoints"
+    }
+  ],
+  "paths": {
+    "/api/appointments": {
+      "get": {
+        "tags": ["Appointments"],
+        "summary": "Get appointments",
+        "description": "Retrieve a list of appointments. Requires authentication for admin access.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Appointment" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Appointments"],
+        "summary": "Create appointment",
+        "description": "Book a new dental appointment",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AppointmentRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Appointment created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": { "$ref": "#/components/schemas/Appointment" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/appointments/slots": {
+      "get": {
+        "tags": ["Appointments"],
+        "summary": "Get available slots",
+        "description": "Retrieve available appointment slots for a specific date",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "description": "Date in YYYY-MM-DD format",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2026-03-15"
+            }
+          },
+          {
+            "name": "doctorId",
+            "in": "query",
+            "required": false,
+            "description": "Optional doctor ID to filter slots",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Available slots retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/TimeSlot" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing required parameters",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/appointments/{id}": {
+      "get": {
+        "tags": ["Appointments"],
+        "summary": "Get appointment by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Appointment details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": { "$ref": "#/components/schemas/Appointment" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Appointment not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Appointments"],
+        "summary": "Update appointment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AppointmentUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Appointment updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": { "$ref": "#/components/schemas/Appointment" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Appointments"],
+        "summary": "Cancel appointment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Appointment cancelled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/contacts": {
+      "post": {
+        "tags": ["Contact"],
+        "summary": "Submit contact form",
+        "description": "Submit a contact form inquiry",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ContactRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Contact form submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/analytics": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Get dashboard analytics",
+        "description": "Retrieve analytics data for the admin dashboard. Requires admin authentication.",
+        "security": [{ "adminAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Analytics data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AnalyticsData" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Analytics actions",
+        "description": "Perform analytics actions like refresh or export",
+        "security": [{ "adminAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "action": {
+                    "type": "string",
+                    "enum": ["refresh", "export"]
+                  },
+                  "dateRange": {
+                    "type": "object",
+                    "properties": {
+                      "start": { "type": "string", "format": "date" },
+                      "end": { "type": "string", "format": "date" }
+                    }
+                  }
+                },
+                "required": ["action"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Action completed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Health check",
+        "description": "Check if the API is running",
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "ok" },
+                    "timestamp": { "type": "string", "format": "date-time" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Appointment": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "patientName": { "type": "string" },
+          "patientPhone": { "type": "string" },
+          "patientEmail": { "type": "string", "format": "email" },
+          "service": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "time": { "type": "string" },
+          "doctorId": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "confirmed", "cancelled", "completed"]
+          },
+          "notes": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "AppointmentRequest": {
+        "type": "object",
+        "required": ["patientName", "patientPhone", "service", "date", "time"],
+        "properties": {
+          "patientName": { "type": "string", "minLength": 2, "maxLength": 100 },
+          "patientPhone": { "type": "string", "pattern": "^\\+380\\d{9}$" },
+          "patientEmail": { "type": "string", "format": "email" },
+          "service": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "time": { "type": "string" },
+          "doctorId": { "type": "string" },
+          "notes": { "type": "string", "maxLength": 500 },
+          "turnstileToken": { "type": "string", "description": "Cloudflare Turnstile verification token" }
+        }
+      },
+      "AppointmentUpdate": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "time": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "confirmed", "cancelled", "completed"]
+          },
+          "notes": { "type": "string" }
+        }
+      },
+      "TimeSlot": {
+        "type": "object",
+        "properties": {
+          "time": { "type": "string", "example": "09:00" },
+          "available": { "type": "boolean" },
+          "doctorId": { "type": "string" },
+          "doctorName": { "type": "string" }
+        }
+      },
+      "ContactRequest": {
+        "type": "object",
+        "required": ["name", "phone", "message"],
+        "properties": {
+          "name": { "type": "string", "minLength": 2, "maxLength": 100 },
+          "phone": { "type": "string", "pattern": "^\\+380\\d{9}$" },
+          "email": { "type": "string", "format": "email" },
+          "message": { "type": "string", "minLength": 10, "maxLength": 1000 },
+          "turnstileToken": { "type": "string" }
+        }
+      },
+      "AnalyticsData": {
+        "type": "object",
+        "properties": {
+          "stats": {
+            "type": "object",
+            "properties": {
+              "totalAppointments": { "type": "integer" },
+              "todayAppointments": { "type": "integer" },
+              "pendingAppointments": { "type": "integer" },
+              "completedAppointments": { "type": "integer" },
+              "totalPatients": { "type": "integer" },
+              "monthlyRevenue": { "type": "number" },
+              "appointmentsTrend": { "type": "number" },
+              "patientsTrend": { "type": "number" }
+            }
+          },
+          "weeklyData": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "appointments": { "type": "integer" },
+                "revenue": { "type": "number" }
+              }
+            }
+          },
+          "serviceBreakdown": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "value": { "type": "integer" },
+                "color": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": false },
+          "error": { "type": "string" },
+          "code": { "type": "string" }
+        }
+      }
+    },
+    "securitySchemes": {
+      "adminAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Admin authentication token"
+      }
+    }
+  }
+}

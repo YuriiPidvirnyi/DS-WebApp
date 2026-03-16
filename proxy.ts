@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { updateSession } from '@/lib/supabase/middleware'
 
 // ---------------------------------------------------------------------------
 // Rate limiting (in-memory, per Edge instance — resets on cold start)
@@ -169,6 +170,22 @@ export function proxy(request: NextRequest): NextResponse {
   }
 
   return response
+}
+
+// Wrap proxy with Supabase session handling
+export async function middleware(request: NextRequest) {
+  // Update Supabase session (refresh tokens, set cookies)
+  const supabaseResponse = await updateSession(request)
+  
+  // Apply our custom proxy logic on top
+  const customResponse = proxy(request)
+  
+  // Merge headers from both responses
+  supabaseResponse.headers.forEach((value, key) => {
+    customResponse.headers.set(key, value)
+  })
+  
+  return customResponse
 }
 
 // Run on all routes except Next.js internals, static files, and PWA assets

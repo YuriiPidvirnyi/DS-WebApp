@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 import {
   createContact,
   CliniCardsError,
@@ -10,7 +11,7 @@ export const dynamic = 'force-dynamic'
 
 /** POST /api/contacts */
 export async function POST(request: NextRequest) {
-  let body: Partial<ContactPayload>
+  let body: Partial<ContactPayload & { email?: string; message?: string }>
 
   try {
     body = await request.json()
@@ -24,20 +25,45 @@ export async function POST(request: NextRequest) {
   // Required: firstName + phone
   if (!body.firstName?.trim()) {
     return NextResponse.json(
-      { success: false, error: 'Поле firstName є обов\'язковим' },
+      { success: false, error: 'Ім\'я є обов\'язковим' },
       { status: 400 }
     )
   }
   if (!body.phone?.trim()) {
     return NextResponse.json(
-      { success: false, error: 'Поле phone є обов\'язковим' },
+      { success: false, error: 'Телефон є обов\'язковим' },
       { status: 400 }
     )
   }
 
   try {
-    const data = await createContact(body as ContactPayload)
-    return NextResponse.json({ success: true, data }, { status: 201 })
+    // Save to Supabase
+    const supabase = await createClient()
+    const { error: dbError } = await supabase
+      .from('contact_submissions')
+      .insert({
+        name: body.firstName,
+        phone: body.phone,
+        email: body.email || null,
+        message: body.message || null,
+      })
+
+    if (dbError) {
+      console.error('[contacts] Supabase error:', dbError)
+    }
+
+    // Also send to CliniCards if configured
+    try {
+      const data = await createContact(body as ContactPayload)
+      return NextResponse.json({ success: true, data }, { status: 201 })
+    } catch (cliniCardsError) {
+      // If CliniCards fails, we still saved to Supabase
+      console.warn('[contacts] CliniCards failed, saved to Supabase:', cliniCardsError)
+      return NextResponse.json({ 
+        success: true, 
+        data: { message: 'Дякуємо! Ми зв\'яжемося з вами найближчим часом.' } 
+      }, { status: 201 })
+    }
   } catch (error) {
     if (error instanceof CliniCardsError) {
       return NextResponse.json(

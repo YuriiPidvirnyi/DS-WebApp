@@ -1,18 +1,29 @@
 import type { Metadata, Viewport } from 'next'
-import { Plus_Jakarta_Sans } from 'next/font/google'
+import { Nunito, Rubik } from 'next/font/google'
 import Script from 'next/script'
 import { headers } from 'next/headers'
 import { Analytics } from '@vercel/analytics/next'
 import '../src/styles/globals.css'
 import ClientProviders from './providers'
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import ClientFloatingButtons from '@/components/ClientFloatingButtons'
 import { StructuredData } from '@/components/StructuredData'
 
-// Replace Google Fonts <link> from index.html with next/font for self-hosting
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ['latin'],
-  weight: ['400', '600', '700'],
-  variable: '--font-plus-jakarta-sans',
+// Dental Story Typography System
+// Nunito - заокруглений шрифт для заголовків (схожий на Stolzl з брендбуку)
+const nunito = Nunito({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-nunito',
+  display: 'swap',
+})
+
+// Rubik - м'який заокруглений шрифт для основного тексту з повною Cyrillic підтримкою
+const rubik = Rubik({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-rubik',
   display: 'swap',
 })
 
@@ -80,7 +91,7 @@ export default async function RootLayout({
   const nonce = (await headers()).get('x-nonce') ?? ''
 
   return (
-    <html lang="uk" className={plusJakartaSans.variable}>
+    <html lang="uk" className={`${nunito.variable} ${rubik.variable}`} data-scroll-behavior="smooth">
       <body>
         {/* Organization JSON-LD structured data (server-rendered) */}
         <StructuredData type="organization" />
@@ -105,19 +116,23 @@ export default async function RootLayout({
           </>
         )}
 
-        <ClientProviders>
+        <div className="min-h-screen flex flex-col">
           {/* Skip navigation link for accessibility */}
           <a
             href="#main-content"
             className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-50 bg-dental-teal text-white px-4 py-2 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-white"
           >
-            Перейти до основного вмісту
+            Skip to main content
           </a>
-          <Header />
-          <main id="main-content" className="flex-1" role="main">
-            {children}
-          </main>
-        </ClientProviders>
+          <ClientProviders>
+            <Header />
+            <main id="main-content" className="flex-1" role="main">
+              {children}
+            </main>
+            <Footer />
+            <ClientFloatingButtons />
+          </ClientProviders>
+        </div>
         <Analytics />
       </body>
     </html>

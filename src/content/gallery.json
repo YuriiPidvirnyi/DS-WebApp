@@ -1,21 +1,21 @@
 [
   {
     "id": "clinic-1",
-    "url": "/assets/images/gallery/gallery-placeholder.svg",
+    "url": "/assets/images/gallery/clinic-reception.jpg",
     "title": "Ресепшн клініки",
     "category": "clinic",
     "description": "Сучасний ресепшн Dental Story"
   },
   {
     "id": "clinic-2",
-    "url": "/assets/images/gallery/gallery-placeholder.svg",
+    "url": "/assets/images/gallery/treatment-room.jpg",
     "title": "Лікувальний кабінет",
     "category": "clinic",
     "description": "Кабінет із сучасним обладнанням"
   },
   {
     "id": "clinic-3",
-    "url": "/assets/images/gallery/gallery-placeholder.svg",
+    "url": "/assets/images/gallery/clinic-reception.jpg",
     "title": "Зона очікування",
     "category": "clinic",
     "description": "Комфортна зона очікування"
@@ -23,21 +23,21 @@
 
   {
     "id": "equipment-1",
-    "url": "/assets/images/gallery/gallery-placeholder.svg",
+    "url": "/assets/images/gallery/dental-equipment.jpg",
     "title": "Стоматологічне крісло",
     "category": "equipment",
     "description": "Ергономічне крісло нового покоління"
   },
   {
     "id": "equipment-2",
-    "url": "/assets/images/gallery/gallery-placeholder.svg",
+    "url": "/assets/images/gallery/dental-equipment.jpg",
     "title": "3D томограф",
     "category": "equipment",
     "description": "Точна діагностика в 3D"
   },
   {
     "id": "equipment-3",
-    "url": "/assets/images/gallery/gallery-placeholder.svg",
+    "url": "/assets/images/gallery/treatment-room.jpg",
     "title": "Стерилізаційна",
     "category": "equipment",
     "description": "Стерильність і безпека"
@@ -45,14 +45,14 @@
 
   {
     "id": "team-1",
-    "url": "/assets/images/gallery/gallery-placeholder.svg",
+    "url": "/assets/images/gallery/dental-team.jpg",
     "title": "Наша команда",
     "category": "team",
     "description": "Команда професіоналів"
   },
   {
     "id": "team-2",
-    "url": "/assets/images/gallery/gallery-placeholder.svg",
+    "url": "/assets/images/gallery/dental-team.jpg",
     "title": "Робочий процес",
     "category": "team",
     "description": "Лікарі за роботою"
@@ -60,7 +60,7 @@
 
   {
     "id": "beforeafter-1",
-    "url": "/assets/images/gallery/gallery-placeholder.svg",
+    "url": "/assets/images/services/teeth-whitening.jpg",
     "title": "Результат відбілювання",
     "category": "before-after",
     "description": "До та після процедури"

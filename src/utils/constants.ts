@@ -7,6 +7,9 @@ const ENV_FB =
 const ENV_IG =
   process.env.NEXT_PUBLIC_INSTAGRAM_URL || 'https://www.instagram.com/dentalstory_lviv/'
 const ENV_TG = process.env.NEXT_PUBLIC_TELEGRAM_URL || 'https://t.me/dentalstory'
+const ENV_TT = process.env.NEXT_PUBLIC_TIKTOK_URL || 'https://www.tiktok.com/@dentalstory'
+const ENV_WA = process.env.NEXT_PUBLIC_WHATSAPP_URL || `https://wa.me/${(process.env.NEXT_PUBLIC_PHONE_NUMBER || '+380682323838').replace(/\D/g, '')}`
+const ENV_TW = process.env.NEXT_PUBLIC_TWITTER_URL || 'https://twitter.com/dentalstory'
 
 export const CONTACT_INFO = {
   phone: ENV_PHONE,
@@ -37,6 +40,9 @@ export const CONTACT_INFO = {
     facebook: ENV_FB,
     instagram: ENV_IG,
     telegram: ENV_TG,
+    tiktok: ENV_TT,
+    whatsapp: ENV_WA,
+    twitter: ENV_TW,
     viber: ENV_PHONE,
   },
 }
@@ -78,3 +84,86 @@ export const BRAND_COLORS = {
   secondary: '#D1CAC0', // RGB(209, 202, 192) - бежевий
   white: '#FFFFFF', // RGB(255, 255, 255)
 } as const
+
+// Ukrainian-specific settings
+export const UKRAINE_CONFIG = {
+  // Currency
+  currency: {
+    code: 'UAH',
+    symbol: '₴',
+    name: 'Українська гривня',
+    locale: 'uk-UA',
+  },
+  // Phone format
+  phone: {
+    countryCode: '+380',
+    format: '+380 XX XXX XX XX',
+    regex: /^\+380\d{9}$/,
+    placeholder: '+380 67 123 45 67',
+  },
+  // Date/time
+  dateFormat: 'dd.MM.yyyy',
+  timeFormat: 'HH:mm',
+  timezone: 'Europe/Kyiv',
+  locale: 'uk-UA',
+  // Holidays (dental clinics often closed)
+  holidays: [
+    { date: '01-01', name: 'Новий рік' },
+    { date: '01-07', name: 'Різдво' },
+    { date: '03-08', name: 'Міжнародний жіночий день' },
+    { date: '05-01', name: 'День праці' },
+    { date: '05-09', name: 'День перемоги' },
+    { date: '06-28', name: 'День Конституції' },
+    { date: '08-24', name: 'День Незалежності' },
+    { date: '10-14', name: 'День захисника України' },
+    { date: '12-25', name: 'Католицьке Різдво' },
+  ],
+  // Payment methods popular in Ukraine
+  paymentMethods: [
+    { id: 'cash', name: 'Готівка', icon: 'banknotes' },
+    { id: 'card', name: 'Картка (Visa/Mastercard)', icon: 'credit-card' },
+    { id: 'privat24', name: 'Приват24', icon: 'smartphone' },
+    { id: 'mono', name: 'Monobank', icon: 'smartphone' },
+    { id: 'apple-pay', name: 'Apple Pay', icon: 'apple' },
+    { id: 'google-pay', name: 'Google Pay', icon: 'google' },
+  ],
+  // Insurance companies (popular in Ukraine for dental)
+  insurancePartners: [
+    'УНІКА',
+    'Провідна',
+    'Альфа Страхування',
+    'PZU Україна',
+    'ТАС Страхування',
+  ],
+}
+
+// Format price in UAH
+export const formatPriceUAH = (amount: number): string => {
+  return new Intl.NumberFormat('uk-UA', {
+    style: 'currency',
+    currency: 'UAH',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount)
+}
+
+// Format Ukrainian phone number
+export const formatUkrainianPhone = (phone: string): string => {
+  const digits = phone.replace(/\D/g, '')
+  if (digits.length === 12 && digits.startsWith('380')) {
+    return `+380 ${digits.slice(3, 5)} ${digits.slice(5, 8)} ${digits.slice(8, 10)} ${digits.slice(10)}`
+  }
+  if (digits.length === 10) {
+    return `+380 ${digits.slice(0, 2)} ${digits.slice(2, 5)} ${digits.slice(5, 7)} ${digits.slice(7)}`
+  }
+  return phone
+}
+
+// Validate Ukrainian phone
+export const isValidUkrainianPhone = (phone: string): boolean => {
+  const digits = phone.replace(/\D/g, '')
+  return (
+    (digits.length === 12 && digits.startsWith('380')) ||
+    (digits.length === 10 && ['0', '06', '07', '09'].some(p => digits.startsWith(p)))
+  )
+}

@@ -1,35 +1,49 @@
 'use client'
 
-import { useState, useCallback, useMemo, memo } from 'react'
+import { useState, useCallback, useMemo, memo, useEffect } from 'react'
 import Link from 'next/link'
-import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Phone, Mail } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { Menu, X, Phone, Mail, User, LogIn } from 'lucide-react'
 import { CONTACT_INFO } from '@/utils/constants'
 import Logo from '@/components/ui/Logo'
-
-// Lazy-load LanguageSwitcher — the only i18n consumer.
-// This defers the entire i18next + react-i18next chain (~30-50KB)
-// from the initial hydration path.
-const LanguageSwitcher = dynamic(
-  () => import('@/components/LanguageSwitcher'),
-  { ssr: false, loading: () => <div className="w-20 h-10" /> }
-)
+import LanguageSwitcher from '@/components/LanguageSwitcher'
+import { createClient } from '@/lib/supabase/client'
+import type { User as SupabaseUser } from '@supabase/supabase-js'
 
 const Header = memo(() => {
+  const { t } = useTranslation()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [user, setUser] = useState<SupabaseUser | null>(null)
   const pathname = usePathname()
 
-  // Memoize navigation array to prevent recreating on every render
+  // Check auth state (only when Supabase is configured)
+  useEffect(() => {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return
+
+    const supabase = createClient()
+
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user)
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  // Memoize navigation array - recreate when language changes
   const navigation = useMemo(
     () => [
-      { name: 'Головна', href: '/' },
-      { name: 'Послуги', href: '/services' },
-      { name: 'Про нас', href: '/about' },
-      { name: 'Галерея', href: '/gallery' },
-      { name: 'Контакти', href: '/contact' },
+      { name: t('navigation.home'), href: '/' },
+      { name: t('navigation.services'), href: '/services' },
+      { name: t('navigation.about'), href: '/about' },
+      { name: t('navigation.gallery'), href: '/gallery' },
+      { name: t('navigation.contact'), href: '/contact' },
     ],
-    []
+    [t]
   )
 
   // Memoize isActive function
@@ -54,7 +68,7 @@ const Header = memo(() => {
     <header className="bg-white shadow-sm sticky top-0 z-50" role="banner">
       {/* Top bar */}
       <div
-        className="bg-slate-800 text-white py-2.5"
+        className="bg-dental-primary-900 text-white py-2.5"
         role="complementary"
         aria-label="Контактна інформація"
       >
@@ -63,12 +77,12 @@ const Header = memo(() => {
             <div className="flex items-center space-x-6">
               <div className="flex items-center space-x-1.5">
                 <Phone
-                  className="h-4 w-4 text-dental-teal"
+                  className="h-4 w-4 text-dental-secondary"
                   aria-hidden="true"
                 />
                 <a
                   href={`tel:${CONTACT_INFO.phoneRaw}`}
-                  className="hover:text-dental-teal font-semibold tracking-wide transition-colors"
+                  className="hover:text-white font-semibold tracking-wide transition-colors"
                   data-track-id="call_click"
                   data-track-category="outbound"
                   data-track-label="header_phone"
@@ -78,10 +92,10 @@ const Header = memo(() => {
                 </a>
               </div>
               <div className="flex items-center space-x-1.5">
-                <Mail className="h-4 w-4 text-dental-teal" aria-hidden="true" />
+                <Mail className="h-4 w-4 text-dental-secondary" aria-hidden="true" />
                 <a
                   href={`mailto:${CONTACT_INFO.email}`}
-                  className="hover:text-dental-teal font-semibold tracking-wide transition-colors"
+                  className="hover:text-white font-semibold tracking-wide transition-colors"
                   data-track-id="email_click"
                   data-track-category="outbound"
                   data-track-label="header_email"
@@ -91,7 +105,7 @@ const Header = memo(() => {
                 </a>
               </div>
             </div>
-            <div className="hidden md:block text-gray-300">
+            <div className="hidden md:block text-dental-secondary">
               <span className="font-medium">
                 {CONTACT_INFO.workingHours.weekdays} |{' '}
                 {CONTACT_INFO.workingHours.saturday}
@@ -125,9 +139,9 @@ const Header = memo(() => {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`text-gray-700 hover:text-dental-blue transition-colors duration-200 font-medium ${
+                className={`text-dental-text hover:text-dental-primary-600 transition-colors duration-200 font-medium ${
                   isActive(item.href)
-                    ? 'text-dental-blue border-b-2 border-dental-blue'
+                    ? 'text-dental-primary-600 border-b-2 border-dental-primary-400'
                     : ''
                 }`}
               >
@@ -136,17 +150,34 @@ const Header = memo(() => {
             ))}
           </nav>
 
-          {/* Language Switcher & CTA */}
+          {/* CTA & Auth & Language */}
           <div className="hidden md:flex items-center space-x-4">
-            <LanguageSwitcher />
+            <LanguageSwitcher variant="dropdown" />
+            {user ? (
+              <Link
+                href="/cabinet"
+                className="flex items-center gap-2 text-dental-text hover:text-dental-primary-600 transition-colors"
+              >
+                <User className="w-5 h-5" />
+                <span>{t('admin.sidebar.dashboard')}</span>
+              </Link>
+            ) : (
+              <Link
+                href="/auth/login"
+                className="flex items-center gap-2 text-dental-text hover:text-dental-primary-600 transition-colors"
+              >
+                <LogIn className="w-5 h-5" />
+                <span>{t('admin.login.login')}</span>
+              </Link>
+            )}
             <Link
               href="/booking"
-              className="bg-teal-800 hover:bg-teal-900 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
+              className="bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
               data-track-id="cta_book_now"
               data-track-category="navigation"
               data-track-label="header_cta"
             >
-              Записатись на прийом
+              {t('buttons.bookAppointment')}
             </Link>
           </div>
 
@@ -155,8 +186,8 @@ const Header = memo(() => {
             <button
               onClick={toggleMenu}
               onKeyDown={handleMenuKeyDown}
-              className="p-2 text-gray-700 hover:text-dental-blue focus:outline-none focus:ring-2 focus:ring-dental-teal focus:ring-offset-2 rounded-lg"
-              aria-label={isMenuOpen ? 'Закрити меню' : 'Відкрити меню'}
+              className="p-2 text-dental-text hover:text-dental-primary-600 focus:outline-none focus:ring-2 focus:ring-dental-primary-400 focus:ring-offset-2 rounded-lg"
+              aria-label={isMenuOpen ? t('accessibility.closeMenu') : t('accessibility.openMenu')}
               aria-expanded={isMenuOpen}
               aria-controls="mobile-menu"
             >
@@ -182,9 +213,9 @@ const Header = memo(() => {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`block px-3 py-2 rounded-lg text-gray-700 hover:text-dental-blue hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-dental-teal focus:ring-inset transition-colors duration-200 ${
+                className={`block px-3 py-2 rounded-lg text-dental-text hover:text-dental-primary-600 hover:bg-dental-primary-50 focus:outline-none focus:ring-2 focus:ring-dental-primary-400 focus:ring-inset transition-colors duration-200 ${
                   isActive(item.href)
-                    ? 'text-dental-blue bg-blue-50 font-semibold'
+                    ? 'text-dental-primary-600 bg-dental-primary-50 font-semibold'
                     : ''
                 }`}
                 onClick={closeMenu}
@@ -194,16 +225,17 @@ const Header = memo(() => {
                 {item.name}
               </Link>
             ))}
-            <div className="px-3 mt-4">
+            <div className="px-3 pt-4 border-t border-dental-secondary-200">
+              <LanguageSwitcher variant="inline" className="mb-4 justify-center" />
               <Link
                 href="/booking"
-                className="block px-6 py-4 min-h-[48px] bg-teal-800 hover:bg-teal-900 text-white rounded-xl text-center font-bold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+                className="block px-6 py-4 min-h-[48px] bg-dental-primary-600 hover:bg-dental-primary-700 text-white rounded-xl text-center font-bold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
                 onClick={closeMenu}
                 data-track-id="cta_book_now_mobile"
                 data-track-category="navigation"
                 data-track-label="mobile_cta"
               >
-                📞 Записатись на прийом
+                {t('buttons.bookAppointment')}
               </Link>
             </div>
           </div>

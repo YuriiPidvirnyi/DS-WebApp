@@ -1,8 +1,7 @@
 'use client'
 
-import i18n from 'i18next'
+import i18next from 'i18next'
 import { initReactI18next } from 'react-i18next'
-import LanguageDetector from 'i18next-browser-languagedetector'
 
 // Eagerly load only the default language (Ukrainian) — 95%+ of visitors.
 // English and Polish are lazy-loaded on demand when the user switches.
@@ -15,21 +14,22 @@ const resources = {
   },
 }
 
-// Initialize i18n
+// Check if we're in the browser
+const isBrowser = typeof window !== 'undefined'
+
+// Create a fresh i18n instance to avoid singleton pollution between SSR requests.
+// This ensures each request starts with a clean slate.
+const i18n = i18next.createInstance()
+
+// Initialize i18n WITHOUT language detector to avoid hydration mismatch.
+// Language detection happens AFTER hydration in initializeLanguage().
 i18n
-  .use(LanguageDetector) // Detect user language
   .use(initReactI18next) // Pass i18n instance to react-i18next
   .init({
     resources,
+    lng: 'uk', // Always start with Ukrainian for consistent SSR
     fallbackLng: 'uk', // Default language
     supportedLngs: ['uk', 'en', 'pl'], // Supported languages
-
-    // Language detection options
-    detection: {
-      order: ['localStorage', 'navigator', 'htmlTag'],
-      caches: ['localStorage'],
-      lookupLocalStorage: 'i18nextLng',
-    },
 
     interpolation: {
       escapeValue: false, // React already does escaping
@@ -60,14 +60,37 @@ i18n.on('languageChanged', async (lng: string) => {
       i18n.addResourceBundle(lng, 'translation', mod.default, true, true)
     }
   }
+  // Persist language choice to localStorage
+  if (isBrowser) {
+    localStorage.setItem('i18nextLng', lng)
+  }
 })
 
-// If the detected language is not Ukrainian, load it immediately
-const detectedLng = i18n.language
-if (detectedLng && detectedLng !== 'uk' && lazyLocaleLoaders[detectedLng]) {
-  lazyLocaleLoaders[detectedLng]().then(mod => {
-    i18n.addResourceBundle(detectedLng, 'translation', mod.default, true, true)
-  })
+/**
+ * Initialize language detection AFTER hydration.
+ * This prevents hydration mismatch by ensuring SSR and initial client render
+ * both use 'uk', then we switch to the user's preferred language if they've chosen one.
+ * 
+ * Only respects stored language preference (localStorage), not browser language.
+ * Default is always Ukrainian.
+ */
+export function initializeLanguage() {
+  if (!isBrowser) return
+
+  // Check localStorage for explicit language choice
+  // Only load other languages if user has previously selected them
+  const storedLng = localStorage.getItem('i18nextLng')
+  
+  if (storedLng && storedLng !== 'uk' && ['en', 'pl'].includes(storedLng)) {
+    // Load the language bundle and switch only if user explicitly chose it before
+    const loader = lazyLocaleLoaders[storedLng]
+    if (loader) {
+      loader().then(mod => {
+        i18n.addResourceBundle(storedLng, 'translation', mod.default, true, true)
+        i18n.changeLanguage(storedLng)
+      })
+    }
+  }
 }
 
 export default i18n

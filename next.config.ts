@@ -105,12 +105,53 @@ const nextConfig: NextConfig = {
   // Static asset cache headers — security headers are set by middleware.ts
   async headers() {
     return [
+      // Immutable static assets (fonts, images in /assets)
       {
         source: '/assets/(.*)',
         headers: [
           {
             key: 'Cache-Control',
             value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      // Next.js static files (_next/static) — long cache
+      {
+        source: '/_next/static/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      // Image optimization cache
+      {
+        source: '/_next/image(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, stale-while-revalidate=604800',
+          },
+        ],
+      },
+      // API routes — short cache with revalidation
+      {
+        source: '/api/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=60, stale-while-revalidate=300',
+          },
+        ],
+      },
+      // Admin API routes — no caching for sensitive data
+      {
+        source: '/api/admin/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'private, no-cache, no-store, must-revalidate',
           },
         ],
       },
@@ -125,6 +166,16 @@ const nextConfig: NextConfig = {
           {
             key: 'Content-Type',
             value: 'application/javascript; charset=utf-8',
+          },
+        ],
+      },
+      // Manifest and icons — moderate cache
+      {
+        source: '/manifest.json',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, stale-while-revalidate=604800',
           },
         ],
       },
@@ -144,6 +195,21 @@ const nextConfig: NextConfig = {
   // Experimental features
   experimental: {
     // typedRoutes: true, // Enable when all routes are migrated
+    // Enable optimizations
+    optimizePackageImports: [
+      'lucide-react',
+      'recharts',
+      '@sentry/nextjs',
+      'react-i18next',
+      'i18next',
+    ],
+  },
+
+  // Enable modularizeImports for tree-shaking
+  modularizeImports: {
+    'lucide-react': {
+      transform: 'lucide-react/dist/esm/icons/{{kebabCase member}}',
+    },
   },
 
   // Environment variables exposed to the browser (type-safe access)

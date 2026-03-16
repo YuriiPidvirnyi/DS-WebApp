@@ -1,12 +1,20 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useAccessibility } from '@/hooks/useAccessibility'
-import { Settings, Maximize, Minimize } from 'lucide-react'
-import { Button } from './ui'
+import { Accessibility, Minus, Plus, RotateCcw, X } from 'lucide-react'
+import { CustomSelect } from '@/components/ui/CustomSelect'
 
-export function AccessibilityPanel() {
-  const [isOpen, setIsOpen] = useState(false)
+interface AccessibilityPanelProps {
+  defaultOpen?: boolean
+  hideToggle?: boolean
+}
+
+export function AccessibilityPanel({ defaultOpen = false, hideToggle = false }: AccessibilityPanelProps) {
+  const [isOpen, setIsOpen] = useState(defaultOpen)
+  const panelRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+
   const {
     fontSize,
     increaseFontSize,
@@ -20,164 +28,208 @@ export function AccessibilityPanel() {
     setColorBlindnessMode,
   } = useAccessibility()
 
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        setIsOpen(false)
+        buttonRef.current?.focus()
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen])
+
+  // Focus trap inside panel
+  useEffect(() => {
+    if (isOpen) {
+      const firstFocusable = panelRef.current?.querySelector<HTMLElement>(
+        'button, input, select, [tabindex]:not([tabindex="-1"])'
+      )
+      firstFocusable?.focus()
+    }
+  }, [isOpen])
+
+  const fontSizeLabel =
+    fontSize === 'normal'
+      ? 'Стандартний'
+      : fontSize === 'larger'
+        ? 'Великий'
+        : 'Найбільший'
+
   return (
     <div
-      className="fixed bottom-4 left-4 z-50"
+      className="relative"
       role="region"
       aria-label="Налаштування доступності"
     >
-      {/* Toggle button */}
-      <button
-        onClick={() => setIsOpen(prev => !prev)}
-        aria-expanded={isOpen}
-        aria-controls="a11y-panel"
-        className="bg-dental-blue text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg focus:outline-none focus:ring-2 focus:ring-dental-blue focus:ring-offset-2"
-        aria-label={
-          isOpen ? 'Закрити панель доступності' : 'Відкрити панель доступності'
-        }
-      >
-        <Settings className="h-6 w-6" />
-      </button>
-
-      {/* Accessibility panel */}
+      {/* Panel - when defaultOpen (controlled externally), no absolute positioning */}
       {isOpen && (
         <div
           id="a11y-panel"
-          className="bg-white rounded-lg shadow-xl p-4 absolute bottom-16 left-0 w-64 border border-gray-200"
-          aria-live="polite"
+          ref={panelRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="a11y-panel-title"
+          className={`${defaultOpen ? '' : 'absolute bottom-16 right-0'} w-full sm:w-72 bg-white rounded-2xl shadow-2xl border border-dental-secondary-200 overflow-y-auto max-h-[70vh] sm:max-h-96`}
         >
-          <h3 className="text-lg font-semibold mb-4 text-gray-900">
-            Доступність
-          </h3>
-
-          {/* Font size controls */}
-          <div className="mb-4">
-            <h4 className="text-sm font-medium text-gray-700 mb-2">
-              Розмір тексту
-            </h4>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={decreaseFontSize}
-                aria-label="Зменшити розмір тексту"
-                disabled={fontSize === 'normal'}
-              >
-                <Minimize className="h-4 w-4" />
-              </Button>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={resetFontSize}
-                aria-label="Скинути розмір тексту"
-                disabled={fontSize === 'normal'}
-              >
-                <span className="text-xs">A</span>
-              </Button>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={increaseFontSize}
-                aria-label="Збільшити розмір тексту"
-                disabled={fontSize === 'largest'}
-              >
-                <Maximize className="h-4 w-4" />
-              </Button>
-
-              <span className="text-sm text-gray-500 ml-2">
-                {fontSize === 'normal'
-                  ? 'Стандартний'
-                  : fontSize === 'larger'
-                    ? 'Великий'
-                    : 'Найбільший'}
-              </span>
-            </div>
+          {/* Header */}
+          <div className="flex items-center justify-between px-5 py-4 border-b border-dental-secondary-200 bg-dental-primary-50">
+            <h3
+              id="a11y-panel-title"
+              className="text-base font-semibold text-dental-dark"
+            >
+              Налаштування доступності
+            </h3>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="w-7 h-7 rounded-full flex items-center justify-center text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-100 transition-colors"
+              aria-label="Закрити панель доступності"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
 
-          {/* High contrast toggle */}
-          <div className="mb-4">
+          <div className="px-5 py-4 space-y-5">
+            {/* Font size */}
+            <div>
+              <p className="text-sm font-medium text-dental-dark mb-2">
+                Розмір тексту
+                <span className="ml-2 text-xs font-normal text-dental-muted">
+                  ({fontSizeLabel})
+                </span>
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={decreaseFontSize}
+                  disabled={fontSize === 'normal'}
+                  aria-label="Зменшити розмір тексту"
+                  className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg border border-dental-secondary-200 text-dental-dark text-sm font-medium hover:bg-dental-secondary-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  <Minus className="h-3.5 w-3.5" />
+                  Менше
+                </button>
+                <button
+                  onClick={resetFontSize}
+                  disabled={fontSize === 'normal'}
+                  aria-label="Скинути розмір тексту"
+                  className="w-9 h-9 flex items-center justify-center rounded-lg border border-dental-secondary-200 text-dental-dark hover:bg-dental-secondary-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  <RotateCcw className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  onClick={increaseFontSize}
+                  disabled={fontSize === 'largest'}
+                  aria-label="Збільшити розмір тексту"
+                  className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg border border-dental-secondary-200 text-dental-dark text-sm font-medium hover:bg-dental-secondary-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Більше
+                </button>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <hr className="border-dental-secondary-200" />
+
+            {/* High contrast */}
             <div className="flex items-center justify-between">
               <label
                 htmlFor="high-contrast"
-                className="text-sm font-medium text-gray-700"
+                className="text-sm font-medium text-dental-dark cursor-pointer"
               >
                 Високий контраст
               </label>
-              <div className="relative inline-block w-10 align-middle select-none">
-                <input
-                  type="checkbox"
-                  id="high-contrast"
-                  name="high-contrast"
-                  checked={highContrast}
-                  onChange={toggleHighContrast}
-                  className="sr-only"
+              <button
+                id="high-contrast"
+                role="switch"
+                aria-checked={highContrast}
+                onClick={toggleHighContrast}
+                className={`relative w-11 h-6 rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-dental-primary-500 focus-visible:ring-offset-2 ${
+                  highContrast ? 'bg-dental-primary-600' : 'bg-dental-secondary-300'
+                }`}
+              >
+                <span
+                  className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${
+                    highContrast ? 'translate-x-5' : 'translate-x-0'
+                  }`}
                 />
-                <div
-                  className={`block h-6 rounded-full w-10 transition-colors duration-200 ease-in-out ${highContrast ? 'bg-dental-teal' : 'bg-gray-300'}`}
-                ></div>
-                <div
-                  className={`absolute left-0.5 top-0.5 bg-white border w-5 h-5 rounded-full transition-transform duration-200 ease-in-out transform ${highContrast ? 'translate-x-4 border-dental-teal' : 'translate-x-0 border-gray-300'}`}
-                ></div>
-              </div>
+                <span className="sr-only">
+                  {highContrast ? 'Вимкнути' : 'Увімкнути'} високий контраст
+                </span>
+              </button>
             </div>
-          </div>
 
-          {/* Reduced motion toggle */}
-          <div className="mb-4">
+            {/* Reduced motion */}
             <div className="flex items-center justify-between">
               <label
                 htmlFor="reduced-motion"
-                className="text-sm font-medium text-gray-700"
+                className="text-sm font-medium text-dental-dark cursor-pointer"
               >
                 Зменшена анімація
               </label>
-              <div className="relative inline-block w-10 align-middle select-none">
-                <input
-                  type="checkbox"
-                  id="reduced-motion"
-                  name="reduced-motion"
-                  checked={reducedMotion}
-                  onChange={toggleReducedMotion}
-                  className="sr-only"
+              <button
+                id="reduced-motion"
+                role="switch"
+                aria-checked={reducedMotion}
+                onClick={toggleReducedMotion}
+                className={`relative w-11 h-6 rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-dental-primary-500 focus-visible:ring-offset-2 ${
+                  reducedMotion ? 'bg-dental-primary-600' : 'bg-dental-secondary-300'
+                }`}
+              >
+                <span
+                  className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${
+                    reducedMotion ? 'translate-x-5' : 'translate-x-0'
+                  }`}
                 />
-                <div
-                  className={`block h-6 rounded-full w-10 transition-colors duration-200 ease-in-out ${reducedMotion ? 'bg-dental-teal' : 'bg-gray-300'}`}
-                ></div>
-                <div
-                  className={`absolute left-0.5 top-0.5 bg-white border w-5 h-5 rounded-full transition-transform duration-200 ease-in-out transform ${reducedMotion ? 'translate-x-4 border-dental-teal' : 'translate-x-0 border-gray-300'}`}
-                ></div>
-              </div>
+                <span className="sr-only">
+                  {reducedMotion ? 'Вимкнути' : 'Увімкнути'} зменшену анімацію
+                </span>
+              </button>
+            </div>
+
+            {/* Divider */}
+            <hr className="border-dental-secondary-200" />
+
+            {/* Color blindness */}
+            <div>
+              <p className="text-sm font-medium text-dental-dark mb-2">
+                Сприйняття кольорів
+              </p>
+              <CustomSelect
+                value={colorBlindnessMode}
+                onChange={val =>
+                  setColorBlindnessMode(
+                    val as 'normal' | 'protanopia' | 'deuteranopia' | 'tritanopia'
+                  )
+                }
+                options={[
+                  { value: 'normal',       label: 'Звичайний режим' },
+                  { value: 'protanopia',   label: 'Протанопія (червоний)' },
+                  { value: 'deuteranopia', label: 'Дейтеранопія (зелений)' },
+                  { value: 'tritanopia',   label: 'Тританопія (синій)' },
+                ]}
+                fullWidth
+                aria-label="Режим сприйняття кольорів"
+              />
             </div>
           </div>
-
-          {/* Color blindness mode */}
-          <div>
-            <h4 className="text-sm font-medium text-gray-700 mb-2">
-              Режим сприйняття кольорів
-            </h4>
-            <select
-              value={colorBlindnessMode}
-              onChange={e =>
-                setColorBlindnessMode(
-                  e.target.value as
-                    | 'normal'
-                    | 'protanopia'
-                    | 'deuteranopia'
-                    | 'tritanopia'
-                )
-              }
-              className="w-full p-2 border border-gray-300 rounded-md text-sm"
-              aria-label="Режим сприйняття кольорів"
-            >
-              <option value="normal">Звичайний режим</option>
-              <option value="protanopia">Протанопія (червоний)</option>
-              <option value="deuteranopia">Дейтеранопія (зелений)</option>
-              <option value="tritanopia">Тританопія (синій)</option>
-            </select>
-          </div>
         </div>
+      )}
+
+      {/* Toggle button - hidden when controlled externally */}
+      {!hideToggle && (
+        <button
+          ref={buttonRef}
+          onClick={() => setIsOpen(prev => !prev)}
+          aria-expanded={isOpen}
+          aria-controls="a11y-panel"
+          aria-label={isOpen ? 'Закрити панель доступності' : 'Відкрити панель доступності'}
+          className="group flex items-center gap-2 bg-gradient-to-br from-dental-primary-600 to-dental-primary-700 text-white pl-3 pr-4 h-11 rounded-full shadow-lg hover:from-dental-primary-700 hover:to-dental-primary-800 hover:shadow-xl hover:shadow-dental-primary-500/30 hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-dental-primary-500 focus-visible:ring-offset-2 transition-all duration-300"
+        >
+          <Accessibility className="h-5 w-5 shrink-0 group-hover:animate-pulse" />
+          <span className="text-sm font-medium">Доступність</span>
+        </button>
       )}
     </div>
   )

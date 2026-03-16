@@ -1,41 +1,61 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Globe, Check } from 'lucide-react'
+import { Globe, ChevronDown, Check } from 'lucide-react'
 
 interface Language {
   code: string
   name: string
+  nativeName: string
   flag: string
 }
 
 const languages: Language[] = [
-  { code: 'uk', name: 'Українська', flag: '🇺🇦' },
-  { code: 'en', name: 'English', flag: '🇬🇧' },
-  { code: 'pl', name: 'Polski', flag: '🇵🇱' },
+  { code: 'uk', name: 'Ukrainian', nativeName: 'Українська', flag: '🇺🇦' },
+  { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧' },
+  { code: 'pl', name: 'Polish', nativeName: 'Polski', flag: '🇵🇱' },
 ]
 
-export default function LanguageSwitcher() {
+interface LanguageSwitcherProps {
+  variant?: 'dropdown' | 'inline'
+  showFlag?: boolean
+  showNativeName?: boolean
+  className?: string
+}
+
+export default function LanguageSwitcher({
+  variant = 'dropdown',
+  showFlag = true,
+  showNativeName = true,
+  className = '',
+}: LanguageSwitcherProps) {
   const { i18n } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const currentLanguage =
-    languages.find(lang => lang.code === i18n.language) || languages[0]
+  // Prevent hydration mismatch by only rendering dynamic content after mount
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
-  const handleLanguageChange = (langCode: string) => {
+  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0]
+
+  const handleLanguageChange = useCallback((langCode: string) => {
     i18n.changeLanguage(langCode)
     setIsOpen(false)
-  }
+    
+    // Update HTML lang attribute
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = langCode
+    }
+  }, [i18n])
 
-  // Close dropdown when clicking outside
+  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false)
       }
     }
@@ -49,7 +69,7 @@ export default function LanguageSwitcher() {
     }
   }, [isOpen])
 
-  // Close dropdown on Escape key
+  // Close on Escape
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -66,48 +86,87 @@ export default function LanguageSwitcher() {
     }
   }, [isOpen])
 
+  // Default language for SSR - always use 'uk' to match server
+  const defaultLang = languages[0]
+  const displayLang = isMounted ? currentLanguage : defaultLang
+
+  if (variant === 'inline') {
+    return (
+      <div className={`flex items-center gap-1 ${className}`}>
+        {languages.map((lang, index) => (
+          <span key={lang.code} className="flex items-center">
+            <button
+              onClick={() => handleLanguageChange(lang.code)}
+              className={`px-2 py-1 text-sm font-medium rounded transition-colors ${
+                lang.code === displayLang.code
+                  ? 'text-dental-primary-600 bg-dental-primary-50'
+                  : 'text-dental-muted hover:text-dental-primary-600 hover:bg-dental-secondary-50'
+              }`}
+              aria-label={`Switch to ${lang.name}`}
+              aria-current={lang.code === displayLang.code ? 'true' : undefined}
+            >
+              {showFlag && <span className="mr-1">{lang.flag}</span>}
+              {lang.code.toUpperCase()}
+            </button>
+            {index < languages.length - 1 && (
+              <span className="text-dental-secondary-300 mx-0.5">|</span>
+            )}
+          </span>
+        ))}
+      </div>
+    )
+  }
+
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div ref={dropdownRef} className={`relative ${className}`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-teal focus:ring-offset-2"
-        aria-label="Select language"
+        className={`flex items-center gap-2 px-3 py-2 text-sm font-medium text-dental-muted hover:text-dental-primary-600 transition-colors border border-transparent ${
+          isOpen 
+            ? 'rounded-t-lg border-dental-primary-400 border-b-transparent bg-white' 
+            : 'rounded-lg hover:bg-dental-secondary-50'
+        }`}
         aria-expanded={isOpen}
-        aria-haspopup="true"
+        aria-haspopup="listbox"
+        aria-label="Select language"
       >
-        <Globe className="h-5 w-5 text-gray-600" aria-hidden="true" />
-        <span className="text-sm font-medium text-gray-700">
-          {currentLanguage.flag} {currentLanguage.code.toUpperCase()}
+        <Globe className="w-4 h-4" />
+        {showFlag && <span>{displayLang.flag}</span>}
+        <span className="hidden sm:inline">
+          {showNativeName ? displayLang.nativeName : displayLang.code.toUpperCase()}
         </span>
+        <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
         <div
-          className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50"
-          role="menu"
-          aria-orientation="vertical"
-          aria-labelledby="language-menu"
+          className="absolute right-0 top-full w-48 bg-white rounded-b-lg shadow-lg border border-dental-primary-400 border-t-0 py-1 z-50"
+          role="listbox"
+          aria-label="Available languages"
         >
-          {languages.map(language => (
+          {languages.map(lang => (
             <button
-              key={language.code}
-              onClick={() => handleLanguageChange(language.code)}
-              className={`w-full flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${
-                language.code === i18n.language
-                  ? 'text-dental-teal font-semibold'
-                  : 'text-gray-700'
+              key={lang.code}
+              onClick={() => handleLanguageChange(lang.code)}
+              className={`w-full flex items-center justify-between px-4 py-2.5 text-left transition-colors ${
+                lang.code === displayLang.code 
+                  ? 'bg-dental-primary-600 text-white' 
+                  : 'hover:bg-dental-primary-50 hover:text-dental-primary-700'
               }`}
-              role="menuitem"
+              role="option"
+              aria-selected={lang.code === displayLang.code}
             >
-              <span className="flex items-center space-x-2">
-                <span className="text-lg">{language.flag}</span>
-                <span>{language.name}</span>
-              </span>
-              {language.code === i18n.language && (
-                <Check
-                  className="h-4 w-4 text-dental-teal"
-                  aria-hidden="true"
-                />
+              <div className="flex items-center gap-3">
+                <span className="text-lg">{lang.flag}</span>
+                <div>
+                  <div className={`font-medium ${lang.code === displayLang.code ? 'text-white' : 'text-dental-dark'}`}>
+                    {lang.nativeName}
+                  </div>
+                  <div className={`text-xs ${lang.code === displayLang.code ? 'text-white/80' : 'text-dental-muted'}`}>{lang.name}</div>
+                </div>
+              </div>
+              {lang.code === displayLang.code && (
+                <Check className="w-4 h-4 text-white" />
               )}
             </button>
           ))}

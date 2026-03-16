@@ -8,6 +8,7 @@ import {
   BookingSummary,
   useBookingForm,
 } from '@/components/booking'
+import { useCSRF } from '@/hooks/useCSRF'
 
 /**
  * Multi-step booking form (3 steps):
@@ -19,6 +20,7 @@ import {
  * Each step is rendered by a dedicated step component.
  */
 export default function BookingForm() {
+  const { token: csrfToken } = useCSRF()
   const {
     form,
     step,
@@ -43,11 +45,11 @@ export default function BookingForm() {
 
   return (
     <div className="bg-white rounded-2xl shadow-lg p-8 relative">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Запис на прийом</h2>
+      <h2 className="text-2xl font-bold text-dental-dark mb-6">Запис на прийом</h2>
 
       {isSubmitSuccessful && (
-        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-          <p className="text-green-800">
+        <div className="mb-6 p-4 bg-dental-primary/10 border border-dental-primary/30 rounded-lg">
+          <p className="text-dental-primary-darker">
             Заявку успішно надіслано! Ми підтвердимо час прийому найближчим
             часом.
           </p>
@@ -68,12 +70,15 @@ export default function BookingForm() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* CSRF Token - hidden input for form protection */}
+        <input type="hidden" name="_csrf" value={csrfToken} />
+        
         {/* Progress stepper */}
         <div className="flex items-center gap-2 mb-2">
           {[0, 1, 2].map(i => (
             <div
               key={i}
-              className={`h-2 flex-1 rounded-full ${i <= step ? 'bg-dental-teal' : 'bg-gray-200'}`}
+              className={`h-2 flex-1 rounded-full ${i <= step ? 'bg-dental-primary' : 'bg-dental-secondary/50'}`}
             />
           ))}
         </div>

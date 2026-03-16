@@ -271,5 +271,173 @@
     "title": "Dental Story - Nowoczesna klinika dentystyczna we Lwowie | Sumska, 10",
     "description": "Profesjonalna klinika dentystyczna na ul. Sumska, 10. Pełen zakres usług: leczenie, implanty, ortodoncja. Bezbolesne leczenie, nowoczesny sprzęt. Rezerwacja: 068 232 38 38",
     "keywords": "dentysta Lwów, dentysta Sumska, klinika dentystyczna Lwów, leczenie zębów, implanty stomatologiczne, aparaty ortodontyczne, wybielanie zębów, Dental Story"
+  },
+  "errors": {
+    "global": {
+      "title": "Błąd krytyczny",
+      "description": "Niestety, wystąpił poważny błąd. Pracujemy nad jego naprawieniem.",
+      "retry": "Spróbuj ponownie",
+      "goHome": "Strona główna"
+    },
+    "page": {
+      "title": "Ups, coś poszło nie tak!",
+      "description": "Wystąpił błąd podczas wyświetlania tej strony. Już pracujemy nad jego naprawieniem.",
+      "retry": "Spróbuj ponownie",
+      "report": "Zgłoś problem",
+      "goHome": "Strona główna",
+      "thankYou": "Dziękujemy za zgłoszenie! Nasz zespół otrzymał informacje o problemie.",
+      "technicalInfo": "Informacje techniczne dla programistów"
+    },
+    "booking": {
+      "title": "Błąd rezerwacji",
+      "description": "Niestety, wystąpił błąd podczas ładowania formularza rezerwacji. Spróbuj ponownie lub zadzwoń do nas bezpośrednio.",
+      "callUs": "Zadzwoń do nas"
+    },
+    "admin": {
+      "title": "Błąd panelu administratora",
+      "description": "Wystąpił błąd w panelu administratora. Spróbuj odświeżyć stronę lub zalogować się ponownie.",
+      "refresh": "Odśwież stronę",
+      "loginAgain": "Zaloguj się ponownie",
+      "backToSite": "Wróć na stronę"
+    }
+  },
+  "booking": {
+    "title": "Rezerwacja online",
+    "description": "Zarezerwuj wizytę u dentysty online. Wybierz dogodny czas i lekarza.",
+    "steps": {
+      "service": "Usługa",
+      "personal": "Dane osobowe",
+      "summary": "Potwierdzenie"
+    },
+    "selectService": "Wybierz usługę",
+    "selectDate": "Wybierz datę",
+    "selectTime": "Wybierz godzinę",
+    "noSlotsAvailable": "Brak dostępnych terminów w tym dniu",
+    "confirmBooking": "Potwierdź rezerwację",
+    "bookingSuccess": "Rezerwacja zakończona sukcesem!",
+    "bookingSuccessDescription": "Skontaktujemy się z Tobą, aby potwierdzić wizytę."
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Panel kontrolny",
+      "welcome": "Witamy w panelu administratora",
+      "totalAppointments": "Wszystkie wizyty",
+      "todayAppointments": "Dzisiejsze wizyty",
+      "pendingAppointments": "Oczekujące na potwierdzenie",
+      "completedAppointments": "Zakończone",
+      "recentActivity": "Ostatnia aktywność",
+      "appointmentsChart": "Wykres wizyt",
+      "popularServices": "Popularne usługi",
+      "revenue": "Przychód"
+    },
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "appointments": "Wizyty",
+      "patients": "Pacjenci",
+      "services": "Usługi",
+      "reviews": "Opinie",
+      "analytics": "Analityka",
+      "settings": "Ustawienia"
+    },
+    "login": {
+      "title": "Logowanie do panelu",
+      "email": "Email",
+      "password": "Hasło",
+      "login": "Zaloguj się",
+      "forgotPassword": "Zapomniałeś hasła?",
+      "invalidCredentials": "Nieprawidłowy email lub hasło"
+    }
+  },
+  "pricing": {
+    "title": "Przejrzyste ceny",
+    "subtitle": "Bez ukrytych opłat. Wszystkie ceny są ustalone i uzgodnione przed rozpoczęciem leczenia",
+    "basicExam": {
+      "title": "Podstawowe badanie",
+      "price": "Bezpłatnie",
+      "features": ["Konsultacja lekarza", "Badanie jamy ustnej", "Plan leczenia"]
+    },
+    "professionalHygiene": {
+      "title": "Profesjonalna higiena",
+      "price": "od 800 UAH",
+      "popular": "Popularne",
+      "features": ["Czyszczenie ultradźwiękowe", "Polerowanie zębów", "Fluoryzacja", "Zalecenia pielęgnacyjne"]
+    },
+    "comprehensiveDiagnostics": {
+      "title": "Kompleksowa diagnostyka",
+      "price": "od 1200 UAH",
+      "features": ["Skan 3D szczęki", "Szczegółowa konsultacja", "Plan leczenia", "10% zniżki na leczenie"]
+    },
+    "disclaimer": "*Ostateczny koszt zależy od złożoności przypadku i wybranej metody leczenia",
+    "viewAllPrices": "Zobacz wszystkie ceny"
+  },
+  "features": {
+    "comfortableTreatment": {
+      "title": "Komfortowe leczenie",
+      "description": "Nowoczesne metody znieczulenia i komfortowa atmosfera"
+    },
+    "safetySterility": {
+      "title": "Bezpieczeństwo i sterylność",
+      "description": "Przestrzeganie najwyższych standardów higieny i bezpieczeństwa"
+    },
+    "experiencedDoctors": {
+      "title": "Doświadczeni lekarze",
+      "description": "Zespół wykwalifikowanych stomatologów z wieloletnim doświadczeniem"
+    },
+    "modernEquipment": {
+      "title": "Nowoczesny sprzęt",
+      "description": "Najnowsze technologie dla precyzyjnej diagnostyki i leczenia"
+    }
+  },
+  "stats": {
+    "patientsServed": "Obsłużonych pacjentów",
+    "patients": "Pacjentów",
+    "satisfactionRate": "Wskaźnik zadowolenia",
+    "satisfiedPatients": "Zadowolonych",
+    "yearsExperience": "Lat doświadczenia",
+    "freeConsultation": "Bezpłatna konsultacja dla nowych pacjentów",
+    "freeConsultationShort": "Bezpłatna konsultacja",
+    "forNewPatients": "Dla nowych pacjentów",
+    "workingNow": "Teraz otwarte",
+    "qualityGuarantee": "Gwarancja jakości"
+  },
+  "hero": {
+    "badge": "Nowoczesna stomatologia",
+    "bookConsultation": "Umów konsultację",
+    "ourServices": "Nasze usługi"
+  },
+  "language": {
+    "select": "Wybierz język",
+    "uk": "Українська",
+    "en": "English",
+    "pl": "Polski"
+  },
+  "ai": {
+    "assistant": "Asystent AI",
+    "openAssistant": "Otwórz asystenta AI",
+    "close": "Zamknij",
+    "online": "Online",
+    "welcome": "Cześć! Jestem Twoim wirtualnym asystentem",
+    "welcomeDescription": "Pomogę w pytaniach o usługi, ceny, rezerwacje lub ocenę objawów",
+    "inputPlaceholder": "Napisz wiadomość...",
+    "callUs": "Lub zadzwoń",
+    "quickActions": {
+      "services": "Usługi i ceny",
+      "symptoms": "Sprawdź objawy",
+      "booking": "Umów wizytę",
+      "hours": "Godziny pracy"
+    },
+    "symptomChecker": {
+      "title": "Sprawdzanie objawów",
+      "description": "Opisz swoje objawy, aby uzyskać wstępną ocenę",
+      "disclaimer": "To nie jest diagnoza medyczna",
+      "selectSymptoms": "Wybierz objawy",
+      "painLevel": "Poziom bólu",
+      "duration": "Czas trwania",
+      "analyze": "Analizuj",
+      "result": "Wynik analizy",
+      "urgency": "Pilność",
+      "possibleCauses": "Możliwe przyczyny",
+      "recommendation": "Zalecenie"
+    }
   }
 }

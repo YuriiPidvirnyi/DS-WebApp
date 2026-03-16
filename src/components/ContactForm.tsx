@@ -6,6 +6,7 @@ import { useRef } from 'react'
 import { Send, CheckCircle } from 'lucide-react'
 import { Input, Textarea, Button } from './ui'
 import { useSubmissionCooldown } from '@/hooks/useSubmissionCooldown'
+import { useCSRF } from '@/hooks/useCSRF'
 import {
   contactFormSchema,
   type ContactFormData,
@@ -24,6 +25,7 @@ interface ContactFormProps {
 
 export default function ContactForm({ onSuccess }: ContactFormProps) {
   const turnstileRef = useRef<TurnstileRef>(null)
+  const { token: csrfToken } = useCSRF()
   const {
     isCoolingDown,
     remainingSec,
@@ -104,7 +106,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
 
   return (
     <div className="bg-white rounded-2xl shadow-lg p-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">
+      <h2 className="text-2xl font-bold text-dental-dark mb-6">
         Зв'язатися з нами
       </h2>
 
@@ -135,10 +137,12 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
           errors?.message?.message}
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* CSRF Token - hidden input for form protection */}
+        <input type="hidden" name="_csrf" value={csrfToken} />
         <div>
           <label
             htmlFor="name"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-dental-dark mb-1"
           >
             Ім'я та прізвище *
           </label>
@@ -155,7 +159,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         <div>
           <label
             htmlFor="phone"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-dental-dark mb-1"
           >
             Номер телефону *
           </label>
@@ -178,7 +182,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-dental-dark mb-1"
           >
             Email *
           </label>
@@ -196,7 +200,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         <div>
           <label
             htmlFor="message"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-dental-dark mb-1"
           >
             Повідомлення *
           </label>
@@ -216,14 +220,14 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
             <input
               id="consent"
               type="checkbox"
-              className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"
+              className="w-4 h-4 border border-dental-secondary-300 rounded bg-dental-secondary-50 focus:ring-3 focus:ring-dental-primary-300"
               disabled={isSubmitting}
               {...register('consent')}
             />
           </div>
           <label
             htmlFor="consent"
-            className="ml-2 text-sm font-medium text-gray-700"
+            className="ml-2 text-sm font-medium text-dental-dark"
           >
             Я даю згоду на обробку моїх персональних даних *
           </label>
@@ -247,7 +251,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
             : 'Надіслати повідомлення'}
         </Button>
 
-        <p className="text-sm text-gray-500 text-center">
+        <p className="text-sm text-dental-muted text-center">
           * Обов'язкові поля. Ми зв'яжемося з вами найближчим часом.
         </p>
       </form>

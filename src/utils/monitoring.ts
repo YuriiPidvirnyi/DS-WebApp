@@ -3,7 +3,7 @@
  * Sentry integration for production error tracking
  */
 
-import * as Sentry from '@sentry/react'
+import * as Sentry from '@sentry/nextjs'
 
 export interface MonitoringConfig {
   dsn: string
