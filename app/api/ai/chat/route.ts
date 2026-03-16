@@ -3,6 +3,7 @@ import {
   streamText,
   tool,
   UIMessage,
+  stepCountIs,
 } from 'ai'
 import * as z from 'zod'
 import { createClient } from '@/lib/supabase/server'
@@ -212,7 +213,7 @@ export async function POST(req: Request) {
     system: systemPrompt + languageInstruction,
     messages: await convertToModelMessages(messages),
     tools,
-    maxSteps: 5,
+    stopWhen: stepCountIs(5),
     abortSignal: req.signal,
   })
 
