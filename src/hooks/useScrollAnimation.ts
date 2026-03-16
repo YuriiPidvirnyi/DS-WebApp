@@ -57,7 +57,6 @@ export function useScrollAnimation<T extends HTMLElement = HTMLDivElement>(
 
 // Hook for staggered animations (multiple children)
 export function useStaggeredAnimation<T extends HTMLElement = HTMLDivElement>(
-  itemCount: number,
   options: ScrollAnimationOptions & { staggerDelay?: number } = {}
 ) {
   const { staggerDelay = 100, ...scrollOptions } = options
