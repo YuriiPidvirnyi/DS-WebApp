@@ -90,15 +90,6 @@ export default function CabinetPage() {
     router.refresh()
   }
 
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr)
-    return date.toLocaleDateString('uk-UA', { 
-      weekday: 'short',
-      day: 'numeric', 
-      month: 'long' 
-    })
-  }
-
   const getStatusBadge = (status: string) => {
     const styles: Record<string, string> = {
       pending: 'bg-yellow-100 text-yellow-700',
