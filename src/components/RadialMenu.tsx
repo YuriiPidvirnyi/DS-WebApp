@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Phone, Send, MessageCircle, Calendar, Bot, MessageSquare, X, Plus, Accessibility, Move } from 'lucide-react'
+import { Phone, Send, Calendar, Bot, MessageSquare, X, Plus, Accessibility } from 'lucide-react'
 import Link from 'next/link'
 import { CONTACT_INFO } from '@/utils/constants'
 
@@ -9,18 +9,15 @@ interface RadialMenuProps {
   onOpenChat?: () => void
   onOpenAI?: () => void
   onOpenAccessibility?: () => void
-  onToggleDragMode?: () => void
 }
 
-export default function RadialMenu({ onOpenChat, onOpenAI, onOpenAccessibility, onToggleDragMode }: RadialMenuProps) {
+export default function RadialMenu({ onOpenChat, onOpenAI, onOpenAccessibility }: RadialMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
   const tel = `tel:${CONTACT_INFO.phoneRaw}`
   const tg = CONTACT_INFO.social?.telegram || 'https://t.me/'
-  const viberNum = (CONTACT_INFO.social?.viber || CONTACT_INFO.phoneRaw).replace(/\D/g, '')
-  const viber = `viber://chat?number=%2B${viberNum}`
 
   const items = [
     { id: 'phone',         icon: Phone,          label: 'Зателефонувати',  href: tel,                                  bg: 'bg-emerald-500 hover:bg-emerald-600' },
@@ -28,9 +25,7 @@ export default function RadialMenu({ onOpenChat, onOpenAI, onOpenAccessibility, 
     { id: 'ai',            icon: Bot,            label: 'AI Асистент',      onClick: onOpenAI,                          bg: 'bg-violet-500 hover:bg-violet-600' },
     { id: 'chat',          icon: MessageSquare,  label: 'Онлайн чат',       onClick: onOpenChat,                        bg: 'bg-blue-500 hover:bg-blue-600' },
     { id: 'tg',            icon: Send,           label: 'Telegram',         href: tg, external: true,                   bg: 'bg-sky-500 hover:bg-sky-600' },
-    { id: 'viber',         icon: MessageCircle,  label: 'Viber',            href: viber,                                bg: 'bg-purple-500 hover:bg-purple-600' },
     { id: 'accessibility', icon: Accessibility,  label: 'Доступність',      onClick: onOpenAccessibility,               bg: 'bg-orange-500 hover:bg-orange-600' },
-    { id: 'drag',          icon: Move,           label: 'Режим переміщення', onClick: onToggleDragMode,                 bg: 'bg-rose-500 hover:bg-rose-600' },
   ]
 
   useEffect(() => {

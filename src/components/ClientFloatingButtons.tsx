@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
-import { useDragMode } from '@/context/DragModeContext'
 
 const RadialMenu = dynamic(() => import('./RadialMenu'), { ssr: false })
 const ChatWidget = dynamic(() => import('./ChatWidget'), { ssr: false })
@@ -14,7 +13,6 @@ export default function ClientFloatingButtons() {
   const [chatOpen, setChatOpen] = useState(false)
   const [aiOpen, setAiOpen] = useState(false)
   const [accessibilityOpen, setAccessibilityOpen] = useState(false)
-  const { toggleDragMode } = useDragMode()
 
   useEffect(() => {
     setMounted(true)
@@ -28,7 +26,6 @@ export default function ClientFloatingButtons() {
         onOpenChat={() => setChatOpen(true)}
         onOpenAI={() => setAiOpen(true)}
         onOpenAccessibility={() => setAccessibilityOpen(true)}
-        onToggleDragMode={toggleDragMode}
       />
 
       {chatOpen && (
