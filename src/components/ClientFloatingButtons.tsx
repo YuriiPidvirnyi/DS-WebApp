@@ -22,11 +22,14 @@ export default function ClientFloatingButtons() {
 
   return (
     <>
-      <RadialMenu
-        onOpenChat={() => setChatOpen(true)}
-        onOpenAI={() => setAiOpen(true)}
-        onOpenAccessibility={() => setAccessibilityOpen(true)}
-      />
+      {/* Radial menu - hidden when any widget is open */}
+      {!chatOpen && !aiOpen && !accessibilityOpen && (
+        <RadialMenu
+          onOpenChat={() => setChatOpen(true)}
+          onOpenAI={() => setAiOpen(true)}
+          onOpenAccessibility={() => setAccessibilityOpen(true)}
+        />
+      )}
 
       {chatOpen && (
         <div className="fixed bottom-24 right-6 z-50">
