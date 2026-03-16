@@ -6,17 +6,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Build and Development
 
-- `npm run dev` - Start development server (runs on port 3000)
-- `npm run build` - Build for production (includes TypeScript compilation)
-- `npm run preview` - Preview production build
+- `npm run dev` - Start Next.js development server (port 3000, Turbopack)
+- `npm run build` - Build for production (Next.js)
+- `npm run start` - Start production server
 
 ### Code Quality and Testing
 
 - `npm run lint` - Run ESLint (max 100 warnings allowed)
 - `npm run lint:fix` - Auto-fix ESLint issues
-- `npm run typecheck` - Run TypeScript type checking
+- `npm run typecheck` - Run TypeScript type checking (full project)
 - `npm run format` - Format code with Prettier
-- `npm run test` - Run unit tests with Vitest
+- `npm run test` - Run unit tests with Vitest (watch mode)
 - `npm run test:run` - Run tests once
 - `npm run test:coverage` - Run tests with coverage
 
@@ -26,101 +26,134 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run test:e2e:ui` - Run E2E tests with UI
 - `npm run test:visual` - Run visual regression tests
 
-### Performance and Quality Checks
+### Storybook
 
-- `npm run perf:build` - Build and check performance budgets
-- `npm run lighthouse` - Run Lighthouse audit
-- `npm run size` - Check bundle size with size-limit
+- `npm run storybook` - Start Storybook on port 6006
+- `npm run build-storybook` - Build Storybook
 
 ## Architecture Overview
 
 ### Tech Stack
 
-- **Framework**: React 18 with TypeScript
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS
-- **Routing**: React Router DOM v7
-- **Forms**: React Hook Form with Zod validation
-- **Internationalization**: react-i18next
+- **Framework**: Next.js 16 App Router (TypeScript)
+- **Styling**: Tailwind CSS 3 + CSS custom properties
+- **Fonts**: Nunito (headings) + Rubik (body) via `next/font/google`
+- **Routing**: Next.js App Router (file-based, `app/` directory)
+- **Auth**: Supabase (`@supabase/ssr`) — requires `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- **Forms**: React Hook Form + Zod validation
+- **Internationalization**: i18next + react-i18next (Ukrainian default, EN + PL)
 - **Icons**: Lucide React
-- **PWA**: vite-plugin-pwa with Workbox
+- **PWA**: @ducanh2912/next-pwa with Workbox
+- **Monitoring**: Sentry (@sentry/nextjs), Vercel Analytics
+- **Cache**: Redis via @upstash/redis (requires `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN`)
+- **Testing**: Vitest (unit), Playwright (e2e/visual), Storybook 10
 
 ### Key Directory Structure
 
 ```
+app/                     # Next.js App Router pages
+├── layout.tsx           # Root layout (fonts, metadata, providers)
+├── page.tsx             # Homepage → renders src/views/Home
+├── providers.tsx        # Client-side providers
+├── i18n-provider.tsx    # i18n wrapper (client)
+├── app-initializer.tsx  # Analytics + reminders init
+├── about/               # /about route
+├── admin/               # /admin route (auth-protected)
+├── api/                 # API routes
+├── auth/                # Auth flow (login, sign-up)
+├── booking/             # /booking route
+├── cabinet/             # Patient cabinet (auth-protected)
+├── contact/             # /contact route
+├── gallery/             # /gallery route
+├── reviews/             # /reviews route
+├── services/            # /services route
+├── patient/[id]/        # /patient/[id] route
+└── symptom-checker/     # AI symptom checker
+
 src/
-├── components/           # Reusable UI components
-│   ├── ui/              # Basic UI primitives (Button, Input, etc.)
+├── components/          # Reusable UI components
+│   ├── ui/              # Basic UI primitives (Button, Input, Logo, etc.)
 │   ├── admin/           # Admin-specific components
-│   ├── clinical/        # Clinical/medical components
-│   ├── patient/         # Patient portal components
 │   └── providers/       # Context providers
-├── pages/               # Route components (lazy-loaded)
-├── services/            # API services and external integrations
+├── context/             # React context (DragModeContext)
+├── contexts/            # Additional contexts (AdminAuthContext)
+├── content/             # Static JSON data (gallery, images)
 ├── hooks/               # Custom React hooks
+├── i18n/                # i18next configuration
+├── lib/                 # External service clients (supabase/, redis.ts)
+├── locales/             # Translation files (uk, en, pl)
+├── services/            # API services and external integrations
+├── styles/              # globals.css (Tailwind base + brand CSS vars)
+├── types/               # TypeScript types
 ├── utils/               # Utility functions
-├── styles/              # Global CSS and Tailwind config
-└── i18n/               # Internationalization files
+├── views/               # Page-level view components (imported by app/ pages)
+└── test/                # Test utilities (test-utils.tsx)
 ```
 
-### Core Features
+### Brand System (v2)
 
-- **Dental Clinic Website**: Modern responsive website for Dental Story clinic
-- **Booking System**: Integration with CliniCards API for appointments
-- **Multi-language**: Ukrainian language support via i18next
-- **Accessibility**: WCAG compliant with accessibility features
-- **Performance**: Optimized with lazy loading, code splitting, PWA features
-- **Monitoring**: Sentry integration, performance tracking, analytics
-- **Security**: Content Security Policy, Turnstile CAPTCHA integration
+Colors defined in `tailwind.config.js` and `src/styles/globals.css`:
+
+| Token | HEX | Usage |
+|-------|-----|-------|
+| `dental.primary` | `#AECED3` | Surface fills, card backgrounds |
+| `dental.primary-600` / `dental-teal` | `#5A8A94` | CTAs, links, focus rings |
+| `dental.dark` / `dental-navy` | `#2C3E42` | Headings, dark text |
+| `dental.text` | `#4A5E63` | Body copy |
+| `dental.secondary` | `#D1CAC0` | Warm neutral surfaces |
+
+**Accessibility rule**: Never use white text on Brand Blue (`#AECED3`) — contrast ratio fails WCAG AA.
+
+**Fonts**: Nunito (`--font-nunito`) for headings, Rubik (`--font-rubik`) for body. Both loaded in `app/layout.tsx` via `next/font`.
 
 ### Development Patterns
 
 #### Component Architecture
 
-- Components follow the pattern: UI components in `components/ui/`, feature components in domain folders
-- Lazy loading used for all pages via `React.lazy()`
-- Error boundaries wrap the entire application
-- Toast notifications via react-hot-toast
+- Pages in `app/` are thin wrappers — actual content in `src/views/`
+- UI primitives in `src/components/ui/`
+- Next.js App Router handles code splitting automatically
+- Error boundaries via `app/global-error.tsx` and `src/components/ErrorBoundary.tsx`
+- Floating UI: `ClientFloatingButtons` renders `RadialMenu` + `AccessibilityPanel`
 
 #### State Management
 
-- Form state managed by React Hook Form with Zod schemas
-- Global state via React Context (AccessibilityProvider, ToastProvider)
-- API state managed through custom services with caching
+- Form state: React Hook Form + Zod schemas
+- Global accessibility prefs: `AccessibilityProvider` (Context)
+- Drag mode: `DragModeContext`
+- API state: custom services with Redis caching in `src/lib/redis.ts`
+
+#### Auth
+
+- Supabase auth via `@supabase/ssr`
+- Client: `src/lib/supabase/client.ts`
+- Server: `src/lib/supabase/server.ts`
+- Middleware: `src/lib/supabase/middleware.ts`
+- Guard: All auth calls check env vars before initializing client
 
 #### API Integration
 
-- Centralized API client in `services/api.ts`
-- CliniCards integration for booking system
-- Offline support via service workers and request queuing
+- CliniCards API for booking (`src/services/cliniCards.ts`)
+- Sentry tunnel at `/monitoring`
+- Rate limiting in `proxy.ts` middleware (60 req/min per IP)
+- OpenAPI docs at `/api-docs`
 
 #### Testing Strategy
 
-- Unit tests with Vitest and Testing Library
-- E2E tests with Playwright
-- Visual regression testing
-- Accessibility testing with axe-core
+- Unit tests: Vitest + @testing-library/react
+- Custom render wrapper in `src/test/test-utils.tsx`
+- Import `screen`, `waitFor` etc. directly from `@testing-library/react`, not from test-utils
+- E2E: Playwright (`e2e/` directory)
+- Visual regression: Playwright snapshots
 
-### Environment Configuration
+### Environment Variables
 
-The application uses environment variables for configuration. Key variables:
-
-- `VITE_API_URL` - Backend API endpoint
-- `VITE_SENTRY_DSN` - Error tracking
-- `VITE_GOOGLE_ANALYTICS_ID` - Analytics
-- `VITE_TURNSTILE_SITE_KEY` - Cloudflare Turnstile
-
-### Performance Considerations
-
-- Bundle size monitoring with size-limit
-- Performance budgets enforced
-- Lighthouse CI integration
-- Image optimization and lazy loading
-- Service worker for caching strategies
-
-### Code Style
-
-- ESLint configuration allows max 100 warnings
-- Prettier for code formatting
-- TypeScript strict mode enabled
-- Specific ESLint rule overrides for admin, service, and test files
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `NEXT_PUBLIC_SITE_URL` | No | Site URL (default: `https://dentalstory.com.ua`) |
+| `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` | No | GA4 measurement ID |
+| `NEXT_PUBLIC_SUPABASE_URL` | For auth | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | For auth | Supabase anon key |
+| `UPSTASH_REDIS_REST_URL` | For cache | Upstash Redis URL |
+| `UPSTASH_REDIS_REST_TOKEN` | For cache | Upstash Redis token |
+| `SENTRY_AUTH_TOKEN` | No | For source map upload (skipped if missing) |

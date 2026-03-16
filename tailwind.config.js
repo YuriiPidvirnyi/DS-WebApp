@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}', './app/**/*.{js,ts,jsx,tsx}'],
+  content: ['./src/**/*.{js,ts,jsx,tsx}', './app/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
@@ -56,10 +56,11 @@ export default {
           'primary-darker': '#5A8A94',
           'primary-light': '#C5DDE1',
         },
-        // Backward compatibility
-        'dental-blue': '#AECED3',
-        'dental-teal': '#AECED3',
-        'dental-green': '#AECED3',
+        // Backward-compatibility aliases (v1 → v2 mapping)
+        'dental-blue': '#AECED3',   // primary brand blue (unchanged)
+        'dental-teal': '#5A8A94',   // accent/CTA teal → dental.primary-600
+        'dental-green': '#5A8A94',  // was alias of teal → dental.primary-600
+        'dental-navy': '#2C3E42',   // deep navy → dental.dark
       },
       fontFamily: {
         sans: ['var(--font-nunito)', 'Nunito', 'system-ui', 'sans-serif'],

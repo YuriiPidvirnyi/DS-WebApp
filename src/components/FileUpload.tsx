@@ -133,12 +133,15 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     fileInputRef.current?.click()
   }
 
-  const getFilePreview = (file: File) => {
+  const getFilePreview = useCallback((file: File) => {
     if (file.type.startsWith('image/')) {
-      return URL.createObjectURL(file)
+      const url = URL.createObjectURL(file)
+      // Schedule revocation after the component has rendered
+      setTimeout(() => URL.revokeObjectURL(url), 30000)
+      return url
     }
     return null
-  }
+  }, [])
 
   return (
     <div className={`space-y-4 ${className}`}>

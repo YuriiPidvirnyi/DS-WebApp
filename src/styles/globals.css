@@ -1,5 +1,4 @@
-/* Google Fonts are linked in index.html: DM Sans (400/500/600) and Rubik (400/500/600/700) */
-/* Using web fonts only; custom local Stolzl font removed to avoid missing assets */
+/* Fonts: Nunito (headings) + Rubik (body) loaded via next/font in app/layout.tsx */
 
 @tailwind base;
 @tailwind components;
@@ -170,7 +169,7 @@
 
   body {
     @apply bg-white antialiased;
-    font-family: var(--font-roboto), system-ui, sans-serif;
+    font-family: var(--font-rubik), system-ui, sans-serif;
     color: var(--dental-text);
     font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
     text-rendering: optimizeLegibility;
@@ -337,13 +336,4 @@
     filter: url('#tritanopia-filter');
   }
 
-  /* Adding focus indicators for keyboard navigation */
-  a:focus-visible,
-  button:focus-visible,
-  input:focus-visible,
-  select:focus-visible,
-  textarea:focus-visible {
-    outline: 3px solid #2563eb !important;
-    outline-offset: 2px !important;
-  }
 }
