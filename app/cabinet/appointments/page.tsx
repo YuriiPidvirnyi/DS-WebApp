@@ -85,15 +85,6 @@ export default function AppointmentsPage() {
     return true
   })
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('uk-UA', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    })
-  }
-
   const getStatusBadge = (status: string) => {
     const styles: Record<string, string> = {
       pending: 'bg-yellow-100 text-yellow-700 border-yellow-200',
