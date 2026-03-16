@@ -10,10 +10,6 @@ interface RadialMenuProps {
   onOpenAI?: () => void
 }
 
-const RADIUS = 80
-const START_ANGLE = -120
-const END_ANGLE = -30
-
 export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [hoveredId, setHoveredId] = useState<string | null>(null)
@@ -32,17 +28,6 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
     { id: 'tg', icon: Send, label: 'Telegram', href: tg, external: true, bg: 'bg-sky-500 hover:bg-sky-600' },
     { id: 'viber', icon: MessageCircle, label: 'Viber', href: viber, bg: 'bg-purple-500 hover:bg-purple-600' },
   ]
-
-  const angleStep = (END_ANGLE - START_ANGLE) / (items.length - 1)
-
-  const getPosition = (index: number) => {
-    const angle = START_ANGLE + index * angleStep
-    const rad = (angle * Math.PI) / 180
-    return {
-      x: Math.cos(rad) * RADIUS,
-      y: Math.sin(rad) * RADIUS,
-    }
-  }
 
   useEffect(() => {
     if (!isOpen) return
@@ -84,65 +69,64 @@ export default function RadialMenu({ onOpenChat, onOpenAI }: RadialMenuProps) {
         />
       )}
 
-      {/* Tooltip */}
-      {isOpen && hoveredItem && (
-        <div className="absolute bottom-20 right-0 bg-gray-900 text-white text-sm px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap">
-          {hoveredItem.label}
-        </div>
-      )}
+      {/* Vertical menu stack */}
+      <div className="absolute bottom-20 right-0 flex flex-col gap-3">
+        {items.map((item, index) => {
+          const Icon = item.icon
+          
+          const buttonClass = `w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg 
+            transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2
+            ${item.bg} ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`
+          
+          const style = {
+            transitionDelay: isOpen ? `${index * 50}ms` : `${(items.length - 1 - index) * 50}ms`,
+          }
 
-      {/* Menu items */}
-      {items.map((item, index) => {
-        const { x, y } = getPosition(index)
-        const Icon = item.icon
-        
-        const buttonClass = `absolute w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg 
-          transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2
-          ${item.bg} ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-0 pointer-events-none'}`
-        
-        const style = {
-          bottom: 4,
-          right: 4,
-          transform: isOpen ? `translate(${x}px, ${y}px)` : 'translate(0, 0)',
-          transitionDelay: isOpen ? `${index * 50}ms` : '0ms',
-        }
+          const commonProps = {
+            className: buttonClass,
+            style,
+            onMouseEnter: () => setHoveredId(item.id),
+            onMouseLeave: () => setHoveredId(null),
+            'aria-label': item.label,
+          }
 
-        const commonProps = {
-          className: buttonClass,
-          style,
-          onMouseEnter: () => setHoveredId(item.id),
-          onMouseLeave: () => setHoveredId(null),
-          'aria-label': item.label,
-        }
-
-        if (item.href) {
-          if (item.external || item.href.startsWith('tel:') || item.href.startsWith('viber:')) {
+          if (item.href) {
+            if (item.external || item.href.startsWith('tel:') || item.href.startsWith('viber:')) {
+              return (
+                <a
+                  key={item.id}
+                  href={item.href}
+                  target={item.external ? '_blank' : undefined}
+                  rel={item.external ? 'noopener noreferrer' : undefined}
+                  onClick={() => setIsOpen(false)}
+                  {...commonProps}
+                >
+                  <Icon className="w-5 h-5" />
+                </a>
+              )
+            }
             return (
-              <a
-                key={item.id}
-                href={item.href}
-                target={item.external ? '_blank' : undefined}
-                rel={item.external ? 'noopener noreferrer' : undefined}
-                onClick={() => setIsOpen(false)}
-                {...commonProps}
-              >
+              <Link key={item.id} href={item.href} onClick={() => setIsOpen(false)} {...commonProps}>
                 <Icon className="w-5 h-5" />
-              </a>
+              </Link>
             )
           }
-          return (
-            <Link key={item.id} href={item.href} onClick={() => setIsOpen(false)} {...commonProps}>
-              <Icon className="w-5 h-5" />
-            </Link>
-          )
-        }
 
-        return (
-          <button key={item.id} type="button" onClick={() => handleItemClick(item)} {...commonProps}>
-            <Icon className="w-5 h-5" />
-          </button>
-        )
-      })}
+          return (
+            <button key={item.id} type="button" onClick={() => handleItemClick(item)} {...commonProps}>
+              <Icon className="w-5 h-5" />
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Tooltip when hovering over items */}
+      {isOpen && hoveredItem && (
+        <div className="absolute bottom-24 right-16 bg-gray-900 text-white text-sm px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap">
+          {hoveredItem.label}
+          <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900" />
+        </div>
+      )}
 
       {/* Main toggle button */}
       <button
