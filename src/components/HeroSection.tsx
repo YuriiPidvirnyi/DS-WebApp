@@ -48,26 +48,6 @@ function useCounter(end: number, duration: number = 2000) {
   return { count, ref }
 }
 
-// Floating element with parallax effect
-function FloatingElement({ 
-  children, 
-  delay = 0, 
-  className = '' 
-}: { 
-  children: React.ReactNode
-  delay?: number
-  className?: string 
-}) {
-  return (
-    <div 
-      className={`animate-float ${className}`}
-      style={{ animationDelay: `${delay}s` }}
-    >
-      {children}
-    </div>
-  )
-}
-
 export default function HeroSection() {
   const { t } = useTranslation()
   const [mounted, setMounted] = useState(false)
