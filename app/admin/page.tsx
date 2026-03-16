@@ -20,14 +20,6 @@ import {
 } from 'lucide-react'
 
 // Dynamic import for heavy chart components - ssr: false to avoid hydration issues
-const AreaChart = dynamic(() => import('recharts').then(mod => mod.AreaChart), { 
-  ssr: false,
-  loading: () => <div className="h-48 bg-dental-primary-50 rounded animate-pulse" />
-})
-const Area = dynamic(() => import('recharts').then(mod => mod.Area), { ssr: false })
-const XAxis = dynamic(() => import('recharts').then(mod => mod.XAxis), { ssr: false })
-const YAxis = dynamic(() => import('recharts').then(mod => mod.YAxis), { ssr: false })
-const CartesianGrid = dynamic(() => import('recharts').then(mod => mod.CartesianGrid), { ssr: false })
 const Tooltip = dynamic(() => import('recharts').then(mod => mod.Tooltip), { ssr: false })
 const ResponsiveContainer = dynamic(() => import('recharts').then(mod => mod.ResponsiveContainer), { 
   ssr: false,
