@@ -19,6 +19,8 @@ next-env.d.ts
 .idea/
 *.swp
 *.swo
+.cursor/
+.claude/
 
 # OS
 .DS_Store
@@ -30,6 +32,8 @@ Thumbs.db
 # Cache
 .eslintcache
 .cache
+test-results/
+supabase/.temp/
 
 # Vercel
 .vercel
