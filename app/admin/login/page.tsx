@@ -3,13 +3,15 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react'
-import { useAdminAuth } from '@/contexts/AdminAuthContext'
+import { Eye, EyeOff, Lock, Mail, AlertCircle, ShieldCheck } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { useAdminAuth } from '@/hooks/useAdminAuth'
 
 export default function AdminLoginPage() {
   const router = useRouter()
   const { login, isAuthenticated } = useAdminAuth()
-  
+  const { t } = useTranslation()
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -28,11 +30,11 @@ export default function AdminLoginPage() {
     setIsLoading(true)
 
     const result = await login(email, password)
-    
+
     if (result.success) {
       router.push('/admin')
     } else {
-      setError(result.error || 'Помилка входу')
+      setError(result.error || t('admin.login.errors.generic'))
       setIsLoading(false)
     }
   }
@@ -43,16 +45,18 @@ export default function AdminLoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-dental-teal rounded-2xl mb-4">
-            <span className="text-3xl">🦷</span>
+            <ShieldCheck className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-white">Dental Story</h1>
-          <p className="text-slate-400 mt-1">Адмін-панель</p>
+          <h1 className="text-2xl font-bold text-white">
+            {t('common.brandName')}
+          </h1>
+          <p className="text-slate-400 mt-1">{t('admin.login.title')}</p>
         </div>
 
         {/* Login Form */}
         <div className="bg-white rounded-2xl shadow-2xl p-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-6 text-center">
-            Вхід в систему
+            {t('admin.login.systemLogin')}
           </h2>
 
           {error && (
@@ -65,8 +69,11 @@ export default function AdminLoginPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                {t('admin.login.email')}
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -74,10 +81,10 @@ export default function AdminLoginPage() {
                   id="email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={e => setEmail(e.target.value)}
                   required
                   className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dental-teal focus:border-dental-teal transition-colors"
-                  placeholder="admin@dentalstory.ua"
+                  placeholder={t('admin.login.emailPlaceholder')}
                   autoComplete="email"
                 />
               </div>
@@ -85,8 +92,11 @@ export default function AdminLoginPage() {
 
             {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Пароль
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                {t('admin.login.password')}
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -94,19 +104,27 @@ export default function AdminLoginPage() {
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   required
                   className="w-full pl-11 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dental-teal focus:border-dental-teal transition-colors"
-                  placeholder="Введіть пароль"
+                  placeholder={t('admin.login.passwordPlaceholder')}
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  aria-label={showPassword ? 'Приховати пароль' : 'Показати пароль'}
+                  aria-label={
+                    showPassword
+                      ? t('admin.login.hidePassword')
+                      : t('admin.login.showPassword')
+                  }
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
                 </button>
               </div>
             </div>
@@ -120,29 +138,37 @@ export default function AdminLoginPage() {
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
                   <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      fill="none"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    />
                   </svg>
-                  Вхід...
+                  {t('admin.login.loading')}
                 </span>
               ) : (
-                'Увійти'
+                t('admin.login.login')
               )}
             </button>
           </form>
-
-          {/* Demo credentials hint */}
-          <div className="mt-6 p-4 bg-slate-50 rounded-lg">
-            <p className="text-xs text-slate-500 text-center">
-              <strong>Demo:</strong> admin@dentalstory.ua / Admin123!
-            </p>
-          </div>
         </div>
 
         {/* Back to site */}
         <div className="text-center mt-6">
-          <Link href="/" className="text-slate-400 hover:text-white text-sm transition-colors">
-            ← Повернутися на сайт
+          <Link
+            href="/"
+            className="text-slate-400 hover:text-white text-sm transition-colors"
+          >
+            {t('admin.login.backToSite')}
           </Link>
         </div>
       </div>

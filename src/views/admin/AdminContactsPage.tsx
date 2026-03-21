@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { RefreshCw } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button, Input } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
@@ -24,6 +25,7 @@ type ReadFilter = 'all' | 'unread' | 'read'
 const STATUS_OPTIONS = ['new', 'in_progress', 'resolved', 'closed']
 
 export default function AdminContactsPage() {
+  const { t } = useTranslation()
   const { preferences } = useAdminPreferences()
   const [rows, setRows] = useState<ContactRow[]>([])
   const [selectedIds, setSelectedIds] = useState<string[]>([])
@@ -41,7 +43,7 @@ export default function AdminContactsPage() {
     async (silent = false) => {
       const supabase = createClient()
       if (!supabase) {
-        setError('Supabase не налаштований. Перевірте змінні середовища.')
+        setError(t('admin.contactsPage.errors.supabaseUnavailable'))
         setIsLoading(false)
         return
       }
@@ -90,13 +92,13 @@ export default function AdminContactsPage() {
         setRows((data || []) as ContactRow[])
       } catch (loadError) {
         console.error('Failed to load contacts:', loadError)
-        setError('Не вдалося завантажити звернення.')
+        setError(t('admin.contactsPage.errors.loadFailed'))
       } finally {
         setIsLoading(false)
         setIsRefreshing(false)
       }
     },
-    [readFilter, searchTerm, statusFilter]
+    [readFilter, searchTerm, statusFilter, t]
   )
 
   useEffect(() => {
@@ -123,6 +125,10 @@ export default function AdminContactsPage() {
   const emptyStateClass = `${
     preferences.compactTables ? 'px-3 py-6' : 'px-4 py-8'
   } text-center text-dental-text-light`
+  const getStatusLabel = useCallback(
+    (status: string) => t(`admin.contactStatuses.${status}`),
+    [t]
+  )
 
   const confirmIfNeeded = useCallback(
     (message: string) => {
@@ -150,7 +156,9 @@ export default function AdminContactsPage() {
     if (selectedIds.length === 0) return
     if (
       !confirmIfNeeded(
-        `Застосувати масову зміну до ${selectedIds.length} звернень?`
+        t('admin.contactsPage.confirmations.bulkChange', {
+          count: selectedIds.length,
+        })
       )
     ) {
       return
@@ -188,7 +196,7 @@ export default function AdminContactsPage() {
       )
     } catch (updateError) {
       console.error('Failed to apply bulk contact changes:', updateError)
-      setError('Не вдалося застосувати масові зміни для звернень.')
+      setError(t('admin.contactsPage.errors.bulkUpdateFailed'))
     } finally {
       setIsUpdatingId(null)
     }
@@ -199,7 +207,11 @@ export default function AdminContactsPage() {
       id: string,
       patch: Partial<Pick<ContactRow, 'status' | 'is_read'>>
     ) => {
-      if (!confirmIfNeeded('Підтвердити зміну стану звернення?')) return
+      if (
+        !confirmIfNeeded(t('admin.contactsPage.confirmations.singleUpdate'))
+      ) {
+        return
+      }
 
       const supabase = createClient()
       if (!supabase) return
@@ -225,12 +237,12 @@ export default function AdminContactsPage() {
         )
       } catch (updateError) {
         console.error('Failed to update contact:', updateError)
-        setError('Не вдалося оновити звернення.')
+        setError(t('admin.contactsPage.errors.updateFailed'))
       } finally {
         setIsUpdatingId(null)
       }
     },
-    [confirmIfNeeded, loadContacts, preferences.autoRefreshLists]
+    [confirmIfNeeded, loadContacts, preferences.autoRefreshLists, t]
   )
 
   return (
@@ -238,11 +250,10 @@ export default function AdminContactsPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-dental-dark">
-            Звернення клієнтів
+            {t('admin.contactsPage.title')}
           </h1>
           <p className="text-sm text-dental-text-light">
-            Черга контактних заявок з SLA-станом та швидкою операційною
-            обробкою.
+            {t('admin.contactsPage.description')}
           </p>
         </div>
         <Button
@@ -252,25 +263,33 @@ export default function AdminContactsPage() {
           isLoading={isRefreshing}
         >
           <RefreshCw className="mr-2 h-4 w-4" />
-          Оновити
+          {t('admin.contactsPage.refresh')}
         </Button>
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">Всього звернень</p>
+          <p className="text-xs text-dental-text-light">
+            {t('admin.contactsPage.summary.total')}
+          </p>
           <p className="text-2xl font-bold text-dental-dark">{stats.total}</p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">Непрочитані</p>
+          <p className="text-xs text-dental-text-light">
+            {t('admin.contactsPage.summary.unread')}
+          </p>
           <p className="text-2xl font-bold text-amber-600">{stats.unread}</p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">В роботі</p>
+          <p className="text-xs text-dental-text-light">
+            {t('admin.contactsPage.summary.inProgress')}
+          </p>
           <p className="text-2xl font-bold text-blue-600">{stats.inProgress}</p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">Вирішені</p>
+          <p className="text-xs text-dental-text-light">
+            {t('admin.contactsPage.summary.resolved')}
+          </p>
           <p className="text-2xl font-bold text-green-600">{stats.resolved}</p>
         </div>
       </div>
@@ -280,7 +299,7 @@ export default function AdminContactsPage() {
           <Input
             value={searchTerm}
             onChange={event => setSearchTerm(event.target.value)}
-            placeholder="Пошук: ім'я, телефон, email"
+            placeholder={t('admin.contactsPage.filters.searchPlaceholder')}
             className="md:col-span-2"
           />
           <select
@@ -288,10 +307,12 @@ export default function AdminContactsPage() {
             onChange={event => setStatusFilter(event.target.value)}
             className="rounded-lg border border-dental-secondary px-4 py-3 text-sm"
           >
-            <option value="all">Усі статуси</option>
+            <option value="all">
+              {t('admin.contactsPage.filters.allStatuses')}
+            </option>
             {STATUS_OPTIONS.map(status => (
               <option key={status} value={status}>
-                {status}
+                {getStatusLabel(status)}
               </option>
             ))}
           </select>
@@ -300,19 +321,27 @@ export default function AdminContactsPage() {
             onChange={event => setReadFilter(event.target.value as ReadFilter)}
             className="rounded-lg border border-dental-secondary px-4 py-3 text-sm"
           >
-            <option value="all">Прочитані + непрочитані</option>
-            <option value="unread">Тільки непрочитані</option>
-            <option value="read">Тільки прочитані</option>
+            <option value="all">
+              {t('admin.contactsPage.filters.read.all')}
+            </option>
+            <option value="unread">
+              {t('admin.contactsPage.filters.read.unread')}
+            </option>
+            <option value="read">
+              {t('admin.contactsPage.filters.read.read')}
+            </option>
           </select>
         </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2 rounded-xl border border-dental-secondary-200 bg-white px-4 py-3">
         <span className="text-sm text-dental-text-light">
-          Вибрано: {selectedIds.length}
+          {t('admin.contactsPage.bulk.selected', { count: selectedIds.length })}
         </span>
         <Button variant="outline" size="sm" onClick={toggleSelectAll}>
-          {allSelected ? 'Зняти вибір' : 'Вибрати всі'}
+          {allSelected
+            ? t('admin.contactsPage.bulk.unselectAll')
+            : t('admin.contactsPage.bulk.selectAll')}
         </Button>
         <select
           value={bulkStatus}
@@ -321,7 +350,9 @@ export default function AdminContactsPage() {
         >
           {STATUS_OPTIONS.map(status => (
             <option key={status} value={status}>
-              Статус: {status}
+              {t('admin.contactsPage.bulk.statusOption', {
+                status: getStatusLabel(status),
+              })}
             </option>
           ))}
         </select>
@@ -332,8 +363,10 @@ export default function AdminContactsPage() {
           }
           className="rounded-md border border-dental-secondary px-3 py-1.5 text-sm"
         >
-          <option value="read">Позначити прочитаними</option>
-          <option value="unread">Позначити непрочитаними</option>
+          <option value="read">{t('admin.contactsPage.bulk.markRead')}</option>
+          <option value="unread">
+            {t('admin.contactsPage.bulk.markUnread')}
+          </option>
         </select>
         <Button
           size="sm"
@@ -341,7 +374,7 @@ export default function AdminContactsPage() {
           disabled={selectedIds.length === 0 || isUpdatingId === 'bulk'}
           isLoading={isUpdatingId === 'bulk'}
         >
-          Застосувати масово
+          {t('admin.contactsPage.bulk.apply')}
         </Button>
       </div>
 
@@ -356,13 +389,13 @@ export default function AdminContactsPage() {
           <div
             className={`rounded-xl border border-dental-secondary-200 bg-white ${emptyStateClass}`}
           >
-            Завантаження звернень...
+            {t('admin.contactsPage.loading')}
           </div>
         ) : rows.length === 0 ? (
           <div
             className={`rounded-xl border border-dental-secondary-200 bg-white ${emptyStateClass}`}
           >
-            За поточними фільтрами звернень не знайдено.
+            {t('admin.contactsPage.empty')}
           </div>
         ) : (
           rows.map(row => (
@@ -377,7 +410,9 @@ export default function AdminContactsPage() {
                       type="checkbox"
                       checked={selectedSet.has(row.id)}
                       onChange={() => toggleSelection(row.id)}
-                      aria-label={`Вибрати звернення ${row.name}`}
+                      aria-label={t('admin.contactsPage.card.selectAria', {
+                        name: row.name,
+                      })}
                     />
                     <p className="font-semibold text-dental-dark">{row.name}</p>
                     <span
@@ -385,11 +420,11 @@ export default function AdminContactsPage() {
                         row.status
                       )}`}
                     >
-                      {row.status}
+                      {getStatusLabel(row.status)}
                     </span>
                     {!row.is_read ? (
                       <span className="inline-flex rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700">
-                        unread
+                        {t('admin.contactsPage.card.unreadBadge')}
                       </span>
                     ) : null}
                   </div>
@@ -424,8 +459,8 @@ export default function AdminContactsPage() {
                     className="rounded-md border border-dental-secondary px-3 py-1.5 text-xs font-semibold text-dental-text hover:bg-dental-secondary-50 disabled:opacity-60"
                   >
                     {row.is_read
-                      ? 'Позначити непрочитаним'
-                      : 'Позначити прочитаним'}
+                      ? t('admin.contactsPage.card.markUnread')
+                      : t('admin.contactsPage.card.markRead')}
                   </button>
                 </div>
               </div>
@@ -433,7 +468,7 @@ export default function AdminContactsPage() {
               {row.message ? (
                 <details className="mt-3 rounded-lg bg-dental-primary-50 p-3">
                   <summary className="cursor-pointer text-sm font-medium text-dental-dark">
-                    Показати повідомлення
+                    {t('admin.contactsPage.card.showMessage')}
                   </summary>
                   <p className="mt-2 whitespace-pre-wrap text-sm text-dental-text">
                     {row.message}
@@ -442,7 +477,7 @@ export default function AdminContactsPage() {
               ) : null}
               {row.admin_notes ? (
                 <p className="mt-3 text-xs text-dental-text-light">
-                  Адмін-нотатка: {row.admin_notes}
+                  {t('admin.contactsPage.card.adminNote')}: {row.admin_notes}
                 </p>
               ) : null}
             </div>

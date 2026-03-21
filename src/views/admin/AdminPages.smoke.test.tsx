@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createClient } from '@/lib/supabase/client'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
+import i18n from '@/i18n/config'
 import {
   listAdminAuditLogs,
   restoreFromAuditLog,
@@ -63,6 +64,7 @@ const createClientMock = vi.mocked(createClient)
 const useAdminPreferencesMock = vi.mocked(useAdminPreferences)
 const listAdminAuditLogsMock = vi.mocked(listAdminAuditLogs)
 const restoreFromAuditLogMock = vi.mocked(restoreFromAuditLog)
+const t = i18n.t.bind(i18n)
 
 const DEFAULT_PREFS = {
   autoRefreshLists: false,
@@ -116,11 +118,21 @@ describe('Admin pages UI smoke', () => {
 
     await screen.findByText('Петров Іван')
 
-    fireEvent.click(screen.getByRole('button', { name: 'Деактивувати' }))
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: t('admin.doctorsPage.actions.deactivate'),
+      })
+    )
     await waitFor(() => expect(updateEq).toHaveBeenCalledWith('id', 'doctor-1'))
 
-    fireEvent.click(screen.getByLabelText('Вибрати лікаря Петров Іван'))
-    fireEvent.click(screen.getByRole('button', { name: 'Застосувати масово' }))
+    fireEvent.click(
+      screen.getByLabelText(
+        t('admin.doctorsPage.table.selectRowAria', { name: 'Петров Іван' })
+      )
+    )
+    fireEvent.click(
+      screen.getByRole('button', { name: t('admin.doctorsPage.bulk.apply') })
+    )
 
     await waitFor(() =>
       expect(updateIn).toHaveBeenCalledWith('id', ['doctor-1'])
@@ -162,7 +174,9 @@ describe('Admin pages UI smoke', () => {
     render(<AdminServicesPage />)
 
     await screen.findByText('Професійна чистка')
-    fireEvent.click(screen.getByLabelText('Видалити послугу'))
+    fireEvent.click(
+      screen.getByLabelText(t('admin.servicesPage.actions.deleteAria'))
+    )
 
     await waitFor(() =>
       expect(deleteEq).toHaveBeenCalledWith('id', 'service-1')
@@ -204,8 +218,18 @@ describe('Admin pages UI smoke', () => {
     render(<AdminAppointmentsPage />)
 
     await screen.findByText('Петро Тестовий')
-    fireEvent.click(screen.getByLabelText('Вибрати запис Петро Тестовий'))
-    fireEvent.click(screen.getByRole('button', { name: 'Застосувати масово' }))
+    fireEvent.click(
+      screen.getByLabelText(
+        t('admin.appointmentsPage.table.selectRowAria', {
+          name: 'Петро Тестовий',
+        })
+      )
+    )
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: t('admin.appointmentsPage.bulk.apply'),
+      })
+    )
 
     await waitFor(() => expect(updateIn).toHaveBeenCalledWith('id', ['appt-1']))
   })
@@ -241,8 +265,14 @@ describe('Admin pages UI smoke', () => {
     render(<AdminReviewsPage />)
 
     await screen.findByText('Олена')
-    fireEvent.click(screen.getByLabelText('Вибрати відгук від Олена'))
-    fireEvent.click(screen.getByRole('button', { name: 'Застосувати масово' }))
+    fireEvent.click(
+      screen.getByLabelText(
+        t('admin.reviewsPage.card.selectAria', { name: 'Олена' })
+      )
+    )
+    fireEvent.click(
+      screen.getByRole('button', { name: t('admin.reviewsPage.bulk.apply') })
+    )
 
     await waitFor(() =>
       expect(updateIn).toHaveBeenCalledWith('id', ['review-1'])
@@ -281,8 +311,14 @@ describe('Admin pages UI smoke', () => {
     render(<AdminContactsPage />)
 
     await screen.findByText('Марія')
-    fireEvent.click(screen.getByLabelText('Вибрати звернення Марія'))
-    fireEvent.click(screen.getByRole('button', { name: 'Застосувати масово' }))
+    fireEvent.click(
+      screen.getByLabelText(
+        t('admin.contactsPage.card.selectAria', { name: 'Марія' })
+      )
+    )
+    fireEvent.click(
+      screen.getByRole('button', { name: t('admin.contactsPage.bulk.apply') })
+    )
 
     await waitFor(() =>
       expect(updateIn).toHaveBeenCalledWith('id', ['contact-1'])
@@ -347,17 +383,24 @@ describe('Admin pages UI smoke', () => {
 
     render(<AdminSettingsPage />)
 
-    await screen.findByText('Audit logs і rollback')
+    await screen.findByText(t('admin.settingsPage.audit.title'))
     await screen.findByText('doctor-1')
 
-    fireEvent.click(screen.getByRole('button', { name: 'Rollback' }))
-    await screen.findByText('Підтвердження rollback')
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: t('admin.settingsPage.audit.actions.rollback'),
+      })
+    )
+    await screen.findByText(t('admin.settingsPage.rollback.modal.title'))
 
-    fireEvent.change(screen.getByLabelText(/Причина rollback/i), {
+    const [rollbackReasonInput] = screen.getAllByRole('textbox')
+    fireEvent.change(rollbackReasonInput, {
       target: { value: 'Невірна модерація запису' },
     })
     fireEvent.click(
-      screen.getByRole('button', { name: 'Підтвердити rollback' })
+      screen.getByRole('button', {
+        name: t('admin.settingsPage.rollback.modal.confirm'),
+      })
     )
 
     await waitFor(() =>

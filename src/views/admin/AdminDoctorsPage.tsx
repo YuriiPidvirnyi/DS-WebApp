@@ -8,6 +8,7 @@ import {
   type FormEvent,
 } from 'react'
 import { Edit, Plus, RefreshCw, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button, Input, Textarea } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
@@ -60,6 +61,7 @@ const DOCTOR_SELECT =
   'id, first_name, last_name, patronymic, specialization, experience_years, education, photo_url, bio, rating, reviews_count, is_active, updated_at'
 
 export default function AdminDoctorsPage() {
+  const { t } = useTranslation()
   const { preferences } = useAdminPreferences()
   const [rows, setRows] = useState<DoctorRow[]>([])
   const [selectedIds, setSelectedIds] = useState<string[]>([])
@@ -83,7 +85,7 @@ export default function AdminDoctorsPage() {
     async (silent = false) => {
       const supabase = createClient()
       if (!supabase) {
-        setError('Supabase не налаштований. Перевірте змінні середовища.')
+        setError(t('admin.doctorsPage.errors.supabaseUnavailable'))
         setIsLoading(false)
         return
       }
@@ -125,13 +127,13 @@ export default function AdminDoctorsPage() {
         setRows((data || []) as DoctorRow[])
       } catch (loadError) {
         console.error('Failed to load doctors:', loadError)
-        setError('Не вдалося завантажити лікарів.')
+        setError(t('admin.doctorsPage.errors.loadFailed'))
       } finally {
         setIsLoading(false)
         setIsRefreshing(false)
       }
     },
-    [searchTerm, statusFilter]
+    [searchTerm, statusFilter, t]
   )
 
   useEffect(() => {
@@ -162,6 +164,10 @@ export default function AdminDoctorsPage() {
   const tableEmptyStateClass = `${
     preferences.compactTables ? 'px-3 py-6' : 'px-4 py-8'
   } text-center text-dental-text-light`
+  const getAvailabilityLabel = useCallback(
+    (status: 'active' | 'inactive') => t(`admin.doctorStatuses.${status}`),
+    [t]
+  )
 
   const confirmIfNeeded = useCallback(
     (message: string) => {
@@ -189,7 +195,10 @@ export default function AdminDoctorsPage() {
     if (selectedIds.length === 0) return
     if (
       !confirmIfNeeded(
-        `Змінити активність для ${selectedIds.length} лікар(ів) на "${bulkStatus}"?`
+        t('admin.doctorsPage.confirmations.bulkStatusChange', {
+          count: selectedIds.length,
+          status: getAvailabilityLabel(bulkStatus),
+        })
       )
     ) {
       return
@@ -222,7 +231,7 @@ export default function AdminDoctorsPage() {
       )
     } catch (updateError) {
       console.error('Failed to apply bulk status update:', updateError)
-      setError('Не вдалося виконати масову зміну статусу.')
+      setError(t('admin.doctorsPage.errors.bulkUpdateFailed'))
     } finally {
       setIsUpdatingId(null)
     }
@@ -233,8 +242,8 @@ export default function AdminDoctorsPage() {
       if (
         !confirmIfNeeded(
           isActive
-            ? 'Деактивувати профіль лікаря?'
-            : 'Активувати профіль лікаря?'
+            ? t('admin.doctorsPage.confirmations.deactivateDoctor')
+            : t('admin.doctorsPage.confirmations.activateDoctor')
         )
       ) {
         return
@@ -266,12 +275,12 @@ export default function AdminDoctorsPage() {
         )
       } catch (updateError) {
         console.error('Failed to update doctor:', updateError)
-        setError('Не вдалося оновити статус лікаря.')
+        setError(t('admin.doctorsPage.errors.statusUpdateFailed'))
       } finally {
         setIsUpdatingId(null)
       }
     },
-    [confirmIfNeeded, loadDoctors, preferences.autoRefreshLists]
+    [confirmIfNeeded, loadDoctors, preferences.autoRefreshLists, t]
   )
 
   const openCreateModal = () => {
@@ -313,13 +322,13 @@ export default function AdminDoctorsPage() {
       !formState.last_name.trim() ||
       !formState.specialization.trim()
     ) {
-      setError("Поля 'Імʼя', 'Прізвище' і 'Спеціалізація' є обовʼязковими.")
+      setError(t('admin.doctorsPage.errors.requiredFields'))
       return
     }
 
     const years = Number(formState.experience_years)
     if (!Number.isFinite(years) || years < 0) {
-      setError('Досвід має бути невідʼємним числом.')
+      setError(t('admin.doctorsPage.errors.invalidExperience'))
       return
     }
 
@@ -356,14 +365,15 @@ export default function AdminDoctorsPage() {
       await loadDoctors(true)
     } catch (saveError) {
       console.error('Failed to save doctor:', saveError)
-      setError('Не вдалося зберегти зміни лікаря.')
+      setError(t('admin.doctorsPage.errors.saveFailed'))
     } finally {
       setIsSaving(false)
     }
   }
 
   const deleteDoctor = async (id: string) => {
-    if (!confirmIfNeeded('Видалити лікаря? Дію неможливо скасувати.')) return
+    if (!confirmIfNeeded(t('admin.doctorsPage.confirmations.deleteDoctor')))
+      return
     const supabase = createClient()
     if (!supabase) return
 
@@ -385,7 +395,7 @@ export default function AdminDoctorsPage() {
       setSelectedIds(prev => prev.filter(item => item !== id))
     } catch (deleteError) {
       console.error('Failed to delete doctor:', deleteError)
-      setError('Не вдалося видалити лікаря.')
+      setError(t('admin.doctorsPage.errors.deleteFailed'))
     } finally {
       setIsUpdatingId(null)
     }
@@ -396,16 +406,16 @@ export default function AdminDoctorsPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-dental-dark">
-            Управління лікарями
+            {t('admin.doctorsPage.title')}
           </h1>
           <p className="text-sm text-dental-text-light">
-            Повний CRUD, масові дії, контроль активності і профілів лікарів.
+            {t('admin.doctorsPage.description')}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="secondary" size="sm" onClick={openCreateModal}>
             <Plus className="mr-2 h-4 w-4" />
-            Додати лікаря
+            {t('admin.doctorsPage.addDoctor')}
           </Button>
           <Button
             variant="outline"
@@ -414,26 +424,34 @@ export default function AdminDoctorsPage() {
             isLoading={isRefreshing}
           >
             <RefreshCw className="mr-2 h-4 w-4" />
-            Оновити
+            {t('admin.doctorsPage.refresh')}
           </Button>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">Всього лікарів</p>
+          <p className="text-xs text-dental-text-light">
+            {t('admin.doctorsPage.summary.total')}
+          </p>
           <p className="text-2xl font-bold text-dental-dark">{stats.total}</p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">Активні</p>
+          <p className="text-xs text-dental-text-light">
+            {t('admin.doctorsPage.summary.active')}
+          </p>
           <p className="text-2xl font-bold text-green-600">{stats.active}</p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">Неактивні</p>
+          <p className="text-xs text-dental-text-light">
+            {t('admin.doctorsPage.summary.inactive')}
+          </p>
           <p className="text-2xl font-bold text-red-600">{stats.inactive}</p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">Середній рейтинг</p>
+          <p className="text-xs text-dental-text-light">
+            {t('admin.doctorsPage.summary.averageRating')}
+          </p>
           <p className="text-2xl font-bold text-dental-dark">
             {stats.averageRating.toFixed(1)}
           </p>
@@ -445,7 +463,7 @@ export default function AdminDoctorsPage() {
           <Input
             value={searchTerm}
             onChange={event => setSearchTerm(event.target.value)}
-            placeholder="Пошук: ім'я або спеціалізація"
+            placeholder={t('admin.doctorsPage.filters.searchPlaceholder')}
             className="md:col-span-2"
           />
           <select
@@ -457,16 +475,20 @@ export default function AdminDoctorsPage() {
             }
             className="rounded-lg border border-dental-secondary px-4 py-3 text-sm"
           >
-            <option value="all">Усі</option>
-            <option value="active">Тільки активні</option>
-            <option value="inactive">Тільки неактивні</option>
+            <option value="all">{t('admin.doctorsPage.filters.all')}</option>
+            <option value="active">
+              {t('admin.doctorsPage.filters.activeOnly')}
+            </option>
+            <option value="inactive">
+              {t('admin.doctorsPage.filters.inactiveOnly')}
+            </option>
           </select>
         </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2 rounded-xl border border-dental-secondary-200 bg-white px-4 py-3">
         <span className="text-sm text-dental-text-light">
-          Вибрано: {selectedIds.length}
+          {t('admin.doctorsPage.bulk.selected', { count: selectedIds.length })}
         </span>
         <select
           value={bulkStatus}
@@ -475,8 +497,12 @@ export default function AdminDoctorsPage() {
           }
           className="rounded-md border border-dental-secondary px-3 py-1.5 text-sm"
         >
-          <option value="active">Активувати вибрані</option>
-          <option value="inactive">Деактивувати вибрані</option>
+          <option value="active">
+            {t('admin.doctorsPage.bulk.activateSelected')}
+          </option>
+          <option value="inactive">
+            {t('admin.doctorsPage.bulk.deactivateSelected')}
+          </option>
         </select>
         <Button
           size="sm"
@@ -484,7 +510,7 @@ export default function AdminDoctorsPage() {
           disabled={selectedIds.length === 0 || isUpdatingId === 'bulk'}
           isLoading={isUpdatingId === 'bulk'}
         >
-          Застосувати масово
+          {t('admin.doctorsPage.bulk.apply')}
         </Button>
       </div>
 
@@ -504,29 +530,43 @@ export default function AdminDoctorsPage() {
                     type="checkbox"
                     checked={allSelected}
                     onChange={toggleSelectAll}
-                    aria-label="Вибрати всі рядки"
+                    aria-label={t('admin.doctorsPage.table.selectAllAria')}
                   />
                 </th>
-                <th className={tableHeadClass}>Лікар</th>
-                <th className={tableHeadClass}>Спеціалізація</th>
-                <th className={tableHeadClass}>Досвід</th>
-                <th className={tableHeadClass}>Рейтинг</th>
-                <th className={tableHeadClass}>Статус</th>
-                <th className={tableHeadClass}>Оновлено</th>
-                <th className={tableHeadClass}>Дії</th>
+                <th className={tableHeadClass}>
+                  {t('admin.doctorsPage.table.headers.doctor')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.doctorsPage.table.headers.specialization')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.doctorsPage.table.headers.experience')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.doctorsPage.table.headers.rating')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.doctorsPage.table.headers.status')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.doctorsPage.table.headers.updatedAt')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.doctorsPage.table.headers.actions')}
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white text-sm">
               {isLoading ? (
                 <tr>
                   <td colSpan={8} className={tableEmptyStateClass}>
-                    Завантаження лікарів...
+                    {t('admin.doctorsPage.table.loading')}
                   </td>
                 </tr>
               ) : rows.length === 0 ? (
                 <tr>
                   <td colSpan={8} className={tableEmptyStateClass}>
-                    Немає даних за поточними фільтрами.
+                    {t('admin.doctorsPage.table.empty')}
                   </td>
                 </tr>
               ) : (
@@ -537,7 +577,9 @@ export default function AdminDoctorsPage() {
                         type="checkbox"
                         checked={selectedSet.has(row.id)}
                         onChange={() => toggleSelection(row.id)}
-                        aria-label={`Вибрати лікаря ${row.last_name} ${row.first_name}`}
+                        aria-label={t('admin.doctorsPage.table.selectRowAria', {
+                          name: `${row.last_name} ${row.first_name}`,
+                        })}
                       />
                     </td>
                     <td className={tableCellClass}>
@@ -554,7 +596,9 @@ export default function AdminDoctorsPage() {
                       {row.specialization}
                     </td>
                     <td className={`${tableCellClass} text-dental-text`}>
-                      {row.experience_years ?? 0} р.
+                      {t('admin.doctorsPage.table.experienceYears', {
+                        years: row.experience_years ?? 0,
+                      })}
                     </td>
                     <td className={`${tableCellClass} text-dental-text`}>
                       {(row.rating ?? 0).toFixed(1)} ({row.reviews_count ?? 0})
@@ -565,7 +609,9 @@ export default function AdminDoctorsPage() {
                           row.is_active ? 'active' : 'inactive'
                         )}`}
                       >
-                        {row.is_active ? 'active' : 'inactive'}
+                        {row.is_active
+                          ? getAvailabilityLabel('active')
+                          : getAvailabilityLabel('inactive')}
                       </span>
                     </td>
                     <td
@@ -579,7 +625,7 @@ export default function AdminDoctorsPage() {
                           type="button"
                           onClick={() => openEditModal(row)}
                           className="rounded-md border border-dental-secondary p-1.5 text-dental-text hover:bg-dental-secondary-50"
-                          aria-label="Редагувати лікаря"
+                          aria-label={t('admin.doctorsPage.actions.editAria')}
                         >
                           <Edit className="h-4 w-4" />
                         </button>
@@ -591,14 +637,16 @@ export default function AdminDoctorsPage() {
                           disabled={isUpdatingId === row.id}
                           className="rounded-md border border-dental-secondary px-3 py-1.5 text-xs font-semibold text-dental-text hover:bg-dental-secondary-50 disabled:opacity-60"
                         >
-                          {row.is_active ? 'Деактивувати' : 'Активувати'}
+                          {row.is_active
+                            ? t('admin.doctorsPage.actions.deactivate')
+                            : t('admin.doctorsPage.actions.activate')}
                         </button>
                         <button
                           type="button"
                           onClick={() => void deleteDoctor(row.id)}
                           disabled={isUpdatingId === row.id}
                           className="rounded-md border border-red-200 p-1.5 text-red-600 hover:bg-red-50 disabled:opacity-60"
-                          aria-label="Видалити лікаря"
+                          aria-label={t('admin.doctorsPage.actions.deleteAria')}
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -614,14 +662,18 @@ export default function AdminDoctorsPage() {
 
       <AdminModal
         open={isModalOpen}
-        title={modalMode === 'create' ? 'Новий лікар' : 'Редагування лікаря'}
-        subtitle="Зміни застосовуються одразу після збереження."
+        title={
+          modalMode === 'create'
+            ? t('admin.doctorsPage.modal.createTitle')
+            : t('admin.doctorsPage.modal.editTitle')
+        }
+        subtitle={t('admin.doctorsPage.modal.subtitle')}
         onClose={closeModal}
       >
         <form className="space-y-4" onSubmit={event => void saveDoctor(event)}>
           <div className="grid gap-3 md:grid-cols-2">
             <Input
-              label="Імʼя"
+              label={t('admin.doctorsPage.form.firstName')}
               value={formState.first_name}
               onChange={event =>
                 setFormState(prev => ({
@@ -632,7 +684,7 @@ export default function AdminDoctorsPage() {
               required
             />
             <Input
-              label="Прізвище"
+              label={t('admin.doctorsPage.form.lastName')}
               value={formState.last_name}
               onChange={event =>
                 setFormState(prev => ({
@@ -645,7 +697,7 @@ export default function AdminDoctorsPage() {
           </div>
           <div className="grid gap-3 md:grid-cols-2">
             <Input
-              label="По батькові"
+              label={t('admin.doctorsPage.form.patronymic')}
               value={formState.patronymic}
               onChange={event =>
                 setFormState(prev => ({
@@ -655,7 +707,7 @@ export default function AdminDoctorsPage() {
               }
             />
             <Input
-              label="Спеціалізація"
+              label={t('admin.doctorsPage.form.specialization')}
               value={formState.specialization}
               onChange={event =>
                 setFormState(prev => ({
@@ -670,7 +722,7 @@ export default function AdminDoctorsPage() {
             <Input
               type="number"
               min={0}
-              label="Досвід (років)"
+              label={t('admin.doctorsPage.form.experienceYears')}
               value={formState.experience_years}
               onChange={event =>
                 setFormState(prev => ({
@@ -682,7 +734,7 @@ export default function AdminDoctorsPage() {
             />
             <Input
               type="url"
-              label="URL фото"
+              label={t('admin.doctorsPage.form.photoUrl')}
               value={formState.photo_url}
               onChange={event =>
                 setFormState(prev => ({
@@ -693,14 +745,14 @@ export default function AdminDoctorsPage() {
             />
           </div>
           <Input
-            label="Освіта"
+            label={t('admin.doctorsPage.form.education')}
             value={formState.education}
             onChange={event =>
               setFormState(prev => ({ ...prev, education: event.target.value }))
             }
           />
           <Textarea
-            label="Біографія"
+            label={t('admin.doctorsPage.form.bio')}
             value={formState.bio}
             onChange={event =>
               setFormState(prev => ({ ...prev, bio: event.target.value }))
@@ -718,7 +770,7 @@ export default function AdminDoctorsPage() {
                 }))
               }
             />
-            Активний профіль лікаря
+            {t('admin.doctorsPage.form.activeProfile')}
           </label>
           <div className="flex items-center justify-end gap-2 border-t border-dental-secondary-200 pt-4">
             <Button
@@ -727,10 +779,12 @@ export default function AdminDoctorsPage() {
               onClick={closeModal}
               disabled={isSaving}
             >
-              Скасувати
+              {t('common.cancel')}
             </Button>
             <Button type="submit" isLoading={isSaving}>
-              {modalMode === 'create' ? 'Створити лікаря' : 'Зберегти зміни'}
+              {modalMode === 'create'
+                ? t('admin.doctorsPage.form.create')
+                : t('admin.doctorsPage.form.saveChanges')}
             </Button>
           </div>
         </form>

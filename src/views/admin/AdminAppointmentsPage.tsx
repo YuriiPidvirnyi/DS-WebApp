@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { RefreshCw } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button, Input } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
@@ -49,6 +50,7 @@ const STATUS_OPTIONS: AppointmentStatus[] = [
 ]
 
 export default function AdminAppointmentsPage() {
+  const { t } = useTranslation()
   const searchParams = useSearchParams()
   const { preferences } = useAdminPreferences()
   const [rows, setRows] = useState<AppointmentRow[]>([])
@@ -75,7 +77,7 @@ export default function AdminAppointmentsPage() {
     async (silent = false) => {
       const supabase = createClient()
       if (!supabase) {
-        setError('Supabase не налаштований. Перевірте змінні середовища.')
+        setError(t('admin.appointmentsPage.errors.supabaseUnavailable'))
         setIsLoading(false)
         return
       }
@@ -130,13 +132,13 @@ export default function AdminAppointmentsPage() {
         setRows((data || []) as AppointmentRow[])
       } catch (loadError) {
         console.error('Failed to load appointments:', loadError)
-        setError('Не вдалося завантажити записи. Спробуйте ще раз.')
+        setError(t('admin.appointmentsPage.errors.loadFailed'))
       } finally {
         setIsLoading(false)
         setIsRefreshing(false)
       }
     },
-    [dateFilter, searchTerm, statusFilter]
+    [dateFilter, searchTerm, statusFilter, t]
   )
 
   useEffect(() => {
@@ -165,6 +167,10 @@ export default function AdminAppointmentsPage() {
   const tableEmptyStateClass = `${
     preferences.compactTables ? 'px-3 py-6' : 'px-4 py-8'
   } text-center text-dental-text-light`
+  const getStatusLabel = useCallback(
+    (status: AppointmentStatus) => t(`admin.appointmentStatuses.${status}`),
+    [t]
+  )
 
   const confirmIfNeeded = useCallback(
     (message: string) => {
@@ -192,7 +198,10 @@ export default function AdminAppointmentsPage() {
     if (selectedIds.length === 0) return
     if (
       !confirmIfNeeded(
-        `Змінити статус для ${selectedIds.length} запис(ів) на "${bulkStatus}"?`
+        t('admin.appointmentsPage.confirmations.bulkStatusChange', {
+          count: selectedIds.length,
+          status: getStatusLabel(bulkStatus),
+        })
       )
     ) {
       return
@@ -223,7 +232,7 @@ export default function AdminAppointmentsPage() {
       )
     } catch (updateError) {
       console.error('Failed to apply bulk appointment status:', updateError)
-      setError('Не вдалося застосувати масову зміну статусу.')
+      setError(t('admin.appointmentsPage.errors.bulkUpdateFailed'))
     } finally {
       setIsUpdatingId(null)
     }
@@ -231,7 +240,15 @@ export default function AdminAppointmentsPage() {
 
   const updateStatus = useCallback(
     async (id: string, nextStatus: AppointmentStatus) => {
-      if (!confirmIfNeeded(`Оновити статус запису на "${nextStatus}"?`)) return
+      if (
+        !confirmIfNeeded(
+          t('admin.appointmentsPage.confirmations.singleStatusChange', {
+            status: getStatusLabel(nextStatus),
+          })
+        )
+      ) {
+        return
+      }
 
       const supabase = createClient()
       if (!supabase) return
@@ -261,12 +278,18 @@ export default function AdminAppointmentsPage() {
         )
       } catch (updateError) {
         console.error('Failed to update appointment status:', updateError)
-        setError('Не вдалося оновити статус запису.')
+        setError(t('admin.appointmentsPage.errors.statusUpdateFailed'))
       } finally {
         setIsUpdatingId(null)
       }
     },
-    [confirmIfNeeded, loadAppointments, preferences.autoRefreshLists]
+    [
+      confirmIfNeeded,
+      getStatusLabel,
+      loadAppointments,
+      preferences.autoRefreshLists,
+      t,
+    ]
   )
 
   const resolvePatientName = (row: AppointmentRow) => {
@@ -289,10 +312,10 @@ export default function AdminAppointmentsPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-dental-dark">
-            Управління записами
+            {t('admin.appointmentsPage.title')}
           </h1>
           <p className="text-sm text-dental-text-light">
-            Пошук, фільтрація та зміна статусів прийомів у реальному часі.
+            {t('admin.appointmentsPage.description')}
           </p>
         </div>
         <Button
@@ -302,27 +325,35 @@ export default function AdminAppointmentsPage() {
           isLoading={isRefreshing}
         >
           <RefreshCw className="mr-2 h-4 w-4" />
-          Оновити
+          {t('admin.appointmentsPage.refresh')}
         </Button>
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">Всього</p>
+          <p className="text-xs text-dental-text-light">
+            {t('admin.appointmentsPage.summary.total')}
+          </p>
           <p className="text-2xl font-bold text-dental-dark">{summary.total}</p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">Сьогодні</p>
+          <p className="text-xs text-dental-text-light">
+            {t('admin.appointmentsPage.summary.today')}
+          </p>
           <p className="text-2xl font-bold text-dental-dark">
             {summary.todayCount}
           </p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">Очікують</p>
+          <p className="text-xs text-dental-text-light">
+            {t('admin.appointmentsPage.summary.pending')}
+          </p>
           <p className="text-2xl font-bold text-amber-600">{summary.pending}</p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">Завершено</p>
+          <p className="text-xs text-dental-text-light">
+            {t('admin.appointmentsPage.summary.completed')}
+          </p>
           <p className="text-2xl font-bold text-green-600">
             {summary.completed}
           </p>
@@ -334,7 +365,7 @@ export default function AdminAppointmentsPage() {
           <Input
             value={searchTerm}
             onChange={event => setSearchTerm(event.target.value)}
-            placeholder="Пошук: ім'я, телефон, email"
+            placeholder={t('admin.appointmentsPage.filters.searchPlaceholder')}
             className="md:col-span-2"
           />
           <select
@@ -344,29 +375,41 @@ export default function AdminAppointmentsPage() {
             }
             className="rounded-lg border border-dental-secondary px-4 py-3 text-sm"
           >
-            <option value="all">Усі статуси</option>
-            <option value="pending">pending</option>
-            <option value="confirmed">confirmed</option>
-            <option value="completed">completed</option>
-            <option value="cancelled">cancelled</option>
-            <option value="no_show">no_show</option>
+            <option value="all">
+              {t('admin.appointmentsPage.filters.allStatuses')}
+            </option>
+            {STATUS_OPTIONS.map(status => (
+              <option key={status} value={status}>
+                {getStatusLabel(status)}
+              </option>
+            ))}
           </select>
           <select
             value={dateFilter}
             onChange={event => setDateFilter(event.target.value as DateFilter)}
             className="rounded-lg border border-dental-secondary px-4 py-3 text-sm"
           >
-            <option value="all">Всі дати</option>
-            <option value="today">Сьогодні</option>
-            <option value="upcoming">Майбутні</option>
-            <option value="past">Минулі</option>
+            <option value="all">
+              {t('admin.appointmentsPage.filters.allDates')}
+            </option>
+            <option value="today">
+              {t('admin.appointmentsPage.filters.today')}
+            </option>
+            <option value="upcoming">
+              {t('admin.appointmentsPage.filters.upcoming')}
+            </option>
+            <option value="past">
+              {t('admin.appointmentsPage.filters.past')}
+            </option>
           </select>
         </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2 rounded-xl border border-dental-secondary-200 bg-white px-4 py-3">
         <span className="text-sm text-dental-text-light">
-          Вибрано: {selectedIds.length}
+          {t('admin.appointmentsPage.bulk.selected', {
+            count: selectedIds.length,
+          })}
         </span>
         <select
           value={bulkStatus}
@@ -377,7 +420,9 @@ export default function AdminAppointmentsPage() {
         >
           {STATUS_OPTIONS.map(status => (
             <option key={status} value={status}>
-              Перевести в {status}
+              {t('admin.appointmentsPage.bulk.moveTo', {
+                status: getStatusLabel(status),
+              })}
             </option>
           ))}
         </select>
@@ -387,7 +432,7 @@ export default function AdminAppointmentsPage() {
           disabled={selectedIds.length === 0 || isUpdatingId === 'bulk'}
           isLoading={isUpdatingId === 'bulk'}
         >
-          Застосувати масово
+          {t('admin.appointmentsPage.bulk.apply')}
         </Button>
       </div>
 
@@ -407,29 +452,43 @@ export default function AdminAppointmentsPage() {
                     type="checkbox"
                     checked={allSelected}
                     onChange={toggleSelectAll}
-                    aria-label="Вибрати всі рядки"
+                    aria-label={t('admin.appointmentsPage.table.selectAllAria')}
                   />
                 </th>
-                <th className={tableHeadClass}>Пацієнт</th>
-                <th className={tableHeadClass}>Контакти</th>
-                <th className={tableHeadClass}>Послуга</th>
-                <th className={tableHeadClass}>Лікар</th>
-                <th className={tableHeadClass}>Дата/час</th>
-                <th className={tableHeadClass}>Статус</th>
-                <th className={tableHeadClass}>Створено</th>
+                <th className={tableHeadClass}>
+                  {t('admin.appointmentsPage.table.headers.patient')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.appointmentsPage.table.headers.contacts')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.appointmentsPage.table.headers.service')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.appointmentsPage.table.headers.doctor')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.appointmentsPage.table.headers.dateTime')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.appointmentsPage.table.headers.status')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.appointmentsPage.table.headers.createdAt')}
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white text-sm">
               {isLoading ? (
                 <tr>
                   <td colSpan={8} className={tableEmptyStateClass}>
-                    Завантаження записів...
+                    {t('admin.appointmentsPage.table.loading')}
                   </td>
                 </tr>
               ) : rows.length === 0 ? (
                 <tr>
                   <td colSpan={8} className={tableEmptyStateClass}>
-                    За поточними фільтрами нічого не знайдено.
+                    {t('admin.appointmentsPage.table.empty')}
                   </td>
                 </tr>
               ) : (
@@ -440,7 +499,12 @@ export default function AdminAppointmentsPage() {
                         type="checkbox"
                         checked={selectedSet.has(row.id)}
                         onChange={() => toggleSelection(row.id)}
-                        aria-label={`Вибрати запис ${resolvePatientName(row)}`}
+                        aria-label={t(
+                          'admin.appointmentsPage.table.selectRowAria',
+                          {
+                            name: resolvePatientName(row),
+                          }
+                        )}
                       />
                     </td>
                     <td className={tableCellClass}>
@@ -478,7 +542,7 @@ export default function AdminAppointmentsPage() {
                             row.status
                           )}`}
                         >
-                          {row.status}
+                          {getStatusLabel(row.status)}
                         </span>
                         <select
                           value={row.status}
@@ -493,7 +557,7 @@ export default function AdminAppointmentsPage() {
                         >
                           {STATUS_OPTIONS.map(status => (
                             <option key={status} value={status}>
-                              {status}
+                              {getStatusLabel(status)}
                             </option>
                           ))}
                         </select>

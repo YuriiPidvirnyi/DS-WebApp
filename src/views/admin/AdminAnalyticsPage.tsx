@@ -2,23 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { RefreshCw } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
-import { createClient } from '@/lib/supabase/client'
+import { useCSRF } from '@/hooks/useCSRF'
 import { formatCurrency } from './utils'
-
-interface AppointmentAnalyticsRow {
-  appointment_date: string
-  status: string
-  price_uah: number | null
-  source: string | null
-  service_id: string | null
-}
-
-interface ServiceRow {
-  id: string
-  name_uk: string
-}
 
 interface AnalyticsModel {
   totalAppointments: number
@@ -36,65 +24,23 @@ interface AnalyticsModel {
   topServices: Array<{ name: string; count: number }>
 }
 
-const PERIODS = [
-  { label: '7 днів', value: 7 },
-  { label: '30 днів', value: 30 },
-  { label: '90 днів', value: 90 },
+interface AnalyticsApiResponse {
+  success: boolean
+  data?: AnalyticsModel
+  error?: string
+  message?: string
+}
+
+const PERIODS: Array<{ value: 7 | 30 | 90 }> = [
+  { value: 7 },
+  { value: 30 },
+  { value: 90 },
 ]
 
-function buildTimeline(
-  periodDays: number,
-  appointments: AppointmentAnalyticsRow[]
-) {
-  const map = new Map<string, { count: number; revenue: number }>()
-  const start = new Date()
-  start.setDate(start.getDate() - (periodDays - 1))
-
-  for (let i = 0; i < periodDays; i += 1) {
-    const current = new Date(start)
-    current.setDate(start.getDate() + i)
-    const key = current.toISOString().slice(0, 10)
-    map.set(key, { count: 0, revenue: 0 })
-  }
-
-  appointments.forEach(appointment => {
-    const bucket = map.get(appointment.appointment_date)
-    if (!bucket) return
-    bucket.count += 1
-    bucket.revenue += Number(appointment.price_uah || 0)
-  })
-
-  return Array.from(map.entries()).map(([date, data]) => ({
-    date,
-    count: data.count,
-    revenue: data.revenue,
-  }))
-}
-
-function buildTopServices(
-  appointments: AppointmentAnalyticsRow[],
-  services: ServiceRow[]
-): Array<{ name: string; count: number }> {
-  const serviceMap = new Map(
-    services.map(service => [service.id, service.name_uk])
-  )
-  const counters = new Map<string, number>()
-
-  appointments.forEach(appointment => {
-    const key = appointment.service_id
-      ? serviceMap.get(appointment.service_id) || 'Невідома послуга'
-      : 'Без послуги'
-    counters.set(key, (counters.get(key) || 0) + 1)
-  })
-
-  return Array.from(counters.entries())
-    .map(([name, count]) => ({ name, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 6)
-}
-
 export default function AdminAnalyticsPage() {
+  const { t } = useTranslation()
   const { preferences } = useAdminPreferences()
+  const { token: csrfToken, refreshToken } = useCSRF()
   const [periodDays, setPeriodDays] = useState<7 | 30 | 90>(30)
   const [model, setModel] = useState<AnalyticsModel | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -106,14 +52,7 @@ export default function AdminAnalyticsPage() {
   }, [preferences.defaultAnalyticsPeriod])
 
   const loadAnalytics = useCallback(
-    async (silent = false) => {
-      const supabase = createClient()
-      if (!supabase) {
-        setError('Supabase не налаштований. Перевірте змінні середовища.')
-        setIsLoading(false)
-        return
-      }
-
+    async (silent = false, forceRefresh = false) => {
       if (silent) {
         setIsRefreshing(true)
       } else {
@@ -122,110 +61,74 @@ export default function AdminAnalyticsPage() {
       setError(null)
 
       try {
-        const fromDate = new Date()
-        fromDate.setDate(fromDate.getDate() - (periodDays - 1))
-        const fromDateIso = fromDate.toISOString().slice(0, 10)
+        if (forceRefresh) {
+          const token =
+            csrfToken ||
+            (typeof window !== 'undefined'
+              ? sessionStorage.getItem('csrf_token') || refreshToken()
+              : '')
 
-        const [
-          { data: appointmentsData, error: appointmentsError },
-          { data: servicesData, error: servicesError },
-          { count: totalPatients, error: patientsError },
-          { count: unreadContacts, error: contactsError },
-          { count: pendingReviews, error: reviewsError },
-        ] = await Promise.all([
-          supabase
-            .from('appointments')
-            .select('appointment_date, status, price_uah, source, service_id')
-            .gte('appointment_date', fromDateIso),
-          supabase.from('services').select('id, name_uk'),
-          supabase.from('patients').select('*', { count: 'exact', head: true }),
-          supabase
-            .from('contact_submissions')
-            .select('*', { count: 'exact', head: true })
-            .eq('is_read', false),
-          supabase
-            .from('reviews')
-            .select('*', { count: 'exact', head: true })
-            .eq('status', 'pending'),
-        ])
+          if (!token) {
+            throw new Error(t('admin.analyticsPage.errors.secureRefreshFailed'))
+          }
 
-        if (
-          appointmentsError ||
-          servicesError ||
-          patientsError ||
-          contactsError ||
-          reviewsError
-        ) {
-          throw (
-            appointmentsError ||
-            servicesError ||
-            patientsError ||
-            contactsError ||
-            reviewsError
+          const refreshResponse = await fetch('/api/admin/analytics', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': token,
+            },
+            body: JSON.stringify({ action: 'refresh', periodDays }),
+          })
+
+          const refreshPayload = (await refreshResponse
+            .json()
+            .catch(() => null)) as AnalyticsApiResponse | null
+
+          if (!refreshResponse.ok || !refreshPayload?.success) {
+            throw new Error(
+              refreshPayload?.error ||
+                t('admin.analyticsPage.errors.refreshFailed')
+            )
+          }
+
+          if (refreshPayload.data) {
+            setModel(refreshPayload.data)
+          }
+        }
+
+        const response = await fetch(
+          `/api/admin/analytics?periodDays=${periodDays}`,
+          {
+            method: 'GET',
+            cache: 'no-store',
+          }
+        )
+
+        const payload = (await response
+          .json()
+          .catch(() => null)) as AnalyticsApiResponse | null
+
+        if (!response.ok || !payload?.success || !payload.data) {
+          throw new Error(
+            payload?.error || t('admin.analyticsPage.errors.loadFailed')
           )
         }
 
-        const appointments = (appointmentsData ||
-          []) as AppointmentAnalyticsRow[]
-        const services = (servicesData || []) as ServiceRow[]
-        const totalAppointments = appointments.length
-        const completedAppointments = appointments.filter(
-          appointment => appointment.status === 'completed'
-        ).length
-        const pendingAppointments = appointments.filter(
-          appointment => appointment.status === 'pending'
-        ).length
-        const cancelledAppointments = appointments.filter(appointment =>
-          ['cancelled', 'no_show'].includes(appointment.status)
-        ).length
-        const revenue = appointments.reduce(
-          (sum, appointment) => sum + Number(appointment.price_uah || 0),
-          0
-        )
-        const completionRate =
-          totalAppointments > 0
-            ? (completedAppointments / totalAppointments) * 100
-            : 0
-        const averageTicket =
-          completedAppointments > 0 ? revenue / completedAppointments : 0
-
-        const sourceMap = new Map<string, number>()
-        appointments.forEach(appointment => {
-          const source = appointment.source || 'unknown'
-          sourceMap.set(source, (sourceMap.get(source) || 0) + 1)
-        })
-
-        const sourceBreakdown = Array.from(sourceMap.entries())
-          .map(([name, count]) => ({ name, count }))
-          .sort((a, b) => b.count - a.count)
-
-        const timeline = buildTimeline(periodDays, appointments)
-        const topServices = buildTopServices(appointments, services)
-
-        setModel({
-          totalAppointments,
-          completedAppointments,
-          pendingAppointments,
-          cancelledAppointments,
-          completionRate,
-          revenue,
-          averageTicket,
-          totalPatients: totalPatients || 0,
-          unreadContacts: unreadContacts || 0,
-          pendingReviews: pendingReviews || 0,
-          timeline,
-          sourceBreakdown,
-          topServices,
-        })
+        setModel(payload.data)
       } catch (loadError) {
         console.error('Failed to load analytics:', loadError)
-        setError('Не вдалося завантажити аналітику.')
+        setError(
+          loadError instanceof Error
+            ? loadError.message
+            : t('admin.analyticsPage.errors.loadFailedFallback')
+        )
       } finally {
         setIsLoading(false)
         setIsRefreshing(false)
       }
     },
-    [periodDays]
+    [csrfToken, periodDays, refreshToken, t]
   )
 
   useEffect(() => {
@@ -242,11 +145,10 @@ export default function AdminAnalyticsPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-dental-dark">
-            Аналітика клініки
+            {t('admin.analyticsPage.title')}
           </h1>
           <p className="text-sm text-dental-text-light">
-            Операційна аналітика в реальному часі по appointments, контактах і
-            ревʼю.
+            {t('admin.analyticsPage.description')}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -259,18 +161,18 @@ export default function AdminAnalyticsPage() {
           >
             {PERIODS.map(period => (
               <option key={period.value} value={period.value}>
-                {period.label}
+                {t(`admin.analyticsPage.periods.${period.value}`)}
               </option>
             ))}
           </select>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => void loadAnalytics(true)}
+            onClick={() => void loadAnalytics(true, true)}
             isLoading={isRefreshing}
           >
             <RefreshCw className="mr-2 h-4 w-4" />
-            Оновити
+            {t('admin.analyticsPage.refresh')}
           </Button>
         </div>
       </div>
@@ -283,37 +185,47 @@ export default function AdminAnalyticsPage() {
 
       {isLoading || !model ? (
         <div className="rounded-xl border border-dental-secondary-200 bg-white px-4 py-8 text-center text-dental-text-light">
-          Завантаження аналітики...
+          {t('admin.analyticsPage.loading')}
         </div>
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
             <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-              <p className="text-xs text-dental-text-light">Appointments</p>
+              <p className="text-xs text-dental-text-light">
+                {t('admin.analyticsPage.cards.appointments')}
+              </p>
               <p className="text-2xl font-bold text-dental-dark">
                 {model.totalAppointments}
               </p>
             </div>
             <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-              <p className="text-xs text-dental-text-light">Completion rate</p>
+              <p className="text-xs text-dental-text-light">
+                {t('admin.analyticsPage.cards.completionRate')}
+              </p>
               <p className="text-2xl font-bold text-green-600">
                 {model.completionRate.toFixed(1)}%
               </p>
             </div>
             <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-              <p className="text-xs text-dental-text-light">Revenue</p>
+              <p className="text-xs text-dental-text-light">
+                {t('admin.analyticsPage.cards.revenue')}
+              </p>
               <p className="text-xl font-bold text-dental-dark">
                 {formatCurrency(model.revenue)}
               </p>
             </div>
             <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-              <p className="text-xs text-dental-text-light">Avg ticket</p>
+              <p className="text-xs text-dental-text-light">
+                {t('admin.analyticsPage.cards.avgTicket')}
+              </p>
               <p className="text-xl font-bold text-dental-dark">
                 {formatCurrency(model.averageTicket)}
               </p>
             </div>
             <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-              <p className="text-xs text-dental-text-light">Patients</p>
+              <p className="text-xs text-dental-text-light">
+                {t('admin.analyticsPage.cards.patients')}
+              </p>
               <p className="text-2xl font-bold text-dental-dark">
                 {model.totalPatients}
               </p>
@@ -323,14 +235,18 @@ export default function AdminAnalyticsPage() {
           <div className="grid gap-4 lg:grid-cols-3">
             <div className="rounded-xl border border-dental-secondary-200 bg-white p-4 lg:col-span-2">
               <h2 className="text-lg font-semibold text-dental-dark">
-                Динаміка записів по днях
+                {t('admin.analyticsPage.timeline.title')}
               </h2>
               <div className="mt-4 space-y-2">
                 {model.timeline.map(item => (
                   <div key={item.date}>
                     <div className="mb-1 flex items-center justify-between text-xs text-dental-text-light">
                       <span>{item.date}</span>
-                      <span>{item.count} записів</span>
+                      <span>
+                        {t('admin.analyticsPage.timeline.appointmentsCount', {
+                          count: item.count,
+                        })}
+                      </span>
                     </div>
                     <div className="h-2 overflow-hidden rounded-full bg-dental-primary-100">
                       <div
@@ -348,23 +264,38 @@ export default function AdminAnalyticsPage() {
             <div className="space-y-4">
               <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
                 <h2 className="text-lg font-semibold text-dental-dark">
-                  Статуси
+                  {t('admin.analyticsPage.statuses.title')}
                 </h2>
                 <ul className="mt-3 space-y-2 text-sm text-dental-text">
-                  <li>pending: {model.pendingAppointments}</li>
-                  <li>completed: {model.completedAppointments}</li>
-                  <li>cancelled/no_show: {model.cancelledAppointments}</li>
-                  <li>unread contacts: {model.unreadContacts}</li>
-                  <li>pending reviews: {model.pendingReviews}</li>
+                  <li>
+                    {t('admin.analyticsPage.statuses.pending')}:{' '}
+                    {model.pendingAppointments}
+                  </li>
+                  <li>
+                    {t('admin.analyticsPage.statuses.completed')}:{' '}
+                    {model.completedAppointments}
+                  </li>
+                  <li>
+                    {t('admin.analyticsPage.statuses.cancelledNoShow')}:{' '}
+                    {model.cancelledAppointments}
+                  </li>
+                  <li>
+                    {t('admin.analyticsPage.statuses.unreadContacts')}:{' '}
+                    {model.unreadContacts}
+                  </li>
+                  <li>
+                    {t('admin.analyticsPage.statuses.pendingReviews')}:{' '}
+                    {model.pendingReviews}
+                  </li>
                 </ul>
               </div>
               <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
                 <h2 className="text-lg font-semibold text-dental-dark">
-                  Джерела записів
+                  {t('admin.analyticsPage.sources.title')}
                 </h2>
                 <ul className="mt-3 space-y-2 text-sm text-dental-text">
                   {model.sourceBreakdown.length === 0 ? (
-                    <li>Немає даних</li>
+                    <li>{t('admin.analyticsPage.common.noData')}</li>
                   ) : (
                     model.sourceBreakdown.map(source => (
                       <li
@@ -383,11 +314,13 @@ export default function AdminAnalyticsPage() {
 
           <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
             <h2 className="text-lg font-semibold text-dental-dark">
-              Топ послуг
+              {t('admin.analyticsPage.topServices.title')}
             </h2>
             <div className="mt-3 grid gap-2 md:grid-cols-2">
               {model.topServices.length === 0 ? (
-                <p className="text-sm text-dental-text-light">Немає даних</p>
+                <p className="text-sm text-dental-text-light">
+                  {t('admin.analyticsPage.common.noData')}
+                </p>
               ) : (
                 model.topServices.map(service => (
                   <div

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
@@ -20,14 +21,27 @@ import {
 } from 'lucide-react'
 
 // Dynamic import for heavy chart components - ssr: false to avoid hydration issues
-const Tooltip = dynamic(() => import('recharts').then(mod => mod.Tooltip), { ssr: false })
-const ResponsiveContainer = dynamic(() => import('recharts').then(mod => mod.ResponsiveContainer), { 
+const Tooltip = dynamic(() => import('recharts').then(mod => mod.Tooltip), {
   ssr: false,
-  loading: () => <div className="h-48 bg-dental-primary-50 rounded animate-pulse" />
 })
-const PieChart = dynamic(() => import('recharts').then(mod => mod.PieChart), { ssr: false })
-const Pie = dynamic(() => import('recharts').then(mod => mod.Pie), { ssr: false })
-const Cell = dynamic(() => import('recharts').then(mod => mod.Cell), { ssr: false })
+const ResponsiveContainer = dynamic(
+  () => import('recharts').then(mod => mod.ResponsiveContainer),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-48 bg-dental-primary-50 rounded animate-pulse" />
+    ),
+  }
+)
+const PieChart = dynamic(() => import('recharts').then(mod => mod.PieChart), {
+  ssr: false,
+})
+const Pie = dynamic(() => import('recharts').then(mod => mod.Pie), {
+  ssr: false,
+})
+const Cell = dynamic(() => import('recharts').then(mod => mod.Cell), {
+  ssr: false,
+})
 
 interface DashboardStats {
   totalAppointments: number
@@ -53,9 +67,17 @@ interface ServiceStat {
   color: string
 }
 
-const SERVICE_COLORS = ['#0d9488', '#3b82f6', '#8b5cf6', '#f59e0b', '#6b7280', '#ef4444']
+const SERVICE_COLORS = [
+  '#0d9488',
+  '#3b82f6',
+  '#8b5cf6',
+  '#f59e0b',
+  '#6b7280',
+  '#ef4444',
+]
 
 export default function AdminDashboard() {
+  const { t } = useTranslation()
   const router = useRouter()
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([])
@@ -67,21 +89,26 @@ export default function AdminDashboard() {
   useEffect(() => {
     const checkAdminAndFetchData = async () => {
       const supabase = createClient()
-      
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/auth/login')
+      if (!supabase) {
+        router.push('/admin/login')
         return
       }
 
-      // Check if user is admin
-      const { data: adminData } = await supabase
-        .from('admin_users')
-        .select('role')
-        .eq('id', user.id)
-        .single()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) {
+        router.push('/admin/login')
+        return
+      }
 
-      if (!adminData) {
+      const { data: adminMembership } = await supabase
+        .from('admin_users')
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle()
+
+      if (!adminMembership) {
         router.push('/cabinet')
         return
       }
@@ -90,7 +117,7 @@ export default function AdminDashboard() {
 
       // Fetch all stats
       const today = new Date().toISOString().split('T')[0]
-      
+
       const [
         { count: totalAppointments },
         { count: todayCount },
@@ -102,21 +129,42 @@ export default function AdminDashboard() {
         { data: todayAppts },
         { data: serviceData },
       ] = await Promise.all([
-        supabase.from('appointments').select('*', { count: 'exact', head: true }),
-        supabase.from('appointments').select('*', { count: 'exact', head: true }).eq('appointment_date', today),
-        supabase.from('appointments').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-        supabase.from('appointments').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
-        supabase.from('doctors').select('*', { count: 'exact', head: true }).eq('is_active', true),
-        supabase.from('contact_submissions').select('*', { count: 'exact', head: true }).eq('is_read', false),
-        supabase.from('reviews').select('*', { count: 'exact', head: true }).eq('is_approved', false),
-        supabase.from('appointments')
-          .select('id, patient_name, appointment_time, status, services(name_uk)')
+        supabase
+          .from('appointments')
+          .select('*', { count: 'exact', head: true }),
+        supabase
+          .from('appointments')
+          .select('*', { count: 'exact', head: true })
+          .eq('appointment_date', today),
+        supabase
+          .from('appointments')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'pending'),
+        supabase
+          .from('appointments')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'completed'),
+        supabase
+          .from('doctors')
+          .select('*', { count: 'exact', head: true })
+          .eq('is_active', true),
+        supabase
+          .from('contact_submissions')
+          .select('*', { count: 'exact', head: true })
+          .eq('is_read', false),
+        supabase
+          .from('reviews')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'pending'),
+        supabase
+          .from('appointments')
+          .select(
+            'id, patient_name, appointment_time, status, services(name_uk)'
+          )
           .eq('appointment_date', today)
           .order('appointment_time', { ascending: true })
           .limit(5),
-        supabase.from('services')
-          .select('category')
-          .eq('is_active', true),
+        supabase.from('services').select('category').eq('is_active', true),
       ])
 
       setStats({
@@ -133,13 +181,19 @@ export default function AdminDashboard() {
 
       // Calculate service distribution
       if (serviceData) {
-        const categories = serviceData.reduce((acc, s) => {
-          acc[s.category] = (acc[s.category] || 0) + 1
-          return acc
-        }, {} as Record<string, number>)
-        
-        const total = Object.values(categories).reduce((a, b) => a + b, 0)
-        const serviceStatsData = Object.entries(categories).map(([name, count], i) => ({
+        const categories = serviceData.reduce(
+          (acc: Record<string, number>, s: { category: string }) => {
+            acc[s.category] = (acc[s.category] || 0) + 1
+            return acc
+          },
+          {} as Record<string, number>
+        )
+
+        const vals = Object.values(categories) as number[]
+        const total = vals.reduce((a, b) => a + b, 0)
+        const serviceStatsData = (
+          Object.entries(categories) as [string, number][]
+        ).map(([name, count], i) => ({
           name,
           value: Math.round((count / total) * 100),
           color: SERVICE_COLORS[i % SERVICE_COLORS.length],
@@ -156,6 +210,7 @@ export default function AdminDashboard() {
 
   const handleLogout = async () => {
     const supabase = createClient()
+    if (!supabase) return
     await supabase.auth.signOut()
     router.push('/')
   }
@@ -197,7 +252,7 @@ export default function AdminDashboard() {
         </div>
         <div className="mt-4">
           <p className="text-3xl font-bold text-dental-dark">
-            {typeof value === 'number' ? value.toLocaleString('uk-UA') : value}
+            {typeof value === 'number' ? value.toLocaleString() : value}
           </p>
           <p className="text-sm text-dental-text-light mt-1">{title}</p>
         </div>
@@ -227,14 +282,16 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-dental-dark">
-                Dental<span className="text-dental-primary-600">Story</span> Admin
+                {t('common.brandName')} {t('admin.layout.panel')}
               </h1>
-              <p className="text-sm text-dental-text-light">Панель керування клінікою</p>
+              <p className="text-sm text-dental-text-light">
+                {t('admin.dashboard.clinicPanel')}
+              </p>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 text-sm text-dental-text-light">
                 <Clock className="w-4 h-4" />
-                Оновлено: {lastUpdated}
+                {t('admin.dashboard.updated')}: {lastUpdated}
               </div>
               <Link
                 href="/admin/settings"
@@ -247,7 +304,9 @@ export default function AdminDashboard() {
                 className="flex items-center gap-2 text-dental-text hover:text-dental-primary-600 transition-colors"
               >
                 <LogOut className="w-5 h-5" />
-                <span className="hidden sm:inline">Вийти</span>
+                <span className="hidden sm:inline">
+                  {t('admin.dashboard.logout')}
+                </span>
               </button>
             </div>
           </div>
@@ -258,30 +317,38 @@ export default function AdminDashboard() {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
           <StatCard
-            title="Всього записів"
+            title={t('admin.dashboard.totalAppointments')}
             value={stats?.totalAppointments || 0}
             icon={Calendar}
             iconBg="bg-dental-primary-500"
             href="/admin/appointments"
-            badge={stats?.pendingAppointments ? `${stats.pendingAppointments} нових` : undefined}
+            badge={
+              stats?.pendingAppointments
+                ? `${stats.pendingAppointments} ${t('admin.dashboard.newBadge')}`
+                : undefined
+            }
           />
           <StatCard
-            title="Сьогодні"
+            title={t('admin.dashboard.today')}
             value={stats?.todayAppointments || 0}
             icon={Clock}
             iconBg="bg-dental-info"
             href="/admin/appointments?filter=today"
           />
           <StatCard
-            title="Звернень"
+            title={t('admin.dashboard.contacts')}
             value={stats?.unreadContacts || 0}
             icon={MessageSquare}
             iconBg="bg-dental-warning"
             href="/admin/contacts"
-            badge={stats?.unreadContacts ? 'нові' : undefined}
+            badge={
+              stats?.unreadContacts
+                ? t('admin.dashboard.newBadgePlural')
+                : undefined
+            }
           />
           <StatCard
-            title="Відгуків на модерації"
+            title={t('admin.dashboard.reviewsModeration')}
             value={stats?.pendingReviews || 0}
             icon={Star}
             iconBg="bg-dental-success"
@@ -294,19 +361,26 @@ export default function AdminDashboard() {
           {/* Today's Appointments */}
           <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-6 border border-dental-secondary-200">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-dental-dark">Записи на сьогодні</h2>
-              <Link href="/admin/appointments?filter=today" className="text-sm text-dental-primary-600 hover:text-dental-primary-700">
-                Всі записи
+              <h2 className="text-lg font-semibold text-dental-dark">
+                {t('admin.dashboard.todayAppointments')}
+              </h2>
+              <Link
+                href="/admin/appointments?filter=today"
+                className="text-sm text-dental-primary-600 hover:text-dental-primary-700"
+              >
+                {t('admin.dashboard.allAppointments')}
               </Link>
             </div>
             {todayAppointments.length === 0 ? (
               <div className="py-12 text-center">
                 <Calendar className="w-12 h-12 text-dental-secondary-300 mx-auto mb-3" />
-                <p className="text-dental-text-light">На сьогодні записів немає</p>
+                <p className="text-dental-text-light">
+                  {t('admin.dashboard.noAppointmentsToday')}
+                </p>
               </div>
             ) : (
               <div className="space-y-3">
-                {todayAppointments.map((apt) => (
+                {todayAppointments.map(apt => (
                   <div
                     key={apt.id}
                     className="flex items-center justify-between p-3 bg-dental-primary-50 rounded-lg"
@@ -316,19 +390,26 @@ export default function AdminDashboard() {
                         <Users className="w-5 h-5 text-dental-primary-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-dental-dark">{apt.patient_name}</p>
-                        <p className="text-sm text-dental-text-light">{apt.services?.[0]?.name_uk || 'Консультація'}</p>
+                        <p className="font-medium text-dental-dark">
+                          {apt.patient_name}
+                        </p>
+                        <p className="text-sm text-dental-text-light">
+                          {apt.services?.[0]?.name_uk ||
+                            t('admin.dashboard.consultation')}
+                        </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium text-dental-dark">{apt.appointment_time.slice(0, 5)}</p>
+                      <p className="font-medium text-dental-dark">
+                        {apt.appointment_time.slice(0, 5)}
+                      </p>
                       <span
                         className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${
                           apt.status === 'confirmed'
                             ? 'bg-dental-success-light text-dental-success'
                             : apt.status === 'completed'
-                            ? 'bg-dental-secondary-100 text-dental-text-light'
-                            : 'bg-dental-warning-light text-dental-warning'
+                              ? 'bg-dental-secondary-100 text-dental-text-light'
+                              : 'bg-dental-warning-light text-dental-warning'
                         }`}
                       >
                         {apt.status === 'confirmed' ? (
@@ -336,8 +417,11 @@ export default function AdminDashboard() {
                         ) : (
                           <AlertCircle className="w-3 h-3" />
                         )}
-                        {apt.status === 'confirmed' ? 'Підтверджено' : 
-                         apt.status === 'completed' ? 'Завершено' : 'Очікує'}
+                        {apt.status === 'confirmed'
+                          ? t('admin.dashboard.statusConfirmed')
+                          : apt.status === 'completed'
+                            ? t('admin.dashboard.statusCompleted')
+                            : t('admin.dashboard.statusPending')}
                       </span>
                     </div>
                   </div>
@@ -348,11 +432,15 @@ export default function AdminDashboard() {
 
           {/* Services Distribution */}
           <div className="bg-white rounded-xl shadow-sm p-6 border border-dental-secondary-200">
-            <h2 className="text-lg font-semibold text-dental-dark mb-4">Категорії послуг</h2>
+            <h2 className="text-lg font-semibold text-dental-dark mb-4">
+              {t('admin.dashboard.serviceCategories')}
+            </h2>
             {serviceStats.length === 0 ? (
               <div className="py-12 text-center">
                 <TrendingUp className="w-12 h-12 text-dental-secondary-300 mx-auto mb-3" />
-                <p className="text-dental-text-light">Немає даних</p>
+                <p className="text-dental-text-light">
+                  {t('admin.dashboard.noData')}
+                </p>
               </div>
             ) : (
               <>
@@ -383,16 +471,23 @@ export default function AdminDashboard() {
                   </ResponsiveContainer>
                 </div>
                 <div className="mt-4 space-y-2">
-                  {serviceStats.map((service) => (
-                    <div key={service.name} className="flex items-center justify-between text-sm">
+                  {serviceStats.map(service => (
+                    <div
+                      key={service.name}
+                      className="flex items-center justify-between text-sm"
+                    >
                       <div className="flex items-center gap-2">
                         <div
                           className="w-3 h-3 rounded-full"
                           style={{ backgroundColor: service.color }}
                         />
-                        <span className="text-dental-text-light">{service.name}</span>
+                        <span className="text-dental-text-light">
+                          {service.name}
+                        </span>
                       </div>
-                      <span className="font-medium text-dental-dark">{service.value}%</span>
+                      <span className="font-medium text-dental-dark">
+                        {service.value}%
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -403,31 +498,53 @@ export default function AdminDashboard() {
 
         {/* Quick Links */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <Link href="/admin/appointments" className="bg-gradient-to-br from-dental-primary-500 to-dental-primary-600 rounded-xl p-4 text-white hover:from-dental-primary-600 hover:to-dental-primary-700 transition-all">
+          <Link
+            href="/admin/appointments"
+            className="bg-gradient-to-br from-dental-primary-500 to-dental-primary-600 rounded-xl p-4 text-white hover:from-dental-primary-600 hover:to-dental-primary-700 transition-all"
+          >
             <div className="flex items-center gap-2 mb-2">
               <Calendar className="w-5 h-5" />
-              <span className="text-sm font-medium opacity-90">Записи</span>
+              <span className="text-sm font-medium opacity-90">
+                {t('admin.sidebar.appointments')}
+              </span>
             </div>
             <p className="text-2xl font-bold">{stats?.totalAppointments}</p>
           </Link>
-          <Link href="/admin/doctors" className="bg-gradient-to-br from-dental-info to-dental-info-dark rounded-xl p-4 text-white hover:from-dental-info-dark hover:to-dental-info-darker transition-all">
+          <Link
+            href="/admin/doctors"
+            className="bg-gradient-to-br from-dental-info to-dental-info-dark rounded-xl p-4 text-white hover:from-dental-info-dark hover:to-dental-info-darker transition-all"
+          >
             <div className="flex items-center gap-2 mb-2">
               <Users className="w-5 h-5" />
-              <span className="text-sm font-medium opacity-90">Лікарі</span>
+              <span className="text-sm font-medium opacity-90">
+                {t('admin.dashboard.doctors')}
+              </span>
             </div>
             <p className="text-2xl font-bold">{stats?.totalDoctors}</p>
           </Link>
-          <Link href="/admin/services" className="bg-gradient-to-br from-dental-warning to-dental-warning-dark rounded-xl p-4 text-white hover:from-dental-warning-dark hover:to-dental-warning-darker transition-all">
+          <Link
+            href="/admin/services"
+            className="bg-gradient-to-br from-dental-warning to-dental-warning-dark rounded-xl p-4 text-white hover:from-dental-warning-dark hover:to-dental-warning-darker transition-all"
+          >
             <div className="flex items-center gap-2 mb-2">
               <TrendingUp className="w-5 h-5" />
-              <span className="text-sm font-medium opacity-90">Послуги</span>
+              <span className="text-sm font-medium opacity-90">
+                {t('admin.sidebar.services')}
+              </span>
             </div>
-            <p className="text-lg font-bold">Прайс-лист</p>
+            <p className="text-lg font-bold">
+              {t('admin.dashboard.priceList')}
+            </p>
           </Link>
-          <Link href="/admin/contacts" className="bg-gradient-to-br from-dental-success to-dental-success-dark rounded-xl p-4 text-white hover:from-dental-success-dark hover:to-dental-success-darker transition-all">
+          <Link
+            href="/admin/contacts"
+            className="bg-gradient-to-br from-dental-success to-dental-success-dark rounded-xl p-4 text-white hover:from-dental-success-dark hover:to-dental-success-darker transition-all"
+          >
             <div className="flex items-center gap-2 mb-2">
               <MessageSquare className="w-5 h-5" />
-              <span className="text-sm font-medium opacity-90">Звернення</span>
+              <span className="text-sm font-medium opacity-90">
+                {t('admin.dashboard.contacts')}
+              </span>
             </div>
             <p className="text-2xl font-bold">{stats?.unreadContacts}</p>
           </Link>

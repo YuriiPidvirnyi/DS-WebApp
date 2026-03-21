@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Search, Plus, Filter, Download, Edit, Trash2, Eye } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { getPatients, searchPatients } from '@/services/patientManagement'
 import { Button, Input } from '@/components/ui'
 import type { EnhancedPatient } from '@/types'
 
 export default function PatientManagement() {
+  const { t, i18n } = useTranslation()
   const [patients, setPatients] = useState<EnhancedPatient[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -13,6 +15,13 @@ export default function PatientManagement() {
   >('active')
   const [page, setPage] = useState(1)
   const [total, setTotal] = useState(0)
+
+  const locale =
+    i18n.language === 'pl'
+      ? 'pl-PL'
+      : i18n.language === 'en'
+        ? 'en-US'
+        : 'uk-UA'
 
   const loadPatients = useCallback(async () => {
     setLoading(true)
@@ -64,13 +73,17 @@ export default function PatientManagement() {
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">
-              Управління пацієнтами
+              {t('admin.patientManagement.title')}
             </h1>
-            <p className="text-gray-600">Всього: {total} пацієнтів</p>
+            <p className="text-gray-600">
+              {t('admin.patientManagement.totalPatients', { total })}
+            </p>
           </div>
-          <Button onClick={() => alert('Додати пацієнта')}>
+          <Button
+            onClick={() => alert(t('admin.patientManagement.addPatientAlert'))}
+          >
             <Plus className="w-5 h-5 mr-2" />
-            Новий пацієнт
+            {t('admin.patientManagement.newPatient')}
           </Button>
         </div>
 
@@ -82,7 +95,7 @@ export default function PatientManagement() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
                   className="pl-10"
-                  placeholder="Пошук за ПІБ, телефоном, email..."
+                  placeholder={t('admin.patientManagement.searchPlaceholder')}
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleSearch()}
@@ -90,7 +103,7 @@ export default function PatientManagement() {
               </div>
             </div>
             <Button onClick={handleSearch} variant="outline">
-              Пошук
+              {t('admin.patientManagement.searchButton')}
             </Button>
             <select
               value={statusFilter}
@@ -99,17 +112,23 @@ export default function PatientManagement() {
               }
               className="px-4 py-2 border rounded-lg"
             >
-              <option value="all">Всі статуси</option>
-              <option value="active">Активні</option>
-              <option value="inactive">Неактивні</option>
+              <option value="all">
+                {t('admin.patientManagement.allStatuses')}
+              </option>
+              <option value="active">
+                {t('admin.patientManagement.statuses.active')}
+              </option>
+              <option value="inactive">
+                {t('admin.patientManagement.statuses.inactive')}
+              </option>
             </select>
             <Button variant="outline">
               <Filter className="w-5 h-5 mr-2" />
-              Фільтри
+              {t('admin.patientManagement.filters')}
             </Button>
             <Button variant="outline">
               <Download className="w-5 h-5 mr-2" />
-              Експорт
+              {t('admin.patientManagement.export')}
             </Button>
           </div>
         </div>
@@ -126,25 +145,25 @@ export default function PatientManagement() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      ПІБ
+                      {t('admin.patientManagement.table.headers.fullName')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Телефон
+                      {t('admin.patientManagement.table.headers.phone')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Email
+                      {t('admin.patientManagement.table.headers.email')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Останній візит
+                      {t('admin.patientManagement.table.headers.lastVisit')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Борг
+                      {t('admin.patientManagement.table.headers.debt')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Статус
+                      {t('admin.patientManagement.table.headers.status')}
                     </th>
                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
-                      Дії
+                      {t('admin.patientManagement.table.headers.actions')}
                     </th>
                   </tr>
                 </thead>
@@ -191,15 +210,16 @@ export default function PatientManagement() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {patient.lastVisitDate
                           ? new Date(patient.lastVisitDate).toLocaleDateString(
-                              'uk'
+                              locale
                             )
-                          : 'Не було'}
+                          : t('admin.patientManagement.table.lastVisitNever')}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
                           className={`text-sm font-medium ${patient.outstandingBalance > 0 ? 'text-red-600' : 'text-green-600'}`}
                         >
-                          {patient.outstandingBalance.toLocaleString()} грн
+                          {patient.outstandingBalance.toLocaleString(locale)}{' '}
+                          {t('cabinet.currency')}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -211,27 +231,33 @@ export default function PatientManagement() {
                           }`}
                         >
                           {patient.status === 'active'
-                            ? 'Активний'
-                            : 'Неактивний'}
+                            ? t('admin.patientManagement.statuses.active')
+                            : t('admin.patientManagement.statuses.inactive')}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex justify-end gap-2">
                           <button
                             className="text-blue-600 hover:text-blue-900"
-                            title="Переглянути"
+                            title={t(
+                              'admin.patientManagement.table.actions.view'
+                            )}
                           >
                             <Eye className="w-5 h-5" />
                           </button>
                           <button
                             className="text-green-600 hover:text-green-900"
-                            title="Редагувати"
+                            title={t(
+                              'admin.patientManagement.table.actions.edit'
+                            )}
                           >
                             <Edit className="w-5 h-5" />
                           </button>
                           <button
                             className="text-red-600 hover:text-red-900"
-                            title="Видалити"
+                            title={t(
+                              'admin.patientManagement.table.actions.delete'
+                            )}
                           >
                             <Trash2 className="w-5 h-5" />
                           </button>
@@ -248,7 +274,10 @@ export default function PatientManagement() {
           {!loading && total > 20 && (
             <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
               <div className="text-sm text-gray-700">
-                Показано {Math.min(page * 20, total)} з {total}
+                {t('admin.patientManagement.pagination.shown', {
+                  shown: Math.min(page * 20, total),
+                  total,
+                })}
               </div>
               <div className="flex gap-2">
                 <Button
@@ -257,7 +286,7 @@ export default function PatientManagement() {
                   onClick={() => setPage(p => Math.max(1, p - 1))}
                   disabled={page === 1}
                 >
-                  Попередня
+                  {t('common.previous')}
                 </Button>
                 <Button
                   variant="outline"
@@ -265,7 +294,7 @@ export default function PatientManagement() {
                   onClick={() => setPage(p => p + 1)}
                   disabled={page * 20 >= total}
                 >
-                  Наступна
+                  {t('common.next')}
                 </Button>
               </div>
             </div>

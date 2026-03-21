@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { RefreshCw, Star } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button, Input } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
@@ -23,6 +24,7 @@ interface ReviewRow {
 }
 
 export default function AdminReviewsPage() {
+  const { t } = useTranslation()
   const { preferences } = useAdminPreferences()
   const [rows, setRows] = useState<ReviewRow[]>([])
   const [selectedIds, setSelectedIds] = useState<string[]>([])
@@ -44,7 +46,7 @@ export default function AdminReviewsPage() {
     async (silent = false) => {
       const supabase = createClient()
       if (!supabase) {
-        setError('Supabase не налаштований. Перевірте змінні середовища.')
+        setError(t('admin.reviewsPage.errors.supabaseUnavailable'))
         setIsLoading(false)
         return
       }
@@ -93,13 +95,13 @@ export default function AdminReviewsPage() {
         setRows((data || []) as ReviewRow[])
       } catch (loadError) {
         console.error('Failed to load reviews:', loadError)
-        setError('Не вдалося завантажити відгуки.')
+        setError(t('admin.reviewsPage.errors.loadFailed'))
       } finally {
         setIsLoading(false)
         setIsRefreshing(false)
       }
     },
-    [ratingFilter, searchTerm, statusFilter]
+    [ratingFilter, searchTerm, statusFilter, t]
   )
 
   useEffect(() => {
@@ -126,6 +128,10 @@ export default function AdminReviewsPage() {
   const emptyStateClass = `${
     preferences.compactTables ? 'px-3 py-6' : 'px-4 py-8'
   } text-center text-dental-text-light`
+  const getStatusLabel = useCallback(
+    (status: ReviewStatus) => t(`admin.reviewStatuses.${status}`),
+    [t]
+  )
 
   const confirmIfNeeded = useCallback(
     (message: string) => {
@@ -153,7 +159,9 @@ export default function AdminReviewsPage() {
     if (selectedIds.length === 0) return
     if (
       !confirmIfNeeded(
-        `Застосувати масову модерацію до ${selectedIds.length} відгуків?`
+        t('admin.reviewsPage.confirmations.bulkModeration', {
+          count: selectedIds.length,
+        })
       )
     ) {
       return
@@ -202,7 +210,7 @@ export default function AdminReviewsPage() {
       )
     } catch (updateError) {
       console.error('Failed to apply bulk review changes:', updateError)
-      setError('Не вдалося застосувати масові зміни до відгуків.')
+      setError(t('admin.reviewsPage.errors.bulkUpdateFailed'))
     } finally {
       setIsUpdatingId(null)
     }
@@ -213,8 +221,9 @@ export default function AdminReviewsPage() {
       id: string,
       patch: Partial<Pick<ReviewRow, 'status' | 'is_featured'>>
     ) => {
-      if (!confirmIfNeeded('Підтвердити зміну статусу/featured для відгуку?'))
+      if (!confirmIfNeeded(t('admin.reviewsPage.confirmations.singleUpdate'))) {
         return
+      }
 
       const supabase = createClient()
       if (!supabase) return
@@ -239,12 +248,12 @@ export default function AdminReviewsPage() {
         )
       } catch (updateError) {
         console.error('Failed to update review:', updateError)
-        setError('Не вдалося оновити відгук.')
+        setError(t('admin.reviewsPage.errors.updateFailed'))
       } finally {
         setIsUpdatingId(null)
       }
     },
-    [confirmIfNeeded, loadReviews, preferences.autoRefreshLists]
+    [confirmIfNeeded, loadReviews, preferences.autoRefreshLists, t]
   )
 
   return (
@@ -252,10 +261,10 @@ export default function AdminReviewsPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-dental-dark">
-            Модерація відгуків
+            {t('admin.reviewsPage.title')}
           </h1>
           <p className="text-sm text-dental-text-light">
-            Швидке погодження/відхилення відгуків та управління featured-блоком.
+            {t('admin.reviewsPage.description')}
           </p>
         </div>
         <Button
@@ -265,25 +274,33 @@ export default function AdminReviewsPage() {
           isLoading={isRefreshing}
         >
           <RefreshCw className="mr-2 h-4 w-4" />
-          Оновити
+          {t('admin.reviewsPage.refresh')}
         </Button>
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">Всього</p>
+          <p className="text-xs text-dental-text-light">
+            {t('admin.reviewsPage.summary.total')}
+          </p>
           <p className="text-2xl font-bold text-dental-dark">{stats.total}</p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">Pending</p>
+          <p className="text-xs text-dental-text-light">
+            {t('admin.reviewsPage.summary.pending')}
+          </p>
           <p className="text-2xl font-bold text-amber-600">{stats.pending}</p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">Approved</p>
+          <p className="text-xs text-dental-text-light">
+            {t('admin.reviewsPage.summary.approved')}
+          </p>
           <p className="text-2xl font-bold text-green-600">{stats.approved}</p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">Featured</p>
+          <p className="text-xs text-dental-text-light">
+            {t('admin.reviewsPage.summary.featured')}
+          </p>
           <p className="text-2xl font-bold text-dental-dark">
             {stats.featured}
           </p>
@@ -295,7 +312,7 @@ export default function AdminReviewsPage() {
           <Input
             value={searchTerm}
             onChange={event => setSearchTerm(event.target.value)}
-            placeholder="Пошук: автор, послуга, текст"
+            placeholder={t('admin.reviewsPage.filters.searchPlaceholder')}
             className="md:col-span-2"
           />
           <select
@@ -305,10 +322,12 @@ export default function AdminReviewsPage() {
             }
             className="rounded-lg border border-dental-secondary px-4 py-3 text-sm"
           >
-            <option value="all">Усі статуси</option>
-            <option value="pending">pending</option>
-            <option value="approved">approved</option>
-            <option value="rejected">rejected</option>
+            <option value="all">
+              {t('admin.reviewsPage.filters.allStatuses')}
+            </option>
+            <option value="pending">{getStatusLabel('pending')}</option>
+            <option value="approved">{getStatusLabel('approved')}</option>
+            <option value="rejected">{getStatusLabel('rejected')}</option>
           </select>
           <select
             value={ratingFilter}
@@ -317,28 +336,46 @@ export default function AdminReviewsPage() {
             }
             className="rounded-lg border border-dental-secondary px-4 py-3 text-sm"
           >
-            <option value="all">Всі рейтинги</option>
-            <option value="4+">4 і вище</option>
-            <option value="5">Тільки 5</option>
+            <option value="all">
+              {t('admin.reviewsPage.filters.allRatings')}
+            </option>
+            <option value="4+">
+              {t('admin.reviewsPage.filters.rating4plus')}
+            </option>
+            <option value="5">{t('admin.reviewsPage.filters.rating5')}</option>
           </select>
         </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2 rounded-xl border border-dental-secondary-200 bg-white px-4 py-3">
         <span className="text-sm text-dental-text-light">
-          Вибрано: {selectedIds.length}
+          {t('admin.reviewsPage.bulk.selected', { count: selectedIds.length })}
         </span>
         <Button variant="outline" size="sm" onClick={toggleSelectAll}>
-          {allSelected ? 'Зняти вибір' : 'Вибрати всі'}
+          {allSelected
+            ? t('admin.reviewsPage.bulk.unselectAll')
+            : t('admin.reviewsPage.bulk.selectAll')}
         </Button>
         <select
           value={bulkStatus}
           onChange={event => setBulkStatus(event.target.value as ReviewStatus)}
           className="rounded-md border border-dental-secondary px-3 py-1.5 text-sm"
         >
-          <option value="approved">Статус: approved</option>
-          <option value="rejected">Статус: rejected</option>
-          <option value="pending">Статус: pending</option>
+          <option value="approved">
+            {t('admin.reviewsPage.bulk.statusOption', {
+              status: getStatusLabel('approved'),
+            })}
+          </option>
+          <option value="rejected">
+            {t('admin.reviewsPage.bulk.statusOption', {
+              status: getStatusLabel('rejected'),
+            })}
+          </option>
+          <option value="pending">
+            {t('admin.reviewsPage.bulk.statusOption', {
+              status: getStatusLabel('pending'),
+            })}
+          </option>
         </select>
         <select
           value={bulkFeatured}
@@ -349,9 +386,15 @@ export default function AdminReviewsPage() {
           }
           className="rounded-md border border-dental-secondary px-3 py-1.5 text-sm"
         >
-          <option value="keep">Featured: без змін</option>
-          <option value="feature">Featured: увімкнути</option>
-          <option value="unfeature">Featured: вимкнути</option>
+          <option value="keep">
+            {t('admin.reviewsPage.bulk.feature.keep')}
+          </option>
+          <option value="feature">
+            {t('admin.reviewsPage.bulk.feature.enable')}
+          </option>
+          <option value="unfeature">
+            {t('admin.reviewsPage.bulk.feature.disable')}
+          </option>
         </select>
         <Button
           size="sm"
@@ -359,7 +402,7 @@ export default function AdminReviewsPage() {
           disabled={selectedIds.length === 0 || isUpdatingId === 'bulk'}
           isLoading={isUpdatingId === 'bulk'}
         >
-          Застосувати масово
+          {t('admin.reviewsPage.bulk.apply')}
         </Button>
       </div>
 
@@ -374,13 +417,13 @@ export default function AdminReviewsPage() {
           <div
             className={`rounded-xl border border-dental-secondary-200 bg-white ${emptyStateClass}`}
           >
-            Завантаження відгуків...
+            {t('admin.reviewsPage.loading')}
           </div>
         ) : rows.length === 0 ? (
           <div
             className={`rounded-xl border border-dental-secondary-200 bg-white ${emptyStateClass}`}
           >
-            Відгуків не знайдено.
+            {t('admin.reviewsPage.empty')}
           </div>
         ) : (
           rows.map(row => (
@@ -395,7 +438,9 @@ export default function AdminReviewsPage() {
                       type="checkbox"
                       checked={selectedSet.has(row.id)}
                       onChange={() => toggleSelection(row.id)}
-                      aria-label={`Вибрати відгук від ${row.name}`}
+                      aria-label={t('admin.reviewsPage.card.selectAria', {
+                        name: row.name,
+                      })}
                     />
                     <p className="font-semibold text-dental-dark">{row.name}</p>
                     <span
@@ -403,12 +448,12 @@ export default function AdminReviewsPage() {
                         row.status
                       )}`}
                     >
-                      {row.status}
+                      {getStatusLabel(row.status)}
                     </span>
                     {row.is_featured ? (
                       <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">
                         <Star className="h-3 w-3 fill-current" />
-                        featured
+                        {t('admin.reviewsPage.card.featured')}
                       </span>
                     ) : null}
                   </div>
@@ -436,7 +481,7 @@ export default function AdminReviewsPage() {
                   disabled={isUpdatingId === row.id}
                   className="rounded-md border border-green-200 bg-green-50 px-3 py-1.5 text-xs font-semibold text-green-700 hover:bg-green-100 disabled:opacity-60"
                 >
-                  Approve
+                  {t('admin.reviewsPage.actions.approve')}
                 </button>
                 <button
                   type="button"
@@ -446,7 +491,7 @@ export default function AdminReviewsPage() {
                   disabled={isUpdatingId === row.id}
                   className="rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:opacity-60"
                 >
-                  Reject
+                  {t('admin.reviewsPage.actions.reject')}
                 </button>
                 <button
                   type="button"
@@ -456,7 +501,7 @@ export default function AdminReviewsPage() {
                   disabled={isUpdatingId === row.id}
                   className="rounded-md border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-100 disabled:opacity-60"
                 >
-                  To pending
+                  {t('admin.reviewsPage.actions.toPending')}
                 </button>
                 <button
                   type="button"
@@ -466,10 +511,16 @@ export default function AdminReviewsPage() {
                   disabled={isUpdatingId === row.id}
                   className="rounded-md border border-dental-secondary px-3 py-1.5 text-xs font-semibold text-dental-text hover:bg-dental-secondary-50 disabled:opacity-60"
                 >
-                  {row.is_featured ? 'Unfeature' : 'Feature'}
+                  {row.is_featured
+                    ? t('admin.reviewsPage.actions.unfeature')
+                    : t('admin.reviewsPage.actions.feature')}
                 </button>
                 <span className="text-xs text-dental-text-light">
-                  Рекомендує: {row.would_recommend ? 'так' : 'ні'}
+                  {t('admin.reviewsPage.card.wouldRecommend', {
+                    value: row.would_recommend
+                      ? t('admin.reviewsPage.card.yes')
+                      : t('admin.reviewsPage.card.no'),
+                  })}
                 </span>
               </div>
             </div>

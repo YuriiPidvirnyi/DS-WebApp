@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslation } from 'react-i18next'
 import { Button, Textarea } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import {
@@ -28,40 +29,33 @@ interface ProfileState {
 }
 
 const AUDIT_TABLE_OPTIONS = [
-  { value: 'all', label: 'Усі таблиці' },
-  { value: 'doctors', label: 'doctors' },
-  { value: 'services', label: 'services' },
-  { value: 'appointments', label: 'appointments' },
-  { value: 'reviews', label: 'reviews' },
-  { value: 'contact_submissions', label: 'contact_submissions' },
-]
-
-const AUDIT_ACTION_OPTIONS = [
-  { value: 'all', label: 'Усі дії' },
-  { value: 'INSERT', label: 'INSERT' },
-  { value: 'UPDATE', label: 'UPDATE' },
-  { value: 'DELETE', label: 'DELETE' },
+  'all',
+  'doctors',
+  'services',
+  'appointments',
+  'reviews',
+  'contact_submissions',
 ] as const
 
-const AUDIT_PERIOD_OPTIONS = [
-  { value: 'all', label: 'За весь час' },
-  { value: '24h', label: 'Останні 24 год' },
-  { value: '7d', label: 'Останні 7 днів' },
-  { value: '30d', label: 'Останні 30 днів' },
-] as const
+const AUDIT_ACTION_OPTIONS = ['all', 'INSERT', 'UPDATE', 'DELETE'] as const
 
-type AuditActionFilter = (typeof AUDIT_ACTION_OPTIONS)[number]['value']
-type AuditPeriodFilter = (typeof AUDIT_PERIOD_OPTIONS)[number]['value']
+const AUDIT_PERIOD_OPTIONS = ['all', '24h', '7d', '30d'] as const
+
+type AuditTableFilter = (typeof AUDIT_TABLE_OPTIONS)[number]
+type AuditActionFilter = (typeof AUDIT_ACTION_OPTIONS)[number]
+type AuditPeriodFilter = (typeof AUDIT_PERIOD_OPTIONS)[number]
 type AuditActorFilter = 'all' | 'mine' | 'unassigned' | `actor:${string}`
 
 export default function AdminSettingsPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const { preferences, updatePreferences } = useAdminPreferences()
   const [profile, setProfile] = useState<ProfileState | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [auditLogs, setAuditLogs] = useState<AdminAuditLog[]>([])
-  const [auditTableFilter, setAuditTableFilter] = useState('all')
+  const [auditTableFilter, setAuditTableFilter] =
+    useState<AuditTableFilter>('all')
   const [auditActionFilter, setAuditActionFilter] =
     useState<AuditActionFilter>('all')
   const [auditPeriodFilter, setAuditPeriodFilter] =
@@ -83,10 +77,34 @@ export default function AdminSettingsPage() {
   const [rollbackComment, setRollbackComment] = useState('')
   const [restoreSuccess, setRestoreSuccess] = useState<string | null>(null)
 
+  const getMembershipRoleLabel = useCallback(
+    (role: AdminMembership['role']) =>
+      t(`admin.settingsPage.profile.roles.${role}`),
+    [t]
+  )
+
+  const getAuditActionLabel = useCallback(
+    (action: string) => {
+      if (action === 'all')
+        return t('admin.settingsPage.audit.actionOptions.all')
+      if (action === 'INSERT') {
+        return t('admin.settingsPage.audit.actionOptions.INSERT')
+      }
+      if (action === 'UPDATE') {
+        return t('admin.settingsPage.audit.actionOptions.UPDATE')
+      }
+      if (action === 'DELETE') {
+        return t('admin.settingsPage.audit.actionOptions.DELETE')
+      }
+      return action
+    },
+    [t]
+  )
+
   const loadProfile = useCallback(async () => {
     const supabase = createClient()
     if (!supabase) {
-      setError('Supabase не налаштований. Перевірте змінні середовища.')
+      setError(t('admin.settingsPage.errors.supabaseUnavailable'))
       setIsLoading(false)
       return
     }
@@ -121,11 +139,11 @@ export default function AdminSettingsPage() {
       })
     } catch (loadError) {
       console.error('Failed to load settings profile:', loadError)
-      setError('Не вдалося завантажити налаштування.')
+      setError(t('admin.settingsPage.errors.loadSettingsFailed'))
     } finally {
       setIsLoading(false)
     }
-  }, [router])
+  }, [router, t])
 
   useEffect(() => {
     void loadProfile()
@@ -160,7 +178,7 @@ export default function AdminSettingsPage() {
   const loadAuditLogs = useCallback(async () => {
     const supabase = createClient()
     if (!supabase) {
-      setAuditError('Supabase не налаштований.')
+      setAuditError(t('admin.settingsPage.audit.errors.supabaseUnavailable'))
       setIsLoadingAudit(false)
       return
     }
@@ -186,9 +204,7 @@ export default function AdminSettingsPage() {
       setAuditLogs(data)
     } catch (loadError) {
       console.error('Failed to load audit logs:', loadError)
-      setAuditError(
-        'Не вдалося завантажити audit logs. Перевірте, чи застосована міграція audit.'
-      )
+      setAuditError(t('admin.settingsPage.audit.errors.loadFailed'))
     } finally {
       setIsLoadingAudit(false)
     }
@@ -198,6 +214,7 @@ export default function AdminSettingsPage() {
     auditTableFilter,
     periodStartIso,
     profile?.id,
+    t,
   ])
 
   useEffect(() => {
@@ -211,7 +228,7 @@ export default function AdminSettingsPage() {
       generatedAt: new Date().toISOString(),
       profile,
       preferences,
-      app: 'Dental Story Admin',
+      app: t('admin.settingsPage.diagnostics.appName'),
     }
     const blob = new Blob([JSON.stringify(diagnostics, null, 2)], {
       type: 'application/json',
@@ -219,7 +236,7 @@ export default function AdminSettingsPage() {
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = 'admin-diagnostics.json'
+    link.download = t('admin.settingsPage.diagnostics.fileName')
     link.click()
     URL.revokeObjectURL(url)
   }
@@ -227,22 +244,28 @@ export default function AdminSettingsPage() {
   const securityChecks = useMemo(() => {
     return [
       {
-        label: 'admin_users membership',
+        label: t('admin.settingsPage.security.membershipLabel'),
         ok: !!profile?.membership,
-        value: profile?.membership ? profile.membership.role : 'missing',
+        value: profile?.membership
+          ? getMembershipRoleLabel(profile.membership.role)
+          : t('admin.settingsPage.security.missingValue'),
       },
       {
-        label: 'Active admin session',
+        label: t('admin.settingsPage.security.sessionLabel'),
         ok: Boolean(profile?.id),
-        value: profile?.id ? 'authenticated' : 'missing',
+        value: profile?.id
+          ? t('admin.settingsPage.security.authenticatedValue')
+          : t('admin.settingsPage.security.missingValue'),
       },
       {
-        label: 'Supabase client',
+        label: t('admin.settingsPage.security.supabaseLabel'),
         ok: !!createClient(),
-        value: createClient() ? 'connected' : 'not configured',
+        value: createClient()
+          ? t('admin.settingsPage.security.connectedValue')
+          : t('admin.settingsPage.security.notConfiguredValue'),
       },
     ]
-  }, [profile])
+  }, [getMembershipRoleLabel, profile, t])
 
   const handleLogout = async () => {
     const supabase = createClient()
@@ -271,7 +294,7 @@ export default function AdminSettingsPage() {
 
     const normalizedReason = rollbackReason.trim()
     if (normalizedReason.length < 5) {
-      setAuditError('Вкажіть причину rollback (мінімум 5 символів).')
+      setAuditError(t('admin.settingsPage.rollback.errors.reasonTooShort'))
       return
     }
 
@@ -281,7 +304,11 @@ export default function AdminSettingsPage() {
     if (
       preferences.confirmSensitiveActions &&
       !window.confirm(
-        `Підтвердьте rollback ${rollbackTarget.action} у ${rollbackTarget.table_name} (${rollbackTarget.record_id}).`
+        t('admin.settingsPage.rollback.confirmPrompt', {
+          action: getAuditActionLabel(rollbackTarget.action),
+          table: rollbackTarget.table_name,
+          recordId: rollbackTarget.record_id,
+        })
       )
     ) {
       return
@@ -298,15 +325,17 @@ export default function AdminSettingsPage() {
       })
 
       setRestoreSuccess(
-        `Rollback виконано: ${result.table} / ${result.record_id} (${result.reverted_action}).`
+        t('admin.settingsPage.rollback.success', {
+          table: result.table,
+          recordId: result.record_id,
+          action: getAuditActionLabel(result.reverted_action),
+        })
       )
       closeRollbackModal()
       await loadAuditLogs()
     } catch (restoreError) {
       console.error('Failed to restore from audit:', restoreError)
-      setAuditError(
-        'Не вдалося виконати restore. Перевірте доступи, reason/comment і актуальність міграцій.'
-      )
+      setAuditError(t('admin.settingsPage.rollback.errors.restoreFailed'))
     } finally {
       setIsRestoringAuditId(null)
     }
@@ -315,11 +344,15 @@ export default function AdminSettingsPage() {
   const summarizeAuditLog = (log: AdminAuditLog): string => {
     if (log.action === 'INSERT') {
       const keys = Object.keys(log.after_data || {})
-      return `Створено запис (${keys.length} полів)`
+      return t('admin.settingsPage.audit.summary.created', {
+        count: keys.length,
+      })
     }
     if (log.action === 'DELETE') {
       const keys = Object.keys(log.before_data || {})
-      return `Видалено запис (${keys.length} полів)`
+      return t('admin.settingsPage.audit.summary.deleted', {
+        count: keys.length,
+      })
     }
     const beforeKeys = Object.keys(log.before_data || {})
     const afterKeys = Object.keys(log.after_data || {})
@@ -334,7 +367,9 @@ export default function AdminSettingsPage() {
     afterKeys.forEach(key => {
       if (!beforeKeys.includes(key)) changed.add(key)
     })
-    return `Змінено полів: ${changed.size}`
+    return t('admin.settingsPage.audit.summary.changed', {
+      count: changed.size,
+    })
   }
 
   const getAuditDiffRows = (log: AdminAuditLog) => {
@@ -342,7 +377,7 @@ export default function AdminSettingsPage() {
     const afterData = (log.after_data || {}) as Record<string, unknown>
     const keys = Array.from(
       new Set([...Object.keys(beforeData), ...Object.keys(afterData)])
-    ).sort((a, b) => a.localeCompare(b, 'uk-UA'))
+    ).sort((a, b) => a.localeCompare(b))
 
     return keys.map(key => {
       const beforeValue = beforeData[key]
@@ -360,7 +395,7 @@ export default function AdminSettingsPage() {
 
   const formatAuditValue = (value: unknown): string => {
     if (typeof value === 'undefined') return '—'
-    if (value === null) return 'null'
+    if (value === null) return t('admin.settingsPage.audit.nullValue')
     if (typeof value === 'string') return value
     return JSON.stringify(value, null, 2)
   }
@@ -377,12 +412,21 @@ export default function AdminSettingsPage() {
     }))
 
     return [
-      { value: 'all' as const, label: 'Усі актори' },
-      { value: 'mine' as const, label: 'Лише мої дії' },
-      { value: 'unassigned' as const, label: 'Без автора (system)' },
+      {
+        value: 'all' as const,
+        label: t('admin.settingsPage.audit.actorOptions.all'),
+      },
+      {
+        value: 'mine' as const,
+        label: t('admin.settingsPage.audit.actorOptions.mine'),
+      },
+      {
+        value: 'unassigned' as const,
+        label: t('admin.settingsPage.audit.actorOptions.unassigned'),
+      },
       ...dynamicActorOptions,
     ]
-  }, [actorIds])
+  }, [actorIds, t])
 
   const auditPreviewDiffRows = useMemo(
     () =>
@@ -404,11 +448,10 @@ export default function AdminSettingsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-dental-dark">
-          Налаштування адмін-панелі
+          {t('admin.settingsPage.title')}
         </h1>
         <p className="text-sm text-dental-text-light">
-          Профіль доступу, локальні операційні параметри та технічна
-          діагностика.
+          {t('admin.settingsPage.description')}
         </p>
       </div>
 
@@ -420,42 +463,54 @@ export default function AdminSettingsPage() {
 
       {isLoading || !profile ? (
         <div className="rounded-xl border border-dental-secondary-200 bg-white px-4 py-8 text-center text-dental-text-light">
-          Завантаження налаштувань...
+          {t('admin.settingsPage.loading')}
         </div>
       ) : (
         <>
           <div className="grid gap-4 lg:grid-cols-2">
             <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
               <h2 className="text-lg font-semibold text-dental-dark">
-                Поточний акаунт
+                {t('admin.settingsPage.profile.title')}
               </h2>
               <dl className="mt-3 space-y-2 text-sm">
                 <div className="flex items-center justify-between gap-2">
-                  <dt className="text-dental-text-light">Email</dt>
+                  <dt className="text-dental-text-light">
+                    {t('admin.settingsPage.profile.email')}
+                  </dt>
                   <dd className="font-medium text-dental-dark">
                     {profile.email}
                   </dd>
                 </div>
                 <div className="flex items-center justify-between gap-2">
-                  <dt className="text-dental-text-light">Role</dt>
+                  <dt className="text-dental-text-light">
+                    {t('admin.settingsPage.profile.role')}
+                  </dt>
                   <dd className="font-medium text-dental-dark">
-                    {profile.membership?.role || '—'}
+                    {profile.membership?.role
+                      ? getMembershipRoleLabel(profile.membership.role)
+                      : '—'}
                   </dd>
                 </div>
                 <div className="flex items-center justify-between gap-2">
-                  <dt className="text-dental-text-light">Display name</dt>
+                  <dt className="text-dental-text-light">
+                    {t('admin.settingsPage.profile.displayName')}
+                  </dt>
                   <dd className="font-medium text-dental-dark">
                     {profile.membership?.display_name || '—'}
                   </dd>
                 </div>
                 <div className="flex items-center justify-between gap-2">
-                  <dt className="text-dental-text-light">Last sign in</dt>
+                  <dt className="text-dental-text-light">
+                    {t('admin.settingsPage.profile.lastSignIn')}
+                  </dt>
                   <dd className="font-medium text-dental-dark">
                     {formatDateTime(profile.lastSignInAt)}
                   </dd>
                 </div>
                 <div className="flex items-center justify-between gap-2">
-                  <dt className="text-dental-text-light">Membership created</dt>
+                  <dt className="text-dental-text-light">
+                    {t('admin.settingsPage.profile.membershipCreated')}
+                  </dt>
                   <dd className="font-medium text-dental-dark">
                     {formatDateTime(profile.membership?.created_at)}
                   </dd>
@@ -465,7 +520,7 @@ export default function AdminSettingsPage() {
 
             <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
               <h2 className="text-lg font-semibold text-dental-dark">
-                Security checks
+                {t('admin.settingsPage.security.title')}
               </h2>
               <ul className="mt-3 space-y-2">
                 {securityChecks.map(check => (
@@ -491,12 +546,12 @@ export default function AdminSettingsPage() {
 
           <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
             <h2 className="text-lg font-semibold text-dental-dark">
-              Операційні параметри
+              {t('admin.settingsPage.preferences.title')}
             </h2>
             <div className="mt-3 space-y-3 text-sm">
               <label className="flex items-center justify-between gap-3">
                 <span className="text-dental-text">
-                  Автооновлення списків після дій
+                  {t('admin.settingsPage.preferences.autoRefresh')}
                 </span>
                 <input
                   type="checkbox"
@@ -510,7 +565,7 @@ export default function AdminSettingsPage() {
               </label>
               <label className="flex items-center justify-between gap-3">
                 <span className="text-dental-text">
-                  Компактний режим таблиць
+                  {t('admin.settingsPage.preferences.compactTables')}
                 </span>
                 <input
                   type="checkbox"
@@ -522,7 +577,7 @@ export default function AdminSettingsPage() {
               </label>
               <label className="flex items-center justify-between gap-3">
                 <span className="text-dental-text">
-                  Підтвердження чутливих дій
+                  {t('admin.settingsPage.preferences.confirmSensitive')}
                 </span>
                 <input
                   type="checkbox"
@@ -536,7 +591,7 @@ export default function AdminSettingsPage() {
               </label>
               <label className="flex items-center justify-between gap-3">
                 <span className="text-dental-text">
-                  Період аналітики за замовчуванням
+                  {t('admin.settingsPage.preferences.defaultAnalyticsPeriod')}
                 </span>
                 <select
                   value={preferences.defaultAnalyticsPeriod}
@@ -550,9 +605,15 @@ export default function AdminSettingsPage() {
                   }
                   className="rounded-lg border border-dental-secondary px-3 py-1.5"
                 >
-                  <option value={7}>7 днів</option>
-                  <option value={30}>30 днів</option>
-                  <option value={90}>90 днів</option>
+                  <option value={7}>
+                    {t('admin.settingsPage.preferences.periodOptions.7')}
+                  </option>
+                  <option value={30}>
+                    {t('admin.settingsPage.preferences.periodOptions.30')}
+                  </option>
+                  <option value={90}>
+                    {t('admin.settingsPage.preferences.periodOptions.90')}
+                  </option>
                 </select>
               </label>
             </div>
@@ -561,17 +622,19 @@ export default function AdminSettingsPage() {
           <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-lg font-semibold text-dental-dark">
-                Audit logs і rollback
+                {t('admin.settingsPage.audit.title')}
               </h2>
               <div className="flex flex-wrap items-center gap-2">
                 <select
                   value={auditTableFilter}
-                  onChange={event => setAuditTableFilter(event.target.value)}
+                  onChange={event =>
+                    setAuditTableFilter(event.target.value as AuditTableFilter)
+                  }
                   className="rounded-lg border border-dental-secondary px-3 py-1.5 text-sm"
                 >
-                  {AUDIT_TABLE_OPTIONS.map(item => (
-                    <option key={item.value} value={item.value}>
-                      {item.label}
+                  {AUDIT_TABLE_OPTIONS.map(value => (
+                    <option key={value} value={value}>
+                      {t(`admin.settingsPage.audit.tableOptions.${value}`)}
                     </option>
                   ))}
                 </select>
@@ -584,9 +647,9 @@ export default function AdminSettingsPage() {
                   }
                   className="rounded-lg border border-dental-secondary px-3 py-1.5 text-sm"
                 >
-                  {AUDIT_ACTION_OPTIONS.map(item => (
-                    <option key={item.value} value={item.value}>
-                      {item.label}
+                  {AUDIT_ACTION_OPTIONS.map(value => (
+                    <option key={value} value={value}>
+                      {getAuditActionLabel(value)}
                     </option>
                   ))}
                 </select>
@@ -599,9 +662,9 @@ export default function AdminSettingsPage() {
                   }
                   className="rounded-lg border border-dental-secondary px-3 py-1.5 text-sm"
                 >
-                  {AUDIT_PERIOD_OPTIONS.map(item => (
-                    <option key={item.value} value={item.value}>
-                      {item.label}
+                  {AUDIT_PERIOD_OPTIONS.map(value => (
+                    <option key={value} value={value}>
+                      {t(`admin.settingsPage.audit.periodOptions.${value}`)}
                     </option>
                   ))}
                 </select>
@@ -623,7 +686,7 @@ export default function AdminSettingsPage() {
                   size="sm"
                   onClick={() => void loadAuditLogs()}
                 >
-                  Оновити логи
+                  {t('admin.settingsPage.audit.refreshLogs')}
                 </Button>
               </div>
             </div>
@@ -641,11 +704,11 @@ export default function AdminSettingsPage() {
 
             {isLoadingAudit ? (
               <div className="mt-4 text-sm text-dental-text-light">
-                Завантаження audit logs...
+                {t('admin.settingsPage.audit.loading')}
               </div>
             ) : auditLogs.length === 0 ? (
               <div className="mt-4 text-sm text-dental-text-light">
-                Логів не знайдено.
+                {t('admin.settingsPage.audit.empty')}
               </div>
             ) : (
               <div className="mt-4 overflow-x-auto">
@@ -655,37 +718,37 @@ export default function AdminSettingsPage() {
                       <th
                         className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-gray-500`}
                       >
-                        Коли
+                        {t('admin.settingsPage.audit.tableHeaders.when')}
                       </th>
                       <th
                         className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-gray-500`}
                       >
-                        Таблиця
+                        {t('admin.settingsPage.audit.tableHeaders.table')}
                       </th>
                       <th
                         className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-gray-500`}
                       >
-                        Дія
+                        {t('admin.settingsPage.audit.tableHeaders.action')}
                       </th>
                       <th
                         className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-gray-500`}
                       >
-                        changed_by
+                        {t('admin.settingsPage.audit.tableHeaders.changedBy')}
                       </th>
                       <th
                         className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-gray-500`}
                       >
-                        Запис
+                        {t('admin.settingsPage.audit.tableHeaders.record')}
                       </th>
                       <th
                         className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-gray-500`}
                       >
-                        Зміст
+                        {t('admin.settingsPage.audit.tableHeaders.summary')}
                       </th>
                       <th
                         className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-gray-500`}
                       >
-                        Дії
+                        {t('admin.settingsPage.audit.tableHeaders.actions')}
                       </th>
                     </tr>
                   </thead>
@@ -712,13 +775,14 @@ export default function AdminSettingsPage() {
                                   : 'inactive'
                             )}`}
                           >
-                            {log.action}
+                            {getAuditActionLabel(log.action)}
                           </span>
                         </td>
                         <td
                           className={`${auditCellPaddingClass} text-xs text-dental-text-light`}
                         >
-                          {log.changed_by || 'system'}
+                          {log.changed_by ||
+                            t('admin.settingsPage.audit.systemActor')}
                         </td>
                         <td
                           className={`${auditCellPaddingClass} text-xs text-dental-text-light`}
@@ -737,7 +801,7 @@ export default function AdminSettingsPage() {
                               size="sm"
                               onClick={() => setAuditPreviewLog(log)}
                             >
-                              Diff
+                              {t('admin.settingsPage.audit.actions.diff')}
                             </Button>
                             <Button
                               variant="secondary"
@@ -745,7 +809,7 @@ export default function AdminSettingsPage() {
                               onClick={() => openRollbackModal(log)}
                               isLoading={isRestoringAuditId === log.id}
                             >
-                              Rollback
+                              {t('admin.settingsPage.audit.actions.rollback')}
                             </Button>
                           </div>
                         </td>
@@ -759,24 +823,24 @@ export default function AdminSettingsPage() {
 
           <div className="flex flex-wrap items-center gap-2">
             <Button variant="outline" size="sm" onClick={exportDiagnostics}>
-              Експортувати діагностику
+              {t('admin.settingsPage.actions.exportDiagnostics')}
             </Button>
             <Button
               variant="secondary"
               size="sm"
               onClick={() => void loadProfile()}
             >
-              Оновити профіль
+              {t('admin.settingsPage.actions.refreshProfile')}
             </Button>
             <Button variant="ghost" size="sm" onClick={handleLogout}>
-              Вийти з адмінки
+              {t('admin.settingsPage.actions.logout')}
             </Button>
           </div>
 
           <AdminModal
             open={Boolean(auditPreviewLog)}
-            title="Diff змін audit log"
-            subtitle="Порівняння before_data та after_data для вибраного запису."
+            title={t('admin.settingsPage.audit.diffModal.title')}
+            subtitle={t('admin.settingsPage.audit.diffModal.subtitle')}
             onClose={() => setAuditPreviewLog(null)}
             maxWidthClassName="max-w-5xl"
           >
@@ -785,23 +849,25 @@ export default function AdminSettingsPage() {
                 <div className="rounded-lg bg-dental-primary-50 p-3 text-sm text-dental-text">
                   <p>
                     <span className="font-semibold text-dental-dark">
-                      Таблиця:
+                      {t('admin.settingsPage.audit.diffModal.meta.table')}:
                     </span>{' '}
                     {auditPreviewLog.table_name}
                   </p>
                   <p>
                     <span className="font-semibold text-dental-dark">
-                      Запис:
+                      {t('admin.settingsPage.audit.diffModal.meta.record')}:
                     </span>{' '}
                     {auditPreviewLog.record_id}
                   </p>
                   <p>
-                    <span className="font-semibold text-dental-dark">Дія:</span>{' '}
-                    {auditPreviewLog.action}
+                    <span className="font-semibold text-dental-dark">
+                      {t('admin.settingsPage.audit.diffModal.meta.action')}:
+                    </span>{' '}
+                    {getAuditActionLabel(auditPreviewLog.action)}
                   </p>
                   <p>
                     <span className="font-semibold text-dental-dark">
-                      Коли:
+                      {t('admin.settingsPage.audit.diffModal.meta.when')}:
                     </span>{' '}
                     {formatDateTime(auditPreviewLog.changed_at)}
                   </p>
@@ -809,7 +875,7 @@ export default function AdminSettingsPage() {
 
                 {auditPreviewDiffRows.length === 0 ? (
                   <div className="rounded-lg border border-dental-secondary-200 bg-white p-3 text-sm text-dental-text-light">
-                    Відмінностей не виявлено.
+                    {t('admin.settingsPage.audit.diffModal.noChanges')}
                   </div>
                 ) : (
                   <div className="space-y-2">
@@ -824,7 +890,7 @@ export default function AdminSettingsPage() {
                         <div className="grid gap-3 md:grid-cols-2">
                           <div>
                             <p className="mb-1 text-xs font-semibold text-dental-text-light">
-                              BEFORE
+                              {t('admin.settingsPage.audit.diffModal.before')}
                             </p>
                             <pre className="overflow-x-auto rounded-md bg-red-50 p-2 text-xs text-red-800">
                               {formatAuditValue(row.beforeValue)}
@@ -832,7 +898,7 @@ export default function AdminSettingsPage() {
                           </div>
                           <div>
                             <p className="mb-1 text-xs font-semibold text-dental-text-light">
-                              AFTER
+                              {t('admin.settingsPage.audit.diffModal.after')}
                             </p>
                             <pre className="overflow-x-auto rounded-md bg-green-50 p-2 text-xs text-green-800">
                               {formatAuditValue(row.afterValue)}
@@ -849,8 +915,8 @@ export default function AdminSettingsPage() {
 
           <AdminModal
             open={Boolean(rollbackTarget)}
-            title="Підтвердження rollback"
-            subtitle="Safe-guard: перевірте diff, вкажіть причину і лише потім підтверджуйте відкат."
+            title={t('admin.settingsPage.rollback.modal.title')}
+            subtitle={t('admin.settingsPage.rollback.modal.subtitle')}
             onClose={closeRollbackModal}
             maxWidthClassName="max-w-4xl"
           >
@@ -858,10 +924,14 @@ export default function AdminSettingsPage() {
               <div className="space-y-4">
                 <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
                   <p>
-                    Відкат буде застосований до{' '}
+                    {t('admin.settingsPage.rollback.modal.targetPrefix')}{' '}
                     <strong>{rollbackTarget.table_name}</strong> /{' '}
-                    <strong>{rollbackTarget.record_id}</strong> для дії{' '}
-                    <strong>{rollbackTarget.action}</strong>.
+                    <strong>{rollbackTarget.record_id}</strong>{' '}
+                    {t('admin.settingsPage.rollback.modal.targetInfix')}{' '}
+                    <strong>
+                      {getAuditActionLabel(rollbackTarget.action)}
+                    </strong>
+                    .
                   </p>
                   <p className="mt-1 text-xs text-amber-800">
                     {summarizeAuditLog(rollbackTarget)}
@@ -871,7 +941,7 @@ export default function AdminSettingsPage() {
                 <div className="max-h-52 space-y-2 overflow-y-auto">
                   {rollbackPreviewDiffRows.length === 0 ? (
                     <div className="rounded-lg border border-dental-secondary-200 bg-white p-3 text-sm text-dental-text-light">
-                      Немає змінених полів для preview.
+                      {t('admin.settingsPage.rollback.modal.noPreviewChanges')}
                     </div>
                   ) : (
                     rollbackPreviewDiffRows.map(row => (
@@ -896,14 +966,14 @@ export default function AdminSettingsPage() {
                 </div>
 
                 <Textarea
-                  label="Причина rollback (обов'язково, мінімум 5 символів)"
+                  label={t('admin.settingsPage.rollback.modal.reasonLabel')}
                   value={rollbackReason}
                   onChange={event => setRollbackReason(event.target.value)}
                   rows={3}
                   required
                 />
                 <Textarea
-                  label="Коментар (опційно)"
+                  label={t('admin.settingsPage.rollback.modal.commentLabel')}
                   value={rollbackComment}
                   onChange={event => setRollbackComment(event.target.value)}
                   rows={2}
@@ -915,7 +985,7 @@ export default function AdminSettingsPage() {
                     onClick={closeRollbackModal}
                     disabled={Boolean(isRestoringAuditId)}
                   >
-                    Скасувати
+                    {t('admin.settingsPage.rollback.modal.cancel')}
                   </Button>
                   <Button
                     onClick={() => void restoreAuditEntry()}
@@ -930,7 +1000,7 @@ export default function AdminSettingsPage() {
                       rollbackTarget && isRestoringAuditId === rollbackTarget.id
                     )}
                   >
-                    Підтвердити rollback
+                    {t('admin.settingsPage.rollback.modal.confirm')}
                   </Button>
                 </div>
               </div>

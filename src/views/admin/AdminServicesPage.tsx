@@ -8,6 +8,7 @@ import {
   type FormEvent,
 } from 'react'
 import { Edit, Plus, RefreshCw, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button, Input, Textarea } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
@@ -64,6 +65,7 @@ const EMPTY_FORM: ServiceFormState = {
 }
 
 export default function AdminServicesPage() {
+  const { t } = useTranslation()
   const { preferences } = useAdminPreferences()
   const [rows, setRows] = useState<ServiceRow[]>([])
   const [selectedIds, setSelectedIds] = useState<string[]>([])
@@ -88,7 +90,7 @@ export default function AdminServicesPage() {
     async (silent = false) => {
       const supabase = createClient()
       if (!supabase) {
-        setError('Supabase не налаштований. Перевірте змінні середовища.')
+        setError(t('admin.servicesPage.errors.supabaseUnavailable'))
         setIsLoading(false)
         return
       }
@@ -134,13 +136,13 @@ export default function AdminServicesPage() {
         setRows((data || []) as ServiceRow[])
       } catch (loadError) {
         console.error('Failed to load services:', loadError)
-        setError('Не вдалося завантажити послуги.')
+        setError(t('admin.servicesPage.errors.loadFailed'))
       } finally {
         setIsLoading(false)
         setIsRefreshing(false)
       }
     },
-    [categoryFilter, searchTerm, statusFilter]
+    [categoryFilter, searchTerm, statusFilter, t]
   )
 
   useEffect(() => {
@@ -155,7 +157,7 @@ export default function AdminServicesPage() {
   const categories = useMemo(() => {
     const unique = new Set<string>()
     rows.forEach(row => unique.add(row.category))
-    return Array.from(unique).sort((a, b) => a.localeCompare(b, 'uk-UA'))
+    return Array.from(unique).sort((a, b) => a.localeCompare(b))
   }, [rows])
 
   const stats = useMemo(() => {
@@ -178,6 +180,10 @@ export default function AdminServicesPage() {
   const tableEmptyStateClass = `${
     preferences.compactTables ? 'px-3 py-6' : 'px-4 py-8'
   } text-center text-dental-text-light`
+  const getAvailabilityLabel = useCallback(
+    (status: 'active' | 'inactive') => t(`admin.serviceStatuses.${status}`),
+    [t]
+  )
 
   const confirmIfNeeded = useCallback(
     (message: string) => {
@@ -205,7 +211,10 @@ export default function AdminServicesPage() {
     if (selectedIds.length === 0) return
     if (
       !confirmIfNeeded(
-        `Змінити статус для ${selectedIds.length} послуг(и) на "${bulkStatus}"?`
+        t('admin.servicesPage.confirmations.bulkStatusChange', {
+          count: selectedIds.length,
+          status: getAvailabilityLabel(bulkStatus),
+        })
       )
     ) {
       return
@@ -238,7 +247,7 @@ export default function AdminServicesPage() {
       )
     } catch (updateError) {
       console.error('Failed bulk update for services:', updateError)
-      setError('Не вдалося виконати масову зміну послуг.')
+      setError(t('admin.servicesPage.errors.bulkUpdateFailed'))
     } finally {
       setIsUpdatingId(null)
     }
@@ -249,8 +258,8 @@ export default function AdminServicesPage() {
       if (
         !confirmIfNeeded(
           isActive
-            ? 'Приховати послугу у публічному каталозі?'
-            : 'Показати послугу у каталозі?'
+            ? t('admin.servicesPage.confirmations.hideService')
+            : t('admin.servicesPage.confirmations.showService')
         )
       ) {
         return
@@ -282,12 +291,12 @@ export default function AdminServicesPage() {
         )
       } catch (updateError) {
         console.error('Failed to update service:', updateError)
-        setError('Не вдалося оновити статус послуги.')
+        setError(t('admin.servicesPage.errors.statusUpdateFailed'))
       } finally {
         setIsUpdatingId(null)
       }
     },
-    [confirmIfNeeded, loadServices, preferences.autoRefreshLists]
+    [confirmIfNeeded, loadServices, preferences.autoRefreshLists, t]
   )
 
   const openCreateModal = () => {
@@ -327,18 +336,18 @@ export default function AdminServicesPage() {
     if (!supabase) return
 
     if (!formState.name_uk.trim() || !formState.category.trim()) {
-      setError("Поля 'Назва (UA)' і 'Категорія' є обовʼязковими.")
+      setError(t('admin.servicesPage.errors.requiredFields'))
       return
     }
 
     const price = Number(formState.price_uah)
     const duration = Number(formState.duration_minutes)
     if (!Number.isFinite(price) || price < 0) {
-      setError('Ціна має бути невідʼємним числом.')
+      setError(t('admin.servicesPage.errors.invalidPrice'))
       return
     }
     if (!Number.isFinite(duration) || duration <= 0) {
-      setError('Тривалість має бути додатним числом хвилин.')
+      setError(t('admin.servicesPage.errors.invalidDuration'))
       return
     }
 
@@ -377,14 +386,15 @@ export default function AdminServicesPage() {
       await loadServices(true)
     } catch (saveError) {
       console.error('Failed to save service:', saveError)
-      setError('Не вдалося зберегти зміни послуги.')
+      setError(t('admin.servicesPage.errors.saveFailed'))
     } finally {
       setIsSaving(false)
     }
   }
 
   const deleteService = async (id: string) => {
-    if (!confirmIfNeeded('Видалити послугу? Дію неможливо скасувати.')) return
+    if (!confirmIfNeeded(t('admin.servicesPage.confirmations.deleteService')))
+      return
     const supabase = createClient()
     if (!supabase) return
 
@@ -406,7 +416,7 @@ export default function AdminServicesPage() {
       setSelectedIds(prev => prev.filter(item => item !== id))
     } catch (deleteError) {
       console.error('Failed to delete service:', deleteError)
-      setError('Не вдалося видалити послугу.')
+      setError(t('admin.servicesPage.errors.deleteFailed'))
     } finally {
       setIsUpdatingId(null)
     }
@@ -417,16 +427,16 @@ export default function AdminServicesPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-dental-dark">
-            Управління послугами
+            {t('admin.servicesPage.title')}
           </h1>
           <p className="text-sm text-dental-text-light">
-            Повний CRUD, масове керування і точний контроль прайсу та каталогу.
+            {t('admin.servicesPage.description')}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="secondary" size="sm" onClick={openCreateModal}>
             <Plus className="mr-2 h-4 w-4" />
-            Додати послугу
+            {t('admin.servicesPage.addService')}
           </Button>
           <Button
             variant="outline"
@@ -435,26 +445,34 @@ export default function AdminServicesPage() {
             isLoading={isRefreshing}
           >
             <RefreshCw className="mr-2 h-4 w-4" />
-            Оновити
+            {t('admin.servicesPage.refresh')}
           </Button>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">Всього послуг</p>
+          <p className="text-xs text-dental-text-light">
+            {t('admin.servicesPage.summary.total')}
+          </p>
           <p className="text-2xl font-bold text-dental-dark">{stats.total}</p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">Активні</p>
+          <p className="text-xs text-dental-text-light">
+            {t('admin.servicesPage.summary.active')}
+          </p>
           <p className="text-2xl font-bold text-green-600">{stats.active}</p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">Неактивні</p>
+          <p className="text-xs text-dental-text-light">
+            {t('admin.servicesPage.summary.inactive')}
+          </p>
           <p className="text-2xl font-bold text-red-600">{stats.inactive}</p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">Середня ціна</p>
+          <p className="text-xs text-dental-text-light">
+            {t('admin.servicesPage.summary.averagePrice')}
+          </p>
           <p className="text-xl font-bold text-dental-dark">
             {formatCurrency(stats.averagePrice)}
           </p>
@@ -466,7 +484,7 @@ export default function AdminServicesPage() {
           <Input
             value={searchTerm}
             onChange={event => setSearchTerm(event.target.value)}
-            placeholder="Пошук: назва або категорія"
+            placeholder={t('admin.servicesPage.filters.searchPlaceholder')}
             className="md:col-span-2"
           />
           <select
@@ -474,7 +492,9 @@ export default function AdminServicesPage() {
             onChange={event => setCategoryFilter(event.target.value)}
             className="rounded-lg border border-dental-secondary px-4 py-3 text-sm"
           >
-            <option value="all">Усі категорії</option>
+            <option value="all">
+              {t('admin.servicesPage.filters.allCategories')}
+            </option>
             {categories.map(category => (
               <option key={category} value={category}>
                 {category}
@@ -490,16 +510,22 @@ export default function AdminServicesPage() {
             }
             className="rounded-lg border border-dental-secondary px-4 py-3 text-sm"
           >
-            <option value="all">Усі статуси</option>
-            <option value="active">Тільки active</option>
-            <option value="inactive">Тільки inactive</option>
+            <option value="all">
+              {t('admin.servicesPage.filters.allStatuses')}
+            </option>
+            <option value="active">
+              {t('admin.servicesPage.filters.activeOnly')}
+            </option>
+            <option value="inactive">
+              {t('admin.servicesPage.filters.inactiveOnly')}
+            </option>
           </select>
         </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2 rounded-xl border border-dental-secondary-200 bg-white px-4 py-3">
         <span className="text-sm text-dental-text-light">
-          Вибрано: {selectedIds.length}
+          {t('admin.servicesPage.bulk.selected', { count: selectedIds.length })}
         </span>
         <select
           value={bulkStatus}
@@ -508,8 +534,12 @@ export default function AdminServicesPage() {
           }
           className="rounded-md border border-dental-secondary px-3 py-1.5 text-sm"
         >
-          <option value="active">Показати вибрані</option>
-          <option value="inactive">Приховати вибрані</option>
+          <option value="active">
+            {t('admin.servicesPage.bulk.showSelected')}
+          </option>
+          <option value="inactive">
+            {t('admin.servicesPage.bulk.hideSelected')}
+          </option>
         </select>
         <Button
           size="sm"
@@ -517,7 +547,7 @@ export default function AdminServicesPage() {
           disabled={selectedIds.length === 0 || isUpdatingId === 'bulk'}
           isLoading={isUpdatingId === 'bulk'}
         >
-          Застосувати масово
+          {t('admin.servicesPage.bulk.apply')}
         </Button>
       </div>
 
@@ -537,29 +567,43 @@ export default function AdminServicesPage() {
                     type="checkbox"
                     checked={allSelected}
                     onChange={toggleSelectAll}
-                    aria-label="Вибрати всі рядки"
+                    aria-label={t('admin.servicesPage.table.selectAllAria')}
                   />
                 </th>
-                <th className={tableHeadClass}>Послуга</th>
-                <th className={tableHeadClass}>Категорія</th>
-                <th className={tableHeadClass}>Ціна</th>
-                <th className={tableHeadClass}>Тривалість</th>
-                <th className={tableHeadClass}>Статус</th>
-                <th className={tableHeadClass}>Оновлено</th>
-                <th className={tableHeadClass}>Дії</th>
+                <th className={tableHeadClass}>
+                  {t('admin.servicesPage.table.headers.service')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.servicesPage.table.headers.category')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.servicesPage.table.headers.price')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.servicesPage.table.headers.duration')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.servicesPage.table.headers.status')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.servicesPage.table.headers.updatedAt')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.servicesPage.table.headers.actions')}
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white text-sm">
               {isLoading ? (
                 <tr>
                   <td colSpan={8} className={tableEmptyStateClass}>
-                    Завантаження послуг...
+                    {t('admin.servicesPage.table.loading')}
                   </td>
                 </tr>
               ) : rows.length === 0 ? (
                 <tr>
                   <td colSpan={8} className={tableEmptyStateClass}>
-                    Немає даних за поточними фільтрами.
+                    {t('admin.servicesPage.table.empty')}
                   </td>
                 </tr>
               ) : (
@@ -570,7 +614,12 @@ export default function AdminServicesPage() {
                         type="checkbox"
                         checked={selectedSet.has(row.id)}
                         onChange={() => toggleSelection(row.id)}
-                        aria-label={`Вибрати послугу ${row.name_uk}`}
+                        aria-label={t(
+                          'admin.servicesPage.table.selectRowAria',
+                          {
+                            name: row.name_uk,
+                          }
+                        )}
                       />
                     </td>
                     <td className={tableCellClass}>
@@ -592,7 +641,9 @@ export default function AdminServicesPage() {
                       {formatCurrency(row.price_uah)}
                     </td>
                     <td className={`${tableCellClass} text-dental-text`}>
-                      {row.duration_minutes} хв
+                      {t('admin.servicesPage.table.durationMinutes', {
+                        minutes: row.duration_minutes,
+                      })}
                     </td>
                     <td className={tableCellClass}>
                       <span
@@ -600,7 +651,9 @@ export default function AdminServicesPage() {
                           row.is_active ? 'active' : 'inactive'
                         )}`}
                       >
-                        {row.is_active ? 'active' : 'inactive'}
+                        {row.is_active
+                          ? getAvailabilityLabel('active')
+                          : getAvailabilityLabel('inactive')}
                       </span>
                     </td>
                     <td
@@ -614,7 +667,7 @@ export default function AdminServicesPage() {
                           type="button"
                           onClick={() => openEditModal(row)}
                           className="rounded-md border border-dental-secondary p-1.5 text-dental-text hover:bg-dental-secondary-50"
-                          aria-label="Редагувати послугу"
+                          aria-label={t('admin.servicesPage.actions.editAria')}
                         >
                           <Edit className="h-4 w-4" />
                         </button>
@@ -626,14 +679,18 @@ export default function AdminServicesPage() {
                           disabled={isUpdatingId === row.id}
                           className="rounded-md border border-dental-secondary px-3 py-1.5 text-xs font-semibold text-dental-text hover:bg-dental-secondary-50 disabled:opacity-60"
                         >
-                          {row.is_active ? 'Приховати' : 'Показати'}
+                          {row.is_active
+                            ? t('admin.servicesPage.actions.hide')
+                            : t('admin.servicesPage.actions.show')}
                         </button>
                         <button
                           type="button"
                           onClick={() => void deleteService(row.id)}
                           disabled={isUpdatingId === row.id}
                           className="rounded-md border border-red-200 p-1.5 text-red-600 hover:bg-red-50 disabled:opacity-60"
-                          aria-label="Видалити послугу"
+                          aria-label={t(
+                            'admin.servicesPage.actions.deleteAria'
+                          )}
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -649,15 +706,19 @@ export default function AdminServicesPage() {
 
       <AdminModal
         open={isModalOpen}
-        title={modalMode === 'create' ? 'Нова послуга' : 'Редагування послуги'}
-        subtitle="Заповніть ключові поля каталогу. Зміни застосовуються одразу."
+        title={
+          modalMode === 'create'
+            ? t('admin.servicesPage.modal.createTitle')
+            : t('admin.servicesPage.modal.editTitle')
+        }
+        subtitle={t('admin.servicesPage.modal.subtitle')}
         onClose={closeModal}
         maxWidthClassName="max-w-4xl"
       >
         <form className="space-y-4" onSubmit={event => void saveService(event)}>
           <div className="grid gap-3 md:grid-cols-3">
             <Input
-              label="Назва (UA)"
+              label={t('admin.servicesPage.form.nameUk')}
               value={formState.name_uk}
               onChange={event =>
                 setFormState(prev => ({ ...prev, name_uk: event.target.value }))
@@ -665,14 +726,14 @@ export default function AdminServicesPage() {
               required
             />
             <Input
-              label="Назва (EN)"
+              label={t('admin.servicesPage.form.nameEn')}
               value={formState.name_en}
               onChange={event =>
                 setFormState(prev => ({ ...prev, name_en: event.target.value }))
               }
             />
             <Input
-              label="Назва (PL)"
+              label={t('admin.servicesPage.form.namePl')}
               value={formState.name_pl}
               onChange={event =>
                 setFormState(prev => ({ ...prev, name_pl: event.target.value }))
@@ -681,7 +742,7 @@ export default function AdminServicesPage() {
           </div>
           <div className="grid gap-3 md:grid-cols-3">
             <Input
-              label="Категорія"
+              label={t('admin.servicesPage.form.category')}
               value={formState.category}
               onChange={event =>
                 setFormState(prev => ({
@@ -694,7 +755,7 @@ export default function AdminServicesPage() {
             <Input
               type="number"
               min={0}
-              label="Ціна (грн)"
+              label={t('admin.servicesPage.form.priceUah')}
               value={formState.price_uah}
               onChange={event =>
                 setFormState(prev => ({
@@ -707,7 +768,7 @@ export default function AdminServicesPage() {
             <Input
               type="number"
               min={1}
-              label="Тривалість (хв)"
+              label={t('admin.servicesPage.form.durationMinutes')}
               value={formState.duration_minutes}
               onChange={event =>
                 setFormState(prev => ({
@@ -720,7 +781,7 @@ export default function AdminServicesPage() {
           </div>
           <Input
             type="url"
-            label="URL зображення"
+            label={t('admin.servicesPage.form.imageUrl')}
             value={formState.image_url}
             onChange={event =>
               setFormState(prev => ({ ...prev, image_url: event.target.value }))
@@ -728,7 +789,7 @@ export default function AdminServicesPage() {
           />
           <div className="grid gap-3 md:grid-cols-3">
             <Textarea
-              label="Опис (UA)"
+              label={t('admin.servicesPage.form.descriptionUk')}
               value={formState.description_uk}
               onChange={event =>
                 setFormState(prev => ({
@@ -739,7 +800,7 @@ export default function AdminServicesPage() {
               rows={4}
             />
             <Textarea
-              label="Опис (EN)"
+              label={t('admin.servicesPage.form.descriptionEn')}
               value={formState.description_en}
               onChange={event =>
                 setFormState(prev => ({
@@ -750,7 +811,7 @@ export default function AdminServicesPage() {
               rows={4}
             />
             <Textarea
-              label="Опис (PL)"
+              label={t('admin.servicesPage.form.descriptionPl')}
               value={formState.description_pl}
               onChange={event =>
                 setFormState(prev => ({
@@ -772,7 +833,7 @@ export default function AdminServicesPage() {
                 }))
               }
             />
-            Послуга активна і доступна для запису
+            {t('admin.servicesPage.form.activeService')}
           </label>
           <div className="flex items-center justify-end gap-2 border-t border-dental-secondary-200 pt-4">
             <Button
@@ -781,10 +842,12 @@ export default function AdminServicesPage() {
               onClick={closeModal}
               disabled={isSaving}
             >
-              Скасувати
+              {t('common.cancel')}
             </Button>
             <Button type="submit" isLoading={isSaving}>
-              {modalMode === 'create' ? 'Створити послугу' : 'Зберегти зміни'}
+              {modalMode === 'create'
+                ? t('admin.servicesPage.form.create')
+                : t('admin.servicesPage.form.saveChanges')}
             </Button>
           </div>
         </form>
