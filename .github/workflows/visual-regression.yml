@@ -27,21 +27,16 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: |
-          rm -rf node_modules package-lock.json
-          npm install
-          npm install --no-save @rollup/rollup-linux-x64-gnu
+        run: npm ci --legacy-peer-deps
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
       - name: Build application
         run: npm run build
-        continue-on-error: true
 
       - name: Run visual regression tests
         run: npm run test:visual
-        continue-on-error: true
 
       - name: Upload test results
         uses: actions/upload-artifact@v7
@@ -108,7 +103,7 @@ jobs:
   compare-screenshots:
     runs-on: ubuntu-latest
     needs: visual-tests
-    if: false  # Disabled until fully implemented
+    if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -121,17 +116,13 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: |
-          rm -rf node_modules package-lock.json
-          npm install
-          npm install --no-save @rollup/rollup-linux-x64-gnu
+        run: npm ci --legacy-peer-deps
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
       - name: Build base version
         run: npm run build
-        continue-on-error: true
 
       - name: Generate baseline screenshots
         run: npm run test:visual
@@ -152,6 +143,40 @@ jobs:
 
       - name: Compare screenshots
         run: |
-          echo "Comparing baseline with PR screenshots..."
-          # Add screenshot comparison logic here
-          # Could use pixelmatch or similar tool
+          echo "## 🖼️ Screenshot Comparison" >> $GITHUB_STEP_SUMMARY
+          BASELINE_DIR="tests/visual"
+          PR_DIR="pr-screenshots"
+          DIFF_COUNT=0
+          MATCH_COUNT=0
+          MISSING_COUNT=0
+
+          if [ ! -d "$PR_DIR" ]; then
+            echo "⚠️ PR screenshots directory not found — visual-tests artifact may be missing." >> $GITHUB_STEP_SUMMARY
+            exit 0
+          fi
+
+          while IFS= read -r -d '' baseline_file; do
+            rel_path="${baseline_file#$BASELINE_DIR/}"
+            pr_file="$PR_DIR/$rel_path"
+            if [ -f "$pr_file" ]; then
+              if cmp -s "$baseline_file" "$pr_file"; then
+                MATCH_COUNT=$((MATCH_COUNT + 1))
+              else
+                DIFF_COUNT=$((DIFF_COUNT + 1))
+                echo "⚠️  Visual diff detected: $rel_path" >> $GITHUB_STEP_SUMMARY
+              fi
+            else
+              MISSING_COUNT=$((MISSING_COUNT + 1))
+              echo "❓ Missing in PR: $rel_path" >> $GITHUB_STEP_SUMMARY
+            fi
+          done < <(find "$BASELINE_DIR" -name "*.png" -print0)
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Matching: $MATCH_COUNT | ⚠️ Changed: $DIFF_COUNT | ❓ Missing: $MISSING_COUNT" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "_Note: comparison uses binary diff (cmp). Intentional UI changes will appear here — review artifacts to confirm._" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$DIFF_COUNT" -gt 0 ] || [ "$MISSING_COUNT" -gt 0 ]; then
+            echo "Visual differences or missing screenshots detected. Review the uploaded screenshot artifacts."
+            exit 1
+          fi
