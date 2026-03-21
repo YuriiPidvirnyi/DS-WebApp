@@ -1,24 +1,25 @@
 import type { Metadata } from 'next'
 import Contact from '@/views/Contact'
 import { generateBreadcrumbSchema } from '@/utils/seo'
+import uk from '@/locales/uk'
+
+const contactMeta = uk.routeMeta.contact
 
 export const metadata: Metadata = {
-  title: 'Контакти — Dental Story Львів',
-  description:
-    'Адреса, телефон, години роботи стоматології Dental Story у Львові. Як нас знайти, карта проїзду.',
-  keywords: 'dental story адреса, телефон стоматології, контакти львів',
+  title: contactMeta.title,
+  description: contactMeta.description,
+  keywords: contactMeta.keywords,
   alternates: { canonical: '/contact' },
   openGraph: {
-    title: 'Контакти — Dental Story Львів',
-    description:
-      'Адреса, телефон, години роботи стоматології Dental Story.',
+    title: contactMeta.openGraphTitle,
+    description: contactMeta.openGraphDescription,
     url: '/contact',
   },
 }
 
 const breadcrumb = generateBreadcrumbSchema([
-  { name: 'Головна', url: 'https://dentalstory.com.ua/' },
-  { name: 'Контакти', url: 'https://dentalstory.com.ua/contact' },
+  { name: uk.navigation.home, url: 'https://dentalstory.com.ua/' },
+  { name: contactMeta.breadcrumb, url: 'https://dentalstory.com.ua/contact' },
 ])
 
 export default function ContactPage() {

@@ -1,7 +1,14 @@
 'use client'
 
 import { type UseFormReturn } from 'react-hook-form'
-import { Input, Select, Textarea, LoadingOverlay } from '@/components/ui'
+import { useTranslation } from 'react-i18next'
+import {
+  Input,
+  Select,
+  Textarea,
+  LoadingOverlay,
+  AsyncState,
+} from '@/components/ui'
 import EditableField from './EditableField'
 import { SERVICES, DOCTORS, type BookingFormValues } from './useBookingForm'
 
@@ -9,6 +16,7 @@ interface BookingSummaryProps {
   form: UseFormReturn<BookingFormValues>
   slots: string[]
   loadingSlots: boolean
+  slotsLoadError?: string | null
   editingField: keyof BookingFormValues | null
   onStartEdit: (field: keyof BookingFormValues) => void
   onSave: () => void
@@ -24,11 +32,13 @@ export default function BookingSummary({
   form,
   slots,
   loadingSlots,
+  slotsLoadError,
   editingField,
   onStartEdit,
   onSave,
   onCancel,
 }: BookingSummaryProps) {
+  const { t } = useTranslation()
   const {
     register,
     watch,
@@ -38,7 +48,7 @@ export default function BookingSummary({
   const doctorValue = watch('doctor')
   const doctorLabel =
     doctorValue === 'any'
-      ? 'Будь-який'
+      ? t('booking.fields.anyDoctor')
       : (DOCTORS.find(d => d.id === doctorValue)?.name ?? '—')
 
   return (
@@ -46,16 +56,16 @@ export default function BookingSummary({
       {/* Summary grid */}
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
         <h3 className="text-sm font-semibold text-gray-900 mb-3">
-          Перевірте дані перед підтвердженням
+          {t('booking.summary.title')}
           <span className="ml-2 text-xs text-gray-500 font-normal">
-            (натисніть на поле для редагування)
+            ({t('booking.summary.hint')})
           </span>
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
           {/* Service */}
           <EditableField
-            label="Послуга"
+            label={t('booking.fields.serviceLabel')}
             value={watch('service') || '—'}
             isEditing={editingField === 'service'}
             onStartEdit={() => onStartEdit('service')}
@@ -68,7 +78,7 @@ export default function BookingSummary({
               {...register('service')}
               autoFocus
             >
-              <option value="">Оберіть послугу</option>
+              <option value="">{t('booking.selectService')}</option>
               {SERVICES.map(s => (
                 <option key={s} value={s}>
                   {s}
@@ -79,7 +89,7 @@ export default function BookingSummary({
 
           {/* Date */}
           <EditableField
-            label="Дата"
+            label={t('booking.fields.dateLabel')}
             value={watch('date') || '—'}
             isEditing={editingField === 'date'}
             onStartEdit={() => onStartEdit('date')}
@@ -89,7 +99,7 @@ export default function BookingSummary({
             <Input
               type="date"
               fullWidth
-              aria-label="Дата"
+              aria-label={t('booking.fields.dateLabel')}
               error={errors.date?.message}
               {...register('date')}
               autoFocus
@@ -98,7 +108,7 @@ export default function BookingSummary({
 
           {/* Time */}
           <EditableField
-            label="Час"
+            label={t('booking.fields.timeLabel')}
             value={watch('time') || '—'}
             isEditing={editingField === 'time'}
             onStartEdit={() => onStartEdit('time')}
@@ -108,12 +118,12 @@ export default function BookingSummary({
             <div className="relative">
               <Select
                 fullWidth
-                aria-label="Час"
+                aria-label={t('booking.fields.timeLabel')}
                 error={errors.time?.message}
                 {...register('time')}
                 autoFocus
               >
-                <option value="">Оберіть час</option>
+                <option value="">{t('booking.selectTime')}</option>
                 {slots.map(t => (
                   <option key={t} value={t}>
                     {t}
@@ -122,14 +132,28 @@ export default function BookingSummary({
               </Select>
               <LoadingOverlay
                 show={loadingSlots}
-                message="Завантажуємо вільні години..."
+                message={t('booking.slots.loadingMessage')}
               />
+              {slotsLoadError && (
+                <AsyncState
+                  variant="error"
+                  message={slotsLoadError}
+                  className="mt-2 px-3 py-3"
+                />
+              )}
+              {!slotsLoadError && !loadingSlots && slots.length === 0 && (
+                <AsyncState
+                  variant="empty"
+                  message={t('booking.slots.summaryEmpty')}
+                  className="mt-2 px-3 py-3"
+                />
+              )}
             </div>
           </EditableField>
 
           {/* Doctor */}
           <EditableField
-            label="Лікар"
+            label={t('booking.fields.doctorLabel')}
             value={doctorLabel}
             isEditing={editingField === 'doctor'}
             onStartEdit={() => onStartEdit('doctor')}
@@ -138,7 +162,7 @@ export default function BookingSummary({
           >
             <Select
               fullWidth
-              aria-label="Лікар"
+              aria-label={t('booking.fields.doctorLabel')}
               error={errors.doctor?.message}
               {...register('doctor')}
               autoFocus
@@ -153,7 +177,7 @@ export default function BookingSummary({
 
           {/* Name (first + last together) */}
           <EditableField
-            label="Ім'я"
+            label={t('booking.fields.fullNameLabel')}
             value={`${watch('firstName')} ${watch('lastName')}`}
             isEditing={
               editingField === 'firstName' || editingField === 'lastName'
@@ -165,14 +189,14 @@ export default function BookingSummary({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <Input
                 fullWidth
-                placeholder="Ім'я"
+                placeholder={t('booking.fields.firstNamePlaceholder')}
                 error={errors.firstName?.message}
                 {...register('firstName')}
                 autoFocus={editingField === 'firstName'}
               />
               <Input
                 fullWidth
-                placeholder="Прізвище"
+                placeholder={t('booking.fields.lastNamePlaceholder')}
                 error={errors.lastName?.message}
                 {...register('lastName')}
                 autoFocus={editingField === 'lastName'}
@@ -182,7 +206,7 @@ export default function BookingSummary({
 
           {/* Phone */}
           <EditableField
-            label="Телефон"
+            label={t('booking.fields.phoneLabel')}
             value={watch('phone') || '—'}
             isEditing={editingField === 'phone'}
             onStartEdit={() => onStartEdit('phone')}
@@ -192,7 +216,7 @@ export default function BookingSummary({
             <Input
               type="tel"
               fullWidth
-              placeholder="+380 XX XXX XX XX"
+              placeholder={t('booking.fields.phonePlaceholder')}
               error={errors.phone?.message}
               {...register('phone')}
               autoFocus
@@ -201,7 +225,7 @@ export default function BookingSummary({
 
           {/* Email */}
           <EditableField
-            label="Email"
+            label={t('booking.fields.emailLabel')}
             value={watch('email') || '—'}
             isEditing={editingField === 'email'}
             onStartEdit={() => onStartEdit('email')}
@@ -211,7 +235,7 @@ export default function BookingSummary({
             <Input
               type="email"
               fullWidth
-              placeholder="email@example.com"
+              placeholder={t('booking.fields.emailPlaceholder')}
               error={errors.email?.message}
               {...register('email')}
               autoFocus
@@ -220,7 +244,7 @@ export default function BookingSummary({
 
           {/* Date of Birth */}
           <EditableField
-            label="Дата народження"
+            label={t('booking.fields.dateOfBirthLabel')}
             value={watch('dateOfBirth') || '—'}
             isEditing={editingField === 'dateOfBirth'}
             onStartEdit={() => onStartEdit('dateOfBirth')}
@@ -238,7 +262,7 @@ export default function BookingSummary({
 
           {/* Symptoms / Notes — spans full width */}
           <EditableField
-            label="Симптоми / побажання"
+            label={t('booking.fields.symptomsLabel')}
             value={
               <span className="whitespace-pre-wrap break-words">
                 {watch('symptoms') || '—'}
@@ -253,7 +277,7 @@ export default function BookingSummary({
             <Textarea
               rows={4}
               fullWidth
-              placeholder="Коротко опишіть ваш запит"
+              placeholder={t('booking.fields.symptomsPlaceholder')}
               error={errors.symptoms?.message}
               {...register('symptoms')}
               autoFocus
@@ -269,17 +293,25 @@ export default function BookingSummary({
             htmlFor="reminderPreference"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Нагадування
+            {t('booking.fields.reminderPreferenceLabel')}
           </label>
           <Select
             id="reminderPreference"
             fullWidth
             {...register('reminderPreference')}
           >
-            <option value="email">По email</option>
-            <option value="sms">По SMS</option>
-            <option value="both">По email та SMS</option>
-            <option value="none">Не надсилати нагадування</option>
+            <option value="email">
+              {t('booking.fields.reminderOptions.email')}
+            </option>
+            <option value="sms">
+              {t('booking.fields.reminderOptions.sms')}
+            </option>
+            <option value="both">
+              {t('booking.fields.reminderOptions.both')}
+            </option>
+            <option value="none">
+              {t('booking.fields.reminderOptions.none')}
+            </option>
           </Select>
         </div>
 
@@ -291,7 +323,7 @@ export default function BookingSummary({
             {...register('consent')}
           />
           <label htmlFor="consent" className="ml-2 text-sm text-gray-700">
-            Я даю згоду на обробку персональних даних *
+            {t('booking.fields.consentLabel')} *
           </label>
         </div>
       </div>

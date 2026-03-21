@@ -10,7 +10,7 @@ import { CONTACT_INFO } from '@/utils/constants'
 
 const Contact = () => {
   const { t } = useTranslation()
-  
+
   return (
     <div className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -32,7 +32,9 @@ const Contact = () => {
           <div className="space-y-8">
             {/* Contact Details */}
             <div className="bg-gradient-to-br from-dental-primary to-dental-primary-600 text-white rounded-2xl p-8">
-              <h2 className="text-2xl font-bold mb-6">{t('contact.contactInfo')}</h2>
+              <h2 className="text-2xl font-bold mb-6">
+                {t('contact.contactInfo')}
+              </h2>
 
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
@@ -50,7 +52,8 @@ const Contact = () => {
                       {CONTACT_INFO.phone}
                     </a>
                     <p className="text-sm text-white/90">
-                      {t('common.workingHours')}: {CONTACT_INFO.workingHours.weekdays}
+                      {t('common.workingHours')}:{' '}
+                      {CONTACT_INFO.workingHours.weekdays}
                     </p>
                   </div>
                 </div>
@@ -70,7 +73,7 @@ const Contact = () => {
                       {CONTACT_INFO.email}
                     </a>
                     <p className="text-sm text-white/90">
-                      Відповідаємо протягом 2 годин
+                      {t('contact.responseTime')}
                     </p>
                   </div>
                 </div>
@@ -78,7 +81,9 @@ const Contact = () => {
                 <div className="flex items-start space-x-4">
                   <MapPin className="h-6 w-6 mt-1 text-dental-accent" />
                   <div>
-                    <h3 className="font-semibold mb-1">{t('common.address')}</h3>
+                    <h3 className="font-semibold mb-1">
+                      {t('common.address')}
+                    </h3>
                     <p>{CONTACT_INFO.address.full}</p>
                     <p>{CONTACT_INFO.address.district}</p>
                     <a
@@ -87,7 +92,7 @@ const Contact = () => {
                       rel="noopener noreferrer"
                       className="text-sm text-blue-100 hover:underline"
                     >
-                      Переглянути на карті →
+                      {t('contact.viewOnMap')}
                     </a>
                   </div>
                 </div>
@@ -95,7 +100,9 @@ const Contact = () => {
                 <div className="flex items-start space-x-4">
                   <Clock className="h-6 w-6 mt-1 text-dental-accent" />
                   <div>
-                    <h3 className="font-semibold mb-1">{t('common.workingHours')}</h3>
+                    <h3 className="font-semibold mb-1">
+                      {t('common.workingHours')}
+                    </h3>
                     <p>{CONTACT_INFO.workingHours.weekdays}</p>
                     <p>{CONTACT_INFO.workingHours.saturday}</p>
                     <p>{CONTACT_INFO.workingHours.sunday}</p>
@@ -142,7 +149,7 @@ const Contact = () => {
                     id="location-heading"
                     className="font-semibold text-dental-dark"
                   >
-                    Наше розташування
+                    {t('contact.ourLocation')}
                   </h3>
                 </div>
                 <p className="text-dental-muted text-sm mb-4">
@@ -167,7 +174,7 @@ const Contact = () => {
                   data-track-label="contact_map_link"
                 >
                   <MapPin className="h-4 w-4 mr-1" />
-                  Відкрити в Google Maps →
+                  {t('contact.openInGoogleMaps')}
                 </a>
               </div>
             </div>

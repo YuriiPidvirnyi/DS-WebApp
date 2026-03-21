@@ -1,63 +1,20 @@
 'use client'
 
+import Link from 'next/link'
+import { useTranslation } from 'react-i18next'
 import { Star } from 'lucide-react'
 import type { Testimonial } from '@/types'
 
-const testimonials: Testimonial[] = [
-  {
-    id: '1',
-    name: 'Олена Шевченко',
-    rating: 5,
-    text: 'Чудова клініка! Лікарі професіонали своєї справи. Робили імплантацію - все пройшло безболісно та швидко. Дуже вдячна всій команді за турботу та якісну роботу.',
-    service: 'Імплантація зубів',
-    date: '2024-09-15',
-  },
-  {
-    id: '2',
-    name: 'Андрій Коваленко',
-    rating: 5,
-    text: 'Найкраща стоматологія в Києві! Ставили брекети дочці - результат перевершив всі очікування. Лікар-ортодонт дуже уважна, все пояснює зрозумілою мовою.',
-    service: 'Ортодонтія',
-    date: '2024-08-28',
-  },
-  {
-    id: '3',
-    name: 'Марія Бондаренко',
-    rating: 5,
-    text: 'Дякую за професійне відбілювання! Посмішка як у голлівудських зірок. Процедура комфортна, без неприємних відчуттів. Рекомендую всім!',
-    service: 'Відбілювання зубів',
-    date: '2024-09-02',
-  },
-  {
-    id: '4',
-    name: 'Віктор Мельник',
-    rating: 5,
-    text: 'Вперше не боявся йти до стоматолога. Сучасне обладнання, привітний персонал, якісна анестезія. Лікування пройшло швидко і абсолютно безболісно.',
-    service: 'Лікування зубів',
-    date: '2024-08-10',
-  },
-  {
-    id: '5',
-    name: 'Юлія Петрова',
-    rating: 5,
-    text: 'Робила професійну чистку зубів. Дуже задоволена результатом! Гігієніст працює акуратно та ретельно. Відчуття свіжості та чистоти після процедури - неймовірне.',
-    service: 'Професійна гігієна',
-    date: '2024-09-20',
-  },
-  {
-    id: '6',
-    name: 'Ігор Сидоренко',
-    rating: 5,
-    text: 'Ставив коронки - якість на найвищому рівні. Колір підібрали ідеально, сидять як рідні. Дякую лікарю за професіоналізм та терпіння!',
-    service: 'Протезування',
-    date: '2024-07-25',
-  },
-]
-
-const StarRating = ({ rating }: { rating: number }) => {
+const StarRating = ({
+  rating,
+  ariaLabel,
+}: {
+  rating: number
+  ariaLabel: string
+}) => {
   return (
     <div className="flex gap-1">
-      <span className="sr-only">Рейтинг: {rating} з 5 зірок</span>
+      <span className="sr-only">{ariaLabel}</span>
       {[...Array(5)].map((_, index) => (
         <Star
           key={index}
@@ -73,14 +30,15 @@ const StarRating = ({ rating }: { rating: number }) => {
 }
 
 const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
-  // Генеруємо ініціали для аватара
+  const { t } = useTranslation()
+  // Generate initials for avatar fallback
   const initials = testimonial.name
     .split(' ')
     .map(n => n[0])
     .join('')
     .toUpperCase()
 
-  // Генеруємо колір фону на основі імені
+  // Generate deterministic background color from name
   const colors = [
     'bg-teal-800',
     'bg-slate-800',
@@ -107,7 +65,10 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
           <h4 className="font-semibold text-gray-900 mb-1">
             {testimonial.name}
           </h4>
-          <StarRating rating={testimonial.rating} />
+          <StarRating
+            rating={testimonial.rating}
+            ariaLabel={t('testimonials.rating', { rating: testimonial.rating })}
+          />
         </div>
       </div>
 
@@ -127,24 +88,36 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
 }
 
 const Testimonials = () => {
+  const { t } = useTranslation()
+  const translatedItems = t('testimonials.items', {
+    returnObjects: true,
+  }) as unknown
+  const testimonials = Array.isArray(translatedItems)
+    ? (translatedItems as Testimonial[])
+    : []
+
   return (
     <section className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            Відгуки наших пацієнтів
+            {t('testimonials.title')}
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Щастя наших пацієнтів - наша найкраща нагорода. Читайте реальні
-            відгуки людей, які довірили нам своє здоров'я
+            {t('testimonials.subtitle')}
           </p>
 
           {/* Rating Summary */}
           <div className="mt-8 inline-flex items-center gap-3 bg-white px-6 py-3 rounded-full shadow-sm">
-            <StarRating rating={5} />
+            <StarRating
+              rating={5}
+              ariaLabel={t('testimonials.rating', { rating: 5 })}
+            />
             <span className="text-2xl font-bold text-gray-900">4.9</span>
-            <span className="text-gray-500">на основі 523 відгуків</span>
+            <span className="text-gray-500">
+              {t('testimonials.basedOn', { count: 523 })}
+            </span>
           </div>
         </div>
 
@@ -157,15 +130,13 @@ const Testimonials = () => {
 
         {/* CTA */}
         <div className="text-center">
-          <p className="text-gray-600 mb-4">
-            Хочете стати частиною нашої щасливої сім'ї пацієнтів?
-          </p>
-          <a
-            href="/contact"
+          <p className="text-gray-600 mb-4">{t('testimonials.cta.question')}</p>
+          <Link
+            href="/booking"
             className="inline-block bg-teal-800 hover:bg-teal-900 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
           >
-            Записатися на прийом
-          </a>
+            {t('testimonials.cta.button')}
+          </Link>
         </div>
       </div>
     </section>

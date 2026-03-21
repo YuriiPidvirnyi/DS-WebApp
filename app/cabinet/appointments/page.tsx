@@ -3,15 +3,9 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
-import { 
-  Calendar, 
-  Clock, 
-  ChevronLeft,
-  Filter,
-  Plus,
-  X
-} from 'lucide-react'
+import { Calendar, Clock, ChevronLeft, Filter, Plus, X } from 'lucide-react'
 
 interface Appointment {
   id: string
@@ -25,6 +19,7 @@ interface Appointment {
 
 export default function AppointmentsPage() {
   const router = useRouter()
+  const { t } = useTranslation()
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('all')
@@ -33,8 +28,14 @@ export default function AppointmentsPage() {
   useEffect(() => {
     const fetchAppointments = async () => {
       const supabase = createClient()
-      
-      const { data: { user } } = await supabase.auth.getUser()
+      if (!supabase) {
+        router.push('/auth/login')
+        return
+      }
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
       if (!user) {
         router.push('/auth/login')
         return
@@ -42,7 +43,8 @@ export default function AppointmentsPage() {
 
       const { data } = await supabase
         .from('appointments')
-        .select(`
+        .select(
+          `
           id,
           appointment_date,
           appointment_time,
@@ -50,7 +52,8 @@ export default function AppointmentsPage() {
           notes,
           doctors (first_name, last_name, specialization),
           services (name_uk, price_uah, duration_minutes)
-        `)
+        `
+        )
         .eq('patient_id', user.id)
         .order('appointment_date', { ascending: false })
 
@@ -62,18 +65,19 @@ export default function AppointmentsPage() {
   }, [router])
 
   const handleCancel = async (id: string) => {
-    if (!confirm('Ви впевнені, що хочете скасувати цей запис?')) return
-    
+    if (!confirm(t('cabinet.appointments.cancelConfirm'))) return
+
     setCancellingId(id)
     const supabase = createClient()
-    
+    if (!supabase) return
+
     await supabase
       .from('appointments')
       .update({ status: 'cancelled' })
       .eq('id', id)
 
-    setAppointments(prev => 
-      prev.map(apt => apt.id === id ? { ...apt, status: 'cancelled' } : apt)
+    setAppointments(prev =>
+      prev.map(apt => (apt.id === id ? { ...apt, status: 'cancelled' } : apt))
     )
     setCancellingId(null)
   }
@@ -93,13 +97,15 @@ export default function AppointmentsPage() {
       cancelled: 'bg-red-100 text-red-700 border-red-200',
     }
     const labels: Record<string, string> = {
-      pending: 'Очікує підтвердження',
-      confirmed: 'Підтверджено',
-      completed: 'Завершено',
-      cancelled: 'Скасовано',
+      pending: t('cabinet.appointments.status.pending'),
+      confirmed: t('cabinet.appointments.status.confirmed'),
+      completed: t('cabinet.appointments.status.completed'),
+      cancelled: t('cabinet.appointments.status.cancelled'),
     }
     return (
-      <span className={`px-3 py-1 rounded-full text-sm font-medium border ${styles[status] || styles.pending}`}>
+      <span
+        className={`px-3 py-1 rounded-full text-sm font-medium border ${styles[status] || styles.pending}`}
+      >
         {labels[status] || status}
       </span>
     )
@@ -120,17 +126,22 @@ export default function AppointmentsPage() {
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link href="/cabinet" className="text-slate-500 hover:text-slate-700">
+              <Link
+                href="/cabinet"
+                className="text-slate-500 hover:text-slate-700"
+              >
                 <ChevronLeft className="w-6 h-6" />
               </Link>
-              <h1 className="text-xl font-bold text-slate-900">Мої записи</h1>
+              <h1 className="text-xl font-bold text-slate-900">
+                {t('cabinet.appointments.title')}
+              </h1>
             </div>
             <Link
               href="/booking"
               className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-xl font-medium transition-colors"
             >
               <Plus className="w-4 h-4" />
-              Новий запис
+              {t('cabinet.appointments.newAppointment')}
             </Link>
           </div>
         </div>
@@ -146,14 +157,14 @@ export default function AppointmentsPage() {
                 key={f}
                 onClick={() => setFilter(f)}
                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
-                  filter === f 
-                    ? 'bg-teal-100 text-teal-700' 
+                  filter === f
+                    ? 'bg-teal-100 text-teal-700'
                     : 'bg-white text-slate-600 hover:bg-slate-100'
                 }`}
               >
-                {f === 'all' && 'Всі'}
-                {f === 'upcoming' && 'Майбутні'}
-                {f === 'past' && 'Минулі'}
+                {f === 'all' && t('cabinet.appointments.filters.all')}
+                {f === 'upcoming' && t('cabinet.appointments.filters.upcoming')}
+                {f === 'past' && t('cabinet.appointments.filters.past')}
               </button>
             ))}
           </div>
@@ -164,27 +175,35 @@ export default function AppointmentsPage() {
           <div className="bg-white rounded-2xl p-12 text-center shadow-soft">
             <Calendar className="w-16 h-16 text-slate-300 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-slate-900 mb-2">
-              {filter === 'upcoming' ? 'Немає майбутніх записів' : 
-               filter === 'past' ? 'Немає минулих записів' : 'Записів поки немає'}
+              {filter === 'upcoming'
+                ? t('cabinet.appointments.empty.upcoming')
+                : filter === 'past'
+                  ? t('cabinet.appointments.empty.past')
+                  : t('cabinet.appointments.empty.all')}
             </h3>
-            <p className="text-slate-500 mb-6">Запишіться на прийом до наших спеціалістів</p>
+            <p className="text-slate-500 mb-6">
+              {t('cabinet.appointments.empty.cta')}
+            </p>
             <Link
               href="/booking"
               className="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-xl font-medium transition-colors"
             >
               <Plus className="w-5 h-5" />
-              Записатися
+              {t('cabinet.appointments.book')}
             </Link>
           </div>
         ) : (
           <div className="space-y-4">
             {filteredAppointments.map(apt => {
               const isUpcoming = new Date(apt.appointment_date) >= new Date()
-              const canCancel = isUpcoming && apt.status !== 'cancelled' && apt.status !== 'completed'
-              
+              const canCancel =
+                isUpcoming &&
+                apt.status !== 'cancelled' &&
+                apt.status !== 'completed'
+
               return (
-                <div 
-                  key={apt.id} 
+                <div
+                  key={apt.id}
                   className={`bg-white rounded-2xl p-6 shadow-soft ${
                     apt.status === 'cancelled' ? 'opacity-60' : ''
                   }`}
@@ -196,15 +215,21 @@ export default function AppointmentsPage() {
                           {new Date(apt.appointment_date).getDate()}
                         </span>
                         <span className="text-xs text-teal-500">
-                          {new Date(apt.appointment_date).toLocaleDateString('uk-UA', { month: 'short' })}
+                          {new Date(apt.appointment_date).toLocaleDateString(
+                            'uk-UA',
+                            { month: 'short' }
+                          )}
                         </span>
                       </div>
                       <div>
                         <h3 className="font-semibold text-slate-900 mb-1">
-                          {apt.services?.[0]?.name_uk || 'Консультація'}
+                          {apt.services?.[0]?.name_uk ||
+                            t('cabinet.appointments.consultation')}
                         </h3>
                         <p className="text-sm text-slate-500 mb-2">
-                          {apt.doctors?.[0]?.last_name} {apt.doctors?.[0]?.first_name} - {apt.doctors?.[0]?.specialization}
+                          {apt.doctors?.[0]?.last_name}{' '}
+                          {apt.doctors?.[0]?.first_name} -{' '}
+                          {apt.doctors?.[0]?.specialization}
                         </p>
                         <div className="flex items-center gap-4 text-sm text-slate-500">
                           <div className="flex items-center gap-1">
@@ -212,17 +237,24 @@ export default function AppointmentsPage() {
                             {apt.appointment_time.slice(0, 5)}
                           </div>
                           {apt.services?.[0]?.duration_minutes && (
-                            <span>{apt.services[0].duration_minutes} хв</span>
-                          )}
-                          {apt.services?.[0]?.price_uah && apt.services[0].price_uah > 0 && (
-                            <span className="font-medium text-slate-700">
-                              {apt.services[0].price_uah.toLocaleString('uk-UA')} грн
+                            <span>
+                              {apt.services[0].duration_minutes}{' '}
+                              {t('cabinet.appointments.minutes')}
                             </span>
                           )}
+                          {apt.services?.[0]?.price_uah &&
+                            apt.services[0].price_uah > 0 && (
+                              <span className="font-medium text-slate-700">
+                                {apt.services[0].price_uah.toLocaleString(
+                                  'uk-UA'
+                                )}{' '}
+                                {t('cabinet.appointments.currency')}
+                              </span>
+                            )}
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="flex flex-col items-end gap-2">
                       {getStatusBadge(apt.status)}
                       {canCancel && (
@@ -236,16 +268,19 @@ export default function AppointmentsPage() {
                           ) : (
                             <X className="w-4 h-4" />
                           )}
-                          Скасувати
+                          {t('cabinet.appointments.cancel')}
                         </button>
                       )}
                     </div>
                   </div>
-                  
+
                   {apt.notes && (
                     <div className="mt-4 pt-4 border-t border-slate-100">
                       <p className="text-sm text-slate-600">
-                        <span className="font-medium">Примітки:</span> {apt.notes}
+                        <span className="font-medium">
+                          {t('cabinet.appointments.notes')}:
+                        </span>{' '}
+                        {apt.notes}
                       </p>
                     </div>
                   )}

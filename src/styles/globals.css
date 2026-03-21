@@ -6,7 +6,8 @@
 
 /* Modern animations for hero section */
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px);
   }
   50% {
@@ -88,15 +89,29 @@
 }
 
 .animate-shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
 }
 
 /* Hero background gradient pattern */
 .bg-gradient-radial-dental {
-  background-image: radial-gradient(circle at 20% 50%, rgba(94, 156, 160, 0.08) 0%, transparent 50%),
-                    radial-gradient(circle at 80% 80%, rgba(94, 156, 160, 0.05) 0%, transparent 50%);
+  background-image:
+    radial-gradient(
+      circle at 20% 50%,
+      rgba(94, 156, 160, 0.08) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(94, 156, 160, 0.05) 0%,
+      transparent 50%
+    );
 }
 
 /* Accessibility class for screen readers only */
@@ -115,52 +130,52 @@
 @layer base {
   :root {
     /* Dental Story Brand Colors - Full 13-color system */
-    
+
     /* Primary palette */
-    --dental-primary: #AECED3;
-    --dental-secondary: #D1CAC0;
-    --dental-white: #FFFFFF;
-    
+    --dental-primary: #aeced3;
+    --dental-secondary: #d1cac0;
+    --dental-white: #ffffff;
+
     /* Primary tints & shades */
-    --dental-primary-50: #F0F7F8;
-    --dental-primary-100: #E1EFF1;
-    --dental-primary-200: #C5DDE1;
-    --dental-primary-300: #AECED3;
-    --dental-primary-400: #8FBAC1;
-    --dental-primary-500: #7BA8B0;
-    --dental-primary-600: #5A8A94;
-    --dental-primary-700: #4A7078;
-    --dental-primary-800: #3A565C;
-    --dental-primary-900: #2A3C40;
-    
+    --dental-primary-50: #f0f7f8;
+    --dental-primary-100: #e1eff1;
+    --dental-primary-200: #c5dde1;
+    --dental-primary-300: #aeced3;
+    --dental-primary-400: #8fbac1;
+    --dental-primary-500: #7ba8b0;
+    --dental-primary-600: #5a8a94;
+    --dental-primary-700: #4a7078;
+    --dental-primary-800: #3a565c;
+    --dental-primary-900: #2a3c40;
+
     /* Secondary tints */
-    --dental-secondary-50: #FAF9F7;
-    --dental-secondary-100: #F5F3F0;
-    --dental-secondary-200: #EBE7E1;
-    --dental-secondary-300: #D1CAC0;
-    --dental-secondary-400: #B8AFA3;
-    --dental-secondary-500: #9F9486;
-    
+    --dental-secondary-50: #faf9f7;
+    --dental-secondary-100: #f5f3f0;
+    --dental-secondary-200: #ebe7e1;
+    --dental-secondary-300: #d1cac0;
+    --dental-secondary-400: #b8afa3;
+    --dental-secondary-500: #9f9486;
+
     /* Functional colors */
-    --dental-success: #4CAF50;
-    --dental-success-light: #E8F5E9;
-    --dental-success-dark: #388E3C;
-    --dental-warning: #FF9800;
-    --dental-warning-light: #FFF3E0;
-    --dental-warning-dark: #F57C00;
-    --dental-error: #EF5350;
-    --dental-error-light: #FFEBEE;
-    --dental-error-dark: #C62828;
-    --dental-info: #2196F3;
-    --dental-info-light: #E3F2FD;
-    --dental-info-dark: #1565C0;
-    
+    --dental-success: #4caf50;
+    --dental-success-light: #e8f5e9;
+    --dental-success-dark: #388e3c;
+    --dental-warning: #ff9800;
+    --dental-warning-light: #fff3e0;
+    --dental-warning-dark: #f57c00;
+    --dental-error: #ef5350;
+    --dental-error-light: #ffebee;
+    --dental-error-dark: #c62828;
+    --dental-info: #2196f3;
+    --dental-info-light: #e3f2fd;
+    --dental-info-dark: #1565c0;
+
     /* Text colors */
-    --dental-dark: #2C3E42;
-    --dental-text: #4A5E63;
-    --dental-muted: #6B8388;
-    --dental-text-light: #8FA3A8;
-    
+    --dental-dark: #2c3e42;
+    --dental-text: #4a5e63;
+    --dental-muted: #6b8388;
+    --dental-text-light: #8fa3a8;
+
     /* Legacy RGB values for rgba() usage */
     --dental-primary-rgb: 174, 206, 211;
     --dental-secondary-rgb: 209, 202, 192;
@@ -171,14 +186,22 @@
     @apply bg-white antialiased;
     font-family: var(--font-rubik), system-ui, sans-serif;
     color: var(--dental-text);
-    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+    font-feature-settings:
+      'kern' 1,
+      'liga' 1,
+      'calt' 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   /* Modern heading styles - Nunito for headings */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-nunito), system-ui, sans-serif;
     color: var(--dental-dark);
     @apply font-bold tracking-tight;
@@ -210,9 +233,10 @@
     color: var(--dental-muted);
     @apply leading-relaxed;
   }
-  
+
   /* Strong/bold text in body */
-  strong, b {
+  strong,
+  b {
     color: var(--dental-text);
     @apply font-semibold;
   }
@@ -225,14 +249,14 @@
   /* Focus visible styles for accessibility */
   *:focus-visible {
     @apply outline-none ring-2 ring-offset-2;
-    --tw-ring-color: #AECED3; /* dental-primary */
+    --tw-ring-color: #aeced3; /* dental-primary */
   }
 
   /* Improved focus styles for interactive elements */
   a:focus-visible,
   button:focus-visible {
     @apply ring-2 ring-offset-2 outline-none;
-    --tw-ring-color: #AECED3; /* dental-primary */
+    --tw-ring-color: #aeced3; /* dental-primary */
   }
 
   /* Remove outline for mouse users but keep for keyboard users */
@@ -241,7 +265,7 @@
   }
 
   /* Smooth scroll behavior — scoped to data attribute per Next.js requirement */
-  html[data-scroll-behavior="smooth"] {
+  html[data-scroll-behavior='smooth'] {
     scroll-behavior: smooth;
   }
 
@@ -252,8 +276,8 @@
 
   /* Ensure sufficient color contrast */
   ::selection {
-    background-color: #AECED3; /* dental-primary */
-    color: #2C3E42; /* dental-dark */
+    background-color: #aeced3; /* dental-primary */
+    color: #2c3e42; /* dental-dark */
   }
 
   /* Reduce motion for users who prefer it (OS-level) */
@@ -335,5 +359,42 @@
   .tritanopia {
     filter: url('#tritanopia-filter');
   }
+}
 
+/* ── Header responsive utilities ──────────────────────────
+   Plain CSS media queries — immune to Turbopack JIT issues.
+   These complement Tailwind classes used in Header.tsx.
+   ──────────────────────────────────────────────────────── */
+
+/* CTA text: hidden < 1280px, visible ≥ 1280px */
+.header-cta-text {
+  display: none;
+}
+
+@media (min-width: 1280px) {
+  .header-cta-text {
+    display: inline;
+  }
+
+  /* At ≥1280 the CTA button gets pill padding instead of circle */
+  .header-cta-btn {
+    padding-left: 1.25rem; /* pl-5 */
+    padding-right: 1.5rem; /* pr-6 */
+  }
+}
+
+/* Language switcher: hide label below 1152px to save space */
+.header-lang-label {
+  display: none;
+}
+
+@media (min-width: 1152px) {
+  .header-lang-label {
+    display: inline;
+  }
+}
+
+/* Body scroll lock when mobile menu is open */
+body.menu-open {
+  overflow: hidden;
 }

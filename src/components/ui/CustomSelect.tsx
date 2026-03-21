@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useId } from 'react'
 import { ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
+import { useTranslation } from 'react-i18next'
 
 export interface SelectOption {
   value: string
@@ -32,6 +33,7 @@ export function CustomSelect({
   className,
   'aria-label': ariaLabel,
 }: CustomSelectProps) {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
@@ -109,8 +111,10 @@ export function CustomSelect({
             : 'rounded-lg'
         )}
       >
-        <span className={selectedOption ? 'text-dental-dark' : 'text-dental-muted'}>
-          {selectedOption?.label ?? 'Оберіть...'}
+        <span
+          className={selectedOption ? 'text-dental-dark' : 'text-dental-muted'}
+        >
+          {selectedOption?.label ?? t('customSelect.placeholder')}
         </span>
         <ChevronDown
           className={clsx(

@@ -1,28 +1,33 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport } from 'ai'
 import { useTranslation } from 'react-i18next'
-import { 
-  X, 
-  Send, 
-  Bot, 
-  User, 
+import { useFocusTrap } from '@/hooks/useFocusTrap'
+import {
+  X,
+  Send,
+  Bot,
+  User,
   Loader2,
   Sparkles,
   Stethoscope,
   Calendar,
   Clock,
-  Phone
+  Phone,
 } from 'lucide-react'
 
 // Helper to extract text from message parts
-function getMessageText(message: { parts?: Array<{ type: string; text?: string }> }): string {
+function getMessageText(message: {
+  parts?: Array<{ type: string; text?: string }>
+}): string {
   if (!message.parts || !Array.isArray(message.parts)) return ''
   return message.parts
-    .filter((p): p is { type: 'text'; text: string } => p.type === 'text' && !!p.text)
-    .map((p) => p.text)
+    .filter(
+      (p): p is { type: 'text'; text: string } => p.type === 'text' && !!p.text
+    )
+    .map(p => p.text)
     .join('')
 }
 
@@ -34,27 +39,11 @@ const quickActions = [
   { id: 'hours', icon: Clock, labelKey: 'ai.quickActions.hours' },
 ]
 
-const quickActionPrompts: Record<string, Record<string, string>> = {
-  services: {
-    uk: 'Які послуги ви надаєте та скільки вони коштують?',
-    en: 'What services do you offer and what are the prices?',
-    pl: 'Jakie usługi oferujecie i jakie są ceny?',
-  },
-  symptoms: {
-    uk: 'У мене болить зуб. Що це може бути?',
-    en: 'I have a toothache. What could it be?',
-    pl: 'Boli mnie ząb. Co to może być?',
-  },
-  booking: {
-    uk: 'Як записатися на прийом?',
-    en: 'How can I book an appointment?',
-    pl: 'Jak mogę umówić się na wizytę?',
-  },
-  hours: {
-    uk: 'Коли працює клініка?',
-    en: 'What are your working hours?',
-    pl: 'Jakie są godziny pracy kliniki?',
-  },
+const quickActionPromptKeys: Record<string, string> = {
+  services: 'ai.quickActionPrompts.services',
+  symptoms: 'ai.quickActionPrompts.symptoms',
+  booking: 'ai.quickActionPrompts.booking',
+  hours: 'ai.quickActionPrompts.hours',
 }
 
 interface AIAssistantProps {
@@ -67,12 +56,18 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
   const [input, setInput] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
 
   const { messages, sendMessage, status, setMessages } = useChat({
-    transport: new DefaultChatTransport({ 
+    transport: new DefaultChatTransport({
       api: '/api/ai/chat',
       body: { language: i18n.language },
+      headers: (): Record<string, string> => {
+        const csrfToken =
+          typeof window !== 'undefined'
+            ? sessionStorage.getItem('csrf_token') || ''
+            : ''
+        return csrfToken ? { 'X-CSRF-Token': csrfToken } : {}
+      },
     }),
   })
 
@@ -83,11 +78,19 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  // Focus input when opened
+  const handleClose = useCallback(() => {
+    setIsOpen(false)
+    setMessages([])
+    setInput('')
+    onClose?.()
+  }, [onClose, setMessages])
+
+  // Focus trap: traps Tab, handles Escape, saves/restores previous focus
+  const containerRef = useFocusTrap<HTMLDivElement>(isOpen, handleClose)
+
+  // Focus the input when opened
   useEffect(() => {
-    if (isOpen) {
-      inputRef.current?.focus()
-    }
+    if (isOpen) inputRef.current?.focus()
   }, [isOpen])
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -98,39 +101,27 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
   }
 
   const handleQuickAction = (actionId: string) => {
-    const lang = i18n.language as 'uk' | 'en' | 'pl'
-    const prompt = quickActionPrompts[actionId]?.[lang] || quickActionPrompts[actionId]?.uk
+    const promptKey = quickActionPromptKeys[actionId]
+    const prompt = promptKey ? t(promptKey) : ''
     if (prompt) {
       sendMessage({ text: prompt })
     }
-  }
-
-  const handleClose = () => {
-    setIsOpen(false)
-    setMessages([])
-    setInput('')
-    onClose?.()
   }
 
   // Close on click outside
   useEffect(() => {
     if (!isOpen) return
     const handler = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
         handleClose()
       }
     }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
-  }, [isOpen])
-
-  // Close on Escape
-  useEffect(() => {
-    if (!isOpen) return
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') handleClose() }
-    document.addEventListener('keydown', handler)
-    return () => document.removeEventListener('keydown', handler)
-  }, [isOpen])
+  }, [isOpen, handleClose, containerRef])
 
   // When controlled externally (onClose provided), don't show trigger button
   const isControlled = !!onClose
@@ -139,7 +130,9 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
     <div ref={containerRef} className="relative">
       {/* Floating button with enhanced styling - only show when not controlled externally */}
       {!isControlled && (
-        <div className={`group ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} transition-all duration-300`}>
+        <div
+          className={`group ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} transition-all duration-300`}
+        >
           <button
             onClick={() => setIsOpen(true)}
             className="relative w-14 h-14 bg-gradient-to-br from-dental-primary-600 to-dental-primary-700 hover:from-dental-primary-700 hover:to-dental-primary-800 text-white rounded-full shadow-lg hover:shadow-xl hover:shadow-dental-primary-500/30 hover:scale-110 transition-all duration-300 flex items-center justify-center"
@@ -147,9 +140,12 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
           >
             {/* Subtle glow effect */}
             <span className="absolute inset-0 rounded-full bg-gradient-to-br from-dental-primary-400 to-dental-primary-600 opacity-0 group-hover:opacity-30 blur-md transition-opacity duration-300" />
-            <Bot className="w-6 h-6 relative z-10 group-hover:animate-bounce" style={{ animationDuration: '1s' }} />
+            <Bot
+              className="w-6 h-6 relative z-10 group-hover:animate-bounce"
+              style={{ animationDuration: '1s' }}
+            />
           </button>
-          
+
           {/* Tooltip */}
           <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-dental-dark text-white text-sm font-medium rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
             {t('ai.assistant')}
@@ -160,8 +156,13 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
 
       {/* Chat window */}
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={t('ai.assistant')}
         className={`${isControlled ? '' : 'absolute bottom-16 right-0'} z-50 w-[380px] max-w-[calc(100vw-3rem)] transition-all duration-300 ${
-          isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'
+          isOpen
+            ? 'scale-100 opacity-100'
+            : 'scale-95 opacity-0 pointer-events-none'
         }`}
       >
         <div className="bg-white rounded-2xl shadow-2xl border border-dental-secondary-200 overflow-hidden flex flex-col max-h-[600px]">
@@ -173,7 +174,9 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
               </div>
               <div>
                 <h3 className="font-semibold">{t('ai.assistant')}</h3>
-                <p className="text-xs text-dental-primary-100">{t('ai.online')}</p>
+                <p className="text-xs text-dental-primary-100">
+                  {t('ai.online')}
+                </p>
               </div>
             </div>
             <button
@@ -192,12 +195,16 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
                 <div className="w-16 h-16 bg-dental-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Sparkles className="w-8 h-8 text-dental-primary-600" />
                 </div>
-                <h4 className="font-semibold text-dental-dark mb-2">{t('ai.welcome')}</h4>
-                <p className="text-sm text-dental-muted mb-6">{t('ai.welcomeDescription')}</p>
-                
+                <h4 className="font-semibold text-dental-dark mb-2">
+                  {t('ai.welcome')}
+                </h4>
+                <p className="text-sm text-dental-muted mb-6">
+                  {t('ai.welcomeDescription')}
+                </p>
+
                 {/* Quick actions */}
                 <div className="grid grid-cols-2 gap-2">
-                  {quickActions.map((action) => (
+                  {quickActions.map(action => (
                     <button
                       key={action.id}
                       onClick={() => handleQuickAction(action.id)}
@@ -210,10 +217,10 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
                 </div>
               </div>
             ) : (
-              messages.map((message) => {
+              messages.map(message => {
                 const text = getMessageText(message)
                 if (!text) return null
-                
+
                 return (
                   <div
                     key={message.id}
@@ -221,7 +228,9 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
                   >
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                        message.role === 'user' ? 'bg-dental-secondary-200' : 'bg-dental-primary-100'
+                        message.role === 'user'
+                          ? 'bg-dental-secondary-200'
+                          : 'bg-dental-primary-100'
                       }`}
                     >
                       {message.role === 'user' ? (
@@ -243,7 +252,7 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
                 )
               })
             )}
-            
+
             {/* Loading indicator */}
             {isLoading && (
               <div className="flex gap-3">
@@ -255,18 +264,21 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
                 </div>
               </div>
             )}
-            
+
             <div ref={messagesEndRef} />
           </div>
 
           {/* Input */}
-          <form onSubmit={handleSubmit} className="p-4 border-t border-dental-secondary-200 bg-white">
+          <form
+            onSubmit={handleSubmit}
+            className="p-4 border-t border-dental-secondary-200 bg-white"
+          >
             <div className="flex gap-2">
               <input
                 ref={inputRef}
                 type="text"
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={e => setInput(e.target.value)}
                 placeholder={t('ai.inputPlaceholder')}
                 disabled={isLoading}
                 className="flex-1 px-4 py-2 border border-dental-secondary-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-dental-primary-500 focus:border-transparent text-sm disabled:opacity-50"
@@ -279,7 +291,7 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
                 <Send className="w-5 h-5" />
               </button>
             </div>
-            
+
             {/* Phone shortcut */}
             <div className="mt-2 flex items-center justify-center gap-2 text-xs text-dental-muted">
               <Phone className="w-3 h-3" />

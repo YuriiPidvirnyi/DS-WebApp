@@ -5,6 +5,7 @@ import { AlertCircle, Home, RefreshCw, MessageCircle } from 'lucide-react'
 import { Button } from './ui'
 import Link from 'next/link'
 import { captureException } from '@/utils/sentry'
+import i18n from '@/i18n/config'
 // Sentry is initialised via sentry.client.config.ts — no manual init needed here
 
 interface ErrorBoundaryProps {
@@ -89,7 +90,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     const errorCount = this.state.errorCount + 1
 
     // Report to Sentry in production
-    if (process.env.NODE_ENV === "production") {
+    if (process.env.NODE_ENV === 'production') {
       try {
         captureException(error, {
           componentStack: errorInfo.componentStack,
@@ -146,9 +147,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
         componentStack: errorInfo?.componentStack,
         userFeedback: true,
       })
-      alert(
-        'Дякуємо за повідомлення! Наша команда отримала інформацію про проблему.'
-      )
+      alert(i18n.t('errors.page.thankYou'))
     }
   }
 
@@ -174,21 +173,22 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
               aria-hidden="true"
             />
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Ой, щось пішло не так!
+              {i18n.t('errors.page.title')}
             </h1>
             <p className="text-gray-600 mb-6">
-              Виникла помилка при відображенні цієї сторінки. Ми вже працюємо
-              над її виправленням.
+              {i18n.t('errors.page.description')}
             </p>
 
-            {process.env.NODE_ENV !== "production" && (
+            {process.env.NODE_ENV !== 'production' && (
               <div className="mb-4 text-left">
                 <details className="border border-gray-300 rounded-md p-4">
                   <summary className="cursor-pointer text-sm text-gray-700 font-medium">
-                    Технічна інформація для розробників
+                    {i18n.t('errors.page.technicalInfo')}
                   </summary>
                   <div className="mt-4">
-                    <h3 className="text-sm font-bold text-red-600">Помилка:</h3>
+                    <h3 className="text-sm font-bold text-red-600">
+                      {i18n.t('errors.page.errorLabel')}
+                    </h3>
                     <pre className="text-xs bg-red-50 p-3 rounded-md text-red-800 overflow-auto max-h-32 mt-2">
                       {error?.toString()}
                     </pre>
@@ -196,7 +196,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                     {errorInfo && (
                       <>
                         <h3 className="text-sm font-bold text-gray-700 mt-4">
-                          Компонент Stack:
+                          {i18n.t('errors.page.componentStackLabel')}
                         </h3>
                         <pre className="text-xs bg-gray-100 p-3 rounded-md text-gray-800 overflow-auto max-h-64 mt-2">
                           {errorInfo.componentStack}
@@ -215,24 +215,24 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                 className="flex items-center"
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
-                Спробувати ще раз
+                {i18n.t('errors.page.retry')}
               </Button>
 
-              {process.env.NODE_ENV === "production" && (
+              {process.env.NODE_ENV === 'production' && (
                 <Button
                   onClick={this.handleReportFeedback}
                   variant="secondary"
                   className="flex items-center"
                 >
                   <MessageCircle className="h-4 w-4 mr-2" />
-                  Повідомити про проблему
+                  {i18n.t('errors.page.report')}
                 </Button>
               )}
 
               <Link href="/">
                 <Button variant="outline" className="flex items-center">
                   <Home className="h-4 w-4 mr-2" />
-                  Повернутися на головну
+                  {i18n.t('errors.page.goHome')}
                 </Button>
               </Link>
             </div>

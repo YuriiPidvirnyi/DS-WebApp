@@ -3,6 +3,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Send, CheckCircle } from 'lucide-react'
 import { Input, Textarea, Button } from './ui'
 import { useSubmissionCooldown } from '@/hooks/useSubmissionCooldown'
@@ -24,6 +25,7 @@ interface ContactFormProps {
 }
 
 export default function ContactForm({ onSuccess }: ContactFormProps) {
+  const { t } = useTranslation()
   const turnstileRef = useRef<TurnstileRef>(null)
   const { token: csrfToken } = useCSRF()
   const {
@@ -53,7 +55,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
       // Cooldown check to prevent spam
       if (isCoolingDown) {
         return withToast.error(
-          `Занадто часті відправлення. Спробуйте через ${remainingSec} с.`
+          t('contact.form.errors.cooldown', { seconds: remainingSec })
         )
       }
 
@@ -65,9 +67,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         if (error instanceof Error) {
           return withToast.error(error.message)
         }
-        return withToast.error(
-          'Перевірка безпеки не пройдена. Спробуйте ще раз.'
-        )
+        return withToast.error(t('contact.form.errors.turnstile'))
       }
 
       // Sanitize input data
@@ -79,12 +79,12 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         consent: data.consent,
       }
 
-      // Real API call with mock fallback inside service
+      // Real API call
       await withToast(
         async () => {
           const res = await createContact(sanitizedData)
           if (!res.success)
-            throw new Error(res.error || 'Не вдалося надіслати повідомлення')
+            throw new Error(res.error || t('contact.form.errors.submitFailed'))
           return res
         },
         { formType: 'contact' }
@@ -107,7 +107,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
   return (
     <div className="bg-white rounded-2xl shadow-lg p-8">
       <h2 className="text-2xl font-bold text-dental-dark mb-6">
-        Зв'язатися з нами
+        {t('contact.form.title')}
       </h2>
 
       {isSubmitSuccessful && (
@@ -116,10 +116,10 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
             <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
             <div>
               <h4 className="font-semibold text-green-900 mb-1">
-                Повідомлення успішно надіслано!
+                {t('contact.form.successTitle')}
               </h4>
               <p className="text-sm text-green-700">
-                Дякуємо за звернення. Ми зв'яжемося з вами найближчим часом.
+                {t('contact.form.successDescription')}
               </p>
             </div>
           </div>
@@ -144,12 +144,12 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
             htmlFor="name"
             className="block text-sm font-medium text-dental-dark mb-1"
           >
-            Ім'я та прізвище *
+            {t('contact.form.fields.fullNameLabel')} *
           </label>
           <Input
             id="name"
             fullWidth
-            placeholder="Введіть ваше ім'я та прізвище"
+            placeholder={t('contact.form.fields.fullNamePlaceholder')}
             disabled={isSubmitting}
             error={errors.name?.message}
             {...register('name')}
@@ -161,13 +161,13 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
             htmlFor="phone"
             className="block text-sm font-medium text-dental-dark mb-1"
           >
-            Номер телефону *
+            {t('contact.form.fields.phoneLabel')} *
           </label>
           <Input
             id="phone"
             type="tel"
             fullWidth
-            placeholder="+380 XX XXX XX XX"
+            placeholder={t('contact.form.fields.phonePlaceholder')}
             disabled={isSubmitting}
             error={errors.phone?.message}
             {...register('phone', {
@@ -184,13 +184,13 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
             htmlFor="email"
             className="block text-sm font-medium text-dental-dark mb-1"
           >
-            Email *
+            {t('contact.form.fields.emailLabel')} *
           </label>
           <Input
             id="email"
             type="email"
             fullWidth
-            placeholder="example@email.com"
+            placeholder={t('contact.form.fields.emailPlaceholder')}
             disabled={isSubmitting}
             error={errors.email?.message}
             {...register('email')}
@@ -202,13 +202,13 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
             htmlFor="message"
             className="block text-sm font-medium text-dental-dark mb-1"
           >
-            Повідомлення *
+            {t('contact.form.fields.messageLabel')} *
           </label>
           <Textarea
             id="message"
             rows={4}
             fullWidth
-            placeholder="Опишіть ваші побажання або питання"
+            placeholder={t('contact.form.fields.messagePlaceholder')}
             disabled={isSubmitting}
             error={errors.message?.message}
             {...register('message')}
@@ -229,7 +229,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
             htmlFor="consent"
             className="ml-2 text-sm font-medium text-dental-dark"
           >
-            Я даю згоду на обробку моїх персональних даних *
+            {t('contact.form.fields.consentLabel')} *
           </label>
         </div>
         {errors.consent && (
@@ -247,12 +247,12 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         >
           {!isSubmitting && <Send className="h-5 w-5 mr-2" />}
           {isCoolingDown
-            ? `Зачекайте ${remainingSec} с`
-            : 'Надіслати повідомлення'}
+            ? t('contact.form.cooldown', { seconds: remainingSec })
+            : t('contact.form.submit')}
         </Button>
 
         <p className="text-sm text-dental-muted text-center">
-          * Обов'язкові поля. Ми зв'яжемося з вами найближчим часом.
+          {t('contact.form.requiredFields')}
         </p>
       </form>
     </div>

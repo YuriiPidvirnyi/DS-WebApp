@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { createICSEvent, downloadICS } from '@/utils/calendar'
 import { CalendarPlus } from 'lucide-react'
 import ReminderSettings from '@/components/ReminderSettings'
+import { useTranslation } from 'react-i18next'
 
 type BookingDetails = {
   id: string
@@ -18,6 +19,7 @@ type BookingDetails = {
 }
 
 export default function BookingSuccess() {
+  const { t } = useTranslation()
   const params = useSearchParams()
   const ref = params.get('ref')
   const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(
@@ -47,10 +49,14 @@ export default function BookingSuccess() {
     const endLocal = new Date(startLocal.getTime() + 30 * 60 * 1000)
     const ics = createICSEvent({
       uid: ref,
-      title: `Візит: ${bookingDetails.service}`,
-      description:
-        `Запис №${ref}. Пацієнт: ${bookingDetails.name || ''}`.trim(),
-      location: 'Dental Studio',
+      title: t('booking.successPage.calendarTitle', {
+        service: bookingDetails.service,
+      }),
+      description: t('booking.successPage.calendarDescription', {
+        ref,
+        name: bookingDetails.name || '',
+      }).trim(),
+      location: t('booking.successPage.calendarLocation'),
       start: startLocal,
       end: endLocal,
       url: window.location.href,
@@ -62,20 +68,20 @@ export default function BookingSuccess() {
     <div className="py-16">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Дякуємо! Запис створено
+          {t('booking.successPage.title')}
         </h1>
         <p className="text-gray-600 mb-6">
-          Ми зв'яжемося з вами для підтвердження найближчим часом.
+          {t('booking.successPage.subtitle')}
         </p>
 
         {/* Appointment details */}
         <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6 mx-auto max-w-md">
           <h2 className="text-lg font-medium text-gray-900 mb-3">
-            Деталі запису
+            {t('booking.successPage.detailsTitle')}
           </h2>
           <div className="space-y-2 text-sm">
             <p className="text-gray-500 flex items-center gap-2">
-              Номер запису:{' '}
+              {t('booking.successPage.bookingNumber')}:{' '}
               <span className="font-mono font-medium text-gray-900">{ref}</span>
               <button
                 onClick={async () => {
@@ -85,20 +91,20 @@ export default function BookingSuccess() {
                 }}
                 className="text-xs px-2 py-0.5 border border-gray-300 rounded hover:bg-gray-50"
               >
-                Копіювати
+                {t('booking.successPage.copy')}
               </button>
             </p>
             {bookingDetails && (
               <>
                 <p className="text-gray-500">
-                  Послуга:{' '}
+                  {t('booking.successPage.service')}:{' '}
                   <span className="font-medium text-gray-900">
                     {bookingDetails.service}
                   </span>
                 </p>
                 {bookingDetails.date && (
                   <p className="text-gray-500">
-                    Дата:{' '}
+                    {t('booking.successPage.date')}:{' '}
                     <span className="font-medium text-gray-900">
                       {bookingDetails.date}
                     </span>
@@ -106,7 +112,7 @@ export default function BookingSuccess() {
                 )}
                 {bookingDetails.time && (
                   <p className="text-gray-500">
-                    Час:{' '}
+                    {t('booking.successPage.time')}:{' '}
                     <span className="font-medium text-gray-900">
                       {bookingDetails.time}
                     </span>
@@ -114,7 +120,7 @@ export default function BookingSuccess() {
                 )}
                 {bookingDetails.name && (
                   <p className="text-gray-500">
-                    Ім'я:{' '}
+                    {t('booking.successPage.name')}:{' '}
                     <span className="font-medium text-gray-900">
                       {bookingDetails.name}
                     </span>
@@ -136,20 +142,21 @@ export default function BookingSuccess() {
             href="/"
             className="px-5 py-2 rounded-lg bg-dental-teal text-white"
           >
-            На головну
+            {t('booking.successPage.goHome')}
           </Link>
           <Link
             href="/booking"
             className="px-5 py-2 rounded-lg bg-gray-100 text-gray-800"
           >
-            Створити ще один запис
+            {t('booking.successPage.createAnother')}
           </Link>
           {canCreateEvent && (
             <button
               onClick={handleAddToCalendar}
               className="px-5 py-2 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 inline-flex items-center gap-2"
             >
-              <CalendarPlus className="h-5 w-5" /> Додати в календар
+              <CalendarPlus className="h-5 w-5" />{' '}
+              {t('booking.successPage.addToCalendar')}
             </button>
           )}
         </div>

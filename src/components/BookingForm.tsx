@@ -2,6 +2,7 @@
 
 import { Button, LoadingOverlay } from '@/components/ui'
 import Turnstile from '@/components/Turnstile'
+import { useTranslation } from 'react-i18next'
 import {
   BookingStepService,
   BookingStepPersonal,
@@ -20,6 +21,7 @@ import { useCSRF } from '@/hooks/useCSRF'
  * Each step is rendered by a dedicated step component.
  */
 export default function BookingForm() {
+  const { t } = useTranslation()
   const { token: csrfToken } = useCSRF()
   const {
     form,
@@ -28,6 +30,7 @@ export default function BookingForm() {
     back,
     slots,
     loadingSlots,
+    slotsLoadError,
     turnstileRef,
     isCoolingDown,
     remainingSec,
@@ -45,13 +48,15 @@ export default function BookingForm() {
 
   return (
     <div className="bg-white rounded-2xl shadow-lg p-8 relative">
-      <h2 className="text-2xl font-bold text-dental-dark mb-6">Запис на прийом</h2>
+      <h2 className="text-2xl font-bold text-dental-dark mb-6">
+        {t('booking.form.heading')}
+      </h2>
 
       {isSubmitSuccessful && (
         <div className="mb-6 p-4 bg-dental-primary/10 border border-dental-primary/30 rounded-lg">
           <p className="text-dental-primary-darker">
-            Заявку успішно надіслано! Ми підтвердимо час прийому найближчим
-            часом.
+            {t('booking.bookingSuccess')}{' '}
+            {t('booking.bookingSuccessDescription')}
           </p>
         </div>
       )}
@@ -72,7 +77,7 @@ export default function BookingForm() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* CSRF Token - hidden input for form protection */}
         <input type="hidden" name="_csrf" value={csrfToken} />
-        
+
         {/* Progress stepper */}
         <div className="flex items-center gap-2 mb-2">
           {[0, 1, 2].map(i => (
@@ -89,6 +94,7 @@ export default function BookingForm() {
             form={form}
             slots={slots}
             loadingSlots={loadingSlots}
+            slotsLoadError={slotsLoadError}
           />
         )}
 
@@ -102,6 +108,7 @@ export default function BookingForm() {
               form={form}
               slots={slots}
               loadingSlots={loadingSlots}
+              slotsLoadError={slotsLoadError}
               editingField={editingField}
               onStartEdit={startEditing}
               onSave={saveEditing}
@@ -118,7 +125,7 @@ export default function BookingForm() {
         <div className="flex justify-between gap-3">
           {step > 0 ? (
             <Button type="button" onClick={back} disabled={isSubmitting}>
-              Назад
+              {t('common.back')}
             </Button>
           ) : (
             <span />
@@ -126,7 +133,7 @@ export default function BookingForm() {
 
           {step < 2 ? (
             <Button type="button" onClick={next} disabled={isSubmitting}>
-              Далі
+              {t('common.next')}
             </Button>
           ) : (
             <Button
@@ -135,13 +142,17 @@ export default function BookingForm() {
               disabled={isSubmitting || isCoolingDown}
               isLoading={isSubmitting}
             >
-              {isCoolingDown ? `Зачекайте ${remainingSec} с` : 'Записатися'}
+              {isCoolingDown
+                ? t('booking.form.cooldown', { seconds: remainingSec })
+                : t('booking.form.submit')}
             </Button>
           )}
         </div>
       </form>
 
-      {isSubmitting && <LoadingOverlay show message="Надсилаємо заявку..." />}
+      {isSubmitting && (
+        <LoadingOverlay show message={t('booking.form.submittingOverlay')} />
+      )}
     </div>
   )
 }

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import { useTranslation } from 'react-i18next'
 
 interface LazyImageProps {
   src: string
@@ -39,6 +40,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
   fill = false,
   sizes,
 }) => {
+  const { t } = useTranslation()
   const [hasError, setHasError] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
 
@@ -50,15 +52,21 @@ const LazyImage: React.FC<LazyImageProps> = ({
         <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
           <div className="flex space-x-1">
             <div className="w-2 h-2 bg-dental-teal rounded-full animate-pulse" />
-            <div className="w-2 h-2 bg-dental-teal rounded-full animate-pulse" style={{ animationDelay: '0.1s' }} />
-            <div className="w-2 h-2 bg-dental-teal rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
+            <div
+              className="w-2 h-2 bg-dental-teal rounded-full animate-pulse"
+              style={{ animationDelay: '0.1s' }}
+            />
+            <div
+              className="w-2 h-2 bg-dental-teal rounded-full animate-pulse"
+              style={{ animationDelay: '0.2s' }}
+            />
           </div>
         </div>
       )}
 
       {hasError && !fallback ? (
         <div className="absolute inset-0 bg-gray-100 flex items-center justify-center text-gray-400 text-sm">
-          Зображення недоступне
+          {t('lazyImage.unavailable')}
         </div>
       ) : (
         <Image
@@ -69,8 +77,14 @@ const LazyImage: React.FC<LazyImageProps> = ({
           fill={fill}
           sizes={sizes ?? (fill ? '100vw' : undefined)}
           priority={loading === 'eager'}
-          onLoad={() => { setIsLoaded(true); onLoad?.() }}
-          onError={() => { if (!hasError) setHasError(true); onError?.() }}
+          onLoad={() => {
+            setIsLoaded(true)
+            onLoad?.()
+          }}
+          onError={() => {
+            if (!hasError) setHasError(true)
+            onError?.()
+          }}
           className={`transition-opacity duration-300 ${
             isLoaded ? 'opacity-100' : 'opacity-70'
           } w-full h-full object-cover`}

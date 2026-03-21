@@ -7,9 +7,14 @@ import { useTranslation } from 'react-i18next'
 import LazyImage from '@/components/ui/LazyImage'
 import HeroSection from '@/components/HeroSection'
 import AnimatedCard, { AnimatedSection } from '@/components/ui/AnimatedCard'
-import { useScrollAnimation, useStaggeredAnimation } from '@/hooks/useScrollAnimation'
+import {
+  useScrollAnimation,
+  useStaggeredAnimation,
+} from '@/hooks/useScrollAnimation'
 import BeforeAfterGallery from '@/components/BeforeAfterGallery'
 import VideoTestimonials from '@/components/VideoTestimonials'
+import { AsyncState } from '@/components/ui'
+import i18n from '@/i18n/config'
 import images from '@/content/images.json'
 
 // Type for service images from images.json
@@ -34,10 +39,14 @@ const typedImages = images as ImagesData
 // Dynamic imports for better code splitting - Testimonials is below the fold
 const Testimonials = dynamic(() => import('@/components/Testimonials'), {
   loading: () => (
-    <div className="py-20 bg-dental-secondary-50 animate-pulse">
-      <div className="max-w-7xl mx-auto px-4 text-center">
-        <div className="h-8 bg-dental-secondary-200 rounded w-64 mx-auto mb-4"></div>
-        <div className="h-4 bg-dental-secondary-200 rounded w-96 mx-auto"></div>
+    <div className="py-20 bg-dental-secondary-50">
+      <div className="mx-auto max-w-7xl px-4">
+        <AsyncState
+          variant="loading"
+          title={i18n.t('home.testimonials.loadingTitle')}
+          message={i18n.t('home.testimonials.loadingMessage')}
+          className="mx-auto max-w-xl"
+        />
       </div>
     </div>
   ),
@@ -46,10 +55,11 @@ const Testimonials = dynamic(() => import('@/components/Testimonials'), {
 
 const Home = () => {
   const { t } = useTranslation()
-  
+
   // Scroll animation hooks for page sections
   const { ref: featuresRef, isVisible: featuresVisible } = useScrollAnimation()
-  const { ref: servicesRef, isVisible: servicesVisible } = useStaggeredAnimation({ staggerDelay: 150 })
+  const { ref: servicesRef, isVisible: servicesVisible } =
+    useStaggeredAnimation({ staggerDelay: 150 })
   const { ref: pricingRef, isVisible: pricingVisible } = useScrollAnimation()
   const { ref: ctaRef, isVisible: ctaVisible } = useScrollAnimation()
 
@@ -79,21 +89,35 @@ const Home = () => {
   const services = [
     {
       title: t('services.categories.therapeutic'),
-      description: 'Лікування карієсу, пульпіту, періодонтиту',
+      description: t('home.services.cards.therapeuticDescription'),
     },
     {
       title: t('services.categories.surgical'),
-      description: 'Видалення зубів, імплантація, пародонтологія',
+      description: t('home.services.cards.surgicalDescription'),
     },
     {
       title: t('services.categories.orthopedic'),
-      description: 'Протезування, коронки, мості, вінири',
+      description: t('home.services.cards.orthopedicDescription'),
     },
     {
       title: t('services.categories.orthodontics'),
-      description: 'Виправлення прикусу, брекети, елайнери',
+      description: t('home.services.cards.orthodonticsDescription'),
     },
   ]
+
+  const basicExamFeatures = t('pricing.basicExam.features', {
+    returnObjects: true,
+  }) as unknown
+  const professionalHygieneFeatures = t(
+    'pricing.professionalHygiene.features',
+    {
+      returnObjects: true,
+    }
+  ) as unknown
+  const comprehensiveDiagnosticsFeatures = t(
+    'pricing.comprehensiveDiagnostics.features',
+    { returnObjects: true }
+  ) as unknown
 
   return (
     <div>
@@ -101,13 +125,24 @@ const Home = () => {
       <HeroSection />
 
       {/* Features Section */}
-      <section ref={featuresRef} role="region" aria-labelledby="features-heading" className="py-24 bg-gradient-to-b from-dental-secondary-50 to-white">
+      <section
+        ref={featuresRef}
+        role="region"
+        aria-labelledby="features-heading"
+        className="py-24 bg-gradient-to-b from-dental-secondary-50 to-white"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <AnimatedSection isVisible={featuresVisible} className="text-center mb-16">
+          <AnimatedSection
+            isVisible={featuresVisible}
+            className="text-center mb-16"
+          >
             <span className="inline-block text-sm font-semibold text-dental-primary-600 tracking-wider uppercase mb-4">
               {t('home.features.title')}
             </span>
-            <h2 id="features-heading" className="text-4xl lg:text-5xl font-bold text-dental-dark mb-6 leading-tight">
+            <h2
+              id="features-heading"
+              className="text-4xl lg:text-5xl font-bold text-dental-dark mb-6 leading-tight"
+            >
               {t('home.features.title')}
             </h2>
             <p className="text-xl text-dental-muted max-w-3xl mx-auto leading-relaxed">
@@ -132,7 +167,9 @@ const Home = () => {
                 <h3 className="text-xl font-bold text-dental-dark mb-3">
                   {feature.title}
                 </h3>
-                <p className="text-dental-muted leading-relaxed">{feature.description}</p>
+                <p className="text-dental-muted leading-relaxed">
+                  {feature.description}
+                </p>
               </AnimatedCard>
             ))}
           </div>
@@ -140,13 +177,24 @@ const Home = () => {
       </section>
 
       {/* Services Section */}
-      <section ref={servicesRef} role="region" aria-labelledby="services-heading" className="py-24 bg-white">
+      <section
+        ref={servicesRef}
+        role="region"
+        aria-labelledby="services-heading"
+        className="py-24 bg-white"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <AnimatedSection isVisible={servicesVisible} className="text-center mb-16">
+          <AnimatedSection
+            isVisible={servicesVisible}
+            className="text-center mb-16"
+          >
             <span className="inline-block text-sm font-semibold text-dental-primary-600 tracking-wider uppercase mb-4">
               {t('navigation.services')}
             </span>
-            <h2 id="services-heading" className="text-4xl lg:text-5xl font-bold text-dental-dark mb-6 leading-tight">
+            <h2
+              id="services-heading"
+              className="text-4xl lg:text-5xl font-bold text-dental-dark mb-6 leading-tight"
+            >
               {t('home.services.title')}
             </h2>
             <p className="text-xl text-dental-muted max-w-3xl mx-auto leading-relaxed">
@@ -172,7 +220,8 @@ const Home = () => {
                       src={svc?.src || bg}
                       fallback={svc?.fallback}
                       alt={
-                        svc?.alt || `${service.title} - стоматологічна послуга`
+                        svc?.alt ||
+                        t('home.services.imageAlt', { title: service.title })
                       }
                       className="absolute inset-0 transition-transform duration-500 group-hover:scale-105"
                       width={1200}
@@ -186,7 +235,9 @@ const Home = () => {
                     </div>
                   </div>
                   <div className="p-6">
-                    <p className="text-dental-muted mb-4 leading-relaxed">{service.description}</p>
+                    <p className="text-dental-muted mb-4 leading-relaxed">
+                      {service.description}
+                    </p>
                     <Link
                       href="/services"
                       className="inline-flex items-center text-dental-primary-600 hover:text-dental-primary-700 font-semibold group/link"
@@ -200,7 +251,11 @@ const Home = () => {
             })}
           </div>
 
-          <AnimatedSection isVisible={servicesVisible} delay={600} className="text-center mt-12">
+          <AnimatedSection
+            isVisible={servicesVisible}
+            delay={600}
+            className="text-center mt-12"
+          >
             <Link
               href="/services"
               className="inline-flex items-center gap-3 bg-dental-primary-900 hover:bg-dental-primary-800 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-dental-primary-900/20 hover:-translate-y-0.5"
@@ -216,13 +271,24 @@ const Home = () => {
       <BeforeAfterGallery />
 
       {/* Pricing Section */}
-      <section ref={pricingRef} role="region" aria-labelledby="pricing-heading" className="py-24 bg-gradient-to-b from-dental-secondary-50 to-white">
+      <section
+        ref={pricingRef}
+        role="region"
+        aria-labelledby="pricing-heading"
+        className="py-24 bg-gradient-to-b from-dental-secondary-50 to-white"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <AnimatedSection isVisible={pricingVisible} className="text-center mb-16">
+          <AnimatedSection
+            isVisible={pricingVisible}
+            className="text-center mb-16"
+          >
             <span className="inline-block text-sm font-semibold text-dental-primary-600 tracking-wider uppercase mb-4">
               {t('pricing.title')}
             </span>
-            <h2 id="pricing-heading" className="text-4xl lg:text-5xl font-bold text-dental-dark mb-6 leading-tight">
+            <h2
+              id="pricing-heading"
+              className="text-4xl lg:text-5xl font-bold text-dental-dark mb-6 leading-tight"
+            >
               {t('home.pricing.title')}
             </h2>
             <p className="text-xl text-dental-muted max-w-3xl mx-auto leading-relaxed">
@@ -241,9 +307,9 @@ const Home = () => {
                   {t('pricing.basicExam.price')}
                 </div>
                 <ul className="space-y-3 text-dental-muted mb-8">
-                  {(Array.isArray(t('pricing.basicExam.features', { returnObjects: true })) 
-                    ? t('pricing.basicExam.features', { returnObjects: true }) as string[]
-                    : ['Консультація лікаря', 'Огляд ротової порожнини', 'План лікування']
+                  {(Array.isArray(basicExamFeatures)
+                    ? (basicExamFeatures as string[])
+                    : []
                   ).map((feature: string, idx: number) => (
                     <li key={idx} className="flex items-center">
                       <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
@@ -275,9 +341,9 @@ const Home = () => {
                   {t('pricing.professionalHygiene.price')}
                 </div>
                 <ul className="space-y-3 text-dental-muted mb-8">
-                  {(Array.isArray(t('pricing.professionalHygiene.features', { returnObjects: true }))
-                    ? t('pricing.professionalHygiene.features', { returnObjects: true }) as string[]
-                    : ['Ультразвукове чищення', 'Полірування зубів', 'Фторування', 'Рекомендації по догляду']
+                  {(Array.isArray(professionalHygieneFeatures)
+                    ? (professionalHygieneFeatures as string[])
+                    : []
                   ).map((feature: string, idx: number) => (
                     <li key={idx} className="flex items-center">
                       <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
@@ -304,9 +370,9 @@ const Home = () => {
                   {t('pricing.comprehensiveDiagnostics.price')}
                 </div>
                 <ul className="space-y-3 text-dental-muted mb-8">
-                  {(Array.isArray(t('pricing.comprehensiveDiagnostics.features', { returnObjects: true }))
-                    ? t('pricing.comprehensiveDiagnostics.features', { returnObjects: true }) as string[]
-                    : ['3D знімок щелеп', 'Детальна консультація', 'План лікування', 'Знижка 10% на лікування']
+                  {(Array.isArray(comprehensiveDiagnosticsFeatures)
+                    ? (comprehensiveDiagnosticsFeatures as string[])
+                    : []
                   ).map((feature: string, idx: number) => (
                     <li key={idx} className="flex items-center">
                       <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
@@ -325,9 +391,7 @@ const Home = () => {
           </div>
 
           <div className="text-center mt-12">
-            <p className="text-dental-muted mb-4">
-              {t('pricing.disclaimer')}
-            </p>
+            <p className="text-dental-muted mb-4">{t('pricing.disclaimer')}</p>
             <Link
               href="/services"
               className="text-dental-teal hover:text-dental-primary-600 font-semibold inline-flex items-center"
@@ -346,16 +410,24 @@ const Home = () => {
       <Testimonials />
 
       {/* CTA Section */}
-      <section ref={ctaRef} role="region" aria-labelledby="cta-heading" className="py-24 bg-gradient-to-br from-dental-primary-900 via-dental-primary-800 to-dental-primary-950 text-white relative overflow-hidden">
+      <section
+        ref={ctaRef}
+        role="region"
+        aria-labelledby="cta-heading"
+        className="py-24 bg-gradient-to-br from-dental-primary-900 via-dental-primary-800 to-dental-primary-950 text-white relative overflow-hidden"
+      >
         {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-96 h-96 bg-dental-primary-500/10 rounded-full blur-3xl" />
           <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-dental-primary-500/10 rounded-full blur-3xl" />
         </div>
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <AnimatedSection isVisible={ctaVisible} animation="fadeUp">
-            <h2 id="cta-heading" className="text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+            <h2
+              id="cta-heading"
+              className="text-4xl lg:text-5xl font-bold mb-6 leading-tight"
+            >
               {t('home.cta.title')}
             </h2>
             <p className="text-xl text-dental-secondary mb-10 max-w-2xl mx-auto leading-relaxed">

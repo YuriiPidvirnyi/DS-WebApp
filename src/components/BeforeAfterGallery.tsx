@@ -8,47 +8,56 @@ import { AnimatedSection } from '@/components/ui/AnimatedCard'
 
 interface BeforeAfterCase {
   id: string
-  title: string
-  description: string
+  titleKey: string
+  descriptionKey: string
   beforeImage: string
   afterImage: string
-  treatment: string
-  duration: string
+  treatmentKey: string
+  durationKey: string
 }
 
 // Demo cases - in production these would come from a CMS/database
 const cases: BeforeAfterCase[] = [
   {
     id: '1',
-    title: 'Відновлення посмішки',
-    description: 'Комплексне лікування та встановлення вінірів',
+    titleKey: 'caseStudies.cases.1.title',
+    descriptionKey: 'caseStudies.cases.1.description',
     beforeImage: '/assets/images/gallery/dental-equipment.jpg',
     afterImage: '/assets/images/gallery/treatment-room.jpg',
-    treatment: 'Вініри',
-    duration: '2 тижні',
+    treatmentKey: 'caseStudies.cases.1.treatment',
+    durationKey: 'caseStudies.cases.1.duration',
   },
   {
     id: '2',
-    title: 'Імплантація зубів',
-    description: 'Заміна відсутніх зубів на імпланти з коронками',
+    titleKey: 'caseStudies.cases.2.title',
+    descriptionKey: 'caseStudies.cases.2.description',
     beforeImage: '/assets/images/gallery/clinic-reception.jpg',
     afterImage: '/assets/images/gallery/dental-team.jpg',
-    treatment: 'Імплантація',
-    duration: '3 місяці',
+    treatmentKey: 'caseStudies.cases.2.treatment',
+    durationKey: 'caseStudies.cases.2.duration',
   },
   {
     id: '3',
-    title: 'Виправлення прикусу',
-    description: 'Ортодонтичне лікування брекетами',
+    titleKey: 'caseStudies.cases.3.title',
+    descriptionKey: 'caseStudies.cases.3.description',
     beforeImage: '/assets/images/services/orthodontics.jpg',
     afterImage: '/assets/images/services/teeth-whitening.jpg',
-    treatment: 'Ортодонтія',
-    duration: '18 місяців',
+    treatmentKey: 'caseStudies.cases.3.treatment',
+    durationKey: 'caseStudies.cases.3.duration',
   },
 ]
 
 // Before/After Slider Component
-function ComparisonSlider({ beforeImage, afterImage, t }: { beforeImage: string; afterImage: string; t: (key: string) => string }) {
+// Comparison slider with before/after overlay
+function ComparisonSlider({
+  beforeImage,
+  afterImage,
+  t,
+}: {
+  beforeImage: string
+  afterImage: string
+  t: (key: string) => string
+}) {
   const [sliderPosition, setSliderPosition] = useState(50)
   const [isDragging, setIsDragging] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -97,10 +106,11 @@ function ComparisonSlider({ beforeImage, afterImage, t }: { beforeImage: string;
     >
       {/* After image (full width, underneath) */}
       <div className="absolute inset-0">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={afterImage}
-          alt="Після лікування"
-          className="w-full h-full object-cover"
+          alt={t('caseStudies.afterTreatment')}
+          className="absolute inset-0 w-full h-full object-cover"
           draggable={false}
         />
         <div className="absolute top-4 right-4 bg-dental-primary-500 text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1.5">
@@ -114,11 +124,11 @@ function ComparisonSlider({ beforeImage, afterImage, t }: { beforeImage: string;
         className="absolute inset-0 overflow-hidden"
         style={{ width: `${sliderPosition}%` }}
       >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={beforeImage}
-          alt="До лікування"
+          alt={t('caseStudies.beforeTreatment')}
           className="absolute inset-0 w-full h-full object-cover"
-          style={{ width: containerRef.current?.offsetWidth || '100%' }}
           draggable={false}
         />
         <div className="absolute top-4 left-4 bg-dental-primary-900 text-white px-3 py-1.5 rounded-full text-sm font-medium">
@@ -142,7 +152,7 @@ function ComparisonSlider({ beforeImage, afterImage, t }: { beforeImage: string;
       {/* Instruction overlay */}
       {!isDragging && (
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/60 text-white px-4 py-2 rounded-full text-sm backdrop-blur-sm pointer-events-none animate-pulse">
-          Перетягніть для порівняння
+          {t('caseStudies.dragToCompare')}
         </div>
       )}
     </div>
@@ -154,8 +164,9 @@ export default function BeforeAfterGallery() {
   const [activeCase, setActiveCase] = useState(0)
   const { ref, isVisible } = useScrollAnimation()
 
-  const nextCase = () => setActiveCase((prev) => (prev + 1) % cases.length)
-  const prevCase = () => setActiveCase((prev) => (prev - 1 + cases.length) % cases.length)
+  const nextCase = () => setActiveCase(prev => (prev + 1) % cases.length)
+  const prevCase = () =>
+    setActiveCase(prev => (prev - 1 + cases.length) % cases.length)
 
   const currentCase = cases[activeCase]
 
@@ -183,7 +194,7 @@ export default function BeforeAfterGallery() {
                 afterImage={currentCase.afterImage}
                 t={t}
               />
-              
+
               {/* Navigation arrows */}
               <div className="absolute -left-4 top-1/2 transform -translate-y-1/2 z-20">
                 <button
@@ -209,24 +220,32 @@ export default function BeforeAfterGallery() {
             <div className="lg:pl-8">
               <div className="mb-6">
                 <span className="inline-block bg-dental-primary-50 text-dental-primary-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
-                  {currentCase.treatment}
+                  {t(currentCase.treatmentKey)}
                 </span>
                 <h3 className="text-3xl font-bold text-dental-dark mb-3">
-                  {currentCase.title}
+                  {t(currentCase.titleKey)}
                 </h3>
                 <p className="text-lg text-dental-muted leading-relaxed">
-                  {currentCase.description}
+                  {t(currentCase.descriptionKey)}
                 </p>
               </div>
 
               <div className="flex items-center gap-8 mb-8">
                 <div>
-                  <p className="text-sm text-dental-muted mb-1">{t('caseStudies.duration')}</p>
-                  <p className="text-xl font-bold text-dental-dark">{currentCase.duration}</p>
+                  <p className="text-sm text-dental-muted mb-1">
+                    {t('caseStudies.duration')}
+                  </p>
+                  <p className="text-xl font-bold text-dental-dark">
+                    {t(currentCase.durationKey)}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-sm text-dental-muted mb-1">{t('caseStudies.procedureType')}</p>
-                  <p className="text-xl font-bold text-dental-dark">{currentCase.treatment}</p>
+                  <p className="text-sm text-dental-muted mb-1">
+                    {t('caseStudies.procedureType')}
+                  </p>
+                  <p className="text-xl font-bold text-dental-dark">
+                    {t(currentCase.treatmentKey)}
+                  </p>
                 </div>
               </div>
 

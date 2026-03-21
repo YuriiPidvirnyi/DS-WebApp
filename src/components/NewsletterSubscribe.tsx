@@ -1,6 +1,7 @@
 'use client'
 
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input, Button } from '@/components/ui'
 import { newsletterSchema } from '@/utils/validationSchemas'
@@ -12,6 +13,7 @@ import MicroFeedback from '@/components/MicroFeedback'
 type NewsletterValues = z.infer<typeof newsletterSchema>
 
 export default function NewsletterSubscribe() {
+  const { t } = useTranslation()
   const {
     register,
     handleSubmit,
@@ -23,34 +25,43 @@ export default function NewsletterSubscribe() {
   })
 
   const onSubmit = async (data: NewsletterValues) => {
-    await withToast(
-      async () => {
-        const res = await subscribeNewsletter(data.email)
-        if (!res.success) throw new Error('Не вдалося підписатися')
-        return res
-      },
-      { formType: 'newsletter' }
-    )
-    reset({ email: '', consent: true })
+    try {
+      await withToast(
+        async () => {
+          const res = await subscribeNewsletter(data.email)
+          if (!res.success) throw new Error(t('newsletter.subscribeError'))
+          return res
+        },
+        { formType: 'newsletter' }
+      )
+      reset({ email: '', consent: true })
+    } catch {
+      // withToast already shows a user-facing error message
+    }
   }
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="space-y-3"
-      aria-label="Форма підписки на розсилку"
+      aria-label={t('newsletter.formAriaLabel')}
     >
       <div className="flex gap-2">
         <div className="flex-1">
+          <label htmlFor="newsletter-email" className="sr-only">
+            {t('newsletter.emailLabel')}
+          </label>
           <Input
-            placeholder="Ваш email"
+            id="newsletter-email"
+            type="email"
+            placeholder={t('newsletter.emailPlaceholder')}
             fullWidth
             error={errors.email?.message}
             {...register('email')}
           />
         </div>
         <Button type="submit" disabled={isSubmitting}>
-          Підписатись
+          {t('newsletter.subscribe')}
         </Button>
       </div>
       <div className="flex items-start gap-2">
@@ -60,13 +71,16 @@ export default function NewsletterSubscribe() {
           className="mt-1"
           {...register('consent')}
         />
-        <label htmlFor="newsletter-consent" className="text-xs text-dental-secondary">
-          Погоджуюся отримувати новини та акції на email
+        <label
+          htmlFor="newsletter-consent"
+          className="text-xs text-dental-secondary"
+        >
+          {t('newsletter.consentText')}
         </label>
       </div>
       {isSubmitSuccessful && (
         <div className="text-xs text-dental-primary">
-          <p>Дякуємо! Ви підписані.</p>
+          <p>{t('newsletter.successMessage')}</p>
           <div className="mt-1">
             <MicroFeedback form="newsletter" compact />
           </div>

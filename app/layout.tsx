@@ -5,13 +5,15 @@ import { headers } from 'next/headers'
 import { Analytics } from '@vercel/analytics/next'
 import '../src/styles/globals.css'
 import ClientProviders from './providers'
-import Header from '@/components/Header'
+import Header from '@/components/SiteHeader'
 import Footer from '@/components/Footer'
 import ClientFloatingButtons from '@/components/ClientFloatingButtons'
+import CookieConsent from '@/components/CookieConsent'
 import { StructuredData } from '@/components/StructuredData'
+import uk from '@/locales/uk'
 
-// Dental Story Typography System
-// Nunito - заокруглений шрифт для заголовків (схожий на Stolzl з брендбуку)
+// Project typography system
+// Nunito - rounded headings font.
 const nunito = Nunito({
   subsets: ['latin', 'cyrillic'],
   weight: ['300', '400', '500', '600', '700', '800'],
@@ -19,7 +21,7 @@ const nunito = Nunito({
   display: 'swap',
 })
 
-// Rubik - м'який заокруглений шрифт для основного тексту з повною Cyrillic підтримкою
+// Rubik - soft rounded body font with full Cyrillic support.
 const rubik = Rubik({
   subsets: ['latin', 'cyrillic'],
   weight: ['300', '400', '500', '600', '700'],
@@ -39,43 +41,38 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Dental Story',
+    title: uk.common.brandName,
   },
   formatDetection: { telephone: false },
   title: {
-    default:
-      'Dental Story - Сучасна стоматологічна клініка у Львові | Сумська, 10',
-    template: '%s | Dental Story',
+    default: uk.meta.title,
+    template: `%s | ${uk.common.brandName}`,
   },
-  description:
-    'Професійна стоматологічна клініка на вул. Сумська, 10. Повний спектр послуг: лікування, імплантація, ортодонтія. Безболісне лікування, сучасне обладнання. Запис 068 232 38 38',
-  keywords:
-    'стоматологія Львів, стоматолог Сумська, стоматологічна клініка Львів, лікування зубів, імплантація зубів, брекети, відбілювання зубів, Dental Story',
-  authors: [{ name: 'Dental Story' }],
+  description: uk.meta.description,
+  keywords: uk.meta.keywords,
+  authors: [{ name: uk.common.brandName }],
   robots: { index: true, follow: true },
   openGraph: {
     type: 'website',
     url: 'https://dentalstory.com.ua/',
-    title: 'Dental Story - Сучасна стоматологічна клініка у Львові',
-    description:
-      'Професійна стоматологічна клініка на вул. Сумська, 10. Безболісне лікування, сучасні технології. Запис: 068 232 38 38',
+    title: uk.meta.openGraphTitle,
+    description: uk.meta.openGraphDescription,
     images: [
       {
         url: '/assets/images/og/og-image.svg',
         width: 1200,
         height: 630,
         type: 'image/svg+xml',
-        alt: 'Dental Story - Сучасна стоматологічна клініка у Львові',
+        alt: uk.meta.ogImageAlt,
       },
     ],
     locale: 'uk_UA',
-    siteName: 'Dental Story',
+    siteName: uk.common.brandName,
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Dental Story - Сучасна стоматологічна клініка у Львові',
-    description:
-      'Професійна стоматологічна клініка на Сумська, 10. Безболісне лікування. Тел: 068 232 38 38',
+    title: uk.meta.twitterTitle,
+    description: uk.meta.twitterDescription,
     images: ['/assets/images/og/og-image.svg'],
   },
 }
@@ -91,7 +88,11 @@ export default async function RootLayout({
   const nonce = (await headers()).get('x-nonce') ?? ''
 
   return (
-    <html lang="uk" className={`${nunito.variable} ${rubik.variable}`} data-scroll-behavior="smooth">
+    <html
+      lang="uk"
+      className={`${nunito.variable} ${rubik.variable}`}
+      data-scroll-behavior="smooth"
+    >
       <body>
         {/* Organization JSON-LD structured data (server-rendered) */}
         <StructuredData type="organization" />
@@ -122,7 +123,7 @@ export default async function RootLayout({
             href="#main-content"
             className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-50 bg-dental-teal text-white px-4 py-2 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-white"
           >
-            Skip to main content
+            {uk.accessibility.skipToContent}
           </a>
           <ClientProviders>
             <Header />
@@ -131,6 +132,7 @@ export default async function RootLayout({
             </main>
             <Footer />
             <ClientFloatingButtons />
+            <CookieConsent />
           </ClientProviders>
         </div>
         <Analytics />

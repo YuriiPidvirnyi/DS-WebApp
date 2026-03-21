@@ -1,4 +1,7 @@
+'use client'
+
 import { HTMLAttributes } from 'react'
+import { useTranslation } from 'react-i18next'
 import { twMerge } from 'tailwind-merge'
 import { Spinner } from './Spinner'
 
@@ -9,10 +12,13 @@ export interface LoadingOverlayProps extends HTMLAttributes<HTMLDivElement> {
 
 export default function LoadingOverlay({
   show,
-  message = 'Завантаження...',
+  message,
   className,
   ...props
 }: LoadingOverlayProps) {
+  const { t } = useTranslation()
+  const text = message ?? `${t('common.loading')}...`
+
   if (!show) return null
   return (
     <div
@@ -26,7 +32,7 @@ export default function LoadingOverlay({
     >
       <div className="flex flex-col items-center gap-3">
         <Spinner />
-        <p className="text-sm text-gray-700">{message}</p>
+        <p className="text-sm text-gray-700">{text}</p>
       </div>
     </div>
   )

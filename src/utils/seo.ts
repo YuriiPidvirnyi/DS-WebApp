@@ -2,6 +2,7 @@
  * SEO utilities for structured data and meta tags
  * Note: sitemap and robots.txt are handled by app/sitemap.ts and app/robots.ts
  */
+import uk from '@/locales/uk'
 
 export interface Organization {
   '@context': string
@@ -65,7 +66,7 @@ export function generateOrganizationSchema(): MedicalBusiness {
   return {
     '@context': 'https://schema.org',
     '@type': 'Dentist',
-    name: 'Dental Story',
+    name: uk.common.brandName,
     url: 'https://dentalstory.com.ua',
     logo: 'https://dentalstory.com.ua/logo.png',
     telephone: '+380XXXXXXXXX',
@@ -115,7 +116,7 @@ export function generateServiceSchema(
     serviceType,
     provider: {
       '@type': 'Dentist',
-      name: 'Dental Story',
+      name: uk.common.brandName,
     },
     description,
     offers: {
@@ -207,48 +208,39 @@ export function generateMetaTags(meta: MetaTags): Record<string, string> {
  */
 export const PAGE_META: Record<string, MetaTags> = {
   home: {
-    title: 'Dental Story - Сучасна стоматологічна клініка в Києві',
-    description:
-      'Професійна стоматологія в Києві. Безболісне лікування зубів, імплантація, відбілювання. Досвідчені лікарі, сучасне обладнання.',
-    keywords:
-      'стоматологія київ, лікування зубів, імплантація, відбілювання зубів, dental story',
+    title: uk.routeMeta.home.title,
+    description: uk.routeMeta.home.description,
+    keywords: uk.routeMeta.home.keywords,
     ogImage: 'https://dentalstory.com.ua/og-home.jpg',
   },
   services: {
-    title: 'Послуги стоматології Dental Story - Повний спектр',
-    description:
-      'Всі види стоматологічних послуг: терапія, ортопедія, імплантація, ортодонтія, дитяча стоматологія. Прозорі ціни.',
-    keywords:
-      'стоматологічні послуги, ціни на лікування зубів, імплантація зубів',
+    title: uk.routeMeta.services.title,
+    description: uk.routeMeta.services.description,
+    keywords: uk.routeMeta.services.keywords,
     ogImage: 'https://dentalstory.com.ua/og-services.jpg',
   },
   booking: {
-    title: 'Онлайн запис до стоматолога - Dental Story',
-    description:
-      'Запишіться на прийом до стоматолога онлайн. Вибирайте зручний час та лікаря. Швидко та безпечно.',
-    keywords: 'запис до стоматолога, онлайн запис, dental story київ',
+    title: uk.routeMeta.booking.title,
+    description: uk.routeMeta.booking.description,
+    keywords: uk.routeMeta.booking.keywords,
     ogImage: 'https://dentalstory.com.ua/og-booking.jpg',
   },
   about: {
-    title: 'Про нас - Dental Story Київ',
-    description:
-      'Dental Story - команда професіоналів з 10-річним досвідом. Сучасне обладнання, європейські стандарти лікування.',
-    keywords: 'стоматологія київ про клініку, команда dental story',
+    title: uk.routeMeta.about.title,
+    description: uk.routeMeta.about.description,
+    keywords: uk.routeMeta.about.keywords,
     ogImage: 'https://dentalstory.com.ua/og-about.jpg',
   },
   gallery: {
-    title: 'Галерея робіт - Результати лікування Dental Story',
-    description:
-      'Портфоліо наших робіт: фото до і після лікування. Імплантація, реставрація, відбілювання зубів.',
-    keywords:
-      'результати лікування зубів, фото до і після, dental story портфоліо',
+    title: uk.routeMeta.gallery.title,
+    description: uk.routeMeta.gallery.description,
+    keywords: uk.routeMeta.gallery.keywords,
     ogImage: 'https://dentalstory.com.ua/og-gallery.jpg',
   },
   contact: {
-    title: 'Контакти - Dental Story Київ',
-    description:
-      'Адреса, телефон, години роботи стоматології Dental Story в Києві. Як нас знайти, карта проїзду.',
-    keywords: 'dental story адреса, телефон стоматології, контакти київ',
+    title: uk.routeMeta.contact.title,
+    description: uk.routeMeta.contact.description,
+    keywords: uk.routeMeta.contact.keywords,
     ogImage: 'https://dentalstory.com.ua/og-contact.jpg',
   },
 }

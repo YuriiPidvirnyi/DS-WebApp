@@ -3,18 +3,19 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
-import { 
-  Calendar, 
-  Clock, 
-  User, 
-  FileText, 
-  LogOut, 
+import {
+  Calendar,
+  Clock,
+  User,
+  FileText,
+  LogOut,
   Plus,
   ChevronRight,
   Star,
   Phone,
-  Mail
+  Mail,
 } from 'lucide-react'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 
@@ -24,7 +25,9 @@ interface Appointment {
   appointment_date: string
   appointment_time: string
   status: string
-  doctors: { first_name: string; last_name: string; specialization: string }[] | null
+  doctors:
+    | { first_name: string; last_name: string; specialization: string }[]
+    | null
   services: { name_uk: string; price_uah: number }[] | null
 }
 
@@ -37,6 +40,7 @@ interface PatientProfile {
 
 export default function CabinetPage() {
   const router = useRouter()
+  const { t } = useTranslation()
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const [profile, setProfile] = useState<PatientProfile | null>(null)
   const [appointments, setAppointments] = useState<Appointment[]>([])
@@ -45,9 +49,15 @@ export default function CabinetPage() {
   useEffect(() => {
     const fetchData = async () => {
       const supabase = createClient()
-      
+      if (!supabase) {
+        router.push('/auth/login')
+        return
+      }
+
       // Get user
-      const { data: { user } } = await supabase.auth.getUser()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
       if (!user) {
         router.push('/auth/login')
         return
@@ -65,14 +75,16 @@ export default function CabinetPage() {
       // Get appointments
       const { data: appointmentsData } = await supabase
         .from('appointments')
-        .select(`
+        .select(
+          `
           id,
           appointment_date,
           appointment_time,
           status,
           doctors (first_name, last_name, specialization),
           services (name_uk, price_uah)
-        `)
+        `
+        )
         .eq('patient_id', user.id)
         .order('appointment_date', { ascending: false })
         .limit(5)
@@ -86,6 +98,7 @@ export default function CabinetPage() {
 
   const handleLogout = async () => {
     const supabase = createClient()
+    if (!supabase) return
     await supabase.auth.signOut()
     router.push('/')
     router.refresh()
@@ -100,13 +113,15 @@ export default function CabinetPage() {
       cancelled: 'bg-red-100 text-red-700',
     }
     const labels: Record<string, string> = {
-      pending: 'Очікує',
-      confirmed: 'Підтверджено',
-      completed: 'Завершено',
-      cancelled: 'Скасовано',
+      pending: t('cabinet.status.pending'),
+      confirmed: t('cabinet.status.confirmed'),
+      completed: t('cabinet.status.completed'),
+      cancelled: t('cabinet.status.cancelled'),
     }
     return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${styles[status] || styles.pending}`}>
+      <span
+        className={`px-2 py-1 rounded-full text-xs font-medium ${styles[status] || styles.pending}`}
+      >
         {labels[status] || status}
       </span>
     )
@@ -120,7 +135,10 @@ export default function CabinetPage() {
     )
   }
 
-  const displayName = profile?.first_name || user?.user_metadata?.first_name || 'Пацієнт'
+  const displayName =
+    profile?.first_name ||
+    user?.user_metadata?.first_name ||
+    t('cabinet.defaultPatient')
 
   return (
     <div className="min-h-screen bg-dental-secondary-50">
@@ -129,7 +147,7 @@ export default function CabinetPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="text-2xl font-bold text-dental-dark">
-              Dental<span className="text-dental-primary-600">Story</span>
+              {t('common.brandName')}
             </Link>
             <div className="flex items-center gap-4">
               <span className="text-dental-muted hidden sm:block">
@@ -140,7 +158,7 @@ export default function CabinetPage() {
                 className="flex items-center gap-2 text-dental-muted hover:text-dental-dark transition-colors"
               >
                 <LogOut className="w-5 h-5" />
-                <span className="hidden sm:inline">Вийти</span>
+                <span className="hidden sm:inline">{t('cabinet.logout')}</span>
               </button>
             </div>
           </div>
@@ -151,11 +169,9 @@ export default function CabinetPage() {
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-dental-dark mb-2">
-            Вітаємо, {displayName}!
+            {t('cabinet.welcome', { name: displayName })}
           </h1>
-          <p className="text-dental-muted">
-            Ваш особистий кабінет пацієнта Dental Story
-          </p>
+          <p className="text-dental-muted">{t('cabinet.subtitle')}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -168,8 +184,12 @@ export default function CabinetPage() {
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold mb-1">Записатися на прийом</h3>
-                  <p className="text-dental-primary-100 text-sm">Оберіть зручний час</p>
+                  <h3 className="text-lg font-semibold mb-1">
+                    {t('cabinet.bookAppointment')}
+                  </h3>
+                  <p className="text-dental-primary-100 text-sm">
+                    {t('cabinet.chooseTime')}
+                  </p>
                 </div>
                 <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                   <Plus className="w-6 h-6" />
@@ -180,20 +200,27 @@ export default function CabinetPage() {
             {/* Profile Card */}
             <div className="bg-white rounded-2xl p-6 shadow-soft">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-dental-dark">Мій профіль</h3>
-                <Link href="/cabinet/profile" className="text-dental-primary-600 hover:text-dental-primary-700 text-sm">
-                  Редагувати
+                <h3 className="font-semibold text-dental-dark">
+                  {t('cabinet.myProfile')}
+                </h3>
+                <Link
+                  href="/cabinet/profile"
+                  className="text-dental-primary-600 hover:text-dental-primary-700 text-sm"
+                >
+                  {t('cabinet.edit')}
                 </Link>
               </div>
-              
+
               <div className="space-y-3">
                 <div className="flex items-center gap-3 text-dental-muted">
                   <User className="w-5 h-5 text-dental-secondary-400" />
-                  <span>{profile?.first_name} {profile?.last_name}</span>
+                  <span>
+                    {profile?.first_name} {profile?.last_name}
+                  </span>
                 </div>
                 <div className="flex items-center gap-3 text-dental-muted">
                   <Phone className="w-5 h-5 text-dental-secondary-400" />
-                  <span>{profile?.phone || 'Не вказано'}</span>
+                  <span>{profile?.phone || t('cabinet.notSpecified')}</span>
                 </div>
                 <div className="flex items-center gap-3 text-dental-muted">
                   <Mail className="w-5 h-5 text-dental-secondary-400" />
@@ -212,31 +239,37 @@ export default function CabinetPage() {
                   <div className="w-10 h-10 bg-dental-primary-100 rounded-xl flex items-center justify-center">
                     <Calendar className="w-5 h-5 text-dental-primary-600" />
                   </div>
-                  <span className="font-medium text-dental-dark">Мої записи</span>
+                  <span className="font-medium text-dental-dark">
+                    {t('cabinet.myAppointments')}
+                  </span>
                 </div>
                 <ChevronRight className="w-5 h-5 text-dental-muted" />
               </Link>
               <Link
-                href="/cabinet/history"
+                href="/cabinet/appointments"
                 className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors border-b border-dental-secondary-100"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
                     <FileText className="w-5 h-5 text-blue-600" />
                   </div>
-                  <span className="font-medium text-dental-dark">Історія лікування</span>
+                  <span className="font-medium text-dental-dark">
+                    {t('cabinet.treatmentHistory')}
+                  </span>
                 </div>
                 <ChevronRight className="w-5 h-5 text-dental-muted" />
               </Link>
               <Link
-                href="/cabinet/reviews"
+                href="/reviews"
                 className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
                     <Star className="w-5 h-5 text-yellow-600" />
                   </div>
-                  <span className="font-medium text-dental-dark">Мої відгуки</span>
+                  <span className="font-medium text-dental-dark">
+                    {t('cabinet.myReviews')}
+                  </span>
                 </div>
                 <ChevronRight className="w-5 h-5 text-dental-muted" />
               </Link>
@@ -247,9 +280,14 @@ export default function CabinetPage() {
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-soft">
               <div className="flex items-center justify-between p-6 border-b border-dental-secondary-100">
-                <h3 className="font-semibold text-dental-dark">Останні записи</h3>
-                <Link href="/cabinet/appointments" className="text-dental-primary-600 hover:text-dental-primary-700 text-sm">
-                  Всі записи
+                <h3 className="font-semibold text-dental-dark">
+                  {t('cabinet.recentAppointments')}
+                </h3>
+                <Link
+                  href="/cabinet/appointments"
+                  className="text-dental-primary-600 hover:text-dental-primary-700 text-sm"
+                >
+                  {t('cabinet.allAppointments')}
                 </Link>
               </div>
 
@@ -258,20 +296,27 @@ export default function CabinetPage() {
                   <div className="w-16 h-16 bg-dental-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Calendar className="w-8 h-8 text-dental-muted" />
                   </div>
-                  <h4 className="font-medium text-dental-dark mb-2">Записів поки немає</h4>
-                  <p className="text-dental-muted mb-4">Запишіться на прийом до наших спеціалістів</p>
+                  <h4 className="font-medium text-dental-dark mb-2">
+                    {t('cabinet.noAppointments')}
+                  </h4>
+                  <p className="text-dental-muted mb-4">
+                    {t('cabinet.bookWithSpecialists')}
+                  </p>
                   <Link
                     href="/booking"
                     className="inline-flex items-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-4 py-2 rounded-xl font-medium transition-colors"
                   >
                     <Plus className="w-4 h-4" />
-                    Записатися
+                    {t('cabinet.book')}
                   </Link>
                 </div>
               ) : (
                 <div className="divide-y divide-dental-secondary-100">
-                  {appointments.map((apt) => (
-                    <div key={apt.id} className="p-4 hover:bg-dental-secondary-50 transition-colors">
+                  {appointments.map(apt => (
+                    <div
+                      key={apt.id}
+                      className="p-4 hover:bg-dental-secondary-50 transition-colors"
+                    >
                       <div className="flex items-start justify-between">
                         <div className="flex gap-4">
                           <div className="w-14 h-14 bg-dental-primary-50 rounded-xl flex flex-col items-center justify-center">
@@ -279,15 +324,21 @@ export default function CabinetPage() {
                               {new Date(apt.appointment_date).getDate()}
                             </span>
                             <span className="text-xs text-dental-primary-500">
-                              {new Date(apt.appointment_date).toLocaleDateString('uk-UA', { month: 'short' })}
+                              {new Date(
+                                apt.appointment_date
+                              ).toLocaleDateString(undefined, {
+                                month: 'short',
+                              })}
                             </span>
                           </div>
                           <div>
                             <h4 className="font-medium text-dental-dark">
-                              {apt.services?.[0]?.name_uk || 'Консультація'}
+                              {apt.services?.[0]?.name_uk ||
+                                t('cabinet.consultation')}
                             </h4>
                             <p className="text-sm text-dental-muted">
-                              {apt.doctors?.[0]?.last_name} {apt.doctors?.[0]?.first_name}
+                              {apt.doctors?.[0]?.last_name}{' '}
+                              {apt.doctors?.[0]?.first_name}
                             </p>
                             <div className="flex items-center gap-2 mt-1 text-sm text-dental-muted">
                               <Clock className="w-4 h-4" />
@@ -299,7 +350,8 @@ export default function CabinetPage() {
                           {getStatusBadge(apt.status)}
                           {apt.services?.[0]?.price_uah && (
                             <p className="text-sm text-dental-muted mt-2">
-                              {apt.services[0].price_uah.toLocaleString('uk-UA')} грн
+                              {apt.services[0].price_uah.toLocaleString()}{' '}
+                              {t('cabinet.currency')}
                             </p>
                           )}
                         </div>

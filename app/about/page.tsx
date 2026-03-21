@@ -1,24 +1,25 @@
 import type { Metadata } from 'next'
 import About from '@/views/About'
 import { generateBreadcrumbSchema } from '@/utils/seo'
+import uk from '@/locales/uk'
+
+const aboutMeta = uk.routeMeta.about
 
 export const metadata: Metadata = {
-  title: 'Про нас — Dental Story Львів',
-  description:
-    'Dental Story — команда професіоналів з 10-річним досвідом. Сучасне обладнання, європейські стандарти лікування.',
-  keywords: 'стоматологія львів про клініку, команда dental story',
+  title: aboutMeta.title,
+  description: aboutMeta.description,
+  keywords: aboutMeta.keywords,
   alternates: { canonical: '/about' },
   openGraph: {
-    title: 'Про нас — Dental Story Львів',
-    description:
-      'Dental Story — команда професіоналів з 10-річним досвідом.',
+    title: aboutMeta.openGraphTitle,
+    description: aboutMeta.openGraphDescription,
     url: '/about',
   },
 }
 
 const breadcrumb = generateBreadcrumbSchema([
-  { name: 'Головна', url: 'https://dentalstory.com.ua/' },
-  { name: 'Про нас', url: 'https://dentalstory.com.ua/about' },
+  { name: uk.navigation.home, url: 'https://dentalstory.com.ua/' },
+  { name: aboutMeta.breadcrumb, url: 'https://dentalstory.com.ua/about' },
 ])
 
 export default function AboutPage() {

@@ -23,6 +23,4 @@ export { Spinner } from './Spinner'
 export type { SpinnerProps } from './Spinner'
 
 export { default as LoadingOverlay } from './LoadingOverlay'
-
-export { ProgressBar } from './ProgressBar'
-export type { default as ProgressBarProps } from './ProgressBar'
+export { AsyncState } from './AsyncState'

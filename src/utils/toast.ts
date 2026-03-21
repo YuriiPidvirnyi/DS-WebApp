@@ -218,11 +218,11 @@ export const withToast = Object.assign(
     // Add direct error method for immediate error display
     error: (message: string) => {
       showError(message)
-      return undefined as any
+      return undefined as unknown
     },
     success: (message: string) => {
       showSuccess(message)
-      return undefined as any
+      return undefined as unknown
     },
   }
 )

@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import TermsOfService from '@/views/TermsOfService'
+import uk from '@/locales/uk'
+
+const termsMeta = uk.routeMeta.termsOfService
 
 export const metadata: Metadata = {
-  title: 'Умови використання — Dental Story',
-  description:
-    'Правила користування веб-сайтом та надання стоматологічних послуг Dental Story.',
+  title: termsMeta.title,
+  description: termsMeta.description,
   alternates: { canonical: '/terms-of-service' },
 }
 

@@ -25,6 +25,7 @@ import {
   trackEvent,
 } from '@/utils/analytics'
 import { useRouter } from 'next/navigation'
+import { useTranslation } from 'react-i18next'
 
 export type BookingFormValues = z.infer<typeof appointmentSchema>
 
@@ -47,11 +48,13 @@ export { SERVICES, DOCTORS, TIME_SLOTS }
  * - Inline editing state for summary step
  */
 export function useBookingForm() {
+  const { t } = useTranslation()
   // --- Available time slots ---
   const [slots, setSlots] = useState<string[]>(
     TIME_SLOTS as unknown as string[]
   )
   const [loadingSlots, setLoadingSlots] = useState(false)
+  const [slotsLoadError, setSlotsLoadError] = useState<string | null>(null)
 
   // --- Turnstile ---
   const turnstileRef = useRef<TurnstileRef>(null)
@@ -85,7 +88,7 @@ export function useBookingForm() {
     },
   })
 
-  const { watch, reset, trigger } = form
+  const { watch, reset, trigger, setValue, getValues } = form
   const selectedDate = watch('date')
   const selectedDoctor = watch('doctor')
 
@@ -113,17 +116,39 @@ export function useBookingForm() {
 
   // --- Fetch available slots when date/doctor changes ---
   useEffect(() => {
-    if (!selectedDate) return
+    if (!selectedDate) {
+      setSlotsLoadError(null)
+      return
+    }
+
+    const slotsErrorMessage = t('booking.slots.loadError')
+
     setLoadingSlots(true)
     getAvailableSlots(
       selectedDate,
       selectedDoctor === 'any' ? undefined : selectedDoctor
     )
       .then(res => {
-        if (res.success && res.data) setSlots(res.data)
+        if (res.success && res.data) {
+          setSlots(res.data)
+          const selectedTime = getValues('time')
+          if (selectedTime && !res.data.includes(selectedTime)) {
+            setValue('time', '', { shouldValidate: true })
+          }
+          setSlotsLoadError(null)
+          return
+        }
+        setSlots([])
+        setValue('time', '', { shouldValidate: true })
+        setSlotsLoadError(res.error || slotsErrorMessage)
+      })
+      .catch(() => {
+        setSlots([])
+        setValue('time', '', { shouldValidate: true })
+        setSlotsLoadError(slotsErrorMessage)
       })
       .finally(() => setLoadingSlots(false))
-  }, [selectedDate, selectedDoctor])
+  }, [getValues, selectedDate, selectedDoctor, setValue, t])
 
   // --- Multi-step wizard ---
   const [step, setStep] = useState(0)
@@ -182,7 +207,7 @@ export function useBookingForm() {
   const onSubmit = async (data: BookingFormValues) => {
     if (isCoolingDown) {
       return withToast.error(
-        `Занадто часті відправлення. Спробуйте через ${remainingSec} с.`
+        t('booking.errors.cooldown', { seconds: remainingSec })
       )
     }
 
@@ -194,7 +219,7 @@ export function useBookingForm() {
       if (error instanceof Error) {
         return withToast.error(error.message)
       }
-      return withToast.error('Перевірка безпеки не пройдена. Спробуйте ще раз.')
+      return withToast.error(t('booking.errors.turnstile'))
     }
 
     // Sanitize user input before submission
@@ -203,39 +228,45 @@ export function useBookingForm() {
     const sanitizedEmail = sanitizeUserInput(data.email)
     const sanitizedMessage = sanitizeUserInput(data.symptoms || '')
 
-    const response = await withToast(
-      async () => {
-        const res = await createAppointment({
-          name: sanitizedName,
-          phone: sanitizedPhone,
-          email: sanitizedEmail,
-          service: data.service,
-          message: sanitizedMessage,
-          preferredDate: data.date,
-          preferredTime: data.time,
-        })
-        if (!res.success || !res.data)
-          throw new Error('Не вдалося створити запис')
-        // Send confirmation (fire-and-forget)
-        void sendBookingConfirmation({
-          appointmentId: res.data.id,
-          email: data.email,
-        })
-        // Track booking complete
-        try {
-          if (window.gtag) {
-            window.gtag('event', BookingEvent.BookingComplete, {
-              appointment_id: res.data.id,
-              service: data.service,
-            })
+    let response: Awaited<ReturnType<typeof createAppointment>>
+    try {
+      response = await withToast(
+        async () => {
+          const res = await createAppointment({
+            name: sanitizedName,
+            phone: sanitizedPhone,
+            email: sanitizedEmail,
+            service: data.service,
+            message: sanitizedMessage,
+            preferredDate: data.date,
+            preferredTime: data.time,
+          })
+          if (!res.success || !res.data)
+            throw new Error(t('booking.errors.createFailed'))
+          // Send confirmation (fire-and-forget)
+          void sendBookingConfirmation({
+            appointmentId: res.data.id,
+            email: data.email,
+          }).catch(() => undefined)
+          // Track booking complete
+          try {
+            if (window.gtag) {
+              window.gtag('event', BookingEvent.BookingComplete, {
+                appointment_id: res.data.id,
+                service: data.service,
+              })
+            }
+          } catch {
+            // Analytics may fail silently
           }
-        } catch {
-          // Analytics may fail silently
-        }
-        return res
-      },
-      { formType: 'appointment' }
-    )
+          return res
+        },
+        { formType: 'appointment' }
+      )
+    } catch {
+      // withToast already shows a user-facing error message
+      return
+    }
 
     // Store appointment details for reference
     const appointmentId = response?.data?.id || `temp-${Date.now().toString()}`
@@ -274,6 +305,7 @@ export function useBookingForm() {
     back,
     slots,
     loadingSlots,
+    slotsLoadError,
     turnstileRef,
     isCoolingDown,
     remainingSec,

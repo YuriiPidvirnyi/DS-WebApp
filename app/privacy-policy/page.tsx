@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import PrivacyPolicy from '@/views/PrivacyPolicy'
+import uk from '@/locales/uk'
+
+const privacyMeta = uk.routeMeta.privacyPolicy
 
 export const metadata: Metadata = {
-  title: 'Політика конфіденційності — Dental Story',
-  description:
-    'Як ми збираємо, зберігаємо та обробляємо ваші персональні дані. Конфіденційність пацієнтів — наш пріоритет.',
+  title: privacyMeta.title,
+  description: privacyMeta.description,
   alternates: { canonical: '/privacy-policy' },
 }
 

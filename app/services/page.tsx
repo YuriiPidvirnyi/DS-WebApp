@@ -1,29 +1,32 @@
 import type { Metadata } from 'next'
 import Services from '@/views/Services'
 import { generateFAQSchema, generateBreadcrumbSchema } from '@/utils/seo'
-import { ALL_FAQS } from '@/content/faqs'
+import uk from '@/locales/uk'
+
+const servicesMeta = uk.routeMeta.services
 
 export const metadata: Metadata = {
-  title: 'Послуги стоматології Dental Story — Повний спектр',
-  description:
-    'Всі види стоматологічних послуг: терапія, ортопедія, імплантація, ортодонтія, дитяча стоматологія. Прозорі ціни.',
-  keywords:
-    'стоматологічні послуги, ціни на лікування зубів, імплантація зубів',
+  title: servicesMeta.title,
+  description: servicesMeta.description,
+  keywords: servicesMeta.keywords,
   alternates: { canonical: '/services' },
   openGraph: {
-    title: 'Послуги стоматології Dental Story',
-    description:
-      'Всі види стоматологічних послуг: терапія, ортопедія, імплантація, ортодонтія. Прозорі ціни.',
+    title: servicesMeta.openGraphTitle,
+    description: servicesMeta.openGraphDescription,
     url: '/services',
   },
 }
 
-// Flatten all FAQs for schema
-const allFaqItems = ALL_FAQS.flatMap(cat => cat.items)
+// Flatten FAQ items from locale for schema
+const allFaqItems: Array<{ question: string; answer: string }> = [
+  ...Object.values(uk.servicesFaq.general.items),
+  ...Object.values(uk.servicesFaq.services.items),
+  ...Object.values(uk.servicesFaq.hygiene.items),
+]
 
 const breadcrumb = generateBreadcrumbSchema([
-  { name: 'Головна', url: 'https://dentalstory.com.ua/' },
-  { name: 'Послуги', url: 'https://dentalstory.com.ua/services' },
+  { name: uk.navigation.home, url: 'https://dentalstory.com.ua/' },
+  { name: servicesMeta.breadcrumb, url: 'https://dentalstory.com.ua/services' },
 ])
 
 export default function ServicesPage() {

@@ -1,25 +1,25 @@
 import type { Metadata } from 'next'
 import Gallery from '@/views/Gallery'
 import { generateBreadcrumbSchema } from '@/utils/seo'
+import uk from '@/locales/uk'
+
+const galleryMeta = uk.routeMeta.gallery
 
 export const metadata: Metadata = {
-  title: 'Галерея робіт — Результати лікування Dental Story',
-  description:
-    'Портфоліо наших робіт: фото до і після лікування. Імплантація, реставрація, відбілювання зубів.',
-  keywords:
-    'результати лікування зубів, фото до і після, dental story портфоліо',
+  title: galleryMeta.title,
+  description: galleryMeta.description,
+  keywords: galleryMeta.keywords,
   alternates: { canonical: '/gallery' },
   openGraph: {
-    title: 'Галерея робіт Dental Story',
-    description:
-      'Портфоліо наших робіт: фото до і після лікування.',
+    title: galleryMeta.openGraphTitle,
+    description: galleryMeta.openGraphDescription,
     url: '/gallery',
   },
 }
 
 const breadcrumb = generateBreadcrumbSchema([
-  { name: 'Головна', url: 'https://dentalstory.com.ua/' },
-  { name: 'Галерея', url: 'https://dentalstory.com.ua/gallery' },
+  { name: uk.navigation.home, url: 'https://dentalstory.com.ua/' },
+  { name: galleryMeta.breadcrumb, url: 'https://dentalstory.com.ua/gallery' },
 ])
 
 export default function GalleryPage() {

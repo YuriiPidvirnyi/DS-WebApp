@@ -23,12 +23,14 @@ export const Button = ({
     'inline-flex items-center justify-center font-semibold rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
 
   const variantStyles = {
-    primary: 'bg-dental-primary-600 text-white hover:bg-dental-primary-700 focus:ring-dental-primary-500',
+    primary:
+      'bg-dental-primary-600 text-white hover:bg-dental-primary-700 focus:ring-dental-primary-500',
     secondary:
       'bg-dental-primary-100 text-dental-primary-700 hover:bg-dental-primary-200 focus:ring-dental-primary-300',
     outline:
       'border-2 border-dental-primary-400 text-dental-primary-600 hover:bg-dental-primary-50 hover:border-dental-primary-500 focus:ring-dental-primary-300',
-    ghost: 'text-dental-primary-600 hover:bg-dental-primary-50 focus:ring-dental-primary-300',
+    ghost:
+      'text-dental-primary-600 hover:bg-dental-primary-50 focus:ring-dental-primary-300',
   }
 
   const sizeStyles = {
@@ -71,7 +73,7 @@ export const Button = ({
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             />
           </svg>
-          Завантаження...
+          {children}
         </>
       ) : (
         children

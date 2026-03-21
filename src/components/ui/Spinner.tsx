@@ -1,4 +1,7 @@
+'use client'
+
 import clsx from 'clsx'
+import { useTranslation } from 'react-i18next'
 
 export interface SpinnerProps {
   size?: 'sm' | 'md' | 'lg' | 'xl'
@@ -11,6 +14,7 @@ export const Spinner = ({
   className,
   color = 'teal',
 }: SpinnerProps) => {
+  const { t } = useTranslation()
   const sizeStyles = {
     sm: 'h-4 w-4 border-2',
     md: 'h-8 w-8 border-2',
@@ -33,9 +37,9 @@ export const Spinner = ({
         className
       )}
       role="status"
-      aria-label="Завантаження"
+      aria-label={t('common.loading')}
     >
-      <span className="sr-only">Завантаження...</span>
+      <span className="sr-only">{t('common.loading')}...</span>
     </div>
   )
 }

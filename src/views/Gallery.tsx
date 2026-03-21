@@ -1,26 +1,30 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { X } from 'lucide-react'
+import Image from 'next/image'
+import { AsyncState } from '@/components/ui'
 import type { GalleryImage } from '@/types'
 import galleryData from '@/content/gallery.json'
 
 // Local gallery data (replaces external Unsplash links). Drop real photos into public/assets/images and update src/content/gallery.json
 const galleryImages: GalleryImage[] = galleryData as unknown as GalleryImage[]
 
-const categories = [
-  { value: 'all', label: 'Всі фото' },
-  { value: 'clinic', label: 'Клініка' },
-  { value: 'equipment', label: 'Обладнання' },
-  { value: 'team', label: 'Команда' },
-  { value: 'implants', label: 'Імплантація' },
-  { value: 'whitening', label: 'Відбілювання' },
-  { value: 'braces', label: 'Брекети' },
-  { value: 'veneers', label: 'Вініри' },
-  { value: 'before-after', label: 'До/Після' },
+const categoryKeys = [
+  { value: 'all', labelKey: 'gallery.categories.all' },
+  { value: 'clinic', labelKey: 'gallery.categories.clinic' },
+  { value: 'equipment', labelKey: 'gallery.categories.equipment' },
+  { value: 'team', labelKey: 'gallery.categories.team' },
+  { value: 'implants', labelKey: 'gallery.categories.implants' },
+  { value: 'whitening', labelKey: 'gallery.categories.whitening' },
+  { value: 'braces', labelKey: 'gallery.categories.braces' },
+  { value: 'veneers', labelKey: 'gallery.categories.veneers' },
+  { value: 'before-after', labelKey: 'gallery.categories.beforeAfter' },
 ]
 
 const Gallery = () => {
+  const { t } = useTranslation()
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null)
 
@@ -74,17 +78,16 @@ const Gallery = () => {
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-            Галерея
+            {t('gallery.title')}
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Подивіться на нашу сучасну клініку, обладнання та результати нашої
-            роботи
+            {t('gallery.subtitle')}
           </p>
         </div>
 
         {/* Category Filter */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {categories.map(category => (
+          {categoryKeys.map(category => (
             <button
               key={category.value}
               onClick={() => setSelectedCategory(category.value)}
@@ -94,7 +97,7 @@ const Gallery = () => {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              {category.label}
+              {t(category.labelKey)}
             </button>
           ))}
         </div>
@@ -107,9 +110,11 @@ const Gallery = () => {
               className="group relative overflow-hidden rounded-xl cursor-pointer bg-gray-100"
               onClick={() => openLightbox(image)}
             >
-              <img
+              <Image
                 src={image.url}
                 alt={image.title}
+                width={400}
+                height={256}
                 className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -125,10 +130,8 @@ const Gallery = () => {
         </div>
 
         {filteredImages.length === 0 && (
-          <div className="text-center py-16">
-            <p className="text-gray-500 text-lg">
-              Фотографій в цій категорії поки немає
-            </p>
+          <div className="py-8">
+            <AsyncState variant="empty" message={t('gallery.noPhotos')} />
           </div>
         )}
       </div>
@@ -142,12 +145,12 @@ const Gallery = () => {
           tabIndex={0}
           role="dialog"
           aria-modal="true"
-          aria-label="Перегляд зображення"
+          aria-label={t('gallery.navigation.viewImage')}
         >
           <button
             className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10"
             onClick={closeLightbox}
-            aria-label="Закрити"
+            aria-label={t('gallery.navigation.close')}
           >
             <X className="h-8 w-8" />
           </button>
@@ -158,7 +161,7 @@ const Gallery = () => {
               e.stopPropagation()
               navigateImage('prev')
             }}
-            aria-label="Попереднє зображення"
+            aria-label={t('gallery.navigation.previous')}
           >
             ‹
           </button>
@@ -169,16 +172,19 @@ const Gallery = () => {
               e.stopPropagation()
               navigateImage('next')
             }}
-            aria-label="Наступне зображення"
+            aria-label={t('gallery.navigation.next')}
           >
             ›
           </button>
 
           <div className="max-w-5xl w-full" onClick={e => e.stopPropagation()}>
-            <img
+            <Image
               src={selectedImage.url}
               alt={selectedImage.title}
+              width={1200}
+              height={800}
               className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
+              priority
             />
             <div className="mt-4 text-center text-white">
               <h3 className="text-2xl font-semibold mb-2">

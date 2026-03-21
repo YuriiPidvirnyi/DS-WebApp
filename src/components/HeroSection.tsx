@@ -3,7 +3,15 @@
 import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
-import { ArrowRight, Play, Shield, Award, Users, Star, Phone } from 'lucide-react'
+import {
+  ArrowRight,
+  Play,
+  Shield,
+  Award,
+  Users,
+  Star,
+  Phone,
+} from 'lucide-react'
 
 // Animated counter hook
 function useCounter(end: number, duration: number = 2000) {
@@ -36,7 +44,7 @@ function useCounter(end: number, duration: number = 2000) {
       if (!startTime) startTime = currentTime
       const progress = Math.min((currentTime - startTime) / duration, 1)
       setCount(Math.floor(progress * end))
-      
+
       if (progress < 1) {
         requestAnimationFrame(animate)
       }
@@ -52,7 +60,10 @@ export default function HeroSection() {
   const { t } = useTranslation()
   const [mounted, setMounted] = useState(false)
   const { count: patientsCount, ref: patientsRef } = useCounter(5000, 2500)
-  const { count: satisfactionCount, ref: satisfactionRef } = useCounter(98, 2000)
+  const { count: satisfactionCount, ref: satisfactionRef } = useCounter(
+    98,
+    2000
+  )
   const { count: yearsCount, ref: yearsRef } = useCounter(10, 1500)
 
   useEffect(() => {
@@ -60,34 +71,50 @@ export default function HeroSection() {
   }, [])
 
   return (
-    <section className="relative min-h-[95vh] flex items-center overflow-hidden bg-white" suppressHydrationWarning>
+    <section
+      className="relative min-h-[95vh] flex items-center overflow-hidden bg-white"
+      suppressHydrationWarning
+    >
       {/* Subtle background pattern */}
-      <div className="absolute inset-0 opacity-40 pointer-events-none bg-gradient-radial-dental" suppressHydrationWarning>
-      </div>
+      <div
+        className="absolute inset-0 opacity-40 pointer-events-none bg-gradient-radial-dental"
+        suppressHydrationWarning
+      ></div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
         {/* Top section: Headlines & CTA */}
         <div className="max-w-5xl mx-auto mb-20">
           {/* Main headline with badge */}
-          <div 
+          <div
             className="transition-all duration-1000"
-            style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translateY(0)' : 'translateY(3rem)' }}
+            style={{
+              opacity: mounted ? 1 : 0,
+              transform: mounted ? 'translateY(0)' : 'translateY(3rem)',
+            }}
           >
             {/* Small badge */}
             <div className="inline-block mb-6">
               <span className="inline-flex items-center gap-2 bg-dental-primary-50 px-3 py-1 rounded-full border border-dental-primary-200">
                 <span className="inline-block w-1.5 h-1.5 bg-dental-primary-500 rounded-full animate-pulse"></span>
-                <span className="text-xs font-semibold text-dental-primary-700">{t('stats.workingNow')}</span>
+                <span className="text-xs font-semibold text-dental-primary-700">
+                  {t('stats.workingNow')}
+                </span>
               </span>
             </div>
 
             {/* Large headline */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-dental-dark leading-[1.05] mb-8 text-balance tracking-tight" suppressHydrationWarning>
+            <h1
+              className="text-5xl md:text-6xl lg:text-7xl font-bold text-dental-dark leading-[1.05] mb-8 text-balance tracking-tight"
+              suppressHydrationWarning
+            >
               {t('home.hero.title')}
             </h1>
 
             {/* Description text */}
-            <p className="text-lg md:text-xl text-dental-text leading-relaxed mb-10 max-w-2xl font-light" suppressHydrationWarning>
+            <p
+              className="text-lg md:text-xl text-dental-text leading-relaxed mb-10 max-w-2xl font-light"
+              suppressHydrationWarning
+            >
               {t('home.hero.description')}
             </p>
 
@@ -113,14 +140,17 @@ export default function HeroSection() {
         </div>
 
         {/* Stats section - Enhanced design */}
-        <div 
+        <div
           className="transition-all duration-1000 delay-300"
-          style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translateY(0)' : 'translateY(3rem)' }}
+          style={{
+            opacity: mounted ? 1 : 0,
+            transform: mounted ? 'translateY(0)' : 'translateY(3rem)',
+          }}
         >
           {/* Stats grid - responsive layout */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {/* Stat 1: Patients */}
-            <div 
+            <div
               ref={patientsRef}
               className="group p-6 lg:p-8 rounded-3xl border border-dental-secondary-200 bg-white hover:bg-dental-primary-50 hover:border-dental-primary-300 transition-all duration-300 cursor-default"
             >
@@ -130,13 +160,17 @@ export default function HeroSection() {
                 </div>
               </div>
               <div className="mb-2">
-                <p className="text-4xl lg:text-5xl font-bold text-dental-dark">{patientsCount.toLocaleString()}+</p>
+                <p className="text-4xl lg:text-5xl font-bold text-dental-dark">
+                  {patientsCount.toLocaleString()}+
+                </p>
               </div>
-              <p className="text-dental-muted text-base font-medium">Пацієнтів</p>
+              <p className="text-dental-muted text-base font-medium">
+                {t('stats.patients')}
+              </p>
             </div>
 
             {/* Stat 2: Satisfaction */}
-            <div 
+            <div
               ref={satisfactionRef}
               className="group p-6 lg:p-8 rounded-3xl border border-dental-secondary-200 bg-white hover:bg-dental-primary-50 hover:border-dental-primary-300 transition-all duration-300 cursor-default"
             >
@@ -146,13 +180,17 @@ export default function HeroSection() {
                 </div>
               </div>
               <div className="mb-2">
-                <p className="text-4xl lg:text-5xl font-bold text-dental-dark">{satisfactionCount}%</p>
+                <p className="text-4xl lg:text-5xl font-bold text-dental-dark">
+                  {satisfactionCount}%
+                </p>
               </div>
-              <p className="text-dental-muted text-base font-medium">Задоволених</p>
+              <p className="text-dental-muted text-base font-medium">
+                {t('stats.satisfiedPatients')}
+              </p>
             </div>
 
             {/* Stat 3: Experience */}
-            <div 
+            <div
               ref={yearsRef}
               className="group p-6 lg:p-8 rounded-3xl border border-dental-secondary-200 bg-white hover:bg-dental-primary-50 hover:border-dental-primary-300 transition-all duration-300 cursor-default"
             >
@@ -162,9 +200,13 @@ export default function HeroSection() {
                 </div>
               </div>
               <div className="mb-2">
-                <p className="text-4xl lg:text-5xl font-bold text-dental-dark">{yearsCount}+</p>
+                <p className="text-4xl lg:text-5xl font-bold text-dental-dark">
+                  {yearsCount}+
+                </p>
               </div>
-              <p className="text-dental-muted text-base font-medium">Років досвіду</p>
+              <p className="text-dental-muted text-base font-medium">
+                {t('stats.yearsExperience')}
+              </p>
             </div>
 
             {/* CTA Card - Highlighted */}
@@ -178,9 +220,11 @@ export default function HeroSection() {
                     <Phone className="h-7 w-7 text-white" />
                   </div>
                 </div>
-                <p className="text-2xl lg:text-3xl font-bold text-white mb-1">Безкоштовна</p>
+                <p className="text-2xl lg:text-3xl font-bold text-white mb-1">
+                  {t('stats.freeConsultationShort')}
+                </p>
                 <p className="text-white/90 text-base font-medium flex items-center gap-2">
-                  консультація
+                  {t('stats.forNewPatients')}
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </p>
               </div>
@@ -188,21 +232,27 @@ export default function HeroSection() {
           </div>
 
           {/* Trust indicators - Compact */}
-          <div 
+          <div
             className="flex flex-wrap justify-center items-center gap-8 pt-4 border-t border-dental-secondary-100 transition-all duration-1000 delay-500"
             style={{ opacity: mounted ? 1 : 0 }}
           >
             <div className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-dental-primary-500" />
-              <span className="text-sm font-medium text-dental-text">Гарантія якості</span>
+              <span className="text-sm font-medium text-dental-text">
+                {t('stats.qualityGuarantee')}
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <Award className="h-5 w-5 text-dental-primary-500" />
-              <span className="text-sm font-medium text-dental-text">Досвідчені лікарі</span>
+              <span className="text-sm font-medium text-dental-text">
+                {t('features.experiencedDoctors.title')}
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <Star className="h-5 w-5 text-dental-primary-500" />
-              <span className="text-sm font-medium text-dental-text">Сучасне обладнання</span>
+              <span className="text-sm font-medium text-dental-text">
+                {t('features.modernEquipment.title')}
+              </span>
             </div>
           </div>
         </div>

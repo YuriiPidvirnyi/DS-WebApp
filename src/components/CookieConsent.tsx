@@ -1,197 +1,78 @@
-import { useState, useCallback } from 'react'
+'use client'
+
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { hasConsented, acceptAll, rejectAll, setConsent } from '@/utils/consent'
-import { initializeAnalytics } from '@/utils/analytics'
-import { initializeSentry } from '@/utils/sentry'
+import { Cookie } from 'lucide-react'
+import Link from 'next/link'
+import {
+  getStoredConsentState,
+  setStoredConsentState,
+  type ConsentState,
+} from '@/utils/cookieConsent'
 
-/**
- * GDPR-compliant cookie consent banner
- * Gates analytics (GA4) and error tracking (Sentry) behind user consent
- */
-const CookieConsent = () => {
+export default function CookieConsent() {
   const { t } = useTranslation()
-  const [visible, setVisible] = useState(() => !hasConsented())
-  const [showCustomize, setShowCustomize] = useState(false)
-  const [analyticsEnabled, setAnalyticsEnabled] = useState(false)
-  const [errorTrackingEnabled, setErrorTrackingEnabled] = useState(false)
+  const [state, setState] = useState<ConsentState>('pending')
+  const [mounted, setMounted] = useState(false)
 
-  const initializeServices = useCallback(
-    (analytics: boolean, errorTracking: boolean) => {
-      if (analytics) {
-        initializeAnalytics()
-      }
-      if (errorTracking && process.env.NODE_ENV === 'production') {
-        initializeSentry()
-      }
-    },
-    []
-  )
-
-  const handleAcceptAll = useCallback(() => {
-    acceptAll()
-    initializeServices(true, true)
-    setVisible(false)
-  }, [initializeServices])
-
-  const handleRejectAll = useCallback(() => {
-    rejectAll()
-    setVisible(false)
+  useEffect(() => {
+    setMounted(true)
+    setState(getStoredConsentState())
   }, [])
 
-  const handleSaveCustom = useCallback(() => {
-    setConsent({
-      analytics: analyticsEnabled,
-      errorTracking: errorTrackingEnabled,
-    })
-    initializeServices(analyticsEnabled, errorTrackingEnabled)
-    setVisible(false)
-  }, [analyticsEnabled, errorTrackingEnabled, initializeServices])
+  const handleAccept = () => {
+    setStoredConsentState('accepted')
+    setState('accepted')
+  }
 
-  if (!visible) return null
+  const handleDecline = () => {
+    setStoredConsentState('declined')
+    setState('declined')
+  }
+
+  // Don't render until mounted (SSR safety) or if already decided
+  if (!mounted || state !== 'pending') return null
 
   return (
     <div
       role="dialog"
-      aria-label={t('cookieConsent.title')}
-      aria-modal="false"
+      aria-label={t('cookies.title')}
       className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6"
     >
-      <div className="mx-auto max-w-3xl rounded-2xl bg-white shadow-2xl border border-gray-200">
-        <div className="p-5 md:p-6">
-          {/* Header */}
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">
-            {t('cookieConsent.title')}
-          </h2>
-
-          {/* Description */}
-          <p className="text-sm text-gray-600 mb-4 leading-relaxed">
-            {t('cookieConsent.description')}{' '}
-            <a
-              href="/privacy-policy"
-              className="text-teal-700 underline hover:text-teal-900 transition-colors"
-            >
-              {t('cookieConsent.privacyPolicyLink')}
-            </a>
-          </p>
-
-          {/* Customize panel */}
-          {showCustomize && (
-            <div className="mb-4 space-y-3 rounded-lg bg-gray-50 p-4">
-              {/* Necessary cookies — always on */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-900">
-                    {t('cookieConsent.categories.necessary.title')}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {t('cookieConsent.categories.necessary.description')}
-                  </p>
-                </div>
-                <span className="text-xs font-medium text-gray-400 select-none px-2 py-1">
-                  {t('cookieConsent.alwaysOn')}
-                </span>
-              </div>
-
-              {/* Analytics */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-900">
-                    {t('cookieConsent.categories.analytics.title')}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {t('cookieConsent.categories.analytics.description')}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={analyticsEnabled}
-                  aria-label={t('cookieConsent.categories.analytics.title')}
-                  onClick={() => setAnalyticsEnabled(!analyticsEnabled)}
-                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 ${
-                    analyticsEnabled ? 'bg-teal-600' : 'bg-gray-300'
-                  }`}
-                >
-                  <span
-                    className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
-                      analyticsEnabled ? 'translate-x-5' : 'translate-x-0'
-                    }`}
-                  />
-                </button>
-              </div>
-
-              {/* Error tracking */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-900">
-                    {t('cookieConsent.categories.errorTracking.title')}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {t('cookieConsent.categories.errorTracking.description')}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={errorTrackingEnabled}
-                  aria-label={t('cookieConsent.categories.errorTracking.title')}
-                  onClick={() => setErrorTrackingEnabled(!errorTrackingEnabled)}
-                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 ${
-                    errorTrackingEnabled ? 'bg-teal-600' : 'bg-gray-300'
-                  }`}
-                >
-                  <span
-                    className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
-                      errorTrackingEnabled ? 'translate-x-5' : 'translate-x-0'
-                    }`}
-                  />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Action buttons */}
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-            {showCustomize ? (
-              <button
-                type="button"
-                onClick={handleSaveCustom}
-                className="flex-1 rounded-lg bg-teal-800 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-teal-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 transition-colors"
+      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl border border-dental-secondary-200 p-6 flex flex-col md:flex-row items-start md:items-center gap-4">
+        <div className="flex items-start gap-3 flex-1">
+          <Cookie
+            className="w-6 h-6 text-dental-primary-600 flex-shrink-0 mt-0.5"
+            aria-hidden="true"
+          />
+          <div>
+            <p className="text-sm text-dental-dark leading-relaxed">
+              {t('cookies.message')}{' '}
+              <Link
+                href="/privacy-policy"
+                className="text-dental-primary-600 underline hover:text-dental-primary-700"
               >
-                {t('cookieConsent.savePreferences')}
-              </button>
-            ) : (
-              <>
-                <button
-                  type="button"
-                  onClick={handleAcceptAll}
-                  className="flex-1 rounded-lg bg-teal-800 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-teal-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 transition-colors"
-                >
-                  {t('cookieConsent.acceptAll')}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleRejectAll}
-                  className="flex-1 rounded-lg bg-gray-100 px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400 transition-colors"
-                >
-                  {t('cookieConsent.rejectAll')}
-                </button>
-              </>
-            )}
-            <button
-              type="button"
-              onClick={() => setShowCustomize(!showCustomize)}
-              className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400 transition-colors"
-            >
-              {showCustomize
-                ? t('cookieConsent.hideCustomize')
-                : t('cookieConsent.customize')}
-            </button>
+                {t('cookies.privacyPolicy')}
+              </Link>
+              .
+            </p>
           </div>
+        </div>
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <button
+            onClick={handleDecline}
+            className="px-4 py-2 text-sm text-dental-muted hover:text-dental-dark border border-dental-secondary-300 rounded-lg hover:bg-dental-secondary-50 transition-colors"
+          >
+            {t('cookies.decline')}
+          </button>
+          <button
+            onClick={handleAccept}
+            className="px-4 py-2 text-sm text-white bg-dental-primary-600 hover:bg-dental-primary-700 rounded-lg transition-colors font-medium"
+          >
+            {t('cookies.accept')}
+          </button>
         </div>
       </div>
     </div>
   )
 }
-
-export default CookieConsent

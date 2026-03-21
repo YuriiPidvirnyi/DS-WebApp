@@ -13,6 +13,7 @@ import {
   FormEvent,
   BookingEvent,
 } from '@/utils/analytics'
+import uk from '@/locales/uk'
 
 /**
  * Hook for tracking page views automatically and exposing other analytics functions
@@ -23,7 +24,7 @@ export const useAnalytics = () => {
   // Track page views — deferred to avoid blocking main thread during hydration
   useEffect(() => {
     const run = () => {
-      const pageTitle = document.title || 'Dental Story'
+      const pageTitle = document.title || uk.common.brandName
       trackPageView(pathname, pageTitle)
     }
     if ('requestIdleCallback' in window) {

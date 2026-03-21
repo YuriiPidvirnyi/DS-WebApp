@@ -1,10 +1,10 @@
-// Turnstile server verification utility
-// This would normally be run server-side, but we're creating a client-side mock version
-// that simulates the verification process for the demo
-
 /**
- * The response from Cloudflare Turnstile verification
+ * Turnstile verification utility
+ *
+ * Client-side: sends the token to our own API route for server-side validation.
+ * If Turnstile is not configured (no site key), verification is skipped.
  */
+
 export interface TurnstileVerifyResponse {
   success: boolean
   challenge_ts?: string
@@ -15,64 +15,44 @@ export interface TurnstileVerifyResponse {
 }
 
 /**
- * Verifies a Turnstile token with Cloudflare
- * In a real implementation, this would be done server-side
- * Here we're simulating the server verification in the client for demo purposes
+ * Verify a Turnstile token by calling our server-side verification endpoint.
  */
 export async function verifyTurnstileToken(
   token: string
 ): Promise<TurnstileVerifyResponse> {
-  // In a real implementation, this would be a fetch to the Cloudflare API from your server
-  // The secret key should NEVER be exposed to the client
-
-  // Check if we have a token
   if (!token) {
-    return {
-      success: false,
-      error_codes: ['missing-token'],
-    }
+    return { success: false, error_codes: ['missing-token'] }
   }
 
-  // Check if Turnstile is enabled in the environment
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY as
-    | string
-    | undefined
+  // If no site key is configured, skip verification (dev / CI)
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
   if (!siteKey) {
-    // If no site key is configured, we'll simulate a successful response
-    if (process.env.NODE_ENV === 'development') {
-      // eslint-disable-next-line no-console
-      console.log('Turnstile verification skipped (no site key configured)')
-    }
     return {
       success: true,
       challenge_ts: new Date().toISOString(),
-      hostname: window.location.hostname,
+      hostname: typeof window !== 'undefined' ? window.location.hostname : '',
     }
   }
 
-  // Mock the server verification with high success rate (95%) for demo purposes
-  const shouldSucceed = Math.random() < 0.95
+  try {
+    const res = await fetch('/api/turnstile/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token }),
+    })
 
-  // Add a small delay to simulate network request
-  await new Promise(resolve => setTimeout(resolve, 300))
+    if (!res.ok) {
+      return { success: false, error_codes: ['server-error'] }
+    }
 
-  if (shouldSucceed) {
-    return {
-      success: true,
-      challenge_ts: new Date().toISOString(),
-      hostname: window.location.hostname,
-    }
-  } else {
-    return {
-      success: false,
-      error_codes: ['invalid-token'],
-    }
+    return (await res.json()) as TurnstileVerifyResponse
+  } catch {
+    return { success: false, error_codes: ['network-error'] }
   }
 }
 
 /**
- * For demo purposes: Verify token and throw error if verification fails
- * In a real implementation, this would be similar but run on the server
+ * Verify token and throw a user-facing error on failure.
  */
 export async function assertValidTurnstile(token: string): Promise<void> {
   const result = await verifyTurnstileToken(token)

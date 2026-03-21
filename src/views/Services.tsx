@@ -15,82 +15,83 @@ import { useTranslation } from 'react-i18next'
 import FAQAccordion from '@/components/FAQAccordion'
 import PriceCalculator from '@/components/PriceCalculator'
 import SmartRecommendations from '@/components/SmartRecommendations'
-import { ALL_FAQS } from '@/content/faqs'
+import { getAllFaqs } from '@/content/faqs'
 
 const Services = () => {
   const { t } = useTranslation()
-  
+  const serviceFaqs = getAllFaqs(t)
+
   const services = [
     {
       category: t('services.categories.therapeutic'),
-      description: 'Лікування та профілактика захворювань зубів',
+      description: t('services.descriptions.therapeutic'),
       services: [
-        'Лікування карієсу',
-        'Ендодонтичне лікування',
-        'Лікування пульпіту',
-        'Лікування періодонтиту',
-        'Професійна гігієна',
-        'Реставрація зубів',
+        t('services.list.therapeutic.caries'),
+        t('services.list.therapeutic.endodontic'),
+        t('services.list.therapeutic.pulpitis'),
+        t('services.list.therapeutic.periodontitis'),
+        t('services.list.therapeutic.hygiene'),
+        t('services.list.therapeutic.restoration'),
       ],
     },
     {
       category: t('services.categories.surgical'),
-      description: 'Хірургічні втручання в порожнині рота',
+      description: t('services.descriptions.surgical'),
       services: [
-        'Видалення зубів',
-        'Видалення зубів мудрості',
-        'Імплантація зубів',
-        'Синус-ліфтинг',
-        'Кісткова пластика',
-        'Лікування пародонтиту',
+        t('services.list.surgical.extraction'),
+        t('services.list.surgical.wisdomTeeth'),
+        t('services.list.surgical.implantation'),
+        t('services.list.surgical.sinusLift'),
+        t('services.list.surgical.bonePlastics'),
+        t('services.list.surgical.periodontalTreatment'),
       ],
     },
     {
       category: t('services.categories.orthopedic'),
-      description: 'Відновлення зубів та їх функцій',
+      description: t('services.descriptions.orthopedic'),
       services: [
-        'Металокерамічні коронки',
-        'Безметалеві коронки',
-        'Мостоподібні протези',
-        'Знімні протези',
-        'Вінири',
-        'Люмінири',
+        t('services.list.orthopedic.metalCeramicCrowns'),
+        t('services.list.orthopedic.metalFreeCrowns'),
+        t('services.list.orthopedic.bridges'),
+        t('services.list.orthopedic.removableDentures'),
+        t('services.list.orthopedic.veneers'),
+        t('services.list.orthopedic.lumineers'),
       ],
     },
     {
       category: t('services.categories.orthodontics'),
-      description: 'Виправлення прикусу та положення зубів',
+      description: t('services.descriptions.orthodontics'),
       services: [
-        'Металеві брекети',
-        'Керамічні брекети',
-        'Сапфірові брекети',
-        'Лінгвальні брекети',
-        'Елайнери (капи)',
-        'Ретейнери',
+        t('services.list.orthodontics.metalBraces'),
+        t('services.list.orthodontics.ceramicBraces'),
+        t('services.list.orthodontics.sapphireBraces'),
+        t('services.list.orthodontics.lingualBraces'),
+        t('services.list.orthodontics.aligners'),
+        t('services.list.orthodontics.retainers'),
       ],
     },
     {
       category: t('services.categories.aesthetic'),
-      description: 'Покращення зовнішнього вигляду зубів',
+      description: t('services.descriptions.aesthetic'),
       services: [
-        'Відбілювання зубів',
-        'Художня реставрація',
-        'Композитні вінири',
-        'Керамічні вінири',
-        'Реконтурінг ясен',
-        'Естетичні пломби',
+        t('services.list.aesthetic.whitening'),
+        t('services.list.aesthetic.artisticRestoration'),
+        t('services.list.aesthetic.compositeVeneers'),
+        t('services.list.aesthetic.ceramicVeneers'),
+        t('services.list.aesthetic.gumContouring'),
+        t('services.list.aesthetic.aestheticFillings'),
       ],
     },
     {
       category: t('services.categories.pediatric'),
-      description: 'Спеціалізована допомога для маленьких пацієнтів',
+      description: t('services.descriptions.pediatric'),
       services: [
-        'Профілактичні огляди',
-        'Лікування молочних зубів',
-        'Фторування зубів',
-        'Герметизація фісур',
-        'Пластинки для дітей',
-        'Навчання гігієні',
+        t('services.list.pediatric.preventiveCheckups'),
+        t('services.list.pediatric.milkTeeth'),
+        t('services.list.pediatric.fluoridation'),
+        t('services.list.pediatric.fissureSealing'),
+        t('services.list.pediatric.plates'),
+        t('services.list.pediatric.hygieneTraining'),
       ],
     },
   ]
@@ -104,9 +105,7 @@ const Services = () => {
             {t('navigation.services')}
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            Повний спектр стоматологічних послуг для всієї родини. Ми
-            використовуємо найсучасніші технології та матеріали для досягнення
-            найкращих результатів лікування.
+            {t('services.subtitle')}
           </p>
           {/* AI Service Finder */}
           <SmartRecommendations />
@@ -188,9 +187,12 @@ const Services = () => {
                 </ul>
 
                 <div className="mt-8 pt-6 border-t border-dental-secondary-200">
-                  <button className="w-full bg-white/80 hover:bg-white text-dental-dark py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-sm hover:shadow-md border border-dental-secondary-200">
+                  <Link
+                    href="/booking"
+                    className="block w-full bg-white/80 hover:bg-white text-dental-dark py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-sm hover:shadow-md border border-dental-secondary-200 text-center"
+                  >
                     {t('buttons.learnMore')} →
-                  </button>
+                  </Link>
                 </div>
               </div>
             )
@@ -201,11 +203,10 @@ const Services = () => {
         <div className="mt-20 bg-dental-primary-50 rounded-2xl p-8 lg:p-12">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-dental-dark mb-4">
-              Що входить в кожну послугу
+              {t('services.features.title')}
             </h2>
             <p className="text-dental-muted max-w-2xl mx-auto">
-              Ми забезпечуємо комплексний підхід до лікування з урахуванням
-              індивідуальних потреб пацієнта
+              {t('services.features.subtitle')}
             </p>
           </div>
 
@@ -215,10 +216,10 @@ const Services = () => {
                 <Check className="h-8 w-8 text-dental-primary" />
               </div>
               <h3 className="text-xl font-semibold text-dental-dark mb-2">
-                Безкоштовна консультація
+                {t('services.features.consultation.title')}
               </h3>
               <p className="text-dental-muted">
-                Детальний огляд та план лікування без додаткових платежів
+                {t('services.features.consultation.description')}
               </p>
             </div>
 
@@ -227,10 +228,10 @@ const Services = () => {
                 <Check className="h-8 w-8 text-dental-primary" />
               </div>
               <h3 className="text-xl font-semibold text-dental-dark mb-2">
-                Гарантія якості
+                {t('services.features.quality.title')}
               </h3>
               <p className="text-dental-muted">
-                Гарантія на всі види робіт згідно з медичними стандартами
+                {t('services.features.quality.description')}
               </p>
             </div>
 
@@ -239,11 +240,10 @@ const Services = () => {
                 <Check className="h-8 w-8 text-dental-primary" />
               </div>
               <h3 className="text-xl font-semibold text-dental-dark mb-2">
-                Післялікувальний контроль
+                {t('services.features.followUp.title')}
               </h3>
               <p className="text-dental-muted">
-                Регулярні контрольні огляди для забезпечення тривалого
-                результату
+                {t('services.features.followUp.description')}
               </p>
             </div>
           </div>
@@ -253,11 +253,10 @@ const Services = () => {
         <div className="mt-20">
           <div className="text-center mb-8">
             <h2 className="text-3xl lg:text-4xl font-bold text-dental-dark mb-4">
-              Розрахуйте вартість
+              {t('services.calculator.title')}
             </h2>
             <p className="text-lg text-dental-muted max-w-2xl mx-auto">
-              Використовуйте наш калькулятор для приблизного розрахунку вартості
-              послуг
+              {t('services.calculator.subtitle')}
             </p>
           </div>
           <PriceCalculator />
@@ -266,10 +265,11 @@ const Services = () => {
         {/* CTA */}
         <div className="mt-16 text-center">
           <div className="bg-dental-primary-700 rounded-2xl p-8 lg:p-12 text-white">
-            <h2 className="text-3xl font-bold mb-4">Потрібна консультація?</h2>
+            <h2 className="text-3xl font-bold mb-4">
+              {t('services.cta.title')}
+            </h2>
             <p className="text-white mb-8 max-w-2xl mx-auto">
-              Наші лікарі проведуть детальний огляд та розроблять індивідуальний
-              план лікування, який підходить саме вам
+              {t('services.cta.description')}
             </p>
             <Link
               href="/booking"
@@ -282,7 +282,7 @@ const Services = () => {
       </div>
       {/* FAQ Section */}
       <div className="mt-20">
-        <FAQAccordion categories={ALL_FAQS} />
+        <FAQAccordion categories={serviceFaqs} />
       </div>
     </div>
   )

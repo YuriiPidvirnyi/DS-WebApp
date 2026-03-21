@@ -1,19 +1,8 @@
-import { api, mockAPIResponse } from './api'
+import { api } from './api'
 import type { ApiResponse } from '@/types'
 
 // Types
 export type ReminderPreference = 'email' | 'sms' | 'both' | 'none'
-
-export interface ReminderDetails {
-  appointmentId: string
-  patientName: string
-  date: string
-  time: string
-  service: string
-  contactMethod: ReminderPreference
-  email?: string
-  phone?: string
-}
 
 export interface ScheduledReminder {
   id: string
@@ -24,50 +13,14 @@ export interface ScheduledReminder {
   contactMethod: ReminderPreference
 }
 
-// API endpoints
-export async function scheduleReminder(
-  details: ReminderDetails
-): Promise<ApiResponse<{ scheduled: boolean; reminderId: string }>> {
-  try {
-    return await api.post<
-      ApiResponse<{ scheduled: boolean; reminderId: string }>
-    >('/reminders/schedule', details)
-  } catch (_error) {
-    // Mock response on error or in development
-    return mockAPIResponse(
-      {
-        scheduled: true,
-        reminderId: `reminder-${Date.now()}-${Math.round(Math.random() * 1000)}`,
-      },
-      500
-    )
-  }
-}
-
-export async function cancelReminder(
-  reminderId: string
-): Promise<ApiResponse<{ cancelled: boolean }>> {
-  try {
-    return await api.delete<ApiResponse<{ cancelled: boolean }>>(
-      `/reminders/${reminderId}`
-    )
-  } catch (_error) {
-    return mockAPIResponse({ cancelled: true }, 300)
-  }
-}
-
 export async function updateReminderPreference(
   appointmentId: string,
   preference: ReminderPreference
 ): Promise<ApiResponse<{ updated: boolean }>> {
-  try {
-    return await api.patch<ApiResponse<{ updated: boolean }>>(
-      `/appointments/${appointmentId}/reminder-preference`,
-      { preference }
-    )
-  } catch (_error) {
-    return mockAPIResponse({ updated: true }, 300)
-  }
+  return api.patch<ApiResponse<{ updated: boolean }>>(
+    `/appointments/${appointmentId}/reminder-preference`,
+    { preference }
+  )
 }
 
 // Client-side reminder storage
@@ -137,6 +90,23 @@ export function removeLocalReminder(appointmentId: string): void {
     localStorage.setItem(REMINDERS_KEY, JSON.stringify(filtered))
   } catch (error) {
     console.error('Failed to remove local reminder', error)
+  }
+}
+
+export function updateLocalReminderPreference(
+  appointmentId: string,
+  preference: ReminderPreference
+): void {
+  try {
+    const reminders = getLocalReminders()
+    const updated = reminders.map(reminder =>
+      reminder.appointmentId === appointmentId
+        ? { ...reminder, contactMethod: preference }
+        : reminder
+    )
+    localStorage.setItem(REMINDERS_KEY, JSON.stringify(updated))
+  } catch (error) {
+    console.error('Failed to update local reminder preference', error)
   }
 }
 

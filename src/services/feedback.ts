@@ -1,4 +1,4 @@
-import { api, mockAPIResponse } from './api'
+import { api } from './api'
 import type { ApiResponse } from '@/types'
 
 export interface FormFeedbackPayload {
@@ -11,12 +11,5 @@ export interface FormFeedbackPayload {
 export async function sendFormFeedback(
   payload: FormFeedbackPayload
 ): Promise<ApiResponse<{ recorded: boolean }>> {
-  try {
-    return await api.post<ApiResponse<{ recorded: boolean }>>(
-      '/feedback/form',
-      payload
-    )
-  } catch {
-    return mockAPIResponse({ recorded: true }, 300)
-  }
+  return api.post<ApiResponse<{ recorded: boolean }>>('/feedback/form', payload)
 }

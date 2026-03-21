@@ -3,187 +3,144 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Link from 'next/link'
-import { 
-  Stethoscope, 
-  AlertTriangle, 
-  CheckCircle, 
-  Clock, 
-  Phone, 
+import {
+  Stethoscope,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Phone,
   ArrowRight,
   ChevronDown,
   ChevronUp,
   Activity,
   Sparkles,
-  Shield
+  Shield,
 } from 'lucide-react'
 
-// Symptom definitions with translations
 const symptoms = [
-  { id: 'toothache', uk: 'Біль у зубі', en: 'Toothache', pl: 'Ból zęba', icon: '🦷' },
-  { id: 'sensitivity', uk: 'Чутливість до холодного/гарячого', en: 'Sensitivity to hot/cold', pl: 'Wrażliwość na ciepło/zimno', icon: '❄️' },
-  { id: 'swelling', uk: 'Набряк ясен або обличчя', en: 'Gum or face swelling', pl: 'Obrzęk dziąseł lub twarzy', icon: '🔴' },
-  { id: 'bleeding', uk: 'Кровоточивість ясен', en: 'Bleeding gums', pl: 'Krwawienie dziąseł', icon: '💉' },
-  { id: 'badBreath', uk: 'Неприємний запах з рота', en: 'Bad breath', pl: 'Nieświeży oddech', icon: '💨' },
-  { id: 'looseTooth', uk: 'Розхитування зуба', en: 'Loose tooth', pl: 'Ruszający się ząb', icon: '↔️' },
-  { id: 'discoloration', uk: 'Зміна кольору зуба', en: 'Tooth discoloration', pl: 'Przebarwienie zęba', icon: '🎨' },
-  { id: 'chewingPain', uk: 'Біль при жуванні', en: 'Pain when chewing', pl: 'Ból przy żuciu', icon: '🍎' },
-  { id: 'jawPain', uk: 'Біль у щелепі', en: 'Jaw pain', pl: 'Ból szczęki', icon: '😣' },
-  { id: 'abscess', uk: 'Гнійник на ясні', en: 'Gum abscess', pl: 'Ropień dziąsła', icon: '⚠️' },
+  { id: 'toothache', icon: '🦷' },
+  { id: 'sensitivity', icon: '❄️' },
+  { id: 'swelling', icon: '🔴' },
+  { id: 'bleeding', icon: '💉' },
+  { id: 'badBreath', icon: '💨' },
+  { id: 'looseTooth', icon: '↔️' },
+  { id: 'discoloration', icon: '🎨' },
+  { id: 'chewingPain', icon: '🍎' },
+  { id: 'jawPain', icon: '😣' },
+  { id: 'abscess', icon: '⚠️' },
 ]
 
-// Analysis results mapping
-const symptomAnalysis: Record<string, {
-  conditions: { uk: string; en: string; pl: string }[];
-  urgency: 'low' | 'medium' | 'high' | 'emergency';
-  recommendation: { uk: string; en: string; pl: string };
-}> = {
+type Urgency = 'low' | 'medium' | 'high' | 'emergency'
+
+const symptomAnalysis: Record<
+  string,
+  {
+    conditionsKey: string
+    urgency: Urgency
+    recommendationKey: string
+  }
+> = {
   toothache: {
-    conditions: [
-      { uk: 'Карієс', en: 'Tooth decay', pl: 'Próchnica' },
-      { uk: 'Пульпіт', en: 'Pulpitis', pl: 'Zapalenie miazgi' },
-      { uk: 'Періодонтит', en: 'Periodontitis', pl: 'Zapalenie przyzębia' },
-    ],
+    conditionsKey: 'ai.symptomChecker.analysis.toothache.conditions',
     urgency: 'medium',
-    recommendation: {
-      uk: 'Рекомендуємо записатися на огляд протягом 1-3 днів',
-      en: 'We recommend scheduling an examination within 1-3 days',
-      pl: 'Zalecamy umówienie wizyty w ciągu 1-3 dni',
-    },
+    recommendationKey: 'ai.symptomChecker.analysis.toothache.recommendation',
   },
   sensitivity: {
-    conditions: [
-      { uk: 'Оголення шийки зуба', en: 'Exposed tooth neck', pl: 'Odsłonięcie szyjki zęba' },
-      { uk: 'Тріщина емалі', en: 'Enamel crack', pl: 'Pęknięcie szkliwa' },
-      { uk: 'Початковий карієс', en: 'Early cavity', pl: 'Wczesna próchnica' },
-    ],
+    conditionsKey: 'ai.symptomChecker.analysis.sensitivity.conditions',
     urgency: 'low',
-    recommendation: {
-      uk: 'Запишіться на діагностику найближчим часом',
-      en: 'Schedule a diagnostic appointment soon',
-      pl: 'Umów się na wizytę diagnostyczną wkrótce',
-    },
+    recommendationKey: 'ai.symptomChecker.analysis.sensitivity.recommendation',
   },
   swelling: {
-    conditions: [
-      { uk: 'Абсцес', en: 'Abscess', pl: 'Ropień' },
-      { uk: 'Періодонтит', en: 'Periodontitis', pl: 'Zapalenie przyzębia' },
-      { uk: 'Перикороніт', en: 'Pericoronitis', pl: 'Zapalenie okołokoronkowe' },
-    ],
+    conditionsKey: 'ai.symptomChecker.analysis.swelling.conditions',
     urgency: 'emergency',
-    recommendation: {
-      uk: 'Потрібна ТЕРМІНОВА консультація! Зателефонуйте негайно',
-      en: 'URGENT consultation needed! Call immediately',
-      pl: 'Potrzebna PILNA konsultacja! Zadzwoń natychmiast',
-    },
+    recommendationKey: 'ai.symptomChecker.analysis.swelling.recommendation',
   },
   bleeding: {
-    conditions: [
-      { uk: 'Гінгівіт', en: 'Gingivitis', pl: 'Zapalenie dziąseł' },
-      { uk: 'Пародонтит', en: 'Periodontitis', pl: 'Paradontoza' },
-    ],
+    conditionsKey: 'ai.symptomChecker.analysis.bleeding.conditions',
     urgency: 'low',
-    recommendation: {
-      uk: 'Рекомендуємо професійну чистку та огляд пародонтолога',
-      en: 'We recommend professional cleaning and periodontal examination',
-      pl: 'Zalecamy profesjonalne czyszczenie i badanie przyzębia',
-    },
+    recommendationKey: 'ai.symptomChecker.analysis.bleeding.recommendation',
   },
   badBreath: {
-    conditions: [
-      { uk: 'Зубний камінь', en: 'Tartar buildup', pl: 'Kamień nazębny' },
-      { uk: 'Карієс', en: 'Tooth decay', pl: 'Próchnica' },
-      { uk: 'Захворювання ясен', en: 'Gum disease', pl: 'Choroba dziąseł' },
-    ],
+    conditionsKey: 'ai.symptomChecker.analysis.badBreath.conditions',
     urgency: 'low',
-    recommendation: {
-      uk: 'Рекомендуємо професійну гігієну порожнини рота',
-      en: 'We recommend professional oral hygiene',
-      pl: 'Zalecamy profesjonalną higienę jamy ustnej',
-    },
+    recommendationKey: 'ai.symptomChecker.analysis.badBreath.recommendation',
   },
   looseTooth: {
-    conditions: [
-      { uk: 'Пародонтит', en: 'Periodontitis', pl: 'Paradontoza' },
-      { uk: 'Травма', en: 'Injury', pl: 'Uraz' },
-    ],
+    conditionsKey: 'ai.symptomChecker.analysis.looseTooth.conditions',
     urgency: 'high',
-    recommendation: {
-      uk: 'Необхідна консультація протягом 24 годин',
-      en: 'Consultation needed within 24 hours',
-      pl: 'Konsultacja potrzebna w ciągu 24 godzin',
-    },
+    recommendationKey: 'ai.symptomChecker.analysis.looseTooth.recommendation',
   },
   discoloration: {
-    conditions: [
-      { uk: 'Некроз пульпи', en: 'Pulp necrosis', pl: 'Martwica miazgi' },
-      { uk: 'Травма', en: 'Injury', pl: 'Uraz' },
-      { uk: 'Внутрішнє забарвлення', en: 'Internal staining', pl: 'Wewnętrzne przebarwienie' },
-    ],
+    conditionsKey: 'ai.symptomChecker.analysis.discoloration.conditions',
     urgency: 'medium',
-    recommendation: {
-      uk: 'Запишіться на консультацію для визначення причини',
-      en: 'Schedule a consultation to determine the cause',
-      pl: 'Umów się na konsultację w celu ustalenia przyczyny',
-    },
+    recommendationKey:
+      'ai.symptomChecker.analysis.discoloration.recommendation',
   },
   chewingPain: {
-    conditions: [
-      { uk: 'Карієс', en: 'Tooth decay', pl: 'Próchnica' },
-      { uk: 'Тріщина зуба', en: 'Cracked tooth', pl: 'Pęknięty ząb' },
-      { uk: 'Періодонтит', en: 'Periodontitis', pl: 'Zapalenie przyzębia' },
-    ],
+    conditionsKey: 'ai.symptomChecker.analysis.chewingPain.conditions',
     urgency: 'medium',
-    recommendation: {
-      uk: 'Рекомендуємо огляд протягом кількох днів',
-      en: 'We recommend an examination within a few days',
-      pl: 'Zalecamy badanie w ciągu kilku dni',
-    },
+    recommendationKey: 'ai.symptomChecker.analysis.chewingPain.recommendation',
   },
   jawPain: {
-    conditions: [
-      { uk: 'Дисфункція СНЩС', en: 'TMJ dysfunction', pl: 'Dysfunkcja stawu skroniowo-żuchwowego' },
-      { uk: 'Бруксизм', en: 'Bruxism', pl: 'Bruksizm' },
-      { uk: 'Артрит', en: 'Arthritis', pl: 'Zapalenie stawów' },
-    ],
+    conditionsKey: 'ai.symptomChecker.analysis.jawPain.conditions',
     urgency: 'medium',
-    recommendation: {
-      uk: 'Рекомендуємо консультацію спеціаліста',
-      en: 'We recommend a specialist consultation',
-      pl: 'Zalecamy konsultację specjalisty',
-    },
+    recommendationKey: 'ai.symptomChecker.analysis.jawPain.recommendation',
   },
   abscess: {
-    conditions: [
-      { uk: 'Периапікальний абсцес', en: 'Periapical abscess', pl: 'Ropień okołowierzchołkowy' },
-      { uk: 'Пародонтальний абсцес', en: 'Periodontal abscess', pl: 'Ropień przyzębny' },
-    ],
+    conditionsKey: 'ai.symptomChecker.analysis.abscess.conditions',
     urgency: 'emergency',
-    recommendation: {
-      uk: 'ТЕРМІНОВО! Зателефонуйте негайно для екстреного прийому',
-      en: 'URGENT! Call immediately for emergency appointment',
-      pl: 'PILNE! Zadzwoń natychmiast po wizytę nagłą',
-    },
+    recommendationKey: 'ai.symptomChecker.analysis.abscess.recommendation',
   },
 }
 
-const urgencyColors = {
-  low: { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-800', icon: CheckCircle },
-  medium: { bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-800', icon: Clock },
-  high: { bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-800', icon: AlertTriangle },
-  emergency: { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-800', icon: AlertTriangle },
+const urgencyColors: Record<
+  Urgency,
+  { bg: string; border: string; text: string; icon: typeof CheckCircle }
+> = {
+  low: {
+    bg: 'bg-green-50',
+    border: 'border-green-200',
+    text: 'text-green-800',
+    icon: CheckCircle,
+  },
+  medium: {
+    bg: 'bg-yellow-50',
+    border: 'border-yellow-200',
+    text: 'text-yellow-800',
+    icon: Clock,
+  },
+  high: {
+    bg: 'bg-orange-50',
+    border: 'border-orange-200',
+    text: 'text-orange-800',
+    icon: AlertTriangle,
+  },
+  emergency: {
+    bg: 'bg-red-50',
+    border: 'border-red-200',
+    text: 'text-red-800',
+    icon: AlertTriangle,
+  },
 }
 
-const urgencyLabels = {
-  low: { uk: 'Низька терміновість', en: 'Low urgency', pl: 'Niska pilność' },
-  medium: { uk: 'Середня терміновість', en: 'Medium urgency', pl: 'Średnia pilność' },
-  high: { uk: 'Висока терміновість', en: 'High urgency', pl: 'Wysoka pilność' },
-  emergency: { uk: 'ТЕРМІНОВО', en: 'URGENT', pl: 'PILNE' },
+const urgencyLabelKeys: Record<Urgency, string> = {
+  low: 'ai.symptomChecker.urgencyLevels.low',
+  medium: 'ai.symptomChecker.urgencyLevels.medium',
+  high: 'ai.symptomChecker.urgencyLevels.high',
+  emergency: 'ai.symptomChecker.urgencyLevels.emergency',
 }
+
+const durationOptions = [
+  { value: 'today', labelKey: 'ai.symptomChecker.durations.today' },
+  { value: 'days', labelKey: 'ai.symptomChecker.durations.days' },
+  { value: 'week', labelKey: 'ai.symptomChecker.durations.week' },
+  { value: 'weeks', labelKey: 'ai.symptomChecker.durations.weeks' },
+  { value: 'months', labelKey: 'ai.symptomChecker.durations.months' },
+]
 
 export default function SymptomCheckerPage() {
-  const { t, i18n } = useTranslation()
-  const lang = (i18n.language || 'uk') as 'uk' | 'en' | 'pl'
-  
+  const { t } = useTranslation()
+
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([])
   const [painLevel, setPainLevel] = useState<number>(5)
   const [duration, setDuration] = useState<string>('')
@@ -191,7 +148,7 @@ export default function SymptomCheckerPage() {
   const [expandedConditions, setExpandedConditions] = useState<string[]>([])
 
   const toggleSymptom = (id: string) => {
-    setSelectedSymptoms(prev => 
+    setSelectedSymptoms(prev =>
       prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]
     )
     setShowResults(false)
@@ -202,8 +159,10 @@ export default function SymptomCheckerPage() {
     setShowResults(true)
   }
 
-  const getOverallUrgency = () => {
-    const urgencies = selectedSymptoms.map(s => symptomAnalysis[s]?.urgency || 'low')
+  const getOverallUrgency = (): Urgency => {
+    const urgencies = selectedSymptoms.map(
+      s => symptomAnalysis[s]?.urgency || 'low'
+    )
     if (urgencies.includes('emergency') || painLevel >= 9) return 'emergency'
     if (urgencies.includes('high') || painLevel >= 7) return 'high'
     if (urgencies.includes('medium')) return 'medium'
@@ -213,14 +172,6 @@ export default function SymptomCheckerPage() {
   const overallUrgency = getOverallUrgency()
   const UrgencyIcon = urgencyColors[overallUrgency].icon
 
-  const durationOptions = [
-    { value: 'today', uk: 'Сьогодні', en: 'Today', pl: 'Dzisiaj' },
-    { value: 'days', uk: 'Кілька днів', en: 'A few days', pl: 'Kilka dni' },
-    { value: 'week', uk: 'Тиждень', en: 'A week', pl: 'Tydzień' },
-    { value: 'weeks', uk: 'Кілька тижнів', en: 'Several weeks', pl: 'Kilka tygodni' },
-    { value: 'months', uk: 'Місяць або більше', en: 'A month or more', pl: 'Miesiąc lub więcej' },
-  ]
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       {/* Header */}
@@ -229,7 +180,9 @@ export default function SymptomCheckerPage() {
           <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 rounded-full mb-6">
             <Stethoscope className="w-10 h-10" />
           </div>
-          <h1 className="text-4xl font-bold mb-4">{t('ai.symptomChecker.title')}</h1>
+          <h1 className="text-4xl font-bold mb-4">
+            {t('ai.symptomChecker.title')}
+          </h1>
           <p className="text-xl text-teal-100 max-w-2xl mx-auto">
             {t('ai.symptomChecker.description')}
           </p>
@@ -247,9 +200,9 @@ export default function SymptomCheckerPage() {
             <Activity className="w-5 h-5 text-teal-600" />
             {t('ai.symptomChecker.selectSymptoms')}
           </h2>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {symptoms.map((symptom) => (
+            {symptoms.map(symptom => (
               <button
                 key={symptom.id}
                 onClick={() => toggleSymptom(symptom.id)}
@@ -260,7 +213,9 @@ export default function SymptomCheckerPage() {
                 }`}
               >
                 <span className="text-2xl">{symptom.icon}</span>
-                <span className="font-medium">{symptom[lang]}</span>
+                <span className="font-medium">
+                  {t(`ai.symptomChecker.symptoms.${symptom.id}`)}
+                </span>
                 {selectedSymptoms.includes(symptom.id) && (
                   <CheckCircle className="w-5 h-5 text-teal-600 ml-auto" />
                 )}
@@ -272,21 +227,22 @@ export default function SymptomCheckerPage() {
         {/* Pain Level */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
           <h2 className="text-xl font-semibold text-slate-900 mb-6">
-            {t('ai.symptomChecker.painLevel')}: <span className="text-teal-600">{painLevel}/10</span>
+            {t('ai.symptomChecker.painLevel')}:{' '}
+            <span className="text-teal-600">{painLevel}/10</span>
           </h2>
-          
+
           <input
             type="range"
             min="1"
             max="10"
             value={painLevel}
-            onChange={(e) => setPainLevel(parseInt(e.target.value))}
+            onChange={e => setPainLevel(parseInt(e.target.value))}
             className="w-full h-3 bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 rounded-lg appearance-none cursor-pointer"
           />
           <div className="flex justify-between text-sm text-slate-500 mt-2">
-            <span>{lang === 'uk' ? 'Легкий' : lang === 'pl' ? 'Lekki' : 'Mild'}</span>
-            <span>{lang === 'uk' ? 'Помірний' : lang === 'pl' ? 'Umiarkowany' : 'Moderate'}</span>
-            <span>{lang === 'uk' ? 'Сильний' : lang === 'pl' ? 'Silny' : 'Severe'}</span>
+            <span>{t('ai.symptomChecker.scale.mild')}</span>
+            <span>{t('ai.symptomChecker.scale.moderate')}</span>
+            <span>{t('ai.symptomChecker.scale.severe')}</span>
           </div>
         </div>
 
@@ -295,9 +251,9 @@ export default function SymptomCheckerPage() {
           <h2 className="text-xl font-semibold text-slate-900 mb-6">
             {t('ai.symptomChecker.duration')}
           </h2>
-          
+
           <div className="flex flex-wrap gap-3">
-            {durationOptions.map((option) => (
+            {durationOptions.map(option => (
               <button
                 key={option.value}
                 onClick={() => setDuration(option.value)}
@@ -307,7 +263,7 @@ export default function SymptomCheckerPage() {
                     : 'border-slate-200 hover:border-slate-300 text-slate-700'
                 }`}
               >
-                {option[lang]}
+                {t(option.labelKey)}
               </button>
             ))}
           </div>
@@ -327,53 +283,60 @@ export default function SymptomCheckerPage() {
         {showResults && selectedSymptoms.length > 0 && (
           <div className="space-y-6 animate-fade-in">
             {/* Overall Assessment */}
-            <div className={`rounded-2xl border-2 p-6 ${urgencyColors[overallUrgency].bg} ${urgencyColors[overallUrgency].border}`}>
+            <div
+              className={`rounded-2xl border-2 p-6 ${urgencyColors[overallUrgency].bg} ${urgencyColors[overallUrgency].border}`}
+            >
               <div className="flex items-start gap-4">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${overallUrgency === 'emergency' ? 'bg-red-200' : overallUrgency === 'high' ? 'bg-orange-200' : overallUrgency === 'medium' ? 'bg-yellow-200' : 'bg-green-200'}`}>
-                  <UrgencyIcon className={`w-6 h-6 ${urgencyColors[overallUrgency].text}`} />
+                <div
+                  className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                    overallUrgency === 'emergency'
+                      ? 'bg-red-200'
+                      : overallUrgency === 'high'
+                        ? 'bg-orange-200'
+                        : overallUrgency === 'medium'
+                          ? 'bg-yellow-200'
+                          : 'bg-green-200'
+                  }`}
+                >
+                  <UrgencyIcon
+                    className={`w-6 h-6 ${urgencyColors[overallUrgency].text}`}
+                  />
                 </div>
                 <div className="flex-1">
-                  <h3 className={`text-xl font-bold mb-2 ${urgencyColors[overallUrgency].text}`}>
-                    {t('ai.symptomChecker.urgency')}: {urgencyLabels[overallUrgency][lang]}
+                  <h3
+                    className={`text-xl font-bold mb-2 ${urgencyColors[overallUrgency].text}`}
+                  >
+                    {t('ai.symptomChecker.urgency')}:{' '}
+                    {t(urgencyLabelKeys[overallUrgency])}
                   </h3>
                   <p className="text-slate-700">
-                    {overallUrgency === 'emergency' || overallUrgency === 'high' ? (
+                    {overallUrgency === 'emergency' ||
+                    overallUrgency === 'high' ? (
                       <span className="font-semibold">
-                        {lang === 'uk' 
-                          ? 'На основі ваших симптомів рекомендуємо негайно звернутися до лікаря!'
-                          : lang === 'pl'
-                          ? 'Na podstawie objawów zalecamy natychmiastową wizytę u lekarza!'
-                          : 'Based on your symptoms, we recommend seeing a doctor immediately!'
-                        }
+                        {t('ai.symptomChecker.assessment.immediate')}
                       </span>
                     ) : (
-                      <span>
-                        {lang === 'uk'
-                          ? 'Рекомендуємо запланувати візит до стоматолога найближчим часом.'
-                          : lang === 'pl'
-                          ? 'Zalecamy umówienie wizyty u dentysty w najbliższym czasie.'
-                          : 'We recommend scheduling a dental visit soon.'
-                        }
-                      </span>
+                      <span>{t('ai.symptomChecker.assessment.soon')}</span>
                     )}
                   </p>
                 </div>
               </div>
-              
-              {(overallUrgency === 'emergency' || overallUrgency === 'high') && (
+
+              {(overallUrgency === 'emergency' ||
+                overallUrgency === 'high') && (
                 <div className="mt-4 flex flex-col sm:flex-row gap-3">
                   <a
                     href="tel:+380671234567"
                     className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-colors"
                   >
                     <Phone className="w-5 h-5" />
-                    {lang === 'uk' ? 'Зателефонувати зараз' : lang === 'pl' ? 'Zadzwoń teraz' : 'Call now'}
+                    {t('ai.symptomChecker.actions.callNow')}
                   </a>
                   <Link
                     href="/booking"
                     className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-white hover:bg-slate-50 text-slate-900 font-semibold rounded-xl border-2 border-slate-200 transition-colors"
                   >
-                    {lang === 'uk' ? 'Записатися онлайн' : lang === 'pl' ? 'Umów się online' : 'Book online'}
+                    {t('ai.symptomChecker.actions.bookOnline')}
                     <ArrowRight className="w-5 h-5" />
                   </Link>
                 </div>
@@ -385,26 +348,38 @@ export default function SymptomCheckerPage() {
               <h3 className="text-xl font-semibold text-slate-900 mb-6">
                 {t('ai.symptomChecker.possibleCauses')}
               </h3>
-              
+
               <div className="space-y-4">
-                {selectedSymptoms.map((symptomId) => {
+                {selectedSymptoms.map(symptomId => {
                   const symptom = symptoms.find(s => s.id === symptomId)
                   const analysis = symptomAnalysis[symptomId]
                   if (!symptom || !analysis) return null
-                  
+
                   const isExpanded = expandedConditions.includes(symptomId)
-                  
+                  const conditions = t(analysis.conditionsKey, {
+                    returnObjects: true,
+                  }) as string[]
+
                   return (
-                    <div key={symptomId} className="border border-slate-200 rounded-xl overflow-hidden">
+                    <div
+                      key={symptomId}
+                      className="border border-slate-200 rounded-xl overflow-hidden"
+                    >
                       <button
-                        onClick={() => setExpandedConditions(prev => 
-                          isExpanded ? prev.filter(id => id !== symptomId) : [...prev, symptomId]
-                        )}
+                        onClick={() =>
+                          setExpandedConditions(prev =>
+                            isExpanded
+                              ? prev.filter(id => id !== symptomId)
+                              : [...prev, symptomId]
+                          )
+                        }
                         className="w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors"
                       >
                         <div className="flex items-center gap-3">
                           <span className="text-xl">{symptom.icon}</span>
-                          <span className="font-medium text-slate-900">{symptom[lang]}</span>
+                          <span className="font-medium text-slate-900">
+                            {t(`ai.symptomChecker.symptoms.${symptom.id}`)}
+                          </span>
                         </div>
                         {isExpanded ? (
                           <ChevronUp className="w-5 h-5 text-slate-400" />
@@ -412,7 +387,7 @@ export default function SymptomCheckerPage() {
                           <ChevronDown className="w-5 h-5 text-slate-400" />
                         )}
                       </button>
-                      
+
                       {isExpanded && (
                         <div className="px-4 pb-4 border-t border-slate-100">
                           <div className="pt-4">
@@ -420,18 +395,22 @@ export default function SymptomCheckerPage() {
                               {t('ai.symptomChecker.possibleCauses')}:
                             </p>
                             <div className="flex flex-wrap gap-2 mb-4">
-                              {analysis.conditions.map((condition, idx) => (
+                              {conditions.map((condition, idx) => (
                                 <span
                                   key={idx}
                                   className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm"
                                 >
-                                  {condition[lang]}
+                                  {condition}
                                 </span>
                               ))}
                             </div>
-                            <div className={`p-3 rounded-lg ${urgencyColors[analysis.urgency].bg}`}>
-                              <p className={`text-sm font-medium ${urgencyColors[analysis.urgency].text}`}>
-                                {analysis.recommendation[lang]}
+                            <div
+                              className={`p-3 rounded-lg ${urgencyColors[analysis.urgency].bg}`}
+                            >
+                              <p
+                                className={`text-sm font-medium ${urgencyColors[analysis.urgency].text}`}
+                              >
+                                {t(analysis.recommendationKey)}
                               </p>
                             </div>
                           </div>
@@ -447,20 +426,10 @@ export default function SymptomCheckerPage() {
             {overallUrgency !== 'emergency' && overallUrgency !== 'high' && (
               <div className="bg-gradient-to-r from-teal-600 to-teal-500 rounded-2xl p-6 text-white text-center">
                 <h3 className="text-xl font-bold mb-2">
-                  {lang === 'uk' 
-                    ? 'Готові записатися на прийом?' 
-                    : lang === 'pl'
-                    ? 'Gotowy umówić się na wizytę?'
-                    : 'Ready to book an appointment?'
-                  }
+                  {t('ai.symptomChecker.cta.title')}
                 </h3>
                 <p className="text-teal-100 mb-4">
-                  {lang === 'uk'
-                    ? 'Безкоштовна консультація для нових пацієнтів'
-                    : lang === 'pl'
-                    ? 'Bezpłatna konsultacja dla nowych pacjentów'
-                    : 'Free consultation for new patients'
-                  }
+                  {t('ai.symptomChecker.cta.subtitle')}
                 </p>
                 <Link
                   href="/booking"
@@ -474,12 +443,7 @@ export default function SymptomCheckerPage() {
 
             {/* Disclaimer */}
             <p className="text-center text-sm text-slate-500 italic">
-              {lang === 'uk'
-                ? '* Це попередня оцінка на основі описаних симптомів. Точний діагноз може поставити тільки лікар після огляду.'
-                : lang === 'pl'
-                ? '* To wstępna ocena na podstawie opisanych objawów. Dokładną diagnozę może postawić tylko lekarz po badaniu.'
-                : '* This is a preliminary assessment based on described symptoms. Only a doctor can provide an accurate diagnosis after examination.'
-              }
+              {t('ai.symptomChecker.disclaimerDetailed')}
             </p>
           </div>
         )}

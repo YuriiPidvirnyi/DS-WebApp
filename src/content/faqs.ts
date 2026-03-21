@@ -1,3 +1,5 @@
+import type { TFunction } from 'i18next'
+
 export type FAQItem = {
   question: string
   answer: string
@@ -8,62 +10,54 @@ export type FAQCategory = {
   items: FAQItem[]
 }
 
-export const GENERAL_FAQ: FAQCategory = {
-  title: 'Загальні питання',
-  items: [
+export function getAllFaqs(t: TFunction): FAQCategory[] {
+  return [
     {
-      question: 'Як записатися на прийом?',
-      answer:
-        "Ви можете записатися через форму на сайті на сторінках 'Контакти' або 'Запис', а також за телефоном. Після відправки заявки ми зв'яжемося з вами для підтвердження часу.",
+      title: t('servicesFaq.general.title'),
+      items: [
+        {
+          question: t('servicesFaq.general.items.booking.question'),
+          answer: t('servicesFaq.general.items.booking.answer'),
+        },
+        {
+          question: t('servicesFaq.general.items.pain.question'),
+          answer: t('servicesFaq.general.items.pain.answer'),
+        },
+        {
+          question: t('servicesFaq.general.items.warranty.question'),
+          answer: t('servicesFaq.general.items.warranty.answer'),
+        },
+      ],
     },
     {
-      question: 'Чи боляче лікувати зуби?',
-      answer:
-        'Ми використовуємо сучасні методи анестезії, тому лікування проходить максимально комфортно та безболісно.',
+      title: t('servicesFaq.services.title'),
+      items: [
+        {
+          question: t('servicesFaq.services.items.caries.question'),
+          answer: t('servicesFaq.services.items.caries.answer'),
+        },
+        {
+          question: t('servicesFaq.services.items.freeConsultation.question'),
+          answer: t('servicesFaq.services.items.freeConsultation.answer'),
+        },
+        {
+          question: t('servicesFaq.services.items.installments.question'),
+          answer: t('servicesFaq.services.items.installments.answer'),
+        },
+      ],
     },
     {
-      question: 'Чи надаєте ви гарантію на лікування?',
-      answer:
-        'Так, ми надаємо гарантію на більшість видів робіт відповідно до медичних стандартів та наших внутрішніх правил.',
+      title: t('servicesFaq.hygiene.title'),
+      items: [
+        {
+          question: t('servicesFaq.hygiene.items.frequency.question'),
+          answer: t('servicesFaq.hygiene.items.frequency.answer'),
+        },
+        {
+          question: t('servicesFaq.hygiene.items.products.question'),
+          answer: t('servicesFaq.hygiene.items.products.answer'),
+        },
+      ],
     },
-  ],
+  ]
 }
-
-export const SERVICES_FAQ: FAQCategory = {
-  title: 'Послуги та ціни',
-  items: [
-    {
-      question: 'Скільки коштує лікування карієсу?',
-      answer:
-        'Вартість залежить від складності випадку та обраних матеріалів. Точний кошторис ви отримаєте після консультації та огляду.',
-    },
-    {
-      question: 'Що входить до безкоштовної консультації?',
-      answer:
-        'Первинний огляд, збір анамнезу, попередній план лікування та відповіді на ваші запитання.',
-    },
-    {
-      question: 'Чи можна встановити розстрочку на лікування?',
-      answer:
-        'Так, для певних послуг можлива поетапна оплата. Деталі уточнюйте у адміністратора.',
-    },
-  ],
-}
-
-export const HYGIENE_FAQ: FAQCategory = {
-  title: 'Догляд та профілактика',
-  items: [
-    {
-      question: 'Як часто потрібно робити професійну гігієну?',
-      answer:
-        'Рекомендуємо проходити професійну гігієну кожні 6 місяців або частіше за рекомендацією лікаря.',
-    },
-    {
-      question: 'Які щітки та пасти ви рекомендуєте?',
-      answer:
-        'Вибір залежить від індивідуальних потреб. Після огляду лікар порадить оптимальні засоби гігієни.',
-    },
-  ],
-}
-
-export const ALL_FAQS: FAQCategory[] = [GENERAL_FAQ, SERVICES_FAQ, HYGIENE_FAQ]

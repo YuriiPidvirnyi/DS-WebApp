@@ -10,7 +10,6 @@ import LiveRegion from '@/components/ui/LiveRegion'
 import I18nProvider from './i18n-provider'
 import useAnalytics from '@/hooks/useAnalytics'
 import { useReminders } from '@/hooks/useReminders'
-import { DragModeProvider } from '@/context/DragModeContext'
 
 // Lazy-load non-critical components to reduce TBT on initial page load
 const PerformanceMetrics = dynamic(
@@ -24,7 +23,6 @@ const ResourcePreloader = dynamic(
 const SVGFilters = dynamic(() => import('@/components/SVGFilters'), {
   ssr: false,
 })
-
 
 /** Initializes analytics, Sentry and registers page-view tracking */
 function AppInitializer() {
@@ -46,15 +44,13 @@ export default function ClientProviders({ children }: ClientProvidersProps) {
     <I18nProvider>
       <ErrorBoundary>
         <AccessibilityProvider>
-          <DragModeProvider>
-            <ToastProvider />
-            <PerformanceMetrics />
-            <ResourcePreloader />
-            <LiveRegion />
-            <SVGFilters />
-            <AppInitializer />
-            {children}
-          </DragModeProvider>
+          <ToastProvider />
+          <PerformanceMetrics />
+          <ResourcePreloader />
+          <LiveRegion />
+          <SVGFilters />
+          <AppInitializer />
+          {children}
         </AccessibilityProvider>
       </ErrorBoundary>
     </I18nProvider>

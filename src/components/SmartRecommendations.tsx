@@ -8,13 +8,13 @@ import {
   ChevronRight,
   Loader2,
   CheckCircle,
-  AlertCircle,
   Clock,
   Heart,
   Lightbulb,
   ArrowRight,
-  X
+  X,
 } from 'lucide-react'
+import { AsyncState } from '@/components/ui'
 
 interface Recommendation {
   primaryRecommendation: {
@@ -33,33 +33,41 @@ interface Recommendation {
   disclaimer: string
 }
 
-const quickConcerns = [
-  { id: 'checkup', uk: 'Плановий огляд', en: 'Routine checkup', pl: 'Rutynowa kontrola' },
-  { id: 'pain', uk: 'Біль у зубі', en: 'Toothache', pl: 'Ból zęba' },
-  { id: 'whitening', uk: 'Відбілювання', en: 'Whitening', pl: 'Wybielanie' },
-  { id: 'cleaning', uk: 'Чистка зубів', en: 'Teeth cleaning', pl: 'Czyszczenie zębów' },
-  { id: 'braces', uk: 'Вирівнювання зубів', en: 'Teeth alignment', pl: 'Prostowanie zębów' },
-  { id: 'implant', uk: 'Відсутній зуб', en: 'Missing tooth', pl: 'Brakujący ząb' },
-]
+interface QuickConcern {
+  id: string
+  label: string
+}
 
-const lastVisitOptions = [
-  { value: 'less6months', uk: 'Менше 6 місяців тому', en: 'Less than 6 months ago', pl: 'Mniej niż 6 miesięcy temu' },
-  { value: '6to12months', uk: '6-12 місяців тому', en: '6-12 months ago', pl: '6-12 miesięcy temu' },
-  { value: 'more1year', uk: 'Більше року тому', en: 'More than a year ago', pl: 'Ponad rok temu' },
-  { value: 'never', uk: 'Не пам\'ятаю', en: 'Don\'t remember', pl: 'Nie pamiętam' },
-]
+interface LastVisitOption {
+  value: string
+  label: string
+}
 
 export default function SmartRecommendations() {
   const { t, i18n } = useTranslation()
   const lang = (i18n.language || 'uk') as 'uk' | 'en' | 'pl'
-  
+  const translatedConcerns = t('ai.recommendations.quickConcerns', {
+    returnObjects: true,
+  }) as unknown
+  const quickConcerns = Array.isArray(translatedConcerns)
+    ? (translatedConcerns as QuickConcern[])
+    : []
+  const translatedLastVisitOptions = t('ai.recommendations.lastVisitOptions', {
+    returnObjects: true,
+  }) as unknown
+  const lastVisitOptions = Array.isArray(translatedLastVisitOptions)
+    ? (translatedLastVisitOptions as LastVisitOption[])
+    : []
+
   const [isOpen, setIsOpen] = useState(false)
   const [step, setStep] = useState(1)
   const [selectedConcerns, setSelectedConcerns] = useState<string[]>([])
   const [lastVisit, setLastVisit] = useState('')
   const [additionalInfo, setAdditionalInfo] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [recommendations, setRecommendations] = useState<Recommendation | null>(null)
+  const [recommendations, setRecommendations] = useState<Recommendation | null>(
+    null
+  )
   const [error, setError] = useState<string | null>(null)
 
   const toggleConcern = (id: string) => {
@@ -71,16 +79,24 @@ export default function SmartRecommendations() {
   const getRecommendations = async () => {
     setIsLoading(true)
     setError(null)
-    
+
     try {
       const concernLabels = selectedConcerns.map(id => {
         const concern = quickConcerns.find(c => c.id === id)
-        return concern ? concern.uk : id
+        return concern ? concern.label : id
       })
-      
+
+      const csrfToken =
+        typeof window !== 'undefined'
+          ? sessionStorage.getItem('csrf_token') || ''
+          : ''
+
       const response = await fetch('/api/ai/recommendations', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
+        },
         body: JSON.stringify({
           symptoms: concernLabels,
           lastVisit: lastVisit,
@@ -97,12 +113,7 @@ export default function SmartRecommendations() {
       setRecommendations(data.recommendations)
       setStep(4)
     } catch {
-      setError(lang === 'uk' 
-        ? 'Помилка при отриманні рекомендацій. Спробуйте ще раз.'
-        : lang === 'pl'
-        ? 'Błąd podczas uzyskiwania rekomendacji. Spróbuj ponownie.'
-        : 'Error getting recommendations. Please try again.'
-      )
+      setError(t('ai.recommendations.loadError'))
     } finally {
       setIsLoading(false)
     }
@@ -123,12 +134,6 @@ export default function SmartRecommendations() {
     urgent: 'bg-red-100 text-red-800',
   }
 
-  const urgencyLabels = {
-    routine: { uk: 'Плановий', en: 'Routine', pl: 'Planowy' },
-    soon: { uk: 'Найближчим часом', en: 'Soon', pl: 'Wkrótce' },
-    urgent: { uk: 'Терміново', en: 'Urgent', pl: 'Pilne' },
-  }
-
   const priorityColors = {
     high: 'border-red-200 bg-red-50',
     medium: 'border-yellow-200 bg-yellow-50',
@@ -145,12 +150,7 @@ export default function SmartRecommendations() {
         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
         <Sparkles className="w-6 h-6 relative z-10" />
         <span className="relative z-10">
-          {lang === 'uk' 
-            ? 'AI-підбір послуг' 
-            : lang === 'pl'
-            ? 'AI dobór usług'
-            : 'AI Service Finder'
-          }
+          {t('ai.recommendations.triggerButton')}
         </span>
         <ChevronRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
       </button>
@@ -164,12 +164,7 @@ export default function SmartRecommendations() {
               <div className="flex items-center gap-3">
                 <Sparkles className="w-6 h-6" />
                 <h2 className="text-xl font-bold">
-                  {lang === 'uk' 
-                    ? 'Розумний підбір послуг' 
-                    : lang === 'pl'
-                    ? 'Inteligentny dobór usług'
-                    : 'Smart Service Finder'
-                  }
+                  {t('ai.recommendations.modalTitle')}
                 </h2>
               </div>
               <button
@@ -184,7 +179,7 @@ export default function SmartRecommendations() {
             {step < 4 && (
               <div className="px-6 pt-4">
                 <div className="flex gap-2">
-                  {[1, 2, 3].map((s) => (
+                  {[1, 2, 3].map(s => (
                     <div
                       key={s}
                       className={`h-2 flex-1 rounded-full transition-colors ${
@@ -201,15 +196,10 @@ export default function SmartRecommendations() {
               {step === 1 && (
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-slate-900">
-                    {lang === 'uk' 
-                      ? 'Що вас турбує?' 
-                      : lang === 'pl'
-                      ? 'Co Cię niepokoi?'
-                      : 'What concerns you?'
-                    }
+                    {t('ai.recommendations.step1.title')}
                   </h3>
                   <div className="grid grid-cols-2 gap-3">
-                    {quickConcerns.map((concern) => (
+                    {quickConcerns.map(concern => (
                       <button
                         key={concern.id}
                         onClick={() => toggleConcern(concern.id)}
@@ -219,7 +209,7 @@ export default function SmartRecommendations() {
                             : 'border-slate-200 hover:border-slate-300'
                         }`}
                       >
-                        <span className="font-medium">{concern[lang]}</span>
+                        <span className="font-medium">{concern.label}</span>
                       </button>
                     ))}
                   </div>
@@ -228,7 +218,7 @@ export default function SmartRecommendations() {
                     disabled={selectedConcerns.length === 0}
                     className="w-full py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white font-semibold rounded-xl transition-colors disabled:cursor-not-allowed mt-4"
                   >
-                    {lang === 'uk' ? 'Далі' : lang === 'pl' ? 'Dalej' : 'Next'}
+                    {t('common.next')}
                   </button>
                 </div>
               )}
@@ -237,15 +227,10 @@ export default function SmartRecommendations() {
               {step === 2 && (
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-slate-900">
-                    {lang === 'uk' 
-                      ? 'Коли ви востаннє відвідували стоматолога?' 
-                      : lang === 'pl'
-                      ? 'Kiedy ostatnio byłeś u dentysty?'
-                      : 'When did you last visit a dentist?'
-                    }
+                    {t('ai.recommendations.step2.title')}
                   </h3>
                   <div className="space-y-2">
-                    {lastVisitOptions.map((option) => (
+                    {lastVisitOptions.map(option => (
                       <button
                         key={option.value}
                         onClick={() => setLastVisit(option.value)}
@@ -255,7 +240,7 @@ export default function SmartRecommendations() {
                             : 'border-slate-200 hover:border-slate-300'
                         }`}
                       >
-                        {option[lang]}
+                        {option.label}
                       </button>
                     ))}
                   </div>
@@ -264,14 +249,14 @@ export default function SmartRecommendations() {
                       onClick={() => setStep(1)}
                       className="flex-1 py-3 border-2 border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-colors"
                     >
-                      {lang === 'uk' ? 'Назад' : lang === 'pl' ? 'Wstecz' : 'Back'}
+                      {t('common.back')}
                     </button>
                     <button
                       onClick={() => setStep(3)}
                       disabled={!lastVisit}
                       className="flex-1 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white font-semibold rounded-xl transition-colors disabled:cursor-not-allowed"
                     >
-                      {lang === 'uk' ? 'Далі' : lang === 'pl' ? 'Dalej' : 'Next'}
+                      {t('common.next')}
                     </button>
                   </div>
                 </div>
@@ -281,22 +266,12 @@ export default function SmartRecommendations() {
               {step === 3 && (
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-slate-900">
-                    {lang === 'uk' 
-                      ? 'Щось додаткове?' 
-                      : lang === 'pl'
-                      ? 'Coś dodatkowego?'
-                      : 'Anything else?'
-                    }
+                    {t('ai.recommendations.step3.title')}
                   </h3>
                   <textarea
                     value={additionalInfo}
-                    onChange={(e) => setAdditionalInfo(e.target.value)}
-                    placeholder={lang === 'uk' 
-                      ? 'Опишіть детальніше вашу ситуацію (необов\'язково)...'
-                      : lang === 'pl'
-                      ? 'Opisz szczegółowo swoją sytuację (opcjonalnie)...'
-                      : 'Describe your situation in detail (optional)...'
-                    }
+                    onChange={e => setAdditionalInfo(e.target.value)}
+                    placeholder={t('ai.recommendations.step3.placeholder')}
                     className="w-full h-32 px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
                   />
                   <div className="flex gap-3">
@@ -304,7 +279,7 @@ export default function SmartRecommendations() {
                       onClick={() => setStep(2)}
                       className="flex-1 py-3 border-2 border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-colors"
                     >
-                      {lang === 'uk' ? 'Назад' : lang === 'pl' ? 'Wstecz' : 'Back'}
+                      {t('common.back')}
                     </button>
                     <button
                       onClick={getRecommendations}
@@ -314,22 +289,21 @@ export default function SmartRecommendations() {
                       {isLoading ? (
                         <>
                           <Loader2 className="w-5 h-5 animate-spin" />
-                          <span>{lang === 'uk' ? 'Аналіз...' : lang === 'pl' ? 'Analiza...' : 'Analyzing...'}</span>
+                          <span>
+                            {t('ai.recommendations.actions.analyzing')}
+                          </span>
                         </>
                       ) : (
                         <>
                           <Sparkles className="w-5 h-5" />
-                          <span>{lang === 'uk' ? 'Отримати рекомендації' : lang === 'pl' ? 'Uzyskaj rekomendacje' : 'Get Recommendations'}</span>
+                          <span>
+                            {t('ai.recommendations.actions.getRecommendations')}
+                          </span>
                         </>
                       )}
                     </button>
                   </div>
-                  {error && (
-                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm flex items-center gap-2">
-                      <AlertCircle className="w-5 h-5" />
-                      {error}
-                    </div>
-                  )}
+                  {error && <AsyncState variant="error" message={error} />}
                 </div>
               )}
 
@@ -347,8 +321,12 @@ export default function SmartRecommendations() {
                           <h3 className="font-bold text-slate-900 text-lg">
                             {recommendations.primaryRecommendation.serviceName}
                           </h3>
-                          <span className={`text-xs font-semibold px-2 py-1 rounded-full ${urgencyColors[recommendations.primaryRecommendation.urgency]}`}>
-                            {urgencyLabels[recommendations.primaryRecommendation.urgency][lang]}
+                          <span
+                            className={`text-xs font-semibold px-2 py-1 rounded-full ${urgencyColors[recommendations.primaryRecommendation.urgency]}`}
+                          >
+                            {t(
+                              `ai.recommendations.urgency.${recommendations.primaryRecommendation.urgency}`
+                            )}
                           </span>
                         </div>
                         <p className="text-slate-600 text-sm mb-3">
@@ -356,7 +334,12 @@ export default function SmartRecommendations() {
                         </p>
                         <div className="flex items-center gap-2 text-sm text-slate-500">
                           <Clock className="w-4 h-4" />
-                          <span>{recommendations.primaryRecommendation.estimatedDuration}</span>
+                          <span>
+                            {
+                              recommendations.primaryRecommendation
+                                .estimatedDuration
+                            }
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -367,15 +350,24 @@ export default function SmartRecommendations() {
                     <div>
                       <h4 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
                         <Heart className="w-5 h-5 text-purple-600" />
-                        {lang === 'uk' ? 'Також рекомендуємо' : lang === 'pl' ? 'Również polecamy' : 'Also recommended'}
+                        {t('ai.recommendations.results.alsoRecommended')}
                       </h4>
                       <div className="space-y-2">
-                        {recommendations.additionalRecommendations.map((rec, idx) => (
-                          <div key={idx} className={`p-4 rounded-xl border-2 ${priorityColors[rec.priority]}`}>
-                            <h5 className="font-semibold text-slate-900">{rec.serviceName}</h5>
-                            <p className="text-sm text-slate-600">{rec.reason}</p>
-                          </div>
-                        ))}
+                        {recommendations.additionalRecommendations.map(
+                          (rec, idx) => (
+                            <div
+                              key={idx}
+                              className={`p-4 rounded-xl border-2 ${priorityColors[rec.priority]}`}
+                            >
+                              <h5 className="font-semibold text-slate-900">
+                                {rec.serviceName}
+                              </h5>
+                              <p className="text-sm text-slate-600">
+                                {rec.reason}
+                              </p>
+                            </div>
+                          )
+                        )}
                       </div>
                     </div>
                   )}
@@ -386,12 +378,14 @@ export default function SmartRecommendations() {
                       <div>
                         <h4 className="font-semibold text-slate-900 mb-2 flex items-center gap-2">
                           <CheckCircle className="w-4 h-4 text-green-600" />
-                          {lang === 'uk' ? 'Профілактика' : lang === 'pl' ? 'Profilaktyka' : 'Prevention'}
+                          {t('ai.recommendations.results.prevention')}
                         </h4>
                         <ul className="text-sm text-slate-600 space-y-1">
-                          {recommendations.preventiveCare.slice(0, 3).map((tip, idx) => (
-                            <li key={idx}>• {tip}</li>
-                          ))}
+                          {recommendations.preventiveCare
+                            .slice(0, 3)
+                            .map((tip, idx) => (
+                              <li key={idx}>• {tip}</li>
+                            ))}
                         </ul>
                       </div>
                     )}
@@ -399,12 +393,14 @@ export default function SmartRecommendations() {
                       <div>
                         <h4 className="font-semibold text-slate-900 mb-2 flex items-center gap-2">
                           <Lightbulb className="w-4 h-4 text-yellow-600" />
-                          {lang === 'uk' ? 'Поради' : lang === 'pl' ? 'Porady' : 'Tips'}
+                          {t('ai.recommendations.results.tips')}
                         </h4>
                         <ul className="text-sm text-slate-600 space-y-1">
-                          {recommendations.lifestyleTips.slice(0, 3).map((tip, idx) => (
-                            <li key={idx}>• {tip}</li>
-                          ))}
+                          {recommendations.lifestyleTips
+                            .slice(0, 3)
+                            .map((tip, idx) => (
+                              <li key={idx}>• {tip}</li>
+                            ))}
                         </ul>
                       </div>
                     )}
@@ -421,7 +417,7 @@ export default function SmartRecommendations() {
                       onClick={reset}
                       className="flex-1 py-3 border-2 border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-colors"
                     >
-                      {lang === 'uk' ? 'Почати знову' : lang === 'pl' ? 'Zacznij od nowa' : 'Start over'}
+                      {t('ai.recommendations.actions.startOver')}
                     </button>
                     <Link
                       href="/booking"

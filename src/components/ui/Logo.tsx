@@ -1,7 +1,19 @@
+import Image from 'next/image'
+import uk from '@/locales/uk'
+
 interface LogoProps {
   variant?: 'default' | 'white'
   size?: 'sm' | 'md' | 'lg'
   className?: string
+}
+
+const sizeMap: Record<
+  NonNullable<LogoProps['size']>,
+  { w: number; h: number; cls: string }
+> = {
+  sm: { w: 128, h: 40, cls: 'w-32 h-10' },
+  md: { w: 192, h: 48, cls: 'w-48 h-12' },
+  lg: { w: 224, h: 56, cls: 'w-56 h-14' },
 }
 
 const Logo = ({
@@ -9,27 +21,21 @@ const Logo = ({
   size = 'md',
   className = '',
 }: LogoProps) => {
-  const sizeClasses: Record<NonNullable<LogoProps['size']>, string> = {
-    sm: 'w-32 h-10',
-    md: 'w-48 h-12',
-    lg: 'w-56 h-14',
-  }
-
   const src =
     variant === 'default'
       ? '/assets/images/logo/logo-mark-teal.svg'
       : '/assets/images/logo/logo-mark-tight.svg'
 
-  const filterClass = ''
+  const { w, h, cls } = sizeMap[size]
 
   return (
-    <img
+    <Image
       src={src}
-      alt="Dental Story"
-      className={`${sizeClasses[size]} ${filterClass} object-contain ${className}`}
-      loading="eager"
-      width={224}
-      height={48}
+      alt={uk.common.brandName}
+      width={w}
+      height={h}
+      priority
+      className={`${cls} object-contain ${className}`}
     />
   )
 }

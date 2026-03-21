@@ -1,4 +1,5 @@
 import { CONTACT_INFO, SITE_INFO } from '@/utils/constants'
+import uk from '@/locales/uk'
 
 interface StructuredDataProps {
   type?: 'organization' | 'localBusiness' | 'medicalClinic' | 'service'
@@ -8,11 +9,13 @@ interface StructuredDataProps {
 export const StructuredData = ({
   type = 'organization',
 }: StructuredDataProps) => {
+  const schemaCopy = uk.structuredData
+
   const getOrganizationSchema = () => ({
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: SITE_INFO.name,
-    alternateName: `Стоматологічна клініка ${SITE_INFO.name}`,
+    alternateName: `${schemaCopy.organizationAlternateName} ${SITE_INFO.name}`,
     url: SITE_INFO.url,
     logo: `${SITE_INFO.url}/assets/images/favicon/favicon-32x32.png`,
     description: SITE_INFO.description,
@@ -88,7 +91,7 @@ export const StructuredData = ({
     '@context': 'https://schema.org',
     '@type': ['MedicalClinic', 'Dentist'],
     '@id': `${SITE_INFO.url}/#medicalclinic`,
-    name: `${SITE_INFO.name} - Стоматологічна Клініка`,
+    name: `${SITE_INFO.name} - ${schemaCopy.medicalClinicNameSuffix}`,
     description: SITE_INFO.description,
     image: `${SITE_INFO.url}/assets/images/og/og-image.svg`,
     medicalSpecialty: [
@@ -102,18 +105,18 @@ export const StructuredData = ({
     availableService: [
       {
         '@type': 'MedicalTherapy',
-        name: 'Терапевтична стоматологія',
-        description: 'Лікування карієсу, пульпіту, періодонтиту',
+        name: schemaCopy.services.therapeutic.name,
+        description: schemaCopy.services.therapeutic.description,
       },
       {
         '@type': 'MedicalProcedure',
-        name: 'Імплантація зубів',
-        description: 'Встановлення зубних імплантів',
+        name: schemaCopy.services.implantation.name,
+        description: schemaCopy.services.implantation.description,
       },
       {
         '@type': 'MedicalProcedure',
-        name: 'Ортодонтія',
-        description: 'Виправлення прикусу, встановлення брекетів',
+        name: schemaCopy.services.orthodontics.name,
+        description: schemaCopy.services.orthodontics.description,
       },
     ],
     address: {

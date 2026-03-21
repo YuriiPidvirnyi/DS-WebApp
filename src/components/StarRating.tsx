@@ -1,6 +1,7 @@
 'use client'
 
 import { Star } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/utils/cn'
 
 interface StarRatingProps {
@@ -16,10 +17,11 @@ export default function StarRating({
   readOnly = false,
   size = 20,
 }: StarRatingProps) {
+  const { t } = useTranslation()
   const stars = [1, 2, 3, 4, 5]
   return (
     <div className="flex items-center gap-1">
-      <span className="sr-only">Рейтинг: {value} з 5 зірок</span>
+      <span className="sr-only">{t('starRating.summary', { value })}</span>
       {stars.map(s => (
         <button
           key={s}
@@ -30,7 +32,7 @@ export default function StarRating({
             'p-0.5 rounded',
             readOnly ? 'cursor-default' : 'hover:scale-110 transition-transform'
           )}
-          aria-label={`${s} зірок`}
+          aria-label={t('starRating.starLabel', { count: s })}
         >
           <Star
             className={cn(

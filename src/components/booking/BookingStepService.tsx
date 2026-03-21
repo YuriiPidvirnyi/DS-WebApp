@@ -1,13 +1,15 @@
 'use client'
 
 import { type UseFormReturn } from 'react-hook-form'
-import { Input, Select, LoadingOverlay } from '@/components/ui'
+import { useTranslation } from 'react-i18next'
+import { Input, Select, LoadingOverlay, AsyncState } from '@/components/ui'
 import { SERVICES, DOCTORS, type BookingFormValues } from './useBookingForm'
 
 interface BookingStepServiceProps {
   form: UseFormReturn<BookingFormValues>
   slots: string[]
   loadingSlots: boolean
+  slotsLoadError?: string | null
 }
 
 /**
@@ -18,7 +20,9 @@ export default function BookingStepService({
   form,
   slots,
   loadingSlots,
+  slotsLoadError,
 }: BookingStepServiceProps) {
+  const { t } = useTranslation()
   const {
     register,
     formState: { errors },
@@ -32,7 +36,7 @@ export default function BookingStepService({
             htmlFor="service"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Послуга *
+            {t('booking.fields.serviceLabel')} *
           </label>
           <Select
             id="service"
@@ -40,7 +44,7 @@ export default function BookingStepService({
             error={errors.service?.message}
             {...register('service')}
           >
-            <option value="">Оберіть послугу</option>
+            <option value="">{t('booking.selectService')}</option>
             {SERVICES.map(s => (
               <option key={s} value={s}>
                 {s}
@@ -54,7 +58,7 @@ export default function BookingStepService({
             htmlFor="date"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Дата *
+            {t('booking.fields.dateLabel')} *
           </label>
           <Input
             id="date"
@@ -70,7 +74,7 @@ export default function BookingStepService({
             htmlFor="time"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Час *
+            {t('booking.fields.timeLabel')} *
           </label>
           <Select
             id="time"
@@ -78,7 +82,7 @@ export default function BookingStepService({
             error={errors.time?.message}
             {...register('time')}
           >
-            <option value="">Оберіть час</option>
+            <option value="">{t('booking.selectTime')}</option>
             {slots.map(t => (
               <option key={t} value={t}>
                 {t}
@@ -87,8 +91,22 @@ export default function BookingStepService({
           </Select>
           <LoadingOverlay
             show={loadingSlots}
-            message="Завантажуємо вільні години..."
+            message={t('booking.slots.loadingMessage')}
           />
+          {slotsLoadError && (
+            <AsyncState
+              variant="error"
+              message={slotsLoadError}
+              className="mt-2 px-3 py-3"
+            />
+          )}
+          {!slotsLoadError && !loadingSlots && slots.length === 0 && (
+            <AsyncState
+              variant="empty"
+              message={t('booking.slots.empty')}
+              className="mt-2 px-3 py-3"
+            />
+          )}
         </div>
       </div>
 
@@ -98,7 +116,7 @@ export default function BookingStepService({
             htmlFor="doctor"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Лікар
+            {t('booking.fields.doctorLabel')}
           </label>
           <Select id="doctor" fullWidth {...register('doctor')}>
             {DOCTORS.map(d => (
@@ -116,7 +134,7 @@ export default function BookingStepService({
             {...register('isFirstVisit')}
           />
           <label htmlFor="isFirstVisit" className="text-sm text-gray-700">
-            Перший візит
+            {t('booking.fields.firstVisit')}
           </label>
         </div>
       </div>

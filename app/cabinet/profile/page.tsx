@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
 import { ChevronLeft, Save, User } from 'lucide-react'
 
@@ -16,6 +17,7 @@ interface PatientProfile {
 
 export default function ProfilePage() {
   const router = useRouter()
+  const { t } = useTranslation()
   const [profile, setProfile] = useState<PatientProfile>({
     first_name: '',
     last_name: '',
@@ -25,13 +27,22 @@ export default function ProfilePage() {
   })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [message, setMessage] = useState<{
+    type: 'success' | 'error'
+    text: string
+  } | null>(null)
 
   useEffect(() => {
     const fetchProfile = async () => {
       const supabase = createClient()
-      
-      const { data: { user } } = await supabase.auth.getUser()
+      if (!supabase) {
+        router.push('/auth/login')
+        return
+      }
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
       if (!user) {
         router.push('/auth/login')
         return
@@ -69,7 +80,8 @@ export default function ProfilePage() {
       const rest = digits.slice(3)
       if (rest.length <= 2) return `+380 ${rest}`
       if (rest.length <= 5) return `+380 ${rest.slice(0, 2)} ${rest.slice(2)}`
-      if (rest.length <= 7) return `+380 ${rest.slice(0, 2)} ${rest.slice(2, 5)} ${rest.slice(5)}`
+      if (rest.length <= 7)
+        return `+380 ${rest.slice(0, 2)} ${rest.slice(2, 5)} ${rest.slice(5)}`
       return `+380 ${rest.slice(0, 2)} ${rest.slice(2, 5)} ${rest.slice(5, 7)} ${rest.slice(7, 9)}`
     }
     return value
@@ -87,29 +99,36 @@ export default function ProfilePage() {
     setMessage(null)
 
     const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    
+    if (!supabase) {
+      router.push('/auth/login')
+      return
+    }
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
     if (!user) {
       router.push('/auth/login')
       return
     }
 
-    const { error } = await supabase
-      .from('patients')
-      .upsert({
-        id: user.id,
-        first_name: profile.first_name || null,
-        last_name: profile.last_name || null,
-        patronymic: profile.patronymic || null,
-        phone: profile.phone || null,
-        date_of_birth: profile.date_of_birth || null,
-        updated_at: new Date().toISOString(),
-      })
+    const { error } = await supabase.from('patients').upsert({
+      id: user.id,
+      first_name: profile.first_name || null,
+      last_name: profile.last_name || null,
+      patronymic: profile.patronymic || null,
+      phone: profile.phone || null,
+      date_of_birth: profile.date_of_birth || null,
+      updated_at: new Date().toISOString(),
+    })
 
     if (error) {
-      setMessage({ type: 'error', text: 'Помилка збереження. Спробуйте пізніше.' })
+      setMessage({
+        type: 'error',
+        text: t('cabinet.profile.errors.saveFailed'),
+      })
     } else {
-      setMessage({ type: 'success', text: 'Профіль успішно оновлено!' })
+      setMessage({ type: 'success', text: t('cabinet.profile.saveSuccess') })
     }
     setSaving(false)
   }
@@ -128,10 +147,15 @@ export default function ProfilePage() {
       <header className="bg-white border-b border-slate-200">
         <div className="max-w-2xl mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
-            <Link href="/cabinet" className="text-slate-500 hover:text-slate-700">
+            <Link
+              href="/cabinet"
+              className="text-slate-500 hover:text-slate-700"
+            >
               <ChevronLeft className="w-6 h-6" />
             </Link>
-            <h1 className="text-xl font-bold text-slate-900">Редагування профілю</h1>
+            <h1 className="text-xl font-bold text-slate-900">
+              {t('cabinet.profile.title')}
+            </h1>
           </div>
         </div>
       </header>
@@ -147,25 +171,32 @@ export default function ProfilePage() {
               <h2 className="font-semibold text-slate-900">
                 {profile.first_name} {profile.last_name}
               </h2>
-              <p className="text-sm text-slate-500">Пацієнт Dental Story</p>
+              <p className="text-sm text-slate-500">
+                {t('cabinet.profile.patientLabel')}
+              </p>
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {message && (
-              <div className={`px-4 py-3 rounded-xl text-sm ${
-                message.type === 'success' 
-                  ? 'bg-green-50 border border-green-200 text-green-700' 
-                  : 'bg-red-50 border border-red-200 text-red-700'
-              }`}>
+              <div
+                className={`px-4 py-3 rounded-xl text-sm ${
+                  message.type === 'success'
+                    ? 'bg-green-50 border border-green-200 text-green-700'
+                    : 'bg-red-50 border border-red-200 text-red-700'
+                }`}
+              >
                 {message.text}
               </div>
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="last_name" className="block text-sm font-medium text-slate-700 mb-2">
-                  Прізвище
+                <label
+                  htmlFor="last_name"
+                  className="block text-sm font-medium text-slate-700 mb-2"
+                >
+                  {t('cabinet.profile.lastName')}
                 </label>
                 <input
                   id="last_name"
@@ -173,13 +204,16 @@ export default function ProfilePage() {
                   type="text"
                   value={profile.last_name || ''}
                   onChange={handleChange}
-                  placeholder="Коваленко"
+                  placeholder={t('cabinet.profile.lastNamePlaceholder')}
                   className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                 />
               </div>
               <div>
-                <label htmlFor="first_name" className="block text-sm font-medium text-slate-700 mb-2">
-                  Ім'я
+                <label
+                  htmlFor="first_name"
+                  className="block text-sm font-medium text-slate-700 mb-2"
+                >
+                  {t('cabinet.profile.firstName')}
                 </label>
                 <input
                   id="first_name"
@@ -187,15 +221,18 @@ export default function ProfilePage() {
                   type="text"
                   value={profile.first_name || ''}
                   onChange={handleChange}
-                  placeholder="Олександр"
+                  placeholder={t('cabinet.profile.firstNamePlaceholder')}
                   className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="patronymic" className="block text-sm font-medium text-slate-700 mb-2">
-                По батькові
+              <label
+                htmlFor="patronymic"
+                className="block text-sm font-medium text-slate-700 mb-2"
+              >
+                {t('cabinet.profile.patronymic')}
               </label>
               <input
                 id="patronymic"
@@ -203,14 +240,17 @@ export default function ProfilePage() {
                 type="text"
                 value={profile.patronymic || ''}
                 onChange={handleChange}
-                placeholder="Петрович"
+                placeholder={t('cabinet.profile.patronymicPlaceholder')}
                 className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
               />
             </div>
 
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-slate-700 mb-2">
-                Телефон
+              <label
+                htmlFor="phone"
+                className="block text-sm font-medium text-slate-700 mb-2"
+              >
+                {t('cabinet.profile.phone')}
               </label>
               <input
                 id="phone"
@@ -218,14 +258,17 @@ export default function ProfilePage() {
                 type="tel"
                 value={profile.phone || ''}
                 onChange={handlePhoneChange}
-                placeholder="+380 67 123 45 67"
+                placeholder={t('cabinet.profile.phonePlaceholder')}
                 className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
               />
             </div>
 
             <div>
-              <label htmlFor="date_of_birth" className="block text-sm font-medium text-slate-700 mb-2">
-                Дата народження
+              <label
+                htmlFor="date_of_birth"
+                className="block text-sm font-medium text-slate-700 mb-2"
+              >
+                {t('cabinet.profile.dateOfBirth')}
               </label>
               <input
                 id="date_of_birth"
@@ -248,7 +291,7 @@ export default function ProfilePage() {
                 ) : (
                   <>
                     <Save className="w-5 h-5" />
-                    Зберегти зміни
+                    {t('cabinet.profile.save')}
                   </>
                 )}
               </button>

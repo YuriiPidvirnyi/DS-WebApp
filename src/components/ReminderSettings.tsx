@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Bell, BellOff, Trash, CalendarPlus } from 'lucide-react'
 import {
   getLocalReminders,
   removeLocalReminder,
+  updateLocalReminderPreference,
   updateReminderPreference,
   type ReminderPreference,
   type ScheduledReminder,
@@ -15,6 +17,7 @@ import { Button } from './ui'
 import { withToast } from '@/utils/toast'
 
 export default function ReminderSettings() {
+  const { t } = useTranslation()
   const [reminders, setReminders] = useState<ScheduledReminder[]>([])
   const [showSettings, setShowSettings] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -33,8 +36,23 @@ export default function ReminderSettings() {
       const date = new Date(reminder.sendAt)
       return `${formatDate(date)}, ${formatTime(date)}`
     } catch {
-      return 'Невідомий час'
+      return t('reminderSettings.unknownTime')
     }
+  }
+
+  const getReminderTypeLabel = (type: ScheduledReminder['type']) => {
+    if (type === 'day-before')
+      return t('reminderSettings.reminderTypes.dayBefore')
+    if (type === 'hour-before')
+      return t('reminderSettings.reminderTypes.hourBefore')
+    return t('reminderSettings.reminderTypes.other')
+  }
+
+  const getPreferenceLabel = (preference: ReminderPreference) => {
+    if (preference === 'email') return t('reminderSettings.preference.email')
+    if (preference === 'sms') return t('reminderSettings.preference.sms')
+    if (preference === 'both') return t('reminderSettings.preference.both')
+    return t('reminderSettings.preference.none')
   }
 
   // Handle deletion of reminders
@@ -45,12 +63,14 @@ export default function ReminderSettings() {
         async () => {
           removeLocalReminder(reminder.appointmentId)
           // Update UI
-          setReminders(prev => prev.filter(r => r.id !== reminder.id))
+          setReminders(prev =>
+            prev.filter(r => r.appointmentId !== reminder.appointmentId)
+          )
           return { success: true }
         },
         {
-          successMessage: 'Нагадування успішно видалено',
-          errorMessage: 'Не вдалося видалити нагадування',
+          successMessage: t('reminderSettings.messages.deleteSuccess'),
+          errorMessage: t('reminderSettings.messages.deleteError'),
         }
       )
     } catch (error) {
@@ -73,20 +93,33 @@ export default function ReminderSettings() {
             appointmentId,
             preference
           )
-          if (response.success) {
-            // If choosing "none", remove reminders
-            if (preference === 'none') {
-              removeLocalReminder(appointmentId)
-              setReminders(prev =>
-                prev.filter(r => r.appointmentId !== appointmentId)
+          if (!response.success) {
+            throw new Error(
+              response.error || t('reminderSettings.messages.updateError')
+            )
+          }
+
+          // If choosing "none", remove reminders
+          if (preference === 'none') {
+            removeLocalReminder(appointmentId)
+            setReminders(prev =>
+              prev.filter(r => r.appointmentId !== appointmentId)
+            )
+          } else {
+            updateLocalReminderPreference(appointmentId, preference)
+            setReminders(prev =>
+              prev.map(reminder =>
+                reminder.appointmentId === appointmentId
+                  ? { ...reminder, contactMethod: preference }
+                  : reminder
               )
-            }
+            )
           }
           return response
         },
         {
-          successMessage: 'Налаштування нагадувань оновлено',
-          errorMessage: 'Не вдалося оновити налаштування нагадувань',
+          successMessage: t('reminderSettings.messages.updateSuccess'),
+          errorMessage: t('reminderSettings.messages.updateError'),
         }
       )
     } catch (error) {
@@ -116,9 +149,13 @@ export default function ReminderSettings() {
 
           const ics = createICSEvent({
             uid: booking.id,
-            title: `Візит: ${booking.service}`,
-            description: `Запис №${booking.id}. Не забудьте взяти з собою документи!`,
-            location: 'Dental Studio',
+            title: t('reminderSettings.calendar.title', {
+              service: booking.service,
+            }),
+            description: t('reminderSettings.calendar.description', {
+              id: booking.id,
+            }),
+            location: t('reminderSettings.calendar.location'),
             start: startLocal,
             end: endLocal,
             url: window.location.origin,
@@ -152,16 +189,16 @@ export default function ReminderSettings() {
           <BellOff className="h-5 w-5 text-gray-500 flex-shrink-0 mt-0.5" />
           <div>
             <h4 className="font-semibold text-gray-900">
-              Немає активних нагадувань
+              {t('reminderSettings.empty.title')}
             </h4>
             <p className="text-sm text-gray-600 mt-1">
-              Коли ви запишетесь на прийом, ви отримаєте нагадування про нього.
+              {t('reminderSettings.empty.description')}
             </p>
             <button
               onClick={() => setShowSettings(false)}
               className="mt-2 text-sm text-dental-teal hover:underline"
             >
-              Закрити
+              {t('common.close')}
             </button>
           </div>
         </div>
@@ -177,17 +214,19 @@ export default function ReminderSettings() {
           className="inline-flex items-center gap-2 text-sm text-dental-teal hover:underline"
         >
           <Bell className="h-4 w-4" />
-          Налаштування нагадувань
+          {t('reminderSettings.title')}
         </button>
       ) : (
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
           <div className="flex justify-between items-center mb-3">
-            <h3 className="text-lg font-semibold">Налаштування нагадувань</h3>
+            <h3 className="text-lg font-semibold">
+              {t('reminderSettings.title')}
+            </h3>
             <button
               onClick={() => setShowSettings(false)}
               className="text-sm text-gray-500 hover:text-gray-700"
             >
-              Закрити
+              {t('common.close')}
             </button>
           </div>
 
@@ -201,7 +240,9 @@ export default function ReminderSettings() {
                   <div className="flex justify-between items-start">
                     <div>
                       <h4 className="font-medium">
-                        Запис #{appointmentId.substring(0, 8)}...
+                        {t('reminderSettings.appointmentShort', {
+                          id: appointmentId.substring(0, 8),
+                        })}
                       </h4>
                       <div className="text-sm text-gray-600 mt-1">
                         {reminders.map(reminder => (
@@ -210,20 +251,16 @@ export default function ReminderSettings() {
                             className="flex items-center gap-2 mt-1"
                           >
                             <span className="text-xs bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded">
-                              {reminder.type === 'day-before'
-                                ? 'За день'
-                                : reminder.type === 'hour-before'
-                                  ? 'За годину'
-                                  : 'Інше'}
+                              {getReminderTypeLabel(reminder.type)}
                             </span>
                             <span>{formatReminderTime(reminder)}</span>
                             {reminder.sent ? (
                               <span className="text-xs text-green-600">
-                                Надіслано
+                                {t('reminderSettings.status.sent')}
                               </span>
                             ) : (
                               <span className="text-xs text-gray-500">
-                                Очікується
+                                {t('reminderSettings.status.pending')}
                               </span>
                             )}
                           </div>
@@ -237,7 +274,8 @@ export default function ReminderSettings() {
                         variant="outline"
                         onClick={() => handleCalendarDownload(reminders[0])}
                       >
-                        <CalendarPlus className="h-4 w-4 mr-1" /> Календар
+                        <CalendarPlus className="h-4 w-4 mr-1" />{' '}
+                        {t('reminderSettings.actions.calendar')}
                       </Button>
 
                       <Button
@@ -254,7 +292,7 @@ export default function ReminderSettings() {
 
                   <div className="mt-2">
                     <label className="text-sm text-gray-600 block mb-1">
-                      Отримувати нагадування:
+                      {t('reminderSettings.receiveLabel')}
                     </label>
                     <div className="flex gap-2">
                       {(['email', 'sms', 'both', 'none'] as const).map(pref => (
@@ -270,13 +308,7 @@ export default function ReminderSettings() {
                           }`}
                           disabled={loading}
                         >
-                          {pref === 'email'
-                            ? 'Email'
-                            : pref === 'sms'
-                              ? 'SMS'
-                              : pref === 'both'
-                                ? 'Email + SMS'
-                                : 'Вимкнути'}
+                          {getPreferenceLabel(pref)}
                         </button>
                       ))}
                     </div>

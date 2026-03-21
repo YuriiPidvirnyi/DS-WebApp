@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { CONTACT_INFO } from '@/utils/constants'
+import { AsyncState } from './ui'
 
 interface GoogleWindow extends Window {
   google?: {
@@ -31,23 +33,46 @@ export default function GoogleMap({
   zoom = 16,
   className,
   height = '20rem',
-  title = 'Карта розташування клініки',
+  title,
 }: GoogleMapProps) {
+  const { t } = useTranslation()
+  const iframeTitle = title || t('contact.map.iframeTitle')
   const mapRef = useRef<HTMLDivElement>(null)
-  const [loaded, setLoaded] = useState(false)
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string | undefined
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as
+    | string
+    | undefined
+  const [loadStatus, setLoadStatus] = useState<'loading' | 'ready' | 'error'>(
+    apiKey ? 'loading' : 'ready'
+  )
+  const iframeSrc = `https://www.google.com/maps?q=${lat},${lng}&z=${zoom}&output=embed`
 
   useEffect(() => {
     if (!apiKey) return // No key - we'll use iframe fallback
+
+    if ((window as GoogleWindow).google?.maps) {
+      setLoadStatus('ready')
+      return
+    }
+
+    setLoadStatus('loading')
+    const handleLoad = () => setLoadStatus('ready')
+    const handleError = () => setLoadStatus('error')
 
     // If script already added
     const existing = document.querySelector<HTMLScriptElement>(
       'script[data-google-maps]'
     )
     if (existing) {
-      existing.addEventListener('load', () => setLoaded(true))
-      if ((window as GoogleWindow).google?.maps) setLoaded(true)
-      return
+      existing.addEventListener('load', handleLoad)
+      existing.addEventListener('error', handleError)
+      if ((window as GoogleWindow).google?.maps) {
+        setLoadStatus('ready')
+      }
+
+      return () => {
+        existing.removeEventListener('load', handleLoad)
+        existing.removeEventListener('error', handleError)
+      }
     }
 
     // Add script
@@ -56,14 +81,24 @@ export default function GoogleMap({
     script.async = true
     script.defer = true
     script.setAttribute('data-google-maps', 'true')
-    script.onload = () => setLoaded(true)
-    script.onerror = () => setLoaded(false)
+    script.onload = handleLoad
+    script.onerror = handleError
     document.head.appendChild(script)
+
+    return () => {
+      script.onload = null
+      script.onerror = null
+    }
   }, [apiKey])
 
   useEffect(() => {
-    if (!loaded || !mapRef.current || !(window as GoogleWindow).google?.maps)
+    if (
+      loadStatus !== 'ready' ||
+      !mapRef.current ||
+      !(window as GoogleWindow).google?.maps
+    ) {
       return
+    }
 
     const { google } = window as GoogleWindow
     if (!google?.maps) return
@@ -88,13 +123,12 @@ export default function GoogleMap({
     new google.maps.Marker({
       position,
       map,
-      title: 'Dental Story',
+      title: t('common.brandName'),
     })
-  }, [loaded, lat, lng, zoom])
+  }, [loadStatus, lat, lng, zoom, t])
 
-  if (!apiKey) {
-    // Fallback to iframe if no API key
-    const iframeSrc = `https://www.google.com/maps?q=${lat},${lng}&z=${zoom}&output=embed`
+  if (!apiKey || loadStatus === 'error') {
+    // Fallback to iframe if no API key or script failed to load
     return (
       <div className={className} style={{ height }}>
         <iframe
@@ -105,9 +139,24 @@ export default function GoogleMap({
           allowFullScreen
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
-          title={title}
+          title={iframeTitle}
           className="w-full h-full"
         />
+      </div>
+    )
+  }
+
+  if (loadStatus !== 'ready') {
+    return (
+      <div className={className} style={{ height }}>
+        <div className="h-full p-3">
+          <AsyncState
+            variant="loading"
+            title={t('contact.map.loadingTitle')}
+            message={t('contact.map.loadingMessage')}
+            className="h-full flex flex-col items-center justify-center"
+          />
+        </div>
       </div>
     )
   }

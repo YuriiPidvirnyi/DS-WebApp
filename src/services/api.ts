@@ -1,10 +1,50 @@
-import type { ApiResponse } from '@/types'
-
 // API Base URL — defaults to the Next.js internal route prefix
 // Override with NEXT_PUBLIC_API_URL for external backends
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  '/api'
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api'
+
+const CSRF_TOKEN_KEY = 'csrf_token'
+
+function generateClientCSRFToken(): string {
+  if (typeof window === 'undefined') return ''
+
+  try {
+    if (window.crypto?.getRandomValues) {
+      const bytes = new Uint8Array(32)
+      window.crypto.getRandomValues(bytes)
+      return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join(
+        ''
+      )
+    }
+  } catch {
+    // Fall through to non-crypto fallback.
+  }
+
+  return `${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`.padEnd(
+    32,
+    '0'
+  )
+}
+
+/** Read (or lazily create) the CSRF token from sessionStorage */
+function getCSRFToken(): string {
+  if (typeof window === 'undefined') return ''
+  try {
+    const existing = sessionStorage.getItem(CSRF_TOKEN_KEY)
+    if (existing && existing.length >= 32) {
+      return existing
+    }
+
+    const token = generateClientCSRFToken()
+    if (token.length >= 32) {
+      sessionStorage.setItem(CSRF_TOKEN_KEY, token)
+      return token
+    }
+
+    return ''
+  } catch {
+    return ''
+  }
+}
 
 /**
  * Custom error class for API errors
@@ -30,10 +70,21 @@ async function fetchAPI<T>(
 ): Promise<T> {
   const url = `${API_URL}${endpoint}`
 
+  // Attach CSRF token for mutating requests
+  const method = (options.method || 'GET').toUpperCase()
+  const csrfHeaders: Record<string, string> = {}
+  if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) {
+    const csrfToken = getCSRFToken()
+    if (csrfToken) {
+      csrfHeaders['X-CSRF-Token'] = csrfToken
+    }
+  }
+
   const config: RequestInit = {
     ...options,
     headers: {
       'Content-Type': 'application/json',
+      ...csrfHeaders,
       ...options.headers,
     },
   }
@@ -144,36 +195,4 @@ export function getErrorMessage(error: unknown): string {
  */
 export function isAPIError(error: unknown): error is APIError {
   return error instanceof APIError
-}
-
-/**
- * Mock API response wrapper (for development without backend)
- */
-export async function mockAPIResponse<T>(
-  data: T,
-  delay: number = 1000
-): Promise<ApiResponse<T>> {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve({
-        success: true,
-        data,
-        message: 'Success',
-      })
-    }, delay)
-  })
-}
-
-/**
- * Mock API error (for testing error handling)
- */
-export async function mockAPIError(
-  message: string,
-  delay: number = 1000
-): Promise<never> {
-  return new Promise((_, reject) => {
-    setTimeout(() => {
-      reject(new APIError(message, 400, 'MOCK_ERROR'))
-    }, delay)
-  })
 }
