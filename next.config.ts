@@ -182,26 +182,14 @@ const nextConfig: NextConfig = {
     ]
   },
 
-  // Redirects (SPA rewrites are no longer needed — Next.js handles routing)
-  async redirects() {
-    return []
-  },
-
-  // Webpack config — keep @/* alias working alongside tsconfig paths
-  webpack(config) {
-    return config
-  },
-
   // Experimental features
   experimental: {
-    // typedRoutes: true, // Enable when all routes are migrated
-    // Enable optimizations
     optimizePackageImports: [
       'lucide-react',
       'recharts',
       '@sentry/nextjs',
-      'react-i18next',
-      'i18next',
+      // DO NOT add 'i18next' or 'react-i18next' here —
+      // it breaks JSON resource loading, stripping keys from translation bundles
     ],
   },
 
@@ -220,14 +208,39 @@ const nextConfig: NextConfig = {
 }
 
 export default withSentryConfig(withPWAConfig(nextConfig), {
-  // Suppress noisy Sentry CLI output during build
+  // For all available options, see:
+  // https://www.npmjs.com/package/@sentry/webpack-plugin#options
+
+  org: 'dental-story',
+
+  project: 'sentry-dentalstory-webapp',
+
+  // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
 
-  // Disable source map upload unless SENTRY_AUTH_TOKEN is set
-  sourcemaps: {
-    disable: !process.env.SENTRY_AUTH_TOKEN,
-  },
+  // For all available options, see:
+  // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 
-  // Tunnel Sentry requests through /monitoring to avoid ad-blockers
+  // Upload a larger set of source maps for prettier stack traces (increases build time)
+  widenClientFileUpload: true,
+
+  // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
+  // This can increase your server load as well as your hosting bill.
+  // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
+  // side errors will fail.
   tunnelRoute: '/monitoring',
+
+  webpack: {
+    // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
+    // See the following for more information:
+    // https://docs.sentry.io/product/crons/
+    // https://vercel.com/docs/cron-jobs
+    automaticVercelMonitors: true,
+
+    // Tree-shaking options for reducing bundle size
+    treeshake: {
+      // Automatically tree-shake Sentry logger statements to reduce bundle size
+      removeDebugLogging: true,
+    },
+  },
 })

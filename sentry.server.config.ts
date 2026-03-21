@@ -1,16 +1,16 @@
 import * as Sentry from '@sentry/nextjs'
 
-const dsn = process.env.SENTRY_DSN
 const environment = process.env.NEXT_PUBLIC_ENVIRONMENT ?? 'production'
 
-if (dsn) {
-  Sentry.init({
-    dsn,
-    environment,
+Sentry.init({
+  dsn: 'https://6c85c1212128b5de1b95d731dac3823c@o4511077757616128.ingest.de.sentry.io/4511077761876048',
+  environment,
 
-    // Lower sample rate on server to reduce overhead
-    tracesSampleRate: environment === 'production' ? 0.1 : 0,
+  // Lower sample rate on server to reduce overhead in production
+  tracesSampleRate: environment === 'production' ? 0.1 : 1,
 
-    maxBreadcrumbs: 50,
-  })
-}
+  maxBreadcrumbs: 50,
+
+  // Do NOT send PII by default (GDPR compliance)
+  sendDefaultPii: false,
+})

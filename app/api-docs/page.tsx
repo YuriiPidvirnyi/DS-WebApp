@@ -3,8 +3,10 @@
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, ExternalLink, FileJson } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export default function ApiDocsPage() {
+  const { t } = useTranslation()
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -14,12 +16,14 @@ export default function ApiDocsPage() {
         // Load Swagger UI CSS
         const link = document.createElement('link')
         link.rel = 'stylesheet'
-        link.href = 'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css'
+        link.href =
+          'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css'
         document.head.appendChild(link)
 
         // Load Swagger UI JS
         const script = document.createElement('script')
-        script.src = 'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js'
+        script.src =
+          'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js'
         script.onload = () => {
           // @ts-expect-error - SwaggerUIBundle is loaded from CDN
           window.SwaggerUIBundle({
@@ -56,11 +60,11 @@ export default function ApiDocsPage() {
                 className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>Back to Site</span>
+                <span>{t('apiDocsPage.backToSite')}</span>
               </Link>
               <div className="h-6 w-px bg-gray-300" />
               <h1 className="text-xl font-semibold text-gray-900">
-                Dental Story API Documentation
+                {t('apiDocsPage.title')}
               </h1>
             </div>
             <div className="flex items-center gap-3">
@@ -71,7 +75,7 @@ export default function ApiDocsPage() {
                 className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 <FileJson className="w-4 h-4" />
-                OpenAPI Spec
+                {t('apiDocsPage.openApiSpec')}
                 <ExternalLink className="w-3 h-3" />
               </a>
             </div>
@@ -86,7 +90,7 @@ export default function ApiDocsPage() {
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
                 <div className="w-8 h-8 border-4 border-dental-teal border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                <p className="text-gray-500">Loading API documentation...</p>
+                <p className="text-gray-500">{t('apiDocsPage.loading')}</p>
               </div>
             </div>
           </div>
@@ -96,27 +100,27 @@ export default function ApiDocsPage() {
         <div className="mt-8 grid md:grid-cols-2 gap-6">
           <div className="bg-white rounded-lg shadow-sm border p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-3">
-              Authentication
+              {t('apiDocsPage.auth.title')}
             </h2>
             <p className="text-gray-600 text-sm mb-4">
-              Admin endpoints require authentication. Use the admin login to obtain a session token.
+              {t('apiDocsPage.auth.description')}
             </p>
             <code className="block bg-gray-100 p-3 rounded text-xs">
-              Authorization: Bearer {'<token>'}
+              {t('apiDocsPage.auth.authorizationHeader')}
             </code>
           </div>
 
           <div className="bg-white rounded-lg shadow-sm border p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-3">
-              Rate Limiting
+              {t('apiDocsPage.rateLimit.title')}
             </h2>
             <p className="text-gray-600 text-sm mb-4">
-              API requests are rate limited to prevent abuse. Default limits:
+              {t('apiDocsPage.rateLimit.description')}
             </p>
             <ul className="text-sm text-gray-600 space-y-1">
-              <li>• Public endpoints: 60 requests/minute</li>
-              <li>• Contact form: 5 requests/minute</li>
-              <li>• Booking: 10 requests/minute</li>
+              <li>{t('apiDocsPage.rateLimit.publicEndpoints')}</li>
+              <li>{t('apiDocsPage.rateLimit.contactForm')}</li>
+              <li>{t('apiDocsPage.rateLimit.booking')}</li>
             </ul>
           </div>
         </div>

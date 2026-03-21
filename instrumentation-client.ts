@@ -1,6 +1,8 @@
 import * as Sentry from '@sentry/nextjs'
 
-const dsn = process.env.SENTRY_DSN
+const dsn =
+  process.env.SENTRY_DSN ||
+  'https://6c85c1212128b5de1b95d731dac3823c@o4511077757616128.ingest.de.sentry.io/4511077761876048'
 const environment = process.env.NEXT_PUBLIC_ENVIRONMENT ?? 'production'
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart

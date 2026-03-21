@@ -7,7 +7,13 @@ export const revalidate = 60
 export async function GET() {
   try {
     const supabase = await createClient()
-    
+    if (!supabase) {
+      return NextResponse.json(
+        { success: false, error: 'Сервіс тимчасово недоступний' },
+        { status: 503 }
+      )
+    }
+
     const { data: services, error } = await supabase
       .from('services')
       .select('*')
@@ -24,20 +30,23 @@ export async function GET() {
     }
 
     // Group services by category
-    const grouped = services?.reduce((acc, service) => {
-      const category = service.category
-      if (!acc[category]) {
-        acc[category] = []
-      }
-      acc[category].push({
-        id: service.id,
-        name: service.name_uk,
-        description: service.description_uk,
-        price: service.price_uah,
-        duration: service.duration_minutes,
-      })
-      return acc
-    }, {} as Record<string, typeof services>)
+    const grouped = services?.reduce(
+      (acc, service) => {
+        const category = service.category
+        if (!acc[category]) {
+          acc[category] = []
+        }
+        acc[category].push({
+          id: service.id,
+          name: service.name_uk,
+          description: service.description_uk,
+          price: service.price_uah,
+          duration: service.duration_minutes,
+        })
+        return acc
+      },
+      {} as Record<string, typeof services>
+    )
 
     return NextResponse.json({
       success: true,

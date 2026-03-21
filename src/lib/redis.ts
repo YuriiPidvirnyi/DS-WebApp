@@ -1,10 +1,16 @@
 import { Redis } from '@upstash/redis'
 
-// Initialize Redis client
-const redis = new Redis({
-  url: process.env.KV_REST_API_URL!,
-  token: process.env.KV_REST_API_TOKEN!,
-})
+// Redis URL/Token: support both Vercel KV (KV_REST_API_*) and Upstash direct (UPSTASH_REDIS_REST_*)
+const redisUrl =
+  process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL
+const redisToken =
+  process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN
+
+// Initialize Redis client (null when env vars are missing — all functions degrade gracefully)
+const redis =
+  redisUrl && redisToken
+    ? new Redis({ url: redisUrl, token: redisToken })
+    : null
 
 export { redis }
 
@@ -25,38 +31,34 @@ export const CACHE_TTL = {
 } as const
 
 /**
- * Get cached data or fetch and cache it
+ * Get cached data or fetch and cache it.
+ * Falls back to direct fetch when Redis is unavailable.
  */
 export async function getCachedData<T>(
   key: string,
   fetcher: () => Promise<T>,
   ttl: number = 300
 ): Promise<T> {
+  if (!redis) return fetcher()
+
   try {
-    // Try to get from cache
     const cached = await redis.get<T>(key)
-    if (cached !== null) {
-      return cached
-    }
+    if (cached !== null) return cached
 
-    // Fetch fresh data
     const data = await fetcher()
-
-    // Cache the result
     await redis.set(key, data, { ex: ttl })
-
     return data
   } catch (error) {
     console.error('[Redis] Cache error:', error)
-    // Fallback to direct fetch on cache error
     return fetcher()
   }
 }
 
 /**
- * Invalidate cache by key or pattern
+ * Invalidate cache by key.
  */
 export async function invalidateCache(key: string): Promise<void> {
+  if (!redis) return
   try {
     await redis.del(key)
   } catch (error) {
@@ -65,26 +67,33 @@ export async function invalidateCache(key: string): Promise<void> {
 }
 
 /**
- * Rate limiting using Redis
+ * Rate limiting using Redis.
+ * Always allows requests when Redis is unavailable.
  */
 export async function checkRateLimit(
   identifier: string,
   limit: number = 60,
   windowSeconds: number = 60
 ): Promise<{ allowed: boolean; remaining: number; resetAt: number }> {
+  const fallback = {
+    allowed: true,
+    remaining: limit,
+    resetAt: Date.now() + windowSeconds * 1000,
+  }
+  if (!redis) return fallback
+
   const key = `${CACHE_KEYS.RATE_LIMIT}:${identifier}`
-  
+
   try {
     const current = await redis.incr(key)
-    
-    // Set expiry on first request
+
     if (current === 1) {
       await redis.expire(key, windowSeconds)
     }
-    
+
     const ttl = await redis.ttl(key)
     const resetAt = Date.now() + (ttl > 0 ? ttl * 1000 : windowSeconds * 1000)
-    
+
     return {
       allowed: current <= limit,
       remaining: Math.max(0, limit - current),
@@ -92,37 +101,39 @@ export async function checkRateLimit(
     }
   } catch (error) {
     console.error('[Redis] Rate limit error:', error)
-    // Allow on error to prevent blocking legitimate requests
-    return { allowed: true, remaining: limit, resetAt: Date.now() + windowSeconds * 1000 }
+    return fallback
   }
 }
 
 /**
- * Store session data
+ * Store session data.
  */
 export async function setSession(
   sessionId: string,
   data: Record<string, unknown>,
   ttl: number = CACHE_TTL.SESSION
 ): Promise<void> {
+  if (!redis) return
   const key = `${CACHE_KEYS.SESSION}:${sessionId}`
   await redis.set(key, data, { ex: ttl })
 }
 
 /**
- * Get session data
+ * Get session data.
  */
 export async function getSession<T = Record<string, unknown>>(
   sessionId: string
 ): Promise<T | null> {
+  if (!redis) return null
   const key = `${CACHE_KEYS.SESSION}:${sessionId}`
   return redis.get<T>(key)
 }
 
 /**
- * Delete session
+ * Delete session.
  */
 export async function deleteSession(sessionId: string): Promise<void> {
+  if (!redis) return
   const key = `${CACHE_KEYS.SESSION}:${sessionId}`
   await redis.del(key)
 }

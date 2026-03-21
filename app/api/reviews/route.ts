@@ -1,0 +1,155 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import {
+  checkRateLimit,
+  rateLimitResponse,
+  validateCSRF,
+  csrfErrorResponse,
+} from '@/lib/api-security'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+/** GET /api/reviews — list approved reviews */
+export async function GET(request: NextRequest) {
+  const { allowed, remaining } = await checkRateLimit(request, 30, 60_000)
+  if (!allowed) return rateLimitResponse(remaining)
+
+  try {
+    const supabase = await createClient()
+    if (!supabase) {
+      return NextResponse.json(
+        { success: false, error: 'Сервіс тимчасово недоступний' },
+        { status: 503 }
+      )
+    }
+
+    const { data: reviews, error } = await supabase
+      .from('reviews')
+      .select(
+        'id, name, rating, service, doctor, comment, visit_date, would_recommend, created_at'
+      )
+      .eq('status', 'approved')
+      .order('created_at', { ascending: false })
+      .limit(50)
+
+    if (error) {
+      console.error('[reviews] Supabase GET error:', error)
+      return NextResponse.json(
+        { success: false, error: 'Помилка завантаження відгуків' },
+        { status: 500 }
+      )
+    }
+
+    // Map snake_case DB columns to camelCase for frontend
+    const items = (reviews || []).map(r => ({
+      id: r.id,
+      name: r.name,
+      rating: r.rating,
+      service: r.service,
+      doctor: r.doctor,
+      comment: r.comment,
+      visitDate: r.visit_date,
+      wouldRecommend: r.would_recommend,
+      createdAt: r.created_at,
+    }))
+
+    return NextResponse.json({ success: true, data: { items } })
+  } catch (error) {
+    console.error('[reviews] Unexpected GET error:', error)
+    return NextResponse.json(
+      { success: false, error: 'Внутрішня помилка сервера' },
+      { status: 500 }
+    )
+  }
+}
+
+/** POST /api/reviews — submit a new review (pending moderation) */
+export async function POST(request: NextRequest) {
+  if (!validateCSRF(request)) return csrfErrorResponse()
+
+  const { allowed, remaining } = await checkRateLimit(request, 5, 60_000)
+  if (!allowed) return rateLimitResponse(remaining)
+
+  let body: {
+    name?: string
+    email?: string
+    rating?: number
+    service?: string
+    doctor?: string
+    comment?: string
+    visitDate?: string
+    wouldRecommend?: boolean
+  }
+
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json(
+      { success: false, error: 'Невалідний запит' },
+      { status: 400 }
+    )
+  }
+
+  // Validate required fields
+  if (!body.name?.trim() || !body.comment?.trim() || !body.service?.trim()) {
+    return NextResponse.json(
+      { success: false, error: "Ім'я, послуга та коментар обов'язкові" },
+      { status: 400 }
+    )
+  }
+
+  if (!body.rating || body.rating < 1 || body.rating > 5) {
+    return NextResponse.json(
+      { success: false, error: 'Рейтинг має бути від 1 до 5' },
+      { status: 400 }
+    )
+  }
+
+  try {
+    const supabase = await createClient()
+    if (!supabase) {
+      return NextResponse.json(
+        { success: false, error: 'Сервіс тимчасово недоступний' },
+        { status: 503 }
+      )
+    }
+
+    const reviewId = crypto.randomUUID()
+
+    const { error } = await supabase.from('reviews').insert({
+      id: reviewId,
+      name: body.name.trim(),
+      email: body.email?.trim() || null,
+      rating: body.rating,
+      service: body.service.trim(),
+      doctor: body.doctor?.trim() || null,
+      comment: body.comment.trim(),
+      visit_date: body.visitDate || null,
+      would_recommend: body.wouldRecommend ?? true,
+      status: 'pending', // Requires admin moderation
+    })
+
+    if (error) {
+      console.error('[reviews] Supabase POST error:', error)
+      return NextResponse.json(
+        { success: false, error: 'Помилка збереження відгуку' },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: { created: true, id: reviewId },
+      },
+      { status: 201 }
+    )
+  } catch (error) {
+    console.error('[reviews] Unexpected POST error:', error)
+    return NextResponse.json(
+      { success: false, error: 'Внутрішня помилка сервера' },
+      { status: 500 }
+    )
+  }
+}

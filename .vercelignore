@@ -1,13 +1,6 @@
 # Dependencies
 node_modules
 
-# Testing
-coverage
-.nyc_output
-tests
-playwright-report
-test-results
-
 # Development
 .vscode
 .idea
@@ -21,18 +14,12 @@ docs
 *.md
 !README.md
 
-# Storybook
-storybook-static
-.storybook
-
-# Build artifacts (will be rebuilt)
-dist
+# Build artifacts
 .cache
 
 # Git
 .git
 .gitignore
-.gitattributes
 
 # CI/CD
 .github
