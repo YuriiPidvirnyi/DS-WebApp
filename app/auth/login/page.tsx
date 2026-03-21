@@ -1,18 +1,23 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
-import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react'
+import { Eye, EyeOff, ArrowRight, Mail, Lock } from 'lucide-react'
+import Logo from '@/components/ui/Logo'
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const passwordResetSuccess = searchParams.get('passwordReset') === 'success'
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -20,6 +25,11 @@ export default function LoginPage() {
     setLoading(true)
 
     const supabase = createClient()
+    if (!supabase) {
+      setError(t('auth.login.errors.unavailable'))
+      setLoading(false)
+      return
+    }
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -27,9 +37,11 @@ export default function LoginPage() {
 
     if (error) {
       setError(
-        error.message === 'Invalid login credentials'
-          ? 'Невірний email або пароль'
-          : 'Помилка входу. Спробуйте пізніше.'
+        error.message.includes('Invalid login credentials')
+          ? t('auth.login.errors.invalidCredentials')
+          : error.message.includes('Email not confirmed')
+            ? t('auth.login.errors.emailNotConfirmed')
+            : t('auth.login.errors.generic')
       )
       setLoading(false)
       return
@@ -40,114 +52,128 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dental-secondary-50 to-dental-primary-50 flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md">
+    <div className="flex items-center justify-center min-h-[calc(100vh-180px)] px-4 py-8">
+      <div className="w-full max-w-md mx-auto">
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <h1 className="text-3xl font-bold text-dental-dark">
-              Dental<span className="text-dental-primary-600">Story</span>
-            </h1>
+            <Logo variant="default" size="md" />
           </Link>
-          <p className="mt-2 text-dental-muted">Вхід до особистого кабінету</p>
+          <p className="text-dental-muted text-sm mt-2">
+            {t('auth.login.subtitle')}
+          </p>
         </div>
 
-        {/* Login Form */}
-        <div className="bg-white rounded-2xl shadow-soft p-8">
-          <form onSubmit={handleLogin} className="space-y-6">
+        {/* Form Card */}
+        <div className="bg-white shadow-soft rounded-2xl p-6 sm:p-8">
+          <form onSubmit={handleLogin}>
+            {passwordResetSuccess && (
+              <div className="mb-6 p-3 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm">
+                {t('auth.login.passwordResetSuccess')}
+              </div>
+            )}
+
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+              <div className="mb-6 p-3 bg-dental-error-light border border-red-200 rounded-xl text-dental-error-dark text-sm">
                 {error}
               </div>
             )}
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-dental-dark mb-2">
-                Email
+            {/* Email */}
+            <div className="mb-5">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-dental-dark mb-1.5"
+              >
+                {t('auth.login.emailLabel')}
               </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-dental-muted" />
+              <div className="flex items-center gap-3 border border-dental-secondary-200 rounded-xl px-4 py-3 transition-colors focus-within:border-dental-primary-600 focus-within:ring-2 focus-within:ring-dental-primary-100">
+                <Mail size={18} className="text-dental-muted shrink-0" />
                 <input
                   id="email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder={t('auth.login.emailPlaceholder')}
                   required
-                  className="w-full pl-10 pr-4 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-dental-primary-500 focus:border-transparent transition-all"
+                  autoComplete="email"
+                  className="w-full text-sm text-dental-dark placeholder:text-dental-text-light outline-none bg-transparent"
                 />
               </div>
             </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-dental-dark mb-2">
-                Пароль
+            {/* Password */}
+            <div className="mb-5">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-dental-dark mb-1.5"
+              >
+                {t('auth.login.passwordLabel')}
               </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-dental-muted" />
+              <div className="flex items-center gap-3 border border-dental-secondary-200 rounded-xl px-4 py-3 transition-colors focus-within:border-dental-primary-600 focus-within:ring-2 focus-within:ring-dental-primary-100">
+                <Lock size={18} className="text-dental-muted shrink-0" />
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Введіть пароль"
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder={t('auth.login.passwordPlaceholder')}
                   required
-                  className="w-full pl-10 pr-12 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-dental-primary-500 focus:border-transparent transition-all"
+                  autoComplete="current-password"
+                  className="w-full text-sm text-dental-dark placeholder:text-dental-text-light outline-none bg-transparent"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-dental-muted hover:text-dental-dark"
+                  className="p-1 text-dental-muted hover:text-dental-dark transition-colors shrink-0"
+                  aria-label={
+                    showPassword
+                      ? t('auth.login.hidePassword')
+                      : t('auth.login.showPassword')
+                  }
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <label className="flex items-center">
-                <input type="checkbox" className="w-4 h-4 text-dental-primary-600 border-dental-secondary-300 rounded focus:ring-dental-primary-500" />
-                <span className="ml-2 text-sm text-dental-muted">Запам'ятати мене</span>
-              </label>
-              <Link href="/auth/forgot-password" className="text-sm text-dental-primary-600 hover:text-dental-primary-700">
-                Забули пароль?
+            {/* Forgot password */}
+            <div className="flex items-center justify-end mb-6">
+              <Link
+                href="/auth/forgot-password"
+                className="text-sm font-medium text-dental-primary-600 hover:text-dental-primary-700 transition-colors"
+              >
+                {t('auth.login.forgotPassword')}
               </Link>
             </div>
 
+            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-dental-primary-600 hover:bg-dental-primary-700 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:bg-gray-400 text-white font-semibold text-sm rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-400"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
-                  Увійти
-                  <ArrowRight className="h-5 w-5" />
+                  {t('auth.login.submit')}
+                  <ArrowRight size={16} />
                 </>
               )}
             </button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-dental-muted">
-              Ще не маєте акаунту?{' '}
-              <Link href="/auth/sign-up" className="text-dental-primary-600 hover:text-dental-primary-700 font-semibold">
-                Зареєструватися
-              </Link>
-            </p>
-          </div>
-        </div>
-
-        {/* Benefits */}
-        <div className="mt-8 text-center text-sm text-dental-muted">
-          <p>Переваги особистого кабінету:</p>
-          <ul className="mt-2 space-y-1">
-            <li>Історія візитів та лікування</li>
-            <li>Онлайн-запис до лікаря</li>
-            <li>Персональні рекомендації</li>
-          </ul>
+          {/* Sign up */}
+          <p className="text-center mt-6 text-sm text-dental-muted">
+            {t('auth.login.noAccount')}{' '}
+            <Link
+              href="/auth/sign-up"
+              className="font-semibold text-dental-primary-600 hover:text-dental-primary-700 transition-colors"
+            >
+              {t('auth.login.signUpLink')}
+            </Link>
+          </p>
         </div>
       </div>
     </div>

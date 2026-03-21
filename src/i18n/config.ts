@@ -5,7 +5,16 @@ import { initReactI18next } from 'react-i18next'
 
 // Eagerly load only the default language (Ukrainian) — 95%+ of visitors.
 // English and Polish are lazy-loaded on demand when the user switches.
-import ukTranslations from '../locales/uk.json'
+//
+// IMPORTANT: We import from uk.ts (not uk.json) because Turbopack (Next.js 16
+// default bundler) aggressively tree-shakes JSON imports, stripping keys it
+// considers "unused". Since i18next accesses keys dynamically at runtime via
+// t('reviews.title') etc., the bundler cannot statically determine which keys
+// are needed. Using a .ts module with `as const` prevents this tree-shaking.
+import ukTranslations from '../locales/uk'
+
+type SupportedLanguage = 'uk' | 'en' | 'pl'
+const supportedLanguages: SupportedLanguage[] = ['uk', 'en', 'pl']
 
 // Resources — start with only Ukrainian pre-loaded
 const resources = {
@@ -17,52 +26,112 @@ const resources = {
 // Check if we're in the browser
 const isBrowser = typeof window !== 'undefined'
 
-// Create a fresh i18n instance to avoid singleton pollution between SSR requests.
-// This ensures each request starts with a clean slate.
-const i18n = i18next.createInstance()
+// Use the global i18next instance instead of createInstance().
+// createInstance() + async init() causes a race condition where React hydration
+// runs before init() resolves, resulting in raw translation keys on the client.
+// The global instance with initImmediate:false initializes synchronously.
+i18next.use(initReactI18next).init({
+  resources,
+  lng: 'uk',
+  fallbackLng: 'uk',
+  supportedLngs: supportedLanguages,
 
-// Initialize i18n WITHOUT language detector to avoid hydration mismatch.
-// Language detection happens AFTER hydration in initializeLanguage().
-i18n
-  .use(initReactI18next) // Pass i18n instance to react-i18next
-  .init({
-    resources,
-    lng: 'uk', // Always start with Ukrainian for consistent SSR
-    fallbackLng: 'uk', // Default language
-    supportedLngs: ['uk', 'en', 'pl'], // Supported languages
+  interpolation: {
+    escapeValue: false, // React already does escaping
+  },
 
-    interpolation: {
-      escapeValue: false, // React already does escaping
-    },
+  // Critical: make init synchronous so translations are available
+  // before React hydrates the component tree
+  initImmediate: false,
 
-    // Namespace
-    defaultNS: 'translation',
+  defaultNS: 'translation',
 
-    // React options
-    react: {
-      useSuspense: false, // Disable suspense mode for compatibility
-    },
-  })
+  react: {
+    useSuspense: false,
+  },
+})
+
+const i18n = i18next
 
 // Lazy-load non-default language bundles on demand.
 // This saves ~20KB from the initial client bundle.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const lazyLocaleLoaders: Record<string, () => Promise<{ default: any }>> = {
-  en: () => import('../locales/en.json'),
-  pl: () => import('../locales/pl.json'),
+// Lazy-loaded locales also use .ts wrappers to prevent Turbopack tree-shaking
+const lazyLocaleLoaders: Partial<
+  Record<SupportedLanguage, () => Promise<{ default: Record<string, unknown> }>>
+> = {
+  en: () => import('../locales/en'),
+  pl: () => import('../locales/pl'),
+}
+
+function normalizeLanguage(
+  value: string | null | undefined
+): SupportedLanguage | null {
+  if (!value) {
+    return null
+  }
+
+  const normalized = value.toLowerCase().split('-')[0]
+  return supportedLanguages.includes(normalized as SupportedLanguage)
+    ? (normalized as SupportedLanguage)
+    : null
+}
+
+async function ensureLanguageBundle(lng: SupportedLanguage) {
+  if (lng === 'uk' || i18n.hasResourceBundle(lng, 'translation')) {
+    return
+  }
+
+  const loader = lazyLocaleLoaders[lng]
+  if (!loader) {
+    return
+  }
+
+  const mod = await loader()
+  i18n.addResourceBundle(lng, 'translation', mod.default, true, true)
+}
+
+export async function setLanguage(lng: string) {
+  const normalized = normalizeLanguage(lng)
+  if (!normalized) {
+    await i18n.changeLanguage('uk')
+    return
+  }
+
+  await ensureLanguageBundle(normalized)
+  await i18n.changeLanguage(normalized)
+
+  if (isBrowser) {
+    localStorage.setItem('i18nextLng', normalized)
+  }
 }
 
 i18n.on('languageChanged', async (lng: string) => {
-  if (lng !== 'uk' && !i18n.hasResourceBundle(lng, 'translation')) {
-    const loader = lazyLocaleLoaders[lng]
+  const normalized = normalizeLanguage(lng)
+
+  if (!normalized) {
+    await i18n.changeLanguage('uk')
+    return
+  }
+
+  if (normalized !== lng) {
+    await i18n.changeLanguage(normalized)
+    return
+  }
+
+  if (
+    normalized !== 'uk' &&
+    !i18n.hasResourceBundle(normalized, 'translation')
+  ) {
+    const loader = lazyLocaleLoaders[normalized]
     if (loader) {
       const mod = await loader()
-      i18n.addResourceBundle(lng, 'translation', mod.default, true, true)
+      i18n.addResourceBundle(normalized, 'translation', mod.default, true, true)
     }
   }
+
   // Persist language choice to localStorage
   if (isBrowser) {
-    localStorage.setItem('i18nextLng', lng)
+    localStorage.setItem('i18nextLng', normalized)
   }
 })
 
@@ -70,7 +139,7 @@ i18n.on('languageChanged', async (lng: string) => {
  * Initialize language detection AFTER hydration.
  * This prevents hydration mismatch by ensuring SSR and initial client render
  * both use 'uk', then we switch to the user's preferred language if they've chosen one.
- * 
+ *
  * Only respects stored language preference (localStorage), not browser language.
  * Default is always Ukrainian.
  */
@@ -79,17 +148,24 @@ export function initializeLanguage() {
 
   // Check localStorage for explicit language choice
   // Only load other languages if user has previously selected them
-  const storedLng = localStorage.getItem('i18nextLng')
-  
-  if (storedLng && storedLng !== 'uk' && ['en', 'pl'].includes(storedLng)) {
-    // Load the language bundle and switch only if user explicitly chose it before
-    const loader = lazyLocaleLoaders[storedLng]
-    if (loader) {
-      loader().then(mod => {
-        i18n.addResourceBundle(storedLng, 'translation', mod.default, true, true)
-        i18n.changeLanguage(storedLng)
-      })
-    }
+  const storedLng = normalizeLanguage(localStorage.getItem('i18nextLng'))
+
+  if (storedLng && storedLng !== 'uk') {
+    void setLanguage(storedLng)
+    return
+  }
+
+  const currentLanguage = normalizeLanguage(i18n.language)
+  if (!currentLanguage) {
+    void i18n.changeLanguage('uk')
+    return
+  }
+
+  if (
+    currentLanguage !== 'uk' &&
+    !i18n.hasResourceBundle(currentLanguage, 'translation')
+  ) {
+    void setLanguage(currentLanguage)
   }
 }
 

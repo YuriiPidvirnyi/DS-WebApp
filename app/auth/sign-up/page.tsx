@@ -3,11 +3,22 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
-import { Eye, EyeOff, Mail, Lock, User, Phone, ArrowRight, Check } from 'lucide-react'
+import {
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  User,
+  Phone,
+  ArrowRight,
+  Check,
+} from 'lucide-react'
 
 export default function SignUpPage() {
   const router = useRouter()
+  const { t } = useTranslation()
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -30,7 +41,8 @@ export default function SignUpPage() {
     const digits = value.replace(/\D/g, '')
     if (digits.length <= 3) return digits
     if (digits.length <= 6) return `${digits.slice(0, 3)} ${digits.slice(3)}`
-    if (digits.length <= 8) return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}`
+    if (digits.length <= 8)
+      return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}`
     return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6, 8)} ${digits.slice(8, 10)}`
   }
 
@@ -44,28 +56,33 @@ export default function SignUpPage() {
     setError(null)
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Паролі не співпадають')
+      setError(t('auth.signUp.errors.passwordsMismatch'))
       return
     }
 
     if (formData.password.length < 8) {
-      setError('Пароль має містити мінімум 8 символів')
+      setError(t('auth.signUp.errors.passwordTooShort'))
       return
     }
 
     if (!agreeToTerms) {
-      setError('Необхідно погодитися з умовами використання')
+      setError(t('auth.signUp.errors.termsRequired'))
       return
     }
 
     setLoading(true)
 
     const supabase = createClient()
-    const { error } = await supabase.auth.signUp({
+    if (!supabase) {
+      setError(t('auth.signUp.errors.unavailable'))
+      setLoading(false)
+      return
+    }
+    const { data, error } = await supabase.auth.signUp({
       email: formData.email,
       password: formData.password,
       options: {
-        emailRedirectTo: `${window.location.origin}/cabinet`,
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=/cabinet`,
         data: {
           first_name: formData.firstName,
           last_name: formData.lastName,
@@ -77,10 +94,31 @@ export default function SignUpPage() {
     if (error) {
       setError(
         error.message.includes('already registered')
-          ? 'Цей email вже зареєстрований'
-          : 'Помилка реєстрації. Спробуйте пізніше.'
+          ? t('auth.signUp.errors.alreadyRegistered')
+          : t('auth.signUp.errors.generic')
       )
       setLoading(false)
+      return
+    }
+
+    const wasAlreadyRegistered =
+      Array.isArray(data.user?.identities) && data.user.identities.length === 0
+
+    if (wasAlreadyRegistered) {
+      setError(t('auth.signUp.errors.alreadyRegistered'))
+      setLoading(false)
+      return
+    }
+
+    if (!data.user) {
+      setError(t('auth.signUp.errors.generic'))
+      setLoading(false)
+      return
+    }
+
+    if (data.session) {
+      router.push('/cabinet')
+      router.refresh()
       return
     }
 
@@ -95,9 +133,21 @@ export default function SignUpPage() {
     if (/[A-Z]/.test(password)) strength++
     if (/[0-9]/.test(password)) strength++
     if (/[^A-Za-z0-9]/.test(password)) strength++
-    
-    const labels = ['', 'Слабкий', 'Середній', 'Добрий', 'Надійний']
-    const colors = ['', 'bg-red-500', 'bg-yellow-500', 'bg-teal-500', 'bg-green-500']
+
+    const labels = [
+      '',
+      t('auth.signUp.passwordStrength.weak'),
+      t('auth.signUp.passwordStrength.medium'),
+      t('auth.signUp.passwordStrength.good'),
+      t('auth.signUp.passwordStrength.strong'),
+    ]
+    const colors = [
+      '',
+      'bg-red-500',
+      'bg-yellow-500',
+      'bg-teal-500',
+      'bg-green-500',
+    ]
     return { strength, label: labels[strength], color: colors[strength] }
   }
 
@@ -110,10 +160,10 @@ export default function SignUpPage() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
             <h1 className="text-3xl font-bold text-slate-900">
-              Dental<span className="text-teal-600">Story</span>
+              {t('common.brandName')}
             </h1>
           </Link>
-          <p className="mt-2 text-slate-600">Створення облікового запису</p>
+          <p className="mt-2 text-slate-600">{t('auth.signUp.subtitle')}</p>
         </div>
 
         {/* Sign Up Form */}
@@ -127,8 +177,11 @@ export default function SignUpPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-slate-700 mb-2">
-                  Ім'я
+                <label
+                  htmlFor="firstName"
+                  className="block text-sm font-medium text-slate-700 mb-2"
+                >
+                  {t('auth.signUp.firstName')}
                 </label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
@@ -138,15 +191,18 @@ export default function SignUpPage() {
                     type="text"
                     value={formData.firstName}
                     onChange={handleChange}
-                    placeholder="Олександр"
+                    placeholder={t('auth.signUp.firstNamePlaceholder')}
                     required
                     className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                   />
                 </div>
               </div>
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-slate-700 mb-2">
-                  Прізвище
+                <label
+                  htmlFor="lastName"
+                  className="block text-sm font-medium text-slate-700 mb-2"
+                >
+                  {t('auth.signUp.lastName')}
                 </label>
                 <input
                   id="lastName"
@@ -154,7 +210,7 @@ export default function SignUpPage() {
                   type="text"
                   value={formData.lastName}
                   onChange={handleChange}
-                  placeholder="Коваленко"
+                  placeholder={t('auth.signUp.lastNamePlaceholder')}
                   required
                   className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                 />
@@ -162,19 +218,24 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-slate-700 mb-2">
-                Телефон
+              <label
+                htmlFor="phone"
+                className="block text-sm font-medium text-slate-700 mb-2"
+              >
+                {t('auth.signUp.phone')}
               </label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-                <span className="absolute left-10 top-1/2 -translate-y-1/2 text-slate-500">+380</span>
+                <span className="absolute left-10 top-1/2 -translate-y-1/2 text-slate-500">
+                  +380
+                </span>
                 <input
                   id="phone"
                   name="phone"
                   type="tel"
                   value={formData.phone}
                   onChange={handlePhoneChange}
-                  placeholder="67 123 45 67"
+                  placeholder={t('auth.signUp.phonePlaceholder')}
                   required
                   maxLength={13}
                   className="w-full pl-20 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
@@ -183,8 +244,11 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
-                Email
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-slate-700 mb-2"
+              >
+                {t('auth.signUp.emailLabel')}
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
@@ -194,7 +258,7 @@ export default function SignUpPage() {
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="your@email.com"
+                  placeholder={t('auth.signUp.emailPlaceholder')}
                   required
                   className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                 />
@@ -202,8 +266,11 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
-                Пароль
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-slate-700 mb-2"
+              >
+                {t('auth.signUp.passwordLabel')}
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
@@ -213,7 +280,7 @@ export default function SignUpPage() {
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="Мінімум 8 символів"
+                  placeholder={t('auth.signUp.passwordPlaceholder')}
                   required
                   className="w-full pl-10 pr-12 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                 />
@@ -222,13 +289,17 @@ export default function SignUpPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
                 </button>
               </div>
               {formData.password && (
                 <div className="mt-2">
                   <div className="flex gap-1 mb-1">
-                    {[1, 2, 3, 4].map((i) => (
+                    {[1, 2, 3, 4].map(i => (
                       <div
                         key={i}
                         className={`h-1 flex-1 rounded-full ${i <= strength ? color : 'bg-slate-200'}`}
@@ -241,8 +312,11 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700 mb-2">
-                Підтвердження пароля
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-slate-700 mb-2"
+              >
+                {t('auth.signUp.confirmPasswordLabel')}
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
@@ -252,13 +326,14 @@ export default function SignUpPage() {
                   type={showPassword ? 'text' : 'password'}
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  placeholder="Повторіть пароль"
+                  placeholder={t('auth.signUp.confirmPasswordPlaceholder')}
                   required
                   className="w-full pl-10 pr-12 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                 />
-                {formData.confirmPassword && formData.password === formData.confirmPassword && (
-                  <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500" />
-                )}
+                {formData.confirmPassword &&
+                  formData.password === formData.confirmPassword && (
+                    <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500" />
+                  )}
               </div>
             </div>
 
@@ -266,17 +341,23 @@ export default function SignUpPage() {
               <input
                 type="checkbox"
                 checked={agreeToTerms}
-                onChange={(e) => setAgreeToTerms(e.target.checked)}
+                onChange={e => setAgreeToTerms(e.target.checked)}
                 className="mt-1 w-4 h-4 text-teal-600 border-slate-300 rounded focus:ring-teal-500"
               />
               <span className="text-sm text-slate-600">
-                Я погоджуюся з{' '}
-                <Link href="/terms" className="text-teal-600 hover:text-teal-700">
-                  умовами використання
+                {t('auth.signUp.agreePrefix')}{' '}
+                <Link
+                  href="/terms-of-service"
+                  className="text-teal-600 hover:text-teal-700"
+                >
+                  {t('auth.signUp.termsLink')}
                 </Link>{' '}
-                та{' '}
-                <Link href="/privacy" className="text-teal-600 hover:text-teal-700">
-                  політикою конфіденційності
+                {t('auth.signUp.agreeAnd')}{' '}
+                <Link
+                  href="/privacy-policy"
+                  className="text-teal-600 hover:text-teal-700"
+                >
+                  {t('auth.signUp.privacyLink')}
                 </Link>
               </span>
             </label>
@@ -290,7 +371,7 @@ export default function SignUpPage() {
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
-                  Зареєструватися
+                  {t('auth.signUp.submit')}
                   <ArrowRight className="h-5 w-5" />
                 </>
               )}
@@ -299,9 +380,12 @@ export default function SignUpPage() {
 
           <div className="mt-6 text-center">
             <p className="text-slate-600">
-              Вже маєте акаунт?{' '}
-              <Link href="/auth/login" className="text-teal-600 hover:text-teal-700 font-semibold">
-                Увійти
+              {t('auth.signUp.hasAccount')}{' '}
+              <Link
+                href="/auth/login"
+                className="text-teal-600 hover:text-teal-700 font-semibold"
+              >
+                {t('auth.signUp.loginLink')}
               </Link>
             </p>
           </div>

@@ -1,0 +1,2733 @@
+// Auto-generated from en.json — DO NOT EDIT directly.
+// This .ts wrapper prevents Turbopack from tree-shaking JSON translation keys.
+// Edit en.json and run: node scripts/generate-locale-ts.js
+
+const en = {
+  navigation: {
+    home: 'Home',
+    services: 'Services',
+    about: 'About',
+    gallery: 'Gallery',
+    contact: 'Contact',
+    privacyPolicy: 'Privacy Policy',
+    termsOfService: 'Terms of Service',
+  },
+  social: {
+    facebook: 'Facebook',
+    instagram: 'Instagram',
+    telegram: 'Telegram',
+  },
+  common: {
+    phone: 'Phone',
+    email: 'Email',
+    brandName: 'Dental Story',
+    address: 'Address',
+    workingHours: 'Working Hours',
+    close: 'Close',
+    open: 'Open',
+    submit: 'Submit',
+    cancel: 'Cancel',
+    save: 'Save',
+    edit: 'Edit',
+    delete: 'Delete',
+    loading: 'Loading...',
+    error: 'Error',
+    success: 'Success',
+    back: 'Back',
+    next: 'Next',
+    previous: 'Previous',
+    required: 'Required',
+    optional: 'Optional',
+  },
+  asyncState: {
+    loading: {
+      title: 'Loading',
+    },
+    error: {
+      title: 'Something went wrong',
+    },
+    empty: {
+      title: 'No data',
+    },
+    actions: {
+      retry: 'Try again',
+    },
+  },
+  radialMenu: {
+    actions: {
+      phone: 'Call us',
+      book: 'Book now',
+      ai: 'AI Assistant',
+      chat: 'Clinic chat',
+      telegram: 'Telegram',
+      accessibility: 'Accessibility',
+    },
+    aria: {
+      open: 'Open quick actions menu',
+      close: 'Close menu',
+    },
+  },
+  languageSwitcher: {
+    languages: {
+      uk: {
+        name: 'Ukrainian',
+        nativeName: 'Українська',
+      },
+      en: {
+        name: 'English',
+        nativeName: 'English',
+      },
+      pl: {
+        name: 'Polish',
+        nativeName: 'Polski',
+      },
+    },
+    aria: {
+      switchTo: 'Switch to {{language}}',
+      select: 'Select language',
+      available: 'Available languages',
+    },
+  },
+  customSelect: {
+    placeholder: 'Select...',
+  },
+  lazyImage: {
+    unavailable: 'Image unavailable',
+  },
+  starRating: {
+    summary: 'Rating: {{value}} out of 5 stars',
+    starLabel: '{{count}} stars',
+  },
+  buttons: {
+    bookAppointment: 'Book Appointment',
+    bookConsultation: 'Book Consultation',
+    learnMore: 'Learn More',
+    viewAll: 'View All',
+    allServices: 'All Services',
+    sendRequest: 'Send Request',
+    requestSent: 'Request Sent',
+    backToHome: 'Back to Home',
+    goBack: 'Go Back',
+    viewImage: 'View Image',
+    book: 'Book',
+  },
+  forms: {
+    labels: {
+      fullName: 'Full Name',
+      phone: 'Phone Number',
+      email: 'Email',
+      service: 'Service',
+      message: 'Message',
+    },
+    placeholders: {
+      fullName: 'Enter your full name',
+      phone: '+380 50 XXX XX XX',
+      email: 'example@email.com',
+      selectService: 'Select service',
+      message: 'Describe your concerns or questions',
+    },
+    validation: {
+      required: '{{field}} is required',
+      invalidEmail: 'Enter a valid email address',
+      invalidPhone: 'Enter a valid phone number',
+      minLength: '{{field}} must contain at least {{min}} characters',
+    },
+    messages: {
+      success: 'Request sent successfully!',
+      successDescription:
+        'Thank you for your inquiry. We will contact you within 30 minutes to confirm your appointment.',
+      error: 'Error',
+      requiredFields:
+        '* Required fields. We will contact you within 30 minutes.',
+      emailOptional: 'Optional field',
+    },
+  },
+  services: {
+    categories: {
+      therapeutic: 'Therapeutic Dentistry',
+      surgical: 'Surgical Dentistry',
+      orthopedic: 'Prosthetic Dentistry',
+      orthodontics: 'Orthodontics',
+      aesthetic: 'Aesthetic Dentistry',
+      pediatric: 'Pediatric Dentistry',
+    },
+    subtitle:
+      'A full range of dental services for the whole family. We use the most advanced technologies and materials to achieve the best treatment results.',
+    descriptions: {
+      therapeutic: 'Treatment and prevention of dental diseases',
+      surgical: 'Surgical procedures in the oral cavity',
+      orthopedic: 'Restoration of teeth and their functions',
+      orthodontics: 'Bite correction and tooth alignment',
+      aesthetic: 'Improving the appearance of teeth',
+      pediatric: 'Specialized care for young patients',
+    },
+    list: {
+      consultation: 'Consultation',
+      treatment: 'Dental Treatment',
+      cleaning: 'Professional Hygiene',
+      implants: 'Dental Implants',
+      orthodontics: 'Orthodontics',
+      prosthetics: 'Prosthetics',
+      whitening: 'Teeth Whitening',
+      surgery: 'Oral Surgery',
+      therapeutic: {
+        caries: 'Caries Treatment',
+        endodontic: 'Endodontic Treatment',
+        pulpitis: 'Pulpitis Treatment',
+        periodontitis: 'Periodontitis Treatment',
+        hygiene: 'Professional Hygiene',
+        restoration: 'Dental Restoration',
+      },
+      surgical: {
+        extraction: 'Tooth Extraction',
+        wisdomTeeth: 'Wisdom Teeth Removal',
+        implantation: 'Dental Implantation',
+        sinusLift: 'Sinus Lift',
+        bonePlastics: 'Bone Grafting',
+        periodontalTreatment: 'Periodontal Treatment',
+      },
+      orthopedic: {
+        metalCeramicCrowns: 'Metal-Ceramic Crowns',
+        metalFreeCrowns: 'Metal-Free Crowns',
+        bridges: 'Dental Bridges',
+        removableDentures: 'Removable Dentures',
+        veneers: 'Veneers',
+        lumineers: 'Lumineers',
+      },
+      orthodonticsItems: {
+        metalBraces: 'Metal Braces',
+        ceramicBraces: 'Ceramic Braces',
+        sapphireBraces: 'Sapphire Braces',
+        lingualBraces: 'Lingual Braces',
+        aligners: 'Aligners (Clear Trays)',
+        retainers: 'Retainers',
+      },
+      aesthetic: {
+        whitening: 'Teeth Whitening',
+        artisticRestoration: 'Artistic Restoration',
+        compositeVeneers: 'Composite Veneers',
+        ceramicVeneers: 'Ceramic Veneers',
+        gumContouring: 'Gum Contouring',
+        aestheticFillings: 'Aesthetic Fillings',
+      },
+      pediatric: {
+        preventiveCheckups: 'Preventive Checkups',
+        milkTeeth: 'Baby Teeth Treatment',
+        fluoridation: 'Fluoride Treatment',
+        fissureSealing: 'Fissure Sealing',
+        plates: 'Dental Plates for Children',
+        hygieneTraining: 'Hygiene Training',
+      },
+    },
+    features: {
+      title: "What's Included in Each Service",
+      subtitle:
+        'We provide a comprehensive approach to treatment tailored to individual patient needs',
+      consultation: {
+        title: 'Free Consultation',
+        description:
+          'Detailed examination and treatment plan at no extra charge',
+      },
+      quality: {
+        title: 'Quality Guarantee',
+        description:
+          'Warranty on all types of work according to medical standards',
+      },
+      followUp: {
+        title: 'Post-Treatment Follow-Up',
+        description: 'Regular check-ups to ensure lasting results',
+      },
+    },
+    calculator: {
+      title: 'Calculate the Cost',
+      subtitle: 'Use our calculator for an approximate cost estimate',
+    },
+    cta: {
+      title: 'Need a Consultation?',
+      description:
+        'Our doctors will conduct a detailed examination and develop a personalized treatment plan tailored just for you',
+    },
+  },
+  caseStudies: {
+    results: 'Results',
+    beforeAfter: 'Before and After Treatment',
+    description: 'Real results from our patients. Drag the slider to compare.',
+    duration: 'Treatment Duration',
+    procedureType: 'Procedure Type',
+    afterTreatment: 'After Treatment',
+    beforeTreatment: 'Before Treatment',
+    dragToCompare: 'Drag to compare',
+    cases: {
+      '1': {
+        title: 'Smile Restoration',
+        description: 'Comprehensive treatment and veneer placement',
+        treatment: 'Veneers',
+        duration: '2 weeks',
+      },
+      '2': {
+        title: 'Dental Implants',
+        description:
+          'Replacement of missing teeth with implant-supported crowns',
+        treatment: 'Implantation',
+        duration: '3 months',
+      },
+      '3': {
+        title: 'Bite Correction',
+        description: 'Orthodontic treatment with braces',
+        treatment: 'Orthodontics',
+        duration: '18 months',
+      },
+    },
+  },
+  labels: {
+    before: 'Before',
+    after: 'After',
+  },
+  gallery: {
+    title: 'Gallery',
+    subtitle:
+      'Take a look at our modern clinic, equipment, and the results of our work',
+    categories: {
+      all: 'All Photos',
+      clinic: 'Clinic',
+      equipment: 'Equipment',
+      team: 'Team',
+      implants: 'Implants',
+      whitening: 'Whitening',
+      braces: 'Braces',
+      veneers: 'Veneers',
+      beforeAfter: 'Before/After',
+    },
+    noPhotos: 'No photos in this category yet',
+    navigation: {
+      close: 'Close',
+      previous: 'Previous image',
+      next: 'Next image',
+      viewImage: 'View image',
+    },
+  },
+  contact: {
+    title: 'Contact',
+    description:
+      "Contact us in the way that's most convenient for you or book an appointment online",
+    contactInfo: 'Contact Information',
+    responseTime: 'We respond within 2 hours',
+    viewOnMap: 'View on map →',
+    ourLocation: 'Our Location',
+    openInGoogleMaps: 'Open in Google Maps →',
+    map: {
+      loadingTitle: 'Loading map',
+      loadingMessage: "Fetching the clinic's interactive map.",
+      iframeTitle: 'Clinic location map',
+    },
+    form: {
+      title: 'Contact us',
+      successTitle: 'Message sent successfully!',
+      successDescription:
+        'Thank you for your request. We will contact you shortly.',
+      fields: {
+        fullNameLabel: 'Full name',
+        fullNamePlaceholder: 'Enter your full name',
+        phoneLabel: 'Phone number',
+        phonePlaceholder: '+380 XX XXX XX XX',
+        emailLabel: 'Email',
+        emailPlaceholder: 'example@email.com',
+        messageLabel: 'Message',
+        messagePlaceholder: 'Describe your questions or preferences',
+        consentLabel: 'I consent to the processing of my personal data',
+      },
+      submit: 'Send message',
+      cooldown: 'Wait {{seconds}} s',
+      requiredFields: '* Required fields. We will contact you shortly.',
+      errors: {
+        cooldown: 'Too many submissions. Try again in {{seconds}} s.',
+        turnstile: 'Security verification failed. Please try again.',
+        submitFailed: 'Failed to send message',
+      },
+    },
+    emergency: {
+      title: '🚨 Emergency Care',
+      description: 'In case of acute pain or injury, contact us immediately:',
+      phone: '📞 +380 50 455 47 74',
+      availability: 'We accept emergency calls 24/7',
+    },
+    faq: {
+      title: 'Frequently Asked Questions',
+      questions: {
+        appointment: {
+          q: 'Do I need to book in advance?',
+          a: 'Yes, we work by appointment. This allows us to dedicate enough time and attention to each patient.',
+        },
+        reschedule: {
+          q: 'Can I reschedule an appointment?',
+          a: 'Yes, you can reschedule by notifying us 24 hours before your scheduled visit.',
+        },
+        documents: {
+          q: 'What documents are needed?',
+          a: 'Bring your passport or ID. If you have a medical card, please bring it too.',
+        },
+        warranty: {
+          q: 'Do you provide warranty?',
+          a: 'Yes, we provide warranty on all services according to medical standards and requirements.',
+        },
+      },
+    },
+  },
+  home: {
+    hero: {
+      title: 'Your Smile - Our Mission',
+      description:
+        'Professional dental care using the latest technologies and an individual approach to each patient.',
+      whyChooseUs: 'Why Choose Us?',
+      benefits: [
+        'Painless Treatment',
+        'Warranty on All Services',
+        'Modern Equipment',
+        'Qualified Doctors',
+      ],
+    },
+    features: {
+      title: 'Why Patients Choose Dental Story',
+      subtitle:
+        'We combine professionalism, modern technologies and an individual approach to achieve the best treatment results',
+    },
+    services: {
+      title: 'Full Range of Services',
+      subtitle:
+        "From prevention to complex surgeries — everything for your smile's health",
+      cards: {
+        therapeuticDescription: 'Treatment of caries, pulpitis, periodontitis',
+        surgicalDescription: 'Tooth extraction, implantation, periodontology',
+        orthopedicDescription: 'Prosthetics, crowns, bridges, veneers',
+        orthodonticsDescription: 'Bite correction, braces, aligners',
+      },
+      imageAlt: '{{title}} - dental service',
+    },
+    pricing: {
+      title: 'Transparent Pricing',
+    },
+    cta: {
+      title: 'Ready for a Beautiful Smile?',
+      description:
+        'Book a free consultation and get your personalized treatment plan',
+    },
+    testimonials: {
+      loadingTitle: 'Loading testimonials',
+      loadingMessage: 'Preparing the patient stories section.',
+    },
+  },
+  about: {
+    title: 'About Our Clinic',
+    subtitle:
+      'Dental Story is a modern dental clinic that combines professionalism, innovative technologies, and an individual approach to each patient.',
+    stats: {
+      experience: 'Years of Experience',
+      patients: 'Satisfied Patients',
+      specialists: 'Specialists',
+      reviews: 'Positive Reviews',
+      positiveReviews: 'Positive Reviews',
+    },
+    story: {
+      title: 'Our Story',
+      tagline: 'Your Smile - Our Mission',
+      paragraph1:
+        'Dental Story clinic was founded in 2014 with the goal of providing quality dental care using the most advanced technologies. Our team brings together experienced doctors who continuously improve their skills and stay up to date with the latest trends in dentistry.',
+      paragraph2:
+        'We are proud that over the years we have helped thousands of patients restore their dental health and beautiful smiles. Our philosophy is based on the principles of trust, professionalism, and an individual approach to each patient.',
+      mission: 'Your Smile - Our Mission',
+    },
+    values: {
+      title: 'Our Values',
+      subtitle:
+        'Principles that guide us in our daily work and relationships with patients',
+      care: {
+        title: 'Patient Care',
+        description:
+          'Individual approach and comfort of every patient is our priority',
+      },
+      professionalism: {
+        title: 'Professionalism',
+        description: 'Highly qualified doctors with years of experience',
+      },
+      teamwork: {
+        title: 'Teamwork',
+        description: 'A coordinated team of specialists for the best results',
+      },
+      punctuality: {
+        title: 'Punctuality',
+        description:
+          'We respect your time — appointments on schedule without delays',
+      },
+    },
+    team: {
+      title: 'Our Team',
+      subtitle:
+        'Experienced doctors with higher education and international certificates',
+      members: {
+        member1: {
+          name: 'Dr. Олена Іванова',
+          position: 'Chief Doctor, Therapeutic Dentist',
+          experience: '15 years of experience',
+          education:
+            'Bohomolets National Medical University, specialization in endodontics',
+        },
+        member2: {
+          name: 'Dr. Микола Петренко',
+          position: 'Oral Surgeon, Implantologist',
+          experience: '12 years of experience',
+          education: 'UMSA, implantology certificate (Germany)',
+        },
+        member3: {
+          name: 'Dr. Марія Коваленко',
+          position: 'Orthodontist',
+          experience: '8 years of experience',
+          education:
+            'Bohomolets National Medical University, specialization in orthodontics',
+        },
+      },
+    },
+    equipment: {
+      title: 'Modern Equipment',
+      defaultAlt: 'Dental equipment',
+      items: {
+        xray: {
+          name: 'Digital X-Ray Diagnostics',
+        },
+        tomography: {
+          name: '3D Tomography',
+        },
+        laser: {
+          name: 'Laser Dentistry',
+        },
+        cadcam: {
+          name: 'CAD/CAM Prosthetics System',
+        },
+        ultrasonic: {
+          name: 'Ultrasonic Cleaning',
+        },
+      },
+    },
+  },
+  testimonials: {
+    title: 'Patient Reviews',
+    subtitle:
+      'The happiness of our patients is our greatest reward. Read real reviews from people who trusted us with their health',
+    rating: 'Rating: {{rating}} out of 5 stars',
+    basedOn: 'based on {{count}} reviews',
+    cta: {
+      question: 'Want to become part of our happy patient family?',
+      button: 'Book Appointment',
+    },
+    items: [
+      {
+        id: '1',
+        name: 'Olena Shevchenko',
+        rating: 5,
+        text: 'Excellent clinic! The doctors are true professionals. I had implantation done - everything was painless and quick. I am very grateful to the whole team for their care and quality work.',
+        service: 'Dental implantation',
+        date: '2024-09-15',
+      },
+      {
+        id: '2',
+        name: 'Andrii Kovalenko',
+        rating: 5,
+        text: 'The best dentistry in Kyiv! We got braces for my daughter - the result exceeded all expectations. The orthodontist is very attentive and explains everything clearly.',
+        service: 'Orthodontics',
+        date: '2024-08-28',
+      },
+      {
+        id: '3',
+        name: 'Mariia Bondarenko',
+        rating: 5,
+        text: 'Thank you for the professional whitening! My smile looks like Hollywood stars. The procedure was comfortable without unpleasant sensations. I recommend it to everyone!',
+        service: 'Teeth whitening',
+        date: '2024-09-02',
+      },
+      {
+        id: '4',
+        name: 'Viktor Melnyk',
+        rating: 5,
+        text: 'For the first time I was not afraid to visit the dentist. Modern equipment, friendly staff, quality anesthesia. Treatment was quick and absolutely painless.',
+        service: 'Dental treatment',
+        date: '2024-08-10',
+      },
+      {
+        id: '5',
+        name: 'Yuliia Petrova',
+        rating: 5,
+        text: 'I had professional teeth cleaning. Very satisfied with the result! The hygienist works carefully and thoroughly. The feeling of freshness and cleanliness after the procedure is incredible.',
+        service: 'Professional hygiene',
+        date: '2024-09-20',
+      },
+      {
+        id: '6',
+        name: 'Ihor Sydorenko',
+        rating: 5,
+        text: 'I got crowns - the quality is top level. The color was matched perfectly, they feel natural. Thanks to the doctor for professionalism and patience!',
+        service: 'Prosthetics',
+        date: '2024-07-25',
+      },
+    ],
+  },
+  reviews: {
+    title: 'Patient Reviews',
+    subtitle:
+      'Share your experience about your visit, it will help other patients',
+    serviceLabel: 'Service',
+    list: {
+      loadingTitle: 'Loading reviews',
+      loadingMessage: 'Fetching the latest patient reviews.',
+      loadError: 'Failed to load reviews.',
+      empty: 'There are no published reviews yet.',
+    },
+    form: {
+      title: 'Leave a Review',
+      yourRating: 'Your Rating',
+      name: 'Name',
+      email: 'Email (optional)',
+      service: 'Service',
+      doctor: 'Doctor (optional)',
+      visitDate: 'Visit Date (optional)',
+      comment: 'Comment',
+      wouldRecommend: 'Would recommend the clinic to others',
+      consent:
+        'By submitting a review, you agree to the publication of the text on the website after moderation.',
+      submit: 'Submit Review',
+      submitError: 'Failed to submit review',
+      successMessage: 'Thank you for your review!',
+    },
+  },
+  videoTestimonials: {
+    sectionLabel: 'Patient Reviews',
+    title: 'What Our Patients Say',
+    subtitle: 'Real stories from people who trusted us with their smiles',
+    videoReview: 'Video Review',
+    reviewFrom: 'Review from',
+    playVideo: 'Play Video',
+    pause: 'Pause',
+    unmute: 'Unmute',
+    mute: 'Mute',
+    previousReview: 'Previous Review',
+    nextReview: 'Next Review',
+    goToReview: 'Go to Review',
+    stats: {
+      satisfiedPatients: 'Satisfied Patients',
+      recommendUs: 'Recommend Us',
+      googleRating: 'Google Rating',
+      yearsExperience: 'Years of Experience',
+    },
+    items: {
+      '1': {
+        name: 'Олена К.',
+        treatment: 'Veneers',
+        quote:
+          'Thanks to the Dental Story team, I can finally smile with confidence. The result exceeded all my expectations!',
+      },
+      '2': {
+        name: 'Андрій М.',
+        treatment: 'Implantation',
+        quote:
+          'Professional approach and care at every stage. After the implantation, I feel 10 years younger!',
+      },
+      '3': {
+        name: 'Марія Л.',
+        treatment: 'Whitening',
+        quote:
+          'Quick, painless, and effective. My smile shines like never before. I recommend it to everyone!',
+      },
+    },
+  },
+  notFound: {
+    title: 'Page Not Found',
+    description:
+      "Unfortunately, the page you're looking for doesn't exist or has been moved.",
+    actions: {
+      home: 'Home',
+      back: 'Go Back',
+    },
+    suggestions: {
+      title: 'Perhaps you were looking for:',
+      services: 'Services',
+      about: 'About',
+      gallery: 'Gallery',
+      contact: 'Contact',
+    },
+  },
+  privacyPolicyPage: {
+    backHome: 'Back to home',
+    title: 'Privacy Policy',
+    lastUpdated: 'Last updated: October 17, 2024',
+    sections: [
+      {
+        id: 'general',
+        title: '1. General provisions',
+        paragraphs: [
+          'Dental clinic "Dental Story" (hereinafter "Clinic", "we") respects your privacy and is committed to protecting personal data you provide. This Privacy Policy explains how we collect, use, and protect your information.',
+          'By using our website or services, you agree to the terms of this Privacy Policy.',
+        ],
+      },
+      {
+        id: 'collectedData',
+        title: '2. Personal data we collect',
+        paragraphs: ['We may collect the following types of personal data:'],
+        list: [
+          'Full name',
+          'Phone number',
+          'Email address',
+          'Medical history and oral health information',
+          'Date of birth',
+          'Home address (if required)',
+          'Information about previous treatment',
+        ],
+      },
+      {
+        id: 'usagePurpose',
+        title: '3. Purpose of personal data use',
+        paragraphs: ['Your personal data is used for:'],
+        list: [
+          'Providing medical services and treatment',
+          'Maintaining medical documentation',
+          'Communicating with patients about appointments',
+          'Informing about services and promotions',
+          'Improving service quality',
+          'Complying with legal obligations',
+        ],
+      },
+      {
+        id: 'protection',
+        title: '4. Personal data protection',
+        paragraphs: [
+          'We apply appropriate technical and organizational measures to protect your personal data from unauthorized access, loss, destruction, or disclosure:',
+        ],
+        list: [
+          'Restricted access to personal data for authorized staff only',
+          'Use of modern encryption methods',
+          'Regular security system updates',
+          'Storage in protected systems',
+        ],
+      },
+      {
+        id: 'sharing',
+        title: '5. Transfer of personal data to third parties',
+        paragraphs: [
+          'We do not sell, exchange, or transfer your personal data to third parties, except where required by Ukrainian law or with your consent. Data may be shared with medical laboratories or insurance providers as part of medical service delivery.',
+        ],
+      },
+      {
+        id: 'rights',
+        title: '6. Your rights',
+        paragraphs: ['According to Ukrainian law, you have the right to:'],
+        list: [
+          'Receive information about processing of your personal data',
+          'Access your personal data',
+          'Request correction of inaccurate data',
+          'Request deletion of your personal data',
+          'Restrict processing of your data',
+          'Submit complaints to personal data protection authorities',
+        ],
+      },
+      {
+        id: 'cookies',
+        title: '7. Cookies',
+        paragraphs: [
+          'Our website may use cookies to improve user experience. You can configure your browser to reject cookies, but this may affect website functionality.',
+        ],
+      },
+      {
+        id: 'storage',
+        title: '8. Personal data retention',
+        paragraphs: [
+          'We store your personal data only as long as needed for processing purposes or as required by law. Medical data is stored according to Ukrainian medical legislation requirements.',
+        ],
+      },
+      {
+        id: 'changes',
+        title: '9. Changes to the Privacy Policy',
+        paragraphs: [
+          'We reserve the right to update this Privacy Policy. Any changes will be communicated on our website. The date of the latest revision is shown at the top of this document.',
+        ],
+      },
+      {
+        id: 'contact',
+        title: '10. Contact information',
+        paragraphs: [
+          'If you have questions about this Privacy Policy or processing of your personal data, contact us:',
+        ],
+      },
+    ],
+    contactCard: {
+      clinic: 'Dental clinic "{{name}}"',
+      addressLabel: 'Address',
+      phoneLabel: 'Phone',
+      emailLabel: 'Email',
+    },
+  },
+  termsOfServicePage: {
+    backHome: 'Back to home',
+    title: 'Terms of Service',
+    lastUpdated: 'Last updated: October 17, 2024',
+    sections: [
+      {
+        id: 'general',
+        title: '1. General provisions',
+        paragraphs: [
+          'These Terms of Service (hereinafter "Terms") regulate use of the website and services of Dental Story dental clinic (hereinafter "Clinic", "we"). By using our website or services, you agree to comply with these Terms.',
+          'If you do not agree with any part of these Terms, please do not use our website or services.',
+        ],
+      },
+      {
+        id: 'websiteUse',
+        title: '2. Website use',
+        paragraphs: ['You may use our website for:'],
+        list: [
+          'Getting information about our services',
+          "Booking a doctor's appointment",
+          'Contacting the clinic',
+          'Viewing our work gallery',
+        ],
+        paragraphsAfter: [
+          "You agree not to use the website for illegal purposes or in ways that may damage website operation or the clinic's reputation.",
+        ],
+      },
+      {
+        id: 'appointments',
+        title: '3. Appointment booking and cancellation',
+        subsections: [
+          {
+            title: 'Booking:',
+            list: [
+              'Booking is available via website, phone, or in person',
+              'Appointment confirmation is sent within 30 minutes',
+              'You must provide accurate information when booking',
+            ],
+          },
+          {
+            title: 'Cancellation:',
+            list: [
+              'Cancellation is available up to 24 hours before the visit',
+              'Cancellation less than 24 hours before may incur a fee',
+              'No-show without notice may be charged at 50% of service cost',
+            ],
+          },
+        ],
+      },
+      {
+        id: 'medical',
+        title: '4. Medical services and responsibility',
+        paragraphs: [
+          'Our clinic provides medical services in accordance with current Ukrainian legislation:',
+        ],
+        list: [
+          'All doctors have appropriate licenses and qualifications',
+          'Treatment is provided according to medical standards',
+          'Patients have the right to full treatment information',
+          'Treatment consent is documented in writing',
+        ],
+        paragraphsAfter: [
+          'Treatment outcomes may vary depending on individual patient conditions. The clinic is not responsible for outcomes that do not meet patient expectations if treatment was provided according to medical standards.',
+        ],
+      },
+      {
+        id: 'payment',
+        title: '5. Payment for services',
+        paragraphs: [
+          "Service payment is made according to the clinic's price list:",
+        ],
+        list: [
+          'Doctor consultation is paid before the appointment',
+          'Treatment is paid before start or after completion',
+          'Cash and cashless payments are accepted',
+          'Consultation fees are non-refundable if treatment is declined',
+          'Refunds for unreceived services are processed within 14 days',
+        ],
+      },
+      {
+        id: 'warranties',
+        title: '6. Warranties and claims',
+        paragraphs: [
+          'The clinic provides warranties for completed work according to medical standards:',
+        ],
+        list: [
+          'Fillings: 12 months',
+          'Crowns and bridges: 24 months',
+          'Implants: 60 months',
+          'Braces systems: for the full treatment period',
+        ],
+        paragraphsAfter: [
+          "Warranty does not apply in cases of non-compliance with doctor's recommendations, mechanical damage, or natural wear.",
+        ],
+      },
+      {
+        id: 'privacy',
+        title: '7. Privacy and personal data',
+        link: {
+          before: 'Personal data processing is performed according to our',
+          text: 'Privacy Policy',
+          after: '.',
+        },
+        paragraphsAfter: [
+          'Patient medical information is confidential and protected according to Ukrainian medical legislation.',
+        ],
+      },
+      {
+        id: 'intellectualProperty',
+        title: '8. Intellectual property',
+        paragraphs: [
+          'All materials on this website, including text, images, logos, and design, are property of Dental Story clinic or are used with permission of rights holders. Copying or use without written permission is prohibited.',
+        ],
+      },
+      {
+        id: 'liability',
+        title: '9. Limitation of liability',
+        paragraphs: ['The clinic is not responsible for:'],
+        list: [
+          'Temporary website unavailability',
+          'Technical failures of online services',
+          'Actions of third parties using our website',
+          'Indirect losses related to use of our services',
+        ],
+      },
+      {
+        id: 'changes',
+        title: '10. Changes to terms of service',
+        paragraphs: [
+          'We reserve the right to update these Terms of Service at any time. Significant changes are communicated on the website or by email. Continued use of our services after updates means your acceptance of the new terms.',
+        ],
+      },
+      {
+        id: 'disputes',
+        title: '11. Dispute resolution',
+        paragraphs: [
+          'Any disputes are resolved through negotiations. If no agreement is reached, disputes are resolved in court according to Ukrainian law. Jurisdiction: courts of Kyiv.',
+        ],
+      },
+      {
+        id: 'contact',
+        title: '12. Contact information',
+        paragraphs: [
+          'For questions regarding these Terms of Service, contact us:',
+        ],
+      },
+    ],
+    contactCard: {
+      clinic: 'Dental clinic "{{name}}"',
+      addressLabel: 'Address',
+      phoneLabel: 'Phone',
+      emailLabel: 'Email',
+    },
+  },
+  footer: {
+    description:
+      'Modern dental clinic providing a full range of services for your dental health. Professional doctors, state-of-the-art equipment, and an individual approach to each patient.',
+    navigation: 'Navigation',
+    contacts: 'Contacts',
+    appointment: 'Book an appointment',
+    appointmentDesc: 'Choose a convenient time for your clinic visit',
+    copyright: '© 2024 Dental Story. All rights reserved.',
+    workingHours: {
+      weekdays: 'Mon-Fri: 9:00-19:00',
+      saturday: 'Sat: 9:00-16:00',
+      sunday: 'Sun: Closed',
+    },
+    socialMedia: 'Social Media',
+  },
+  accessibility: {
+    skipToContent: 'Skip to main content',
+    homeLink: 'Dental Story — home',
+    mainNavigation: 'Main navigation',
+    mobileMenu: 'Mobile menu',
+    contactInfo: 'Contact information',
+    siteNavigation: 'Site navigation',
+    openMenu: 'Open menu',
+    closeMenu: 'Close menu',
+    prevCase: 'Previous case',
+    nextCase: 'Next case',
+    goToCase: 'Go to case',
+  },
+  accessibilityPanel: {
+    regionLabel: 'Accessibility settings',
+    title: 'Accessibility settings',
+    close: 'Close accessibility panel',
+    open: 'Open accessibility panel',
+    toggleLabel: 'Accessibility',
+    fontSize: {
+      title: 'Text size',
+      decrease: 'Smaller',
+      decreaseAria: 'Decrease text size',
+      resetAria: 'Reset text size',
+      increase: 'Larger',
+      increaseAria: 'Increase text size',
+      labels: {
+        normal: 'Standard',
+        larger: 'Large',
+        largest: 'Largest',
+      },
+    },
+    highContrast: {
+      title: 'High contrast',
+      turnOn: 'Enable high contrast',
+      turnOff: 'Disable high contrast',
+    },
+    reducedMotion: {
+      title: 'Reduced motion',
+      turnOn: 'Enable reduced motion',
+      turnOff: 'Disable reduced motion',
+    },
+    colorPerception: {
+      title: 'Color perception',
+      ariaLabel: 'Color perception mode',
+      options: {
+        normal: 'Normal mode',
+        protanopia: 'Protanopia (red)',
+        deuteranopia: 'Deuteranopia (green)',
+        tritanopia: 'Tritanopia (blue)',
+      },
+    },
+  },
+  faqAccordion: {
+    title: 'Frequently Asked Questions',
+  },
+  faqPage: {
+    title: 'Frequently Asked Questions',
+    subtitle: 'Answers to the most common questions from our patients',
+    items: [
+      {
+        question: 'Do I need to book in advance?',
+        answer:
+          'Yes, we work by appointment. This allows us to dedicate enough time and attention to each patient. You can book online via our website or call us at 068 232 38 38.',
+      },
+      {
+        question: 'Can I reschedule an appointment?',
+        answer:
+          'Yes, you can reschedule by notifying us 24 hours before your planned visit time. You can do this by phone or by messaging us.',
+      },
+      {
+        question: 'What documents are needed for the appointment?',
+        answer:
+          'Bring your passport or other ID. If you have previous medical documents (X-rays, tests, records), please bring them too.',
+      },
+      {
+        question: 'Do you provide a treatment warranty?',
+        answer:
+          'Yes, we provide warranty for all types of work according to medical standards and requirements. The warranty period depends on the procedure type and is discussed individually.',
+      },
+      {
+        question: 'What payment methods do you accept?',
+        answer:
+          'We accept cash, card payments (Visa, Mastercard), and bank transfer. Installments are available for certain treatments.',
+      },
+      {
+        question: 'Do you offer online consultations?',
+        answer:
+          'Yes, we can provide an initial online consultation via Telegram or Viber. However, an in-person examination is required for accurate diagnosis and treatment planning.',
+      },
+      {
+        question: 'How long does an appointment take?',
+        answer:
+          'The duration depends on the procedure type. Initial consultation usually takes 30-45 minutes. Complex procedures can take from 1 to 2 hours.',
+      },
+      {
+        question: 'Do you have parking?',
+        answer:
+          'Yes, there is convenient parking near the clinic. The clinic is also located in an accessible area with good public transport.',
+      },
+    ],
+    cta: {
+      question: "Didn't find the answer to your question?",
+      contact: 'Contact us',
+    },
+  },
+  servicesFaq: {
+    general: {
+      title: 'General questions',
+      items: {
+        booking: {
+          question: 'How can I book an appointment?',
+          answer:
+            'You can book through the form on the website on the "Contact" or "Booking" pages, or by phone. After submitting a request, we will contact you to confirm the time.',
+        },
+        pain: {
+          question: 'Is dental treatment painful?',
+          answer:
+            'We use modern anesthesia methods, so treatment is as comfortable and painless as possible.',
+        },
+        warranty: {
+          question: 'Do you provide a treatment warranty?',
+          answer:
+            'Yes, we provide warranty for most types of work in accordance with medical standards and our internal policies.',
+        },
+      },
+    },
+    services: {
+      title: 'Services and prices',
+      items: {
+        caries: {
+          question: 'How much does caries treatment cost?',
+          answer:
+            'The cost depends on case complexity and selected materials. You will receive an exact estimate after consultation and examination.',
+        },
+        freeConsultation: {
+          question: 'What is included in the free consultation?',
+          answer:
+            'Initial examination, medical history collection, a preliminary treatment plan, and answers to your questions.',
+        },
+        installments: {
+          question: 'Can I pay in installments?',
+          answer:
+            'Yes, phased payments are available for certain services. Please check details with the administrator.',
+        },
+      },
+    },
+    hygiene: {
+      title: 'Care and prevention',
+      items: {
+        frequency: {
+          question: 'How often should I do professional hygiene?',
+          answer:
+            "We recommend professional hygiene every 6 months, or more often based on your doctor's advice.",
+        },
+        products: {
+          question: 'Which brushes and toothpaste do you recommend?',
+          answer:
+            'The choice depends on individual needs. After examination, the doctor will recommend optimal hygiene products.',
+        },
+      },
+    },
+  },
+  dateFormat: {
+    locale: 'en-US',
+    options: {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    },
+  },
+  cookieConsent: {
+    title: 'We use cookies',
+    description:
+      'We use cookies for analytics and to improve the quality of our services. You can choose which categories of cookies to allow.',
+    privacyPolicyLink: 'Privacy Policy',
+    acceptAll: 'Accept All',
+    rejectAll: 'Reject',
+    customize: 'Customize',
+    hideCustomize: 'Hide',
+    savePreferences: 'Save Preferences',
+    alwaysOn: 'Always on',
+    categories: {
+      necessary: {
+        title: 'Necessary',
+        description:
+          'Required for the website to function properly. Cannot be disabled.',
+      },
+      analytics: {
+        title: 'Analytics',
+        description:
+          'Help us understand how visitors use the website (Google Analytics).',
+      },
+      errorTracking: {
+        title: 'Error Tracking',
+        description: 'Help us detect and fix technical issues (Sentry).',
+      },
+    },
+  },
+  cookies: {
+    title: 'Cookie Consent',
+    message:
+      "We use cookies to improve the website experience and for analytics. By clicking 'Accept', you agree to our",
+    privacyPolicy: 'privacy policy',
+    accept: 'Accept',
+    decline: 'Decline',
+  },
+  meta: {
+    title: 'Dental Story - Modern Dental Clinic in Lviv | Sumska St., 10',
+    description:
+      'Professional dental clinic at Sumska St., 10. Full range of services: treatment, implants, orthodontics. Painless treatment, modern equipment. Booking: 068 232 38 38',
+    keywords:
+      'dentist Lviv, dentist Sumska, dental clinic Lviv, dental treatment, dental implants, braces, teeth whitening, Dental Story',
+  },
+  structuredData: {
+    organizationAlternateName: 'Dental clinic',
+    medicalClinicNameSuffix: 'Dental Clinic',
+    services: {
+      therapeutic: {
+        name: 'Therapeutic dentistry',
+        description: 'Treatment of caries, pulpitis, and periodontitis',
+      },
+      implantation: {
+        name: 'Dental implantation',
+        description: 'Placement of dental implants',
+      },
+      orthodontics: {
+        name: 'Orthodontics',
+        description: 'Bite correction and braces treatment',
+      },
+    },
+  },
+  errors: {
+    common: {
+      errorId: 'Error ID',
+    },
+    global: {
+      title: 'Critical Error',
+      description:
+        'Unfortunately, a serious error occurred. We are working on fixing it.',
+      retry: 'Try Again',
+      goHome: 'Go Home',
+      digestLabel: 'ID',
+      devDetails: 'Error (development):',
+      supportPrompt: 'Issue still not resolved?',
+      supportLink: 'Contact us',
+    },
+    page: {
+      title: 'Oops, something went wrong!',
+      description:
+        'An error occurred while displaying this page. We are already working on fixing it.',
+      retry: 'Try Again',
+      report: 'Report Issue',
+      goHome: 'Go Home',
+      thankYou:
+        'Thank you for reporting! Our team has received the information about the issue.',
+      technicalInfo: 'Technical information for developers',
+      errorLabel: 'Error:',
+      componentStackLabel: 'Component Stack:',
+      devDetails: 'Error details (development):',
+      supportPrompt: 'Need help?',
+      supportLink: 'Contact us',
+    },
+    booking: {
+      title: 'Booking Error',
+      description:
+        'Unfortunately, an error occurred while loading the booking form. Please try again or call us directly.',
+      callUs: 'Call Us',
+      callUsWithPhone: 'Call us: {{phone}}',
+    },
+    admin: {
+      title: 'Admin Panel Error',
+      description:
+        'An error occurred in the admin panel. Try refreshing the page or logging in again.',
+      refresh: 'Refresh Page',
+      loginAgain: 'Log In Again',
+      backToSite: 'Return to Site',
+      details: 'Error details:',
+    },
+  },
+  booking: {
+    title: 'Book an Appointment',
+    subtitle:
+      'Choose a convenient time and we will confirm your appointment shortly',
+    description:
+      'Book your dental appointment online. Choose a convenient time and doctor.',
+    steps: {
+      service: 'Service',
+      personal: 'Personal Info',
+      summary: 'Confirmation',
+    },
+    selectService: 'Select Service',
+    selectDate: 'Select Date',
+    selectTime: 'Select Time',
+    noSlotsAvailable: 'No slots available for this date',
+    confirmBooking: 'Confirm Booking',
+    bookingSuccess: 'Booking successful!',
+    bookingSuccessDescription:
+      'We will contact you to confirm your appointment.',
+    loading: {
+      formTitle: 'Loading booking form',
+      preparingMessage: 'Preparing the form takes a few seconds.',
+      stepsMessage: 'Connecting booking steps.',
+    },
+    slots: {
+      loadingMessage: 'Loading available time slots...',
+      loadError: 'Failed to load available time slots. Please try again.',
+      empty:
+        'No available time slots for this date. Please choose another day.',
+      summaryEmpty:
+        'No available time for the selected date. Change the date or doctor.',
+    },
+    fields: {
+      serviceLabel: 'Service',
+      dateLabel: 'Date',
+      timeLabel: 'Time',
+      doctorLabel: 'Doctor',
+      firstVisit: 'First visit',
+      anyDoctor: 'Any',
+      fullNameLabel: 'Name',
+      firstNameLabel: 'First name',
+      firstNamePlaceholder: 'First name',
+      lastNameLabel: 'Last name',
+      lastNamePlaceholder: 'Last name',
+      phoneLabel: 'Phone',
+      phonePlaceholder: '+380 XX XXX XX XX',
+      emailLabel: 'Email',
+      emailPlaceholder: 'email@example.com',
+      dateOfBirthLabel: 'Date of birth',
+      symptomsLabel: 'Symptoms / notes',
+      symptomsPlaceholder: 'Briefly describe your request',
+      reminderPreferenceLabel: 'Reminders',
+      reminderOptions: {
+        email: 'By email',
+        sms: 'By SMS',
+        both: 'By email and SMS',
+        none: 'Do not send reminders',
+      },
+      consentLabel: 'I consent to the processing of personal data',
+    },
+    summary: {
+      title: 'Review your details before confirmation',
+      hint: 'click a field to edit',
+    },
+    form: {
+      heading: 'Book an appointment',
+      submit: 'Book now',
+      cooldown: 'Wait {{seconds}} s',
+      submittingOverlay: 'Submitting request...',
+    },
+    errors: {
+      cooldown: 'Too many submissions. Try again in {{seconds}} s.',
+      turnstile: 'Security verification failed. Please try again.',
+      createFailed: 'Failed to create appointment',
+    },
+    successPage: {
+      title: 'Thank you! Booking created',
+      subtitle: 'We will contact you shortly to confirm your appointment.',
+      detailsTitle: 'Booking details',
+      bookingNumber: 'Booking number',
+      copy: 'Copy',
+      service: 'Service',
+      date: 'Date',
+      time: 'Time',
+      name: 'Name',
+      goHome: 'Home',
+      createAnother: 'Create another booking',
+      addToCalendar: 'Add to calendar',
+      calendarTitle: 'Visit: {{service}}',
+      calendarDescription: 'Booking #{{ref}}. Patient: {{name}}',
+      calendarLocation: 'Dental Studio',
+    },
+  },
+  apiDocsPage: {
+    backToSite: 'Back to Site',
+    title: 'Dental Story API Documentation',
+    openApiSpec: 'OpenAPI Spec',
+    loading: 'Loading API documentation...',
+    auth: {
+      title: 'Authentication',
+      description:
+        'Admin endpoints require authentication. Use admin login to obtain a session token.',
+      authorizationHeader: 'Authorization: Bearer <token>',
+    },
+    rateLimit: {
+      title: 'Rate Limiting',
+      description:
+        'API requests are rate-limited to prevent abuse. Default limits:',
+      publicEndpoints: '• Public endpoints: 60 requests/minute',
+      contactForm: '• Contact form: 5 requests/minute',
+      booking: '• Booking: 10 requests/minute',
+    },
+  },
+  sentryExamplePage: {
+    meta: {
+      title: 'sentry-example-page',
+      description: 'Test Sentry for your Next.js app.',
+    },
+    logoAria: 'Sentry logo',
+    title: 'sentry-example-page',
+    description: {
+      prefix: 'Click the button below and view the sample error on the Sentry',
+      issuesLinkLabel: 'Issues Page',
+      middle: 'For more details about setting up Sentry,',
+      docsLinkLabel: 'read our docs',
+    },
+    actions: {
+      throwSampleError: 'Throw Sample Error',
+    },
+    status: {
+      errorSent: 'Error sent to Sentry.',
+      connectivityBlocked:
+        'It looks like network requests to Sentry are being blocked, which prevents errors from being captured. Try disabling your ad-blocker to complete the test.',
+    },
+  },
+  admin: {
+    dashboard: {
+      title: 'Dashboard',
+      welcome: 'Welcome to Admin Panel',
+      totalAppointments: 'Total Appointments',
+      todayAppointments: "Today's Appointments",
+      pendingAppointments: 'Pending Confirmation',
+      completedAppointments: 'Completed',
+      recentActivity: 'Recent Activity',
+      appointmentsChart: 'Appointments Chart',
+      popularServices: 'Popular Services',
+      revenue: 'Revenue',
+      clinicPanel: 'Clinic Control Panel',
+      updated: 'Updated',
+      logout: 'Log Out',
+      today: 'Today',
+      contacts: 'Inquiries',
+      reviewsModeration: 'Reviews for Moderation',
+      newBadge: 'new',
+      newBadgePlural: 'new',
+      allAppointments: 'All Appointments',
+      noAppointmentsToday: 'No appointments for today',
+      consultation: 'Consultation',
+      statusConfirmed: 'Confirmed',
+      statusCompleted: 'Completed',
+      statusPending: 'Pending',
+      serviceCategories: 'Service Categories',
+      noData: 'No data',
+      doctors: 'Doctors',
+      priceList: 'Price List',
+    },
+    sidebar: {
+      dashboard: 'Dashboard',
+      appointments: 'Appointments',
+      patients: 'Patients',
+      doctors: 'Doctors',
+      services: 'Services',
+      reviews: 'Reviews',
+      contacts: 'Contacts',
+      chat: 'Chat',
+      analytics: 'Analytics',
+      settings: 'Settings',
+    },
+    login: {
+      title: 'Admin Login',
+      subtitle: 'Admin Panel',
+      systemLogin: 'System sign in',
+      email: 'Email',
+      emailPlaceholder: 'your@email.com',
+      password: 'Password',
+      passwordPlaceholder: 'Enter password',
+      showPassword: 'Show password',
+      hidePassword: 'Hide password',
+      login: 'Log In',
+      loading: 'Signing in...',
+      backToSite: '← Back to site',
+      forgotPassword: 'Forgot Password?',
+      invalidCredentials: 'Invalid email or password',
+      errors: {
+        generic: 'Sign-in error. Please try again later.',
+        unavailable: 'Authorization system is unavailable. Please try later.',
+        emailNotConfirmed: 'Email is not confirmed. Please check your inbox.',
+        noAdminRights: 'You do not have administrator permissions.',
+      },
+    },
+    layout: {
+      panel: 'Admin Panel',
+      logout: 'Log Out',
+      backToSite: '← Back to site',
+      systemOnline: 'System online',
+      defaultUser: 'Admin',
+    },
+    modal: {
+      closeAria: 'Close modal window',
+    },
+    chat: {
+      title: 'Chats',
+      anonymous: 'Anonymous',
+      filters: {
+        active: 'Active',
+        all: 'All',
+      },
+      empty: {
+        active: 'No active chats',
+        all: 'No chats',
+      },
+      choose: {
+        title: 'Select a chat',
+        description: 'Choose a conversation on the left to reply',
+      },
+      aria: {
+        backToList: 'Back to list',
+      },
+      connection: {
+        realtime: 'Realtime',
+        disconnected: 'Disconnected',
+      },
+      actions: {
+        close: 'Close chat',
+      },
+      input: {
+        placeholder: 'Type a reply...',
+        sendAria: 'Send',
+      },
+      closed: 'This chat is closed',
+      date: {
+        today: 'Today',
+        yesterday: 'Yesterday',
+      },
+      status: {
+        active: 'Active',
+        closed: 'Closed',
+      },
+    },
+    appointmentStatuses: {
+      pending: 'Pending',
+      confirmed: 'Confirmed',
+      completed: 'Completed',
+      cancelled: 'Cancelled',
+      no_show: 'No show',
+    },
+    appointmentsPage: {
+      title: 'Appointment Management',
+      description:
+        'Search, filter, and update appointment statuses in real time.',
+      refresh: 'Refresh',
+      summary: {
+        total: 'Total',
+        today: 'Today',
+        pending: 'Pending',
+        completed: 'Completed',
+      },
+      filters: {
+        searchPlaceholder: 'Search: name, phone, email',
+        allStatuses: 'All statuses',
+        allDates: 'All dates',
+        today: 'Today',
+        upcoming: 'Upcoming',
+        past: 'Past',
+      },
+      bulk: {
+        selected: 'Selected: {{count}}',
+        moveTo: 'Move to {{status}}',
+        apply: 'Apply in bulk',
+      },
+      table: {
+        selectAllAria: 'Select all rows',
+        selectRowAria: 'Select appointment {{name}}',
+        headers: {
+          patient: 'Patient',
+          contacts: 'Contacts',
+          service: 'Service',
+          doctor: 'Doctor',
+          dateTime: 'Date/time',
+          status: 'Status',
+          createdAt: 'Created',
+        },
+        loading: 'Loading appointments...',
+        empty: 'No appointments found for current filters.',
+      },
+      confirmations: {
+        bulkStatusChange:
+          'Change status for {{count}} appointment(s) to "{{status}}"?',
+        singleStatusChange: 'Update appointment status to "{{status}}"?',
+      },
+      errors: {
+        supabaseUnavailable:
+          'Supabase is not configured. Check your environment variables.',
+        loadFailed: 'Failed to load appointments. Please try again.',
+        bulkUpdateFailed: 'Failed to apply bulk status update.',
+        statusUpdateFailed: 'Failed to update appointment status.',
+      },
+    },
+    analyticsPage: {
+      title: 'Clinic Analytics',
+      description:
+        'Real-time operational analytics for appointments, contacts, and reviews.',
+      periods: {
+        '7': '7 days',
+        '30': '30 days',
+        '90': '90 days',
+      },
+      refresh: 'Refresh',
+      loading: 'Loading analytics...',
+      cards: {
+        appointments: 'Appointments',
+        completionRate: 'Completion rate',
+        revenue: 'Revenue',
+        avgTicket: 'Avg ticket',
+        patients: 'Patients',
+      },
+      timeline: {
+        title: 'Appointments by day',
+        appointmentsCount: '{{count}} appointments',
+      },
+      statuses: {
+        title: 'Statuses',
+        pending: 'Pending',
+        completed: 'Completed',
+        cancelledNoShow: 'Cancelled/no-show',
+        unreadContacts: 'Unread contacts',
+        pendingReviews: 'Pending reviews',
+      },
+      sources: {
+        title: 'Appointment sources',
+      },
+      topServices: {
+        title: 'Top services',
+      },
+      common: {
+        noData: 'No data',
+      },
+      errors: {
+        secureRefreshFailed:
+          'Failed to prepare secure refresh. Please try again.',
+        refreshFailed: 'Failed to refresh analytics',
+        loadFailed: 'Failed to load analytics',
+        loadFailedFallback: 'Failed to load analytics.',
+      },
+    },
+    patientManagement: {
+      title: 'Patient Management',
+      totalPatients: 'Total: {{total}} patients',
+      addPatientAlert: 'Add patient',
+      newPatient: 'New patient',
+      searchPlaceholder: 'Search by name, phone, email...',
+      searchButton: 'Search',
+      allStatuses: 'All statuses',
+      statuses: {
+        active: 'Active',
+        inactive: 'Inactive',
+      },
+      filters: 'Filters',
+      export: 'Export',
+      table: {
+        headers: {
+          fullName: 'Full name',
+          phone: 'Phone',
+          email: 'Email',
+          lastVisit: 'Last visit',
+          debt: 'Debt',
+          status: 'Status',
+          actions: 'Actions',
+        },
+        lastVisitNever: 'Never',
+        actions: {
+          view: 'View',
+          edit: 'Edit',
+          delete: 'Delete',
+        },
+      },
+      pagination: {
+        shown: 'Showing {{shown}} of {{total}}',
+      },
+    },
+    reviewStatuses: {
+      pending: 'Pending',
+      approved: 'Approved',
+      rejected: 'Rejected',
+    },
+    reviewsPage: {
+      title: 'Review Moderation',
+      description:
+        'Fast approve/reject workflow and featured block management.',
+      refresh: 'Refresh',
+      summary: {
+        total: 'Total',
+        pending: 'Pending',
+        approved: 'Approved',
+        featured: 'Featured',
+      },
+      filters: {
+        searchPlaceholder: 'Search: author, service, text',
+        allStatuses: 'All statuses',
+        allRatings: 'All ratings',
+        rating4plus: '4 and above',
+        rating5: 'Only 5',
+      },
+      bulk: {
+        selected: 'Selected: {{count}}',
+        selectAll: 'Select all',
+        unselectAll: 'Clear selection',
+        statusOption: 'Status: {{status}}',
+        feature: {
+          keep: 'Featured: keep',
+          enable: 'Featured: enable',
+          disable: 'Featured: disable',
+        },
+        apply: 'Apply in bulk',
+      },
+      loading: 'Loading reviews...',
+      empty: 'No reviews found.',
+      card: {
+        selectAria: 'Select review by {{name}}',
+        featured: 'featured',
+        wouldRecommend: 'Would recommend: {{value}}',
+        yes: 'yes',
+        no: 'no',
+      },
+      actions: {
+        approve: 'Approve',
+        reject: 'Reject',
+        toPending: 'To pending',
+        feature: 'Feature',
+        unfeature: 'Unfeature',
+      },
+      confirmations: {
+        bulkModeration: 'Apply bulk moderation to {{count}} reviews?',
+        singleUpdate: 'Confirm status/featured change for this review?',
+      },
+      errors: {
+        supabaseUnavailable:
+          'Supabase is not configured. Check your environment variables.',
+        loadFailed: 'Failed to load reviews.',
+        bulkUpdateFailed: 'Failed to apply bulk changes to reviews.',
+        updateFailed: 'Failed to update review.',
+      },
+    },
+    contactStatuses: {
+      new: 'New',
+      in_progress: 'In progress',
+      resolved: 'Resolved',
+      closed: 'Closed',
+    },
+    contactsPage: {
+      title: 'Customer Inquiries',
+      description:
+        'Contact queue with SLA state and quick operational handling.',
+      refresh: 'Refresh',
+      summary: {
+        total: 'Total inquiries',
+        unread: 'Unread',
+        inProgress: 'In progress',
+        resolved: 'Resolved',
+      },
+      filters: {
+        searchPlaceholder: 'Search: name, phone, email',
+        allStatuses: 'All statuses',
+        read: {
+          all: 'Read + unread',
+          unread: 'Unread only',
+          read: 'Read only',
+        },
+      },
+      bulk: {
+        selected: 'Selected: {{count}}',
+        selectAll: 'Select all',
+        unselectAll: 'Clear selection',
+        statusOption: 'Status: {{status}}',
+        markRead: 'Mark as read',
+        markUnread: 'Mark as unread',
+        apply: 'Apply in bulk',
+      },
+      loading: 'Loading inquiries...',
+      empty: 'No inquiries found for current filters.',
+      card: {
+        selectAria: 'Select inquiry {{name}}',
+        unreadBadge: 'unread',
+        markRead: 'Mark as read',
+        markUnread: 'Mark as unread',
+        showMessage: 'Show message',
+        adminNote: 'Admin note',
+      },
+      confirmations: {
+        bulkChange: 'Apply bulk update to {{count}} inquiries?',
+        singleUpdate: 'Confirm inquiry state change?',
+      },
+      errors: {
+        supabaseUnavailable:
+          'Supabase is not configured. Check your environment variables.',
+        loadFailed: 'Failed to load inquiries.',
+        bulkUpdateFailed: 'Failed to apply bulk changes for inquiries.',
+        updateFailed: 'Failed to update inquiry.',
+      },
+    },
+    serviceStatuses: {
+      active: 'active',
+      inactive: 'inactive',
+    },
+    servicesPage: {
+      title: 'Service Management',
+      description:
+        'Full CRUD, bulk operations, and precise pricing/catalog control.',
+      addService: 'Add service',
+      refresh: 'Refresh',
+      summary: {
+        total: 'Total services',
+        active: 'Active',
+        inactive: 'Inactive',
+        averagePrice: 'Average price',
+      },
+      filters: {
+        searchPlaceholder: 'Search: name or category',
+        allCategories: 'All categories',
+        allStatuses: 'All statuses',
+        activeOnly: 'Active only',
+        inactiveOnly: 'Inactive only',
+      },
+      bulk: {
+        selected: 'Selected: {{count}}',
+        showSelected: 'Show selected',
+        hideSelected: 'Hide selected',
+        apply: 'Apply in bulk',
+      },
+      table: {
+        selectAllAria: 'Select all rows',
+        selectRowAria: 'Select service {{name}}',
+        headers: {
+          service: 'Service',
+          category: 'Category',
+          price: 'Price',
+          duration: 'Duration',
+          status: 'Status',
+          updatedAt: 'Updated',
+          actions: 'Actions',
+        },
+        loading: 'Loading services...',
+        empty: 'No data for current filters.',
+        durationMinutes: '{{minutes}} min',
+      },
+      actions: {
+        editAria: 'Edit service',
+        hide: 'Hide',
+        show: 'Show',
+        deleteAria: 'Delete service',
+      },
+      modal: {
+        createTitle: 'New service',
+        editTitle: 'Edit service',
+        subtitle: 'Fill key catalog fields. Changes apply immediately.',
+      },
+      form: {
+        nameUk: 'Name (UA)',
+        nameEn: 'Name (EN)',
+        namePl: 'Name (PL)',
+        category: 'Category',
+        priceUah: 'Price (UAH)',
+        durationMinutes: 'Duration (min)',
+        imageUrl: 'Image URL',
+        descriptionUk: 'Description (UA)',
+        descriptionEn: 'Description (EN)',
+        descriptionPl: 'Description (PL)',
+        activeService: 'Service is active and available for booking',
+        create: 'Create service',
+        saveChanges: 'Save changes',
+      },
+      confirmations: {
+        bulkStatusChange:
+          'Change status for {{count}} service(s) to "{{status}}"?',
+        hideService: 'Hide service in public catalog?',
+        showService: 'Show service in catalog?',
+        deleteService: 'Delete service? This action cannot be undone.',
+      },
+      errors: {
+        supabaseUnavailable:
+          'Supabase is not configured. Check your environment variables.',
+        loadFailed: 'Failed to load services.',
+        bulkUpdateFailed: 'Failed to apply bulk service update.',
+        statusUpdateFailed: 'Failed to update service status.',
+        requiredFields: "Fields 'Name (UA)' and 'Category' are required.",
+        invalidPrice: 'Price must be a non-negative number.',
+        invalidDuration: 'Duration must be a positive number of minutes.',
+        saveFailed: 'Failed to save service changes.',
+        deleteFailed: 'Failed to delete service.',
+      },
+    },
+    doctorStatuses: {
+      active: 'active',
+      inactive: 'inactive',
+    },
+    doctorsPage: {
+      title: 'Doctor Management',
+      description:
+        'Full CRUD, bulk actions, activity control, and doctor profiles.',
+      addDoctor: 'Add doctor',
+      refresh: 'Refresh',
+      summary: {
+        total: 'Total doctors',
+        active: 'Active',
+        inactive: 'Inactive',
+        averageRating: 'Average rating',
+      },
+      filters: {
+        searchPlaceholder: 'Search: name or specialization',
+        all: 'All',
+        activeOnly: 'Active only',
+        inactiveOnly: 'Inactive only',
+      },
+      bulk: {
+        selected: 'Selected: {{count}}',
+        activateSelected: 'Activate selected',
+        deactivateSelected: 'Deactivate selected',
+        apply: 'Apply in bulk',
+      },
+      table: {
+        selectAllAria: 'Select all rows',
+        selectRowAria: 'Select doctor {{name}}',
+        headers: {
+          doctor: 'Doctor',
+          specialization: 'Specialization',
+          experience: 'Experience',
+          rating: 'Rating',
+          status: 'Status',
+          updatedAt: 'Updated',
+          actions: 'Actions',
+        },
+        loading: 'Loading doctors...',
+        empty: 'No data for current filters.',
+        experienceYears: '{{years}} y.',
+      },
+      actions: {
+        editAria: 'Edit doctor',
+        activate: 'Activate',
+        deactivate: 'Deactivate',
+        deleteAria: 'Delete doctor',
+      },
+      modal: {
+        createTitle: 'New doctor',
+        editTitle: 'Edit doctor',
+        subtitle: 'Changes are applied immediately after saving.',
+      },
+      form: {
+        firstName: 'First name',
+        lastName: 'Last name',
+        patronymic: 'Patronymic',
+        specialization: 'Specialization',
+        experienceYears: 'Experience (years)',
+        photoUrl: 'Photo URL',
+        education: 'Education',
+        bio: 'Biography',
+        activeProfile: 'Active doctor profile',
+        create: 'Create doctor',
+        saveChanges: 'Save changes',
+      },
+      confirmations: {
+        bulkStatusChange:
+          'Change activity for {{count}} doctor(s) to "{{status}}"?',
+        activateDoctor: 'Activate doctor profile?',
+        deactivateDoctor: 'Deactivate doctor profile?',
+        deleteDoctor: 'Delete doctor? This action cannot be undone.',
+      },
+      errors: {
+        supabaseUnavailable:
+          'Supabase is not configured. Check your environment variables.',
+        loadFailed: 'Failed to load doctors.',
+        bulkUpdateFailed: 'Failed to apply bulk status update.',
+        statusUpdateFailed: 'Failed to update doctor status.',
+        requiredFields:
+          "Fields 'First name', 'Last name' and 'Specialization' are required.",
+        invalidExperience: 'Experience must be a non-negative number.',
+        saveFailed: 'Failed to save doctor changes.',
+        deleteFailed: 'Failed to delete doctor.',
+      },
+    },
+    settingsPage: {
+      title: 'Admin panel settings',
+      description:
+        'Access profile, local operational parameters, and technical diagnostics.',
+      loading: 'Loading settings...',
+      errors: {
+        supabaseUnavailable:
+          'Supabase is not configured. Check your environment variables.',
+        loadSettingsFailed: 'Failed to load settings.',
+      },
+      profile: {
+        title: 'Current account',
+        email: 'Email',
+        role: 'Role',
+        roles: {
+          admin: 'Administrator',
+          superadmin: 'Super administrator',
+        },
+        displayName: 'Display name',
+        lastSignIn: 'Last sign in',
+        membershipCreated: 'Membership created',
+      },
+      security: {
+        title: 'Security checks',
+        membershipLabel: 'Membership in admin_users',
+        sessionLabel: 'Active admin session',
+        supabaseLabel: 'Supabase client',
+        missingValue: 'missing',
+        authenticatedValue: 'authenticated',
+        connectedValue: 'connected',
+        notConfiguredValue: 'not configured',
+      },
+      preferences: {
+        title: 'Operational parameters',
+        autoRefresh: 'Auto-refresh lists after actions',
+        compactTables: 'Compact table mode',
+        confirmSensitive: 'Confirm sensitive actions',
+        defaultAnalyticsPeriod: 'Default analytics period',
+        periodOptions: {
+          '7': '7 days',
+          '30': '30 days',
+          '90': '90 days',
+        },
+      },
+      audit: {
+        title: 'Audit logs and rollback',
+        tableOptions: {
+          all: 'All tables',
+          doctors: 'Doctors',
+          services: 'Services',
+          appointments: 'Appointments',
+          reviews: 'Reviews',
+          contact_submissions: 'Contact submissions',
+        },
+        actionOptions: {
+          all: 'All actions',
+          INSERT: 'Create',
+          UPDATE: 'Update',
+          DELETE: 'Delete',
+        },
+        periodOptions: {
+          all: 'All time',
+          '24h': 'Last 24 hours',
+          '7d': 'Last 7 days',
+          '30d': 'Last 30 days',
+        },
+        actorOptions: {
+          all: 'All actors',
+          mine: 'Only my actions',
+          unassigned: 'No author (system)',
+        },
+        refreshLogs: 'Refresh logs',
+        loading: 'Loading audit logs...',
+        empty: 'No logs found.',
+        tableHeaders: {
+          when: 'When',
+          table: 'Table',
+          action: 'Action',
+          changedBy: 'Changed by',
+          record: 'Record',
+          summary: 'Summary',
+          actions: 'Actions',
+        },
+        systemActor: 'system',
+        actions: {
+          diff: 'Diff',
+          rollback: 'Rollback',
+        },
+        summary: {
+          created: 'Record created ({{count}} fields)',
+          deleted: 'Record deleted ({{count}} fields)',
+          changed: 'Fields changed: {{count}}',
+        },
+        nullValue: 'null',
+        errors: {
+          supabaseUnavailable: 'Supabase is not configured.',
+          loadFailed:
+            'Failed to load audit logs. Verify that the audit migration is applied.',
+        },
+        diffModal: {
+          title: 'Audit log diff',
+          subtitle:
+            'Comparison of before_data and after_data for the selected record.',
+          meta: {
+            table: 'Table',
+            record: 'Record',
+            action: 'Action',
+            when: 'When',
+          },
+          noChanges: 'No differences detected.',
+          before: 'BEFORE',
+          after: 'AFTER',
+        },
+      },
+      rollback: {
+        errors: {
+          reasonTooShort: 'Provide a rollback reason (minimum 5 characters).',
+          restoreFailed:
+            'Failed to perform restore. Verify permissions, reason/comment, and migration state.',
+        },
+        confirmPrompt:
+          'Confirm rollback {{action}} in {{table}} ({{recordId}}).',
+        success: 'Rollback completed: {{table}} / {{recordId}} ({{action}}).',
+        modal: {
+          title: 'Confirm rollback',
+          subtitle:
+            'Safety guard: review diff, specify a reason, and only then confirm rollback.',
+          targetPrefix: 'Rollback will be applied to',
+          targetInfix: 'for action',
+          noPreviewChanges: 'No changed fields for preview.',
+          reasonLabel: 'Rollback reason (required, minimum 5 characters)',
+          commentLabel: 'Comment (optional)',
+          cancel: 'Cancel',
+          confirm: 'Confirm rollback',
+        },
+      },
+      actions: {
+        exportDiagnostics: 'Export diagnostics',
+        refreshProfile: 'Refresh profile',
+        logout: 'Log out of admin',
+      },
+      diagnostics: {
+        appName: 'Dental Story Admin',
+        fileName: 'admin-diagnostics.json',
+      },
+    },
+  },
+  auth: {
+    login: {
+      subtitle: 'Sign in to your personal account',
+      emailLabel: 'Email',
+      emailPlaceholder: 'your@email.com',
+      passwordLabel: 'Password',
+      passwordPlaceholder: 'Enter password',
+      showPassword: 'Show password',
+      hidePassword: 'Hide password',
+      rememberMe: 'Remember me',
+      forgotPassword: 'Forgot password?',
+      passwordResetSuccess:
+        'Password updated successfully. Sign in with your new password.',
+      submit: 'Sign In',
+      noAccount: "Don't have an account yet?",
+      signUpLink: 'Sign Up',
+      benefits: {
+        title: 'Personal account benefits:',
+        history: 'Visit and treatment history',
+        booking: 'Online appointment booking',
+        recommendations: 'Personalized recommendations',
+      },
+      errors: {
+        unavailable: 'Authorization is temporarily unavailable',
+        invalidCredentials: 'Invalid email or password',
+        emailNotConfirmed: 'Please confirm your email before signing in.',
+        generic: 'Sign-in error. Please try again later.',
+      },
+    },
+    signUp: {
+      subtitle: 'Create an account',
+      firstName: 'First Name',
+      firstNamePlaceholder: 'John',
+      lastName: 'Last Name',
+      lastNamePlaceholder: 'Smith',
+      phone: 'Phone',
+      phonePlaceholder: '67 123 45 67',
+      emailLabel: 'Email',
+      emailPlaceholder: 'your@email.com',
+      passwordLabel: 'Password',
+      passwordPlaceholder: 'Minimum 8 characters',
+      confirmPasswordLabel: 'Confirm Password',
+      confirmPasswordPlaceholder: 'Repeat password',
+      agreePrefix: 'I agree to the',
+      termsLink: 'terms of service',
+      agreeAnd: 'and',
+      privacyLink: 'privacy policy',
+      submit: 'Sign Up',
+      hasAccount: 'Already have an account?',
+      loginLink: 'Sign In',
+      passwordStrength: {
+        weak: 'Weak',
+        medium: 'Medium',
+        good: 'Good',
+        strong: 'Strong',
+      },
+      errors: {
+        passwordsMismatch: 'Passwords do not match',
+        passwordTooShort: 'Password must be at least 8 characters',
+        termsRequired: 'You must agree to the terms of service',
+        unavailable: 'Registration is temporarily unavailable',
+        alreadyRegistered: 'This email is already registered',
+        generic: 'Registration error. Please try again later.',
+      },
+    },
+    signUpSuccess: {
+      title: 'Registration Successful!',
+      checkEmail: 'Check your email',
+      description:
+        'We have sent an email with a link to confirm your account. Follow the link in the email to activate your account.',
+      noEmail: {
+        title: "Didn't receive the email?",
+        checkSpam: '• Check your Spam folder',
+        checkEmail: '• Make sure the email address is correct',
+        wait: '• Wait a few minutes',
+      },
+      goToLogin: 'Go to Sign In',
+      goHome: 'Go Home',
+    },
+    forgotPassword: {
+      subtitle: 'Enter your email and we will send a password reset link.',
+      emailLabel: 'Email',
+      emailPlaceholder: 'your@email.com',
+      submit: 'Send reset link',
+      successTitle: 'Email sent',
+      successDescription:
+        'If an account exists for this email, you will receive reset instructions shortly.',
+      backToLogin: 'Back to Sign In',
+      errors: {
+        unavailable: 'Password recovery is temporarily unavailable',
+        generic: 'Unable to send reset email. Please try again later.',
+      },
+    },
+    resetPassword: {
+      subtitle: 'Set a new password for your account.',
+      checkingSession: 'Validating recovery link...',
+      passwordLabel: 'New password',
+      passwordPlaceholder: 'Minimum 8 characters',
+      confirmPasswordLabel: 'Confirm new password',
+      confirmPasswordPlaceholder: 'Repeat new password',
+      showPassword: 'Show password',
+      hidePassword: 'Hide password',
+      submit: 'Update password',
+      backToLogin: 'Back to Sign In',
+      errors: {
+        unavailable: 'Password recovery is temporarily unavailable',
+        noSession: 'This link is invalid or expired. Request a new reset link.',
+        passwordsMismatch: 'Passwords do not match',
+        passwordTooShort: 'Password must be at least 8 characters',
+        generic: 'Unable to update password. Please try again.',
+      },
+    },
+    callback: {
+      loading: 'Finishing sign-in, please wait...',
+      goToLogin: 'Go to Sign In',
+      errors: {
+        unavailable: 'Authorization is temporarily unavailable',
+        sessionMissing: 'Could not activate session. Please sign in again.',
+        generic: 'Could not complete authorization. Please try again.',
+      },
+    },
+  },
+  cabinet: {
+    logout: 'Log Out',
+    welcome: 'Welcome, {{name}}!',
+    subtitle: 'Your personal Dental Story patient account',
+    defaultPatient: 'Patient',
+    bookAppointment: 'Book Appointment',
+    chooseTime: 'Choose a convenient time',
+    myProfile: 'My Profile',
+    edit: 'Edit',
+    notSpecified: 'Not specified',
+    myAppointments: 'My Appointments',
+    treatmentHistory: 'Treatment History',
+    myReviews: 'My Reviews',
+    recentAppointments: 'Recent Appointments',
+    allAppointments: 'All Appointments',
+    noAppointments: 'No appointments yet',
+    bookWithSpecialists: 'Book an appointment with our specialists',
+    book: 'Book',
+    consultation: 'Consultation',
+    currency: 'UAH',
+    status: {
+      pending: 'Pending',
+      confirmed: 'Confirmed',
+      completed: 'Completed',
+      cancelled: 'Cancelled',
+    },
+    appointments: {
+      title: 'My Appointments',
+      newAppointment: 'New Appointment',
+      cancelConfirm: 'Are you sure you want to cancel this appointment?',
+      cancel: 'Cancel',
+      consultation: 'Consultation',
+      minutes: 'min',
+      currency: 'UAH',
+      notes: 'Notes',
+      book: 'Book',
+      filters: {
+        all: 'All',
+        upcoming: 'Upcoming',
+        past: 'Past',
+      },
+      status: {
+        pending: 'Pending Confirmation',
+        confirmed: 'Confirmed',
+        completed: 'Completed',
+        cancelled: 'Cancelled',
+      },
+      empty: {
+        all: 'No appointments yet',
+        upcoming: 'No upcoming appointments',
+        past: 'No past appointments',
+        cta: 'Book an appointment with our specialists',
+      },
+    },
+    profile: {
+      title: 'Edit Profile',
+      patientLabel: 'Dental Story Patient',
+      lastName: 'Last Name',
+      lastNamePlaceholder: 'Smith',
+      firstName: 'First Name',
+      firstNamePlaceholder: 'John',
+      patronymic: 'Patronymic',
+      patronymicPlaceholder: '',
+      phone: 'Phone',
+      phonePlaceholder: '+380 67 123 45 67',
+      dateOfBirth: 'Date of Birth',
+      save: 'Save Changes',
+      saveSuccess: 'Profile updated successfully!',
+      errors: {
+        saveFailed: 'Failed to save. Please try again later.',
+      },
+    },
+  },
+  patientDashboard: {
+    notFound: 'Patient not found',
+    subtitle: 'Personal account',
+    downloadData: 'Download data',
+    common: {
+      empty: '—',
+    },
+    cards: {
+      nextVisit: 'Next visit',
+      activePlans: 'Active plans',
+      amountDue: 'Amount due',
+      newMessages: 'New messages',
+    },
+    tabs: {
+      appointments: 'Appointments',
+      treatments: 'Treatments',
+      payments: 'Payments',
+      messages: 'Messages',
+    },
+    sections: {
+      appointments: {
+        title: 'Upcoming appointments',
+        description: 'Your upcoming appointments will appear here',
+      },
+      treatments: {
+        title: 'Treatment plans',
+        description: 'Your treatment plans will appear here',
+      },
+      payments: {
+        title: 'Payment history',
+        description: 'Your payment history will appear here',
+      },
+      messages: {
+        title: 'Messages',
+        description: 'Your messages with the clinic will appear here',
+      },
+    },
+  },
+  priceCalculator: {
+    title: 'Cost Calculator',
+    subtitle: 'Select the services you need for an approximate estimate',
+    currency: 'UAH',
+    estimatedCost: 'Estimated Cost',
+    exactCostDisclaimer: '*Exact cost after consultation',
+    getExactCalculation: 'Get an Exact Quote',
+    nameLabel: 'Your Name',
+    namePlaceholder: 'John Smith',
+    phoneLabel: 'Phone',
+    phonePlaceholder: '+380 XX XXX XX XX',
+    cancel: 'Cancel',
+    send: 'Send',
+    sending: 'Sending...',
+    fillAllFields: 'Please fill in all fields',
+    successMessage: 'Thank you! We will contact you shortly',
+    errorMessage: 'Something went wrong. Please try again.',
+    selectServicesHint: 'Select services to calculate the cost',
+    decreaseQuantity: 'Decrease quantity',
+    increaseQuantity: 'Increase quantity',
+    categories: {
+      therapy: 'Therapy',
+      surgery: 'Surgery',
+      prosthetics: 'Prosthetics',
+      implantation: 'Implantation',
+      orthodontics: 'Orthodontics',
+      aesthetics: 'Aesthetics',
+    },
+    services: {
+      consultation: 'Dentist Consultation',
+      fillingSimple: 'Filling (simple)',
+      fillingComposite: 'Filling (composite)',
+      canalTreatment: 'Root Canal Treatment (1 canal)',
+      extractionSimple: 'Tooth Extraction (simple)',
+      extractionComplex: 'Tooth Extraction (complex)',
+      wisdomTooth: 'Wisdom Tooth Extraction',
+      crownMetalCeramic: 'Crown (metal-ceramic)',
+      crownZirconia: 'Crown (zirconia)',
+      veneer: 'Veneer (1 tooth)',
+      implant: 'Implant (with placement)',
+      boneGrafting: 'Bone Grafting',
+      bracesMetal: 'Braces (metal)',
+      bracesCeramic: 'Braces (ceramic)',
+      aligners: 'Aligners (clear trays)',
+      whitening: 'Teeth Whitening',
+      hygiene: 'Professional Cleaning',
+    },
+  },
+  callback: {
+    title: 'Quick Callback',
+    nameLabel: 'Your Name',
+    namePlaceholder: 'Your name',
+    phoneLabel: 'Phone Number',
+    phonePlaceholder: 'Phone number',
+    timeLabel: 'Preferred time for a call',
+    timeAny: 'Anytime',
+    timeMorning: 'Morning',
+    timeAfternoon: 'Afternoon',
+    timeEvening: 'Evening',
+    serviceLabel: 'Service (optional)',
+    servicePlaceholder: 'Service (optional)',
+    consentText: 'I agree to the processing of personal data',
+    submitButton: 'Request Callback',
+    submitError: 'Failed to submit request',
+    successMessage: 'Thank you! We will call you shortly.',
+  },
+  newsletter: {
+    formAriaLabel: 'Newsletter subscription form',
+    emailLabel: 'Email address',
+    emailPlaceholder: 'Your email',
+    subscribe: 'Subscribe',
+    consentText: 'I agree to receive news and promotions via email',
+    subscribeError: 'Failed to subscribe',
+    successMessage: 'Thank you! You are subscribed.',
+  },
+  feedback: {
+    question: 'Was this form helpful?',
+    ariaYes: 'Yes',
+    ariaNo: 'No',
+    thankYou: 'Thanks for your feedback!',
+    improveLabel: 'What can we improve?',
+    improvePlaceholder:
+      'Tell us how we can improve your interaction with this form',
+    submit: 'Send feedback',
+    skip: 'Skip',
+  },
+  reminderSettings: {
+    title: 'Reminder settings',
+    unknownTime: 'Unknown time',
+    empty: {
+      title: 'No active reminders',
+      description:
+        "Once you book an appointment, you'll receive reminders about it.",
+    },
+    messages: {
+      deleteSuccess: 'Reminder deleted successfully',
+      deleteError: 'Failed to delete reminder',
+      updateSuccess: 'Reminder settings updated',
+      updateError: 'Failed to update reminder settings',
+    },
+    notifications: {
+      dayBefore:
+        'Reminder: you have an appointment tomorrow at {{time}}. Service: {{service}}.',
+      hourBefore:
+        'Reminder: your appointment is in one hour at {{time}}. Get ready for your visit!',
+      downloadPrompt: 'Download reminder to calendar?',
+    },
+    calendar: {
+      title: 'Visit: {{service}}',
+      description: "Booking #{{id}}. Don't forget to bring your documents!",
+      location: 'Dental Studio',
+    },
+    appointmentShort: 'Booking #{{id}}...',
+    reminderTypes: {
+      dayBefore: 'Day before',
+      hourBefore: 'Hour before',
+      other: 'Other',
+    },
+    status: {
+      sent: 'Sent',
+      pending: 'Pending',
+    },
+    actions: {
+      calendar: 'Calendar',
+    },
+    receiveLabel: 'Receive reminders:',
+    preference: {
+      email: 'Email',
+      sms: 'SMS',
+      both: 'Email + SMS',
+      none: 'Off',
+    },
+  },
+  chat: {
+    openChat: 'Open Chat',
+    closeChat: 'Close Chat',
+    onlineChat: 'Online Chat',
+    onlineConsultant: 'Online Consultant',
+    connected: 'Connected',
+    connecting: 'Connecting...',
+    subtitle: 'Online chat with the clinic',
+    namePrompt: 'Welcome! How should we address you?',
+    namePlaceholder: 'Your name',
+    startChat: 'Start chat',
+    authRequired: 'For secure chat access, please sign in to your account.',
+    login: 'Sign in',
+    dialogAriaLabel: 'Dental Story Online Chat',
+    welcomeMessage: 'Welcome to Dental Story! How can we help you?',
+    quickRepliesLabel: 'Quick Replies',
+    inputPlaceholder: 'Type a message...',
+    sendMessage: 'Send',
+    quickReplies: {
+      booking: 'Book an Appointment',
+      prices: 'Service Prices',
+      hours: 'Working Hours',
+      contact: 'Contacts',
+    },
+    responses: {
+      booking:
+        'To book an appointment, go to the booking page or call us at +380 44 123 45 67. We are open every day from 9:00 to 20:00.',
+      prices:
+        'You can check service prices on the "Services" page. Free consultation for new patients!',
+      hours:
+        'Our hours:\n• Mon-Fri: 9:00 - 20:00\n• Sat: 10:00 - 18:00\n• Sun: Closed',
+      contact:
+        'Our contacts:\n• Phone: +380 44 123 45 67\n• Email: info@dentalstory.ua\n• Address: 1 Khreshchatyk St., Kyiv',
+      default:
+        'Thank you for your message! Our manager will contact you shortly. For quick contact, call: +380 44 123 45 67',
+    },
+  },
+  pricing: {
+    title: 'Transparent Pricing',
+    subtitle:
+      'No hidden fees. All prices are fixed and agreed upon before treatment begins',
+    basicExam: {
+      title: 'Basic Examination',
+      price: 'Free',
+      features: [
+        'Doctor Consultation',
+        'Oral Cavity Examination',
+        'Treatment Plan',
+      ],
+    },
+    professionalHygiene: {
+      title: 'Professional Hygiene',
+      price: 'from 800 UAH',
+      popular: 'Popular',
+      features: [
+        'Ultrasonic Cleaning',
+        'Teeth Polishing',
+        'Fluoridation',
+        'Care Recommendations',
+      ],
+    },
+    comprehensiveDiagnostics: {
+      title: 'Comprehensive Diagnostics',
+      price: 'from 1200 UAH',
+      features: [
+        '3D Jaw Scan',
+        'Detailed Consultation',
+        'Treatment Plan',
+        '10% Discount on Treatment',
+      ],
+    },
+    disclaimer:
+      '*Final cost depends on case complexity and chosen treatment method',
+    viewAllPrices: 'View All Prices',
+  },
+  features: {
+    comfortableTreatment: {
+      title: 'Comfortable Treatment',
+      description: 'Modern anesthesia methods and comfortable atmosphere',
+    },
+    safetySterility: {
+      title: 'Safety & Sterility',
+      description: 'Adhering to the highest hygiene and safety standards',
+    },
+    experiencedDoctors: {
+      title: 'Experienced Doctors',
+      description: 'Team of qualified dentists with years of experience',
+    },
+    modernEquipment: {
+      title: 'Modern Equipment',
+      description: 'Latest technologies for precise diagnosis and treatment',
+    },
+  },
+  stats: {
+    patientsServed: 'Patients Served',
+    patients: 'Patients',
+    satisfactionRate: 'Satisfaction Rate',
+    satisfiedPatients: 'Satisfied',
+    yearsExperience: 'Years Experience',
+    freeConsultation: 'Free consultation for new patients',
+    freeConsultationShort: 'Free Consultation',
+    forNewPatients: 'For new patients',
+    workingNow: 'Open Now',
+    qualityGuarantee: 'Quality Guarantee',
+  },
+  hero: {
+    badge: 'Modern Dentistry',
+    bookConsultation: 'Book Consultation',
+    ourServices: 'Our Services',
+  },
+  language: {
+    select: 'Select language',
+    uk: 'Українська',
+    en: 'English',
+    pl: 'Polski',
+  },
+  ai: {
+    assistant: 'AI Assistant',
+    openAssistant: 'Open AI assistant',
+    close: 'Close',
+    online: 'Online',
+    welcome: "Hello! I'm your virtual assistant",
+    welcomeDescription:
+      'I can help with questions about services, prices, booking, or symptom assessment',
+    inputPlaceholder: 'Type a message...',
+    callUs: 'Or call us',
+    quickActions: {
+      services: 'Services & Prices',
+      symptoms: 'Symptom Check',
+      booking: 'Book Appointment',
+      hours: 'Working Hours',
+    },
+    quickActionPrompts: {
+      services: 'What services do you offer and what are the prices?',
+      symptoms: 'I have a toothache. What could it be?',
+      booking: 'How can I book an appointment?',
+      hours: 'What are your working hours?',
+    },
+    recommendations: {
+      triggerButton: 'AI Service Finder',
+      modalTitle: 'Smart Service Finder',
+      step1: {
+        title: 'What concerns you?',
+      },
+      quickConcerns: [
+        {
+          id: 'checkup',
+          label: 'Routine checkup',
+        },
+        {
+          id: 'pain',
+          label: 'Toothache',
+        },
+        {
+          id: 'whitening',
+          label: 'Whitening',
+        },
+        {
+          id: 'cleaning',
+          label: 'Teeth cleaning',
+        },
+        {
+          id: 'braces',
+          label: 'Teeth alignment',
+        },
+        {
+          id: 'implant',
+          label: 'Missing tooth',
+        },
+      ],
+      step2: {
+        title: 'When did you last visit a dentist?',
+      },
+      lastVisitOptions: [
+        {
+          value: 'less6months',
+          label: 'Less than 6 months ago',
+        },
+        {
+          value: '6to12months',
+          label: '6-12 months ago',
+        },
+        {
+          value: 'more1year',
+          label: 'More than a year ago',
+        },
+        {
+          value: 'never',
+          label: "Don't remember",
+        },
+      ],
+      step3: {
+        title: 'Anything else?',
+        placeholder: 'Describe your situation in detail (optional)...',
+      },
+      actions: {
+        analyzing: 'Analyzing...',
+        getRecommendations: 'Get recommendations',
+        startOver: 'Start over',
+      },
+      urgency: {
+        routine: 'Routine',
+        soon: 'Soon',
+        urgent: 'Urgent',
+      },
+      results: {
+        alsoRecommended: 'Also recommended',
+        prevention: 'Prevention',
+        tips: 'Tips',
+      },
+      loadError: 'Failed to get recommendations. Please try again.',
+    },
+    symptomChecker: {
+      title: 'Symptom Checker',
+      description: 'Describe your symptoms for a preliminary assessment',
+      disclaimer: 'This is not a medical diagnosis',
+      selectSymptoms: 'Select symptoms',
+      painLevel: 'Pain level',
+      scale: {
+        mild: 'Mild',
+        moderate: 'Moderate',
+        severe: 'Severe',
+      },
+      duration: 'Duration',
+      durations: {
+        today: 'Today',
+        days: 'A few days',
+        week: 'A week',
+        weeks: 'Several weeks',
+        months: 'A month or more',
+      },
+      analyze: 'Analyze',
+      result: 'Analysis result',
+      urgency: 'Urgency',
+      urgencyLevels: {
+        low: 'Low urgency',
+        medium: 'Medium urgency',
+        high: 'High urgency',
+        emergency: 'URGENT',
+      },
+      assessment: {
+        immediate:
+          'Based on your symptoms, we recommend seeing a doctor immediately!',
+        soon: 'We recommend scheduling a dental visit soon.',
+      },
+      actions: {
+        callNow: 'Call now',
+        bookOnline: 'Book online',
+      },
+      possibleCauses: 'Possible causes',
+      recommendation: 'Recommendation',
+      cta: {
+        title: 'Ready to book an appointment?',
+        subtitle: 'Free consultation for new patients',
+      },
+      disclaimerDetailed:
+        '* This is a preliminary assessment based on described symptoms. Only a doctor can provide an accurate diagnosis after examination.',
+      symptoms: {
+        toothache: 'Toothache',
+        sensitivity: 'Sensitivity to hot/cold',
+        swelling: 'Gum or face swelling',
+        bleeding: 'Bleeding gums',
+        badBreath: 'Bad breath',
+        looseTooth: 'Loose tooth',
+        discoloration: 'Tooth discoloration',
+        chewingPain: 'Pain when chewing',
+        jawPain: 'Jaw pain',
+        abscess: 'Gum abscess',
+      },
+      analysis: {
+        toothache: {
+          conditions: ['Tooth decay', 'Pulpitis', 'Periodontitis'],
+          recommendation:
+            'We recommend scheduling an examination within 1-3 days',
+        },
+        sensitivity: {
+          conditions: ['Exposed tooth neck', 'Enamel crack', 'Early cavity'],
+          recommendation: 'Schedule a diagnostic appointment soon',
+        },
+        swelling: {
+          conditions: ['Abscess', 'Periodontitis', 'Pericoronitis'],
+          recommendation: 'URGENT consultation needed! Call immediately',
+        },
+        bleeding: {
+          conditions: ['Gingivitis', 'Periodontitis'],
+          recommendation:
+            'We recommend professional cleaning and periodontal examination',
+        },
+        badBreath: {
+          conditions: ['Tartar buildup', 'Tooth decay', 'Gum disease'],
+          recommendation: 'We recommend professional oral hygiene',
+        },
+        looseTooth: {
+          conditions: ['Periodontitis', 'Injury'],
+          recommendation: 'Consultation needed within 24 hours',
+        },
+        discoloration: {
+          conditions: ['Pulp necrosis', 'Injury', 'Internal staining'],
+          recommendation: 'Schedule a consultation to determine the cause',
+        },
+        chewingPain: {
+          conditions: ['Tooth decay', 'Cracked tooth', 'Periodontitis'],
+          recommendation: 'We recommend an examination within a few days',
+        },
+        jawPain: {
+          conditions: ['TMJ dysfunction', 'Bruxism', 'Arthritis'],
+          recommendation: 'We recommend a specialist consultation',
+        },
+        abscess: {
+          conditions: ['Periapical abscess', 'Periodontal abscess'],
+          recommendation: 'URGENT! Call immediately for emergency appointment',
+        },
+      },
+    },
+  },
+} as const
+
+export default en

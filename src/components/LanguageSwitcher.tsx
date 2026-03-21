@@ -3,18 +3,18 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Globe, ChevronDown, Check } from 'lucide-react'
+import uk from '@/locales/uk'
+import { setLanguage } from '@/i18n/config'
 
 interface Language {
-  code: string
-  name: string
-  nativeName: string
+  code: 'uk' | 'en' | 'pl'
   flag: string
 }
 
 const languages: Language[] = [
-  { code: 'uk', name: 'Ukrainian', nativeName: 'Українська', flag: '🇺🇦' },
-  { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧' },
-  { code: 'pl', name: 'Polish', nativeName: 'Polski', flag: '🇵🇱' },
+  { code: 'uk', flag: '🇺🇦' },
+  { code: 'en', flag: '🇬🇧' },
+  { code: 'pl', flag: '🇵🇱' },
 ]
 
 interface LanguageSwitcherProps {
@@ -30,7 +30,7 @@ export default function LanguageSwitcher({
   showNativeName = true,
   className = '',
 }: LanguageSwitcherProps) {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -40,22 +40,53 @@ export default function LanguageSwitcher({
     setIsMounted(true)
   }, [])
 
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0]
+  const currentLanguage =
+    languages.find(lang => lang.code === i18n.language) || languages[0]
 
-  const handleLanguageChange = useCallback((langCode: string) => {
-    i18n.changeLanguage(langCode)
+  const handleLanguageChange = useCallback((langCode: Language['code']) => {
+    void setLanguage(langCode)
     setIsOpen(false)
-    
+
     // Update HTML lang attribute
     if (typeof document !== 'undefined') {
       document.documentElement.lang = langCode
     }
-  }, [i18n])
+  }, [])
+
+  const getLanguageMeta = (code: Language['code']) => {
+    if (!isMounted) {
+      return {
+        name: uk.languageSwitcher.languages[code].name,
+        nativeName: uk.languageSwitcher.languages[code].nativeName,
+      }
+    }
+
+    return {
+      name: t(`languageSwitcher.languages.${code}.name`),
+      nativeName: t(`languageSwitcher.languages.${code}.nativeName`),
+    }
+  }
+
+  const getSwitchToLabel = (code: Language['code']) => {
+    if (!isMounted) {
+      return uk.languageSwitcher.aria.switchTo.replace(
+        '{{language}}',
+        getLanguageMeta(code).name
+      )
+    }
+
+    return t('languageSwitcher.aria.switchTo', {
+      language: getLanguageMeta(code).name,
+    })
+  }
 
   // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false)
       }
     }
@@ -102,7 +133,7 @@ export default function LanguageSwitcher({
                   ? 'text-dental-primary-600 bg-dental-primary-50'
                   : 'text-dental-muted hover:text-dental-primary-600 hover:bg-dental-secondary-50'
               }`}
-              aria-label={`Switch to ${lang.name}`}
+              aria-label={getSwitchToLabel(lang.code)}
               aria-current={lang.code === displayLang.code ? 'true' : undefined}
             >
               {showFlag && <span className="mr-1">{lang.flag}</span>}
@@ -122,54 +153,83 @@ export default function LanguageSwitcher({
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`flex items-center gap-2 px-3 py-2 text-sm font-medium text-dental-muted hover:text-dental-primary-600 transition-colors border border-transparent ${
-          isOpen 
-            ? 'rounded-t-lg border-dental-primary-400 border-b-transparent bg-white' 
+          isOpen
+            ? 'rounded-t-lg border-dental-primary-400 border-b-transparent bg-white'
             : 'rounded-lg hover:bg-dental-secondary-50'
         }`}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
-        aria-label="Select language"
+        aria-label={
+          isMounted
+            ? t('languageSwitcher.aria.select')
+            : uk.languageSwitcher.aria.select
+        }
       >
         <Globe className="w-4 h-4" />
         {showFlag && <span>{displayLang.flag}</span>}
         <span className="hidden sm:inline">
-          {showNativeName ? displayLang.nativeName : displayLang.code.toUpperCase()}
+          {showNativeName
+            ? getLanguageMeta(displayLang.code).nativeName
+            : displayLang.code.toUpperCase()}
         </span>
-        <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown
+          className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+        />
       </button>
 
       {isOpen && (
         <div
           className="absolute right-0 top-full w-48 bg-white rounded-b-lg shadow-lg border border-dental-primary-400 border-t-0 py-1 z-50"
           role="listbox"
-          aria-label="Available languages"
+          aria-label={
+            isMounted
+              ? t('languageSwitcher.aria.available')
+              : uk.languageSwitcher.aria.available
+          }
         >
-          {languages.map(lang => (
-            <button
-              key={lang.code}
-              onClick={() => handleLanguageChange(lang.code)}
-              className={`w-full flex items-center justify-between px-4 py-2.5 text-left transition-colors ${
-                lang.code === displayLang.code 
-                  ? 'bg-dental-primary-600 text-white' 
-                  : 'hover:bg-dental-primary-50 hover:text-dental-primary-700'
-              }`}
-              role="option"
-              aria-selected={lang.code === displayLang.code}
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-lg">{lang.flag}</span>
-                <div>
-                  <div className={`font-medium ${lang.code === displayLang.code ? 'text-white' : 'text-dental-dark'}`}>
-                    {lang.nativeName}
+          {languages.map(lang => {
+            const meta = getLanguageMeta(lang.code)
+            return (
+              <button
+                key={lang.code}
+                onClick={() => handleLanguageChange(lang.code)}
+                className={`w-full flex items-center justify-between px-4 py-2.5 text-left transition-colors ${
+                  lang.code === displayLang.code
+                    ? 'bg-dental-primary-600 text-white'
+                    : 'hover:bg-dental-primary-50 hover:text-dental-primary-700'
+                }`}
+                role="option"
+                aria-selected={lang.code === displayLang.code}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-lg">{lang.flag}</span>
+                  <div>
+                    <div
+                      className={`font-medium ${
+                        lang.code === displayLang.code
+                          ? 'text-white'
+                          : 'text-dental-dark'
+                      }`}
+                    >
+                      {meta.nativeName}
+                    </div>
+                    <div
+                      className={`text-xs ${
+                        lang.code === displayLang.code
+                          ? 'text-white/80'
+                          : 'text-dental-muted'
+                      }`}
+                    >
+                      {meta.name}
+                    </div>
                   </div>
-                  <div className={`text-xs ${lang.code === displayLang.code ? 'text-white/80' : 'text-dental-muted'}`}>{lang.name}</div>
                 </div>
-              </div>
-              {lang.code === displayLang.code && (
-                <Check className="w-4 h-4 text-white" />
-              )}
-            </button>
-          ))}
+                {lang.code === displayLang.code && (
+                  <Check className="w-4 h-4 text-white" />
+                )}
+              </button>
+            )
+          })}
         </div>
       )}
     </div>
