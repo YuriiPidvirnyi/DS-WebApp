@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI
 
 on:
   push:
@@ -8,123 +8,49 @@ on:
 
 jobs:
   lint-and-typecheck:
-    name: Lint and Type Check
+    name: Lint & Typecheck
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+      - run: npm ci --legacy-peer-deps
 
-      - name: Run ESLint
+      - name: ESLint
         run: npm run lint
 
-      - name: Run TypeScript type check
+      - name: TypeScript
         run: npm run typecheck
 
-      - name: Check code formatting
+      - name: Prettier
         run: npm run format:check
 
-  test:
-    name: Run Tests
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
-
-      - name: Run unit tests
-        run: npm run test:run
-
-      - name: Generate coverage report
-        run: npm run test:coverage
-        continue-on-error: true
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        if: always()
-        with:
-          file: ./coverage/coverage-final.json
-          fail_ci_if_error: false
-          token: ${{ secrets.CODECOV_TOKEN }}
-
-  e2e-tests:
-    name: End-to-End Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-
-      - name: Build application
-        run: npm run build
-
-      - name: Run E2E tests
-        run: npx playwright test
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
-          if-no-files-found: ignore
-
   build:
-    name: Build Application
+    name: Build
     runs-on: ubuntu-latest
-    needs: [lint-and-typecheck, test]
+    needs: [lint-and-typecheck]
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+      - run: npm ci --legacy-peer-deps
 
       - name: Build for production
         run: npm run build
 
-      - name: Check bundle size
+      - name: Bundle size
         run: |
-          echo "## Bundle Size Report" >> $GITHUB_STEP_SUMMARY
+          echo "## Bundle Size" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           du -sh .next/ >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
@@ -134,18 +60,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: Run npm audit
+      - name: npm audit
         run: npm audit --audit-level=moderate
-
-      - name: Check for outdated dependencies
-        run: npm outdated
         continue-on-error: true

@@ -11,12 +11,7 @@ export default tseslint.config(
     ignores: [
       '.next/**',
       'node_modules/**',
-      'coverage/**',
-      'test-results/**',
-      'playwright-report/**',
       'scripts/**',
-      'storybook-static/**',
-      '.storybook/**',
       'commitlint.config.cjs',
     ],
   },
@@ -93,29 +88,6 @@ export default tseslint.config(
     },
   },
 
-  // Storybook files
-  {
-    files: ['**/*.stories.tsx', '**/*.stories.ts'],
-    rules: {
-      'react-refresh/only-export-components': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
-      'no-console': 'off',
-    },
-  },
-
-  // Test files
-  {
-    files: [
-      'src/**/__tests__/**/*.test.tsx',
-      'src/test/**/*.tsx',
-      'src/test/**/*.ts',
-    ],
-    rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-      'react-refresh/only-export-components': 'off',
-    },
-  },
-
   // Service and util files with complex types
   {
     files: ['src/services/**/*.ts', 'src/utils/**/*.ts'],
@@ -127,14 +99,11 @@ export default tseslint.config(
   // Components with external library types
   {
     files: [
-      'src/components/FormProgress.tsx',
-      'src/components/SecurityDashboard.tsx',
       'src/components/AccessibilityProvider.tsx',
       'src/components/ui/LiveRegion.tsx',
       'src/components/ui/LazyImage.tsx',
       'src/views/Home.tsx',
       'src/views/Reviews.tsx',
-      'src/utils/apiCache.ts',
     ],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
