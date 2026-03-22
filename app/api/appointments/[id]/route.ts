@@ -1,10 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import {
-  getAppointment,
-  updateAppointment,
-  deleteAppointment,
-  CliniCardsError,
-} from '@/lib/clinicards-client'
 import { getAdminAccess } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import {
@@ -13,33 +7,25 @@ import {
   rateLimitResponse,
   validateCSRF,
 } from '@/lib/api-security'
+import { captureException } from '@/utils/sentry'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 type Params = { params: Promise<{ id: string }> }
 
-function errorResponse(error: unknown) {
-  if (error instanceof CliniCardsError) {
-    return NextResponse.json(
-      { success: false, error: error.message, code: error.code },
-      { status: error.status }
-    )
-  }
-  console.error('[appointments/[id]] unexpected error:', error)
-  return NextResponse.json(
-    { success: false, error: 'Внутрішня помилка сервера' },
-    { status: 500 }
-  )
-}
+const APPOINTMENT_SELECT =
+  'id, patient_id, patient_name, guest_name, guest_phone, guest_email, appointment_date, appointment_time, duration_minutes, status, source, notes, created_at, services(name_uk), doctors(first_name,last_name)'
 
 async function requireAdmin() {
   const supabase = await createClient()
   if (!supabase) {
-    return NextResponse.json(
-      { success: false, error: 'Сервіс тимчасово недоступний' },
-      { status: 503 }
-    )
+    return {
+      error: NextResponse.json(
+        { success: false, error: 'Сервіс тимчасово недоступний' },
+        { status: 503 }
+      ),
+    }
   }
 
   const {
@@ -48,21 +34,25 @@ async function requireAdmin() {
   } = await supabase.auth.getUser()
 
   if (error || !user) {
-    return NextResponse.json(
-      { success: false, error: 'Потрібна авторизація' },
-      { status: 401 }
-    )
+    return {
+      error: NextResponse.json(
+        { success: false, error: 'Потрібна авторизація' },
+        { status: 401 }
+      ),
+    }
   }
 
   const adminAccess = await getAdminAccess(supabase, user.id)
   if (!adminAccess) {
-    return NextResponse.json(
-      { success: false, error: 'Недостатньо прав доступу' },
-      { status: 403 }
-    )
+    return {
+      error: NextResponse.json(
+        { success: false, error: 'Недостатньо прав доступу' },
+        { status: 403 }
+      ),
+    }
   }
 
-  return null
+  return { supabase }
 }
 
 /** GET /api/appointments/:id */
@@ -70,17 +60,45 @@ export async function GET(request: NextRequest, { params }: Params) {
   const { allowed, remaining } = await checkRateLimit(request, 30, 60_000)
   if (!allowed) return rateLimitResponse(remaining)
 
-  const authResponse = await requireAdmin()
-  if (authResponse) return authResponse
+  const auth = await requireAdmin()
+  if ('error' in auth && auth.error) return auth.error
 
   const { id } = await params
-  try {
-    const data = await getAppointment(id)
-    return NextResponse.json({ success: true, data })
-  } catch (error) {
-    return errorResponse(error)
+  const { data, error } = await auth
+    .supabase!.from('appointments')
+    .select(APPOINTMENT_SELECT)
+    .eq('id', id)
+    .maybeSingle()
+
+  if (error) {
+    captureException(new Error('[appointments/[id]] Supabase GET error'), {
+      supabaseError: error,
+    })
+    return NextResponse.json(
+      { success: false, error: 'Не вдалося завантажити запис' },
+      { status: 500 }
+    )
   }
+
+  if (!data) {
+    return NextResponse.json(
+      { success: false, error: 'Запис не знайдено' },
+      { status: 404 }
+    )
+  }
+
+  return NextResponse.json({ success: true, data })
 }
+
+const PATCHABLE_FIELDS = new Set([
+  'status',
+  'appointment_date',
+  'appointment_time',
+  'duration_minutes',
+  'notes',
+  'doctor_id',
+  'service_id',
+])
 
 /** PATCH /api/appointments/:id */
 export async function PATCH(request: NextRequest, { params }: Params) {
@@ -89,8 +107,8 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   const { allowed, remaining } = await checkRateLimit(request, 20, 60_000)
   if (!allowed) return rateLimitResponse(remaining)
 
-  const authResponse = await requireAdmin()
-  if (authResponse) return authResponse
+  const auth = await requireAdmin()
+  if ('error' in auth && auth.error) return auth.error
 
   const { id } = await params
 
@@ -104,12 +122,77 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     )
   }
 
-  try {
-    const data = await updateAppointment(id, body)
-    return NextResponse.json({ success: true, data })
-  } catch (error) {
-    return errorResponse(error)
+  const updates: Record<string, unknown> = {}
+  for (const [key, value] of Object.entries(body)) {
+    if (PATCHABLE_FIELDS.has(key)) {
+      updates[key] = value
+    }
   }
+
+  if (Object.keys(updates).length === 0) {
+    return NextResponse.json(
+      { success: false, error: 'Немає полів для оновлення' },
+      { status: 400 }
+    )
+  }
+
+  const { data: oldRow } = updates.status
+    ? await auth
+        .supabase!.from('appointments')
+        .select('status, guest_email')
+        .eq('id', id)
+        .maybeSingle()
+    : { data: null }
+
+  const { data, error } = await auth
+    .supabase!.from('appointments')
+    .update(updates)
+    .eq('id', id)
+    .select(APPOINTMENT_SELECT)
+    .maybeSingle()
+
+  if (error) {
+    captureException(new Error('[appointments/[id]] Supabase update error'), {
+      supabaseError: error,
+    })
+    return NextResponse.json(
+      { success: false, error: 'Не вдалося оновити запис' },
+      { status: 500 }
+    )
+  }
+
+  if (!data) {
+    return NextResponse.json(
+      { success: false, error: 'Запис не знайдено' },
+      { status: 404 }
+    )
+  }
+
+  if (
+    updates.status === 'cancelled' &&
+    oldRow?.status !== 'cancelled' &&
+    oldRow?.guest_email
+  ) {
+    await auth
+      .supabase!.from('notification_events')
+      .insert({
+        type: 'appointment_cancellation',
+        appointment_id: id,
+        recipient_email: oldRow.guest_email,
+        status: 'queued',
+        details: { cancelledBy: 'admin' },
+      })
+      .then(({ error: notifErr }) => {
+        if (notifErr) {
+          console.warn(
+            '[appointments/[id]] Failed to queue cancellation email:',
+            notifErr.message
+          )
+        }
+      })
+  }
+
+  return NextResponse.json({ success: true, data })
 }
 
 /** DELETE /api/appointments/:id */
@@ -119,14 +202,25 @@ export async function DELETE(request: NextRequest, { params }: Params) {
   const { allowed, remaining } = await checkRateLimit(request, 15, 60_000)
   if (!allowed) return rateLimitResponse(remaining)
 
-  const authResponse = await requireAdmin()
-  if (authResponse) return authResponse
+  const auth = await requireAdmin()
+  if ('error' in auth && auth.error) return auth.error
 
   const { id } = await params
-  try {
-    await deleteAppointment(id)
-    return new NextResponse(null, { status: 204 })
-  } catch (error) {
-    return errorResponse(error)
+
+  const { error } = await auth
+    .supabase!.from('appointments')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    captureException(new Error('[appointments/[id]] Supabase delete error'), {
+      supabaseError: error,
+    })
+    return NextResponse.json(
+      { success: false, error: 'Не вдалося видалити запис' },
+      { status: 500 }
+    )
   }
+
+  return new NextResponse(null, { status: 204 })
 }

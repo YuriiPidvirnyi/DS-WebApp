@@ -1,10 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import {
-  getAppointments,
-  createAppointment,
-  CliniCardsError,
-  type AppointmentPayload,
-} from '@/lib/clinicards-client'
 import { createClient as createSupabaseClient } from '@/lib/supabase/server'
 import { getAdminAccess } from '@/lib/supabase/admin'
 import {
@@ -13,6 +7,7 @@ import {
   validateCSRF,
   csrfErrorResponse,
 } from '@/lib/api-security'
+import { captureException } from '@/utils/sentry'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -25,10 +20,11 @@ type BookingPayload = {
   message?: string
   preferredDate: string
   preferredTime: string
+  doctorId?: string
 }
 
 function isBookingPayload(
-  body: Partial<BookingPayload & AppointmentPayload>
+  body: Partial<BookingPayload>
 ): body is BookingPayload {
   return (
     typeof body.name === 'string' &&
@@ -67,6 +63,7 @@ async function createSupabaseAppointment(payload: BookingPayload) {
     id: appointmentId,
     patient_id: user?.id ?? null,
     service_id: serviceRecord?.id ?? null,
+    doctor_id: payload.doctorId?.trim() || null,
     patient_name: payload.name.trim(),
     guest_name: payload.name.trim(),
     guest_phone: payload.phone.trim(),
@@ -81,11 +78,48 @@ async function createSupabaseAppointment(payload: BookingPayload) {
   })
 
   if (error) {
-    console.error('[appointments] Supabase create error:', error)
+    captureException(new Error('[appointments] Supabase create error'), {
+      supabaseError: error,
+    })
     return NextResponse.json(
       { success: false, error: 'Не вдалося створити запис' },
       { status: 500 }
     )
+  }
+
+  const guestEmail = payload.email.trim()
+  if (guestEmail) {
+    const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL ?? ''
+    const notifEvents = [
+      {
+        type: 'booking_confirmation',
+        appointment_id: appointmentId,
+        recipient_email: guestEmail,
+        status: 'queued',
+        details: { source: 'webapp' },
+      },
+      ...(adminEmail
+        ? [
+            {
+              type: 'new_booking_admin',
+              appointment_id: appointmentId,
+              recipient_email: adminEmail,
+              status: 'queued',
+              details: { source: 'webapp' },
+            },
+          ]
+        : []),
+    ]
+    supabase
+      .from('notification_events')
+      .insert(notifEvents)
+      .then(({ error: notifErr }) => {
+        if (notifErr)
+          console.warn(
+            '[appointments] Failed to queue notifications:',
+            notifErr.message
+          )
+      })
   }
 
   return NextResponse.json(
@@ -95,7 +129,7 @@ async function createSupabaseAppointment(payload: BookingPayload) {
         id: appointmentId,
         name: payload.name.trim(),
         phone: payload.phone.trim(),
-        email: payload.email.trim(),
+        email: guestEmail,
         service: payload.service.trim(),
         message: payload.message?.trim() || '',
         preferredDate: payload.preferredDate,
@@ -108,87 +142,87 @@ async function createSupabaseAppointment(payload: BookingPayload) {
   )
 }
 
-function errorResponse(error: unknown) {
-  if (error instanceof CliniCardsError) {
-    return NextResponse.json(
-      { success: false, error: error.message, code: error.code },
-      { status: error.status }
-    )
-  }
-  console.error('[appointments] unexpected error:', error)
-  return NextResponse.json(
-    { success: false, error: 'Внутрішня помилка сервера' },
-    { status: 500 }
-  )
-}
+const APPOINTMENT_SELECT =
+  'id, patient_name, guest_name, guest_phone, guest_email, appointment_date, appointment_time, duration_minutes, status, source, notes, created_at, services(name_uk), doctors(first_name,last_name)'
 
-async function requireAdmin() {
-  const supabase = await createSupabaseClient()
-  if (!supabase) {
-    return NextResponse.json(
-      { success: false, error: 'Сервіс тимчасово недоступний' },
-      { status: 503 }
-    )
-  }
-
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser()
-
-  if (error || !user) {
-    return NextResponse.json(
-      { success: false, error: 'Потрібна авторизація' },
-      { status: 401 }
-    )
-  }
-
-  const adminAccess = await getAdminAccess(supabase, user.id)
-  if (!adminAccess) {
-    return NextResponse.json(
-      { success: false, error: 'Недостатньо прав доступу' },
-      { status: 403 }
-    )
-  }
-
-  return null
-}
-
-/** GET /api/appointments?date=&doctorId=&patientId= */
+/** GET /api/appointments — admin-only list */
 export async function GET(request: NextRequest) {
-  // Rate limiting: 30 requests per minute (no CSRF needed for GET)
   const { allowed, remaining } = await checkRateLimit(request, 30, 60_000)
   if (!allowed) return rateLimitResponse(remaining)
 
-  const authResponse = await requireAdmin()
-  if (authResponse) return authResponse
-
-  const { searchParams } = request.nextUrl
-  const params: Record<string, string> = {}
-  searchParams.forEach((v, k) => {
-    params[k] = v
-  })
-
   try {
-    const data = await getAppointments(
-      Object.keys(params).length ? params : undefined
-    )
+    const supabase = await createSupabaseClient()
+    if (!supabase) {
+      return NextResponse.json(
+        { success: false, error: 'Сервіс тимчасово недоступний' },
+        { status: 503 }
+      )
+    }
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { success: false, error: 'Потрібна авторизація' },
+        { status: 401 }
+      )
+    }
+
+    const adminAccess = await getAdminAccess(supabase, user.id)
+    if (!adminAccess) {
+      return NextResponse.json(
+        { success: false, error: 'Недостатньо прав доступу' },
+        { status: 403 }
+      )
+    }
+
+    const { searchParams } = request.nextUrl
+    let query = supabase.from('appointments').select(APPOINTMENT_SELECT)
+
+    const status = searchParams.get('status')
+    if (status) query = query.eq('status', status)
+
+    const date = searchParams.get('date')
+    if (date) query = query.eq('appointment_date', date)
+
+    const doctorId = searchParams.get('doctorId')
+    if (doctorId) query = query.eq('doctor_id', doctorId)
+
+    const patientId = searchParams.get('patientId')
+    if (patientId) query = query.eq('patient_id', patientId)
+
+    const { data, error } = await query
+      .order('appointment_date', { ascending: false })
+      .order('appointment_time', { ascending: false })
+      .limit(300)
+
+    if (error) {
+      return NextResponse.json(
+        { success: false, error: 'Не вдалося завантажити записи' },
+        { status: 500 }
+      )
+    }
+
     return NextResponse.json({ success: true, data })
-  } catch (error) {
-    return errorResponse(error)
+  } catch {
+    return NextResponse.json(
+      { success: false, error: 'Внутрішня помилка сервера' },
+      { status: 500 }
+    )
   }
 }
 
-/** POST /api/appointments */
+/** POST /api/appointments — public booking */
 export async function POST(request: NextRequest) {
-  // CSRF validation
   if (!validateCSRF(request)) return csrfErrorResponse()
 
-  // Rate limiting: 15 requests per minute
   const { allowed, remaining } = await checkRateLimit(request, 15, 60_000)
   if (!allowed) return rateLimitResponse(remaining)
 
-  let body: Partial<AppointmentPayload & BookingPayload>
+  let body: Partial<BookingPayload>
 
   try {
     body = await request.json()
@@ -199,38 +233,19 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  // Booking form payload (current UI) -> save to Supabase appointments.
-  if (isBookingPayload(body)) {
-    if (!body.preferredDate?.trim() || !body.preferredTime?.trim()) {
-      return NextResponse.json(
-        { success: false, error: 'Дата та час є обовʼязковими' },
-        { status: 400 }
-      )
-    }
-
-    return createSupabaseAppointment(body)
-  }
-
-  // Legacy CliniCards payload validation
-  const required: (keyof AppointmentPayload)[] = [
-    'patientId',
-    'doctorId',
-    'date',
-    'time',
-    'duration',
-  ]
-  const missing = required.filter(f => !body[f])
-  if (missing.length) {
+  if (!isBookingPayload(body)) {
     return NextResponse.json(
-      { success: false, error: `Відсутні поля: ${missing.join(', ')}` },
+      { success: false, error: 'Відсутні обовʼязкові поля' },
       { status: 400 }
     )
   }
 
-  try {
-    const data = await createAppointment(body as AppointmentPayload)
-    return NextResponse.json({ success: true, data }, { status: 201 })
-  } catch (error) {
-    return errorResponse(error)
+  if (!body.preferredDate?.trim() || !body.preferredTime?.trim()) {
+    return NextResponse.json(
+      { success: false, error: 'Дата та час є обовʼязковими' },
+      { status: 400 }
+    )
   }
+
+  return createSupabaseAppointment(body)
 }

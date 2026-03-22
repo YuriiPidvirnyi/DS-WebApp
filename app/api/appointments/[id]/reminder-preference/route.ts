@@ -6,6 +6,7 @@ import {
   rateLimitResponse,
   validateCSRF,
 } from '@/lib/api-security'
+import { captureException } from '@/utils/sentry'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -59,6 +60,46 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     })
   }
 
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
+
+  if (authError || !user) {
+    return NextResponse.json(
+      { success: false, error: 'Потрібна авторизація' },
+      { status: 401 }
+    )
+  }
+
+  const { data: appointment } = await supabase
+    .from('appointments')
+    .select('patient_id')
+    .eq('id', id)
+    .maybeSingle()
+
+  if (!appointment) {
+    return NextResponse.json(
+      { success: false, error: 'Запис не знайдено' },
+      { status: 404 }
+    )
+  }
+
+  if (appointment.patient_id !== user.id) {
+    const { data: adminRow } = await supabase
+      .from('admin_users')
+      .select('id')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    if (!adminRow) {
+      return NextResponse.json(
+        { success: false, error: 'Недостатньо прав доступу' },
+        { status: 403 }
+      )
+    }
+  }
+
   const now = new Date().toISOString()
   const { error: insertError } = await supabase
     .from('appointment_reminder_preferences')
@@ -99,10 +140,9 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       })
     }
 
-    console.error(
-      '[appointments/reminder-preference] Supabase update error:',
-      updateError
-    )
+    captureException(new Error('[reminder-preference] Supabase update error'), {
+      supabaseError: updateError,
+    })
     return NextResponse.json(
       { success: false, error: 'Не вдалося оновити preference' },
       { status: 500 }
@@ -117,10 +157,9 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     })
   }
 
-  console.error(
-    '[appointments/reminder-preference] Supabase insert error:',
-    insertError
-  )
+  captureException(new Error('[reminder-preference] Supabase insert error'), {
+    supabaseError: insertError,
+  })
   return NextResponse.json(
     { success: false, error: 'Не вдалося оновити preference' },
     { status: 500 }
