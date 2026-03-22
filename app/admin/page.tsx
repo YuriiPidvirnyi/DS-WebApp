@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
+import { captureException } from '@/utils/sentry'
 import {
   Calendar,
   Users,
@@ -85,6 +86,7 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [isAdmin, setIsAdmin] = useState(false)
   const [lastUpdated, setLastUpdated] = useState<string>('')
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const checkAdminAndFetchData = async () => {
@@ -115,98 +117,106 @@ export default function AdminDashboard() {
 
       setIsAdmin(true)
 
-      // Fetch all stats
-      const today = new Date().toISOString().split('T')[0]
+      try {
+        const today = new Date().toISOString().split('T')[0]
 
-      const [
-        { count: totalAppointments },
-        { count: todayCount },
-        { count: pendingAppointments },
-        { count: completedAppointments },
-        { count: totalDoctors },
-        { count: unreadContacts },
-        { count: pendingReviews },
-        { data: todayAppts },
-        { data: serviceData },
-      ] = await Promise.all([
-        supabase
-          .from('appointments')
-          .select('*', { count: 'exact', head: true }),
-        supabase
-          .from('appointments')
-          .select('*', { count: 'exact', head: true })
-          .eq('appointment_date', today),
-        supabase
-          .from('appointments')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'pending'),
-        supabase
-          .from('appointments')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'completed'),
-        supabase
-          .from('doctors')
-          .select('*', { count: 'exact', head: true })
-          .eq('is_active', true),
-        supabase
-          .from('contact_submissions')
-          .select('*', { count: 'exact', head: true })
-          .eq('is_read', false),
-        supabase
-          .from('reviews')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'pending'),
-        supabase
-          .from('appointments')
-          .select(
-            'id, patient_name, appointment_time, status, services(name_uk)'
+        const [
+          { count: totalAppointments },
+          { count: todayCount },
+          { count: pendingAppointments },
+          { count: completedAppointments },
+          { count: totalDoctors },
+          { count: unreadContacts },
+          { count: pendingReviews },
+          { data: todayAppts },
+          { data: serviceData },
+        ] = await Promise.all([
+          supabase
+            .from('appointments')
+            .select('*', { count: 'exact', head: true }),
+          supabase
+            .from('appointments')
+            .select('*', { count: 'exact', head: true })
+            .eq('appointment_date', today),
+          supabase
+            .from('appointments')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'pending'),
+          supabase
+            .from('appointments')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'completed'),
+          supabase
+            .from('doctors')
+            .select('*', { count: 'exact', head: true })
+            .eq('is_active', true),
+          supabase
+            .from('contact_submissions')
+            .select('*', { count: 'exact', head: true })
+            .eq('is_read', false),
+          supabase
+            .from('reviews')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'pending'),
+          supabase
+            .from('appointments')
+            .select(
+              'id, patient_name, appointment_time, status, services(name_uk)'
+            )
+            .eq('appointment_date', today)
+            .order('appointment_time', { ascending: true })
+            .limit(5),
+          supabase.from('services').select('category').eq('is_active', true),
+        ])
+
+        setStats({
+          totalAppointments: totalAppointments || 0,
+          todayAppointments: todayCount || 0,
+          pendingAppointments: pendingAppointments || 0,
+          completedAppointments: completedAppointments || 0,
+          totalDoctors: totalDoctors || 0,
+          unreadContacts: unreadContacts || 0,
+          pendingReviews: pendingReviews || 0,
+        })
+
+        setTodayAppointments(todayAppts || [])
+
+        if (serviceData) {
+          const categories = serviceData.reduce(
+            (acc: Record<string, number>, s: { category: string }) => {
+              acc[s.category] = (acc[s.category] || 0) + 1
+              return acc
+            },
+            {} as Record<string, number>
           )
-          .eq('appointment_date', today)
-          .order('appointment_time', { ascending: true })
-          .limit(5),
-        supabase.from('services').select('category').eq('is_active', true),
-      ])
 
-      setStats({
-        totalAppointments: totalAppointments || 0,
-        todayAppointments: todayCount || 0,
-        pendingAppointments: pendingAppointments || 0,
-        completedAppointments: completedAppointments || 0,
-        totalDoctors: totalDoctors || 0,
-        unreadContacts: unreadContacts || 0,
-        pendingReviews: pendingReviews || 0,
-      })
+          const vals = Object.values(categories) as number[]
+          const total = vals.reduce((a, b) => a + b, 0)
+          const serviceStatsData = (
+            Object.entries(categories) as [string, number][]
+          ).map(([name, count], i) => ({
+            name,
+            value: Math.round((count / total) * 100),
+            color: SERVICE_COLORS[i % SERVICE_COLORS.length],
+          }))
+          setServiceStats(serviceStatsData)
+        }
 
-      setTodayAppointments(todayAppts || [])
-
-      // Calculate service distribution
-      if (serviceData) {
-        const categories = serviceData.reduce(
-          (acc: Record<string, number>, s: { category: string }) => {
-            acc[s.category] = (acc[s.category] || 0) + 1
-            return acc
-          },
-          {} as Record<string, number>
+        setLastUpdated(new Date().toLocaleTimeString('uk-UA'))
+      } catch (fetchError) {
+        captureException(
+          fetchError instanceof Error
+            ? fetchError
+            : new Error(String(fetchError))
         )
-
-        const vals = Object.values(categories) as number[]
-        const total = vals.reduce((a, b) => a + b, 0)
-        const serviceStatsData = (
-          Object.entries(categories) as [string, number][]
-        ).map(([name, count], i) => ({
-          name,
-          value: Math.round((count / total) * 100),
-          color: SERVICE_COLORS[i % SERVICE_COLORS.length],
-        }))
-        setServiceStats(serviceStatsData)
+        setError(t('admin.dashboard.loadError', 'Не вдалося завантажити дані'))
+      } finally {
+        setIsLoading(false)
       }
-
-      setLastUpdated(new Date().toLocaleTimeString('uk-UA'))
-      setIsLoading(false)
     }
 
     checkAdminAndFetchData()
-  }, [router])
+  }, [router, t])
 
   const handleLogout = async () => {
     const supabase = createClient()
@@ -314,6 +324,11 @@ export default function AdminDashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        {error && (
+          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {error}
+          </div>
+        )}
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
           <StatCard
@@ -500,7 +515,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
             href="/admin/appointments"
-            className="bg-gradient-to-br from-dental-primary-500 to-dental-primary-600 rounded-xl p-4 text-white hover:from-dental-primary-600 hover:to-dental-primary-700 transition-all"
+            className="bg-dental-primary-600 rounded-xl p-4 text-white hover:bg-dental-primary-700 transition-all"
           >
             <div className="flex items-center gap-2 mb-2">
               <Calendar className="w-5 h-5" />
@@ -512,7 +527,7 @@ export default function AdminDashboard() {
           </Link>
           <Link
             href="/admin/doctors"
-            className="bg-gradient-to-br from-dental-info to-dental-info-dark rounded-xl p-4 text-white hover:from-dental-info-dark hover:to-dental-info-darker transition-all"
+            className="bg-dental-info rounded-xl p-4 text-white hover:bg-dental-info-dark transition-all"
           >
             <div className="flex items-center gap-2 mb-2">
               <Users className="w-5 h-5" />
@@ -524,7 +539,7 @@ export default function AdminDashboard() {
           </Link>
           <Link
             href="/admin/services"
-            className="bg-gradient-to-br from-dental-warning to-dental-warning-dark rounded-xl p-4 text-white hover:from-dental-warning-dark hover:to-dental-warning-darker transition-all"
+            className="bg-dental-warning rounded-xl p-4 text-white hover:bg-dental-warning-dark transition-all"
           >
             <div className="flex items-center gap-2 mb-2">
               <TrendingUp className="w-5 h-5" />
@@ -538,7 +553,7 @@ export default function AdminDashboard() {
           </Link>
           <Link
             href="/admin/contacts"
-            className="bg-gradient-to-br from-dental-success to-dental-success-dark rounded-xl p-4 text-white hover:from-dental-success-dark hover:to-dental-success-darker transition-all"
+            className="bg-dental-success rounded-xl p-4 text-white hover:bg-dental-success-dark transition-all"
           >
             <div className="flex items-center gap-2 mb-2">
               <MessageSquare className="w-5 h-5" />

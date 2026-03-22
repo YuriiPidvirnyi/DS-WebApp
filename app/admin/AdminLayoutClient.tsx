@@ -19,6 +19,9 @@ import {
   X,
   LogOut,
   ChevronRight,
+  ClipboardList,
+  Package,
+  ShoppingCart,
 } from 'lucide-react'
 import { AdminAuthProvider } from '@/contexts/AdminAuthContext'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
@@ -69,6 +72,21 @@ const navigation: NavItem[] = [
     nameKey: 'admin.sidebar.chat',
     href: '/admin/chat',
     icon: <MessageSquare className="w-5 h-5" />,
+  },
+  {
+    nameKey: 'admin.sidebar.treatments',
+    href: '/admin/treatments',
+    icon: <ClipboardList className="w-5 h-5" />,
+  },
+  {
+    nameKey: 'admin.sidebar.materials',
+    href: '/admin/materials',
+    icon: <Package className="w-5 h-5" />,
+  },
+  {
+    nameKey: 'admin.sidebar.orders',
+    href: '/admin/orders',
+    icon: <ShoppingCart className="w-5 h-5" />,
   },
   {
     nameKey: 'admin.sidebar.analytics',
