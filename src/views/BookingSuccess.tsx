@@ -32,9 +32,18 @@ export default function BookingSuccess() {
       if (saved) {
         const parsed = JSON.parse(saved) as BookingDetails
         setBookingDetails(parsed)
+        return
       }
     } catch {}
-  }, [])
+
+    if (!ref) return
+    fetch(`/api/appointments/${ref}/summary`)
+      .then(r => (r.ok ? r.json() : null))
+      .then(json => {
+        if (json?.data) setBookingDetails(json.data)
+      })
+      .catch(() => {})
+  }, [ref])
 
   const canCreateEvent = useMemo(
     () => Boolean(bookingDetails?.date && bookingDetails?.time && ref),
@@ -90,6 +99,7 @@ export default function BookingSuccess() {
                   } catch {}
                 }}
                 className="text-xs px-2 py-0.5 border border-gray-300 rounded hover:bg-gray-50"
+                aria-label={t('booking.successPage.copy')}
               >
                 {t('booking.successPage.copy')}
               </button>
@@ -154,6 +164,7 @@ export default function BookingSuccess() {
             <button
               onClick={handleAddToCalendar}
               className="px-5 py-2 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 inline-flex items-center gap-2"
+              aria-label={t('booking.successPage.addToCalendar')}
             >
               <CalendarPlus className="h-5 w-5" />{' '}
               {t('booking.successPage.addToCalendar')}

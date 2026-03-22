@@ -129,6 +129,7 @@ export default function AppointmentsPage() {
               <Link
                 href="/cabinet"
                 className="text-slate-500 hover:text-slate-700"
+                aria-label={t('common.back')}
               >
                 <ChevronLeft className="w-6 h-6" />
               </Link>

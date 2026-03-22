@@ -6,6 +6,7 @@ import {
   validateCSRF,
   csrfErrorResponse,
 } from '@/lib/api-security'
+import { captureException } from '@/utils/sentry'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -62,7 +63,9 @@ export async function POST(request: NextRequest) {
         })
       }
 
-      console.error('[newsletter] Supabase error:', error)
+      captureException(new Error('[newsletter] Supabase error'), {
+        supabaseError: error,
+      })
       return NextResponse.json(
         { success: false, error: 'Помилка збереження. Спробуйте пізніше.' },
         { status: 500 }
@@ -74,7 +77,7 @@ export async function POST(request: NextRequest) {
       data: { subscribed: true },
     })
   } catch (error) {
-    console.error('[newsletter] Unexpected error:', error)
+    captureException(error instanceof Error ? error : new Error(String(error)))
     return NextResponse.json(
       { success: false, error: 'Внутрішня помилка сервера' },
       { status: 500 }

@@ -7,6 +7,7 @@ export interface AppointmentFormData extends Record<string, unknown> {
   message: string
   preferredDate?: string
   preferredTime?: string
+  doctorId?: string
 }
 
 export interface Appointment extends AppointmentFormData {

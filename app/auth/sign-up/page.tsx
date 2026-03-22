@@ -154,7 +154,7 @@ export default function SignUpPage() {
   const { strength, label, color } = passwordStrength()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-teal-50 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -288,6 +288,11 @@ export default function SignUpPage() {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  aria-label={
+                    showPassword
+                      ? t('auth.hidePassword')
+                      : t('auth.showPassword')
+                  }
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5" />

@@ -20,11 +20,6 @@ export interface TurnstileVerifyResponse {
 export async function verifyTurnstileToken(
   token: string
 ): Promise<TurnstileVerifyResponse> {
-  if (!token) {
-    return { success: false, error_codes: ['missing-token'] }
-  }
-
-  // If no site key is configured, skip verification (dev / CI)
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
   if (!siteKey) {
     return {
@@ -32,6 +27,10 @@ export async function verifyTurnstileToken(
       challenge_ts: new Date().toISOString(),
       hostname: typeof window !== 'undefined' ? window.location.hostname : '',
     }
+  }
+
+  if (!token) {
+    return { success: false, error_codes: ['missing-token'] }
   }
 
   try {

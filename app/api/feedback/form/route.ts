@@ -65,47 +65,51 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const supabase = await createClient()
-  if (!supabase) {
-    // The app can run without Supabase in some environments.
-    return NextResponse.json({
-      success: true,
-      data: { recorded: false },
-    })
-  }
-
-  const { error } = await supabase.from('form_feedback_events').insert({
-    form,
-    rating,
-    ref_id: refId,
-    comment,
-    metadata: {
-      userAgent: request.headers.get('user-agent'),
-      referer: request.headers.get('referer'),
-    },
-  })
-
-  if (error) {
-    // Keep user flow non-blocking if DB migration/policies are not yet applied.
-    if (['42P01', 'PGRST205', '42501'].includes(error.code ?? '')) {
+  try {
+    const supabase = await createClient()
+    if (!supabase) {
       return NextResponse.json({
         success: true,
         data: { recorded: false },
       })
     }
 
-    console.error('[feedback/form] Supabase error:', error)
+    const { error } = await supabase.from('form_feedback_events').insert({
+      form,
+      rating,
+      ref_id: refId,
+      comment,
+      metadata: {
+        userAgent: request.headers.get('user-agent'),
+        referer: request.headers.get('referer'),
+      },
+    })
+
+    if (error) {
+      if (['42P01', 'PGRST205', '42501'].includes(error.code ?? '')) {
+        return NextResponse.json({
+          success: true,
+          data: { recorded: false },
+        })
+      }
+
+      return NextResponse.json(
+        { success: false, error: 'Не вдалося зберегти відгук' },
+        { status: 500 }
+      )
+    }
+
     return NextResponse.json(
-      { success: false, error: 'Не вдалося зберегти відгук' },
+      {
+        success: true,
+        data: { recorded: true },
+      },
+      { status: 201 }
+    )
+  } catch {
+    return NextResponse.json(
+      { success: false, error: 'Внутрішня помилка сервера' },
       { status: 500 }
     )
   }
-
-  return NextResponse.json(
-    {
-      success: true,
-      data: { recorded: true },
-    },
-    { status: 201 }
-  )
 }

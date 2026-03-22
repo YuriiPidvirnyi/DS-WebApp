@@ -125,8 +125,8 @@ function VideoCard({
           />
         )}
 
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-slate-900/50" />
 
         {/* Play button */}
         <button

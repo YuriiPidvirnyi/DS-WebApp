@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { Button, Input } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
+import { captureException } from '@/utils/sentry'
 import {
   formatDate,
   formatDateTime,
@@ -131,7 +132,9 @@ export default function AdminAppointmentsPage() {
 
         setRows((data || []) as AppointmentRow[])
       } catch (loadError) {
-        console.error('Failed to load appointments:', loadError)
+        captureException(
+          loadError instanceof Error ? loadError : new Error(String(loadError))
+        )
         setError(t('admin.appointmentsPage.errors.loadFailed'))
       } finally {
         setIsLoading(false)
@@ -231,7 +234,11 @@ export default function AdminAppointmentsPage() {
         )
       )
     } catch (updateError) {
-      console.error('Failed to apply bulk appointment status:', updateError)
+      captureException(
+        updateError instanceof Error
+          ? updateError
+          : new Error(String(updateError))
+      )
       setError(t('admin.appointmentsPage.errors.bulkUpdateFailed'))
     } finally {
       setIsUpdatingId(null)
@@ -277,7 +284,11 @@ export default function AdminAppointmentsPage() {
           )
         )
       } catch (updateError) {
-        console.error('Failed to update appointment status:', updateError)
+        captureException(
+          updateError instanceof Error
+            ? updateError
+            : new Error(String(updateError))
+        )
         setError(t('admin.appointmentsPage.errors.statusUpdateFailed'))
       } finally {
         setIsUpdatingId(null)

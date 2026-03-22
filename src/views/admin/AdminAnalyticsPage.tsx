@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { useCSRF } from '@/hooks/useCSRF'
+import { captureException } from '@/utils/sentry'
 import { formatCurrency } from './utils'
 
 interface AnalyticsModel {
@@ -117,7 +118,9 @@ export default function AdminAnalyticsPage() {
 
         setModel(payload.data)
       } catch (loadError) {
-        console.error('Failed to load analytics:', loadError)
+        captureException(
+          loadError instanceof Error ? loadError : new Error(String(loadError))
+        )
         setError(
           loadError instanceof Error
             ? loadError.message

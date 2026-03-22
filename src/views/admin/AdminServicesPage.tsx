@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next'
 import { Button, Input, Textarea } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
+import { captureException } from '@/utils/sentry'
 import AdminModal from './components/AdminModal'
 import { formatCurrency, formatDateTime, getStatusTone } from './utils'
 
@@ -135,7 +136,9 @@ export default function AdminServicesPage() {
 
         setRows((data || []) as ServiceRow[])
       } catch (loadError) {
-        console.error('Failed to load services:', loadError)
+        captureException(
+          loadError instanceof Error ? loadError : new Error(String(loadError))
+        )
         setError(t('admin.servicesPage.errors.loadFailed'))
       } finally {
         setIsLoading(false)
@@ -246,7 +249,11 @@ export default function AdminServicesPage() {
         )
       )
     } catch (updateError) {
-      console.error('Failed bulk update for services:', updateError)
+      captureException(
+        updateError instanceof Error
+          ? updateError
+          : new Error(String(updateError))
+      )
       setError(t('admin.servicesPage.errors.bulkUpdateFailed'))
     } finally {
       setIsUpdatingId(null)
@@ -290,7 +297,11 @@ export default function AdminServicesPage() {
           )
         )
       } catch (updateError) {
-        console.error('Failed to update service:', updateError)
+        captureException(
+          updateError instanceof Error
+            ? updateError
+            : new Error(String(updateError))
+        )
         setError(t('admin.servicesPage.errors.statusUpdateFailed'))
       } finally {
         setIsUpdatingId(null)
@@ -385,7 +396,9 @@ export default function AdminServicesPage() {
       setIsModalOpen(false)
       await loadServices(true)
     } catch (saveError) {
-      console.error('Failed to save service:', saveError)
+      captureException(
+        saveError instanceof Error ? saveError : new Error(String(saveError))
+      )
       setError(t('admin.servicesPage.errors.saveFailed'))
     } finally {
       setIsSaving(false)
@@ -415,7 +428,11 @@ export default function AdminServicesPage() {
       setRows(prev => prev.filter(row => row.id !== id))
       setSelectedIds(prev => prev.filter(item => item !== id))
     } catch (deleteError) {
-      console.error('Failed to delete service:', deleteError)
+      captureException(
+        deleteError instanceof Error
+          ? deleteError
+          : new Error(String(deleteError))
+      )
       setError(t('admin.servicesPage.errors.deleteFailed'))
     } finally {
       setIsUpdatingId(null)

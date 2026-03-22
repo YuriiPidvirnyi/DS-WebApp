@@ -135,11 +135,11 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
         >
           <button
             onClick={() => setIsOpen(true)}
-            className="relative w-14 h-14 bg-gradient-to-br from-dental-primary-600 to-dental-primary-700 hover:from-dental-primary-700 hover:to-dental-primary-800 text-white rounded-full shadow-lg hover:shadow-xl hover:shadow-dental-primary-500/30 hover:scale-110 transition-all duration-300 flex items-center justify-center"
+            className="relative w-14 h-14 bg-dental-primary-600 hover:bg-dental-primary-700 text-white rounded-full shadow-lg hover:shadow-xl hover:shadow-dental-primary-500/30 hover:scale-110 transition-all duration-300 flex items-center justify-center"
             aria-label={t('ai.openAssistant')}
           >
             {/* Subtle glow effect */}
-            <span className="absolute inset-0 rounded-full bg-gradient-to-br from-dental-primary-400 to-dental-primary-600 opacity-0 group-hover:opacity-30 blur-md transition-opacity duration-300" />
+            <span className="absolute inset-0 rounded-full bg-dental-primary-500 opacity-0 group-hover:opacity-30 blur-md transition-opacity duration-300" />
             <Bot
               className="w-6 h-6 relative z-10 group-hover:animate-bounce"
               style={{ animationDuration: '1s' }}
@@ -167,7 +167,7 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
       >
         <div className="bg-white rounded-2xl shadow-2xl border border-dental-secondary-200 overflow-hidden flex flex-col max-h-[600px]">
           {/* Header */}
-          <div className="bg-gradient-to-r from-dental-primary-600 to-dental-primary-500 text-white px-4 py-3 flex items-center justify-between">
+          <div className="bg-dental-primary-600 text-white px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
                 <Bot className="w-6 h-6" />

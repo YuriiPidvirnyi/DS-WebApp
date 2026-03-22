@@ -10,8 +10,9 @@ export async function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     await import('./sentry.server.config')
   }
-  // Edge runtime: Sentry is initialized client-side via instrumentation-client.ts.
-  // No separate edge config needed — this app has no edge API routes.
+  if (process.env.NEXT_RUNTIME === 'edge') {
+    await import('./sentry.edge.config')
+  }
 }
 
 // Capture errors from nested React Server Components

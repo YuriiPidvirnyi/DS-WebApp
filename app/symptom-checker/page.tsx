@@ -173,9 +173,9 @@ export default function SymptomCheckerPage() {
   const UrgencyIcon = urgencyColors[overallUrgency].icon
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <section className="py-16 bg-gradient-to-br from-teal-600 to-teal-700 text-white">
+      <section className="py-16 bg-dental-primary-700 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 rounded-full mb-6">
             <Stethoscope className="w-10 h-10" />
@@ -206,6 +206,7 @@ export default function SymptomCheckerPage() {
               <button
                 key={symptom.id}
                 onClick={() => toggleSymptom(symptom.id)}
+                aria-pressed={selectedSymptoms.includes(symptom.id)}
                 className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all duration-200 text-left ${
                   selectedSymptoms.includes(symptom.id)
                     ? 'border-teal-500 bg-teal-50 text-teal-900'
@@ -237,7 +238,11 @@ export default function SymptomCheckerPage() {
             max="10"
             value={painLevel}
             onChange={e => setPainLevel(parseInt(e.target.value))}
-            className="w-full h-3 bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 rounded-lg appearance-none cursor-pointer"
+            className="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-dental-primary-600"
+            aria-label={t('ai.symptomChecker.painLevel')}
+            aria-valuemin={1}
+            aria-valuemax={10}
+            aria-valuenow={painLevel}
           />
           <div className="flex justify-between text-sm text-slate-500 mt-2">
             <span>{t('ai.symptomChecker.scale.mild')}</span>
@@ -257,6 +262,7 @@ export default function SymptomCheckerPage() {
               <button
                 key={option.value}
                 onClick={() => setDuration(option.value)}
+                aria-pressed={duration === option.value}
                 className={`px-4 py-2 rounded-lg border-2 font-medium transition-all ${
                   duration === option.value
                     ? 'border-teal-500 bg-teal-50 text-teal-900'
@@ -273,7 +279,7 @@ export default function SymptomCheckerPage() {
         <button
           onClick={analyzeSymptoms}
           disabled={selectedSymptoms.length === 0}
-          className="w-full py-4 bg-gradient-to-r from-teal-600 to-teal-500 hover:from-teal-700 hover:to-teal-600 disabled:from-slate-300 disabled:to-slate-300 text-white font-semibold rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed mb-8"
+          className="w-full py-4 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:bg-slate-300 text-white font-semibold rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed mb-8"
         >
           <Sparkles className="w-5 h-5" />
           {t('ai.symptomChecker.analyze')}
@@ -424,7 +430,7 @@ export default function SymptomCheckerPage() {
 
             {/* CTA */}
             {overallUrgency !== 'emergency' && overallUrgency !== 'high' && (
-              <div className="bg-gradient-to-r from-teal-600 to-teal-500 rounded-2xl p-6 text-white text-center">
+              <div className="bg-dental-primary-600 rounded-2xl p-6 text-white text-center">
                 <h3 className="text-xl font-bold mb-2">
                   {t('ai.symptomChecker.cta.title')}
                 </h3>

@@ -1,20 +1,82 @@
-import { useState, useEffect, useCallback } from 'react'
-import { Search, Plus, Filter, Download, Edit, Trash2, Eye } from 'lucide-react'
+'use client'
+
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type FormEvent,
+} from 'react'
+import { Edit, Eye, Plus, RefreshCw, Search, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { getPatients, searchPatients } from '@/services/patientManagement'
-import { Button, Input } from '@/components/ui'
-import type { EnhancedPatient } from '@/types'
+import { Button, Input, Textarea } from '@/components/ui'
+import { useAdminPreferences } from '@/hooks/useAdminPreferences'
+import { createClient } from '@/lib/supabase/client'
+import { captureException } from '@/utils/sentry'
+import AdminModal from './components/AdminModal'
+import { formatDateTime } from './utils'
+
+interface PatientRow {
+  id: string
+  first_name: string | null
+  last_name: string | null
+  patronymic: string | null
+  phone: string | null
+  email: string | null
+  date_of_birth: string | null
+  gender: string | null
+  address: string | null
+  medical_notes: string | null
+  total_visits: number
+  total_spent_uah: number
+  created_at: string
+  updated_at: string
+}
+
+type ModalMode = 'create' | 'edit' | 'view'
+
+interface PatientFormState {
+  first_name: string
+  last_name: string
+  patronymic: string
+  phone: string
+  email: string
+  date_of_birth: string
+  gender: string
+  address: string
+  medical_notes: string
+}
+
+const EMPTY_FORM: PatientFormState = {
+  first_name: '',
+  last_name: '',
+  patronymic: '',
+  phone: '',
+  email: '',
+  date_of_birth: '',
+  gender: '',
+  address: '',
+  medical_notes: '',
+}
+
+const PATIENT_SELECT =
+  'id, first_name, last_name, patronymic, phone, email, date_of_birth, gender, address, medical_notes, total_visits, total_spent_uah, created_at, updated_at'
 
 export default function PatientManagement() {
   const { t, i18n } = useTranslation()
-  const [patients, setPatients] = useState<EnhancedPatient[]>([])
-  const [loading, setLoading] = useState(true)
+  const { preferences } = useAdminPreferences()
+  const [rows, setRows] = useState<PatientRow[]>([])
   const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState<
-    'all' | 'active' | 'inactive'
-  >('active')
-  const [page, setPage] = useState(1)
-  const [total, setTotal] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
+  const [isUpdatingId, setIsUpdatingId] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [modalMode, setModalMode] = useState<ModalMode>('create')
+  const [editingPatientId, setEditingPatientId] = useState<string | null>(null)
+  const [formState, setFormState] = useState<PatientFormState>(EMPTY_FORM)
+  const [isSaving, setIsSaving] = useState(false)
 
   const locale =
     i18n.language === 'pl'
@@ -23,284 +85,696 @@ export default function PatientManagement() {
         ? 'en-US'
         : 'uk-UA'
 
-  const loadPatients = useCallback(async () => {
-    setLoading(true)
-    try {
-      const res = await getPatients({
-        page,
-        limit: 20,
-        status: statusFilter === 'all' ? undefined : statusFilter,
-      })
-      if (res.success && res.data) {
-        setPatients(res.data.patients)
-        setTotal(res.data.total)
+  const loadPatients = useCallback(
+    async (silent = false) => {
+      const supabase = createClient()
+      if (!supabase) {
+        setError(t('admin.patientManagement.errors.supabaseUnavailable'))
+        setIsLoading(false)
+        return
       }
-    } catch (error) {
-      console.error('Failed to load patients:', error)
-    } finally {
-      setLoading(false)
-    }
-  }, [page, statusFilter])
+
+      if (silent) {
+        setIsRefreshing(true)
+      } else {
+        setIsLoading(true)
+      }
+      setError(null)
+
+      try {
+        let query = supabase.from('patients').select(PATIENT_SELECT)
+
+        const normalizedSearch = searchTerm
+          .replace(/[%_',]/g, ' ')
+          .trim()
+          .slice(0, 100)
+
+        if (normalizedSearch) {
+          query = query.or(
+            `first_name.ilike.%${normalizedSearch}%,last_name.ilike.%${normalizedSearch}%,phone.ilike.%${normalizedSearch}%,email.ilike.%${normalizedSearch}%`
+          )
+        }
+
+        const { data, error: queryError } = await query
+          .order('created_at', { ascending: false })
+          .limit(200)
+
+        if (queryError) throw queryError
+
+        setRows((data || []) as PatientRow[])
+      } catch (loadError) {
+        captureException(
+          loadError instanceof Error ? loadError : new Error(String(loadError))
+        )
+        setError(t('admin.patientManagement.errors.loadFailed'))
+      } finally {
+        setIsLoading(false)
+        setIsRefreshing(false)
+      }
+    },
+    [searchTerm, t]
+  )
 
   useEffect(() => {
-    loadPatients()
+    void loadPatients()
   }, [loadPatients])
 
-  const handleSearch = async () => {
-    if (!searchTerm) {
-      loadPatients()
+  const stats = useMemo(() => {
+    const total = rows.length
+    const totalVisits = rows.reduce((sum, r) => sum + r.total_visits, 0)
+    const totalRevenue = rows.reduce((sum, r) => sum + r.total_spent_uah, 0)
+    return { total, totalVisits, totalRevenue }
+  }, [rows])
+
+  const tableCellClass = preferences.compactTables ? 'px-3 py-2' : 'px-4 py-3'
+  const tableHeadClass = `${tableCellClass} text-left text-xs font-semibold uppercase text-gray-500`
+  const tableEmptyStateClass = `${
+    preferences.compactTables ? 'px-3 py-6' : 'px-4 py-8'
+  } text-center text-dental-text-light`
+
+  const confirmIfNeeded = useCallback(
+    (message: string) => {
+      if (!preferences.confirmSensitiveActions) return true
+      return window.confirm(message)
+    },
+    [preferences.confirmSensitiveActions]
+  )
+
+  const openCreateModal = () => {
+    setModalMode('create')
+    setEditingPatientId(null)
+    setFormState(EMPTY_FORM)
+    setIsModalOpen(true)
+  }
+
+  const openEditModal = (row: PatientRow) => {
+    setModalMode('edit')
+    setEditingPatientId(row.id)
+    setFormState({
+      first_name: row.first_name || '',
+      last_name: row.last_name || '',
+      patronymic: row.patronymic || '',
+      phone: row.phone || '',
+      email: row.email || '',
+      date_of_birth: row.date_of_birth || '',
+      gender: row.gender || '',
+      address: row.address || '',
+      medical_notes: row.medical_notes || '',
+    })
+    setIsModalOpen(true)
+  }
+
+  const openViewModal = (row: PatientRow) => {
+    setModalMode('view')
+    setEditingPatientId(row.id)
+    setFormState({
+      first_name: row.first_name || '',
+      last_name: row.last_name || '',
+      patronymic: row.patronymic || '',
+      phone: row.phone || '',
+      email: row.email || '',
+      date_of_birth: row.date_of_birth || '',
+      gender: row.gender || '',
+      address: row.address || '',
+      medical_notes: row.medical_notes || '',
+    })
+    setIsModalOpen(true)
+  }
+
+  const closeModal = () => {
+    if (isSaving) return
+    setIsModalOpen(false)
+  }
+
+  const savePatient = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const supabase = createClient()
+    if (!supabase) return
+
+    if (!formState.first_name.trim() || !formState.last_name.trim()) {
+      setError(t('admin.patientManagement.errors.requiredFields'))
       return
     }
 
-    setLoading(true)
+    const payload = {
+      first_name: formState.first_name.trim(),
+      last_name: formState.last_name.trim(),
+      patronymic: formState.patronymic.trim() || null,
+      phone: formState.phone.trim() || null,
+      email: formState.email.trim() || null,
+      date_of_birth: formState.date_of_birth || null,
+      gender: formState.gender || null,
+      address: formState.address.trim() || null,
+      medical_notes: formState.medical_notes.trim() || null,
+    }
+
+    setIsSaving(true)
+    setError(null)
     try {
-      const res = await searchPatients({ term: searchTerm })
-      if (res.success && res.data) {
-        setPatients(res.data)
-        setTotal(res.data.length)
+      if (modalMode === 'create') {
+        const { error: insertError } = await supabase
+          .from('patients')
+          .insert(payload)
+        if (insertError) throw insertError
+      } else {
+        if (!editingPatientId) return
+        const { error: updateError } = await supabase
+          .from('patients')
+          .update(payload)
+          .eq('id', editingPatientId)
+        if (updateError) throw updateError
       }
-    } catch (error) {
-      console.error('Search failed:', error)
+
+      setIsModalOpen(false)
+      await loadPatients(true)
+    } catch (saveError) {
+      captureException(
+        saveError instanceof Error ? saveError : new Error(String(saveError))
+      )
+      setError(t('admin.patientManagement.errors.saveFailed'))
     } finally {
-      setLoading(false)
+      setIsSaving(false)
     }
   }
 
+  const deletePatient = async (id: string) => {
+    if (
+      !confirmIfNeeded(t('admin.patientManagement.confirmations.deletePatient'))
+    )
+      return
+
+    const supabase = createClient()
+    if (!supabase) return
+
+    setIsUpdatingId(id)
+    setError(null)
+    try {
+      const { error: deleteError } = await supabase
+        .from('patients')
+        .delete()
+        .eq('id', id)
+      if (deleteError) throw deleteError
+
+      if (preferences.autoRefreshLists) {
+        await loadPatients(true)
+        return
+      }
+
+      setRows(prev => prev.filter(row => row.id !== id))
+    } catch (deleteError) {
+      captureException(
+        deleteError instanceof Error
+          ? deleteError
+          : new Error(String(deleteError))
+      )
+      setError(t('admin.patientManagement.errors.deleteFailed'))
+    } finally {
+      setIsUpdatingId(null)
+    }
+  }
+
+  const viewingPatientRow = editingPatientId
+    ? rows.find(r => r.id === editingPatientId)
+    : null
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              {t('admin.patientManagement.title')}
-            </h1>
-            <p className="text-gray-600">
-              {t('admin.patientManagement.totalPatients', { total })}
-            </p>
-          </div>
-          <Button
-            onClick={() => alert(t('admin.patientManagement.addPatientAlert'))}
-          >
-            <Plus className="w-5 h-5 mr-2" />
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-dental-dark">
+            {t('admin.patientManagement.title')}
+          </h1>
+          <p className="text-sm text-dental-text-light">
+            {t('admin.patientManagement.totalPatients', {
+              total: stats.total,
+            })}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="secondary" size="sm" onClick={openCreateModal}>
+            <Plus className="mr-2 h-4 w-4" />
             {t('admin.patientManagement.newPatient')}
           </Button>
-        </div>
-
-        {/* Filters & Search */}
-        <div className="bg-white rounded-lg shadow p-4 mb-6">
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <Input
-                  className="pl-10"
-                  placeholder={t('admin.patientManagement.searchPlaceholder')}
-                  value={searchTerm}
-                  onChange={e => setSearchTerm(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && handleSearch()}
-                />
-              </div>
-            </div>
-            <Button onClick={handleSearch} variant="outline">
-              {t('admin.patientManagement.searchButton')}
-            </Button>
-            <select
-              value={statusFilter}
-              onChange={e =>
-                setStatusFilter(e.target.value as 'all' | 'active' | 'inactive')
-              }
-              className="px-4 py-2 border rounded-lg"
-            >
-              <option value="all">
-                {t('admin.patientManagement.allStatuses')}
-              </option>
-              <option value="active">
-                {t('admin.patientManagement.statuses.active')}
-              </option>
-              <option value="inactive">
-                {t('admin.patientManagement.statuses.inactive')}
-              </option>
-            </select>
-            <Button variant="outline">
-              <Filter className="w-5 h-5 mr-2" />
-              {t('admin.patientManagement.filters')}
-            </Button>
-            <Button variant="outline">
-              <Download className="w-5 h-5 mr-2" />
-              {t('admin.patientManagement.export')}
-            </Button>
-          </div>
-        </div>
-
-        {/* Patients Table */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          {loading ? (
-            <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-dental-teal" />
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      {t('admin.patientManagement.table.headers.fullName')}
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      {t('admin.patientManagement.table.headers.phone')}
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      {t('admin.patientManagement.table.headers.email')}
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      {t('admin.patientManagement.table.headers.lastVisit')}
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      {t('admin.patientManagement.table.headers.debt')}
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      {t('admin.patientManagement.table.headers.status')}
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
-                      {t('admin.patientManagement.table.headers.actions')}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {patients.map(patient => (
-                    <tr key={patient.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-10 w-10 bg-dental-teal/10 rounded-full flex items-center justify-center">
-                            <span className="text-dental-teal font-semibold">
-                              {patient.firstName[0]}
-                              {patient.lastName[0]}
-                            </span>
-                          </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">
-                              {patient.firstName} {patient.lastName}
-                            </div>
-                            {patient.tags.length > 0 && (
-                              <div className="flex gap-1 mt-1">
-                                {patient.tags.slice(0, 2).map(tag => (
-                                  <span
-                                    key={tag.id}
-                                    className="px-2 py-0.5 text-xs rounded"
-                                    style={{
-                                      backgroundColor: tag.color + '20',
-                                      color: tag.color,
-                                    }}
-                                  >
-                                    {tag.label}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {patient.phone}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {patient.email || '—'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {patient.lastVisitDate
-                          ? new Date(patient.lastVisitDate).toLocaleDateString(
-                              locale
-                            )
-                          : t('admin.patientManagement.table.lastVisitNever')}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`text-sm font-medium ${patient.outstandingBalance > 0 ? 'text-red-600' : 'text-green-600'}`}
-                        >
-                          {patient.outstandingBalance.toLocaleString(locale)}{' '}
-                          {t('cabinet.currency')}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`px-2 py-1 text-xs rounded-full ${
-                            patient.status === 'active'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-gray-100 text-gray-800'
-                          }`}
-                        >
-                          {patient.status === 'active'
-                            ? t('admin.patientManagement.statuses.active')
-                            : t('admin.patientManagement.statuses.inactive')}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex justify-end gap-2">
-                          <button
-                            className="text-blue-600 hover:text-blue-900"
-                            title={t(
-                              'admin.patientManagement.table.actions.view'
-                            )}
-                          >
-                            <Eye className="w-5 h-5" />
-                          </button>
-                          <button
-                            className="text-green-600 hover:text-green-900"
-                            title={t(
-                              'admin.patientManagement.table.actions.edit'
-                            )}
-                          >
-                            <Edit className="w-5 h-5" />
-                          </button>
-                          <button
-                            className="text-red-600 hover:text-red-900"
-                            title={t(
-                              'admin.patientManagement.table.actions.delete'
-                            )}
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {/* Pagination */}
-          {!loading && total > 20 && (
-            <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-              <div className="text-sm text-gray-700">
-                {t('admin.patientManagement.pagination.shown', {
-                  shown: Math.min(page * 20, total),
-                  total,
-                })}
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                >
-                  {t('common.previous')}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage(p => p + 1)}
-                  disabled={page * 20 >= total}
-                >
-                  {t('common.next')}
-                </Button>
-              </div>
-            </div>
-          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => void loadPatients(true)}
+            isLoading={isRefreshing}
+          >
+            <RefreshCw className="mr-2 h-4 w-4" />
+            {t('admin.patientManagement.refresh')}
+          </Button>
         </div>
       </div>
+
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+        <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
+          <p className="text-xs text-dental-text-light">
+            {t('admin.patientManagement.summary.total')}
+          </p>
+          <p className="text-2xl font-bold text-dental-dark">{stats.total}</p>
+        </div>
+        <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
+          <p className="text-xs text-dental-text-light">
+            {t('admin.patientManagement.summary.totalVisits')}
+          </p>
+          <p className="text-2xl font-bold text-dental-dark">
+            {stats.totalVisits}
+          </p>
+        </div>
+        <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
+          <p className="text-xs text-dental-text-light">
+            {t('admin.patientManagement.summary.totalRevenue')}
+          </p>
+          <p className="text-2xl font-bold text-green-600">
+            {stats.totalRevenue.toLocaleString(locale)} {t('cabinet.currency')}
+          </p>
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
+        <div className="flex gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-dental-text-light" />
+            <Input
+              value={searchTerm}
+              onChange={event => setSearchTerm(event.target.value)}
+              placeholder={t('admin.patientManagement.searchPlaceholder')}
+              className="pl-10"
+            />
+          </div>
+        </div>
+      </div>
+
+      {error && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
+      <div className="overflow-hidden rounded-xl border border-dental-secondary-200 bg-white">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className={tableHeadClass}>
+                  {t('admin.patientManagement.table.headers.fullName')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.patientManagement.table.headers.phone')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.patientManagement.table.headers.email')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.patientManagement.table.headers.lastUpdated')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.patientManagement.table.headers.totalSpent')}
+                </th>
+                <th className={tableHeadClass}>
+                  {t('admin.patientManagement.table.headers.actions')}
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 bg-white text-sm">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={6} className={tableEmptyStateClass}>
+                    {t('admin.patientManagement.table.loading')}
+                  </td>
+                </tr>
+              ) : rows.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className={tableEmptyStateClass}>
+                    {t('admin.patientManagement.table.empty')}
+                  </td>
+                </tr>
+              ) : (
+                rows.map(row => (
+                  <tr key={row.id}>
+                    <td className={tableCellClass}>
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0 h-10 w-10 bg-dental-teal/10 rounded-full flex items-center justify-center">
+                          <span className="text-dental-teal font-semibold text-sm">
+                            {(row.first_name || '?')[0]}
+                            {(row.last_name || '?')[0]}
+                          </span>
+                        </div>
+                        <div className="ml-3">
+                          <p className="font-medium text-dental-dark">
+                            {row.last_name} {row.first_name}
+                          </p>
+                          {row.patronymic && (
+                            <p className="text-xs text-dental-text-light">
+                              {row.patronymic}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td
+                      className={`${tableCellClass} text-dental-text whitespace-nowrap`}
+                    >
+                      {row.phone || '—'}
+                    </td>
+                    <td
+                      className={`${tableCellClass} text-dental-text-light whitespace-nowrap`}
+                    >
+                      {row.email || '—'}
+                    </td>
+                    <td
+                      className={`${tableCellClass} text-xs text-dental-text-light whitespace-nowrap`}
+                    >
+                      {formatDateTime(row.updated_at)}
+                    </td>
+                    <td className={`${tableCellClass} whitespace-nowrap`}>
+                      <span
+                        className={`text-sm font-medium ${row.total_spent_uah > 0 ? 'text-green-600' : 'text-dental-text-light'}`}
+                      >
+                        {row.total_spent_uah.toLocaleString(locale)}{' '}
+                        {t('cabinet.currency')}
+                      </span>
+                    </td>
+                    <td className={tableCellClass}>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => openViewModal(row)}
+                          className="rounded-md border border-dental-secondary p-1.5 text-blue-600 hover:bg-blue-50"
+                          aria-label={t(
+                            'admin.patientManagement.table.actions.view'
+                          )}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => openEditModal(row)}
+                          className="rounded-md border border-dental-secondary p-1.5 text-dental-text hover:bg-dental-secondary-50"
+                          aria-label={t(
+                            'admin.patientManagement.table.actions.edit'
+                          )}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => void deletePatient(row.id)}
+                          disabled={isUpdatingId === row.id}
+                          className="rounded-md border border-red-200 p-1.5 text-red-600 hover:bg-red-50 disabled:opacity-60"
+                          aria-label={t(
+                            'admin.patientManagement.table.actions.delete'
+                          )}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <AdminModal
+        open={isModalOpen}
+        title={
+          modalMode === 'create'
+            ? t('admin.patientManagement.modal.createTitle')
+            : modalMode === 'edit'
+              ? t('admin.patientManagement.modal.editTitle')
+              : t('admin.patientManagement.modal.viewTitle')
+        }
+        subtitle={
+          modalMode === 'view'
+            ? undefined
+            : t('admin.patientManagement.modal.subtitle')
+        }
+        onClose={closeModal}
+      >
+        {modalMode === 'view' ? (
+          <div className="space-y-4 text-sm">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <p className="text-dental-text-light">
+                  {t('admin.patientManagement.form.firstName')}
+                </p>
+                <p className="font-medium text-dental-dark">
+                  {formState.first_name || '—'}
+                </p>
+              </div>
+              <div>
+                <p className="text-dental-text-light">
+                  {t('admin.patientManagement.form.lastName')}
+                </p>
+                <p className="font-medium text-dental-dark">
+                  {formState.last_name || '—'}
+                </p>
+              </div>
+              <div>
+                <p className="text-dental-text-light">
+                  {t('admin.patientManagement.form.patronymic')}
+                </p>
+                <p className="font-medium text-dental-dark">
+                  {formState.patronymic || '—'}
+                </p>
+              </div>
+              <div>
+                <p className="text-dental-text-light">
+                  {t('admin.patientManagement.form.phone')}
+                </p>
+                <p className="font-medium text-dental-dark">
+                  {formState.phone || '—'}
+                </p>
+              </div>
+              <div>
+                <p className="text-dental-text-light">
+                  {t('admin.patientManagement.form.email')}
+                </p>
+                <p className="font-medium text-dental-dark">
+                  {formState.email || '—'}
+                </p>
+              </div>
+              <div>
+                <p className="text-dental-text-light">
+                  {t('admin.patientManagement.form.dateOfBirth')}
+                </p>
+                <p className="font-medium text-dental-dark">
+                  {formState.date_of_birth
+                    ? new Date(formState.date_of_birth).toLocaleDateString(
+                        locale
+                      )
+                    : '—'}
+                </p>
+              </div>
+              <div>
+                <p className="text-dental-text-light">
+                  {t('admin.patientManagement.form.gender')}
+                </p>
+                <p className="font-medium text-dental-dark">
+                  {formState.gender || '—'}
+                </p>
+              </div>
+              <div>
+                <p className="text-dental-text-light">
+                  {t('admin.patientManagement.form.address')}
+                </p>
+                <p className="font-medium text-dental-dark">
+                  {formState.address || '—'}
+                </p>
+              </div>
+            </div>
+            {viewingPatientRow && (
+              <div className="grid gap-4 md:grid-cols-2 border-t border-dental-secondary-200 pt-4">
+                <div>
+                  <p className="text-dental-text-light">
+                    {t('admin.patientManagement.summary.totalVisits')}
+                  </p>
+                  <p className="font-medium text-dental-dark">
+                    {viewingPatientRow.total_visits}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-dental-text-light">
+                    {t('admin.patientManagement.summary.totalRevenue')}
+                  </p>
+                  <p className="font-medium text-green-600">
+                    {viewingPatientRow.total_spent_uah.toLocaleString(locale)}{' '}
+                    {t('cabinet.currency')}
+                  </p>
+                </div>
+              </div>
+            )}
+            {formState.medical_notes && (
+              <div className="border-t border-dental-secondary-200 pt-4">
+                <p className="text-dental-text-light mb-1">
+                  {t('admin.patientManagement.form.medicalNotes')}
+                </p>
+                <p className="whitespace-pre-wrap text-dental-text">
+                  {formState.medical_notes}
+                </p>
+              </div>
+            )}
+            <div className="flex justify-end gap-2 border-t border-dental-secondary-200 pt-4">
+              <Button variant="outline" onClick={closeModal}>
+                {t('common.close')}
+              </Button>
+              <Button
+                onClick={() => {
+                  setModalMode('edit')
+                }}
+              >
+                <Edit className="mr-2 h-4 w-4" />
+                {t('admin.patientManagement.table.actions.edit')}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <form
+            className="space-y-4"
+            onSubmit={event => void savePatient(event)}
+          >
+            <div className="grid gap-3 md:grid-cols-2">
+              <Input
+                label={t('admin.patientManagement.form.firstName')}
+                value={formState.first_name}
+                onChange={event =>
+                  setFormState(prev => ({
+                    ...prev,
+                    first_name: event.target.value,
+                  }))
+                }
+                required
+              />
+              <Input
+                label={t('admin.patientManagement.form.lastName')}
+                value={formState.last_name}
+                onChange={event =>
+                  setFormState(prev => ({
+                    ...prev,
+                    last_name: event.target.value,
+                  }))
+                }
+                required
+              />
+            </div>
+            <div className="grid gap-3 md:grid-cols-2">
+              <Input
+                label={t('admin.patientManagement.form.patronymic')}
+                value={formState.patronymic}
+                onChange={event =>
+                  setFormState(prev => ({
+                    ...prev,
+                    patronymic: event.target.value,
+                  }))
+                }
+              />
+              <Input
+                label={t('admin.patientManagement.form.phone')}
+                type="tel"
+                value={formState.phone}
+                onChange={event =>
+                  setFormState(prev => ({
+                    ...prev,
+                    phone: event.target.value,
+                  }))
+                }
+              />
+            </div>
+            <div className="grid gap-3 md:grid-cols-2">
+              <Input
+                label={t('admin.patientManagement.form.email')}
+                type="email"
+                value={formState.email}
+                onChange={event =>
+                  setFormState(prev => ({
+                    ...prev,
+                    email: event.target.value,
+                  }))
+                }
+              />
+              <Input
+                label={t('admin.patientManagement.form.dateOfBirth')}
+                type="date"
+                value={formState.date_of_birth}
+                onChange={event =>
+                  setFormState(prev => ({
+                    ...prev,
+                    date_of_birth: event.target.value,
+                  }))
+                }
+              />
+            </div>
+            <div className="grid gap-3 md:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-dental-text">
+                  {t('admin.patientManagement.form.gender')}
+                </label>
+                <select
+                  value={formState.gender}
+                  onChange={event =>
+                    setFormState(prev => ({
+                      ...prev,
+                      gender: event.target.value,
+                    }))
+                  }
+                  className="w-full rounded-lg border border-dental-secondary px-4 py-3 text-sm"
+                >
+                  <option value="">—</option>
+                  <option value="male">
+                    {t('admin.patientManagement.form.genderOptions.male')}
+                  </option>
+                  <option value="female">
+                    {t('admin.patientManagement.form.genderOptions.female')}
+                  </option>
+                  <option value="other">
+                    {t('admin.patientManagement.form.genderOptions.other')}
+                  </option>
+                </select>
+              </div>
+              <Input
+                label={t('admin.patientManagement.form.address')}
+                value={formState.address}
+                onChange={event =>
+                  setFormState(prev => ({
+                    ...prev,
+                    address: event.target.value,
+                  }))
+                }
+              />
+            </div>
+            <Textarea
+              label={t('admin.patientManagement.form.medicalNotes')}
+              value={formState.medical_notes}
+              onChange={event =>
+                setFormState(prev => ({
+                  ...prev,
+                  medical_notes: event.target.value,
+                }))
+              }
+              rows={4}
+            />
+            <div className="flex items-center justify-end gap-2 border-t border-dental-secondary-200 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={closeModal}
+                disabled={isSaving}
+              >
+                {t('common.cancel')}
+              </Button>
+              <Button type="submit" isLoading={isSaving}>
+                {modalMode === 'create'
+                  ? t('admin.patientManagement.form.create')
+                  : t('admin.patientManagement.form.saveChanges')}
+              </Button>
+            </div>
+          </form>
+        )}
+      </AdminModal>
     </div>
   )
 }

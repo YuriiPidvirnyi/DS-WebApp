@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { Button, Input } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
+import { captureException } from '@/utils/sentry'
 import { formatDateTime, getStatusTone } from './utils'
 
 type ReviewStatus = 'pending' | 'approved' | 'rejected'
@@ -94,7 +95,9 @@ export default function AdminReviewsPage() {
 
         setRows((data || []) as ReviewRow[])
       } catch (loadError) {
-        console.error('Failed to load reviews:', loadError)
+        captureException(
+          loadError instanceof Error ? loadError : new Error(String(loadError))
+        )
         setError(t('admin.reviewsPage.errors.loadFailed'))
       } finally {
         setIsLoading(false)
@@ -209,7 +212,11 @@ export default function AdminReviewsPage() {
         })
       )
     } catch (updateError) {
-      console.error('Failed to apply bulk review changes:', updateError)
+      captureException(
+        updateError instanceof Error
+          ? updateError
+          : new Error(String(updateError))
+      )
       setError(t('admin.reviewsPage.errors.bulkUpdateFailed'))
     } finally {
       setIsUpdatingId(null)
@@ -247,7 +254,11 @@ export default function AdminReviewsPage() {
           prev.map(row => (row.id === id ? { ...row, ...patch } : row))
         )
       } catch (updateError) {
-        console.error('Failed to update review:', updateError)
+        captureException(
+          updateError instanceof Error
+            ? updateError
+            : new Error(String(updateError))
+        )
         setError(t('admin.reviewsPage.errors.updateFailed'))
       } finally {
         setIsUpdatingId(null)

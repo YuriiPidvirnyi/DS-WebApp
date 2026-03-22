@@ -74,7 +74,7 @@ export default function ReminderSettings() {
         }
       )
     } catch (error) {
-      console.error('Failed to delete reminder:', error)
+      import('@sentry/nextjs').then(Sentry => Sentry.captureException(error))
     } finally {
       setLoading(false)
     }
@@ -123,7 +123,7 @@ export default function ReminderSettings() {
         }
       )
     } catch (error) {
-      console.error('Failed to update preference:', error)
+      import('@sentry/nextjs').then(Sentry => Sentry.captureException(error))
     } finally {
       setLoading(false)
     }
@@ -165,7 +165,7 @@ export default function ReminderSettings() {
         }
       }
     } catch (error) {
-      console.error('Failed to create calendar event:', error)
+      import('@sentry/nextjs').then(Sentry => Sentry.captureException(error))
     }
   }
 

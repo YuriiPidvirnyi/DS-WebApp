@@ -99,7 +99,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         onSuccess()
       }
     } catch (error) {
-      console.error('Contact form error:', error)
+      import('@sentry/nextjs').then(Sentry => Sentry.captureException(error))
       // Error toast is handled by withToast utility
     }
   }

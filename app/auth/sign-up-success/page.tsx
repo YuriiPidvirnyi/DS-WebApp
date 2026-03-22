@@ -8,7 +8,7 @@ export default function SignUpSuccessPage() {
   const { t } = useTranslation()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-teal-50 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md text-center">
         {/* Success Icon */}
         <div className="mb-6">

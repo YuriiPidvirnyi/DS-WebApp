@@ -2,6 +2,7 @@
 
 import { type ReactNode } from 'react'
 import { PenSquare, Check, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface EditableFieldProps {
   label: string
@@ -29,6 +30,8 @@ export default function EditableField({
   children,
   className = '',
 }: EditableFieldProps) {
+  const { t } = useTranslation()
+
   return (
     <div className={`relative ${className}`}>
       <div className="text-gray-500 flex justify-between">
@@ -38,6 +41,7 @@ export default function EditableField({
             type="button"
             onClick={onStartEdit}
             className="text-gray-400 hover:text-dental-teal"
+            aria-label={t('common.edit')}
           >
             <PenSquare className="h-3.5 w-3.5" />
           </button>
@@ -52,6 +56,7 @@ export default function EditableField({
               type="button"
               onClick={onCancel}
               className="p-1 text-gray-500 hover:text-gray-700"
+              aria-label={t('common.cancel')}
             >
               <X className="h-4 w-4" />
             </button>
@@ -59,6 +64,7 @@ export default function EditableField({
               type="button"
               onClick={onSave}
               className="p-1 text-dental-teal hover:text-dental-teal-dark"
+              aria-label={t('common.save')}
             >
               <Check className="h-4 w-4" />
             </button>

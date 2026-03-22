@@ -97,14 +97,21 @@ export async function POST(request: NextRequest) {
     },
   })
 
-  const { data, error } = await supabase.auth.admin.generateLink({
-    type: payload.type,
-    email: payload.email,
-    password: payload.type === 'signup' ? payload.password : undefined,
-    options: {
-      redirectTo: redirectTo.toString(),
-    },
-  })
+  const linkParams =
+    payload.type === 'signup'
+      ? {
+          type: 'signup' as const,
+          email: payload.email,
+          password: payload.password!,
+          options: { redirectTo: redirectTo.toString() },
+        }
+      : {
+          type: 'recovery' as const,
+          email: payload.email,
+          options: { redirectTo: redirectTo.toString() },
+        }
+
+  const { data, error } = await supabase.auth.admin.generateLink(linkParams)
 
   if (error) {
     return NextResponse.json(

@@ -31,7 +31,7 @@ const Contact = () => {
           {/* Contact Information */}
           <div className="space-y-8">
             {/* Contact Details */}
-            <div className="bg-gradient-to-br from-dental-primary to-dental-primary-600 text-white rounded-2xl p-8">
+            <div className="bg-dental-primary-600 text-white rounded-2xl p-8">
               <h2 className="text-2xl font-bold mb-6">
                 {t('contact.contactInfo')}
               </h2>
@@ -44,6 +44,7 @@ const Contact = () => {
                     <a
                       href={`tel:${CONTACT_INFO.phoneRaw}`}
                       className="hover:underline"
+                      aria-label={`${t('common.phone')}: ${CONTACT_INFO.phone}`}
                       data-track-id="call_click"
                       data-track-category="outbound"
                       data-track-label="contact_phone"
@@ -65,6 +66,7 @@ const Contact = () => {
                     <a
                       href={`mailto:${CONTACT_INFO.email}`}
                       className="hover:underline"
+                      aria-label={`${t('common.email')}: ${CONTACT_INFO.email}`}
                       data-track-id="email_click"
                       data-track-category="outbound"
                       data-track-label="contact_email"
@@ -91,6 +93,7 @@ const Contact = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm text-blue-100 hover:underline"
+                      aria-label={t('contact.viewOnMap')}
                     >
                       {t('contact.viewOnMap')}
                     </a>

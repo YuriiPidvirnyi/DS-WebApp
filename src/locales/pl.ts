@@ -1393,6 +1393,9 @@ const pl = {
       reviews: 'Opinie',
       contacts: 'Kontakty',
       chat: 'Czat',
+      treatments: 'Akty prac',
+      materials: 'Materiały',
+      orders: 'Zamówienia',
       analytics: 'Analityka',
       settings: 'Ustawienia',
     },
@@ -1575,36 +1578,64 @@ const pl = {
     patientManagement: {
       title: 'Zarządzanie pacjentami',
       totalPatients: 'Łącznie: {{total}} pacjentów',
-      addPatientAlert: 'Dodaj pacjenta',
       newPatient: 'Nowy pacjent',
+      refresh: 'Odśwież',
       searchPlaceholder: 'Szukaj po imieniu i nazwisku, telefonie, emailu...',
-      searchButton: 'Szukaj',
-      allStatuses: 'Wszystkie statusy',
-      statuses: {
-        active: 'Aktywny',
-        inactive: 'Nieaktywny',
+      summary: {
+        total: 'Łączna liczba pacjentów',
+        totalVisits: 'Łączna liczba wizyt',
+        totalRevenue: 'Łączny przychód',
       },
-      filters: 'Filtry',
-      export: 'Eksport',
       table: {
         headers: {
           fullName: 'Imię i nazwisko',
           phone: 'Telefon',
           email: 'Email',
-          lastVisit: 'Ostatnia wizyta',
-          debt: 'Zadłużenie',
-          status: 'Status',
+          lastUpdated: 'Ostatnia aktualizacja',
+          totalSpent: 'Wydatki',
           actions: 'Akcje',
         },
-        lastVisitNever: 'Brak',
+        loading: 'Ładowanie pacjentów…',
+        empty: 'Nie znaleziono pacjentów',
         actions: {
           view: 'Podgląd',
           edit: 'Edytuj',
           delete: 'Usuń',
         },
       },
-      pagination: {
-        shown: 'Pokazano {{shown}} z {{total}}',
+      modal: {
+        createTitle: 'Nowy pacjent',
+        editTitle: 'Edytuj pacjenta',
+        viewTitle: 'Karta pacjenta',
+        subtitle: 'Wypełnij dane pacjenta',
+      },
+      form: {
+        firstName: 'Imię',
+        lastName: 'Nazwisko',
+        patronymic: 'Drugie imię',
+        phone: 'Telefon',
+        email: 'Email',
+        dateOfBirth: 'Data urodzenia',
+        gender: 'Płeć',
+        genderOptions: {
+          male: 'Mężczyzna',
+          female: 'Kobieta',
+          other: 'Inna',
+        },
+        address: 'Adres',
+        medicalNotes: 'Notatki medyczne',
+        create: 'Utwórz',
+        saveChanges: 'Zapisz zmiany',
+      },
+      errors: {
+        supabaseUnavailable: 'Usługa tymczasowo niedostępna',
+        loadFailed: 'Nie udało się załadować pacjentów',
+        saveFailed: 'Nie udało się zapisać pacjenta',
+        deleteFailed: 'Nie udało się usunąć pacjenta',
+        requiredFields: 'Imię i nazwisko są wymagane',
+      },
+      confirmations: {
+        deletePatient: 'Czy na pewno chcesz usunąć tego pacjenta?',
       },
     },
     reviewStatuses: {
@@ -1714,6 +1745,7 @@ const pl = {
         markUnread: 'Oznacz jako nieprzeczytane',
         showMessage: 'Pokaż wiadomość',
         adminNote: 'Notatka admina',
+        notesPlaceholder: 'Dodaj notatkę…',
       },
       confirmations: {
         bulkChange: 'Zastosować masową zmianę do {{count}} zgłoszeń?',
@@ -2172,6 +2204,8 @@ const pl = {
       loading: 'Kończymy logowanie, proszę czekać...',
       goToLogin: 'Przejdź do logowania',
       errors: {
+        invalidLink:
+          'Link odzyskiwania jest niekompletny lub uszkodzony. Poproś o nowy.',
         unavailable: 'Autoryzacja jest tymczasowo niedostępna',
         sessionMissing: 'Nie udało się aktywować sesji. Zaloguj się ponownie.',
         generic: 'Nie udało się zakończyć autoryzacji. Spróbuj ponownie.',
@@ -2254,15 +2288,11 @@ const pl = {
   patientDashboard: {
     notFound: 'Nie znaleziono pacjenta',
     subtitle: 'Konto pacjenta',
-    downloadData: 'Pobierz dane',
-    common: {
-      empty: '—',
-    },
     cards: {
       nextVisit: 'Następna wizyta',
-      activePlans: 'Aktywne plany',
-      amountDue: 'Do zapłaty',
-      newMessages: 'Nowe wiadomości',
+      completedVisits: 'Zakończonych wizyt',
+      totalSpent: 'Łączne wydatki',
+      totalAppointments: 'Łączna liczba wizyt',
     },
     tabs: {
       appointments: 'Wizyty',
@@ -2272,20 +2302,28 @@ const pl = {
     },
     sections: {
       appointments: {
-        title: 'Nadchodzące wizyty',
-        description: 'Tutaj pojawią się Twoje nadchodzące wizyty',
+        title: 'Historia wizyt',
+        empty: 'Brak wizyt',
+        at: 'o',
+        statuses: {
+          pending: 'Oczekuje',
+          confirmed: 'Potwierdzona',
+          completed: 'Zakończona',
+          cancelled: 'Anulowana',
+          no_show: 'Nieobecny',
+        },
       },
       treatments: {
         title: 'Plany leczenia',
-        description: 'Tutaj pojawią się Twoje plany leczenia',
+        comingSoon: 'Funkcja planów leczenia będzie dostępna wkrótce',
       },
       payments: {
         title: 'Historia płatności',
-        description: 'Tutaj pojawi się historia Twoich płatności',
+        comingSoon: 'Funkcja płatności będzie dostępna wkrótce',
       },
       messages: {
         title: 'Wiadomości',
-        description: 'Tutaj pojawią się Twoje wiadomości z kliniką',
+        comingSoon: 'Funkcja wiadomości będzie dostępna wkrótce',
       },
     },
   },
@@ -2524,6 +2562,7 @@ const pl = {
     freeConsultationShort: 'Bezpłatna konsultacja',
     forNewPatients: 'Dla nowych pacjentów',
     workingNow: 'Teraz otwarte',
+    closedNow: 'Teraz zamknięte',
     qualityGuarantee: 'Gwarancja jakości',
   },
   hero: {

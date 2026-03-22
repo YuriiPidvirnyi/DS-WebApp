@@ -15,7 +15,7 @@ import { assertValidTurnstile } from '@/utils/turnstileVerify'
 import { useSubmissionCooldown } from '@/hooks/useSubmissionCooldown'
 import { getAvailableSlots, createAppointment } from '@/services/appointments'
 import { storeLocalReminder } from '@/services/reminders'
-import { sendBookingConfirmation } from '@/services/notifications'
+
 import { sanitizeUserInput } from '@/utils/security'
 import { withToast } from '@/utils/toast'
 import {
@@ -240,14 +240,10 @@ export function useBookingForm() {
             message: sanitizedMessage,
             preferredDate: data.date,
             preferredTime: data.time,
+            doctorId: data.doctor || undefined,
           })
           if (!res.success || !res.data)
             throw new Error(t('booking.errors.createFailed'))
-          // Send confirmation (fire-and-forget)
-          void sendBookingConfirmation({
-            appointmentId: res.data.id,
-            email: data.email,
-          }).catch(() => undefined)
           // Track booking complete
           try {
             if (window.gtag) {

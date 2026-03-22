@@ -180,7 +180,7 @@ export default function CabinetPage() {
             {/* Quick Book */}
             <Link
               href="/booking"
-              className="block bg-gradient-to-br from-dental-primary-500 to-dental-primary-600 text-white rounded-2xl p-6 hover:from-dental-primary-600 hover:to-dental-primary-700 transition-all shadow-lg hover:shadow-xl"
+              className="block bg-dental-primary-600 text-white rounded-2xl p-6 hover:bg-dental-primary-700 transition-all shadow-lg hover:shadow-xl"
             >
               <div className="flex items-center justify-between">
                 <div>
@@ -193,6 +193,22 @@ export default function CabinetPage() {
                 </div>
                 <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                   <Plus className="w-6 h-6" />
+                </div>
+              </div>
+            </Link>
+
+            <Link
+              href="/cabinet/treatments"
+              className="block bg-white rounded-2xl p-6 shadow-soft border border-dental-secondary-100 hover:border-dental-primary-200 transition-colors"
+            >
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-dental-dark">
+                  {t('cabinet.treatmentHistory', {
+                    defaultValue: 'Історія лікування',
+                  })}
+                </h3>
+                <div className="w-12 h-12 bg-dental-primary-100 rounded-xl flex items-center justify-center shrink-0">
+                  <FileText className="w-6 h-6 text-dental-teal" />
                 </div>
               </div>
             </Link>
@@ -246,7 +262,7 @@ export default function CabinetPage() {
                 <ChevronRight className="w-5 h-5 text-dental-muted" />
               </Link>
               <Link
-                href="/cabinet/appointments"
+                href="/booking"
                 className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors border-b border-dental-secondary-100"
               >
                 <div className="flex items-center gap-3">
@@ -254,7 +270,7 @@ export default function CabinetPage() {
                     <FileText className="w-5 h-5 text-blue-600" />
                   </div>
                   <span className="font-medium text-dental-dark">
-                    {t('cabinet.treatmentHistory')}
+                    {t('cabinet.bookAppointment')}
                   </span>
                 </div>
                 <ChevronRight className="w-5 h-5 text-dental-muted" />

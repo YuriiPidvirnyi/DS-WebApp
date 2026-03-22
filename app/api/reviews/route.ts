@@ -6,6 +6,7 @@ import {
   validateCSRF,
   csrfErrorResponse,
 } from '@/lib/api-security'
+import { captureException } from '@/utils/sentry'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -34,7 +35,9 @@ export async function GET(request: NextRequest) {
       .limit(50)
 
     if (error) {
-      console.error('[reviews] Supabase GET error:', error)
+      captureException(new Error('[reviews] Supabase GET error'), {
+        supabaseError: error,
+      })
       return NextResponse.json(
         { success: false, error: 'Помилка завантаження відгуків' },
         { status: 500 }
@@ -56,7 +59,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ success: true, data: { items } })
   } catch (error) {
-    console.error('[reviews] Unexpected GET error:', error)
+    captureException(error instanceof Error ? error : new Error(String(error)))
     return NextResponse.json(
       { success: false, error: 'Внутрішня помилка сервера' },
       { status: 500 }
@@ -131,7 +134,9 @@ export async function POST(request: NextRequest) {
     })
 
     if (error) {
-      console.error('[reviews] Supabase POST error:', error)
+      captureException(new Error('[reviews] Supabase POST error'), {
+        supabaseError: error,
+      })
       return NextResponse.json(
         { success: false, error: 'Помилка збереження відгуку' },
         { status: 500 }
@@ -146,7 +151,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     )
   } catch (error) {
-    console.error('[reviews] Unexpected POST error:', error)
+    captureException(error instanceof Error ? error : new Error(String(error)))
     return NextResponse.json(
       { success: false, error: 'Внутрішня помилка сервера' },
       { status: 500 }

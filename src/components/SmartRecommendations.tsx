@@ -109,8 +109,8 @@ export default function SmartRecommendations() {
         throw new Error('Failed to get recommendations')
       }
 
-      const data = await response.json()
-      setRecommendations(data.recommendations)
+      const result = await response.json()
+      setRecommendations(result.data)
       setStep(4)
     } catch {
       setError(t('ai.recommendations.loadError'))
@@ -145,7 +145,7 @@ export default function SmartRecommendations() {
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="group relative overflow-hidden bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-6 py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3"
+        className="group relative overflow-hidden bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-6 py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3"
       >
         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
         <Sparkles className="w-6 h-6 relative z-10" />
@@ -160,7 +160,7 @@ export default function SmartRecommendations() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto">
             {/* Header */}
-            <div className="sticky top-0 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-4 flex items-center justify-between rounded-t-3xl">
+            <div className="sticky top-0 bg-dental-primary-700 text-white px-6 py-4 flex items-center justify-between rounded-t-3xl">
               <div className="flex items-center gap-3">
                 <Sparkles className="w-6 h-6" />
                 <h2 className="text-xl font-bold">
@@ -284,7 +284,7 @@ export default function SmartRecommendations() {
                     <button
                       onClick={getRecommendations}
                       disabled={isLoading}
-                      className="flex-1 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                      className="flex-1 py-3 bg-dental-primary-600 hover:bg-dental-primary-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                     >
                       {isLoading ? (
                         <>
@@ -311,7 +311,7 @@ export default function SmartRecommendations() {
               {step === 4 && recommendations && (
                 <div className="space-y-6">
                   {/* Primary Recommendation */}
-                  <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl p-5 border border-purple-200">
+                  <div className="bg-dental-primary-50 rounded-2xl p-5 border border-dental-primary-200">
                     <div className="flex items-start gap-4">
                       <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
                         <CheckCircle className="w-6 h-6 text-white" />
@@ -422,7 +422,7 @@ export default function SmartRecommendations() {
                     <Link
                       href="/booking"
                       onClick={() => setIsOpen(false)}
-                      className="flex-1 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
+                      className="flex-1 py-3 bg-dental-primary-600 hover:bg-dental-primary-700 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
                     >
                       {t('buttons.bookAppointment')}
                       <ArrowRight className="w-5 h-5" />

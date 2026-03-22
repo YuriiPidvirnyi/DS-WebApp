@@ -1,10 +1,14 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { checkRateLimit, rateLimitResponse } from '@/lib/api-security'
+import { captureException } from '@/utils/sentry'
 
-// Revalidate every 120 seconds - doctors list doesn't change often
 export const revalidate = 120
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const { allowed, remaining } = await checkRateLimit(request, 60, 60_000)
+  if (!allowed) return rateLimitResponse(remaining)
+
   try {
     const supabase = await createClient()
     if (!supabase) {
@@ -21,7 +25,9 @@ export async function GET() {
       .order('experience_years', { ascending: false })
 
     if (error) {
-      console.error('Supabase error:', error)
+      captureException(new Error('[doctors] Supabase GET error'), {
+        supabaseError: error,
+      })
       return NextResponse.json(
         { success: false, error: 'Помилка завантаження лікарів' },
         { status: 500 }
@@ -49,7 +55,7 @@ export async function GET() {
       data: formattedDoctors || [],
     })
   } catch (error) {
-    console.error('API error:', error)
+    captureException(error instanceof Error ? error : new Error(String(error)))
     return NextResponse.json(
       { success: false, error: 'Внутрішня помилка сервера' },
       { status: 500 }

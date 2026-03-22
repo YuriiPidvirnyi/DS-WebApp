@@ -16,10 +16,6 @@ const categoryKeys = [
   { value: 'clinic', labelKey: 'gallery.categories.clinic' },
   { value: 'equipment', labelKey: 'gallery.categories.equipment' },
   { value: 'team', labelKey: 'gallery.categories.team' },
-  { value: 'implants', labelKey: 'gallery.categories.implants' },
-  { value: 'whitening', labelKey: 'gallery.categories.whitening' },
-  { value: 'braces', labelKey: 'gallery.categories.braces' },
-  { value: 'veneers', labelKey: 'gallery.categories.veneers' },
   { value: 'before-after', labelKey: 'gallery.categories.beforeAfter' },
 ]
 
@@ -117,7 +113,7 @@ const Gallery = () => {
                 height={256}
                 className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
                   <h3 className="font-semibold text-lg mb-1">{image.title}</h3>
                   {image.description && (

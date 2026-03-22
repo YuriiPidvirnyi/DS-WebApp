@@ -129,7 +129,7 @@ const Home = () => {
         ref={featuresRef}
         role="region"
         aria-labelledby="features-heading"
-        className="py-24 bg-gradient-to-b from-dental-secondary-50 to-white"
+        className="py-24 bg-dental-secondary-50"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection
@@ -160,7 +160,7 @@ const Home = () => {
                 className="text-center p-8 border border-dental-secondary-200"
               >
                 <div className="flex justify-center mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl flex items-center justify-center">
+                  <div className="w-16 h-16 bg-dental-primary-50 rounded-2xl flex items-center justify-center">
                     {feature.icon}
                   </div>
                 </div>
@@ -227,7 +227,7 @@ const Home = () => {
                       width={1200}
                       height={800}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent" />
+                    <div className="absolute inset-0 bg-slate-900/40" />
                     <div className="absolute bottom-4 left-6 right-6">
                       <h3 className="text-2xl font-bold text-white mb-1">
                         {service.title}
@@ -275,7 +275,7 @@ const Home = () => {
         ref={pricingRef}
         role="region"
         aria-labelledby="pricing-heading"
-        className="py-24 bg-gradient-to-b from-dental-secondary-50 to-white"
+        className="py-24 bg-dental-secondary-50"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection
@@ -414,7 +414,7 @@ const Home = () => {
         ref={ctaRef}
         role="region"
         aria-labelledby="cta-heading"
-        className="py-24 bg-gradient-to-br from-dental-primary-900 via-dental-primary-800 to-dental-primary-950 text-white relative overflow-hidden"
+        className="py-24 bg-dental-primary-900 text-white relative overflow-hidden"
       >
         {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">

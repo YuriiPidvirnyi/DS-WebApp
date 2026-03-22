@@ -11,6 +11,7 @@ import {
   type AdminAuditLog,
 } from '@/lib/supabase/audit'
 import { createClient } from '@/lib/supabase/client'
+import { captureException } from '@/utils/sentry'
 import AdminModal from './components/AdminModal'
 import { formatDateTime, getStatusTone } from './utils'
 
@@ -138,7 +139,9 @@ export default function AdminSettingsPage() {
         membership: (membership as AdminMembership | null) || null,
       })
     } catch (loadError) {
-      console.error('Failed to load settings profile:', loadError)
+      captureException(
+        loadError instanceof Error ? loadError : new Error(String(loadError))
+      )
       setError(t('admin.settingsPage.errors.loadSettingsFailed'))
     } finally {
       setIsLoading(false)
@@ -203,7 +206,9 @@ export default function AdminSettingsPage() {
       })
       setAuditLogs(data)
     } catch (loadError) {
-      console.error('Failed to load audit logs:', loadError)
+      captureException(
+        loadError instanceof Error ? loadError : new Error(String(loadError))
+      )
       setAuditError(t('admin.settingsPage.audit.errors.loadFailed'))
     } finally {
       setIsLoadingAudit(false)
@@ -334,7 +339,11 @@ export default function AdminSettingsPage() {
       closeRollbackModal()
       await loadAuditLogs()
     } catch (restoreError) {
-      console.error('Failed to restore from audit:', restoreError)
+      captureException(
+        restoreError instanceof Error
+          ? restoreError
+          : new Error(String(restoreError))
+      )
       setAuditError(t('admin.settingsPage.rollback.errors.restoreFailed'))
     } finally {
       setIsRestoringAuditId(null)

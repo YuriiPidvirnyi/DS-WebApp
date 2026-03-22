@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAvailableSlots, CliniCardsError } from '@/lib/clinicards-client'
 import { getCachedData, CACHE_KEYS, CACHE_TTL } from '@/lib/redis'
 import { checkRateLimit, rateLimitResponse } from '@/lib/api-security'
+import { captureException } from '@/utils/sentry'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -90,10 +91,7 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    console.error(
-      '[appointments/slots] unexpected error, using fallback:',
-      error
-    )
+    captureException(error instanceof Error ? error : new Error(String(error)))
     return NextResponse.json({
       success: true,
       data: buildFallbackSlots(date),

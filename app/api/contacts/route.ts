@@ -11,6 +11,7 @@ import {
   validateCSRF,
   csrfErrorResponse,
 } from '@/lib/api-security'
+import { captureException } from '@/utils/sentry'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -146,7 +147,9 @@ export async function POST(request: NextRequest) {
         })
 
       if (dbError) {
-        console.error('[contacts] Supabase error:', dbError)
+        captureException(new Error('[contacts] Supabase insert error'), {
+          supabaseError: dbError,
+        })
       } else {
         savedSubmissionId = submissionId
       }
@@ -189,7 +192,7 @@ export async function POST(request: NextRequest) {
         { status: error.status || 503 }
       )
     }
-    console.error('[contacts] unexpected error:', error)
+    captureException(error instanceof Error ? error : new Error(String(error)))
     return NextResponse.json(
       { success: false, error: 'Внутрішня помилка сервера' },
       { status: 500 }

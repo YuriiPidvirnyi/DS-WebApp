@@ -123,7 +123,7 @@ const About = () => {
               {t('about.story.paragraph2')}
             </p>
           </div>
-          <div className="bg-gradient-to-br from-dental-blue/10 to-dental-teal/10 rounded-2xl p-8 flex items-center justify-center">
+          <div className="bg-dental-primary-50 rounded-2xl p-8 flex items-center justify-center">
             <div className="text-center">
               <div className="text-6xl mb-4">🦷</div>
               <h3 className="text-2xl font-semibold text-gray-900 mb-2">

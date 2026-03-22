@@ -1386,6 +1386,9 @@ const en = {
       reviews: 'Reviews',
       contacts: 'Contacts',
       chat: 'Chat',
+      treatments: 'Treatment Acts',
+      materials: 'Materials',
+      orders: 'Orders',
       analytics: 'Analytics',
       settings: 'Settings',
     },
@@ -1569,36 +1572,64 @@ const en = {
     patientManagement: {
       title: 'Patient Management',
       totalPatients: 'Total: {{total}} patients',
-      addPatientAlert: 'Add patient',
       newPatient: 'New patient',
+      refresh: 'Refresh',
       searchPlaceholder: 'Search by name, phone, email...',
-      searchButton: 'Search',
-      allStatuses: 'All statuses',
-      statuses: {
-        active: 'Active',
-        inactive: 'Inactive',
+      summary: {
+        total: 'Total patients',
+        totalVisits: 'Total visits',
+        totalRevenue: 'Total revenue',
       },
-      filters: 'Filters',
-      export: 'Export',
       table: {
         headers: {
           fullName: 'Full name',
           phone: 'Phone',
           email: 'Email',
-          lastVisit: 'Last visit',
-          debt: 'Debt',
-          status: 'Status',
+          lastUpdated: 'Last updated',
+          totalSpent: 'Spent',
           actions: 'Actions',
         },
-        lastVisitNever: 'Never',
+        loading: 'Loading patients…',
+        empty: 'No patients found',
         actions: {
           view: 'View',
           edit: 'Edit',
           delete: 'Delete',
         },
       },
-      pagination: {
-        shown: 'Showing {{shown}} of {{total}}',
+      modal: {
+        createTitle: 'New patient',
+        editTitle: 'Edit patient',
+        viewTitle: 'Patient card',
+        subtitle: 'Fill in patient details',
+      },
+      form: {
+        firstName: 'First name',
+        lastName: 'Last name',
+        patronymic: 'Patronymic',
+        phone: 'Phone',
+        email: 'Email',
+        dateOfBirth: 'Date of birth',
+        gender: 'Gender',
+        genderOptions: {
+          male: 'Male',
+          female: 'Female',
+          other: 'Other',
+        },
+        address: 'Address',
+        medicalNotes: 'Medical notes',
+        create: 'Create',
+        saveChanges: 'Save changes',
+      },
+      errors: {
+        supabaseUnavailable: 'Service temporarily unavailable',
+        loadFailed: 'Failed to load patients',
+        saveFailed: 'Failed to save patient',
+        deleteFailed: 'Failed to delete patient',
+        requiredFields: 'First name and last name are required',
+      },
+      confirmations: {
+        deletePatient: 'Are you sure you want to delete this patient?',
       },
     },
     reviewStatuses: {
@@ -1708,6 +1739,7 @@ const en = {
         markUnread: 'Mark as unread',
         showMessage: 'Show message',
         adminNote: 'Admin note',
+        notesPlaceholder: 'Add a note…',
       },
       confirmations: {
         bulkChange: 'Apply bulk update to {{count}} inquiries?',
@@ -2163,6 +2195,8 @@ const en = {
       loading: 'Finishing sign-in, please wait...',
       goToLogin: 'Go to Sign In',
       errors: {
+        invalidLink:
+          'This recovery link is incomplete or broken. Request a new one.',
         unavailable: 'Authorization is temporarily unavailable',
         sessionMissing: 'Could not activate session. Please sign in again.',
         generic: 'Could not complete authorization. Please try again.',
@@ -2245,15 +2279,11 @@ const en = {
   patientDashboard: {
     notFound: 'Patient not found',
     subtitle: 'Personal account',
-    downloadData: 'Download data',
-    common: {
-      empty: '—',
-    },
     cards: {
       nextVisit: 'Next visit',
-      activePlans: 'Active plans',
-      amountDue: 'Amount due',
-      newMessages: 'New messages',
+      completedVisits: 'Completed visits',
+      totalSpent: 'Total spent',
+      totalAppointments: 'Total appointments',
     },
     tabs: {
       appointments: 'Appointments',
@@ -2263,20 +2293,28 @@ const en = {
     },
     sections: {
       appointments: {
-        title: 'Upcoming appointments',
-        description: 'Your upcoming appointments will appear here',
+        title: 'Appointment history',
+        empty: 'No appointments yet',
+        at: 'at',
+        statuses: {
+          pending: 'Pending',
+          confirmed: 'Confirmed',
+          completed: 'Completed',
+          cancelled: 'Cancelled',
+          no_show: 'No show',
+        },
       },
       treatments: {
         title: 'Treatment plans',
-        description: 'Your treatment plans will appear here',
+        comingSoon: 'Treatment plans feature is coming soon',
       },
       payments: {
         title: 'Payment history',
-        description: 'Your payment history will appear here',
+        comingSoon: 'Payment history feature is coming soon',
       },
       messages: {
         title: 'Messages',
-        description: 'Your messages with the clinic will appear here',
+        comingSoon: 'Messaging feature is coming soon',
       },
     },
   },
@@ -2516,6 +2554,7 @@ const en = {
     freeConsultationShort: 'Free Consultation',
     forNewPatients: 'For new patients',
     workingNow: 'Open Now',
+    closedNow: 'Closed Now',
     qualityGuarantee: 'Quality Guarantee',
   },
   hero: {

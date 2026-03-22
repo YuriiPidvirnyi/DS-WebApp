@@ -127,9 +127,7 @@ export const appointmentSchema = z.object({
 
   marketingConsent: z.boolean().default(false),
 
-  reminderPreference: z
-    .enum(['email', 'phone', 'both', 'none'])
-    .default('email'),
+  reminderPreference: z.enum(['email', 'sms', 'both', 'none']).default('email'),
 
   notes: z
     .string()

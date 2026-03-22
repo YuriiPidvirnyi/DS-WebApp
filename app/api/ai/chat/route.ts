@@ -292,10 +292,27 @@ export async function POST(req: NextRequest) {
   const { allowed, remaining } = await checkRateLimit(req, 10, 60_000)
   if (!allowed) return rateLimitResponse(remaining)
 
-  const {
-    messages,
-    language = 'uk',
-  }: { messages: UIMessage[]; language?: string } = await req.json()
+  let body: { messages?: UIMessage[]; language?: string }
+  try {
+    body = await req.json()
+  } catch {
+    return Response.json(
+      { success: false, error: 'Невірний формат запиту' },
+      { status: 400 }
+    )
+  }
+
+  const { messages, language = 'uk' } = body as {
+    messages: UIMessage[]
+    language?: string
+  }
+
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return Response.json(
+      { success: false, error: 'Повідомлення є обовʼязковими' },
+      { status: 400 }
+    )
+  }
 
   const languageInstruction =
     language === 'en'
@@ -304,14 +321,22 @@ export async function POST(req: NextRequest) {
         ? '\n\nIMPORTANT: The user prefers Polish. Respond in Polish.'
         : ''
 
-  const result = streamText({
-    model: 'openai/gpt-4o-mini',
-    system: systemPrompt + languageInstruction,
-    messages: await convertToModelMessages(messages),
-    tools,
-    stopWhen: stepCountIs(5),
-    abortSignal: req.signal,
-  })
+  try {
+    const result = streamText({
+      model: 'openai/gpt-4o-mini',
+      system: systemPrompt + languageInstruction,
+      messages: await convertToModelMessages(messages),
+      tools,
+      stopWhen: stepCountIs(5),
+      abortSignal: req.signal,
+    })
 
-  return result.toUIMessageStreamResponse()
+    return result.toUIMessageStreamResponse()
+  } catch (error) {
+    import('@sentry/nextjs').then(Sentry => Sentry.captureException(error))
+    return Response.json(
+      { success: false, error: 'AI service temporarily unavailable' },
+      { status: 503 }
+    )
+  }
 }

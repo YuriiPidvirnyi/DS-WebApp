@@ -104,49 +104,15 @@ async function cliniRequest<T>(
   )
 }
 
-// ─── Appointments ────────────────────────────────────────────────────────────
-
-export interface AppointmentPayload {
-  patientId: string
-  doctorId: string
-  serviceId?: string
-  date: string
-  time: string
-  duration: number
-  notes?: string
-}
-
-export function getAppointments(params?: Record<string, string>) {
-  const qs = params ? `?${new URLSearchParams(params)}` : ''
-  return cliniRequest<unknown>(`/appointments${qs}`, { method: 'GET' })
-}
-
-export function getAppointment(id: string) {
-  return cliniRequest<unknown>(`/appointments/${id}`, { method: 'GET' })
-}
-
-export function createAppointment(payload: AppointmentPayload) {
-  return cliniRequest<{ id: string }>('/appointments', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  })
-}
-
-export function updateAppointment(id: string, updates: Record<string, unknown>) {
-  return cliniRequest<unknown>(`/appointments/${id}`, {
-    method: 'PATCH',
-    body: JSON.stringify(updates),
-  })
-}
-
-export function deleteAppointment(id: string) {
-  return cliniRequest<void>(`/appointments/${id}`, { method: 'DELETE' })
-}
-
 // ─── Slots ───────────────────────────────────────────────────────────────────
 
+export type SlotsResponse = {
+  slots: string[]
+  [key: string]: unknown
+}
+
 export function getAvailableSlots(doctorId: string, date: string) {
-  return cliniRequest<unknown>(
+  return cliniRequest<SlotsResponse>(
     `/schedule/slots?doctor_id=${encodeURIComponent(doctorId)}&date=${encodeURIComponent(date)}`,
     { method: 'GET' }
   )

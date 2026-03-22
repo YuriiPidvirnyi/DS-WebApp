@@ -8,6 +8,7 @@ import {
   getCachedData,
   invalidateCache,
 } from '@/lib/redis'
+import { captureException } from '@/utils/sentry'
 import {
   checkRateLimit,
   csrfErrorResponse,
@@ -275,7 +276,7 @@ export async function GET(request: NextRequest) {
       data: model,
     })
   } catch (error) {
-    console.error('[admin/analytics] GET error:', error)
+    captureException(error instanceof Error ? error : new Error(String(error)))
     return NextResponse.json(
       { success: false, error: 'Не вдалося завантажити аналітику' },
       { status: 500 }
@@ -326,7 +327,7 @@ export async function POST(request: NextRequest) {
       message: 'Аналітику оновлено',
     })
   } catch (error) {
-    console.error('[admin/analytics] POST refresh error:', error)
+    captureException(error instanceof Error ? error : new Error(String(error)))
     return NextResponse.json(
       { success: false, error: 'Не вдалося оновити аналітику' },
       { status: 500 }

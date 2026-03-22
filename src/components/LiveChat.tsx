@@ -94,7 +94,7 @@ export default function LiveChat({ onClose }: LiveChatProps) {
       {!isControlled && (
         <button
           onClick={() => setIsOpen(true)}
-          className={`w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-all ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
+          className={`w-14 h-14 bg-blue-600 rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-all ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
           aria-label={t('chat.openChat')}
         >
           <MessageSquare className="h-6 w-6" />
@@ -113,7 +113,7 @@ export default function LiveChat({ onClose }: LiveChatProps) {
         }`}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 flex items-center justify-between text-white">
+        <div className="bg-blue-600 p-4 flex items-center justify-between text-white">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
               <MessageSquare className="h-5 w-5" />

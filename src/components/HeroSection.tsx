@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useMemo } from 'react'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import {
@@ -12,6 +12,7 @@ import {
   Star,
   Phone,
 } from 'lucide-react'
+import { UKRAINE_CONFIG } from '@/utils/constants'
 
 // Animated counter hook
 function useCounter(end: number, duration: number = 2000) {
@@ -66,9 +67,29 @@ export default function HeroSection() {
   )
   const { count: yearsCount, ref: yearsRef } = useCounter(10, 1500)
 
+  const [now, setNow] = useState<Date | null>(null)
+
   useEffect(() => {
     setMounted(true)
+    setNow(new Date())
+    const timer = setInterval(() => setNow(new Date()), 60_000)
+    return () => clearInterval(timer)
   }, [])
+
+  const isClinicOpen = useMemo(() => {
+    if (!now) return false
+    const kyiv = new Date(
+      now.toLocaleString('en-US', { timeZone: UKRAINE_CONFIG.timezone })
+    )
+    const day = kyiv.getDay()
+    const hours = kyiv.getHours()
+    const minutes = kyiv.getMinutes()
+    const time = hours * 60 + minutes
+
+    if (day === 0) return false
+    if (day === 6) return time >= 540 && time < 1080
+    return time >= 540 && time < 1260
+  }, [now])
 
   return (
     <section
@@ -77,7 +98,7 @@ export default function HeroSection() {
     >
       {/* Subtle background pattern */}
       <div
-        className="absolute inset-0 opacity-40 pointer-events-none bg-gradient-radial-dental"
+        className="absolute inset-0 opacity-40 pointer-events-none bg-dental-primary-50"
         suppressHydrationWarning
       ></div>
 
@@ -92,14 +113,36 @@ export default function HeroSection() {
               transform: mounted ? 'translateY(0)' : 'translateY(3rem)',
             }}
           >
-            {/* Small badge */}
+            {/* Open / Closed badge */}
             <div className="inline-block mb-6">
-              <span className="inline-flex items-center gap-2 bg-dental-primary-50 px-3 py-1 rounded-full border border-dental-primary-200">
-                <span className="inline-block w-1.5 h-1.5 bg-dental-primary-500 rounded-full animate-pulse"></span>
-                <span className="text-xs font-semibold text-dental-primary-700">
-                  {t('stats.workingNow')}
+              {mounted && (
+                <span
+                  className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border ${
+                    isClinicOpen
+                      ? 'bg-dental-success-light border-dental-success/30'
+                      : 'bg-dental-secondary-50 border-dental-secondary-300'
+                  }`}
+                >
+                  <span
+                    className={`inline-block w-1.5 h-1.5 rounded-full ${
+                      isClinicOpen
+                        ? 'bg-dental-success animate-pulse'
+                        : 'bg-dental-muted'
+                    }`}
+                  />
+                  <span
+                    className={`text-xs font-semibold ${
+                      isClinicOpen
+                        ? 'text-dental-success-dark'
+                        : 'text-dental-muted'
+                    }`}
+                  >
+                    {isClinicOpen
+                      ? t('stats.workingNow')
+                      : t('stats.closedNow')}
+                  </span>
                 </span>
-              </span>
+              )}
             </div>
 
             {/* Large headline */}
@@ -212,7 +255,7 @@ export default function HeroSection() {
             {/* CTA Card - Highlighted */}
             <Link
               href="/booking"
-              className="group p-6 lg:p-8 rounded-3xl bg-gradient-to-br from-dental-primary-500 to-dental-primary-600 hover:from-dental-primary-600 hover:to-dental-primary-700 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+              className="group p-6 lg:p-8 rounded-3xl bg-dental-primary-600 hover:bg-dental-primary-700 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
             >
               <div>
                 <div className="mb-6">

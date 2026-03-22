@@ -1,11 +1,12 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { RefreshCw } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { RefreshCw, StickyNote } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button, Input } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
+import { captureException } from '@/utils/sentry'
 import { formatDateTime, getStatusTone } from './utils'
 
 interface ContactRow {
@@ -91,7 +92,9 @@ export default function AdminContactsPage() {
 
         setRows((data || []) as ContactRow[])
       } catch (loadError) {
-        console.error('Failed to load contacts:', loadError)
+        captureException(
+          loadError instanceof Error ? loadError : new Error(String(loadError))
+        )
         setError(t('admin.contactsPage.errors.loadFailed'))
       } finally {
         setIsLoading(false)
@@ -195,7 +198,11 @@ export default function AdminContactsPage() {
         )
       )
     } catch (updateError) {
-      console.error('Failed to apply bulk contact changes:', updateError)
+      captureException(
+        updateError instanceof Error
+          ? updateError
+          : new Error(String(updateError))
+      )
       setError(t('admin.contactsPage.errors.bulkUpdateFailed'))
     } finally {
       setIsUpdatingId(null)
@@ -205,7 +212,7 @@ export default function AdminContactsPage() {
   const patchContact = useCallback(
     async (
       id: string,
-      patch: Partial<Pick<ContactRow, 'status' | 'is_read'>>
+      patch: Partial<Pick<ContactRow, 'status' | 'is_read' | 'admin_notes'>>
     ) => {
       if (
         !confirmIfNeeded(t('admin.contactsPage.confirmations.singleUpdate'))
@@ -236,7 +243,11 @@ export default function AdminContactsPage() {
           prev.map(row => (row.id === id ? { ...row, ...patch } : row))
         )
       } catch (updateError) {
-        console.error('Failed to update contact:', updateError)
+        captureException(
+          updateError instanceof Error
+            ? updateError
+            : new Error(String(updateError))
+        )
         setError(t('admin.contactsPage.errors.updateFailed'))
       } finally {
         setIsUpdatingId(null)
@@ -446,7 +457,7 @@ export default function AdminContactsPage() {
                   >
                     {STATUS_OPTIONS.map(status => (
                       <option key={status} value={status}>
-                        {status}
+                        {getStatusLabel(status)}
                       </option>
                     ))}
                   </select>
@@ -475,15 +486,100 @@ export default function AdminContactsPage() {
                   </p>
                 </details>
               ) : null}
-              {row.admin_notes ? (
-                <p className="mt-3 text-xs text-dental-text-light">
-                  {t('admin.contactsPage.card.adminNote')}: {row.admin_notes}
-                </p>
-              ) : null}
+              <InlineNotes
+                value={row.admin_notes || ''}
+                isSaving={isUpdatingId === row.id}
+                placeholder={t('admin.contactsPage.card.notesPlaceholder')}
+                label={t('admin.contactsPage.card.adminNote')}
+                onSave={newValue =>
+                  void patchContact(row.id, {
+                    admin_notes: newValue || null,
+                  })
+                }
+              />
             </div>
           ))
         )}
       </div>
     </div>
+  )
+}
+
+function InlineNotes({
+  value,
+  isSaving,
+  placeholder,
+  label,
+  onSave,
+}: {
+  value: string
+  isSaving: boolean
+  placeholder: string
+  label: string
+  onSave: (newValue: string) => void
+}) {
+  const [isEditing, setIsEditing] = useState(false)
+  const [draft, setDraft] = useState(value)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    setDraft(value)
+  }, [value])
+
+  useEffect(() => {
+    if (isEditing && textareaRef.current) {
+      textareaRef.current.focus()
+    }
+  }, [isEditing])
+
+  const save = () => {
+    setIsEditing(false)
+    const trimmed = draft.trim()
+    if (trimmed !== value) {
+      onSave(trimmed)
+    }
+  }
+
+  if (isEditing) {
+    return (
+      <div className="mt-3">
+        <label className="mb-1 block text-xs font-medium text-dental-text-light">
+          {label}
+        </label>
+        <textarea
+          ref={textareaRef}
+          value={draft}
+          onChange={e => setDraft(e.target.value)}
+          onBlur={save}
+          onKeyDown={e => {
+            if (e.key === 'Escape') {
+              setDraft(value)
+              setIsEditing(false)
+            }
+          }}
+          placeholder={placeholder}
+          disabled={isSaving}
+          rows={2}
+          className="w-full rounded-lg border border-dental-secondary bg-white px-3 py-2 text-sm text-dental-text focus:border-dental-primary-600 focus:outline-none focus:ring-1 focus:ring-dental-primary-600 disabled:opacity-60"
+        />
+      </div>
+    )
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => setIsEditing(true)}
+      className="mt-3 flex w-full items-start gap-2 rounded-lg px-3 py-2 text-left text-xs text-dental-text-light transition-colors hover:bg-dental-secondary-50"
+    >
+      <StickyNote className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
+      {value ? (
+        <span>
+          <span className="font-medium">{label}:</span> {value}
+        </span>
+      ) : (
+        <span className="italic">{placeholder}</span>
+      )}
+    </button>
   )
 }

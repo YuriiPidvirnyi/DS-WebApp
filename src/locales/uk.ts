@@ -1516,6 +1516,9 @@ const uk = {
       reviews: 'Відгуки',
       contacts: 'Звернення',
       chat: 'Чат',
+      treatments: 'Акти робіт',
+      materials: 'Матеріали',
+      orders: 'Замовлення',
       analytics: 'Аналітика',
       settings: 'Налаштування',
     },
@@ -1699,36 +1702,64 @@ const uk = {
     patientManagement: {
       title: 'Управління пацієнтами',
       totalPatients: 'Всього: {{total}} пацієнтів',
-      addPatientAlert: 'Додати пацієнта',
       newPatient: 'Новий пацієнт',
+      refresh: 'Оновити',
       searchPlaceholder: 'Пошук за ПІБ, телефоном, email...',
-      searchButton: 'Пошук',
-      allStatuses: 'Всі статуси',
-      statuses: {
-        active: 'Активний',
-        inactive: 'Неактивний',
+      summary: {
+        total: 'Всього пацієнтів',
+        totalVisits: 'Загальна кількість візитів',
+        totalRevenue: 'Загальний дохід',
       },
-      filters: 'Фільтри',
-      export: 'Експорт',
       table: {
         headers: {
           fullName: 'ПІБ',
           phone: 'Телефон',
           email: 'Email',
-          lastVisit: 'Останній візит',
-          debt: 'Борг',
-          status: 'Статус',
+          lastUpdated: 'Останнє оновлення',
+          totalSpent: 'Витрати',
           actions: 'Дії',
         },
-        lastVisitNever: 'Не було',
+        loading: 'Завантаження пацієнтів…',
+        empty: 'Пацієнтів не знайдено',
         actions: {
           view: 'Переглянути',
           edit: 'Редагувати',
           delete: 'Видалити',
         },
       },
-      pagination: {
-        shown: 'Показано {{shown}} з {{total}}',
+      modal: {
+        createTitle: 'Новий пацієнт',
+        editTitle: 'Редагувати пацієнта',
+        viewTitle: 'Картка пацієнта',
+        subtitle: 'Заповніть дані пацієнта',
+      },
+      form: {
+        firstName: "Ім'я",
+        lastName: 'Прізвище',
+        patronymic: 'По батькові',
+        phone: 'Телефон',
+        email: 'Email',
+        dateOfBirth: 'Дата народження',
+        gender: 'Стать',
+        genderOptions: {
+          male: 'Чоловіча',
+          female: 'Жіноча',
+          other: 'Інше',
+        },
+        address: 'Адреса',
+        medicalNotes: 'Медичні нотатки',
+        create: 'Створити',
+        saveChanges: 'Зберегти зміни',
+      },
+      errors: {
+        supabaseUnavailable: 'Сервіс тимчасово недоступний',
+        loadFailed: 'Не вдалося завантажити список пацієнтів',
+        saveFailed: 'Не вдалося зберегти дані пацієнта',
+        deleteFailed: 'Не вдалося видалити пацієнта',
+        requiredFields: "Ім'я та прізвище обов'язкові",
+      },
+      confirmations: {
+        deletePatient: 'Ви впевнені, що хочете видалити цього пацієнта?',
       },
     },
     reviewStatuses: {
@@ -1838,6 +1869,7 @@ const uk = {
         markUnread: 'Позначити непрочитаним',
         showMessage: 'Показати повідомлення',
         adminNote: 'Адмін-нотатка',
+        notesPlaceholder: 'Додати нотатку…',
       },
       confirmations: {
         bulkChange: 'Застосувати масову зміну до {{count}} звернень?',
@@ -2295,6 +2327,8 @@ const uk = {
       loading: 'Завершуємо вхід, зачекайте...',
       goToLogin: 'Перейти до входу',
       errors: {
+        invalidLink:
+          'Посилання для відновлення пошкоджене або неповне. Запросіть нове.',
         unavailable: 'Авторизація тимчасово недоступна',
         sessionMissing: 'Сесію не вдалося активувати. Спробуйте увійти ще раз.',
         generic: 'Не вдалося завершити авторизацію. Спробуйте ще раз.',
@@ -2377,15 +2411,11 @@ const uk = {
   patientDashboard: {
     notFound: 'Пацієнта не знайдено',
     subtitle: 'Особистий кабінет',
-    downloadData: 'Завантажити дані',
-    common: {
-      empty: '—',
-    },
     cards: {
       nextVisit: 'Наступний візит',
-      activePlans: 'Активних планів',
-      amountDue: 'До сплати',
-      newMessages: 'Нових повідомлень',
+      completedVisits: 'Завершених візитів',
+      totalSpent: 'Загальні витрати',
+      totalAppointments: 'Всього записів',
     },
     tabs: {
       appointments: 'Записи',
@@ -2395,20 +2425,29 @@ const uk = {
     },
     sections: {
       appointments: {
-        title: 'Майбутні записи',
-        description: 'Тут будуть ваші записи на прийом',
+        title: 'Історія записів',
+        empty: 'Записів поки немає',
+        at: 'о',
+        statuses: {
+          pending: 'Очікує',
+          confirmed: 'Підтверджено',
+          completed: 'Завершено',
+          cancelled: 'Скасовано',
+          no_show: "Не з'явився",
+        },
       },
       treatments: {
         title: 'Плани лікування',
-        description: 'Тут будуть ваші плани лікування',
+        comingSoon:
+          'Функціонал планів лікування буде доступний найближчим часом',
       },
       payments: {
         title: 'Історія платежів',
-        description: 'Тут буде історія ваших платежів',
+        comingSoon: 'Функціонал платежів буде доступний найближчим часом',
       },
       messages: {
         title: 'Повідомлення',
-        description: 'Тут будуть ваші повідомлення з клінікою',
+        comingSoon: 'Функціонал повідомлень буде доступний найближчим часом',
       },
     },
   },
@@ -2650,6 +2689,7 @@ const uk = {
     freeConsultationShort: 'Безкоштовна консультація',
     forNewPatients: 'Для нових пацієнтів',
     workingNow: 'Працюємо зараз',
+    closedNow: 'Зараз зачинено',
     qualityGuarantee: 'Гарантія якості',
   },
   hero: {

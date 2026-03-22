@@ -136,17 +136,17 @@ const Services = () => {
             const getBgColor = () => {
               switch (index) {
                 case 0:
-                  return 'bg-gradient-to-br from-dental-primary-50 to-dental-primary-100 border-dental-primary-200'
+                  return 'bg-dental-primary-50 border-dental-primary-200'
                 case 1:
-                  return 'bg-gradient-to-br from-dental-error-light to-dental-error-light/50 border-dental-error-light'
+                  return 'bg-dental-error-light border-dental-error-light'
                 case 2:
-                  return 'bg-gradient-to-br from-dental-warning-light to-dental-warning-light/50 border-dental-warning-light'
+                  return 'bg-dental-warning-light border-dental-warning-light'
                 case 3:
-                  return 'bg-gradient-to-br from-dental-info-light to-dental-info-light/50 border-dental-info-light'
+                  return 'bg-dental-info-light border-dental-info-light'
                 case 4:
-                  return 'bg-gradient-to-br from-dental-primary-50 to-dental-primary-100 border-dental-primary-200'
+                  return 'bg-dental-primary-50 border-dental-primary-200'
                 case 5:
-                  return 'bg-gradient-to-br from-dental-success-light to-dental-success-light/50 border-dental-success-light'
+                  return 'bg-dental-success-light border-dental-success-light'
                 default:
                   return 'bg-white border-dental-secondary-200'
               }

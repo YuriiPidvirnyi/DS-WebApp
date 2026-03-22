@@ -8,6 +8,7 @@ import {
   validateCSRF,
   csrfErrorResponse,
 } from '@/lib/api-security'
+import { captureException } from '@/utils/sentry'
 import { SITE_INFO } from '@/utils/constants'
 
 export const maxDuration = 30
@@ -39,19 +40,41 @@ export async function POST(req: NextRequest) {
   const { allowed, remaining } = await checkRateLimit(req, 10, 60_000)
   if (!allowed) return rateLimitResponse(remaining)
 
-  const {
-    symptoms,
-    painLevel,
-    lastVisit,
-    concerns,
-    language = 'uk',
-  }: {
-    symptoms: string[]
+  let body: {
+    symptoms?: unknown
     painLevel?: number
     lastVisit?: string
     concerns?: string
     language?: string
-  } = await req.json()
+  }
+  try {
+    body = await req.json()
+  } catch {
+    return Response.json(
+      { success: false, error: 'Невірний формат запиту' },
+      { status: 400 }
+    )
+  }
+
+  const { painLevel, lastVisit, concerns, language = 'uk' } = body
+
+  if (!Array.isArray(body.symptoms) || body.symptoms.length === 0) {
+    return Response.json(
+      { success: false, error: 'Симптоми є обовʼязковими (масив рядків)' },
+      { status: 400 }
+    )
+  }
+
+  const symptoms: string[] = body.symptoms.filter(
+    (s): s is string => typeof s === 'string' && s.trim().length > 0
+  )
+
+  if (symptoms.length === 0) {
+    return Response.json(
+      { success: false, error: 'Потрібен хоча б один симптом' },
+      { status: 400 }
+    )
+  }
 
   // Fetch available services from database
   const supabase = await createClient()
@@ -113,15 +136,29 @@ GUIDELINES:
 
 Be helpful and professional. Do not diagnose - only recommend services based on symptoms.`
 
-  const result = await generateText({
-    model: 'openai/gpt-4o-mini',
-    prompt,
-    output: Output.object({ schema: RecommendationSchema }),
-    abortSignal: req.signal,
-  })
+  try {
+    const result = await generateText({
+      model: 'openai/gpt-4o-mini',
+      prompt,
+      output: Output.object({ schema: RecommendationSchema }),
+      abortSignal: req.signal,
+    })
 
-  return Response.json({
-    success: true,
-    recommendations: result.output,
-  })
+    return Response.json({
+      success: true,
+      data: result.output,
+    })
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      return Response.json(
+        { success: false, error: 'Запит скасовано' },
+        { status: 499 }
+      )
+    }
+    captureException(error instanceof Error ? error : new Error(String(error)))
+    return Response.json(
+      { success: false, error: 'Не вдалося отримати рекомендації' },
+      { status: 500 }
+    )
+  }
 }
