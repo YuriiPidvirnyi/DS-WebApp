@@ -5,6 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
+    "dev:kill": "npx --yes kill-port 3000",
+    "dev:clear-turbo": "node ./scripts/clean-turbopack-cache.mjs",
+    "dev:restart": "npm run dev:kill && npm run dev:clear-turbo && npm run dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint src/ app/ --report-unused-disable-directives --max-warnings 100",
@@ -43,6 +46,7 @@
     "react-i18next": "^16.2.4",
     "react-is": "^19.2.4",
     "recharts": "^3.7.0",
+    "resend": "^6.9.4",
     "tailwind-merge": "^3.5.0",
     "zod": "^4.3.6"
   },

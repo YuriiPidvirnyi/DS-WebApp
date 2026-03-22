@@ -39,6 +39,7 @@
     "instrumentation.ts",
     "instrumentation-client.ts",
     "sentry.server.config.ts",
+    "sentry.edge.config.ts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
