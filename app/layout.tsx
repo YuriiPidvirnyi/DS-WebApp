@@ -85,7 +85,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  // Read CSP nonce injected by middleware — makes this layout dynamically rendered
+  // Read CSP nonce injected by root proxy (`proxy.ts`) — makes this layout dynamically rendered
   const nonce = (await headers()).get('x-nonce') ?? ''
 
   return (
@@ -118,7 +118,7 @@ export default async function RootLayout({
           </>
         )}
 
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen min-w-0 flex flex-col overflow-x-clip">
           {/* Skip navigation link for accessibility */}
           <a
             href="#main-content"
@@ -128,7 +128,11 @@ export default async function RootLayout({
           </a>
           <ClientProviders>
             <Header />
-            <main id="main-content" className="flex-1" role="main">
+            <main
+              id="main-content"
+              className="flex-1 pb-28 sm:pb-24 max-sm:pb-32"
+              role="main"
+            >
               {children}
             </main>
             <Footer />
