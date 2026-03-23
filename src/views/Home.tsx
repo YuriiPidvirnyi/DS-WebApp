@@ -394,7 +394,7 @@ const Home = () => {
             <p className="text-dental-muted mb-4">{t('pricing.disclaimer')}</p>
             <Link
               href="/services"
-              className="text-dental-teal hover:text-dental-primary-600 font-semibold inline-flex items-center"
+              className="text-dental-primary-700 hover:text-dental-primary-600 font-semibold inline-flex items-center"
             >
               {t('pricing.viewAllPrices')}
               <ArrowRight className="ml-1 h-4 w-4" />

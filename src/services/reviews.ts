@@ -14,9 +14,13 @@ export type Review = {
   createdAt: string
 }
 
+const REVIEWS_FETCH_MS = 15_000
+
 /** Fetch approved reviews from the API */
 export async function getReviews(): Promise<ApiResponse<{ items: Review[] }>> {
-  return api.get<ApiResponse<{ items: Review[] }>>('/reviews')
+  return api.get<ApiResponse<{ items: Review[] }>>('/reviews', {
+    signal: AbortSignal.timeout(REVIEWS_FETCH_MS),
+  })
 }
 
 /** Submit a new review (pending moderation) */

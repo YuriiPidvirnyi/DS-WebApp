@@ -578,6 +578,8 @@ const en = {
       loadingTitle: 'Loading reviews',
       loadingMessage: 'Fetching the latest patient reviews.',
       loadError: 'Failed to load reviews.',
+      timeoutError:
+        'Loading took too long. Check your connection and try again.',
       empty: 'There are no published reviews yet.',
     },
     form: {
@@ -925,8 +927,8 @@ const en = {
     appointmentDesc: 'Choose a convenient time for your clinic visit',
     copyright: '© 2024 Dental Story. All rights reserved.',
     workingHours: {
-      weekdays: 'Mon-Fri: 9:00-19:00',
-      saturday: 'Sat: 9:00-16:00',
+      weekdays: 'Mon-Fri: 9:00-20:00',
+      saturday: 'Sat: 10:00-18:00',
       sunday: 'Sun: Closed',
     },
     socialMedia: 'Social Media',
@@ -1488,11 +1490,14 @@ const en = {
         today: 'Today',
         upcoming: 'Upcoming',
         past: 'Past',
+        statusSelectAria: 'Filter by appointment status',
+        dateSelectAria: 'Filter by appointment date',
       },
       bulk: {
         selected: 'Selected: {{count}}',
         moveTo: 'Move to {{status}}',
         apply: 'Apply in bulk',
+        targetStatusSelectAria: 'Target status for bulk update',
       },
       table: {
         selectAllAria: 'Select all rows',
@@ -1531,6 +1536,7 @@ const en = {
         '30': '30 days',
         '90': '90 days',
       },
+      periodSelectAria: 'Reporting period',
       refresh: 'Refresh',
       loading: 'Loading analytics...',
       cards: {
@@ -1734,6 +1740,7 @@ const en = {
       empty: 'No inquiries found for current filters.',
       card: {
         selectAria: 'Select inquiry {{name}}',
+        statusSelectAria: 'Change inquiry status: {{name}}',
         unreadBadge: 'unread',
         markRead: 'Mark as read',
         markUnread: 'Mark as unread',

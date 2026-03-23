@@ -152,10 +152,10 @@ export default function LanguageSwitcher({
     <div ref={dropdownRef} className={`relative ${className}`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 px-3 py-2 text-sm font-medium text-dental-muted hover:text-dental-primary-600 transition-colors border border-transparent ${
+        className={`flex min-h-[44px] items-center gap-2 px-3 py-2 text-sm font-medium text-dental-muted hover:text-dental-primary-600 transition-colors border border-transparent ${
           isOpen
-            ? 'rounded-t-lg border-dental-primary-400 border-b-transparent bg-white'
-            : 'rounded-lg hover:bg-dental-secondary-50'
+            ? 'rounded-t-2xl border-dental-primary-400 border-b-transparent bg-white shadow-sm'
+            : 'rounded-2xl hover:bg-dental-secondary-50'
         }`}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
@@ -179,7 +179,7 @@ export default function LanguageSwitcher({
 
       {isOpen && (
         <div
-          className="absolute right-0 top-full w-48 bg-white rounded-b-lg shadow-lg border border-dental-primary-400 border-t-0 py-1 z-50"
+          className="absolute right-0 top-full z-50 w-[min(18rem,calc(100vw-1rem))] sm:w-48 bg-white rounded-b-2xl border border-dental-primary-400 border-t-0 py-1 shadow-xl"
           role="listbox"
           aria-label={
             isMounted
@@ -193,7 +193,7 @@ export default function LanguageSwitcher({
               <button
                 key={lang.code}
                 onClick={() => handleLanguageChange(lang.code)}
-                className={`w-full flex items-center justify-between px-4 py-2.5 text-left transition-colors ${
+                className={`w-full flex min-h-[44px] items-center justify-between px-4 py-2.5 text-left transition-colors ${
                   lang.code === displayLang.code
                     ? 'bg-dental-primary-600 text-white'
                     : 'hover:bg-dental-primary-50 hover:text-dental-primary-700'

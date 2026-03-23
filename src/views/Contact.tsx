@@ -31,16 +31,18 @@ const Contact = () => {
           {/* Contact Information */}
           <div className="space-y-8">
             {/* Contact Details */}
-            <div className="bg-dental-primary-600 text-white rounded-2xl p-8">
-              <h2 className="text-2xl font-bold mb-6">
+            <div className="bg-dental-primary-800 text-white rounded-2xl p-8">
+              <h2 className="text-2xl font-bold text-white mb-6">
                 {t('contact.contactInfo')}
               </h2>
 
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <Phone className="h-6 w-6 mt-1 text-dental-accent" />
+                  <Phone className="h-6 w-6 mt-1 text-white" />
                   <div>
-                    <h3 className="font-semibold mb-1">{t('common.phone')}</h3>
+                    <h3 className="font-semibold text-white mb-1">
+                      {t('common.phone')}
+                    </h3>
                     <a
                       href={`tel:${CONTACT_INFO.phoneRaw}`}
                       className="hover:underline"
@@ -60,9 +62,11 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <Mail className="h-6 w-6 mt-1 text-dental-accent" />
+                  <Mail className="h-6 w-6 mt-1 text-white" />
                   <div>
-                    <h3 className="font-semibold mb-1">{t('common.email')}</h3>
+                    <h3 className="font-semibold text-white mb-1">
+                      {t('common.email')}
+                    </h3>
                     <a
                       href={`mailto:${CONTACT_INFO.email}`}
                       className="hover:underline"
@@ -81,9 +85,9 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <MapPin className="h-6 w-6 mt-1 text-dental-accent" />
+                  <MapPin className="h-6 w-6 mt-1 text-white" />
                   <div>
-                    <h3 className="font-semibold mb-1">
+                    <h3 className="font-semibold text-white mb-1">
                       {t('common.address')}
                     </h3>
                     <p>{CONTACT_INFO.address.full}</p>
@@ -92,7 +96,7 @@ const Contact = () => {
                       href="https://maps.app.goo.gl/gprGw94tfAJH7xFSA"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-blue-100 hover:underline"
+                      className="text-sm text-white/90 hover:text-white hover:underline"
                       aria-label={t('contact.viewOnMap')}
                     >
                       {t('contact.viewOnMap')}
@@ -101,9 +105,9 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <Clock className="h-6 w-6 mt-1 text-dental-accent" />
+                  <Clock className="h-6 w-6 mt-1 text-white" />
                   <div>
-                    <h3 className="font-semibold mb-1">
+                    <h3 className="font-semibold text-white mb-1">
                       {t('common.workingHours')}
                     </h3>
                     <p>{CONTACT_INFO.workingHours.weekdays}</p>
@@ -118,15 +122,15 @@ const Contact = () => {
             </div>
 
             {/* Emergency */}
-            <div className="bg-dental-error-light border border-dental-error-border rounded-2xl p-6">
-              <h3 className="text-lg font-bold text-dental-error mb-3">
+            <div className="bg-dental-error-light border border-dental-error rounded-2xl p-6">
+              <h3 className="text-lg font-bold text-dental-error-dark mb-3">
                 {t('contact.emergency.title')}
               </h3>
-              <p className="text-dental-error mb-4">
+              <p className="text-dental-error-dark mb-4">
                 {t('contact.emergency.description')}
               </p>
               <div className="space-y-2">
-                <p className="font-semibold text-dental-error">
+                <p className="font-semibold text-dental-error-dark">
                   <a
                     href={`tel:${CONTACT_INFO.emergencyPhoneRaw}`}
                     className="hover:underline"
@@ -134,7 +138,7 @@ const Contact = () => {
                     {t('contact.emergency.phone')}
                   </a>
                 </p>
-                <p className="text-dental-error text-sm">
+                <p className="text-dental-error-dark text-sm">
                   {t('contact.emergency.availability')}
                 </p>
               </div>

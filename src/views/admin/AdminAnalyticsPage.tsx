@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button } from '@/components/ui'
+import { Button, Select } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { useCSRF } from '@/hooks/useCSRF'
 import { captureException } from '@/utils/sentry'
@@ -155,19 +155,20 @@ export default function AdminAnalyticsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <select
+          <Select
+            selectSize="compact"
             value={periodDays}
             onChange={event =>
               setPeriodDays(Number(event.target.value) as 7 | 30 | 90)
             }
-            className="rounded-lg border border-dental-secondary px-3 py-2 text-sm"
+            aria-label={t('admin.analyticsPage.periodSelectAria')}
           >
             {PERIODS.map(period => (
               <option key={period.value} value={period.value}>
                 {t(`admin.analyticsPage.periods.${period.value}`)}
               </option>
             ))}
-          </select>
+          </Select>
           <Button
             variant="outline"
             size="sm"

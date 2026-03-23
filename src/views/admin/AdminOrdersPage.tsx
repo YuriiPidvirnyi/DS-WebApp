@@ -12,7 +12,7 @@ import {
   X,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button, Input, Textarea } from '@/components/ui'
+import { Button, Input, Select, Textarea } from '@/components/ui'
 import { useCSRF } from '@/hooks/useCSRF'
 import { captureException } from '@/utils/sentry'
 import { formatCurrency, formatDateTime } from './utils'
@@ -114,8 +114,6 @@ const PATCH_ACTS: PatchAct[] = [
 ]
 const mname = (m: OrderItem['materials']) =>
   !m ? '—' : m.name_uk?.trim() || m.name_en?.trim() || m.name_pl?.trim() || '—'
-const inp =
-  'mt-1 w-full rounded-lg border border-dental-secondary px-3 py-2 text-sm'
 const grid =
   'grid grid-cols-1 sm:grid-cols-12 gap-2 items-end border border-dental-secondary/60 rounded-lg p-3 bg-dental-primary/10'
 
@@ -300,12 +298,13 @@ export default function AdminOrdersPage() {
           Замовлення матеріалів
         </h1>
         <div className="flex flex-wrap items-center gap-2">
-          <label className="text-sm text-dental-text flex items-center gap-2">
+          <label className="flex items-center gap-2 text-sm text-dental-text">
             Статус
-            <select
+            <Select
+              selectSize="compact"
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value)}
-              className="rounded-lg border border-dental-secondary px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-dental-teal"
+              aria-label="Фільтр за статусом замовлення"
             >
               <option value="">Усі</option>
               {stKeys.map(s => (
@@ -313,7 +312,7 @@ export default function AdminOrdersPage() {
                   {STATUS_LABELS[s]}
                 </option>
               ))}
-            </select>
+            </Select>
           </label>
           <Button
             type="button"
@@ -483,10 +482,13 @@ export default function AdminOrdersPage() {
                     <span className="text-dental-text font-medium">
                       Матеріал
                     </span>
-                    <select
+                    <Select
+                      selectSize="compact"
+                      fullWidth
+                      className="mt-1"
                       value={line.materialId}
                       onChange={e => setLine(i, { materialId: e.target.value })}
-                      className={inp}
+                      aria-label="Матеріал"
                     >
                       <option value="">—</option>
                       {materials.map(m => (
@@ -494,7 +496,7 @@ export default function AdminOrdersPage() {
                           {m.name_uk}
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </label>
                   <label className="sm:col-span-3 block text-sm">
                     <span className="text-dental-text font-medium">
@@ -563,17 +565,20 @@ export default function AdminOrdersPage() {
                 <span className="text-dental-text font-medium">
                   Терміновість
                 </span>
-                <select
+                <Select
+                  selectSize="compact"
+                  fullWidth
+                  className="mt-1"
                   value={urgency}
                   onChange={e => setUrgency(e.target.value as Urgency)}
-                  className={inp}
+                  aria-label="Терміновість"
                 >
                   {urgKeys.map(u => (
                     <option key={u} value={u}>
                       {URGENCY_LABELS[u]}
                     </option>
                   ))}
-                </select>
+                </Select>
               </label>
               <label className="block text-sm">
                 <span className="text-dental-text font-medium">Примітки</span>

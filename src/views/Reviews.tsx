@@ -11,6 +11,7 @@ import {
 import { Input, Textarea, Select, Button, AsyncState } from '@/components/ui'
 import StarRating from '@/components/StarRating'
 import { getReviews, createReview, type Review } from '@/services/reviews'
+import { isAPIError } from '@/services/api'
 import { withToast } from '@/utils/toast'
 import { CheckCircle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -54,8 +55,12 @@ export default function ReviewsPage() {
       }
 
       setLoadError(res.error || t('reviews.list.loadError'))
-    } catch {
-      setLoadError(t('reviews.list.loadError'))
+    } catch (err) {
+      if (isAPIError(err) && err.code === 'ABORTED') {
+        setLoadError(t('reviews.list.timeoutError'))
+      } else {
+        setLoadError(t('reviews.list.loadError'))
+      }
     } finally {
       setLoading(false)
     }
@@ -147,11 +152,11 @@ export default function ReviewsPage() {
                   <h3 className="font-semibold text-gray-900">{r.name}</h3>
                   <StarRating value={r.rating} readOnly />
                 </div>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-gray-700 mt-1">
                   {t('reviews.serviceLabel')}: {r.service}
                 </p>
                 <p className="text-gray-700 mt-3">{r.comment}</p>
-                <div className="text-xs text-gray-400 mt-3">
+                <div className="text-xs text-gray-600 mt-3">
                   {new Date(r.createdAt).toLocaleString('uk-UA')}
                 </div>
               </div>

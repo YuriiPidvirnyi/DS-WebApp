@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { RefreshCw, Star } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button, Input } from '@/components/ui'
+import { Button, Input, Select } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
@@ -326,12 +326,14 @@ export default function AdminReviewsPage() {
             placeholder={t('admin.reviewsPage.filters.searchPlaceholder')}
             className="md:col-span-2"
           />
-          <select
+          <Select
+            selectSize="compact"
+            fullWidth
             value={statusFilter}
             onChange={event =>
               setStatusFilter(event.target.value as 'all' | ReviewStatus)
             }
-            className="rounded-lg border border-dental-secondary px-4 py-3 text-sm"
+            aria-label={t('admin.reviewsPage.filters.allStatuses')}
           >
             <option value="all">
               {t('admin.reviewsPage.filters.allStatuses')}
@@ -339,13 +341,15 @@ export default function AdminReviewsPage() {
             <option value="pending">{getStatusLabel('pending')}</option>
             <option value="approved">{getStatusLabel('approved')}</option>
             <option value="rejected">{getStatusLabel('rejected')}</option>
-          </select>
-          <select
+          </Select>
+          <Select
+            selectSize="compact"
+            fullWidth
             value={ratingFilter}
             onChange={event =>
               setRatingFilter(event.target.value as 'all' | '4+' | '5')
             }
-            className="rounded-lg border border-dental-secondary px-4 py-3 text-sm"
+            aria-label={t('admin.reviewsPage.filters.allRatings')}
           >
             <option value="all">
               {t('admin.reviewsPage.filters.allRatings')}
@@ -354,7 +358,7 @@ export default function AdminReviewsPage() {
               {t('admin.reviewsPage.filters.rating4plus')}
             </option>
             <option value="5">{t('admin.reviewsPage.filters.rating5')}</option>
-          </select>
+          </Select>
         </div>
       </div>
 
@@ -367,10 +371,11 @@ export default function AdminReviewsPage() {
             ? t('admin.reviewsPage.bulk.unselectAll')
             : t('admin.reviewsPage.bulk.selectAll')}
         </Button>
-        <select
+        <Select
+          selectSize="compact"
           value={bulkStatus}
           onChange={event => setBulkStatus(event.target.value as ReviewStatus)}
-          className="rounded-md border border-dental-secondary px-3 py-1.5 text-sm"
+          aria-label={t('admin.reviewsPage.bulk.apply')}
         >
           <option value="approved">
             {t('admin.reviewsPage.bulk.statusOption', {
@@ -387,15 +392,16 @@ export default function AdminReviewsPage() {
               status: getStatusLabel('pending'),
             })}
           </option>
-        </select>
-        <select
+        </Select>
+        <Select
+          selectSize="compact"
           value={bulkFeatured}
           onChange={event =>
             setBulkFeatured(
               event.target.value as 'keep' | 'feature' | 'unfeature'
             )
           }
-          className="rounded-md border border-dental-secondary px-3 py-1.5 text-sm"
+          aria-label={t('admin.reviewsPage.bulk.feature.keep')}
         >
           <option value="keep">
             {t('admin.reviewsPage.bulk.feature.keep')}
@@ -406,7 +412,7 @@ export default function AdminReviewsPage() {
           <option value="unfeature">
             {t('admin.reviewsPage.bulk.feature.disable')}
           </option>
-        </select>
+        </Select>
         <Button
           size="sm"
           onClick={() => void applyBulkChanges()}

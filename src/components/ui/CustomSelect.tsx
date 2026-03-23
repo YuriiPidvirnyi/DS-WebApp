@@ -101,14 +101,14 @@ export function CustomSelect({
         onClick={() => setIsOpen(prev => !prev)}
         onKeyDown={handleKeyDown}
         className={clsx(
-          'w-full flex items-center justify-between px-3 py-2 text-sm text-dental-dark bg-white border border-dental-secondary-200 transition-all duration-200',
+          'w-full min-h-[44px] flex items-center justify-between gap-2 px-4 py-2.5 text-base sm:text-sm text-dental-dark bg-white border transition-all duration-200 shadow-sm',
           'focus:outline-none focus-visible:ring-2 focus-visible:ring-dental-primary-500 focus-visible:ring-offset-1',
           error
             ? 'border-red-300 focus-visible:ring-red-500'
-            : 'hover:border-dental-primary-400',
+            : 'border-dental-secondary-200 hover:border-dental-primary-400',
           isOpen
-            ? 'rounded-t-lg border-dental-primary-400 border-b-transparent'
-            : 'rounded-lg'
+            ? 'rounded-t-2xl border-dental-primary-400 border-b-transparent shadow-md'
+            : 'rounded-2xl'
         )}
       >
         <span
@@ -118,9 +118,10 @@ export function CustomSelect({
         </span>
         <ChevronDown
           className={clsx(
-            'h-4 w-4 text-dental-muted shrink-0 transition-transform duration-200',
+            'h-5 w-5 text-dental-muted shrink-0 transition-transform duration-200',
             isOpen && 'rotate-180'
           )}
+          aria-hidden
         />
       </button>
 
@@ -132,8 +133,8 @@ export function CustomSelect({
           role="listbox"
           aria-label={ariaLabel ?? label}
           className={clsx(
-            'absolute left-0 right-0 z-50 bg-white border border-dental-primary-400 border-t-0 rounded-b-lg shadow-lg',
-            'max-h-60 overflow-y-auto py-1'
+            'absolute left-0 right-0 z-50 bg-white border border-dental-primary-400 border-t-0 rounded-b-2xl shadow-xl',
+            'max-h-[min(16rem,60vh)] overflow-y-auto overscroll-contain py-1'
           )}
         >
           {options.map(option => {
@@ -148,7 +149,7 @@ export function CustomSelect({
                   setIsOpen(false)
                 }}
                 className={clsx(
-                  'px-3 py-2.5 text-sm cursor-pointer transition-colors duration-150 select-none',
+                  'px-4 py-3 sm:py-2.5 text-base sm:text-sm cursor-pointer transition-colors duration-150 select-none min-h-[44px] flex items-center',
                   isSelected
                     ? 'bg-dental-primary-600 text-white font-medium'
                     : 'text-dental-dark hover:bg-dental-primary-50 hover:text-dental-primary-700'

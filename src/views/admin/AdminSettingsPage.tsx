@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
-import { Button, Textarea } from '@/components/ui'
+import { Button, Select, Textarea } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import {
   listAdminAuditLogs,
@@ -602,7 +602,8 @@ export default function AdminSettingsPage() {
                 <span className="text-dental-text">
                   {t('admin.settingsPage.preferences.defaultAnalyticsPeriod')}
                 </span>
-                <select
+                <Select
+                  selectSize="compact"
                   value={preferences.defaultAnalyticsPeriod}
                   onChange={event =>
                     updatePreferences({
@@ -612,7 +613,9 @@ export default function AdminSettingsPage() {
                         | 90,
                     })
                   }
-                  className="rounded-lg border border-dental-secondary px-3 py-1.5"
+                  aria-label={t(
+                    'admin.settingsPage.preferences.defaultAnalyticsPeriod'
+                  )}
                 >
                   <option value={7}>
                     {t('admin.settingsPage.preferences.periodOptions.7')}
@@ -623,7 +626,7 @@ export default function AdminSettingsPage() {
                   <option value={90}>
                     {t('admin.settingsPage.preferences.periodOptions.90')}
                   </option>
-                </select>
+                </Select>
               </label>
             </div>
           </div>
@@ -634,62 +637,67 @@ export default function AdminSettingsPage() {
                 {t('admin.settingsPage.audit.title')}
               </h2>
               <div className="flex flex-wrap items-center gap-2">
-                <select
+                <Select
+                  selectSize="compact"
                   value={auditTableFilter}
                   onChange={event =>
                     setAuditTableFilter(event.target.value as AuditTableFilter)
                   }
-                  className="rounded-lg border border-dental-secondary px-3 py-1.5 text-sm"
+                  aria-label={t('admin.settingsPage.audit.title')}
                 >
                   {AUDIT_TABLE_OPTIONS.map(value => (
                     <option key={value} value={value}>
                       {t(`admin.settingsPage.audit.tableOptions.${value}`)}
                     </option>
                   ))}
-                </select>
-                <select
+                </Select>
+                <Select
+                  selectSize="compact"
                   value={auditActionFilter}
                   onChange={event =>
                     setAuditActionFilter(
                       event.target.value as AuditActionFilter
                     )
                   }
-                  className="rounded-lg border border-dental-secondary px-3 py-1.5 text-sm"
+                  aria-label={t('admin.settingsPage.audit.title')}
                 >
                   {AUDIT_ACTION_OPTIONS.map(value => (
                     <option key={value} value={value}>
                       {getAuditActionLabel(value)}
                     </option>
                   ))}
-                </select>
-                <select
+                </Select>
+                <Select
+                  selectSize="compact"
                   value={auditPeriodFilter}
                   onChange={event =>
                     setAuditPeriodFilter(
                       event.target.value as AuditPeriodFilter
                     )
                   }
-                  className="rounded-lg border border-dental-secondary px-3 py-1.5 text-sm"
+                  aria-label={t('admin.settingsPage.audit.title')}
                 >
                   {AUDIT_PERIOD_OPTIONS.map(value => (
                     <option key={value} value={value}>
                       {t(`admin.settingsPage.audit.periodOptions.${value}`)}
                     </option>
                   ))}
-                </select>
-                <select
+                </Select>
+                <Select
+                  selectSize="compact"
                   value={auditActorFilter}
                   onChange={event =>
                     setAuditActorFilter(event.target.value as AuditActorFilter)
                   }
-                  className="max-w-[260px] rounded-lg border border-dental-secondary px-3 py-1.5 text-sm"
+                  className="max-w-[260px]"
+                  aria-label={t('admin.settingsPage.audit.title')}
                 >
                   {actorFilterOptions.map(item => (
                     <option key={item.value} value={item.value}>
                       {item.label}
                     </option>
                   ))}
-                </select>
+                </Select>
                 <Button
                   variant="outline"
                   size="sm"

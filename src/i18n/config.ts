@@ -136,28 +136,23 @@ i18n.on('languageChanged', async (lng: string) => {
 })
 
 /**
- * Initialize language detection AFTER hydration.
- * This prevents hydration mismatch by ensuring SSR and initial client render
- * both use 'uk', then we switch to the user's preferred language if they've chosen one.
- *
- * Only respects stored language preference (localStorage), not browser language.
- * Default is always Ukrainian.
+ * Initialize language from localStorage AFTER hydration.
+ * SSR + first paint stay on Ukrainian; we then await lazy bundles before
+ * `changeLanguage`, so `t()` never resolves against a half-loaded en/pl bundle.
  */
-export function initializeLanguage() {
+export async function initializeI18nFromStorage(): Promise<void> {
   if (!isBrowser) return
 
-  // Check localStorage for explicit language choice
-  // Only load other languages if user has previously selected them
   const storedLng = normalizeLanguage(localStorage.getItem('i18nextLng'))
 
   if (storedLng && storedLng !== 'uk') {
-    void setLanguage(storedLng)
+    await setLanguage(storedLng)
     return
   }
 
   const currentLanguage = normalizeLanguage(i18n.language)
   if (!currentLanguage) {
-    void i18n.changeLanguage('uk')
+    await i18n.changeLanguage('uk')
     return
   }
 
@@ -165,7 +160,7 @@ export function initializeLanguage() {
     currentLanguage !== 'uk' &&
     !i18n.hasResourceBundle(currentLanguage, 'translation')
   ) {
-    void setLanguage(currentLanguage)
+    await setLanguage(currentLanguage)
   }
 }
 

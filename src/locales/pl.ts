@@ -579,6 +579,8 @@ const pl = {
       loadingTitle: 'Ładowanie opinii',
       loadingMessage: 'Pobieramy najnowsze opinie pacjentów.',
       loadError: 'Nie udało się załadować opinii.',
+      timeoutError:
+        'Ładowanie trwa zbyt długo. Sprawdź połączenie i spróbuj ponownie.',
       empty: 'Na razie nie ma opublikowanych opinii.',
     },
     form: {
@@ -928,8 +930,8 @@ const pl = {
     appointmentDesc: 'Wybierz dogodny termin wizyty w naszej klinice',
     copyright: '© 2024 Dental Story. Wszelkie prawa zastrzeżone.',
     workingHours: {
-      weekdays: 'Pn-Pt: 9:00-19:00',
-      saturday: 'Sob: 9:00-16:00',
+      weekdays: 'Pn-Pt: 9:00-20:00',
+      saturday: 'Sob: 10:00-18:00',
       sunday: 'Niedz: Zamknięte',
     },
     socialMedia: 'Media społecznościowe',
@@ -1495,11 +1497,14 @@ const pl = {
         today: 'Dziś',
         upcoming: 'Nadchodzące',
         past: 'Minione',
+        statusSelectAria: 'Filtruj według statusu wizyty',
+        dateSelectAria: 'Filtruj według daty wizyty',
       },
       bulk: {
         selected: 'Wybrano: {{count}}',
         moveTo: 'Przenieś do {{status}}',
         apply: 'Zastosuj zbiorczo',
+        targetStatusSelectAria: 'Status docelowy dla zmiany zbiorczej',
       },
       table: {
         selectAllAria: 'Wybierz wszystkie wiersze',
@@ -1537,6 +1542,7 @@ const pl = {
         '30': '30 dni',
         '90': '90 dni',
       },
+      periodSelectAria: 'Okres raportu',
       refresh: 'Odśwież',
       loading: 'Ładowanie analityki...',
       cards: {
@@ -1740,6 +1746,7 @@ const pl = {
       empty: 'Brak zgłoszeń dla bieżących filtrów.',
       card: {
         selectAria: 'Wybierz zgłoszenie {{name}}',
+        statusSelectAria: 'Zmień status zgłoszenia: {{name}}',
         unreadBadge: 'unread',
         markRead: 'Oznacz jako przeczytane',
         markUnread: 'Oznacz jako nieprzeczytane',

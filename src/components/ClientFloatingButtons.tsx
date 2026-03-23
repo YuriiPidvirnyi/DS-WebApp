@@ -41,14 +41,14 @@ export default function ClientFloatingButtons() {
 
       {/* AI Assistant (GPT-powered) */}
       {aiOpen && (
-        <div className="fixed bottom-24 right-6 z-50">
+        <div className="fixed z-50 bottom-[calc(6rem+env(safe-area-inset-bottom,0px))] right-[calc(1.5rem+env(safe-area-inset-right,0px))]">
           <AIAssistant onClose={() => setAiOpen(false)} />
         </div>
       )}
 
       {/* Live Chat (Supabase Realtime) */}
       {chatOpen && (
-        <div className="fixed bottom-24 right-6 z-50">
+        <div className="fixed z-50 bottom-[calc(6rem+env(safe-area-inset-bottom,0px))] right-[calc(1.5rem+env(safe-area-inset-right,0px))]">
           <LiveChat onClose={() => setChatOpen(false)} />
         </div>
       )}
@@ -61,7 +61,7 @@ export default function ClientFloatingButtons() {
             onClick={() => setAccessibilityOpen(false)}
             aria-hidden="true"
           />
-          <div className="fixed z-50 inset-x-4 bottom-24 sm:inset-auto sm:bottom-24 sm:right-6 sm:w-72">
+          <div className="fixed z-50 inset-x-4 bottom-[calc(6rem+env(safe-area-inset-bottom,0px))] sm:inset-auto sm:bottom-[calc(6rem+env(safe-area-inset-bottom,0px))] sm:right-[calc(1.5rem+env(safe-area-inset-right,0px))] sm:w-72">
             <AccessibilityPanel defaultOpen={true} hideToggle={true} />
           </div>
         </>

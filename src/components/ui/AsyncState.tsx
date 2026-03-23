@@ -19,9 +19,9 @@ interface AsyncStateProps {
 }
 
 const variantStyles: Record<AsyncStateVariant, string> = {
-  loading: 'border-dental-secondary-200 bg-white text-dental-text-light',
+  loading: 'border-dental-secondary-200 bg-white text-dental-text',
   error: 'border-red-200 bg-red-50 text-red-700',
-  empty: 'border-dental-secondary-200 bg-white text-dental-text-light',
+  empty: 'border-dental-secondary-200 bg-white text-dental-text',
 }
 
 function renderDefaultIcon(variant: AsyncStateVariant): ReactNode {

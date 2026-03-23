@@ -111,7 +111,10 @@ export default function RadialMenu({
   const hoveredItem = items.find(i => i.id === hoveredId)
 
   return (
-    <div ref={menuRef} className="fixed bottom-6 right-6 z-50">
+    <div
+      ref={menuRef}
+      className="fixed z-50 bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))] right-[calc(1.5rem+env(safe-area-inset-right,0px))]"
+    >
       {/* Backdrop */}
       {isOpen && (
         <div

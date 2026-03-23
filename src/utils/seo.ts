@@ -2,6 +2,7 @@
  * SEO utilities for structured data and meta tags
  * Note: sitemap and robots.txt are handled by app/sitemap.ts and app/robots.ts
  */
+import { getOpeningHoursSchemaStrings } from '@/config/clinicSchedule'
 import uk from '@/locales/uk'
 
 export interface Organization {
@@ -84,7 +85,7 @@ export function generateOrganizationSchema(): MedicalBusiness {
       latitude: 50.4501,
       longitude: 30.5234,
     },
-    openingHours: ['Mo-Fr 09:00-20:00', 'Sa 10:00-18:00'],
+    openingHours: getOpeningHoursSchemaStrings(),
     priceRange: '₴₴',
     medicalSpecialty: [
       'Dental Care',
