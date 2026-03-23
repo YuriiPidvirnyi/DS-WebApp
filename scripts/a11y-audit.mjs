@@ -1,11 +1,24 @@
-// Basic accessibility audit using Playwright + axe
-// Usage: ensure the app is running (npm run preview) then: npm run a11y:install && npm run a11y:audit
+// Basic accessibility audit using Playwright + axe (Next.js)
+// Usage: npm run dev (or rely on auto-start) then: npm run a11y:install && npm run a11y:audit
+// Optional: BASE_URL=http://127.0.0.1:3000 npm run a11y:audit
 
 import { chromium } from 'playwright'
 import AxeBuilder from '@axe-core/playwright'
 
-const BASE = process.env.BASE_URL || 'http://localhost:4173'
-const PAGES = ['/', '/services', '/about', '/contact', '/booking', '/reviews']
+const BASE = process.env.BASE_URL || 'http://localhost:3000'
+const PAGES = [
+  '/',
+  '/services',
+  '/about',
+  '/contact',
+  '/booking',
+  '/reviews',
+  '/gallery',
+  '/auth/login',
+  '/auth/sign-up',
+  '/privacy-policy',
+  '/terms-of-service',
+]
 
 async function waitForServer(url, timeoutMs = 20000) {
   const start = Date.now()
@@ -25,15 +38,18 @@ async function waitForServer(url, timeoutMs = 20000) {
   const ok = await waitForServer(BASE)
   if (!ok) {
     const { spawn } = await import('child_process')
+    // Next.js App Router — dev server on 3000 (not Vite)
     previewProc = spawn(
       'npx',
-      ['vite', 'preview', '--port', '4173', '--strictPort'],
-      { stdio: 'ignore', shell: process.platform === 'win32' }
+      ['next', 'dev', '-p', '3000'],
+      { stdio: 'ignore', shell: process.platform === 'win32', cwd: process.cwd() }
     )
-    const ready = await waitForServer(BASE, 20000)
+    const ready = await waitForServer(BASE, 90000)
     if (!ready) {
       previewProc?.kill('SIGTERM')
-      throw new Error('Preview server not reachable at ' + BASE)
+      throw new Error(
+        `Next.js not reachable at ${BASE}. Start manually: npm run dev`
+      )
     }
   }
 

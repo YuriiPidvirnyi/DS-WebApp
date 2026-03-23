@@ -18,9 +18,12 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:e2e:ui-smoke": "playwright test e2e/ui-form-controls.smoke.spec.ts --config=playwright.auth.config.ts",
     "test:e2e:auth": "playwright test e2e/auth-flows.spec.ts --config=playwright.auth.config.ts",
     "test:e2e:auth:live": "playwright test e2e/auth-live.smoke.spec.ts --config=playwright.auth.live.config.ts",
     "test:e2e:auth:links:live": "playwright test e2e/auth-email-links.live.spec.ts --config=playwright.auth.links.live.config.ts",
+    "a11y:install": "npx playwright install chromium",
+    "a11y:audit": "node scripts/a11y-audit.mjs",
     "prepare": "husky"
   },
   "dependencies": {
@@ -36,7 +39,7 @@
     "@vercel/speed-insights": "^2.0.0",
     "ai": "^6.0.104",
     "clsx": "^2.0.0",
-    "dompurify": "^3.3.0",
+    "dompurify": "^3.3.3",
     "i18next": "^25.6.1",
     "lucide-react": "^0.294.0",
     "next": "^16.1.6",
@@ -52,6 +55,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@eslint/js": "^10.0.1",
@@ -78,6 +82,7 @@
     "typescript": "^5.2.2",
     "typescript-eslint": "^8.56.0",
     "vitest": "^4.1.0",
+    "wait-on": "^8.0.1",
     "web-vitals": "^5.1.0"
   },
   "keywords": [
@@ -92,5 +97,8 @@
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=9.0.0"
+  },
+  "overrides": {
+    "serialize-javascript": "7.0.4"
   }
 }
