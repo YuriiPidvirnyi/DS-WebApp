@@ -33,6 +33,7 @@
     "@types/dompurify": "^3.0.5",
     "@upstash/redis": "^1.36.3",
     "@vercel/analytics": "^1.6.1",
+    "@vercel/speed-insights": "^2.0.0",
     "ai": "^6.0.104",
     "clsx": "^2.0.0",
     "dompurify": "^3.3.0",

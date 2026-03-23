@@ -3,6 +3,7 @@ import { Nunito, Rubik } from 'next/font/google'
 import Script from 'next/script'
 import { headers } from 'next/headers'
 import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import '../src/styles/globals.css'
 import ClientProviders from './providers'
 import Header from '@/components/SiteHeader'
@@ -136,6 +137,7 @@ export default async function RootLayout({
           </ClientProviders>
         </div>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
