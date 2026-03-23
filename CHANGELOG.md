@@ -53,3 +53,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Analytics integration
 
 ## [v2.0.0] - 2026-03-22
+
+## [v2.0.0] - 2026-03-23
