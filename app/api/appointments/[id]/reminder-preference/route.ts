@@ -100,68 +100,32 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     }
   }
 
-  const now = new Date().toISOString()
-  const { error: insertError } = await supabase
+  const { error: upsertError } = await supabase
     .from('appointment_reminder_preferences')
-    .insert({
-      appointment_id: id,
-      preference: body.preference,
-      updated_at: now,
-    })
-
-  if (!insertError) {
-    return NextResponse.json({
-      success: true,
-      data: { updated: true },
-    })
-  }
-
-  if (insertError.code === '23505') {
-    const { error: updateError } = await supabase
-      .from('appointment_reminder_preferences')
-      .update({
+    .upsert(
+      {
+        appointment_id: id,
         preference: body.preference,
-        updated_at: now,
-      })
-      .eq('appointment_id', id)
-
-    if (!updateError) {
-      return NextResponse.json({
-        success: true,
-        data: { updated: true },
-      })
-    }
-
-    // Graceful mode until migration/policies land in all environments.
-    if (['42P01', 'PGRST205', '42501'].includes(updateError.code ?? '')) {
-      return NextResponse.json({
-        success: true,
-        data: { updated: false },
-      })
-    }
-
-    captureException(new Error('[reminder-preference] Supabase update error'), {
-      supabaseError: updateError,
-    })
-    return NextResponse.json(
-      { success: false, error: 'Не вдалося оновити preference' },
-      { status: 500 }
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'appointment_id' }
     )
+
+  if (!upsertError) {
+    return NextResponse.json({ success: true, data: { updated: true } })
   }
 
-  // Graceful mode until migration/policies land in all environments.
-  if (['42P01', 'PGRST205', '42501'].includes(insertError.code ?? '')) {
-    return NextResponse.json({
-      success: true,
-      data: { updated: false },
-    })
+  // Graceful degradation: table may not exist in all environments
+  if (['42P01', 'PGRST205', '42501'].includes(upsertError.code ?? '')) {
+    return NextResponse.json({ success: true, data: { updated: false } })
   }
 
-  captureException(new Error('[reminder-preference] Supabase insert error'), {
-    supabaseError: insertError,
+  // Unexpected error
+  captureException(new Error('[reminder-preference] Supabase upsert error'), {
+    supabaseError: upsertError,
   })
   return NextResponse.json(
-    { success: false, error: 'Не вдалося оновити preference' },
+    { success: false, error: 'Не вдалося оновити налаштування нагадування' },
     { status: 500 }
   )
 }
