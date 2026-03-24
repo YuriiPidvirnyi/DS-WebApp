@@ -7,6 +7,11 @@ on:
     branches: [develop]
   workflow_dispatch:
 
+# Cancel stale runs for the same branch/PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   pull-requests: write
@@ -39,7 +44,7 @@ jobs:
         run: npm run test:visual
 
       - name: Upload test results
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: visual-test-results
@@ -47,7 +52,7 @@ jobs:
           retention-days: 30
 
       - name: Upload screenshots
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: visual-screenshots
@@ -55,7 +60,7 @@ jobs:
           retention-days: 30
 
       - name: Upload Playwright Report
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
@@ -129,14 +134,14 @@ jobs:
         continue-on-error: true
 
       - name: Save baseline screenshots
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: baseline-screenshots
           path: tests/visual/**/*-snapshots/
           retention-days: 30
 
       - name: Download PR screenshots
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@v4
         with:
           name: visual-screenshots
           path: pr-screenshots/

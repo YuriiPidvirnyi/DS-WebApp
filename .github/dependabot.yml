@@ -19,6 +19,20 @@ updates:
       - 'automated'
     versioning-strategy: increase
     groups:
+      next:
+        patterns:
+          - 'next'
+          - '@next/*'
+      sentry:
+        patterns:
+          - '@sentry/*'
+      supabase:
+        patterns:
+          - '@supabase/*'
+      i18n:
+        patterns:
+          - 'i18next*'
+          - 'react-i18next'
       react:
         patterns:
           - 'react*'
