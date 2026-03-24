@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
 
   const parseResult = contactSchema.safeParse(rawBody)
   if (!parseResult.success) {
-    const firstError = parseResult.error.errors[0]?.message ?? 'Невірний запит'
+    const firstError = parseResult.error.issues[0]?.message ?? 'Невірний запит'
     return NextResponse.json(
       { success: false, error: firstError },
       { status: 400 }
