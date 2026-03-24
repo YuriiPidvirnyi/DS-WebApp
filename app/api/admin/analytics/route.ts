@@ -178,25 +178,32 @@ async function buildAnalyticsModel(
   fromDate.setDate(today.getDate() - (periodDays - 1))
   const fromDateIso = fromDate.toISOString().slice(0, 10)
 
-  const results = await Promise.allSettled([
-    supabase
-      .from('appointments')
-      .select('appointment_date, status, price_uah, source, service_id')
-      .gte('appointment_date', fromDateIso)
-      .lte('appointment_date', todayIso),
-    supabase.from('services').select('id, name_uk'),
-    supabase.from('patients').select('*', { count: 'exact', head: true }),
-    supabase
-      .from('contact_submissions')
-      .select('*', { count: 'exact', head: true })
-      .eq('is_read', false),
-    supabase
-      .from('reviews')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'pending'),
-  ])
+  const [apptResult, svcResult, patientsResult, contactsResult, reviewsResult] =
+    await Promise.allSettled([
+      supabase
+        .from('appointments')
+        .select('appointment_date, status, price_uah, source, service_id')
+        .gte('appointment_date', fromDateIso)
+        .lte('appointment_date', todayIso),
+      supabase.from('services').select('id, name_uk'),
+      supabase.from('patients').select('*', { count: 'exact', head: true }),
+      supabase
+        .from('contact_submissions')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_read', false),
+      supabase
+        .from('reviews')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'pending'),
+    ])
 
-  results.forEach((r, i) => {
+  ;[
+    apptResult,
+    svcResult,
+    patientsResult,
+    contactsResult,
+    reviewsResult,
+  ].forEach((r, i) => {
     if (r.status === 'rejected') {
       captureException(
         r.reason instanceof Error ? r.reason : new Error(String(r.reason))
@@ -205,44 +212,44 @@ async function buildAnalyticsModel(
     }
   })
 
-  const appointments = settledData(results[0]) as AppointmentAnalyticsRow[]
-  const services = settledData(results[1]) as ServiceRow[]
-  const totalPatients = settledCount(results[2])
-  const unreadContacts = settledCount(results[3])
-  const pendingReviews = settledCount(results[4])
+  const appointments = settledData(apptResult) as AppointmentAnalyticsRow[]
+  const services = settledData(svcResult) as ServiceRow[]
+  const totalPatients = settledCount(patientsResult)
+  const unreadContacts = settledCount(contactsResult)
+  const pendingReviews = settledCount(reviewsResult)
+
+  // Single pass: accumulate all per-appointment counters and source map together.
+  let completedAppointments = 0
+  let pendingAppointments = 0
+  let actionableCount = 0
+  let actionableCompleted = 0
+  let revenue = 0
+  const sourceMap = new Map<string, number>()
+
+  for (const appt of appointments) {
+    revenue += Number(appt.price_uah || 0)
+    const source = appt.source || 'unknown'
+    sourceMap.set(source, (sourceMap.get(source) || 0) + 1)
+
+    const isNonActionable =
+      appt.status === 'cancelled' || appt.status === 'no_show'
+    if (!isNonActionable) {
+      actionableCount += 1
+      if (appt.status === 'completed') {
+        completedAppointments += 1
+        actionableCompleted += 1
+      } else if (appt.status === 'pending') {
+        pendingAppointments += 1
+      }
+    }
+  }
 
   const totalAppointments = appointments.length
-  const completedAppointments = appointments.filter(
-    appointment => appointment.status === 'completed'
-  ).length
-  const pendingAppointments = appointments.filter(
-    appointment => appointment.status === 'pending'
-  ).length
-  const cancelledAppointments = appointments.filter(appointment =>
-    ['cancelled', 'no_show'].includes(appointment.status)
-  ).length
-  const revenue = appointments.reduce(
-    (sum, appointment) => sum + Number(appointment.price_uah || 0),
-    0
-  )
-
-  const actionable = appointments.filter(
-    a => a.status !== 'cancelled' && a.status !== 'no_show'
-  )
+  const cancelledAppointments = totalAppointments - actionableCount
   const completionRate =
-    actionable.length > 0
-      ? (actionable.filter(a => a.status === 'completed').length /
-          actionable.length) *
-        100
-      : 0
+    actionableCount > 0 ? (actionableCompleted / actionableCount) * 100 : 0
   const averageTicket =
     completedAppointments > 0 ? revenue / completedAppointments : 0
-
-  const sourceMap = new Map<string, number>()
-  appointments.forEach(appointment => {
-    const source = appointment.source || 'unknown'
-    sourceMap.set(source, (sourceMap.get(source) || 0) + 1)
-  })
 
   const sourceBreakdown = Array.from(sourceMap.entries())
     .map(([name, count]) => ({ name, count }))
