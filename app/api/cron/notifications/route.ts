@@ -85,7 +85,8 @@ async function processEvent(
     return
   }
 
-  const patientName = appointment.patient_name || appointment.guest_name || 'Шановний пацієнт'
+  const patientName =
+    appointment.patient_name || appointment.guest_name || 'Шановний пацієнт'
   const service = resolveServiceName(appointment.services)
   const doctorName = resolveDoctorName(appointment.doctors)
 
@@ -281,7 +282,10 @@ export async function GET(request: NextRequest) {
     : { data: [] }
 
   const appointmentsMap = new Map(
-    (appointmentsData ?? []).map(a => [a.id as string, a as unknown as AppointmentData])
+    (appointmentsData ?? []).map(a => [
+      a.id as string,
+      a as unknown as AppointmentData,
+    ])
   )
 
   let processed = 0
@@ -289,7 +293,11 @@ export async function GET(request: NextRequest) {
 
   for (const event of events as NotificationRow[]) {
     try {
-      await processEvent(supabase, event, appointmentsMap.get(event.appointment_id) ?? null)
+      await processEvent(
+        supabase,
+        event,
+        appointmentsMap.get(event.appointment_id) ?? null
+      )
       processed++
     } catch (err) {
       failed++
