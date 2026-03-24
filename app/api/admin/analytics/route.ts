@@ -157,7 +157,9 @@ function settledData<T>(
   result: PromiseSettledResult<{ data: T[] | null; error: unknown }>,
   fallback: T[] = []
 ): T[] {
-  return result.status === 'fulfilled' ? (result.value.data ?? fallback) : fallback
+  return result.status === 'fulfilled'
+    ? (result.value.data ?? fallback)
+    : fallback
 }
 
 function settledCount(
