@@ -28,7 +28,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@ai-sdk/react": "^3.0.106",
+    "@ai-sdk/react": "^3.0.136",
     "@ducanh2912/next-pwa": "^10.2.9",
     "@hookform/resolvers": "^5.2.2",
     "@sentry/nextjs": "^10.45.0",
