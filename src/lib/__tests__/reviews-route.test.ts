@@ -90,9 +90,9 @@ describe('POST /api/reviews', () => {
 
     const res = await POST(
       makeRequest('POST', {
-        name: 'Test',
+        patientName: 'Test',
         rating: 5,
-        service: 'Терапія',
+        visitDate: '2025-01-01',
         comment: 'Good',
       })
     )
@@ -101,7 +101,9 @@ describe('POST /api/reviews', () => {
   })
 
   it('validates required fields', async () => {
-    const res = await POST(makeRequest('POST', { name: 'Test', rating: 5 }))
+    const res = await POST(
+      makeRequest('POST', { patientName: 'Test', rating: 5 })
+    )
     const body = await res.json()
 
     expect(res.status).toBe(400)
@@ -111,10 +113,40 @@ describe('POST /api/reviews', () => {
   it('validates rating range', async () => {
     const res = await POST(
       makeRequest('POST', {
-        name: 'Test',
-        service: 'Терапія',
+        patientName: 'Test',
+        visitDate: '2025-01-01',
         comment: 'Good',
         rating: 6,
+      })
+    )
+    const body = await res.json()
+
+    expect(res.status).toBe(400)
+    expect(body.success).toBe(false)
+  })
+
+  it('rejects non-integer rating like 4.5', async () => {
+    const res = await POST(
+      makeRequest('POST', {
+        patientName: 'Test',
+        visitDate: '2025-01-01',
+        comment: 'Good',
+        rating: 4.5,
+      })
+    )
+    const body = await res.json()
+
+    expect(res.status).toBe(400)
+    expect(body.success).toBe(false)
+  })
+
+  it('rejects future visitDate', async () => {
+    const res = await POST(
+      makeRequest('POST', {
+        patientName: 'Test',
+        visitDate: '2099-01-01',
+        comment: 'Good',
+        rating: 5,
       })
     )
     const body = await res.json()
@@ -128,9 +160,9 @@ describe('POST /api/reviews', () => {
 
     const res = await POST(
       makeRequest('POST', {
-        name: 'Test User',
+        patientName: 'Test User',
         rating: 5,
-        service: 'Терапія',
+        visitDate: '2025-01-01',
         comment: 'Excellent service!',
       })
     )
