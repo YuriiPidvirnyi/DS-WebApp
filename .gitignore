@@ -33,6 +33,9 @@ Thumbs.db
 .eslintcache
 .cache
 test-results/
+
+# Coverage reports
+coverage/
 supabase/.temp/
 
 # Vercel
