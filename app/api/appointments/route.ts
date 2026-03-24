@@ -7,6 +7,7 @@ import {
   validateCSRF,
   csrfErrorResponse,
 } from '@/lib/api-security'
+import { parsePagination, paginationMeta } from '@/lib/pagination'
 import { captureException } from '@/utils/sentry'
 
 export const runtime = 'nodejs'
@@ -180,7 +181,9 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = request.nextUrl
-    let query = supabase.from('appointments').select(APPOINTMENT_SELECT)
+    const { page, pageSize, from, to } = parsePagination(searchParams)
+
+    let query = supabase.from('appointments').select(APPOINTMENT_SELECT, { count: 'exact' })
 
     const status = searchParams.get('status')
     if (status) query = query.eq('status', status)
@@ -194,10 +197,10 @@ export async function GET(request: NextRequest) {
     const patientId = searchParams.get('patientId')
     if (patientId) query = query.eq('patient_id', patientId)
 
-    const { data, error } = await query
+    const { data, error, count } = await query
       .order('appointment_date', { ascending: false })
       .order('appointment_time', { ascending: false })
-      .limit(300)
+      .range(from, to)
 
     if (error) {
       return NextResponse.json(
@@ -206,7 +209,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    return NextResponse.json({ success: true, data })
+    return NextResponse.json({ success: true, data, meta: paginationMeta(page, pageSize, count) })
   } catch {
     return NextResponse.json(
       { success: false, error: 'Внутрішня помилка сервера' },
