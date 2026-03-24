@@ -11,12 +11,12 @@ interface ScrollAnimationOptions {
 export function useScrollAnimation<T extends HTMLElement = HTMLDivElement>(
   options: ScrollAnimationOptions = {}
 ) {
-  const { 
-    threshold = 0.1, 
+  const {
+    threshold = 0.1,
     rootMargin = '0px 0px -50px 0px',
-    triggerOnce = true 
+    triggerOnce = true,
   } = options
-  
+
   const ref = useRef<T>(null)
   const [isVisible, setIsVisible] = useState(false)
   const [hasAnimated, setHasAnimated] = useState(false)
@@ -26,7 +26,9 @@ export function useScrollAnimation<T extends HTMLElement = HTMLDivElement>(
     if (!element) return
 
     // Check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const prefersReducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches
     if (prefersReducedMotion) {
       setIsVisible(true)
       setHasAnimated(true)
@@ -62,9 +64,12 @@ export function useStaggeredAnimation<T extends HTMLElement = HTMLDivElement>(
   const { staggerDelay = 100, ...scrollOptions } = options
   const { ref, isVisible } = useScrollAnimation<T>(scrollOptions)
 
-  const getStaggerDelay = useCallback((index: number) => {
-    return isVisible ? `${index * staggerDelay}ms` : '0ms'
-  }, [isVisible, staggerDelay])
+  const getStaggerDelay = useCallback(
+    (index: number) => {
+      return isVisible ? `${index * staggerDelay}ms` : '0ms'
+    },
+    [isVisible, staggerDelay]
+  )
 
   return { ref, isVisible, getStaggerDelay }
 }
@@ -77,24 +82,26 @@ export function useParallax(speed: number = 0.5) {
   useEffect(() => {
     const handleScroll = () => {
       if (!ref.current) return
-      
+
       const rect = ref.current.getBoundingClientRect()
       const scrolled = window.scrollY
       const elementTop = rect.top + scrolled
       const viewportHeight = window.innerHeight
-      
+
       // Calculate parallax offset based on element position
       const relativeScroll = scrolled - elementTop + viewportHeight
       setOffset(relativeScroll * speed)
     }
 
     // Check for reduced motion
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const prefersReducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches
     if (prefersReducedMotion) return
 
     window.addEventListener('scroll', handleScroll, { passive: true })
     handleScroll()
-    
+
     return () => window.removeEventListener('scroll', handleScroll)
   }, [speed])
 

@@ -92,8 +92,7 @@ export const CardTitle = ({
 }
 
 // Card Description component
-export interface CardDescriptionProps
-  extends HTMLAttributes<HTMLParagraphElement> {
+export interface CardDescriptionProps extends HTMLAttributes<HTMLParagraphElement> {
   children: ReactNode
 }
 
