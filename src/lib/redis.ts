@@ -137,3 +137,58 @@ export async function deleteSession(sessionId: string): Promise<void> {
   const key = `${CACHE_KEYS.SESSION}:${sessionId}`
   await redis.del(key)
 }
+
+export interface CacheStats {
+  connected: boolean
+  latencyMs: number
+  keyCount: number | null
+  memoryUsage: string | null
+}
+
+/**
+ * Gather basic cache health metrics for monitoring.
+ * Returns connection status, round-trip latency, approximate key count
+ * and memory usage (when available via Upstash INFO).
+ */
+export async function getCacheStats(): Promise<CacheStats> {
+  if (!redis) {
+    return {
+      connected: false,
+      latencyMs: -1,
+      keyCount: null,
+      memoryUsage: null,
+    }
+  }
+
+  const start = performance.now()
+  try {
+    await redis.ping()
+    const latencyMs = Math.round(performance.now() - start)
+
+    let keyCount: number | null = null
+    let memoryUsage: string | null = null
+    try {
+      keyCount = await redis.dbsize()
+    } catch {
+      /* Upstash may restrict DBSIZE on some plans */
+    }
+    try {
+      const infoResult = await (
+        redis as unknown as { info: (section: string) => Promise<string> }
+      ).info('memory')
+      const match = infoResult?.match?.(/used_memory_human:(\S+)/)
+      memoryUsage = match?.[1] ?? null
+    } catch {
+      /* INFO may be unavailable on all Upstash plans */
+    }
+
+    return { connected: true, latencyMs, keyCount, memoryUsage }
+  } catch {
+    return {
+      connected: false,
+      latencyMs: Math.round(performance.now() - start),
+      keyCount: null,
+      memoryUsage: null,
+    }
+  }
+}
