@@ -12,6 +12,15 @@ import { captureException } from '@/utils/sentry'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
+// Valid forward status transitions. Absent key = terminal state (no transitions allowed).
+const ALLOWED_TRANSITIONS: Record<string, ReadonlySet<string>> = {
+  pending: new Set(['confirmed', 'cancelled', 'no_show']),
+  confirmed: new Set(['completed', 'cancelled', 'no_show']),
+  completed: new Set([]), // terminal
+  cancelled: new Set([]), // terminal
+  no_show: new Set(['pending']), // allow re-scheduling
+}
+
 type Params = { params: Promise<{ id: string }> }
 
 const APPOINTMENT_SELECT =
@@ -136,13 +145,34 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     )
   }
 
-  const { data: oldRow } = updates.status
+  const { data: currentRow } = updates.status
     ? await auth
         .supabase!.from('appointments')
         .select('status, guest_email')
         .eq('id', id)
         .maybeSingle()
     : { data: null }
+
+  if (updates.status) {
+    if (!currentRow) {
+      return NextResponse.json(
+        { success: false, error: 'Запис не знайдено' },
+        { status: 404 }
+      )
+    }
+    if (updates.status !== currentRow.status) {
+      const allowed = ALLOWED_TRANSITIONS[currentRow.status ?? '']
+      if (!allowed || !allowed.has(updates.status as string)) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: `Перехід зі статусу '${currentRow.status}' у '${updates.status}' не дозволений`,
+          },
+          { status: 422 }
+        )
+      }
+    }
+  }
 
   const { data, error } = await auth
     .supabase!.from('appointments')
@@ -170,15 +200,15 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
   if (
     updates.status === 'cancelled' &&
-    oldRow?.status !== 'cancelled' &&
-    oldRow?.guest_email
+    currentRow?.status !== 'cancelled' &&
+    currentRow?.guest_email
   ) {
     await auth
       .supabase!.from('notification_events')
       .insert({
         type: 'appointment_cancellation',
         appointment_id: id,
-        recipient_email: oldRow.guest_email,
+        recipient_email: currentRow.guest_email,
         status: 'queued',
         details: { cancelledBy: 'admin' },
       })
