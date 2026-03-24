@@ -1,6 +1,8 @@
 # Component Library Documentation
 
-**DS-WebApp Component Library** - Reusable React components with TypeScript, accessibility, and best practices.
+**DentalStory Component Library** - Reusable React components with TypeScript, accessibility, and best practices.
+
+> **52 components** across UI primitives, forms, layout, booking, chat, AI, and admin.
 
 ## Quick Links
 
@@ -208,7 +210,6 @@ interface CardProps {
 
 ```tsx
 import { Card } from '@/components/ui'
-
 ;<Card variant="elevated" padding="lg">
   <h3>Наші послуги</h3>
   <p>Професійна стоматологія</p>
@@ -886,9 +887,39 @@ Use this checklist when creating new components:
 - [ ] Loading states handled
 - [ ] Unit tests written
 - [ ] Documented in this file
-- [ ] Storybook story created
 - [ ] Performance tested
 - [ ] Browser tested (Chrome, Firefox, Safari)
+
+---
+
+## Full Component Inventory
+
+Components not individually documented above:
+
+| Component               | Location                                         | Purpose                                          |
+| ----------------------- | ------------------------------------------------ | ------------------------------------------------ |
+| `SVGFilters`            | `src/components/SVGFilters.tsx`                  | SVG filter definitions for visual effects        |
+| `ResourcePreloader`     | `src/components/ResourcePreloader.tsx`           | Preloads critical fonts, images, and scripts     |
+| `PerformanceMetrics`    | `src/components/PerformanceMetrics.tsx`          | Web Vitals reporting component                   |
+| `MicroFeedback`         | `src/components/MicroFeedback.tsx`               | Thumbs up/down feedback widget for forms         |
+| `SmartRecommendations`  | `src/components/SmartRecommendations.tsx`        | AI-powered service recommendations               |
+| `VideoTestimonials`     | `src/components/VideoTestimonials.tsx`           | Video testimonial carousel                       |
+| `ReminderSettings`      | `src/components/ReminderSettings.tsx`            | Appointment reminder preferences                 |
+| `PriceCalculator`       | `src/components/PriceCalculator.tsx`             | Interactive price calculator                     |
+| `RadialMenu`            | `src/components/RadialMenu.tsx`                  | Floating radial action menu                      |
+| `ClientFloatingButtons` | `src/components/ClientFloatingButtons.tsx`       | Container for RadialMenu + AccessibilityPanel    |
+| `LiveChat`              | `src/components/LiveChat.tsx`                    | Patient live chat widget                         |
+| `AIAssistant`           | `src/components/AIAssistant.tsx`                 | AI chat assistant component                      |
+| `Turnstile`             | `src/components/Turnstile.tsx`                   | Cloudflare Turnstile CAPTCHA wrapper             |
+| `BookingStepPersonal`   | `src/components/booking/BookingStepPersonal.tsx` | Booking form personal info step                  |
+| `BookingStepService`    | `src/components/booking/BookingStepService.tsx`  | Booking form service selection step              |
+| `BookingSummary`        | `src/components/booking/BookingSummary.tsx`      | Booking confirmation summary                     |
+| `EditableField`         | `src/components/booking/EditableField.tsx`       | Inline-editable field in booking review          |
+| `useBookingForm`        | `src/components/booking/useBookingForm.ts`       | Booking form state management hook               |
+| `AsyncState`            | `src/components/ui/AsyncState.tsx`               | Loading / error / empty state wrapper            |
+| `LiveRegion`            | `src/components/ui/LiveRegion.tsx`               | ARIA live region for screen reader announcements |
+| `LoadingOverlay`        | `src/components/ui/LoadingOverlay.tsx`           | Full-screen loading indicator                    |
+| `CustomSelect`          | `src/components/ui/CustomSelect.tsx`             | Accessible custom dropdown (combobox pattern)    |
 
 ---
 
@@ -902,6 +933,5 @@ Use this checklist when creating new components:
 
 ---
 
-**Last Updated**: 2024-11-09  
-**Component Count**: 25+ reusable components  
+**Component Count**: 52 reusable components  
 **Framework**: React 18 + TypeScript + Tailwind CSS

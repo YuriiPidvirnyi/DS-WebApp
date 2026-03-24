@@ -10,6 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run dev:restart` - Free port 3000, clear `.next/dev/cache/turbopack`, then `npm run dev` (see also Claude Code `/restart_ds_web_app`). After the server is **Ready**, open **http://localhost:3000** in **Cursor’s built-in browser** (MCP `cursor-ide-browser` → navigate) so the tab is visible in the editor.
 - `npm run dev:kill` / `npm run dev:clear-turbo` - Individual steps used by `dev:restart`
 - `npm run build` - Build for production (Next.js)
+- `npm run analyze` - Production build with bundle size analysis (`@next/bundle-analyzer`)
 - `npm run start` - Start production server
 
 ### Code Quality and Testing

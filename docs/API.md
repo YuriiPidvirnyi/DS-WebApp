@@ -1,797 +1,312 @@
-# API Documentation
-
-**DS-WebApp API Reference** - Comprehensive documentation for all API endpoints used by the Dental Story web application.
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Base Configuration](#base-configuration)
-- [Authentication](#authentication)
-- [Rate Limiting](#rate-limiting)
-- [Error Handling](#error-handling)
-- [Endpoints](#endpoints)
-  - [Contacts](#contacts)
-  - [Appointments](#appointments)
-  - [Subscriptions](#subscriptions)
-  - [Reviews](#reviews)
-  - [Feedback](#feedback)
-- [Request/Response Schemas](#requestresponse-schemas)
-- [Caching Strategy](#caching-strategy)
-- [Development Mode](#development-mode)
-
----
+# API Reference
 
 ## Overview
 
-The DS-WebApp uses a REST API architecture with JSON request/response format. All API communication goes through the centralized `http` service built on Axios with built-in features:
-
-- ✅ Automatic retries on transient errors (429, 5xx, network errors)
-- ✅ Rate limiting (10 requests/minute per endpoint)
-- ✅ Request caching for GET endpoints (30s TTL)
-- ✅ Request correlation IDs
-- ✅ Exponential backoff retry strategy
-- ✅ Mock fallback for development without backend
-
-**Base URL**: `http://localhost:3001/api` (configurable via `VITE_API_URL`)
-
----
-
-## Base Configuration
-
-### Environment Variables
-
-```env
-# Required
-VITE_API_URL=http://localhost:3001/api
-
-# Optional
-VITE_SENTRY_DSN=https://...
-VITE_TURNSTILE_SITE_KEY=...
-```
-
-### Timeouts
-
-- **Request Timeout**: 10,000ms (10 seconds)
-- **Retry Delays**: 250ms → 500ms → 1000ms (exponential backoff)
-- **Cache TTL**: 30,000ms (30 seconds) for GET requests
-
----
-
-## Authentication
-
-Currently, authentication is optional and uses Bearer token approach:
-
-```typescript
-// Token is attached automatically if available
-window.__AUTH_TOKEN__ = 'your-jwt-token'
-```
-
-**Header**:
-
-```
-Authorization: Bearer <token>
-```
-
-> **Note**: Auth implementation is placeholder. Tokens are not currently validated.
-
----
-
-## Rate Limiting
-
-### Client-Side Rate Limiting
-
-- **Window**: 60 seconds
-- **Max Requests**: 10 per endpoint per minute
-- **Scope**: Per HTTP method + endpoint combination
-
-**Example**:
-
-- `POST /contacts`: 10 requests/minute
-- `GET /appointments/slots`: 10 requests/minute (separate counter)
-
-### Rate Limit Exceeded
-
-When rate limit is exceeded, a `RateLimitExceededError` is thrown:
-
-```typescript
-{
-  name: "RateLimitExceededError",
-  message: "Rate limit exceeded for POST:http://localhost:3001/api/contacts. Retry after 30000ms.",
-  retryAfter: 30000 // milliseconds
-}
-```
-
-### Server-Side Rate Limiting
-
-If the server returns `429 Too Many Requests`, the client automatically updates its rate limit window based on the `Retry-After` header.
-
----
-
-## Error Handling
-
-### Error Types
-
-#### APIError
-
-```typescript
-class APIError extends Error {
-  statusCode?: number
-  code?: string
-  details?: unknown
-}
-```
-
-**Common Error Codes**:
-
-| Code               | Description                       |
-| ------------------ | --------------------------------- |
-| `NETWORK_ERROR`    | Connection failed, check internet |
-| `TIMEOUT_ERROR`    | Request took longer than 10s      |
-| `VALIDATION_ERROR` | Invalid request data              |
-| `RATE_LIMIT_ERROR` | Too many requests                 |
-| `SERVER_ERROR`     | Server-side error (5xx)           |
-| `NOT_FOUND`        | Resource not found (404)          |
-| `UNAUTHORIZED`     | Authentication required (401)     |
-| `FORBIDDEN`        | Insufficient permissions (403)    |
-
-### Error Response Format
+DentalStory WebApp exposes 25 Next.js App Router API routes under `/api/`. All routes return JSON responses with a standard envelope:
 
 ```json
-{
-  "success": false,
-  "error": "Detailed error message",
-  "code": "ERROR_CODE",
-  "details": {
-    "field": "name",
-    "issue": "Name must be at least 2 characters"
-  }
-}
+{ "success": true, "data": ... }
+{ "success": false, "error": "..." }
 ```
 
-### Retry Logic
+**Base URL:** `http://localhost:3000` (dev) / `https://dentalstory.com.ua` (prod)  
+**OpenAPI spec:** `public/openapi.json` (viewable at `/api-docs`)
 
-Automatic retries occur for:
+### Common security
 
-- Network errors (no response)
-- 429 (rate limit - after delay)
-- 5xx (server errors)
-
-**Max Retries**: 3
-**Retry Delays**: 250ms, 500ms, 1000ms
+- **CSRF:** Mutation endpoints require `x-csrf-token` header (32+ chars, generated client-side via `sessionStorage`)
+- **Rate limiting:** Per-IP via Upstash Redis. Edge middleware: 60 req/min. Per-route limits vary (e.g., feedback: 20 req/min)
+- **Auth:** Supabase session cookies. Admin routes check `admin_users` table membership
+- **Cron:** `/api/cron/*` routes require `Authorization: Bearer <CRON_SECRET>`
 
 ---
 
-## Endpoints
+## Public Endpoints
 
-### Contacts
+### GET /api/doctors
 
-#### Create Contact Request
+List active doctors ordered by experience.
 
-**Endpoint**: `POST /contacts`
+- **Caching:** ISR `revalidate = 120` (2 min)
+- **Response:** `{ success, data: Doctor[] }`
 
-**Purpose**: Submit contact form inquiry
+### GET /api/services
 
-**Request Body**:
+List active services ordered by category and price.
 
-```typescript
-{
-  name: string // Min 2 chars, max 50 chars, letters only
-  email: string // Valid email format
-  phone: string // Ukrainian format: +380XXXXXXXXX
-  message: string // Min 10 chars, max 1000 chars
-  consent: boolean // Must be true
-}
-```
+- **Caching:** ISR `revalidate = 60` (1 min)
+- **Response:** `{ success, data: Service[] }`
 
-**Response** (200 OK):
+### GET /api/appointments/slots
 
-```json
-{
-  "success": true,
-  "data": {
-    "id": "contact-1699876543210"
-  },
-  "message": "Contact request received successfully"
-}
-```
+Available time slots for a given date.
 
-**Validation Rules**:
+- **Query params:** `date` (required), `doctorId` (optional)
+- **Source:** CliniCards API with Redis cache (60s TTL), falls back to generated slots when CliniCards is unavailable
+- **Response:** `{ success, data: Slot[] }`
 
-- `name`: `/^[a-zA-ZаА-яЯієїґІЄЇҐ\s'-]+$/`
-- `email`: `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`
-- `phone`: `/^\+?380\d{9}$/`
+### POST /api/contacts
 
-**Error Responses**:
+Submit contact form.
 
-- `400`: Invalid request data
-- `429`: Rate limit exceeded (wait 60s)
-- `500`: Server error (retries automatic)
+- **CSRF:** Required
+- **Rate limit:** Per-IP
+- **Body:** `{ name, phone, email?, subject?, message? }`
+- **Side effect:** Forwards to CliniCards if configured
+- **Response:** `{ success, data: { id } }`
 
-**Mock Fallback**: ✅ Returns mock ID after 600ms delay
+### GET /api/reviews
 
----
+List approved reviews.
 
-### Appointments
+- **Response:** `{ success, data: Review[] }`
 
-#### Create Appointment
+### POST /api/reviews
 
-**Endpoint**: `POST /appointments`
+Submit a new review for moderation.
 
-**Purpose**: Book a new dental appointment
+- **CSRF:** Required
+- **Body:** `{ name, email?, rating, service, doctor?, comment, visitDate?, wouldRecommend? }`
+- **Response:** `{ success, data: { id } }` (status: 201)
 
-**Request Body**:
+### POST /api/newsletter
 
-```typescript
-{
-  // Personal Info
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  dateOfBirth: string      // ISO format: "YYYY-MM-DD"
+Subscribe to newsletter.
 
-  // Appointment Details
-  service: string          // From SERVICES enum
-  date: string             // ISO format: "YYYY-MM-DD"
-  time: string             // HH:mm format: "14:30"
-  doctor?: string          // Doctor ID or "any"
+- **CSRF:** Required
+- **Body:** `{ email }`
+- **Response:** `{ success }`
 
-  // Additional Info (optional)
-  isFirstVisit: boolean
-  symptoms?: string
-  medicalHistory?: string
-  allergies?: string
-  medications?: string
-  notes?: string
+### POST /api/feedback/form
 
-  // Consent
-  consent: boolean         // Must be true
-  marketingConsent?: boolean
-  reminderPreference?: "email" | "phone" | "both" | "none"
-}
-```
+Record micro-feedback on a form.
 
-**Response** (201 Created):
+- **CSRF:** Required
+- **Rate limit:** 20 req/min
+- **Body:** `{ form, rating: 'up'|'down', refId?, comment? }`
+- **Response:** `{ success, data: { recorded: boolean } }`
 
-```json
-{
-  "success": true,
-  "data": {
-    "id": "apt-1699876543210",
-    "firstName": "Іван",
-    "lastName": "Петренко",
-    "status": "pending",
-    "createdAt": "2024-11-08T22:00:00.000Z",
-    ...
-  },
-  "message": "Appointment created successfully"
-}
-```
+### POST /api/turnstile/verify
 
-**Appointment Statuses**:
+Verify Cloudflare Turnstile CAPTCHA token server-side.
 
-- `pending`: Awaiting confirmation
-- `confirmed`: Confirmed by clinic
-- `cancelled`: Cancelled by patient/clinic
-- `completed`: Appointment finished
-- `no-show`: Patient didn't show up
+- **Body:** `{ token }`
+- **Response:** `{ success }` (no-ops gracefully if `TURNSTILE_SECRET_KEY` is not configured)
 
-**Mock Fallback**: ✅ Returns mock appointment after 800ms delay
+### GET /api/health
+
+Liveness check.
+
+- **Response:** `{ status: 'ok', version, timestamp, environment, clinicards?: { status } }`
 
 ---
 
-#### Get Available Slots
+## Authenticated Endpoints
 
-**Endpoint**: `GET /appointments/slots`
+Require valid Supabase session cookie.
 
-**Purpose**: Fetch available time slots for booking
+### GET /api/appointments
 
-**Query Parameters**:
+List current user's appointments.
 
-```typescript
-{
-  date: string       // Required: "YYYY-MM-DD"
-  doctorId?: string  // Optional: Filter by doctor
-}
-```
+- **Response:** `{ success, data: Appointment[] }`
 
-**Response** (200 OK):
+### POST /api/appointments
 
-```json
-{
-  "success": true,
-  "data": ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"]
-}
-```
+Create a new appointment.
 
-**Cache**: ✅ Cached for 30 seconds
+- **CSRF:** Required
+- **Body:** `{ doctorId, serviceId, appointmentDate, appointmentTime, patientName, notes? }`
+- **Side effects:** Queues `booking_confirmation` email (patient) + `new_booking_admin` email (admin)
+- **Response:** `{ success, data: Appointment }` (status: 201)
 
-**Mock Fallback**: ✅ Returns 9 slots (09:00-18:00) after 500ms
+### GET /api/appointments/[id]/summary
 
----
+Minimal non-sensitive appointment data for the booking success page. Only accessible by the appointment owner.
 
-#### Get Appointment by ID
+- **Response:** `{ success, data: { id, doctorName, serviceName, date, time } }`
 
-**Endpoint**: `GET /appointments/:id`
+### PATCH /api/appointments/[id]/reminder-preference
 
-**Purpose**: Retrieve specific appointment details
+Update reminder preference for an appointment.
 
-**Response** (200 OK):
+- **Body:** `{ channel: 'email'|'sms'|'both'|'none' }`
+- **Response:** `{ success }`
 
-```json
-{
-  "success": true,
-  "data": {
-    "id": "apt-123",
-    "firstName": "Іван",
-    "status": "confirmed",
-    ...
-  }
-}
-```
+### POST /api/ai/chat
 
-**Error Responses**:
+AI chat assistant (streaming).
 
-- `404`: Appointment not found
-- `401`: Unauthorized (if auth required)
+- **CSRF:** Required
+- **Rate limit:** Per-IP
+- **Body:** `{ messages: Message[] }`
+- **Response:** Streaming text response via AI SDK
+- **Config:** `maxDuration = 30`
+
+### POST /api/ai/recommendations
+
+AI-powered service recommendations.
+
+- **Body:** `{ symptoms, context? }`
+- **Response:** Structured recommendation JSON
+- **Config:** `maxDuration = 30`
 
 ---
 
-#### Get All Appointments (Admin)
+## Admin Endpoints
 
-**Endpoint**: `GET /appointments`
+Require `admin_users` table membership (checked via `getAdminAccess`).
 
-**Purpose**: List all appointments (admin only)
+### GET /api/appointments (admin mode)
 
-**Query Parameters**:
+List all appointments with filters.
 
-```typescript
-{
-  status?: "pending" | "confirmed" | "cancelled" | "completed"
-  date?: string        // Filter by date
-  doctorId?: string    // Filter by doctor
-  limit?: number       // Pagination limit
-  offset?: number      // Pagination offset
-}
-```
+- **Query params:** `status`, `doctorId`, `dateFrom`, `dateTo`, `search`
+- **Response:** `{ success, data: Appointment[] }`
 
-**Response** (200 OK):
+### GET /api/appointments/[id]
 
-```json
-{
-  "success": true,
-  "data": [
-    { "id": "apt-1", ... },
-    { "id": "apt-2", ... }
-  ],
-  "pagination": {
-    "total": 150,
-    "limit": 20,
-    "offset": 0
-  }
-}
-```
+Fetch single appointment detail.
+
+### PATCH /api/appointments/[id]
+
+Update appointment (status, notes, reschedule).
+
+- **Body:** Partial appointment fields
+- **Side effect:** Queues `appointment_cancellation` email on cancel
+
+### DELETE /api/appointments/[id]
+
+Delete appointment.
+
+### GET /api/admin/analytics
+
+Dashboard analytics with Redis caching (5 min).
+
+- **Response:** `{ success, data: { appointments, revenue, patients, ... } }`
+
+### POST /api/admin/analytics
+
+Refresh analytics cache.
+
+- **Body:** `{ action: 'refresh', period? }`
+
+### GET /api/materials
+
+List materials catalog with optional filters.
+
+- **Query params:** `category`, `isActive`, `search`
+
+### POST /api/materials
+
+Create material catalog entry.
+
+- **Body:** `{ nameUk, nameEn?, namePl?, category, unit, sku?, minStockLevel?, supplier* }`
+
+### PATCH /api/materials/[id]
+
+Update material.
+
+### DELETE /api/materials/[id]
+
+Delete material.
+
+### GET /api/material-orders
+
+List material orders.
+
+### POST /api/material-orders
+
+Create material order with line items.
+
+### GET /api/material-orders/[id]
+
+Fetch single order with items.
+
+### PATCH /api/material-orders/[id]
+
+Update order status/details. On delivery status, inventory is auto-updated.
+
+### DELETE /api/material-orders/[id]
+
+Delete/cancel order.
+
+### GET /api/treatment-records
+
+List treatment records.
+
+### POST /api/treatment-records
+
+Create treatment record with line items.
+
+- **Body:** `{ appointmentId?, patientId, doctorId, toothNumbers?, diagnosis?, notes?, items: [{ serviceId, toothNumber?, quantity, priceAtTime }] }`
+
+### GET /api/treatment-records/[id]
+
+Fetch treatment record with items.
+
+### PATCH /api/treatment-records/[id]
+
+Update treatment record (status, payment, notes).
+
+### DELETE /api/treatment-records/[id]
+
+Delete treatment record.
 
 ---
 
-#### Update Appointment Status
+## Cron Endpoints
 
-**Endpoint**: `PATCH /appointments/:id/status`
+Secured by `Authorization: Bearer <CRON_SECRET>`. Designed for Vercel Cron.
 
-**Purpose**: Change appointment status (admin only)
+### GET /api/cron/notifications
 
-**Request Body**:
+Process queued notification events. Picks up `status = 'queued'` rows where `scheduled_at <= now()`, sends via Resend, updates status.
 
-```json
-{
-  "status": "confirmed"
-}
-```
+- **Schedule:** Every 5 minutes
+- **Config:** `maxDuration = 30`
 
-**Response** (200 OK):
+### GET /api/cron/reminders
 
-```json
-{
-  "success": true,
-  "data": {
-    "id": "apt-123",
-    "status": "confirmed",
-    ...
-  }
-}
-```
+Schedule appointment reminder notifications for tomorrow. Inserts `appointment_reminder` events with `scheduled_at` set to 09:00 Kyiv time.
+
+- **Schedule:** Daily at 18:00 UTC
+- **Config:** `maxDuration = 15`
 
 ---
 
-#### Cancel Appointment
+## E2E Helper
 
-**Endpoint**: `DELETE /appointments/:id`
+### GET/POST /api/e2e/auth-links
 
-**Purpose**: Cancel an appointment
-
-**Response** (200 OK):
-
-```json
-{
-  "success": true,
-  "message": "Appointment cancelled successfully"
-}
-```
+Non-production helper for E2E tests. Generates Supabase auth links via service role key. Only available when `NODE_ENV !== 'production'`.
 
 ---
 
-### Subscriptions
+## Error Responses
 
-#### Create Newsletter Subscription
+| Status | Meaning                                                 |
+| ------ | ------------------------------------------------------- |
+| 400    | Validation error (missing/invalid fields)               |
+| 403    | CSRF token missing/invalid, or insufficient permissions |
+| 404    | Resource not found                                      |
+| 429    | Rate limit exceeded                                     |
+| 500    | Internal server error                                   |
 
-**Endpoint**: `POST /subscriptions/newsletter`
+Rate limit responses include headers:
 
-**Request Body**:
-
-```json
-{
-  "email": "user@example.com",
-  "consent": true
-}
 ```
-
-**Response** (201 Created):
-
-```json
-{
-  "success": true,
-  "data": {
-    "id": "sub-123",
-    "email": "user@example.com"
-  }
-}
+X-RateLimit-Remaining: <number>
+Retry-After: <seconds>
 ```
 
 ---
 
-### Reviews
+## Client SDK
 
-#### Submit Review
+The client-side API wrapper is at `src/services/api.ts`. It provides:
 
-**Endpoint**: `POST /reviews`
-
-**Request Body**:
-
-```typescript
-{
-  name: string
-  email?: string
-  rating: number       // 1-5
-  review: string       // Min 10 chars, max 1000 chars
-  visitDate?: string
-  wouldRecommend: boolean
-  consent: boolean
-}
-```
-
-**Response** (201 Created):
-
-```json
-{
-  "success": true,
-  "data": {
-    "id": "review-123",
-    "status": "pending"
-  }
-}
-```
-
-#### Get Published Reviews
-
-**Endpoint**: `GET /reviews`
-
-**Query Parameters**:
-
-```typescript
-{
-  limit?: number
-  offset?: number
-  rating?: number      // Filter by rating
-}
-```
-
-**Response** (200 OK):
-
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "review-1",
-      "name": "Марія",
-      "rating": 5,
-      "review": "Чудовий сервіс!",
-      "createdAt": "2024-11-01T10:00:00Z"
-    }
-  ]
-}
-```
-
----
-
-### Feedback
-
-#### Submit Micro Feedback
-
-**Endpoint**: `POST /feedback`
-
-**Request Body**:
-
-```json
-{
-  "form": "contact" | "booking" | "callback",
-  "rating": 1 | 2 | 3,  // 1=bad, 2=neutral, 3=good
-  "comment?: string
-}
-```
-
-**Response** (201 Created):
-
-```json
-{
-  "success": true,
-  "message": "Feedback submitted"
-}
-```
-
----
-
-## Request/Response Schemas
-
-### Common Types
-
-```typescript
-// Generic API Response
-interface ApiResponse<T> {
-  success: boolean
-  data?: T
-  error?: string
-  message?: string
-}
-
-// Contact Request
-interface ContactRequest {
-  name: string
-  email: string
-  phone: string
-  message: string
-  consent: boolean
-}
-
-// Appointment
-interface Appointment {
-  id: string
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  dateOfBirth: string
-  service: string
-  date: string
-  time: string
-  doctor?: string
-  status: 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'no-show'
-  isFirstVisit: boolean
-  symptoms?: string
-  medicalHistory?: string
-  allergies?: string
-  medications?: string
-  notes?: string
-  consent: boolean
-  marketingConsent?: boolean
-  reminderPreference?: 'email' | 'phone' | 'both' | 'none'
-  createdAt: Date
-  updatedAt?: Date
-}
-```
-
----
-
-## Caching Strategy
-
-### GET Requests
-
-All `GET` requests are cached client-side for **30 seconds**:
-
-```typescript
-Cache-Control: max-age=30
-```
-
-**Cache Key Format**:
-
-```
-{baseURL}{endpoint}?{queryParams}
-```
-
-**Example**:
-
-```
-http://localhost:3001/api/appointments/slots?date=2024-11-15&doctorId=123
-```
-
-### Cache Invalidation
-
-Cache is automatically cleared:
-
-- After 30 seconds (TTL expiry)
-- On page reload
-- On any `POST`, `PUT`, `PATCH`, `DELETE` request to the same endpoint
-
-### Manual Cache Clearing
-
-```typescript
-// Clear specific cache entry
-cache.delete(key)
-
-// Clear all cache
-cache.clear()
-```
-
----
-
-## Development Mode
-
-### Mock API Responses
-
-When backend is unavailable, services automatically fall back to mock responses:
-
-**Features**:
-
-- ✅ Simulated network delays (500-800ms)
-- ✅ Generates realistic IDs
-- ✅ Returns proper data structures
-- ✅ Helpful for frontend development
-
-**Example**:
-
-```typescript
-// If real API fails, this runs automatically
-return mockAPIResponse({ id: `contact-${Date.now()}` }, 600)
-```
-
-### Mock Error Testing
-
-```typescript
-import { mockAPIError } from '@/services/api'
-
-// Simulate error after 1s
-await mockAPIError('Something went wrong', 1000)
-```
-
----
-
-## Best Practices
-
-### 1. Error Handling
-
-Always wrap API calls in try-catch:
-
-```typescript
-try {
-  const result = await createContact(data)
-  // Handle success
-} catch (error) {
-  if (isAPIError(error)) {
-    console.error(`API Error: ${error.code}`, error.message)
-  }
-}
-```
-
-### 2. Loading States
-
-Show loading indicators during API calls:
-
-```typescript
-const [isSubmitting, setIsSubmitting] = useState(false)
-
-const handleSubmit = async () => {
-  setIsSubmitting(true)
-  try {
-    await createContact(data)
-  } finally {
-    setIsSubmitting(false)
-  }
-}
-```
-
-### 3. Rate Limiting
-
-Handle rate limit errors gracefully:
-
-```typescript
-catch (error) {
-  if (error instanceof RateLimitExceededError) {
-    toast.error(`Too many requests. Please wait ${error.retryAfter / 1000}s`)
-  }
-}
-```
-
-### 4. Validation
-
-Validate data before sending:
-
-```typescript
-import { contactFormSchema } from '@/utils/validationSchemas'
-
-// Validate with Zod
-const result = contactFormSchema.safeParse(formData)
-if (!result.success) {
-  // Handle validation errors
-}
-```
-
----
-
-## Troubleshooting
-
-### Common Issues
-
-#### 1. CORS Errors
-
-**Problem**: `Access-Control-Allow-Origin` error
-
-**Solution**: Configure backend to allow origin:
-
-```javascript
-app.use(cors({ origin: 'http://localhost:3000' }))
-```
-
-#### 2. Timeout Errors
-
-**Problem**: Request takes longer than 10s
-
-**Solution**:
-
-- Optimize backend performance
-- Increase timeout in `http.ts`
-- Check network connectivity
-
-#### 3. Rate Limit Errors
-
-**Problem**: Too many requests
-
-**Solution**:
-
-- Wait for rate limit window to reset (60s)
-- Implement request debouncing/throttling
-- Reduce polling frequency
-
-#### 4. Mock Data in Production
-
-**Problem**: Seeing mock data in production
-
-**Solution**:
-
-- Ensure `VITE_API_URL` is set correctly
-- Check backend is running and accessible
-- Verify network requests in DevTools
-
----
-
-## API Versioning
-
-Currently at **v1**. Future versions will use URL prefix:
-
-```
-/api/v1/contacts
-/api/v2/contacts
-```
-
----
-
-## Support
-
-For API issues:
-
-- **GitHub Issues**: https://github.com/YuriiPidvirnyi/DS-WebApp/issues
-- **Email**: dev@dentalstory.com.ua
-
----
-
-**Last Updated**: 2024-11-08  
-**API Version**: 1.0.0
+- `api.get(url)`, `api.post(url, body)`, `api.patch(url, body)`, `api.delete(url)`
+- Automatic CSRF token injection from `sessionStorage`
+- `AbortError` -> `APIError` with `code: 'ABORTED'`
+- Domain-specific services: `src/services/appointments.ts`, `reviews.ts`, `contacts.ts`, `reminders.ts`, `subscriptions.ts`, `feedback.ts`
