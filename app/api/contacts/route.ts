@@ -18,14 +18,14 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 const contactSchema = z.object({
+  name: z.string().min(1, "Ім'я є обов'язковим").max(100),
   phone: z
     .string()
-    .regex(/^\+?380\d{9}$/, 'Невірний формат телефону (+380XXXXXXXXX)'),
-  email: z.union([z.string().email(), z.literal('')]).optional(),
-  name: z.string().max(100).optional(),
+    .regex(/^\+380\d{9}$/, 'Невірний формат телефону (+380XXXXXXXXX)'),
+  message: z.string().min(1, "Повідомлення є обов'язковим").max(2000),
+  email: z.string().email('Невірний формат email').optional(),
   firstName: z.string().max(100).optional(),
   lastName: z.string().max(100).optional(),
-  message: z.string().max(2000).optional(),
 })
 
 type ContactSchemaInput = z.infer<typeof contactSchema>
