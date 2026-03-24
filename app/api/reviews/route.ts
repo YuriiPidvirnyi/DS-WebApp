@@ -13,23 +13,22 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 const reviewSchema = z.object({
-  name: z.string().min(2).max(100),
-  email: z.union([z.string().email(), z.literal('')]).optional(),
+  patientName: z.string().min(1, "Ім'я є обов'язковим").max(100),
   rating: z
     .number()
     .int('Рейтинг має бути цілим числом від 1 до 5')
     .min(1, 'Рейтинг має бути цілим числом від 1 до 5')
     .max(5, 'Рейтинг має бути цілим числом від 1 до 5'),
-  service: z.string().min(1).max(200),
-  doctor: z.string().max(100).optional(),
-  comment: z.string().min(10).max(2000),
   visitDate: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Невірний формат дати (РРРР-ММ-ДД)')
     .refine(val => new Date(val) <= new Date(), {
       message: 'Дата візиту не може бути в майбутньому',
-    })
-    .optional(),
+    }),
+  comment: z.string().max(2000),
+  email: z.string().email('Невірний формат email').optional(),
+  service: z.string().max(200).optional(),
+  doctor: z.string().max(100).optional(),
   wouldRecommend: z.boolean().default(true),
 })
 
@@ -133,13 +132,13 @@ export async function POST(request: NextRequest) {
 
     const { error } = await supabase.from('reviews').insert({
       id: reviewId,
-      name: body.name.trim(),
+      name: body.patientName.trim(),
       email: body.email?.trim() || null,
       rating: body.rating,
-      service: body.service.trim(),
+      service: body.service?.trim() || null,
       doctor: body.doctor?.trim() || null,
       comment: body.comment.trim(),
-      visit_date: body.visitDate || null,
+      visit_date: body.visitDate,
       would_recommend: body.wouldRecommend,
       status: 'pending', // Requires admin moderation
     })
