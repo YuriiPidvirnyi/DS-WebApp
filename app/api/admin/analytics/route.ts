@@ -153,25 +153,35 @@ async function requireAdmin(): Promise<
   return { supabase }
 }
 
+function settledData<T>(
+  result: PromiseSettledResult<{ data: T[] | null; error: unknown }>,
+  fallback: T[] = []
+): T[] {
+  return result.status === 'fulfilled' ? (result.value.data ?? fallback) : fallback
+}
+
+function settledCount(
+  result: PromiseSettledResult<{ count: number | null; error: unknown }>
+): number {
+  return result.status === 'fulfilled' ? (result.value.count ?? 0) : 0
+}
+
 async function buildAnalyticsModel(
   supabase: SupabaseClient,
   periodDays: PeriodDays
 ): Promise<AnalyticsModel> {
-  const fromDate = new Date()
-  fromDate.setDate(fromDate.getDate() - (periodDays - 1))
+  const today = new Date()
+  const todayIso = today.toISOString().slice(0, 10)
+  const fromDate = new Date(today)
+  fromDate.setDate(today.getDate() - (periodDays - 1))
   const fromDateIso = fromDate.toISOString().slice(0, 10)
 
-  const [
-    { data: appointmentsData, error: appointmentsError },
-    { data: servicesData, error: servicesError },
-    { count: totalPatients, error: patientsError },
-    { count: unreadContacts, error: contactsError },
-    { count: pendingReviews, error: reviewsError },
-  ] = await Promise.all([
+  const results = await Promise.allSettled([
     supabase
       .from('appointments')
       .select('appointment_date, status, price_uah, source, service_id')
-      .gte('appointment_date', fromDateIso),
+      .gte('appointment_date', fromDateIso)
+      .lte('appointment_date', todayIso),
     supabase.from('services').select('id, name_uk'),
     supabase.from('patients').select('*', { count: 'exact', head: true }),
     supabase
@@ -184,24 +194,20 @@ async function buildAnalyticsModel(
       .eq('status', 'pending'),
   ])
 
-  if (
-    appointmentsError ||
-    servicesError ||
-    patientsError ||
-    contactsError ||
-    reviewsError
-  ) {
-    throw (
-      appointmentsError ||
-      servicesError ||
-      patientsError ||
-      contactsError ||
-      reviewsError
-    )
-  }
+  results.forEach((r, i) => {
+    if (r.status === 'rejected') {
+      captureException(
+        r.reason instanceof Error ? r.reason : new Error(String(r.reason))
+      )
+      console.error(`[analytics] Query ${i} failed:`, r.reason)
+    }
+  })
 
-  const appointments = (appointmentsData || []) as AppointmentAnalyticsRow[]
-  const services = (servicesData || []) as ServiceRow[]
+  const appointments = settledData(results[0]) as AppointmentAnalyticsRow[]
+  const services = settledData(results[1]) as ServiceRow[]
+  const totalPatients = settledCount(results[2])
+  const unreadContacts = settledCount(results[3])
+  const pendingReviews = settledCount(results[4])
 
   const totalAppointments = appointments.length
   const completedAppointments = appointments.filter(
@@ -218,9 +224,14 @@ async function buildAnalyticsModel(
     0
   )
 
+  const actionable = appointments.filter(
+    a => a.status !== 'cancelled' && a.status !== 'no_show'
+  )
   const completionRate =
-    totalAppointments > 0
-      ? (completedAppointments / totalAppointments) * 100
+    actionable.length > 0
+      ? (actionable.filter(a => a.status === 'completed').length /
+          actionable.length) *
+        100
       : 0
   const averageTicket =
     completedAppointments > 0 ? revenue / completedAppointments : 0
@@ -243,9 +254,9 @@ async function buildAnalyticsModel(
     completionRate,
     revenue,
     averageTicket,
-    totalPatients: totalPatients || 0,
-    unreadContacts: unreadContacts || 0,
-    pendingReviews: pendingReviews || 0,
+    totalPatients,
+    unreadContacts,
+    pendingReviews,
     timeline: buildTimeline(periodDays, appointments),
     sourceBreakdown,
     topServices: buildTopServices(appointments, services),
