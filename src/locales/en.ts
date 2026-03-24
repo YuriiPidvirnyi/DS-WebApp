@@ -925,7 +925,7 @@ const en = {
     contacts: 'Contacts',
     appointment: 'Book an appointment',
     appointmentDesc: 'Choose a convenient time for your clinic visit',
-    copyright: '© 2024 Dental Story. All rights reserved.',
+    copyright: '© {{year}} Dental Story. All rights reserved.',
     workingHours: {
       weekdays: 'Mon-Fri: 9:00-20:00',
       saturday: 'Sat: 10:00-18:00',

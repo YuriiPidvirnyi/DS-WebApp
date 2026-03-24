@@ -923,7 +923,7 @@ const uk = {
     contacts: 'Контакти',
     appointment: 'Запис на прийом',
     appointmentDesc: 'Оберіть зручний час для візиту до нашої клініки',
-    copyright: '© 2024 Dental Story. Усі права захищені.',
+    copyright: '© {{year}} Dental Story. Усі права захищені.',
     workingHours: {
       weekdays: 'Пн-Пт: 9:00-20:00',
       saturday: 'Сб: 10:00-18:00',

@@ -928,7 +928,7 @@ const pl = {
     contacts: 'Kontakty',
     appointment: 'Umów wizytę',
     appointmentDesc: 'Wybierz dogodny termin wizyty w naszej klinice',
-    copyright: '© 2024 Dental Story. Wszelkie prawa zastrzeżone.',
+    copyright: '© {{year}} Dental Story. Wszelkie prawa zastrzeżone.',
     workingHours: {
       weekdays: 'Pn-Pt: 9:00-20:00',
       saturday: 'Sob: 10:00-18:00',
