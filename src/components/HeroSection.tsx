@@ -145,10 +145,9 @@ function HeroSection() {
         <div className="max-w-5xl mx-auto mb-20">
           {/* Main headline with badge */}
           <div
-            className="transition-all duration-1000"
+            className="transition-all duration-700"
             style={{
-              opacity: mounted ? 1 : 0,
-              transform: mounted ? 'translateY(0)' : 'translateY(3rem)',
+              transform: mounted ? 'translateY(0)' : 'translateY(1.5rem)',
             }}
           >
             {/* Open / Closed badge */}
@@ -222,10 +221,9 @@ function HeroSection() {
 
         {/* Stats section - Enhanced design */}
         <div
-          className="transition-all duration-1000 delay-300"
+          className="transition-all duration-700 delay-150"
           style={{
-            opacity: mounted ? 1 : 0,
-            transform: mounted ? 'translateY(0)' : 'translateY(3rem)',
+            transform: mounted ? 'translateY(0)' : 'translateY(1.5rem)',
           }}
         >
           {/* Stats grid - responsive layout */}
@@ -277,10 +275,7 @@ function HeroSection() {
           </div>
 
           {/* Trust indicators - Compact */}
-          <div
-            className="flex flex-wrap justify-center items-center gap-8 pt-4 border-t border-dental-secondary-100 transition-all duration-1000 delay-500"
-            style={{ opacity: mounted ? 1 : 0 }}
-          >
+          <div className="flex flex-wrap justify-center items-center gap-8 pt-4 border-t border-dental-secondary-100 transition-all duration-700 delay-300">
             <div className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-dental-primary-500" />
               <span className="text-sm font-medium text-dental-text">
