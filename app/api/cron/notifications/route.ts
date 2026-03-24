@@ -67,15 +67,11 @@ function resolveDoctorName(
   return `${doc.first_name} ${doc.last_name}`.trim() || undefined
 }
 
-async function processEvent(supabase: ServiceClient, event: NotificationRow) {
-  const { data: appointment } = await supabase
-    .from('appointments')
-    .select(
-      'patient_name, guest_name, guest_phone, guest_email, appointment_date, appointment_time, services(name_uk), doctors(first_name,last_name)'
-    )
-    .eq('id', event.appointment_id)
-    .maybeSingle()
-
+async function processEvent(
+  supabase: ServiceClient,
+  event: NotificationRow,
+  appointment: AppointmentData | null = null
+) {
   if (!appointment) {
     await supabase
       .from('notification_events')
@@ -89,10 +85,10 @@ async function processEvent(supabase: ServiceClient, event: NotificationRow) {
     return
   }
 
-  const appt = appointment as unknown as AppointmentData
-  const patientName = appt.patient_name || appt.guest_name || 'Шановний пацієнт'
-  const service = resolveServiceName(appt.services)
-  const doctorName = resolveDoctorName(appt.doctors)
+  const patientName =
+    appointment.patient_name || appointment.guest_name || 'Шановний пацієнт'
+  const service = resolveServiceName(appointment.services)
+  const doctorName = resolveDoctorName(appointment.doctors)
 
   let email: { subject: string; html: string; text: string } | null = null
   let to = event.recipient_email
@@ -102,8 +98,8 @@ async function processEvent(supabase: ServiceClient, event: NotificationRow) {
       email = bookingConfirmationEmail({
         patientName,
         service,
-        date: appt.appointment_date,
-        time: appt.appointment_time,
+        date: appointment.appointment_date,
+        time: appointment.appointment_time,
         appointmentId: event.appointment_id,
         doctorName,
       })
@@ -113,8 +109,8 @@ async function processEvent(supabase: ServiceClient, event: NotificationRow) {
       email = appointmentReminderEmail({
         patientName,
         service,
-        date: appt.appointment_date,
-        time: appt.appointment_time,
+        date: appointment.appointment_date,
+        time: appointment.appointment_time,
         appointmentId: event.appointment_id,
         doctorName,
       })
@@ -124,8 +120,8 @@ async function processEvent(supabase: ServiceClient, event: NotificationRow) {
       email = appointmentCancellationEmail({
         patientName,
         service,
-        date: appt.appointment_date,
-        time: appt.appointment_time,
+        date: appointment.appointment_date,
+        time: appointment.appointment_time,
         reason: (event.details?.reason as string) ?? undefined,
       })
       break
@@ -146,11 +142,11 @@ async function processEvent(supabase: ServiceClient, event: NotificationRow) {
       to = ADMIN_EMAIL
       email = newBookingAdminEmail({
         patientName,
-        phone: appt.guest_phone ?? '—',
-        email: appt.guest_email ?? '—',
+        phone: appointment.guest_phone ?? '—',
+        email: appointment.guest_email ?? '—',
         service,
-        date: appt.appointment_date,
-        time: appt.appointment_time,
+        date: appointment.appointment_date,
+        time: appointment.appointment_time,
         appointmentId: event.appointment_id,
       })
       break
@@ -266,12 +262,42 @@ export async function GET(request: NextRequest) {
     })
   }
 
+  // Collect unique appointment IDs (filter out null/undefined)
+  const appointmentIds = [
+    ...new Set(
+      (events as NotificationRow[])
+        .map(e => e.appointment_id)
+        .filter((id): id is string => Boolean(id))
+    ),
+  ]
+
+  // Single batch fetch for all appointments in this batch
+  const { data: appointmentsData } = appointmentIds.length
+    ? await supabase
+        .from('appointments')
+        .select(
+          'id, patient_name, guest_name, guest_phone, guest_email, appointment_date, appointment_time, services(name_uk), doctors(first_name,last_name)'
+        )
+        .in('id', appointmentIds)
+    : { data: [] }
+
+  const appointmentsMap = new Map(
+    (appointmentsData ?? []).map(a => [
+      a.id as string,
+      a as unknown as AppointmentData,
+    ])
+  )
+
   let processed = 0
   let failed = 0
 
   for (const event of events as NotificationRow[]) {
     try {
-      await processEvent(supabase, event)
+      await processEvent(
+        supabase,
+        event,
+        appointmentsMap.get(event.appointment_id) ?? null
+      )
       processed++
     } catch (err) {
       failed++
