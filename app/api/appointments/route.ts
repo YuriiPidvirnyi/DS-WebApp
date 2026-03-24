@@ -18,7 +18,10 @@ const TIME_REGEX = /^([01]\d|2[0-3]):[0-5]\d$/
 const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
 
 const bookingSchema = z.object({
-  name: z.string().min(2, 'Імʼя занадто коротке').max(100, 'Імʼя занадто довге'),
+  name: z
+    .string()
+    .min(2, 'Імʼя занадто коротке')
+    .max(100, 'Імʼя занадто довге'),
   phone: z
     .string()
     .regex(PHONE_REGEX, 'Невірний формат телефону (+380XXXXXXXXX)'),
@@ -43,9 +46,7 @@ const bookingSchema = z.object({
       today.setHours(0, 0, 0, 0)
       return new Date(date) >= today
     }, 'Дата не може бути в минулому'),
-  preferredTime: z
-    .string()
-    .regex(TIME_REGEX, 'Невірний формат часу (HH:MM)'),
+  preferredTime: z.string().regex(TIME_REGEX, 'Невірний формат часу (HH:MM)'),
   doctorId: z
     .union([z.string().uuid('doctorId повинен бути UUID'), z.literal('')])
     .optional()
@@ -81,7 +82,12 @@ async function createSupabaseAppointment(payload: BookingPayload) {
     }
   }
 
-  const [{ data: { user } }, { data: serviceRecord }] = await Promise.all([
+  const [
+    {
+      data: { user },
+    },
+    { data: serviceRecord },
+  ] = await Promise.all([
     supabase.auth.getUser(),
     supabase
       .from('services')
@@ -269,9 +275,12 @@ export async function POST(request: NextRequest) {
 
   const parsed = bookingSchema.safeParse(rawBody)
   if (!parsed.success) {
-    const firstError = parsed.error.errors[0]
+    const firstError = parsed.error.issues[0]
     return NextResponse.json(
-      { success: false, error: firstError?.message ?? 'Відсутні обовʼязкові поля' },
+      {
+        success: false,
+        error: firstError?.message ?? 'Відсутні обовʼязкові поля',
+      },
       { status: 400 }
     )
   }
