@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
 import {
   checkRateLimit,
@@ -10,6 +11,29 @@ import { captureException } from '@/utils/sentry'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+
+const reviewSchema = z.object({
+  name: z.string().min(2).max(100),
+  email: z.union([z.string().email(), z.literal('')]).optional(),
+  rating: z
+    .number()
+    .int('Рейтинг має бути цілим числом від 1 до 5')
+    .min(1, 'Рейтинг має бути цілим числом від 1 до 5')
+    .max(5, 'Рейтинг має бути цілим числом від 1 до 5'),
+  service: z.string().min(1).max(200),
+  doctor: z.string().max(100).optional(),
+  comment: z.string().min(10).max(2000),
+  visitDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .refine(val => new Date(val) <= new Date(), {
+      message: 'Дата візиту не може бути в майбутньому',
+    })
+    .optional(),
+  wouldRecommend: z.boolean().default(true),
+})
+
+type ReviewInput = z.infer<typeof reviewSchema>
 
 /** GET /api/reviews — list approved reviews */
 export async function GET(request: NextRequest) {
@@ -74,19 +98,10 @@ export async function POST(request: NextRequest) {
   const { allowed, remaining } = await checkRateLimit(request, 5, 60_000)
   if (!allowed) return rateLimitResponse(remaining)
 
-  let body: {
-    name?: string
-    email?: string
-    rating?: number
-    service?: string
-    doctor?: string
-    comment?: string
-    visitDate?: string
-    wouldRecommend?: boolean
-  }
+  let rawBody: unknown
 
   try {
-    body = await request.json()
+    rawBody = await request.json()
   } catch {
     return NextResponse.json(
       { success: false, error: 'Невалідний запит' },
@@ -94,20 +109,16 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  // Validate required fields
-  if (!body.name?.trim() || !body.comment?.trim() || !body.service?.trim()) {
+  const parseResult = reviewSchema.safeParse(rawBody)
+  if (!parseResult.success) {
+    const firstError = parseResult.error.errors[0]?.message ?? 'Невірний запит'
     return NextResponse.json(
-      { success: false, error: "Ім'я, послуга та коментар обов'язкові" },
+      { success: false, error: firstError },
       { status: 400 }
     )
   }
 
-  if (!body.rating || body.rating < 1 || body.rating > 5) {
-    return NextResponse.json(
-      { success: false, error: 'Рейтинг має бути від 1 до 5' },
-      { status: 400 }
-    )
-  }
+  const body: ReviewInput = parseResult.data
 
   try {
     const supabase = await createClient()
@@ -129,7 +140,7 @@ export async function POST(request: NextRequest) {
       doctor: body.doctor?.trim() || null,
       comment: body.comment.trim(),
       visit_date: body.visitDate || null,
-      would_recommend: body.wouldRecommend ?? true,
+      would_recommend: body.wouldRecommend,
       status: 'pending', // Requires admin moderation
     })
 

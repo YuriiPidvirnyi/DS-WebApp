@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
 import {
   createContact,
@@ -15,6 +16,19 @@ import { captureException } from '@/utils/sentry'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+
+const contactSchema = z.object({
+  phone: z
+    .string()
+    .regex(/^\+?380\d{9}$/, 'Невірний формат телефону (+380XXXXXXXXX)'),
+  email: z.union([z.string().email(), z.literal('')]).optional(),
+  name: z.string().max(100).optional(),
+  firstName: z.string().max(100).optional(),
+  lastName: z.string().max(100).optional(),
+  message: z.string().max(2000).optional(),
+})
+
+type ContactSchemaInput = z.infer<typeof contactSchema>
 
 let hasLoggedMissingCliniCardsConfig = false
 
@@ -98,14 +112,14 @@ export async function POST(request: NextRequest) {
   const { allowed, remaining } = await checkRateLimit(request, 10, 60_000)
   if (!allowed) return rateLimitResponse(remaining)
 
-  let body: IncomingContactPayload
+  let rawBody: unknown
 
   try {
     const parsed = await request.json()
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
       throw new Error('Invalid JSON body')
     }
-    body = parsed as IncomingContactPayload
+    rawBody = parsed
   } catch {
     return NextResponse.json(
       { success: false, error: 'Невірний формат запиту' },
@@ -113,18 +127,22 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const normalized = normalizeContactPayload(body)
-
-  // Required: name + phone
-  if (!normalized.payload.firstName) {
+  const parseResult = contactSchema.safeParse(rawBody)
+  if (!parseResult.success) {
+    const firstError = parseResult.error.errors[0]?.message ?? 'Невірний запит'
     return NextResponse.json(
-      { success: false, error: "Ім'я є обов'язковим" },
+      { success: false, error: firstError },
       { status: 400 }
     )
   }
-  if (!normalized.payload.phone) {
+
+  const body: ContactSchemaInput = parseResult.data
+  const normalized = normalizeContactPayload(body as IncomingContactPayload)
+
+  // Required: name + phone (post-normalize checks kept for safety)
+  if (!normalized.payload.firstName) {
     return NextResponse.json(
-      { success: false, error: "Телефон є обов'язковим" },
+      { success: false, error: "Ім'я є обов'язковим" },
       { status: 400 }
     )
   }
