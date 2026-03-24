@@ -116,7 +116,9 @@ export async function GET(request: NextRequest) {
     const { searchParams } = request.nextUrl
     const { page, pageSize, from, to } = parsePagination(searchParams)
 
-    let query = auth.supabase!.from('treatment_records').select(LIST_SELECT, { count: 'exact' })
+    let query = auth
+      .supabase!.from('treatment_records')
+      .select(LIST_SELECT, { count: 'exact' })
 
     const patientId = searchParams.get('patientId')
     if (patientId) query = query.eq('patient_id', patientId)
@@ -144,7 +146,11 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    return NextResponse.json({ success: true, data, meta: paginationMeta(page, pageSize, count) })
+    return NextResponse.json({
+      success: true,
+      data,
+      meta: paginationMeta(page, pageSize, count),
+    })
   } catch (err) {
     captureException(
       err instanceof Error

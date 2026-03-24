@@ -183,7 +183,9 @@ export async function GET(request: NextRequest) {
     const { searchParams } = request.nextUrl
     const { page, pageSize, from, to } = parsePagination(searchParams)
 
-    let query = supabase.from('appointments').select(APPOINTMENT_SELECT, { count: 'exact' })
+    let query = supabase
+      .from('appointments')
+      .select(APPOINTMENT_SELECT, { count: 'exact' })
 
     const status = searchParams.get('status')
     if (status) query = query.eq('status', status)
@@ -209,7 +211,11 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    return NextResponse.json({ success: true, data, meta: paginationMeta(page, pageSize, count) })
+    return NextResponse.json({
+      success: true,
+      data,
+      meta: paginationMeta(page, pageSize, count),
+    })
   } catch {
     return NextResponse.json(
       { success: false, error: 'Внутрішня помилка сервера' },

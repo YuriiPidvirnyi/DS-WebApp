@@ -8,11 +8,17 @@ export type PaginationParams = {
   to: number
 }
 
-export function parsePagination(searchParams: URLSearchParams): PaginationParams {
+export function parsePagination(
+  searchParams: URLSearchParams
+): PaginationParams {
   const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10) || 1)
   const pageSize = Math.min(
     PAGE_SIZE_MAX,
-    Math.max(1, parseInt(searchParams.get('pageSize') ?? String(PAGE_SIZE_DEFAULT), 10) || PAGE_SIZE_DEFAULT)
+    Math.max(
+      1,
+      parseInt(searchParams.get('pageSize') ?? String(PAGE_SIZE_DEFAULT), 10) ||
+        PAGE_SIZE_DEFAULT
+    )
   )
   const from = (page - 1) * pageSize
   const to = from + pageSize - 1

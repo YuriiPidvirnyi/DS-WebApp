@@ -131,7 +131,11 @@ export async function GET(request: NextRequest) {
     }
   })
 
-  return NextResponse.json({ success: true, data: rows, meta: paginationMeta(page, pageSize, count) })
+  return NextResponse.json({
+    success: true,
+    data: rows,
+    meta: paginationMeta(page, pageSize, count),
+  })
 }
 
 /** POST /api/materials */
