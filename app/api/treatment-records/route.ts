@@ -7,6 +7,7 @@ import {
   validateCSRF,
   csrfErrorResponse,
 } from '@/lib/api-security'
+import { parsePagination, paginationMeta } from '@/lib/pagination'
 import { captureException } from '@/utils/sentry'
 
 export const runtime = 'nodejs'
@@ -113,7 +114,11 @@ export async function GET(request: NextRequest) {
     if ('error' in auth && auth.error) return auth.error
 
     const { searchParams } = request.nextUrl
-    let query = auth.supabase!.from('treatment_records').select(LIST_SELECT)
+    const { page, pageSize, from, to } = parsePagination(searchParams)
+
+    let query = auth
+      .supabase!.from('treatment_records')
+      .select(LIST_SELECT, { count: 'exact' })
 
     const patientId = searchParams.get('patientId')
     if (patientId) query = query.eq('patient_id', patientId)
@@ -124,9 +129,9 @@ export async function GET(request: NextRequest) {
     const doctorId = searchParams.get('doctorId')
     if (doctorId) query = query.eq('doctor_id', doctorId)
 
-    const { data, error } = await query
+    const { data, error, count } = await query
       .order('created_at', { ascending: false })
-      .limit(200)
+      .range(from, to)
 
     if (error) {
       captureException(
@@ -141,7 +146,11 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    return NextResponse.json({ success: true, data })
+    return NextResponse.json({
+      success: true,
+      data,
+      meta: paginationMeta(page, pageSize, count),
+    })
   } catch (err) {
     captureException(
       err instanceof Error
