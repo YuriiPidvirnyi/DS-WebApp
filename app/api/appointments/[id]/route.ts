@@ -14,11 +14,11 @@ export const dynamic = 'force-dynamic'
 
 // Valid forward status transitions. Absent key = terminal state (no transitions allowed).
 const ALLOWED_TRANSITIONS: Record<string, ReadonlySet<string>> = {
-  pending:   new Set(['confirmed', 'cancelled', 'no_show']),
+  pending: new Set(['confirmed', 'cancelled', 'no_show']),
   confirmed: new Set(['completed', 'cancelled', 'no_show']),
-  completed: new Set([]),   // terminal
-  cancelled: new Set([]),   // terminal
-  no_show:   new Set(['pending']),  // allow re-scheduling
+  completed: new Set([]), // terminal
+  cancelled: new Set([]), // terminal
+  no_show: new Set(['pending']), // allow re-scheduling
 }
 
 type Params = { params: Promise<{ id: string }> }
