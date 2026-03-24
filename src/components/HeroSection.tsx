@@ -14,50 +14,83 @@ import {
 } from 'lucide-react'
 import { UKRAINE_CONFIG } from '@/utils/constants'
 
-// Animated counter hook
+import { memo } from 'react'
+
 function useCounter(end: number, duration: number = 2000) {
   const [count, setCount] = useState(0)
   const [isVisible, setIsVisible] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const hasAnimated = useRef(false)
 
   useEffect(() => {
+    const el = ref.current
+    if (!el) return
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && !hasAnimated.current) {
+          hasAnimated.current = true
           setIsVisible(true)
+          observer.disconnect()
         }
       },
       { threshold: 0.1 }
     )
-
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
-
+    observer.observe(el)
     return () => observer.disconnect()
   }, [])
 
   useEffect(() => {
     if (!isVisible) return
-
     let startTime: number
+    let raf: number
     const animate = (currentTime: number) => {
       if (!startTime) startTime = currentTime
       const progress = Math.min((currentTime - startTime) / duration, 1)
       setCount(Math.floor(progress * end))
-
-      if (progress < 1) {
-        requestAnimationFrame(animate)
-      }
+      if (progress < 1) raf = requestAnimationFrame(animate)
     }
-
-    requestAnimationFrame(animate)
+    raf = requestAnimationFrame(animate)
+    return () => cancelAnimationFrame(raf)
   }, [isVisible, end, duration])
 
   return { count, ref }
 }
 
-export default function HeroSection() {
+const StatCard = memo(function StatCard({
+  counterRef,
+  count,
+  suffix,
+  label,
+  icon,
+}: {
+  counterRef: React.RefObject<HTMLDivElement | null>
+  count: number
+  suffix: string
+  label: string
+  icon: React.ReactNode
+}) {
+  return (
+    <div
+      ref={counterRef}
+      className="group p-6 lg:p-8 rounded-3xl border border-dental-secondary-200 bg-white hover:bg-dental-primary-50 hover:border-dental-primary-300 transition-all duration-300 cursor-default"
+    >
+      <div className="mb-6">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-dental-primary-100 group-hover:bg-dental-primary-200 transition-colors">
+          {icon}
+        </div>
+      </div>
+      <div className="mb-2">
+        <p className="text-4xl lg:text-5xl font-bold text-dental-dark">
+          {count.toLocaleString()}
+          {suffix}
+        </p>
+      </div>
+      <p className="text-dental-muted text-base font-medium">{label}</p>
+    </div>
+  )
+})
+
+function HeroSection() {
   const { t } = useTranslation()
   const [mounted, setMounted] = useState(false)
   const { count: patientsCount, ref: patientsRef } = useCounter(5000, 2500)
@@ -72,8 +105,13 @@ export default function HeroSection() {
   useEffect(() => {
     setMounted(true)
     setNow(new Date())
-    const timer = setInterval(() => setNow(new Date()), 60_000)
-    return () => clearInterval(timer)
+    const msUntilNextMinute = (60 - new Date().getSeconds()) * 1000
+    const timeout = setTimeout(() => {
+      setNow(new Date())
+      const interval = setInterval(() => setNow(new Date()), 60_000)
+      return () => clearInterval(interval)
+    }, msUntilNextMinute)
+    return () => clearTimeout(timeout)
   }, [])
 
   const isClinicOpen = useMemo(() => {
@@ -162,7 +200,7 @@ export default function HeroSection() {
             </p>
 
             {/* CTA buttons */}
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-4 min-w-0">
               <Link
                 href="/booking"
                 className="group inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-8 py-3.5 rounded-full font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-dental-primary-600/30 hover:-translate-y-0.5"
@@ -192,65 +230,29 @@ export default function HeroSection() {
         >
           {/* Stats grid - responsive layout */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            {/* Stat 1: Patients */}
-            <div
-              ref={patientsRef}
-              className="group p-6 lg:p-8 rounded-3xl border border-dental-secondary-200 bg-white hover:bg-dental-primary-50 hover:border-dental-primary-300 transition-all duration-300 cursor-default"
-            >
-              <div className="mb-6">
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-dental-primary-100 group-hover:bg-dental-primary-200 transition-colors">
-                  <Users className="h-7 w-7 text-dental-primary-600" />
-                </div>
-              </div>
-              <div className="mb-2">
-                <p className="text-4xl lg:text-5xl font-bold text-dental-dark">
-                  {patientsCount.toLocaleString()}+
-                </p>
-              </div>
-              <p className="text-dental-muted text-base font-medium">
-                {t('stats.patients')}
-              </p>
-            </div>
-
-            {/* Stat 2: Satisfaction */}
-            <div
-              ref={satisfactionRef}
-              className="group p-6 lg:p-8 rounded-3xl border border-dental-secondary-200 bg-white hover:bg-dental-primary-50 hover:border-dental-primary-300 transition-all duration-300 cursor-default"
-            >
-              <div className="mb-6">
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-dental-primary-100 group-hover:bg-dental-primary-200 transition-colors">
-                  <Star className="h-7 w-7 text-dental-primary-600 fill-dental-primary-600" />
-                </div>
-              </div>
-              <div className="mb-2">
-                <p className="text-4xl lg:text-5xl font-bold text-dental-dark">
-                  {satisfactionCount}%
-                </p>
-              </div>
-              <p className="text-dental-muted text-base font-medium">
-                {t('stats.satisfiedPatients')}
-              </p>
-            </div>
-
-            {/* Stat 3: Experience */}
-            <div
-              ref={yearsRef}
-              className="group p-6 lg:p-8 rounded-3xl border border-dental-secondary-200 bg-white hover:bg-dental-primary-50 hover:border-dental-primary-300 transition-all duration-300 cursor-default"
-            >
-              <div className="mb-6">
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-dental-primary-100 group-hover:bg-dental-primary-200 transition-colors">
-                  <Award className="h-7 w-7 text-dental-primary-600" />
-                </div>
-              </div>
-              <div className="mb-2">
-                <p className="text-4xl lg:text-5xl font-bold text-dental-dark">
-                  {yearsCount}+
-                </p>
-              </div>
-              <p className="text-dental-muted text-base font-medium">
-                {t('stats.yearsExperience')}
-              </p>
-            </div>
+            <StatCard
+              counterRef={patientsRef}
+              count={patientsCount}
+              suffix="+"
+              label={t('stats.patients')}
+              icon={<Users className="h-7 w-7 text-dental-primary-600" />}
+            />
+            <StatCard
+              counterRef={satisfactionRef}
+              count={satisfactionCount}
+              suffix="%"
+              label={t('stats.satisfiedPatients')}
+              icon={
+                <Star className="h-7 w-7 text-dental-primary-600 fill-dental-primary-600" />
+              }
+            />
+            <StatCard
+              counterRef={yearsRef}
+              count={yearsCount}
+              suffix="+"
+              label={t('stats.yearsExperience')}
+              icon={<Award className="h-7 w-7 text-dental-primary-600" />}
+            />
 
             {/* CTA Card - Highlighted */}
             <Link
@@ -303,3 +305,5 @@ export default function HeroSection() {
     </section>
   )
 }
+
+export default memo(HeroSection)

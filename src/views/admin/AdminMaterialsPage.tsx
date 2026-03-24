@@ -18,7 +18,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button, Input } from '@/components/ui'
+import { Button, Input, Select } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { useCSRF } from '@/hooks/useCSRF'
 import { captureException } from '@/utils/sentry'
@@ -177,37 +177,37 @@ export default function AdminMaterialsPage() {
 
   const c = preferences.compactTables ? 'px-3 py-2' : 'px-4 py-3'
   const th = `${c} text-left text-xs font-semibold uppercase text-gray-500`
-  const sel =
-    'w-full rounded-lg border border-dental-secondary-200 bg-white px-3 py-2 text-sm text-dental-dark'
 
   const F = (k: keyof Form, label: string) => (
     <div>
       <label className="text-xs font-medium text-dental-text">{label}</label>
       <div className="mt-1">
         {k === 'category' ? (
-          <select
+          <Select
+            selectSize="compact"
+            fullWidth
             value={form.category}
             onChange={e => setForm(upd('category')(e))}
-            className={sel}
           >
             {CATS.map(v => (
               <option key={v} value={v}>
                 {CAT_UK[v]}
               </option>
             ))}
-          </select>
+          </Select>
         ) : k === 'unit' ? (
-          <select
+          <Select
+            selectSize="compact"
+            fullWidth
             value={form.unit}
             onChange={e => setForm(upd('unit')(e))}
-            className={sel}
           >
             {UNITS.map(u => (
               <option key={u} value={u}>
                 {u}
               </option>
             ))}
-          </select>
+          </Select>
         ) : (
           <Input
             type={
@@ -393,10 +393,12 @@ export default function AdminMaterialsPage() {
           <label className="mb-1 block text-xs font-medium text-dental-text">
             Категорія
           </label>
-          <select
+          <Select
+            selectSize="compact"
+            fullWidth
             value={catF}
             onChange={e => setCatF(e.target.value)}
-            className={sel}
+            aria-label="Категорія фільтр"
           >
             <option value="all">Усі категорії</option>
             {CATS.map(v => (
@@ -404,21 +406,23 @@ export default function AdminMaterialsPage() {
                 {CAT_UK[v]}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
         <div className="w-full min-w-[160px] lg:w-40">
           <label className="mb-1 block text-xs font-medium text-dental-text">
             Статус
           </label>
-          <select
+          <Select
+            selectSize="compact"
+            fullWidth
             value={statF}
             onChange={e => setStatF(e.target.value as typeof statF)}
-            className={sel}
+            aria-label="Статус фільтр"
           >
             <option value="all">Усі</option>
             <option value="active">Активні</option>
             <option value="inactive">Неактивні</option>
-          </select>
+          </Select>
         </div>
       </div>
       <div className="overflow-x-auto rounded-xl border border-dental-secondary-200 bg-white shadow-sm">

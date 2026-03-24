@@ -8,9 +8,23 @@ function generateNonce(): string {
 }
 
 function buildCSP(nonce: string): string {
+  const isDev = process.env.NODE_ENV === 'development'
+  const scriptSrc = [
+    "'self'",
+    `'nonce-${nonce}'`,
+    'https://www.googletagmanager.com',
+    'https://www.google-analytics.com',
+    'https://challenges.cloudflare.com',
+    // Sentry Session Replay lazy-loads from this CDN
+    'https://browser.sentry-cdn.com',
+    // @vercel/analytics (script.debug.js in dev, script.js in prod)
+    'https://va.vercel-scripts.com',
+    ...(isDev ? ["'unsafe-eval'"] : []),
+  ].join(' ')
+
   const directives = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com`,
+    `script-src ${scriptSrc}`,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: blob: https://www.google-analytics.com https://*.supabase.co https://api.cliniccards.com",
     "font-src 'self' https://fonts.gstatic.com",
@@ -26,16 +40,27 @@ function buildCSP(nonce: string): string {
 }
 
 /**
- * Next.js Root Middleware
+ * Next.js proxy
  * Applies security headers to all responses and runs Supabase auth session checks.
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const response = await updateSession(request)
 
   const nonce = generateNonce()
   response.headers.set('x-nonce', nonce)
 
-  response.headers.set('Content-Security-Policy-Report-Only', buildCSP(nonce))
+  const cspHeaderValue = buildCSP(nonce)
+  const reportOnly = process.env.CSP_REPORT_ONLY === 'true'
+  response.headers.set(
+    reportOnly
+      ? 'Content-Security-Policy-Report-Only'
+      : 'Content-Security-Policy',
+    cspHeaderValue
+  )
+  // Keep a mirrored report-only header in enforced mode for observability.
+  if (!reportOnly) {
+    response.headers.set('Content-Security-Policy-Report-Only', cspHeaderValue)
+  }
 
   response.headers.set('X-Content-Type-Options', 'nosniff')
   response.headers.set('X-Frame-Options', 'DENY')
@@ -48,6 +73,7 @@ export async function middleware(request: NextRequest) {
     'Strict-Transport-Security',
     'max-age=63072000; includeSubDomains; preload'
   )
+  response.headers.set('Cross-Origin-Opener-Policy', 'same-origin')
 
   return response
 }

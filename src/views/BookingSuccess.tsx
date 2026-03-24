@@ -1,6 +1,6 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import MicroFeedback from '@/components/MicroFeedback'
 import { useEffect, useMemo, useState } from 'react'
@@ -18,32 +18,50 @@ type BookingDetails = {
   created: string
 }
 
+function readLastBooking(): BookingDetails | null {
+  try {
+    const saved = localStorage.getItem('last_booking')
+    if (!saved) return null
+    return JSON.parse(saved) as BookingDetails
+  } catch {
+    return null
+  }
+}
+
 export default function BookingSuccess() {
   const { t } = useTranslation()
   const params = useSearchParams()
+  const router = useRouter()
   const ref = params.get('ref')
   const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(
     null
   )
 
+  // Require ?ref=… or a recent last_booking; otherwise redirect to /booking
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('last_booking')
-      if (saved) {
-        const parsed = JSON.parse(saved) as BookingDetails
-        setBookingDetails(parsed)
+    const stored = readLastBooking()
+
+    if (!ref) {
+      if (stored?.id) {
+        router.replace(`/booking/success?ref=${encodeURIComponent(stored.id)}`)
         return
       }
-    } catch {}
+      router.replace('/booking')
+      return
+    }
 
-    if (!ref) return
-    fetch(`/api/appointments/${ref}/summary`)
+    if (stored?.id === ref) {
+      setBookingDetails(stored)
+      return
+    }
+
+    void fetch(`/api/appointments/${ref}/summary`)
       .then(r => (r.ok ? r.json() : null))
       .then(json => {
         if (json?.data) setBookingDetails(json.data)
       })
       .catch(() => {})
-  }, [ref])
+  }, [ref, router])
 
   const canCreateEvent = useMemo(
     () => Boolean(bookingDetails?.date && bookingDetails?.time && ref),

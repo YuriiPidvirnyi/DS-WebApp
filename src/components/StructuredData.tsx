@@ -1,3 +1,4 @@
+import { CLINIC_OPENING_HOURS } from '@/config/clinicSchedule'
 import { CONTACT_INFO, SITE_INFO } from '@/utils/constants'
 import uk from '@/locales/uk'
 
@@ -67,14 +68,14 @@ export const StructuredData = ({
       {
         '@type': 'OpeningHoursSpecification',
         dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-        opens: '09:00',
-        closes: '21:00',
+        opens: CLINIC_OPENING_HOURS.weekday.open,
+        closes: CLINIC_OPENING_HOURS.weekday.close,
       },
       {
         '@type': 'OpeningHoursSpecification',
         dayOfWeek: 'Saturday',
-        opens: '09:00',
-        closes: '18:00',
+        opens: CLINIC_OPENING_HOURS.saturday.open,
+        closes: CLINIC_OPENING_HOURS.saturday.close,
       },
     ],
     priceRange: '$$',

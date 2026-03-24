@@ -9,7 +9,7 @@ import {
 } from 'react'
 import { Edit, Eye, Plus, RefreshCw, Search, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button, Input, Textarea } from '@/components/ui'
+import { Button, Input, Select, Textarea } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
@@ -713,7 +713,9 @@ export default function PatientManagement() {
                 <label className="mb-1 block text-sm font-medium text-dental-text">
                   {t('admin.patientManagement.form.gender')}
                 </label>
-                <select
+                <Select
+                  selectSize="compact"
+                  fullWidth
                   value={formState.gender}
                   onChange={event =>
                     setFormState(prev => ({
@@ -721,7 +723,7 @@ export default function PatientManagement() {
                       gender: event.target.value,
                     }))
                   }
-                  className="w-full rounded-lg border border-dental-secondary px-4 py-3 text-sm"
+                  aria-label={t('admin.patientManagement.form.gender')}
                 >
                   <option value="">—</option>
                   <option value="male">
@@ -733,7 +735,7 @@ export default function PatientManagement() {
                   <option value="other">
                     {t('admin.patientManagement.form.genderOptions.other')}
                   </option>
-                </select>
+                </Select>
               </div>
               <Input
                 label={t('admin.patientManagement.form.address')}

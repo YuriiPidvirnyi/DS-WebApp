@@ -61,9 +61,9 @@ const Footer = memo(() => {
   ]
 
   const headingClass =
-    'text-white/70 font-semibold text-[11px] uppercase tracking-[0.15em] mb-4'
+    'text-white/85 font-semibold text-[11px] uppercase tracking-[0.15em] mb-4'
   const linkClass =
-    'text-white/40 hover:text-white text-[13px] transition-colors'
+    'text-white/75 hover:text-white text-[13px] transition-colors'
 
   return (
     <footer className="bg-dental-primary-900 text-white" role="contentinfo">
@@ -73,7 +73,7 @@ const Footer = memo(() => {
           <div className="flex items-center gap-4">
             <Logo variant="white" size="sm" />
             <span className="hidden md:block w-px h-6 bg-white/10" />
-            <p className="hidden md:block text-white/30 text-[13px] max-w-xs leading-relaxed">
+            <p className="hidden md:block text-white/75 text-[13px] max-w-xs leading-relaxed">
               {SITE_INFO.description}
             </p>
           </div>
@@ -86,7 +86,7 @@ const Footer = memo(() => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-dental-primary-600 flex items-center justify-center transition-all duration-200 text-white/30 hover:text-white"
+                  className="w-8 h-8 rounded-full bg-white/[0.12] hover:bg-dental-primary-600 flex items-center justify-center transition-all duration-200 text-white/75 hover:text-white"
                 >
                   {icon}
                 </a>
@@ -128,7 +128,7 @@ const Footer = memo(() => {
               <li>
                 <a
                   href={`tel:${CONTACT_INFO.phoneRaw}`}
-                  className="flex items-center gap-2 text-white/40 hover:text-white transition-colors"
+                  className="flex items-center gap-2 text-white/75 hover:text-white transition-colors"
                 >
                   <Phone className="w-3.5 h-3.5 text-dental-primary-400 shrink-0" />
                   {CONTACT_INFO.phone}
@@ -137,7 +137,7 @@ const Footer = memo(() => {
               <li>
                 <a
                   href={`mailto:${CONTACT_INFO.email}`}
-                  className="flex items-center gap-2 text-white/40 hover:text-white transition-colors"
+                  className="flex items-center gap-2 text-white/75 hover:text-white transition-colors"
                 >
                   <Mail className="w-3.5 h-3.5 text-dental-primary-400 shrink-0" />
                   {CONTACT_INFO.email}
@@ -148,7 +148,7 @@ const Footer = memo(() => {
                   href={`https://maps.google.com/?q=${CONTACT_INFO.coordinates.lat},${CONTACT_INFO.coordinates.lng}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-white/40 hover:text-white transition-colors"
+                  className="flex items-center gap-2 text-white/75 hover:text-white transition-colors"
                 >
                   <MapPin className="w-3.5 h-3.5 text-dental-primary-400 shrink-0" />
                   <span>
@@ -157,7 +157,7 @@ const Footer = memo(() => {
                 </a>
               </li>
             </ul>
-            <p className="mt-4 text-[12px] text-white/25 leading-relaxed">
+            <p className="mt-4 text-[12px] text-white/70 leading-relaxed">
               {t('footer.workingHours.weekdays')} ·{' '}
               {t('footer.workingHours.saturday')}
               <br />
@@ -168,12 +168,12 @@ const Footer = memo(() => {
           {/* Col 3: CTA */}
           <div>
             <h4 className={headingClass}>{t('footer.appointment')}</h4>
-            <p className="text-white/30 text-[13px] leading-relaxed mb-4">
+            <p className="text-white/75 text-[13px] leading-relaxed mb-4">
               {t('footer.appointmentDesc')}
             </p>
             <Link
               href="/booking"
-              className="inline-flex items-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-500 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-colors duration-200"
+              className="inline-flex items-center gap-2 bg-dental-primary-700 hover:bg-dental-primary-800 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-colors duration-200"
             >
               <Calendar className="w-4 h-4" />
               {t('buttons.bookAppointment')}
@@ -184,18 +184,20 @@ const Footer = memo(() => {
 
       {/* ─── Bottom bar ─── */}
       <div className="border-t border-white/[0.06]">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-4 pb-20 md:pb-4 flex flex-col md:flex-row items-center justify-between gap-2 text-[11px] text-white/20">
-          <span>{t('footer.copyright')}</span>
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-4 pb-20 md:pb-4 flex flex-col md:flex-row items-center justify-between gap-2 text-[11px] text-white/65">
+          <span>
+            {t('footer.copyright', { year: new Date().getFullYear() })}
+          </span>
           <div className="flex items-center gap-4">
             <Link
               href="/privacy-policy"
-              className="hover:text-white/50 transition-colors"
+              className="hover:text-white transition-colors"
             >
               {t('navigation.privacyPolicy')}
             </Link>
             <Link
               href="/terms-of-service"
-              className="hover:text-white/50 transition-colors"
+              className="hover:text-white transition-colors"
             >
               {t('navigation.termsOfService')}
             </Link>

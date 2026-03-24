@@ -8,6 +8,7 @@ import {
   rateLimitResponse,
   validateCSRF,
 } from '@/lib/api-security'
+import { parsePagination, paginationMeta } from '@/lib/pagination'
 import { captureException } from '@/utils/sentry'
 
 export const runtime = 'nodejs'
@@ -89,12 +90,14 @@ export async function GET(request: NextRequest) {
   const { supabase } = auth
 
   const { searchParams } = request.nextUrl
+  const { page, pageSize, from, to } = parsePagination(searchParams)
+
   const category = searchParams.get('category')
   const isActiveParam = searchParams.get('isActive')
 
   let query = supabase
     .from('materials')
-    .select(MATERIAL_SELECT)
+    .select(MATERIAL_SELECT, { count: 'exact' })
     .order('name_uk', { ascending: true })
 
   if (category) {
@@ -104,7 +107,7 @@ export async function GET(request: NextRequest) {
     query = query.eq('is_active', isActiveParam === 'true')
   }
 
-  const { data, error } = await query
+  const { data, error, count } = await query.range(from, to)
 
   if (error) {
     captureException(new Error('[materials] Supabase GET error'), {
@@ -128,7 +131,11 @@ export async function GET(request: NextRequest) {
     }
   })
 
-  return NextResponse.json({ success: true, data: rows })
+  return NextResponse.json({
+    success: true,
+    data: rows,
+    meta: paginationMeta(page, pageSize, count),
+  })
 }
 
 /** POST /api/materials */

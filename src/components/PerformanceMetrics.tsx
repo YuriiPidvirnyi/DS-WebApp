@@ -17,13 +17,13 @@ export default function PerformanceMetrics() {
   const reportWebVitals = useCallback(async (metric: WebVitalsMetric) => {
     // Skip logging in development - dev server is always slow due to on-the-fly compilation
     // These metrics are only meaningful in production builds
-    if (process.env.NODE_ENV !== "production") {
+    if (process.env.NODE_ENV !== 'production') {
       return
     }
 
     // In production, we would send to analytics service
     // Example: sending to Google Analytics
-    if (process.env.NODE_ENV === "production") {
+    if (process.env.NODE_ENV === 'production') {
       // Check if analytics is available
       if (window.gtag) {
         window.gtag('event', 'web_vitals', {
@@ -64,9 +64,8 @@ export default function PerformanceMetrics() {
           return // Don't measure for users with saveData enabled
         }
 
-        const { onCLS, onINP, onLCP, onFCP, onTTFB } = await import(
-          'web-vitals'
-        )
+        const { onCLS, onINP, onLCP, onFCP, onTTFB } =
+          await import('web-vitals')
         onCLS(reportWebVitals)
         onINP(reportWebVitals)
         onLCP(reportWebVitals)

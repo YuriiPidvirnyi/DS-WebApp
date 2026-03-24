@@ -538,6 +538,7 @@
       "loadingTitle": "Loading reviews",
       "loadingMessage": "Fetching the latest patient reviews.",
       "loadError": "Failed to load reviews.",
+      "timeoutError": "Loading took too long. Check your connection and try again.",
       "empty": "There are no published reviews yet."
     },
     "form": {
@@ -879,8 +880,8 @@
     "appointmentDesc": "Choose a convenient time for your clinic visit",
     "copyright": "© 2024 Dental Story. All rights reserved.",
     "workingHours": {
-      "weekdays": "Mon-Fri: 9:00-19:00",
-      "saturday": "Sat: 9:00-16:00",
+      "weekdays": "Mon-Fri: 9:00-20:00",
+      "saturday": "Sat: 10:00-18:00",
       "sunday": "Sun: Closed"
     },
     "socialMedia": "Social Media"

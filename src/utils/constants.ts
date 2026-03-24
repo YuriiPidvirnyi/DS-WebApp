@@ -1,4 +1,5 @@
 import uk from '@/locales/uk'
+import { CLINIC_OPENING_HOURS } from '@/config/clinicSchedule'
 
 // Контактна інформація клініки
 const ENV_PHONE = process.env.NEXT_PUBLIC_PHONE_NUMBER || '+380682323838'
@@ -36,8 +37,8 @@ export const CONTACT_INFO = {
     fullWithPostal: '79034, вулиця Сумська, 10, Львів, Львівська область',
   },
   workingHours: {
-    weekdays: 'Пн-Пт: 09:00-21:00',
-    saturday: 'Сб: 09:00-18:00',
+    weekdays: `Пн-Пт: ${CLINIC_OPENING_HOURS.weekday.open}-${CLINIC_OPENING_HOURS.weekday.close}`,
+    saturday: `Сб: ${CLINIC_OPENING_HOURS.saturday.open}-${CLINIC_OPENING_HOURS.saturday.close}`,
     sunday: 'Нд: Вихідний',
     timezone: 'EET (UTC+2)',
   },

@@ -1,10 +1,11 @@
 # Dental Story - Professional Dental Clinic WebApp
 
-A modern, fully-featured website for a dental clinic (Dental Story) built with Next.js 16, React 19, Supabase, and Tailwind CSS.
+A modern, fully-featured website for a dental clinic (Dental Story) built with Next.js 16, React 18, Supabase, and Tailwind CSS.
 
 ## Features
 
 ### 🎯 Core Features
+
 - **Online Appointment Booking** - Real-time doctor/service/time slot selection with Turnstile CAPTCHA
 - **Patient Cabinet** - Personal account with appointment history and profile management
 - **Admin Dashboard** - Analytics, appointment management, revenue tracking with Recharts
@@ -15,6 +16,7 @@ A modern, fully-featured website for a dental clinic (Dental Story) built with N
 - **Accessibility Panel** - Font size, contrast, language settings
 
 ### 🔒 Security
+
 - Supabase authentication with Row Level Security (RLS)
 - CSRF protection on all forms
 - Turnstile CAPTCHA for bot prevention
@@ -23,6 +25,7 @@ A modern, fully-featured website for a dental clinic (Dental Story) built with N
 - XSS protection and parameterized queries
 
 ### 🎨 Design & UX
+
 - Responsive mobile-first design
 - Accessible components (WCAG 2.1 AA)
 - Smooth animations and transitions
@@ -30,6 +33,7 @@ A modern, fully-featured website for a dental clinic (Dental Story) built with N
 - Tailwind CSS with custom semantic tokens
 
 ### ⚡ Performance
+
 - Next.js 16 with Turbopack bundler (default)
 - Dynamic component imports for code splitting
 - Image optimization with next/image
@@ -37,10 +41,11 @@ A modern, fully-featured website for a dental clinic (Dental Story) built with N
 - PWA support with offline capability
 
 ### 🧪 Testing
-- Unit tests (Jest, React Testing Library)
+
+- Unit tests (Vitest + React Testing Library)
 - E2E tests (Playwright)
+- Accessibility audits (@axe-core/playwright, WCAG 2.1 AA)
 - Error boundaries with Sentry integration
-- 1450+ lines of test code
 
 ## Prerequisites
 
@@ -52,12 +57,14 @@ A modern, fully-featured website for a dental clinic (Dental Story) built with N
 ## Installation
 
 ### 1. Clone Repository
+
 ```bash
 git clone <your-repo-url>
 cd dental-story
 ```
 
 ### 2. Install Dependencies
+
 ```bash
 npm install
 # or
@@ -69,6 +76,7 @@ bun install
 ### 3. Set Up Environment Variables
 
 Create `.env.local`:
+
 ```env
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
@@ -96,8 +104,9 @@ SENTRY_AUTH_TOKEN=your-sentry-token
 5. Paste and click "Run" to execute migration
 
 Expected tables created:
+
 - doctors
-- services  
+- services
 - appointments
 - reviews
 - working_hours
@@ -105,6 +114,7 @@ Expected tables created:
 - contact_submissions
 
 ### 5. Run Development Server
+
 ```bash
 npm run dev
 ```
@@ -114,110 +124,90 @@ Open [http://localhost:3000](http://localhost:3000) in browser.
 ## Project Structure
 
 ```
-dental-story/
-├── app/                          # Next.js app directory
-│   ├── page.tsx                 # Homepage
-│   ├── layout.tsx               # Root layout with providers
-│   ├── error.tsx                # Error boundary
-│   ├── global-error.tsx         # Global error handler
-│   ├── proxy.ts                 # Middleware (rate limiting, CSP, auth)
-│   ├── api/                     # API routes
-│   │   ├── appointments/        # Booking endpoints
-│   │   ├── doctors/             # Doctor data
-│   │   ├── services/            # Service data
-│   │   ├── contacts/            # Contact form
-│   │   ├── reviews/             # Reviews endpoints
-│   │   └── admin/               # Admin analytics
-│   ├── auth/                    # Auth pages
-│   │   ├── login/page.tsx
-│   │   ├── sign-up/page.tsx
-│   │   └── forgot-password/page.tsx
-│   ├── booking/                 # Booking page
-│   ├── cabinet/                 # User dashboard
-│   ├── admin/                   # Admin dashboard
-│   └── [locale]/               # Locale-specific routes
-│
-├── src/
-│   ├── components/              # Reusable React components (95+)
-│   │   ├── Header.tsx
-│   │   ├── Footer.tsx
-│   │   ├── BookingForm.tsx
-│   │   ├── ContactForm.tsx
-│   │   ├── AccessibilityPanel.tsx
-│   │   ├── ChatWidget.tsx
-│   │   ├── AIAssistant.tsx
-│   │   ├── ErrorBoundary.tsx
-│   │   ├── LanguageSwitcher.tsx
-│   │   └── __tests__/
-│   │
-│   ├── views/                   # Page views/sections (14)
-│   │   ├── Home.tsx
-│   │   ├── About.tsx
-│   │   ├── Services.tsx
-│   │   ├── Contact.tsx
-│   │   ├── Booking.tsx
-│   │   ├── Gallery.tsx
-│   │   └── admin/AdminDashboard.tsx
-│   │
-│   ├── lib/
-│   │   ├── supabase/            # Supabase clients & utilities
-│   │   │   ├── client.ts
-│   │   │   ├── server.ts
-│   │   │   └── middleware.ts
-│   │   ├── utils/               # Helper functions
-│   │   └── hooks/               # Custom hooks
-│   │
-│   ├── locales/                 # Translation files (3 languages)
-│   │   ├── uk.json              # Ukrainian (default)
-│   │   ├── en.json              # English
-│   │   └── pl.json              # Polish
-│   │
-│   ├── styles/
-│   │   └── globals.css          # Design tokens, Tailwind
-│   │
-│   └── context/
-│       ├── AccessibilityContext.tsx
-│       └── LanguageContext.tsx
-│
-├── e2e/                         # End-to-end tests (Playwright)
-│   ├── booking-flow.spec.ts
-│   ├── admin-dashboard.spec.ts
-│   └── language-and-errors.spec.ts
-│
-├── scripts/
-│   ├── init_database.sql        # Database initialization
-│   └── seed.sql                 # Sample data
-│
-├── public/                      # Static assets
-│   ├── images/
-│   ├── icons/
-│   └── locales/
-│
-├── next.config.ts               # Next.js configuration
-├── tailwind.config.ts           # Tailwind configuration
-├── tsconfig.json                # TypeScript configuration
-└── package.json
+app/                             # Next.js App Router pages
+├── layout.tsx                   # Root layout (fonts, metadata, providers)
+├── page.tsx                     # Homepage -> src/views/Home
+├── providers.tsx                # Client-side provider stack
+├── api/                         # 25 API route handlers
+│   ├── appointments/            # Booking CRUD + slots
+│   ├── contacts/                # Contact form
+│   ├── reviews/                 # Reviews submission
+│   ├── doctors/                 # Doctor data
+│   ├── services/                # Service catalog
+│   ├── materials/               # Inventory management
+│   ├── treatment-records/       # Clinical records
+│   ├── material-orders/         # Purchase orders
+│   ├── cron/                    # Vercel Cron (notifications, reminders)
+│   ├── ai/                      # AI chat + recommendations
+│   ├── admin/analytics/         # Admin analytics
+│   └── health/                  # Health check
+├── auth/                        # Login, signup, password reset, callback
+├── booking/                     # Multi-step booking flow
+├── cabinet/                     # Patient portal (appointments, profile, treatments)
+├── admin/                       # Admin dashboard (15 sub-pages)
+├── symptom-checker/             # AI symptom checker
+└── ...                          # about, contact, gallery, reviews, services, etc.
+
+src/
+├── components/                  # 52 reusable components
+│   ├── ui/                      # Primitives (Button, Input, Card, Logo, etc.)
+│   ├── booking/                 # Booking form steps
+│   └── providers/               # Toast provider
+├── views/                       # 27 page-level view components
+│   ├── admin/                   # Admin page views
+│   ├── auth/                    # Auth page tests
+│   └── patient/                 # Patient dashboard
+├── hooks/                       # 11 custom hooks
+├── lib/                         # Supabase, Redis, email, API security
+├── services/                    # Client-side API services
+├── locales/                     # i18n translations (uk, en, pl)
+├── styles/                      # globals.css (Tailwind + design tokens)
+├── types/                       # TypeScript types
+└── utils/                       # Utility functions
+
+e2e/                             # Playwright E2E tests
+supabase/migrations/             # Database migrations (15 SQL files)
+scripts/                         # Build scripts, a11y audit, SQL helpers
+proxy.ts                         # Edge middleware (CSP, auth, security headers)
 ```
 
 ## API Endpoints
 
 ### Public Endpoints
-- `GET /api/doctors` - List all active doctors
-- `GET /api/services` - List all services  
-- `GET /api/appointments/slots` - Available time slots for date
+
+- `GET /api/doctors` - List active doctors
+- `GET /api/services` - List active services
+- `GET /api/appointments/slots` - Available time slots (CliniCards + fallback)
 - `POST /api/contacts` - Submit contact form
+- `POST /api/reviews` - Submit review
+- `POST /api/newsletter` - Subscribe to newsletter
+- `POST /api/feedback/form` - Micro-feedback submission
+- `GET /api/health` - Health check
+- `POST /api/turnstile/verify` - CAPTCHA verification
 
 ### Authenticated Endpoints
-- `GET /api/appointments` - User's appointments (RLS protected)
-- `POST /api/appointments` - Create appointment
-- `PUT /api/appointments/[id]` - Reschedule appointment
-- `DELETE /api/appointments/[id]` - Cancel appointment
-- `POST /api/reviews` - Submit review
 
-### Admin Endpoints (requires admin role)
-- `GET /api/admin/stats` - Dashboard statistics
-- `GET /api/admin/appointments` - All appointments
-- `PUT /api/admin/appointments/[id]` - Update appointment status
+- `GET/POST /api/appointments` - List own / create appointment
+- `PATCH/DELETE /api/appointments/[id]` - Update / cancel appointment
+- `GET /api/appointments/[id]/summary` - Appointment summary
+- `POST /api/appointments/[id]/reminder-preference` - Set reminder preference
+- `POST /api/ai/chat` - AI chat assistant
+- `GET /api/ai/recommendations` - Smart recommendations
+
+### Admin Endpoints (requires admin_users membership)
+
+- `GET /api/admin/analytics` - Dashboard analytics
+- `GET/POST /api/materials` - Materials CRUD
+- `PATCH/DELETE /api/materials/[id]` - Material management
+- `GET/POST /api/material-orders` - Order management
+- `PATCH /api/material-orders/[id]` - Order status updates
+- `GET/POST /api/treatment-records` - Treatment records CRUD
+- `PATCH /api/treatment-records/[id]` - Treatment record updates
+
+### Cron Endpoints (requires CRON_SECRET)
+
+- `POST /api/cron/notifications` - Process notification queue (every 5 min)
+- `POST /api/cron/reminders` - Schedule appointment reminders (daily 18:00 UTC)
 
 ## Configuration
 
@@ -227,10 +217,10 @@ Edit `src/styles/globals.css` to customize colors:
 
 ```css
 :root {
-  --color-primary-600: hsl(172, 71%, 44%);  /* Dental teal */
-  --color-secondary-50: hsl(0, 0%, 98%);    /* Light background */
-  --color-dark: hsl(0, 0%, 17%);            /* Text color */
-  --color-muted: hsl(0, 0%, 47%);           /* Secondary text */
+  --color-primary-600: hsl(172, 71%, 44%); /* Dental teal */
+  --color-secondary-50: hsl(0, 0%, 98%); /* Light background */
+  --color-dark: hsl(0, 0%, 17%); /* Text color */
+  --color-muted: hsl(0, 0%, 47%); /* Secondary text */
 }
 ```
 
@@ -244,49 +234,45 @@ Edit `src/i18n/config.ts`:
 export const config = {
   defaultLanguage: 'uk',
   supportedLanguages: ['uk', 'en', 'pl'],
-  fallbackLanguage: 'en'
+  fallbackLanguage: 'en',
 }
 ```
 
 Add new language by:
+
 1. Creating `src/locales/xx.json`
 2. Adding to `supportedLanguages` array
 
 ## Testing
 
-### Run Unit Tests
 ```bash
-npm test
-```
-
-### Run E2E Tests
-```bash
-npm run test:e2e
-```
-
-### View Test Coverage
-```bash
-npm test -- --coverage
-```
-
-### Check Types
-```bash
-npm run typecheck
+npm run test              # Unit tests (Vitest)
+npm run test:watch        # Watch mode
+npm run test:coverage     # With coverage
+npm run test:e2e:auth     # E2E auth flows (mocked Supabase)
+npm run test:e2e:ui-smoke # UI smoke tests (Select, language)
+npm run a11y:audit        # Accessibility audit (10 routes, axe-core)
+npm run typecheck         # TypeScript type checking
+npm run lint              # ESLint
+npm run format:check      # Prettier check
 ```
 
 ## Building & Deployment
 
 ### Build for Production
+
 ```bash
 npm run build
 ```
 
 ### Start Production Server
+
 ```bash
 npm start
 ```
 
 ### Deploy to Vercel (Recommended)
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -298,41 +284,47 @@ vercel deploy --prod
 ### Deploy to Other Platforms
 
 **Netlify:**
+
 ```bash
 netlify deploy --prod
 ```
 
 **Docker:**
+
 ```bash
 docker build -t dental-story .
 docker run -p 3000:3000 dental-story
 ```
 
 **Railway/Render:**
+
 - Connect GitHub repo
 - Set environment variables
 - Auto-deploy on push
 
 ## Key Technologies
 
-| Tech | Purpose |
-|------|---------|
-| Next.js 16 | Framework with App Router |
-| React 19.2 | UI library with Server Components |
-| TypeScript | Type safety |
-| Tailwind CSS 3 | Styling with design tokens |
-| Supabase | Backend, database, auth, RLS |
-| Upstash Redis | Rate limiting, caching |
-| Recharts | Data visualization |
-| react-i18next | Multi-language support |
-| Zod | Form validation |
-| Sentry | Error tracking (optional) |
-| Playwright | E2E testing |
-| Jest | Unit testing |
+| Tech           | Purpose                      |
+| -------------- | ---------------------------- |
+| Next.js 16     | Framework with App Router    |
+| React 18       | UI library                   |
+| TypeScript     | Type safety                  |
+| Tailwind CSS 3 | Styling with design tokens   |
+| Supabase       | Backend, database, auth, RLS |
+| Upstash Redis  | Rate limiting, caching       |
+| Recharts       | Data visualization           |
+| react-i18next  | Multi-language support       |
+| Zod            | Form validation              |
+| Sentry         | Error tracking (optional)    |
+| Playwright     | E2E testing                  |
+| Vitest         | Unit testing                 |
+| Resend         | Transactional emails         |
+| AI SDK         | AI chat and recommendations  |
 
 ## Monitoring & Analytics
 
 ### Error Tracking (Sentry)
+
 ```env
 NEXT_PUBLIC_SENTRY_DSN=https://your-sentry-dsn
 ```
@@ -340,11 +332,12 @@ NEXT_PUBLIC_SENTRY_DSN=https://your-sentry-dsn
 Errors auto-reported. Dashboard at sentry.io.
 
 ### Performance Monitoring
-- Check Lighthouse scores: `npm run lighthouse`
-- Next.js Analytics: Vercel Dashboard
-- Web Vitals tracking in browser
+
+- Vercel Analytics + Speed Insights
+- Web Vitals tracking via `web-vitals`
 
 ### Database Performance
+
 - Monitor slow queries in Supabase Dashboard
 - Check RLS policy performance
 - Verify indexes are used
@@ -374,41 +367,51 @@ Errors auto-reported. Dashboard at sentry.io.
 ## Troubleshooting
 
 ### Database Connection Fails
+
 ```
 Error: Failed to fetch from Supabase
 ```
+
 - Verify `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - Check Supabase project is active in Dashboard
 - Ensure `scripts/init_database.sql` was executed
 
 ### Appointments Not Saving
+
 ```
 Error: row-level security policy blocked
 ```
+
 - Check RLS policies in Supabase
 - Verify user is authenticated
 - Check browser DevTools Network tab for response
 
 ### Language Not Switching
+
 ```
 i18n: failed to load locale
 ```
+
 - Verify locale files exist in `src/locales/`
 - Check localStorage for `i18nextLng`
 - Clear browser cache and reload
 
 ### Rate Limiting Errors
+
 ```
 Error: Too many requests
 ```
+
 - Check UPSTASH_REDIS_REST_TOKEN is correct
 - Verify Upstash project is active
 - Check IP is not banned in rate limiting rules
 
 ### Turnstile CAPTCHA Not Showing
+
 ```
 Turnstile widget failed to load
 ```
+
 - Verify `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is set
 - Check Cloudflare Turnstile status
 - Clear browser cache
@@ -416,18 +419,22 @@ Turnstile widget failed to load
 ## Development Tips
 
 ### Enable Debug Logging
+
 ```typescript
 // In any file
-console.log("[v0] Debug message:", variable)
+console.log('[v0] Debug message:', variable)
 ```
 
 ### Test Email Locally
+
 Use Supabase auth emails in development. In production, connect SMTP.
 
 ### Mock API Responses
+
 Create `.mocks/` directory with MSW (Mock Service Worker) setup.
 
 ### Performance Profiling
+
 ```bash
 npm run build -- --debug
 ```
@@ -453,7 +460,5 @@ MIT License - see LICENSE file for details
 
 ---
 
-**Last Updated**: March 14, 2024
-**Version**: 1.0.0
+**Version**: 2.0.0  
 **Maintained by**: Dental Story Development Team
-

@@ -451,7 +451,10 @@
           "time": { "type": "string" },
           "doctorId": { "type": "string" },
           "notes": { "type": "string", "maxLength": 500 },
-          "turnstileToken": { "type": "string", "description": "Cloudflare Turnstile verification token" }
+          "turnstileToken": {
+            "type": "string",
+            "description": "Cloudflare Turnstile verification token"
+          }
         }
       },
       "AppointmentUpdate": {

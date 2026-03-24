@@ -3,7 +3,7 @@
 import { useForm, type Resolver } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Input, Button } from '@/components/ui'
+import { Input, Button, Select } from '@/components/ui'
 import { callbackSchema } from '@/utils/validationSchemas'
 import type { z } from 'zod'
 import { withToast } from '@/utils/toast'
@@ -113,16 +113,17 @@ export default function CallbackRequest() {
             <label htmlFor="cb-time" className="sr-only">
               {t('callback.timeLabel')}
             </label>
-            <select
+            <Select
               id="cb-time"
-              className="px-4 py-3 border rounded-lg w-full"
+              fullWidth
+              error={errors.preferredTime?.message}
               {...register('preferredTime')}
             >
               <option value="any">{t('callback.timeAny')}</option>
               <option value="morning">{t('callback.timeMorning')}</option>
               <option value="afternoon">{t('callback.timeAfternoon')}</option>
               <option value="evening">{t('callback.timeEvening')}</option>
-            </select>
+            </Select>
           </div>
           <div>
             <label htmlFor="cb-service" className="sr-only">

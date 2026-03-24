@@ -21,12 +21,12 @@ export function useCSRF() {
   useEffect(() => {
     // Check for existing token in sessionStorage
     let existingToken = sessionStorage.getItem(TOKEN_KEY)
-    
+
     if (!existingToken) {
       existingToken = generateToken()
       sessionStorage.setItem(TOKEN_KEY, existingToken)
     }
-    
+
     setToken(existingToken)
   }, [])
 

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { RefreshCw, StickyNote } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button, Input } from '@/components/ui'
+import { Button, Input, Select } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
@@ -313,10 +313,12 @@ export default function AdminContactsPage() {
             placeholder={t('admin.contactsPage.filters.searchPlaceholder')}
             className="md:col-span-2"
           />
-          <select
+          <Select
+            selectSize="compact"
+            fullWidth
             value={statusFilter}
             onChange={event => setStatusFilter(event.target.value)}
-            className="rounded-lg border border-dental-secondary px-4 py-3 text-sm"
+            aria-label={t('admin.contactsPage.filters.allStatuses')}
           >
             <option value="all">
               {t('admin.contactsPage.filters.allStatuses')}
@@ -326,11 +328,13 @@ export default function AdminContactsPage() {
                 {getStatusLabel(status)}
               </option>
             ))}
-          </select>
-          <select
+          </Select>
+          <Select
+            selectSize="compact"
+            fullWidth
             value={readFilter}
             onChange={event => setReadFilter(event.target.value as ReadFilter)}
-            className="rounded-lg border border-dental-secondary px-4 py-3 text-sm"
+            aria-label={t('admin.contactsPage.filters.read.all')}
           >
             <option value="all">
               {t('admin.contactsPage.filters.read.all')}
@@ -341,7 +345,7 @@ export default function AdminContactsPage() {
             <option value="read">
               {t('admin.contactsPage.filters.read.read')}
             </option>
-          </select>
+          </Select>
         </div>
       </div>
 
@@ -354,10 +358,11 @@ export default function AdminContactsPage() {
             ? t('admin.contactsPage.bulk.unselectAll')
             : t('admin.contactsPage.bulk.selectAll')}
         </Button>
-        <select
+        <Select
+          selectSize="compact"
           value={bulkStatus}
           onChange={event => setBulkStatus(event.target.value)}
-          className="rounded-md border border-dental-secondary px-3 py-1.5 text-sm"
+          aria-label={t('admin.contactsPage.bulk.apply')}
         >
           {STATUS_OPTIONS.map(status => (
             <option key={status} value={status}>
@@ -366,19 +371,20 @@ export default function AdminContactsPage() {
               })}
             </option>
           ))}
-        </select>
-        <select
+        </Select>
+        <Select
+          selectSize="compact"
           value={bulkReadState}
           onChange={event =>
             setBulkReadState(event.target.value as 'read' | 'unread')
           }
-          className="rounded-md border border-dental-secondary px-3 py-1.5 text-sm"
+          aria-label={t('admin.contactsPage.bulk.markRead')}
         >
           <option value="read">{t('admin.contactsPage.bulk.markRead')}</option>
           <option value="unread">
             {t('admin.contactsPage.bulk.markUnread')}
           </option>
-        </select>
+        </Select>
         <Button
           size="sm"
           onClick={() => void applyBulkChanges()}
@@ -447,20 +453,23 @@ export default function AdminContactsPage() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
-                  <select
+                  <Select
+                    selectSize="dense"
                     value={row.status}
                     onChange={event =>
                       void patchContact(row.id, { status: event.target.value })
                     }
                     disabled={isUpdatingId === row.id}
-                    className="rounded-md border border-dental-secondary px-2 py-1 text-xs"
+                    aria-label={t('admin.contactsPage.card.statusSelectAria', {
+                      name: row.name,
+                    })}
                   >
                     {STATUS_OPTIONS.map(status => (
                       <option key={status} value={status}>
                         {getStatusLabel(status)}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                   <button
                     type="button"
                     onClick={() =>

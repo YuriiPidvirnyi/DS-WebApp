@@ -17,7 +17,12 @@ export type {
 } from './Card'
 
 export { Input, Textarea, Select } from './Input'
-export type { InputProps, TextareaProps, SelectProps } from './Input'
+export type {
+  InputProps,
+  TextareaProps,
+  SelectProps,
+  SelectSize,
+} from './Input'
 
 export { Spinner } from './Spinner'
 export type { SpinnerProps } from './Spinner'

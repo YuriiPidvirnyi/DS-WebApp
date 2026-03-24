@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button, Input } from '@/components/ui'
+import { Button, Input, Select } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
@@ -379,12 +379,14 @@ export default function AdminAppointmentsPage() {
             placeholder={t('admin.appointmentsPage.filters.searchPlaceholder')}
             className="md:col-span-2"
           />
-          <select
+          <Select
+            selectSize="compact"
+            fullWidth
             value={statusFilter}
             onChange={event =>
               setStatusFilter(event.target.value as 'all' | AppointmentStatus)
             }
-            className="rounded-lg border border-dental-secondary px-4 py-3 text-sm"
+            aria-label={t('admin.appointmentsPage.filters.statusSelectAria')}
           >
             <option value="all">
               {t('admin.appointmentsPage.filters.allStatuses')}
@@ -394,11 +396,13 @@ export default function AdminAppointmentsPage() {
                 {getStatusLabel(status)}
               </option>
             ))}
-          </select>
-          <select
+          </Select>
+          <Select
+            selectSize="compact"
+            fullWidth
             value={dateFilter}
             onChange={event => setDateFilter(event.target.value as DateFilter)}
-            className="rounded-lg border border-dental-secondary px-4 py-3 text-sm"
+            aria-label={t('admin.appointmentsPage.filters.dateSelectAria')}
           >
             <option value="all">
               {t('admin.appointmentsPage.filters.allDates')}
@@ -412,7 +416,7 @@ export default function AdminAppointmentsPage() {
             <option value="past">
               {t('admin.appointmentsPage.filters.past')}
             </option>
-          </select>
+          </Select>
         </div>
       </div>
 
@@ -422,12 +426,13 @@ export default function AdminAppointmentsPage() {
             count: selectedIds.length,
           })}
         </span>
-        <select
+        <Select
+          selectSize="compact"
           value={bulkStatus}
           onChange={event =>
             setBulkStatus(event.target.value as AppointmentStatus)
           }
-          className="rounded-md border border-dental-secondary px-3 py-1.5 text-sm"
+          aria-label={t('admin.appointmentsPage.bulk.apply')}
         >
           {STATUS_OPTIONS.map(status => (
             <option key={status} value={status}>
@@ -436,7 +441,7 @@ export default function AdminAppointmentsPage() {
               })}
             </option>
           ))}
-        </select>
+        </Select>
         <Button
           size="sm"
           onClick={() => void applyBulkStatus()}
@@ -555,7 +560,9 @@ export default function AdminAppointmentsPage() {
                         >
                           {getStatusLabel(row.status)}
                         </span>
-                        <select
+                        <Select
+                          selectSize="dense"
+                          fullWidth
                           value={row.status}
                           onChange={event =>
                             void updateStatus(
@@ -564,14 +571,14 @@ export default function AdminAppointmentsPage() {
                             )
                           }
                           disabled={isUpdatingId === row.id}
-                          className="rounded-md border border-dental-secondary px-2 py-1 text-xs"
+                          aria-label={`${t('admin.appointmentsPage.table.headers.status')}: ${resolvePatientName(row)}`}
                         >
                           {STATUS_OPTIONS.map(status => (
                             <option key={status} value={status}>
                               {getStatusLabel(status)}
                             </option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
                     </td>
                     <td

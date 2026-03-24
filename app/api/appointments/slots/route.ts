@@ -9,6 +9,8 @@ export const dynamic = 'force-dynamic'
 
 let hasLoggedMissingCliniCardsConfig = false
 
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/
+
 function buildFallbackSlots(date: string): string[] {
   const day = new Date(`${date}T00:00:00`).getDay()
 
@@ -50,6 +52,36 @@ export async function GET(request: NextRequest) {
     )
   }
 
+  // ISO date format
+  if (!ISO_DATE_RE.test(date)) {
+    return NextResponse.json(
+      { success: false, error: 'Дата у форматі YYYY-MM-DD' },
+      { status: 400 }
+    )
+  }
+
+  const requestedDate = new Date(`${date}T00:00:00`)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  // Past date rejection
+  if (requestedDate < today) {
+    return NextResponse.json(
+      { success: false, error: 'Неможливо переглянути слоти для минулої дати' },
+      { status: 400 }
+    )
+  }
+
+  // Too far in the future (> 60 days)
+  const maxDate = new Date(today)
+  maxDate.setDate(today.getDate() + 60)
+  if (requestedDate > maxDate) {
+    return NextResponse.json(
+      { success: false, error: 'Дата перевищує горизонт бронювання (60 днів)' },
+      { status: 400 }
+    )
+  }
+
   try {
     // Use Redis caching for slot data
     const cacheKey = `${CACHE_KEYS.SLOTS}:${doctorId}:${date}`
@@ -75,19 +107,24 @@ export async function GET(request: NextRequest) {
           )
           hasLoggedMissingCliniCardsConfig = true
         }
-      } else {
-        console.warn(
-          '[appointments/slots] CliniCards unavailable, using fallback slots:',
-          {
-            status: error.status,
-            code: error.code,
-          }
-        )
+        return NextResponse.json({
+          success: true,
+          data: buildFallbackSlots(date),
+          meta: { source: 'fallback', reason: 'clinicards_not_configured' },
+        })
       }
+
+      console.warn(
+        '[appointments/slots] CliniCards unavailable, using fallback slots:',
+        {
+          status: error.status,
+          code: error.code,
+        }
+      )
       return NextResponse.json({
         success: true,
         data: buildFallbackSlots(date),
-        meta: { source: 'fallback' },
+        meta: { source: 'fallback', reason: 'clinicards_unavailable' },
       })
     }
 
@@ -95,7 +132,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: buildFallbackSlots(date),
-      meta: { source: 'fallback' },
+      meta: { source: 'fallback', reason: 'unexpected_error' },
     })
   }
 }

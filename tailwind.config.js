@@ -18,8 +18,9 @@ export default {
           'primary-300': '#AECED3', // Base primary
           'primary-400': '#8FBAC1', // Slightly darker
           'primary-500': '#7BA8B0', // Medium - hover
-          'primary-600': '#5A8A94', // Dark - active states
-          'primary-700': '#4A7078', // Darker - text on light
+          // Darker than legacy brand teal so white text meets WCAG AA on buttons
+          'primary-600': '#3f6f79',
+          'primary-700': '#335d66',
           'primary-800': '#3A565C', // Very dark
           'primary-900': '#2A3C40', // Darkest
           'primary-950': '#1A2528', // Near-black
@@ -35,13 +36,13 @@ export default {
           // FUNCTIONAL COLORS
           success: '#4CAF50', // Green - confirmations
           'success-light': '#E8F5E9',
-          'success-dark': '#388E3C',
+          'success-dark': '#1f6b2b',
           warning: '#FF9800', // Amber - caution
           'warning-light': '#FFF3E0',
           'warning-dark': '#F57C00',
-          error: '#EF5350', // Coral - errors (softer than red)
+          error: '#b3261e',
           'error-light': '#FFEBEE',
-          'error-dark': '#C62828',
+          'error-dark': '#8f1d18',
           info: '#2196F3', // Blue - information
           'info-light': '#E3F2FD',
           'info-dark': '#1565C0',
@@ -49,18 +50,18 @@ export default {
           // TEXT COLORS
           dark: '#2C3E42', // Headings
           text: '#4A5E63', // Body text
-          muted: '#6B8388', // Secondary text
+          muted: '#4f6970', // Secondary text (AA on white)
           'text-light': '#8FA3A8', // Placeholder text
 
           // LEGACY ALIASES
           'primary-dark': '#7BA8B0',
-          'primary-darker': '#5A8A94',
+          'primary-darker': '#3f6f79',
           'primary-light': '#C5DDE1',
         },
         // Backward-compatibility aliases (v1 → v2 mapping)
         'dental-blue': '#AECED3', // primary brand blue (unchanged)
-        'dental-teal': '#5A8A94', // accent/CTA teal → dental.primary-600
-        'dental-green': '#5A8A94', // was alias of teal → dental.primary-600
+        'dental-teal': '#3f6f79', // accent/CTA teal → dental.primary-600 (WCAG-aligned)
+        'dental-green': '#3f6f79',
         'dental-navy': '#2C3E42', // deep navy → dental.dark
       },
       fontFamily: {

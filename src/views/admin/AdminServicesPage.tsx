@@ -9,7 +9,7 @@ import {
 } from 'react'
 import { Edit, Plus, RefreshCw, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button, Input, Textarea } from '@/components/ui'
+import { Button, Input, Select, Textarea } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
@@ -504,10 +504,12 @@ export default function AdminServicesPage() {
             placeholder={t('admin.servicesPage.filters.searchPlaceholder')}
             className="md:col-span-2"
           />
-          <select
+          <Select
+            selectSize="compact"
+            fullWidth
             value={categoryFilter}
             onChange={event => setCategoryFilter(event.target.value)}
-            className="rounded-lg border border-dental-secondary px-4 py-3 text-sm"
+            aria-label={t('admin.servicesPage.filters.allCategories')}
           >
             <option value="all">
               {t('admin.servicesPage.filters.allCategories')}
@@ -517,15 +519,17 @@ export default function AdminServicesPage() {
                 {category}
               </option>
             ))}
-          </select>
-          <select
+          </Select>
+          <Select
+            selectSize="compact"
+            fullWidth
             value={statusFilter}
             onChange={event =>
               setStatusFilter(
                 event.target.value as 'all' | 'active' | 'inactive'
               )
             }
-            className="rounded-lg border border-dental-secondary px-4 py-3 text-sm"
+            aria-label={t('admin.servicesPage.filters.allStatuses')}
           >
             <option value="all">
               {t('admin.servicesPage.filters.allStatuses')}
@@ -536,7 +540,7 @@ export default function AdminServicesPage() {
             <option value="inactive">
               {t('admin.servicesPage.filters.inactiveOnly')}
             </option>
-          </select>
+          </Select>
         </div>
       </div>
 
@@ -544,12 +548,13 @@ export default function AdminServicesPage() {
         <span className="text-sm text-dental-text-light">
           {t('admin.servicesPage.bulk.selected', { count: selectedIds.length })}
         </span>
-        <select
+        <Select
+          selectSize="compact"
           value={bulkStatus}
           onChange={event =>
             setBulkStatus(event.target.value as 'active' | 'inactive')
           }
-          className="rounded-md border border-dental-secondary px-3 py-1.5 text-sm"
+          aria-label={t('admin.servicesPage.bulk.apply')}
         >
           <option value="active">
             {t('admin.servicesPage.bulk.showSelected')}
@@ -557,7 +562,7 @@ export default function AdminServicesPage() {
           <option value="inactive">
             {t('admin.servicesPage.bulk.hideSelected')}
           </option>
-        </select>
+        </Select>
         <Button
           size="sm"
           onClick={() => void handleBulkStatusUpdate()}

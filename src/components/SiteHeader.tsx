@@ -167,7 +167,10 @@ const Header = memo(() => {
   }
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50" role="banner">
+    <header
+      className="bg-white shadow-sm sticky top-0 z-50 min-w-0 overflow-x-clip"
+      role="banner"
+    >
       {/* Top bar — hidden on mobile */}
       <div
         className="hidden sm:block bg-dental-primary-900 text-white py-2"
@@ -195,7 +198,7 @@ const Header = memo(() => {
               </a>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-white/70 font-medium text-xs lg:text-sm">
+              <span className="text-white/85 font-medium text-xs lg:text-sm">
                 {CONTACT_INFO.workingHours.weekdays} |{' '}
                 {CONTACT_INFO.workingHours.saturday}
               </span>
@@ -214,7 +217,7 @@ const Header = memo(() => {
               {user ? (
                 <Link
                   href="/cabinet"
-                  className="hidden lg:flex items-center gap-1.5 text-white/80 hover:text-white transition-colors"
+                  className="hidden lg:flex items-center gap-1.5 text-white/90 hover:text-white transition-colors"
                   title={t('cabinet.myProfile')}
                 >
                   <User className="w-3.5 h-3.5" />
@@ -225,7 +228,7 @@ const Header = memo(() => {
               ) : (
                 <Link
                   href="/auth/login"
-                  className="hidden lg:flex items-center gap-1.5 text-white/80 hover:text-white transition-colors"
+                  className="hidden lg:flex items-center gap-1.5 text-white/90 hover:text-white transition-colors"
                   title={t('auth.login.submit')}
                 >
                   <LogIn className="w-3.5 h-3.5" />

@@ -1,6 +1,7 @@
 'use client'
 
 import { InputHTMLAttributes, TextareaHTMLAttributes, forwardRef } from 'react'
+import { ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
 
 // Helper function to determine autocomplete value based on input type and name
@@ -54,7 +55,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const inputId = id || label?.toLowerCase().replace(/\s+/g, '-')
 
     const baseStyles =
-      'px-4 py-3 border rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0'
+      'min-h-[44px] px-4 py-3 border rounded-2xl transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 text-base text-gray-900 placeholder:text-gray-600 sm:text-sm'
 
     const stateStyles = error
       ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
@@ -107,7 +108,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
 
         {!error && helperText && (
-          <p id={`${inputId}-helper`} className="mt-2 text-sm text-dental-muted">
+          <p
+            id={`${inputId}-helper`}
+            className="mt-2 text-sm text-dental-muted"
+          >
             {helperText}
           </p>
         )}
@@ -119,8 +123,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 Input.displayName = 'Input'
 
 // Textarea component
-export interface TextareaProps
-  extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string
   error?: string
   helperText?: string
@@ -135,7 +138,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     const textareaId = id || label?.toLowerCase().replace(/\s+/g, '-')
 
     const baseStyles =
-      'px-4 py-3 border rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 resize-vertical'
+      'min-h-[44px] px-4 py-3 border rounded-2xl transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 resize-vertical text-base text-gray-900 placeholder:text-gray-600 sm:text-sm'
 
     const stateStyles = error
       ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
@@ -184,7 +187,10 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         )}
 
         {!error && helperText && (
-          <p id={`${textareaId}-helper`} className="mt-2 text-sm text-dental-muted">
+          <p
+            id={`${textareaId}-helper`}
+            className="mt-2 text-sm text-dental-muted"
+          >
             {helperText}
           </p>
         )}
@@ -195,12 +201,33 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 
 Textarea.displayName = 'Textarea'
 
+/** Native `<select>` visual variants — use `compact`/`dense` in admin toolbars & tables. */
+export type SelectSize = 'default' | 'compact' | 'dense'
+
+const SELECT_SIZE_STYLES: Record<SelectSize, { field: string; icon: string }> =
+  {
+    default: {
+      field: 'px-4 py-3 pr-11 min-h-[44px] rounded-2xl text-base sm:text-sm',
+      icon: 'right-3.5 h-5 w-5',
+    },
+    compact: {
+      field: 'px-3 py-2 pr-10 min-h-10 rounded-xl text-sm',
+      icon: 'right-3 h-4 w-4',
+    },
+    dense: {
+      field: 'px-2 py-1.5 pr-8 min-h-9 rounded-lg text-xs',
+      icon: 'right-2 h-3.5 w-3.5',
+    },
+  }
+
 // Select component
 export interface SelectProps extends InputHTMLAttributes<HTMLSelectElement> {
   label?: string
   error?: string
   helperText?: string
   fullWidth?: boolean
+  /** Default: forms & booking; `compact` filters; `dense` table rows */
+  selectSize?: SelectSize
   children: React.ReactNode
 }
 
@@ -214,14 +241,18 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       className,
       id,
       children,
+      selectSize = 'default',
       ...props
     },
     ref
   ) => {
     const selectId = id || label?.toLowerCase().replace(/\s+/g, '-')
+    const sizeStyles = SELECT_SIZE_STYLES[selectSize]
 
-    const baseStyles =
-      'px-4 py-3 border rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 bg-white'
+    const baseStyles = clsx(
+      'border transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 bg-white text-gray-900 appearance-none cursor-pointer',
+      sizeStyles.field
+    )
 
     const stateStyles = error
       ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
@@ -239,27 +270,36 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           </label>
         )}
 
-        <select
-          ref={ref}
-          id={selectId}
-          className={clsx(
-            baseStyles,
-            stateStyles,
-            fullWidth && 'w-full',
-            className
-          )}
-          aria-invalid={error ? 'true' : 'false'}
-          aria-describedby={
-            error
-              ? `${selectId}-error`
-              : helperText
-                ? `${selectId}-helper`
-                : undefined
-          }
-          {...props}
-        >
-          {children}
-        </select>
+        <div className={clsx('relative', fullWidth && 'w-full')}>
+          <select
+            ref={ref}
+            id={selectId}
+            className={clsx(
+              baseStyles,
+              stateStyles,
+              fullWidth && 'w-full',
+              className
+            )}
+            aria-invalid={error ? 'true' : 'false'}
+            aria-describedby={
+              error
+                ? `${selectId}-error`
+                : helperText
+                  ? `${selectId}-helper`
+                  : undefined
+            }
+            {...props}
+          >
+            {children}
+          </select>
+          <ChevronDown
+            className={clsx(
+              'pointer-events-none absolute top-1/2 -translate-y-1/2 text-dental-muted',
+              sizeStyles.icon
+            )}
+            aria-hidden
+          />
+        </div>
 
         {error && (
           <p
@@ -272,7 +312,10 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         )}
 
         {!error && helperText && (
-          <p id={`${selectId}-helper`} className="mt-2 text-sm text-dental-muted">
+          <p
+            id={`${selectId}-helper`}
+            className="mt-2 text-sm text-dental-muted"
+          >
             {helperText}
           </p>
         )}

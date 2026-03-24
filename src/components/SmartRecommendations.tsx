@@ -145,7 +145,7 @@ export default function SmartRecommendations() {
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="group relative overflow-hidden bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-6 py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3"
+        className="group relative overflow-hidden bg-dental-primary-700 hover:bg-dental-primary-800 text-white px-6 py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3"
       >
         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
         <Sparkles className="w-6 h-6 relative z-10" />
@@ -284,7 +284,7 @@ export default function SmartRecommendations() {
                     <button
                       onClick={getRecommendations}
                       disabled={isLoading}
-                      className="flex-1 py-3 bg-dental-primary-600 hover:bg-dental-primary-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                      className="flex-1 py-3 bg-dental-primary-700 hover:bg-dental-primary-800 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
                     >
                       {isLoading ? (
                         <>
@@ -422,7 +422,7 @@ export default function SmartRecommendations() {
                     <Link
                       href="/booking"
                       onClick={() => setIsOpen(false)}
-                      className="flex-1 py-3 bg-dental-primary-600 hover:bg-dental-primary-700 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
+                      className="flex-1 py-3 bg-dental-primary-700 hover:bg-dental-primary-800 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
                     >
                       {t('buttons.bookAppointment')}
                       <ArrowRight className="w-5 h-5" />

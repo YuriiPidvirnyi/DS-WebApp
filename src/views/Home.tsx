@@ -11,8 +11,6 @@ import {
   useScrollAnimation,
   useStaggeredAnimation,
 } from '@/hooks/useScrollAnimation'
-import BeforeAfterGallery from '@/components/BeforeAfterGallery'
-import VideoTestimonials from '@/components/VideoTestimonials'
 import { AsyncState } from '@/components/ui'
 import i18n from '@/i18n/config'
 import images from '@/content/images.json'
@@ -36,7 +34,14 @@ interface ImagesData {
 
 const typedImages = images as ImagesData
 
-// Dynamic imports for better code splitting - Testimonials is below the fold
+const BeforeAfterGallery = dynamic(
+  () => import('@/components/BeforeAfterGallery'),
+  { ssr: true }
+)
+const VideoTestimonials = dynamic(
+  () => import('@/components/VideoTestimonials'),
+  { ssr: true }
+)
 const Testimonials = dynamic(() => import('@/components/Testimonials'), {
   loading: () => (
     <div className="py-20 bg-dental-secondary-50">
@@ -394,7 +399,7 @@ const Home = () => {
             <p className="text-dental-muted mb-4">{t('pricing.disclaimer')}</p>
             <Link
               href="/services"
-              className="text-dental-teal hover:text-dental-primary-600 font-semibold inline-flex items-center"
+              className="text-dental-primary-700 hover:text-dental-primary-600 font-semibold inline-flex items-center"
             >
               {t('pricing.viewAllPrices')}
               <ArrowRight className="ml-1 h-4 w-4" />

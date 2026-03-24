@@ -3,6 +3,7 @@ import { Nunito, Rubik } from 'next/font/google'
 import Script from 'next/script'
 import { headers } from 'next/headers'
 import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import '../src/styles/globals.css'
 import ClientProviders from './providers'
 import Header from '@/components/SiteHeader'
@@ -84,7 +85,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  // Read CSP nonce injected by middleware — makes this layout dynamically rendered
+  // Read CSP nonce injected by root proxy (`proxy.ts`) — makes this layout dynamically rendered
   const nonce = (await headers()).get('x-nonce') ?? ''
 
   return (
@@ -117,7 +118,7 @@ export default async function RootLayout({
           </>
         )}
 
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen min-w-0 flex flex-col overflow-x-clip">
           {/* Skip navigation link for accessibility */}
           <a
             href="#main-content"
@@ -136,6 +137,7 @@ export default async function RootLayout({
           </ClientProviders>
         </div>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )

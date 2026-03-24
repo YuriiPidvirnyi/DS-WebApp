@@ -290,8 +290,8 @@ export default function SignUpPage() {
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                   aria-label={
                     showPassword
-                      ? t('auth.hidePassword')
-                      : t('auth.showPassword')
+                      ? t('auth.login.hidePassword')
+                      : t('auth.login.showPassword')
                   }
                 >
                   {showPassword ? (

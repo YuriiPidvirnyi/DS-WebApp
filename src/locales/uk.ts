@@ -578,6 +578,8 @@ const uk = {
       loadingTitle: 'Завантажуємо відгуки',
       loadingMessage: 'Отримуємо найновіші відгуки пацієнтів.',
       loadError: 'Не вдалося завантажити відгуки.',
+      timeoutError:
+        'Завантаження зайняло забагато часу. Перевірте з’єднання та спробуйте ще раз.',
       empty: 'Поки що немає опублікованих відгуків.',
     },
     form: {
@@ -921,10 +923,10 @@ const uk = {
     contacts: 'Контакти',
     appointment: 'Запис на прийом',
     appointmentDesc: 'Оберіть зручний час для візиту до нашої клініки',
-    copyright: '© 2024 Dental Story. Усі права захищені.',
+    copyright: '© {{year}} Dental Story. Усі права захищені.',
     workingHours: {
-      weekdays: 'Пн-Пт: 9:00-19:00',
-      saturday: 'Сб: 9:00-16:00',
+      weekdays: 'Пн-Пт: 9:00-20:00',
+      saturday: 'Сб: 10:00-18:00',
       sunday: 'Нд: вихідний',
     },
     socialMedia: 'Соціальні мережі',
@@ -1618,11 +1620,14 @@ const uk = {
         today: 'Сьогодні',
         upcoming: 'Майбутні',
         past: 'Минулі',
+        statusSelectAria: 'Фільтр за статусом запису',
+        dateSelectAria: 'Фільтр за датою прийому',
       },
       bulk: {
         selected: 'Вибрано: {{count}}',
         moveTo: 'Перевести в {{status}}',
         apply: 'Застосувати масово',
+        targetStatusSelectAria: 'Статус для масового застосування',
       },
       table: {
         selectAllAria: 'Вибрати всі рядки',
@@ -1661,6 +1666,7 @@ const uk = {
         '30': '30 днів',
         '90': '90 днів',
       },
+      periodSelectAria: 'Період для звіту',
       refresh: 'Оновити',
       loading: 'Завантаження аналітики...',
       cards: {
@@ -1864,6 +1870,7 @@ const uk = {
       empty: 'За поточними фільтрами звернень не знайдено.',
       card: {
         selectAria: 'Вибрати звернення {{name}}',
+        statusSelectAria: 'Змінити статус звернення: {{name}}',
         unreadBadge: 'unread',
         markRead: 'Позначити прочитаним',
         markUnread: 'Позначити непрочитаним',

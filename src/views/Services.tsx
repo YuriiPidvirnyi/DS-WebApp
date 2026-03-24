@@ -265,7 +265,7 @@ const Services = () => {
         {/* CTA */}
         <div className="mt-16 text-center">
           <div className="bg-dental-primary-700 rounded-2xl p-8 lg:p-12 text-white">
-            <h2 className="text-3xl font-bold mb-4">
+            <h2 className="text-3xl font-bold text-white mb-4">
               {t('services.cta.title')}
             </h2>
             <p className="text-white mb-8 max-w-2xl mx-auto">

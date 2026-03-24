@@ -87,7 +87,7 @@ export default function FAQ() {
           <p className="text-gray-600 mb-4">{t('faqPage.cta.question')}</p>
           <Link
             href="/contact"
-            className="inline-flex items-center justify-center px-6 py-3 bg-dental-teal text-white font-semibold rounded-lg hover:bg-teal-700 transition-colors"
+            className="inline-flex items-center justify-center px-6 py-3 bg-dental-primary-700 text-white font-semibold rounded-lg hover:bg-dental-primary-800 transition-colors"
           >
             {t('faqPage.cta.contact')}
           </Link>

@@ -242,8 +242,8 @@ export const COMMON_MESSAGES = {
   VALIDATION_ERROR: 'Перевірте правильність заповнених полів.',
   UNEXPECTED_ERROR: 'Щось пішло не так. Спробуйте ще раз пізніше.',
 
-  // Office hours reminder
+  // Office hours reminder (keep in sync with src/config/clinicSchedule.ts)
   OFFICE_HOURS:
-    'Ми працюємо: Пн-Пт 9:00-19:00, Сб 9:00-16:00. Неділя - вихідний.',
+    'Ми працюємо: Пн-Пт 9:00-20:00, Сб 10:00-18:00. Неділя — вихідний.',
   CALL_US: 'Для термінових питань телефонуйте: +380 50 455 47 74',
 } as const

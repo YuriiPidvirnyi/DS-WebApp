@@ -1,7 +1,14 @@
 'use client'
 
 import { ReactNode, CSSProperties } from 'react'
-import { useMouseFollow } from '@/hooks/useScrollAnimation'
+
+const hoverClasses: Record<string, string> = {
+  lift: 'hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] transition-[transform,box-shadow] duration-300 ease-out shadow-[0_4px_6px_rgba(0,0,0,0.05)]',
+  glow: 'hover:shadow-[0_0_30px_rgba(20,184,166,0.3),0_10px_30px_rgba(0,0,0,0.1)] transition-shadow duration-300 ease-out shadow-[0_4px_6px_rgba(0,0,0,0.05)]',
+  scale: 'hover:scale-[1.02] transition-transform duration-300 ease-out',
+  tilt: 'transition-[transform,box-shadow] duration-150 ease-out',
+  none: '',
+}
 
 interface AnimatedCardProps {
   children: ReactNode
@@ -18,57 +25,17 @@ export default function AnimatedCard({
   delay = 0,
   isVisible = true,
 }: AnimatedCardProps) {
-  const { ref, getTransform, isHovering } = useMouseFollow<HTMLDivElement>()
-
-  const getHoverStyles = (): CSSProperties => {
-    switch (hoverEffect) {
-      case 'tilt':
-        return {
-          transform: isHovering ? getTransform(8) : 'none',
-          transition: 'transform 0.15s ease-out, box-shadow 0.3s ease-out',
-        }
-      case 'lift':
-        return {
-          transform: isHovering ? 'translateY(-8px)' : 'translateY(0)',
-          boxShadow: isHovering 
-            ? '0 20px 40px rgba(0, 0, 0, 0.1)' 
-            : '0 4px 6px rgba(0, 0, 0, 0.05)',
-          transition: 'transform 0.3s ease-out, box-shadow 0.3s ease-out',
-        }
-      case 'glow':
-        return {
-          boxShadow: isHovering 
-            ? '0 0 30px rgba(20, 184, 166, 0.3), 0 10px 30px rgba(0, 0, 0, 0.1)' 
-            : '0 4px 6px rgba(0, 0, 0, 0.05)',
-          transition: 'box-shadow 0.3s ease-out',
-        }
-      case 'scale':
-        return {
-          transform: isHovering ? 'scale(1.02)' : 'scale(1)',
-          transition: 'transform 0.3s ease-out',
-        }
-      default:
-        return {}
-    }
-  }
-
   const animationStyles: CSSProperties = {
     opacity: isVisible ? 1 : 0,
-    transform: isVisible 
-      ? (getHoverStyles().transform as string || 'translateY(0)') 
-      : 'translateY(20px)',
+    transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
     transitionDelay: `${delay}ms`,
+    transition: `opacity 0.5s ease-out ${delay}ms, transform 0.5s ease-out ${delay}ms`,
   }
 
   return (
     <div
-      ref={ref}
-      className={`bg-white rounded-2xl ${className}`}
-      style={{
-        ...animationStyles,
-        ...getHoverStyles(),
-        willChange: 'transform, opacity, box-shadow',
-      }}
+      className={`bg-white rounded-2xl ${hoverClasses[hoverEffect] || ''} ${className}`}
+      style={animationStyles}
     >
       {children}
     </div>
@@ -93,7 +60,7 @@ export function AnimatedSection({
 }: AnimatedSectionProps) {
   const getAnimationStyles = (): CSSProperties => {
     const baseTransition = `all 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`
-    
+
     switch (animation) {
       case 'fadeUp':
         return {

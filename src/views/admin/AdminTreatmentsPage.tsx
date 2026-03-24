@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Edit, Plus, RefreshCw, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button, Input, Textarea } from '@/components/ui'
+import { Button, Input, Select, Textarea } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { useCSRF } from '@/hooks/useCSRF'
 import { createClient } from '@/lib/supabase/client'
@@ -56,8 +56,6 @@ type ApptOpt = {
   guest_name: string | null
 }
 
-const sel =
-  'w-full rounded-lg border border-dental-secondary px-3 py-2 text-sm text-dental-dark'
 const ST: Record<TreatmentStatus, [string, string]> = {
   draft: ['bg-amber-100 text-amber-800', 'Чернетка'],
   signed: ['bg-blue-100 text-blue-800', 'Підписано'],
@@ -453,17 +451,19 @@ export default function AdminTreatmentsPage() {
           placeholder="Пошук за ім’ям пацієнта"
           className="md:col-span-2"
         />
-        <select
+        <Select
+          selectSize="compact"
+          fullWidth
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value as typeof statusFilter)}
-          className={sel}
+          aria-label="Фільтр за статусом акту"
         >
           {FILT_OPTS.map(([v, lab]) => (
             <option key={v} value={v}>
               {lab}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
       {error ? (
         <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-800">
@@ -602,10 +602,13 @@ export default function AdminTreatmentsPage() {
             <div className="grid gap-3 md:grid-cols-2">
               <label className="block text-sm font-medium text-dental-dark">
                 Пацієнт
-                <select
+                <Select
+                  selectSize="compact"
+                  fullWidth
+                  className="mt-1"
                   value={patientId}
                   onChange={e => setPatientId(e.target.value)}
-                  className={`${sel} mt-1`}
+                  aria-label="Пацієнт"
                 >
                   <option value="">—</option>
                   {patients.map(p => (
@@ -613,14 +616,17 @@ export default function AdminTreatmentsPage() {
                       {person(p)}
                     </option>
                   ))}
-                </select>
+                </Select>
               </label>
               <label className="block text-sm font-medium text-dental-dark">
                 Лікар
-                <select
+                <Select
+                  selectSize="compact"
+                  fullWidth
+                  className="mt-1"
                   value={doctorId}
                   onChange={e => setDoctorId(e.target.value)}
-                  className={`${sel} mt-1`}
+                  aria-label="Лікар"
                 >
                   <option value="">—</option>
                   {doctors.map(d => (
@@ -628,14 +634,17 @@ export default function AdminTreatmentsPage() {
                       {d.first_name} {d.last_name}
                     </option>
                   ))}
-                </select>
+                </Select>
               </label>
               <label className="col-span-full block text-sm font-medium text-dental-dark">
                 Візит (необов’язково)
-                <select
+                <Select
+                  selectSize="compact"
+                  fullWidth
+                  className="mt-1"
                   value={appointmentId}
                   onChange={e => setAppointmentId(e.target.value)}
-                  className={`${sel} mt-1`}
+                  aria-label="Візит"
                 >
                   <option value="">—</option>
                   {appts.map(a => (
@@ -644,7 +653,7 @@ export default function AdminTreatmentsPage() {
                       {a.patient_name || a.guest_name || 'Гість'}
                     </option>
                   ))}
-                </select>
+                </Select>
               </label>
             </div>
           )}
@@ -699,10 +708,12 @@ export default function AdminTreatmentsPage() {
                     <span className="text-xs text-dental-text-light">
                       Послуга
                     </span>
-                    <select
+                    <Select
+                      selectSize="compact"
+                      fullWidth
                       value={line.serviceId}
                       onChange={e => onServicePick(idx, e.target.value)}
-                      className={sel}
+                      aria-label="Послуга"
                     >
                       <option value="">—</option>
                       {services.map(s => (
@@ -710,7 +721,7 @@ export default function AdminTreatmentsPage() {
                           {s.name_uk}
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </label>
                   <label className="md:col-span-2">
                     <span className="text-xs text-dental-text-light">Зуб</span>
@@ -761,31 +772,37 @@ export default function AdminTreatmentsPage() {
           <div className="grid gap-3 md:grid-cols-2">
             <label className="block text-sm font-medium text-dental-dark">
               Статус акту
-              <select
+              <Select
+                selectSize="compact"
+                fullWidth
+                className="mt-1"
                 value={status}
                 onChange={e => setStatus(e.target.value as TreatmentStatus)}
-                className={`${sel} mt-1`}
+                aria-label="Статус акту"
               >
                 {ST_OPTS.map(([v, lab]) => (
                   <option key={v} value={v}>
                     {lab}
                   </option>
                 ))}
-              </select>
+              </Select>
             </label>
             <label className="block text-sm font-medium text-dental-dark">
               Статус оплати
-              <select
+              <Select
+                selectSize="compact"
+                fullWidth
+                className="mt-1"
                 value={payStatus}
                 onChange={e => setPayStatus(e.target.value as PayStatus)}
-                className={`${sel} mt-1`}
+                aria-label="Статус оплати"
               >
                 {PAY_OPTS.map(([v, lab]) => (
                   <option key={v} value={v}>
                     {lab}
                   </option>
                 ))}
-              </select>
+              </Select>
             </label>
           </div>
           <div className="flex justify-end gap-2 border-t border-dental-secondary-200 pt-4">

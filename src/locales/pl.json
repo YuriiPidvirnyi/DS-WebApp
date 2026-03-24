@@ -538,6 +538,7 @@
       "loadingTitle": "Ładowanie opinii",
       "loadingMessage": "Pobieramy najnowsze opinie pacjentów.",
       "loadError": "Nie udało się załadować opinii.",
+      "timeoutError": "Ładowanie trwa zbyt długo. Sprawdź połączenie i spróbuj ponownie.",
       "empty": "Na razie nie ma opublikowanych opinii."
     },
     "form": {
@@ -881,8 +882,8 @@
     "appointmentDesc": "Wybierz dogodny termin wizyty w naszej klinice",
     "copyright": "© 2024 Dental Story. Wszelkie prawa zastrzeżone.",
     "workingHours": {
-      "weekdays": "Pn-Pt: 9:00-19:00",
-      "saturday": "Sob: 9:00-16:00",
+      "weekdays": "Pn-Pt: 9:00-20:00",
+      "saturday": "Sob: 10:00-18:00",
       "sunday": "Niedz: Zamknięte"
     },
     "socialMedia": "Media społecznościowe"

@@ -191,6 +191,16 @@ Brief description of changes
 - [ ] Staging environment tested
 - [ ] Rollback plan prepared
 
+## 🤖 Automated Code Review
+
+The project uses Claude Code for automated PR reviews via `.github/workflows/claude-code-review.yml`:
+
+- **Trigger:** on `pull_request` opened or synchronized
+- **Scope:** code quality, potential bugs, performance, security, test coverage
+- **Convention:** follows `CLAUDE.md` for style and architecture guidance
+
+Additionally, `.github/workflows/claude.yml` allows triggering Claude Code via `@claude` mentions in issue/PR comments.
+
 ## 📅 Release Schedule
 
 - **Production Releases**: Every 2 weeks (Thursday)

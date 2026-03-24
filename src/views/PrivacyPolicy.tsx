@@ -28,7 +28,7 @@ const PrivacyPolicy = () => {
         <div className="mb-8">
           <Link
             href="/"
-            className="inline-flex items-center text-dental-teal hover:text-teal-600 mb-6"
+            className="inline-flex items-center text-dental-primary-700 hover:text-dental-primary-600 mb-6"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             {t('privacyPolicyPage.backHome')}

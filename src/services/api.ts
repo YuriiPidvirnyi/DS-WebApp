@@ -113,6 +113,21 @@ async function fetchAPI<T>(
       throw error
     }
 
+    const isAbort =
+      (typeof DOMException !== 'undefined' &&
+        error instanceof DOMException &&
+        error.name === 'AbortError') ||
+      (error instanceof Error && error.name === 'AbortError')
+
+    if (isAbort) {
+      throw new APIError(
+        'Запит перервано (таймаут або скасування).',
+        0,
+        'ABORTED',
+        error instanceof Error ? error.message : undefined
+      )
+    }
+
     if (error instanceof Error) {
       throw new APIError(
         "Помилка з'єднання. Перевірте інтернет-підключення.",

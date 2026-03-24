@@ -11,6 +11,8 @@ if (dsn) {
   Sentry.init({
     dsn,
     environment,
+    // Avoid console warning when webpack treeshake.removeDebugLogging strips Sentry debug helpers
+    debug: false,
 
     // Performance monitoring
     tracesSampleRate: environment === 'production' ? 0.2 : 0,
@@ -48,20 +50,22 @@ if (dsn) {
     maxBreadcrumbs: 50,
   })
 
-  // Lazy-load Session Replay after the browser is idle to avoid blocking
-  // the main thread during page load (~100KB payload).
-  if (typeof window !== 'undefined') {
+  // Lazy-load Session Replay in production only (dev skips Sentry sends via beforeSend;
+  // loading replay still hit CSP / threw before script-src allowed the CDN).
+  if (typeof window !== 'undefined' && process.env.NODE_ENV !== 'development') {
     const loadReplay = () => {
-      Sentry.lazyLoadIntegration('replayIntegration').then(
-        replayIntegration => {
+      void Sentry.lazyLoadIntegration('replayIntegration')
+        .then(replayIntegration => {
           Sentry.addIntegration(
             replayIntegration({
               maskAllInputs: true,
               blockAllMedia: true,
             })
           )
-        }
-      )
+        })
+        .catch(() => {
+          // Integration load can fail if blocked; avoid uncaught promise noise
+        })
     }
 
     if ('requestIdleCallback' in window) {

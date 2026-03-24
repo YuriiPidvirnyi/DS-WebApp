@@ -7,9 +7,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Build and Development
 
 - `npm run dev` - Start Next.js development server (port 3000, Turbopack)
-- `npm run dev:restart` - Free port 3000, clear `.next/dev/cache/turbopack`, then `npm run dev` (see also Claude Code `/restart_ds_web_app`)
+- `npm run dev:restart` - Free port 3000, clear `.next/dev/cache/turbopack`, then `npm run dev` (see also Claude Code `/restart_ds_web_app`). After the server is **Ready**, open **http://localhost:3000** in **Cursor’s built-in browser** (MCP `cursor-ide-browser` → navigate) so the tab is visible in the editor.
 - `npm run dev:kill` / `npm run dev:clear-turbo` - Individual steps used by `dev:restart`
 - `npm run build` - Build for production (Next.js)
+- `npm run analyze` - Production build with bundle size analysis (`@next/bundle-analyzer`)
 - `npm run start` - Start production server
 
 ### Code Quality and Testing
@@ -24,9 +25,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### End-to-End Testing
 
+- `npm run test:e2e:ui-smoke` - Browser smoke: `Select` (contact / booking / reviews) + language dropdown (`e2e/ui-form-controls.smoke.spec.ts`, same dev server as auth mock)
 - `npm run test:e2e:auth` - Run auth E2E tests (mocked Supabase)
 - `npm run test:e2e:auth:live` - Run auth E2E tests against live Supabase
 - `npm run test:e2e:auth:links:live` - Run auth email link tests (live)
+
+### CI (GitHub Actions)
+
+- **Build job** (`.github/workflows/ci.yml`): after `npm run build`, runs `npx playwright install chromium --with-deps`, starts `npm run start`, waits on `http://127.0.0.1:3000` with `npx wait-on`, then runs `BASE_URL=http://127.0.0.1:3000 npm run a11y:audit` (see `scripts/a11y-audit.mjs` for route list).
+- **Security audit job**: `npm ci --legacy-peer-deps` then `npm audit --audit-level=moderate` must pass (no `continue-on-error`).
 
 ## Architecture Overview
 
@@ -38,9 +45,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Routing**: Next.js App Router (file-based, `app/` directory)
 - **Auth**: Supabase (`@supabase/ssr`) — requires `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - **Forms**: React Hook Form + Zod validation
-- **Internationalization**: i18next + react-i18next (Ukrainian default, EN + PL)
+- **Internationalization**: i18next + react-i18next (Ukrainian default, EN + PL lazy-loaded). After hydration, `initializeI18nFromStorage()` in `app/i18n-provider.tsx` **awaits** `setLanguage` so en/pl bundles load before switching language (reduces raw-key flashes).
 - **Icons**: Lucide React
 - **PWA**: @ducanh2912/next-pwa with Workbox
+- **Dependency overrides**: `package.json` → `overrides.serialize-javascript` is pinned to **7.0.4** so the transitive chain `workbox-build` → `@rollup/plugin-terser` does not pull vulnerable `serialize-javascript` ≤7.0.2 ([GHSA-5c6j-r48x-rmvq](https://github.com/advisories/GHSA-5c6j-r48x-rmvq)). This keeps PWA/Workbox without ripping out `@ducanh2912/next-pwa` or using `npm audit fix --force` to an older plugin version.
 - **Monitoring**: Sentry (@sentry/nextjs), Vercel Analytics
 - **Email**: Resend (`resend`) — transactional emails (booking confirmation, reminders, cancellation)
 - **Cache**: Redis via @upstash/redis (requires `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN`)

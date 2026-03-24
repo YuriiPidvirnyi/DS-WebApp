@@ -9,7 +9,7 @@ import {
 } from 'react'
 import { Edit, Plus, RefreshCw, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button, Input, Textarea } from '@/components/ui'
+import { Button, Input, Select, Textarea } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
@@ -483,14 +483,16 @@ export default function AdminDoctorsPage() {
             placeholder={t('admin.doctorsPage.filters.searchPlaceholder')}
             className="md:col-span-2"
           />
-          <select
+          <Select
+            selectSize="compact"
+            fullWidth
             value={statusFilter}
             onChange={event =>
               setStatusFilter(
                 event.target.value as 'all' | 'active' | 'inactive'
               )
             }
-            className="rounded-lg border border-dental-secondary px-4 py-3 text-sm"
+            aria-label={t('admin.doctorsPage.filters.all')}
           >
             <option value="all">{t('admin.doctorsPage.filters.all')}</option>
             <option value="active">
@@ -499,7 +501,7 @@ export default function AdminDoctorsPage() {
             <option value="inactive">
               {t('admin.doctorsPage.filters.inactiveOnly')}
             </option>
-          </select>
+          </Select>
         </div>
       </div>
 
@@ -507,12 +509,13 @@ export default function AdminDoctorsPage() {
         <span className="text-sm text-dental-text-light">
           {t('admin.doctorsPage.bulk.selected', { count: selectedIds.length })}
         </span>
-        <select
+        <Select
+          selectSize="compact"
           value={bulkStatus}
           onChange={event =>
             setBulkStatus(event.target.value as 'active' | 'inactive')
           }
-          className="rounded-md border border-dental-secondary px-3 py-1.5 text-sm"
+          aria-label={t('admin.doctorsPage.bulk.apply')}
         >
           <option value="active">
             {t('admin.doctorsPage.bulk.activateSelected')}
@@ -520,7 +523,7 @@ export default function AdminDoctorsPage() {
           <option value="inactive">
             {t('admin.doctorsPage.bulk.deactivateSelected')}
           </option>
-        </select>
+        </Select>
         <Button
           size="sm"
           onClick={() => void handleBulkStatusUpdate()}
