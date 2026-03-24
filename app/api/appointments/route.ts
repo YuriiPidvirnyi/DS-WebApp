@@ -14,7 +14,7 @@ import { captureException } from '@/utils/sentry'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const PHONE_REGEX = /^\+?380\d{9}$/
+const PHONE_REGEX = /^\+380\d{9}$/
 const TIME_REGEX = /^([01]\d|2[0-3]):[0-5]\d$/
 const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
 
@@ -77,8 +77,8 @@ async function createSupabaseAppointment(payload: BookingPayload) {
 
     if (!doctor) {
       return NextResponse.json(
-        { success: false, error: 'Лікаря не знайдено або він недоступний' },
-        { status: 422 }
+        { success: false, error: 'Doctor not found or inactive' },
+        { status: 400 }
       )
     }
   }
@@ -152,9 +152,9 @@ async function createSupabaseAppointment(payload: BookingPayload) {
           ]
         : []),
     ]
-    supabase
-      .from('notification_events')
-      .insert(notifEvents)
+    void Promise.resolve(
+      supabase.from('notification_events').insert(notifEvents)
+    )
       .then(({ error: notifErr }) => {
         if (notifErr)
           console.warn(
@@ -162,6 +162,9 @@ async function createSupabaseAppointment(payload: BookingPayload) {
             notifErr.message
           )
       })
+      .catch((err: unknown) =>
+        console.error('Failed to queue notification:', err)
+      )
   }
 
   return NextResponse.json(
