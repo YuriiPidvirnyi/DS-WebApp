@@ -128,11 +128,7 @@ export default async function RootLayout({
           </a>
           <ClientProviders>
             <Header />
-            <main
-              id="main-content"
-              className="flex-1 pb-28 sm:pb-24 max-sm:pb-32"
-              role="main"
-            >
+            <main id="main-content" className="flex-1" role="main">
               {children}
             </main>
             <Footer />

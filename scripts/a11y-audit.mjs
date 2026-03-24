@@ -39,11 +39,11 @@ async function waitForServer(url, timeoutMs = 20000) {
   if (!ok) {
     const { spawn } = await import('child_process')
     // Next.js App Router — dev server on 3000 (not Vite)
-    previewProc = spawn(
-      'npx',
-      ['next', 'dev', '-p', '3000'],
-      { stdio: 'ignore', shell: process.platform === 'win32', cwd: process.cwd() }
-    )
+    previewProc = spawn('npx', ['next', 'dev', '-p', '3000'], {
+      stdio: 'ignore',
+      shell: process.platform === 'win32',
+      cwd: process.cwd(),
+    })
     const ready = await waitForServer(BASE, 90000)
     if (!ready) {
       previewProc?.kill('SIGTERM')
