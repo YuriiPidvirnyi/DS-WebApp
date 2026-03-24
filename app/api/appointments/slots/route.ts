@@ -55,29 +55,32 @@ export async function GET(request: NextRequest) {
   // ISO date format
   if (!ISO_DATE_RE.test(date)) {
     return NextResponse.json(
-      { success: false, error: 'Дата у форматі YYYY-MM-DD' },
+      { success: false, error: 'Invalid date format. Use YYYY-MM-DD' },
       { status: 400 }
     )
   }
 
-  const requestedDate = new Date(`${date}T00:00:00`)
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+  const now = Date.now()
+  const today = new Date(now).toISOString().slice(0, 10)
 
   // Past date rejection
-  if (requestedDate < today) {
+  if (date < today) {
     return NextResponse.json(
-      { success: false, error: 'Неможливо переглянути слоти для минулої дати' },
+      { success: false, error: 'Cannot query slots for past dates' },
       { status: 400 }
     )
   }
 
   // Too far in the future (> 60 days)
-  const maxDate = new Date(today)
-  maxDate.setDate(today.getDate() + 60)
-  if (requestedDate > maxDate) {
+  const maxDate = new Date(now + 60 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10)
+  if (date > maxDate) {
     return NextResponse.json(
-      { success: false, error: 'Дата перевищує горизонт бронювання (60 днів)' },
+      {
+        success: false,
+        error: 'Cannot query slots more than 60 days in advance',
+      },
       { status: 400 }
     )
   }
