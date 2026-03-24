@@ -185,7 +185,9 @@ const Footer = memo(() => {
       {/* ─── Bottom bar ─── */}
       <div className="border-t border-white/[0.06]">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-4 pb-20 md:pb-4 flex flex-col md:flex-row items-center justify-between gap-2 text-[11px] text-white/65">
-          <span>{t('footer.copyright')}</span>
+          <span>
+            {t('footer.copyright', { year: new Date().getFullYear() })}
+          </span>
           <div className="flex items-center gap-4">
             <Link
               href="/privacy-policy"
