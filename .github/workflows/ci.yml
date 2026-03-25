@@ -6,6 +6,14 @@ on:
   pull_request:
     branches: [main]
 
+# Cancel redundant in-progress runs on the same branch / PR
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   lint-and-typecheck:
     name: Lint & Typecheck
@@ -55,6 +63,14 @@ jobs:
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           cat coverage/coverage-summary.json 2>/dev/null | head -20 >> $GITHUB_STEP_SUMMARY || echo "No coverage report" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 7
 
   build:
     name: Build

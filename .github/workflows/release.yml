@@ -1,9 +1,12 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
+  # Only release after CI passes on main — prevents releasing broken code
+  workflow_run:
+    workflows: ['CI']
+    branches: [main]
+    types: [completed]
+  # Allow triggering a release manually (skips the CI-gate condition)
   workflow_dispatch:
 
 permissions:
@@ -14,7 +17,11 @@ jobs:
   release:
     name: Create Release
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    # For workflow_run events: only proceed when CI succeeded.
+    # For manual dispatch: always proceed so maintainers can cut a release on demand.
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
 
     steps:
       - name: Checkout
@@ -25,7 +32,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
@@ -45,10 +52,6 @@ jobs:
           else
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
-
-      - name: Build application
-        if: steps.version.outputs.changed == 'true'
-        run: npm run build
 
       - name: Create GitHub Release
         if: steps.version.outputs.changed == 'true'

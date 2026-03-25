@@ -18,6 +18,7 @@ const PAGES = [
   '/auth/sign-up',
   '/privacy-policy',
   '/terms-of-service',
+  '/symptom-checker',
 ]
 
 async function waitForServer(url, timeoutMs = 20000) {
