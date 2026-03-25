@@ -188,7 +188,7 @@
   html,
   body {
     max-width: 100%;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   /* Flex/grid children default to min-width:auto and can force horizontal overflow; clip at layout level */
