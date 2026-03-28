@@ -75,9 +75,9 @@ const NAV_ITEMS = [
 
 type ChatMode = null | 'choose' | 'human' | 'ai'
 
-/* ── Font style ── */
-const rubikFont = {
-  fontFamily: 'var(--font-rubik), Rubik, system-ui, sans-serif',
+/* ── Font style — system sans-serif for crisp, non-rounded look ── */
+const sidebarFont = {
+  fontFamily: 'system-ui, -apple-system, "Segoe UI", sans-serif',
 }
 
 /* ── Component ── */
@@ -114,7 +114,7 @@ export default function SidebarNav() {
     <span
       className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold whitespace-nowrap overflow-hidden transition-all duration-200"
       style={{
-        ...rubikFont,
+        ...sidebarFont,
         opacity: expanded ? 1 : 0,
         maxHeight: expanded ? 16 : 0,
         marginBottom: expanded ? 4 : 0,
@@ -263,7 +263,7 @@ export default function SidebarNav() {
                 <Icon className="w-5 h-5 shrink-0 transition-transform duration-150 group-hover:scale-110" />
                 <span
                   className={`text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-200 ${labelCls}`}
-                  style={rubikFont}
+                  style={sidebarFont}
                 >
                   {t(labelKey)}
                 </span>
@@ -290,7 +290,7 @@ export default function SidebarNav() {
                 {item.icon}
                 <span
                   className={`text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-200 ${labelCls}`}
-                  style={rubikFont}
+                  style={sidebarFont}
                 >
                   {item.label}
                 </span>
@@ -307,7 +307,7 @@ export default function SidebarNav() {
             <MessageCircle className="w-5 h-5 shrink-0" />
             <span
               className={`text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-200 ${labelCls}`}
-              style={rubikFont}
+              style={sidebarFont}
             >
               {t('radialMenu.actions.chat')}
             </span>
@@ -317,14 +317,16 @@ export default function SidebarNav() {
             type="button"
             onClick={() => setAccessibilityOpen(true)}
             className={itemCls()}
-            title={!expanded ? t('accessibilityPanel.title') : undefined}
+            title={
+              !expanded ? t('accessibility.title', 'Доступність') : undefined
+            }
           >
             <Accessibility className="w-5 h-5 shrink-0" />
             <span
               className={`text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-200 ${labelCls}`}
-              style={rubikFont}
+              style={sidebarFont}
             >
-              {t('accessibilityPanel.title')}
+              {t('accessibility.title', 'Доступність')}
             </span>
           </button>
         </div>
@@ -356,7 +358,7 @@ export default function SidebarNav() {
                 {icon}
                 <span
                   className={`text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-200 ${labelCls}`}
-                  style={rubikFont}
+                  style={sidebarFont}
                 >
                   {label}
                 </span>
@@ -370,7 +372,7 @@ export default function SidebarNav() {
           <p
             className="text-[10px] text-gray-400 text-center whitespace-nowrap overflow-hidden transition-all duration-200"
             style={{
-              ...rubikFont,
+              ...sidebarFont,
               opacity: expanded ? 1 : 0,
               maxHeight: expanded ? 24 : 0,
               transition: 'opacity 200ms, max-height 200ms',
