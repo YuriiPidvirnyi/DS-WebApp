@@ -20,7 +20,6 @@ import {
   Accessibility,
 } from 'lucide-react'
 import { CONTACT_INFO } from '@/utils/constants'
-import Logo from '@/components/ui/Logo'
 
 /* ── Dynamic panel imports ── */
 
@@ -214,35 +213,36 @@ export default function SidebarNav() {
         aria-label={t('accessibility.mainNavigation')}
       >
         {/* ─── Logo ─── */}
-        <div className="relative flex items-center justify-center h-12 border-b border-gray-100">
-          <Link
-            href="/"
-            aria-label={t('accessibility.homeLink')}
-            className="flex items-center justify-center"
-          >
-            {/* Tooth icon — visible when collapsed */}
-            <Image
-              src="/favicon.svg"
-              alt=""
-              width={28}
-              height={28}
-              className="w-7 h-7 shrink-0 absolute"
-              style={{
-                opacity: expanded ? 0 : 1,
-                transition: 'opacity 200ms',
-              }}
-            />
-            {/* Full logo — visible when expanded */}
-            <div
-              style={{
-                opacity: expanded ? 1 : 0,
-                transition: 'opacity 250ms',
-              }}
-            >
-              <Logo variant="default" size="sm" className="!h-9 shrink-0" />
-            </div>
-          </Link>
-        </div>
+        <Link
+          href="/"
+          aria-label={t('accessibility.homeLink')}
+          className="relative flex items-center justify-center h-12 border-b border-gray-100 shrink-0"
+        >
+          {/* Tooth icon — visible when collapsed */}
+          <Image
+            src="/favicon.svg"
+            alt=""
+            width={28}
+            height={28}
+            className="w-7 h-7 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+            style={{
+              opacity: expanded ? 0 : 1,
+              transition: 'opacity 200ms',
+            }}
+          />
+          {/* Full logo — visible when expanded */}
+          <Image
+            src="/assets/images/logo/logo-mark-teal.svg"
+            alt="Dental Story"
+            width={140}
+            height={36}
+            className="h-8 w-auto absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+            style={{
+              opacity: expanded ? 1 : 0,
+              transition: 'opacity 250ms',
+            }}
+          />
+        </Link>
 
         {/* ─── Page navigation ─── */}
         <nav className="flex flex-col gap-0.5 px-2 pt-3 pb-1">
