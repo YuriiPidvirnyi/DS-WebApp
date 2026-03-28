@@ -109,15 +109,32 @@ export default function SidebarNav() {
     ? 'max-w-[180px] opacity-100 ml-3'
     : 'max-w-0 opacity-0 ml-0'
 
+  /* ── Section label (visible only expanded) ── */
+  const sectionLabel = (text: string) => (
+    <span
+      className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold whitespace-nowrap overflow-hidden transition-all duration-200"
+      style={{
+        ...rubikFont,
+        opacity: expanded ? 1 : 0,
+        maxHeight: expanded ? 16 : 0,
+        marginBottom: expanded ? 4 : 0,
+        paddingLeft: expanded ? 12 : 0,
+      }}
+    >
+      {text}
+    </span>
+  )
+
   /* ── Shared item styles ── */
   const itemCls = (active = false) =>
     [
-      'flex items-center rounded-xl relative',
-      'h-10 min-w-0 px-3',
-      'transition-colors duration-150',
+      'group flex items-center rounded-xl relative',
+      'h-10 min-w-0',
+      expanded ? 'px-3' : 'justify-center',
+      'transition-all duration-150',
       active
         ? 'bg-dental-primary-50 text-dental-primary-600 shadow-sm'
-        : 'text-dental-text hover:bg-gray-50 hover:text-dental-primary-600',
+        : 'text-dental-text hover:bg-gray-50 hover:text-dental-primary-600 hover:translate-x-0.5',
     ].join(' ')
 
   /* ── Messenger items ── */
@@ -183,13 +200,13 @@ export default function SidebarNav() {
       <div className="hidden lg:block w-16 shrink-0" aria-hidden="true" />
 
       <aside
-        className={[
-          'hidden lg:flex flex-col absolute top-0 left-0 bottom-0 bg-white border-r border-gray-100 z-40',
-          expanded ? 'shadow-xl' : '',
-        ].join(' ')}
+        className="hidden lg:flex flex-col absolute top-0 left-0 bottom-0 bg-white border-r border-gray-100 z-40"
         style={{
           width: expanded ? 240 : 64,
           transition: 'width 250ms cubic-bezier(0.4, 0, 0.2, 1)',
+          boxShadow: expanded
+            ? '4px 0 24px rgba(0,0,0,0.08), 1px 0 4px rgba(0,0,0,0.04)'
+            : 'none',
         }}
         onMouseEnter={expand}
         onMouseLeave={collapse}
@@ -229,7 +246,8 @@ export default function SidebarNav() {
         </div>
 
         {/* ─── Page navigation ─── */}
-        <nav className="flex flex-col gap-0.5 px-2 pt-3">
+        <nav className="flex flex-col gap-0.5 px-2 pt-3 pb-1">
+          {sectionLabel(t('navigation.menu', 'Меню'))}
           {NAV_ITEMS.map(({ href, icon: Icon, labelKey }) => {
             const active = pathname === href
             return (
@@ -242,7 +260,7 @@ export default function SidebarNav() {
                 {active && (
                   <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-dental-primary-600" />
                 )}
-                <Icon className="w-5 h-5 shrink-0" />
+                <Icon className="w-5 h-5 shrink-0 transition-transform duration-150 group-hover:scale-110" />
                 <span
                   className={`text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-200 ${labelCls}`}
                   style={rubikFont}
@@ -257,7 +275,8 @@ export default function SidebarNav() {
         <div className="mx-3 my-2 border-t border-gray-100" />
 
         {/* ─── Messengers + Chat + Accessibility ─── */}
-        <div className="flex flex-col gap-0.5 px-2">
+        <div className="flex flex-col gap-0.5 px-2 py-1">
+          {sectionLabel(t('navigation.contact_us', "Зв'язок"))}
           {messengerItems.map(item =>
             item.href ? (
               <a
@@ -316,7 +335,8 @@ export default function SidebarNav() {
         <div className="mx-3 my-2 border-t border-gray-100" />
 
         {/* ─── Social links (vertical) ─── */}
-        <div className="flex flex-col gap-0.5 px-2">
+        <div className="flex flex-col gap-0.5 px-2 py-1">
+          {sectionLabel(t('navigation.socials', 'Соцмережі'))}
           {socialItems.map(({ href, label, icon }) =>
             href ? (
               <a
@@ -325,10 +345,11 @@ export default function SidebarNav() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className={[
-                  'flex items-center rounded-xl',
-                  'h-9 min-w-0 px-3',
-                  'text-gray-400 hover:text-dental-primary-600 hover:bg-gray-50',
-                  'transition-colors duration-150',
+                  'group flex items-center rounded-xl relative',
+                  'h-10 min-w-0',
+                  expanded ? 'px-3' : 'justify-center',
+                  'text-gray-400 hover:text-dental-primary-600 hover:bg-gray-50 hover:translate-x-0.5',
+                  'transition-all duration-150',
                 ].join(' ')}
                 title={!expanded ? label : undefined}
               >
@@ -345,12 +366,14 @@ export default function SidebarNav() {
         </div>
 
         {/* ─── Copyright ─── */}
-        <div className="px-3 pb-3 pt-2 border-t border-gray-100 mt-2 overflow-hidden">
+        <div className="px-3 pb-3 pt-2 overflow-hidden">
           <p
             className="text-[10px] text-gray-400 text-center whitespace-nowrap overflow-hidden transition-all duration-200"
             style={{
+              ...rubikFont,
               opacity: expanded ? 1 : 0,
               maxHeight: expanded ? 24 : 0,
+              transition: 'opacity 200ms, max-height 200ms',
             }}
           >
             {t('footer.copyright', { year: new Date().getFullYear() })}
