@@ -76,7 +76,7 @@ type ChatMode = null | 'choose' | 'human' | 'ai'
 
 /* ── Font style — system sans-serif for crisp, non-rounded look ── */
 const sidebarFont = {
-  fontFamily: 'system-ui, -apple-system, "Segoe UI", sans-serif',
+  fontFamily: 'var(--font-nunito), "Nunito", sans-serif',
 }
 
 /* ── Component ── */
@@ -133,7 +133,7 @@ export default function SidebarNav() {
       'transition-all duration-150',
       active
         ? 'bg-dental-primary-50 text-dental-primary-600 shadow-sm'
-        : 'text-dental-text hover:bg-gray-50 hover:text-dental-primary-600 hover:translate-x-0.5',
+        : 'text-dental-dark hover:bg-gray-50 hover:text-dental-primary-600 hover:translate-x-0.5',
     ].join(' ')
 
   /* ── Messenger items ── */
@@ -244,127 +244,132 @@ export default function SidebarNav() {
           />
         </Link>
 
-        {/* ─── Page navigation ─── */}
-        <nav className="flex flex-col gap-0.5 px-2 pt-3 pb-1">
-          {sectionLabel(t('navigation.menu', 'Меню'))}
-          {NAV_ITEMS.map(({ href, icon: Icon, labelKey }) => {
-            const active = pathname === href
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={itemCls(active)}
-                title={!expanded ? t(labelKey) : undefined}
-              >
-                {active && (
-                  <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-dental-primary-600" />
-                )}
-                <Icon className="w-5 h-5 shrink-0 transition-transform duration-150 group-hover:scale-110" />
-                <span
-                  className={`text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-200 ${labelCls}`}
-                  style={sidebarFont}
+        {/* ─── Scrollable content area — vertically centered ─── */}
+        <div className="flex-1 flex flex-col justify-center py-2 min-h-0">
+          {/* ─── Page navigation ─── */}
+          <nav className="flex flex-col gap-0.5 px-2 pb-1">
+            {sectionLabel(t('navigation.menu', 'Меню'))}
+            {NAV_ITEMS.map(({ href, icon: Icon, labelKey }) => {
+              const active = pathname === href
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={itemCls(active)}
+                  title={!expanded ? t(labelKey) : undefined}
                 >
-                  {t(labelKey)}
-                </span>
-              </Link>
-            )
-          })}
-        </nav>
+                  {active && (
+                    <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-dental-primary-600" />
+                  )}
+                  <Icon className="w-5 h-5 shrink-0 transition-transform duration-150 group-hover:scale-110" />
+                  <span
+                    className={`text-[15px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-200 ${labelCls}`}
+                    style={sidebarFont}
+                  >
+                    {t(labelKey)}
+                  </span>
+                </Link>
+              )
+            })}
+          </nav>
 
-        <div className="mx-3 my-2 border-t border-gray-100" />
+          {/* ─── Зв'язок — subtle background tint to distinguish ─── */}
+          <div className="mx-2 my-2 rounded-xl bg-gray-50/70 px-1 py-1.5">
+            <div className="flex flex-col gap-0.5">
+              {sectionLabel(t('navigation.contact_us', "Зв'язок"))}
+              {messengerItems.map(item =>
+                item.href ? (
+                  <a
+                    key={item.id}
+                    href={item.href}
+                    target={item.external ? '_blank' : undefined}
+                    rel={item.external ? 'noopener noreferrer' : undefined}
+                    className={itemCls()}
+                    title={!expanded ? item.label : undefined}
+                  >
+                    {item.icon}
+                    <span
+                      className={`text-[15px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-200 ${labelCls}`}
+                      style={sidebarFont}
+                    >
+                      {item.label}
+                    </span>
+                  </a>
+                ) : null
+              )}
 
-        {/* ─── Messengers + Chat + Accessibility ─── */}
-        <div className="flex flex-col gap-0.5 px-2 py-1">
-          {sectionLabel(t('navigation.contact_us', "Зв'язок"))}
-          {messengerItems.map(item =>
-            item.href ? (
-              <a
-                key={item.id}
-                href={item.href}
-                target={item.external ? '_blank' : undefined}
-                rel={item.external ? 'noopener noreferrer' : undefined}
+              <button
+                type="button"
+                onClick={() => setChatMode('choose')}
                 className={itemCls()}
-                title={!expanded ? item.label : undefined}
+                title={!expanded ? t('radialMenu.actions.chat') : undefined}
               >
-                {item.icon}
+                <MessageCircle className="w-5 h-5 shrink-0" />
                 <span
-                  className={`text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-200 ${labelCls}`}
+                  className={`text-[15px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-200 ${labelCls}`}
                   style={sidebarFont}
                 >
-                  {item.label}
+                  {t('radialMenu.actions.chat')}
                 </span>
-              </a>
-            ) : null
-          )}
+              </button>
 
-          <button
-            type="button"
-            onClick={() => setChatMode('choose')}
-            className={itemCls()}
-            title={!expanded ? t('radialMenu.actions.chat') : undefined}
-          >
-            <MessageCircle className="w-5 h-5 shrink-0" />
-            <span
-              className={`text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-200 ${labelCls}`}
-              style={sidebarFont}
-            >
-              {t('radialMenu.actions.chat')}
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setAccessibilityOpen(true)}
-            className={itemCls()}
-            title={
-              !expanded ? t('accessibility.title', 'Доступність') : undefined
-            }
-          >
-            <Accessibility className="w-5 h-5 shrink-0" />
-            <span
-              className={`text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-200 ${labelCls}`}
-              style={sidebarFont}
-            >
-              {t('accessibility.title', 'Доступність')}
-            </span>
-          </button>
-        </div>
-
-        <div className="mx-3 my-2 border-t border-gray-100" />
-
-        {/* ─── Social links (vertical) ─── */}
-        <div className="flex flex-col gap-0.5 px-2 py-1">
-          {sectionLabel(t('navigation.socials', 'Соцмережі'))}
-          {socialItems.map(({ href, label, icon }) =>
-            href ? (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={[
-                  'group flex items-center rounded-xl relative',
-                  'h-9 min-w-0',
-                  expanded ? 'px-3' : 'justify-center',
-                  'text-gray-400 hover:text-dental-primary-600 hover:bg-gray-50 hover:translate-x-0.5',
-                  'transition-all duration-150',
-                ].join(' ')}
-                title={!expanded ? label : undefined}
+              <button
+                type="button"
+                onClick={() => setAccessibilityOpen(true)}
+                className={itemCls()}
+                title={
+                  !expanded
+                    ? t('accessibility.title', 'Доступність')
+                    : undefined
+                }
               >
-                {icon}
+                <Accessibility className="w-5 h-5 shrink-0" />
                 <span
-                  className={`text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-200 ${labelCls}`}
+                  className={`text-[15px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-200 ${labelCls}`}
                   style={sidebarFont}
                 >
-                  {label}
+                  {t('accessibility.title', 'Доступність')}
                 </span>
-              </a>
-            ) : null
-          )}
+              </button>
+            </div>
+          </div>
+
+          <div className="mx-3 my-1 border-t border-gray-100" />
+
+          {/* ─── Social links (vertical) ─── */}
+          <div className="flex flex-col gap-0.5 px-2 py-1">
+            {sectionLabel(t('navigation.socials', 'Соцмережі'))}
+            {socialItems.map(({ href, label, icon }) =>
+              href ? (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={[
+                    'group flex items-center rounded-xl relative',
+                    'h-9 min-w-0',
+                    expanded ? 'px-3' : 'justify-center',
+                    'text-gray-400 hover:text-dental-primary-600 hover:bg-gray-50 hover:translate-x-0.5',
+                    'transition-all duration-150',
+                  ].join(' ')}
+                  title={!expanded ? label : undefined}
+                >
+                  {icon}
+                  <span
+                    className={`text-[15px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-200 ${labelCls}`}
+                    style={sidebarFont}
+                  >
+                    {label}
+                  </span>
+                </a>
+              ) : null
+            )}
+          </div>
         </div>
 
         {/* ─── Copyright ─── */}
-        <div className="px-3 pb-3 pt-2 overflow-hidden">
+        <div className="px-3 pb-3 pt-2 overflow-hidden shrink-0">
           <p
             className="text-[10px] text-gray-400 text-center whitespace-nowrap overflow-hidden transition-all duration-200"
             style={{
