@@ -9,11 +9,13 @@ import { CustomSelect } from '@/components/ui/CustomSelect'
 interface AccessibilityPanelProps {
   defaultOpen?: boolean
   hideToggle?: boolean
+  onClose?: () => void
 }
 
 export function AccessibilityPanel({
   defaultOpen = false,
   hideToggle = false,
+  onClose,
 }: AccessibilityPanelProps) {
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(defaultOpen)
@@ -79,7 +81,7 @@ export function AccessibilityPanel({
           className={`${defaultOpen ? '' : 'absolute bottom-16 right-0'} w-full sm:w-72 bg-white rounded-2xl shadow-2xl border border-dental-secondary-200 overflow-y-auto max-h-[70vh] sm:max-h-96`}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-dental-secondary-200 bg-dental-primary-50">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-dental-secondary-200 bg-[#ddeef1]">
             <h3
               id="a11y-panel-title"
               className="text-base font-semibold text-dental-dark"
@@ -87,7 +89,10 @@ export function AccessibilityPanel({
               {t('accessibilityPanel.title')}
             </h3>
             <button
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                setIsOpen(false)
+                onClose?.()
+              }}
               className="w-7 h-7 rounded-full flex items-center justify-center text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-100 transition-colors"
               aria-label={t('accessibilityPanel.close')}
             >

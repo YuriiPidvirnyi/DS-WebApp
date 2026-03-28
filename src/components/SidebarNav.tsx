@@ -72,7 +72,12 @@ const NAV_ITEMS = [
 
 /* ── Types ── */
 
-type ChatMode = null | 'choose' | 'human' | 'ai'
+type ActivePanel =
+  | null
+  | 'chat-choose'
+  | 'chat-human'
+  | 'chat-ai'
+  | 'accessibility'
 
 /* ── Font style — system sans-serif for crisp, non-rounded look ── */
 const sidebarFont = {
@@ -85,9 +90,10 @@ export default function SidebarNav() {
   const { t } = useTranslation()
   const pathname = usePathname()
   const [expanded, setExpanded] = useState(false)
-  const [chatMode, setChatMode] = useState<ChatMode>(null)
-  const [accessibilityOpen, setAccessibilityOpen] = useState(false)
+  const [activePanel, setActivePanel] = useState<ActivePanel>(null)
   const collapseTimer = useRef<ReturnType<typeof setTimeout>>(null)
+
+  const closePanel = useCallback(() => setActivePanel(null), [])
 
   const expand = useCallback(() => {
     if (collapseTimer.current) clearTimeout(collapseTimer.current)
@@ -300,7 +306,7 @@ export default function SidebarNav() {
 
               <button
                 type="button"
-                onClick={() => setChatMode('choose')}
+                onClick={() => setActivePanel('chat-choose')}
                 className={itemCls()}
                 title={!expanded ? t('radialMenu.actions.chat') : undefined}
               >
@@ -315,7 +321,7 @@ export default function SidebarNav() {
 
               <button
                 type="button"
-                onClick={() => setAccessibilityOpen(true)}
+                onClick={() => setActivePanel('accessibility')}
                 className={itemCls()}
                 title={
                   !expanded
@@ -384,121 +390,118 @@ export default function SidebarNav() {
         </div>
       </aside>
 
-      {/* ─── Chat mode chooser ─── */}
-      {chatMode === 'choose' && (
-        <div className="fixed z-50 top-1/2 left-20 -translate-y-1/2">
-          <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 w-72">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-dental-dark font-semibold text-base">
-                {t('radialMenu.actions.chat')}
-              </h3>
-              <button
-                onClick={() => setChatMode(null)}
-                className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
-                aria-label={t('radialMenu.aria.close')}
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-            <p className="text-sm text-dental-text mb-4">
-              Оберіть спосіб зв&apos;язку:
-            </p>
-            <div className="flex flex-col gap-2">
-              <button
-                onClick={() => setChatMode('human')}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl bg-dental-primary-600 text-white hover:bg-dental-primary-700 active:scale-[0.98] transition-all text-sm font-medium"
-              >
-                <svg
-                  className="w-5 h-5 shrink-0"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
-                  />
-                </svg>
-                Написати адміністратору
-              </button>
-              <button
-                onClick={() => setChatMode('ai')}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl bg-dental-dark text-white hover:bg-dental-dark/90 active:scale-[0.98] transition-all text-sm font-medium"
-              >
-                <svg
-                  className="w-5 h-5 shrink-0"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456Z"
-                  />
-                </svg>
-                AI-асистент
-              </button>
-            </div>
+      {/* ─── Panel overlay (backdrop + single active panel) ─── */}
+      {activePanel && (
+        <>
+          {/* Backdrop — click to close */}
+          <div
+            className="fixed inset-0 z-40 bg-black/10 backdrop-blur-[2px] transition-opacity"
+            onClick={closePanel}
+            aria-hidden="true"
+          />
+
+          {/* Panel container — unified position */}
+          <div className="fixed z-50 top-1/2 left-20 -translate-y-1/2">
+            {/* ─── Chat chooser ─── */}
+            {activePanel === 'chat-choose' && (
+              <div className="bg-white rounded-2xl shadow-2xl border border-dental-secondary-200 w-72 overflow-hidden">
+                {/* Header — unified with accessibility panel */}
+                <div className="flex items-center justify-between px-5 py-4 border-b border-dental-secondary-200 bg-[#ddeef1]">
+                  <h3
+                    className="text-base font-semibold text-dental-dark"
+                    style={sidebarFont}
+                  >
+                    {t('radialMenu.actions.chat')}
+                  </h3>
+                  <button
+                    onClick={closePanel}
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-100 transition-colors"
+                    aria-label={t('radialMenu.aria.close')}
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <div className="p-5">
+                  <p
+                    className="text-sm text-dental-text mb-4"
+                    style={sidebarFont}
+                  >
+                    Оберіть спосіб зв&apos;язку:
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    <button
+                      onClick={() => setActivePanel('chat-human')}
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-dental-primary-600 text-white hover:bg-dental-primary-700 active:scale-[0.98] transition-all text-sm font-semibold"
+                      style={sidebarFont}
+                    >
+                      <svg
+                        className="w-5 h-5 shrink-0"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={1.5}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                        />
+                      </svg>
+                      Написати адміністратору
+                    </button>
+                    <button
+                      onClick={() => setActivePanel('chat-ai')}
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-dental-dark text-white hover:bg-dental-dark/90 active:scale-[0.98] transition-all text-sm font-semibold"
+                      style={sidebarFont}
+                    >
+                      <svg
+                        className="w-5 h-5 shrink-0"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={1.5}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456Z"
+                        />
+                      </svg>
+                      AI-асистент
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ─── LiveChat ─── */}
+            {activePanel === 'chat-human' && <LiveChat onClose={closePanel} />}
+
+            {/* ─── AI Assistant ─── */}
+            {activePanel === 'chat-ai' && <AIAssistant onClose={closePanel} />}
+
+            {/* ─── Accessibility ─── */}
+            {activePanel === 'accessibility' && (
+              <AccessibilityPanelDynamic
+                defaultOpen
+                hideToggle
+                onClose={closePanel}
+              />
+            )}
           </div>
-        </div>
-      )}
-
-      {/* ─── LiveChat panel ─── */}
-      {chatMode === 'human' && (
-        <div className="fixed z-50 bottom-6 left-20">
-          <LiveChat onClose={() => setChatMode(null)} />
-        </div>
-      )}
-
-      {/* ─── AI Assistant panel ─── */}
-      {chatMode === 'ai' && (
-        <div className="fixed z-50 bottom-6 left-20">
-          <AIAssistant onClose={() => setChatMode(null)} />
-        </div>
-      )}
-
-      {/* ─── Accessibility panel ─── */}
-      {accessibilityOpen && (
-        <div className="fixed z-50 bottom-6 left-20">
-          <div className="relative">
-            <AccessibilityPanelDynamic defaultOpen hideToggle />
-            <button
-              onClick={() => setAccessibilityOpen(false)}
-              className="absolute top-2 right-2 w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors z-10"
-              aria-label={t('radialMenu.aria.close')}
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
+        </>
       )}
     </>
   )
