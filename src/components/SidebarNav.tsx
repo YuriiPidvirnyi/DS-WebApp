@@ -214,30 +214,29 @@ export default function SidebarNav() {
         aria-label={t('accessibility.mainNavigation')}
       >
         {/* ─── Logo ─── */}
-        <div className="flex items-center justify-center h-12 border-b border-gray-100 overflow-hidden">
+        <div className="relative flex items-center justify-center h-12 border-b border-gray-100">
           <Link
             href="/"
             aria-label={t('accessibility.homeLink')}
-            className="flex items-center justify-center overflow-hidden"
+            className="flex items-center justify-center"
           >
+            {/* Tooth icon — visible when collapsed */}
             <Image
               src="/favicon.svg"
               alt=""
               width={28}
               height={28}
-              className="w-7 h-7 shrink-0"
+              className="w-7 h-7 shrink-0 absolute"
               style={{
                 opacity: expanded ? 0 : 1,
-                width: expanded ? 0 : 28,
-                transition: 'opacity 200ms, width 200ms',
+                transition: 'opacity 200ms',
               }}
             />
+            {/* Full logo — visible when expanded */}
             <div
               style={{
                 opacity: expanded ? 1 : 0,
-                width: expanded ? 180 : 0,
-                transition: 'opacity 200ms, width 250ms',
-                overflow: 'hidden',
+                transition: 'opacity 250ms',
               }}
             >
               <Logo variant="default" size="sm" className="!h-9 shrink-0" />
