@@ -34,14 +34,6 @@ interface ImagesData {
 
 const typedImages = images as ImagesData
 
-const BeforeAfterGallery = dynamic(
-  () => import('@/components/BeforeAfterGallery'),
-  { ssr: true }
-)
-const VideoTestimonials = dynamic(
-  () => import('@/components/VideoTestimonials'),
-  { ssr: true }
-)
 const Testimonials = dynamic(() => import('@/components/Testimonials'), {
   loading: () => (
     <div className="py-20 bg-dental-secondary-50">
@@ -272,9 +264,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Before/After Gallery */}
-      <BeforeAfterGallery />
-
       {/* Pricing Section */}
       <section
         ref={pricingRef}
@@ -407,9 +396,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-
-      {/* Video Testimonials Section */}
-      <VideoTestimonials />
 
       {/* Text Testimonials Section */}
       <Testimonials />

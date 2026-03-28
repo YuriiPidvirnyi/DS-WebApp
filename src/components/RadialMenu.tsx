@@ -1,204 +1,241 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import {
   Phone,
-  Send,
-  Calendar,
-  Bot,
-  MessageSquare,
-  X,
-  Plus,
+  MessageCircle,
   Accessibility,
+  X,
+  MessageSquare,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import { CONTACT_INFO } from '@/utils/constants'
 
-interface RadialMenuProps {
+/* ── Brand-accurate messenger SVG icons ── */
+
+const WhatsAppIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+  </svg>
+)
+
+const ViberIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+    <path d="M12.006 0C5.391 0 .006 4.256.006 9.6c0 2.968 1.56 5.63 4.003 7.41v4.39a.6.6 0 00.957.483l3.247-2.442A14.3 14.3 0 0012.006 19.8c6.615 0 11.994-4.256 11.994-9.6V9.6C24 4.256 18.62 0 12.006 0zm.58 13.724c-.563.606-1.31.912-2.244.912h-.03a3.31 3.31 0 01-1.603-.414l-.12-.066a12.7 12.7 0 01-3.17-2.676 9.8 9.8 0 01-1.78-2.91c-.38-.93-.44-1.68-.174-2.228.174-.36.492-.624.87-.786a1.2 1.2 0 01.468-.102c.198 0 .372.054.522.156.264.18.516.546.756.888l.486.696c.228.33.168.726-.126 1.002l-.27.252c-.126.114-.126.312-.018.444.474.594 1.008 1.098 1.584 1.5.144.102.33.102.474.006l.294-.204c.306-.204.696-.174.966.078l.654.546c.372.312.588.648.648.996.06.36-.066.72-.336 1.014zm1.35-3.744a.48.48 0 01-.48-.408 2.27 2.27 0 00-.648-1.332 2.27 2.27 0 00-1.182-.618.48.48 0 01.174-.942 3.23 3.23 0 011.686.882 3.23 3.23 0 01.924 1.902.48.48 0 01-.402.546l-.072-.03zm1.494.048a.48.48 0 01-.474-.408 4.22 4.22 0 00-1.122-2.37 4.22 4.22 0 00-2.238-1.2.48.48 0 01.192-.942 5.18 5.18 0 012.748 1.476 5.18 5.18 0 011.374 2.91.48.48 0 01-.408.546l-.072-.012zm1.47.012a.48.48 0 01-.474-.414 6.17 6.17 0 00-1.626-3.408 6.17 6.17 0 00-3.282-1.74.48.48 0 01.174-.942 7.13 7.13 0 013.798 2.016 7.13 7.13 0 011.884 3.948.48.48 0 01-.402.552l-.072-.012z" />
+  </svg>
+)
+
+const TelegramIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+  </svg>
+)
+
+/* ── Menu item type ── */
+
+interface MenuItem {
+  id: string
+  icon: React.ReactNode
+  label: string
+  href?: string
+  onClick?: () => void
+  external?: boolean
+  color: string
+}
+
+/* ── Component ── */
+
+export interface RadialMenuProps {
   onOpenChat?: () => void
-  onOpenAI?: () => void
   onOpenAccessibility?: () => void
 }
 
 export default function RadialMenu({
   onOpenChat,
-  onOpenAI,
   onOpenAccessibility,
 }: RadialMenuProps) {
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
-  const [hoveredId, setHoveredId] = useState<string | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
-  const tel = `tel:${CONTACT_INFO.phoneRaw}`
-  const tg = CONTACT_INFO.social?.telegram || 'https://t.me/'
+  const phone = CONTACT_INFO.phoneRaw
+  const whatsapp = CONTACT_INFO.social?.whatsapp
+  const viber = `viber://chat?number=${encodeURIComponent(phone)}`
+  const telegram = CONTACT_INFO.social?.telegram
 
-  const items = [
-    {
-      id: 'phone',
-      icon: Phone,
-      label: t('radialMenu.actions.phone'),
-      href: tel,
-      bg: 'bg-emerald-500 hover:bg-emerald-600',
-    },
-    {
-      id: 'book',
-      icon: Calendar,
-      label: t('radialMenu.actions.book'),
-      href: '/booking',
-      bg: 'bg-teal-600 hover:bg-teal-700',
-    },
-    {
-      id: 'ai',
-      icon: Bot,
-      label: t('radialMenu.actions.ai'),
-      onClick: onOpenAI,
-      bg: 'bg-violet-500 hover:bg-violet-600',
-    },
-    {
-      id: 'chat',
-      icon: MessageSquare,
-      label: t('radialMenu.actions.chat'),
-      onClick: onOpenChat,
-      bg: 'bg-blue-500 hover:bg-blue-600',
-    },
-    {
-      id: 'tg',
-      icon: Send,
-      label: t('radialMenu.actions.telegram'),
-      href: tg,
-      external: true,
-      bg: 'bg-sky-500 hover:bg-sky-600',
-    },
-    {
-      id: 'accessibility',
-      icon: Accessibility,
-      label: t('radialMenu.actions.accessibility'),
-      onClick: onOpenAccessibility,
-      bg: 'bg-orange-500 hover:bg-orange-600',
-    },
-  ]
+  const items: MenuItem[] = useMemo(
+    () => [
+      {
+        id: 'phone',
+        icon: <Phone className="w-5 h-5" />,
+        label: t('radialMenu.actions.phone'),
+        href: `tel:${phone}`,
+        color: 'bg-dental-primary-600 text-white',
+      },
+      {
+        id: 'whatsapp',
+        icon: <WhatsAppIcon />,
+        label: 'WhatsApp',
+        href: whatsapp,
+        external: true,
+        color: 'bg-[#25D366] text-white',
+      },
+      {
+        id: 'viber',
+        icon: <ViberIcon />,
+        label: 'Viber',
+        href: viber,
+        external: true,
+        color: 'bg-[#7360F2] text-white',
+      },
+      {
+        id: 'telegram',
+        icon: <TelegramIcon />,
+        label: 'Telegram',
+        href: telegram,
+        external: true,
+        color: 'bg-[#26A5E4] text-white',
+      },
+      {
+        id: 'chat',
+        icon: <MessageCircle className="w-5 h-5" />,
+        label: t('radialMenu.actions.chat'),
+        onClick: () => {
+          onOpenChat?.()
+          setIsOpen(false)
+        },
+        color: 'bg-dental-dark text-white',
+      },
+      {
+        id: 'accessibility',
+        icon: <Accessibility className="w-5 h-5" />,
+        label: t('accessibilityPanel.title'),
+        onClick: () => {
+          onOpenAccessibility?.()
+          setIsOpen(false)
+        },
+        color: 'bg-gray-700 text-white',
+      },
+    ],
+    [t, phone, whatsapp, viber, telegram, onOpenChat, onOpenAccessibility]
+  )
 
+  // Close on outside click or Escape
   useEffect(() => {
     if (!isOpen) return
 
-    const handleClickOutside = (e: MouseEvent) => {
+    const handleClick = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setIsOpen(false)
       }
     }
-
-    const handleEscape = (e: KeyboardEvent) => {
+    const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setIsOpen(false)
     }
 
-    document.addEventListener('mousedown', handleClickOutside)
-    document.addEventListener('keydown', handleEscape)
+    document.addEventListener('mousedown', handleClick)
+    document.addEventListener('keydown', handleKey)
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      document.removeEventListener('keydown', handleEscape)
+      document.removeEventListener('mousedown', handleClick)
+      document.removeEventListener('keydown', handleKey)
     }
   }, [isOpen])
-
-  const handleItemClick = (item: (typeof items)[0]) => {
-    if (item.onClick) {
-      item.onClick()
-    }
-    setIsOpen(false)
-  }
-
-  const hoveredItem = items.find(i => i.id === hoveredId)
 
   return (
     <div
       ref={menuRef}
-      className="fixed z-50 bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))] right-[calc(1.5rem+env(safe-area-inset-right,0px))]"
+      className="fixed z-50 bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] right-[calc(1.25rem+env(safe-area-inset-right,0px))]"
     >
       {/* Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm -z-10"
+          className="fixed inset-0 bg-black/10 -z-10"
           onClick={() => setIsOpen(false)}
         />
       )}
 
-      {/* Vertical menu stack */}
-      <div className="absolute bottom-20 right-0 flex flex-col gap-3">
-        {items.map((item, index) => {
-          const Icon = item.icon
-
-          const buttonClass = `w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg 
-            transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2
-            ${item.bg} ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`
-
+      {/* Expanded menu items */}
+      <div className="absolute bottom-16 right-0 flex flex-col gap-2 items-end">
+        {items.map((item, idx) => {
           const style = {
             transitionDelay: isOpen
-              ? `${index * 50}ms`
-              : `${(items.length - 1 - index) * 50}ms`,
+              ? `${idx * 40}ms`
+              : `${(items.length - 1 - idx) * 25}ms`,
           }
 
-          const commonProps = {
-            className: buttonClass,
-            style,
-            onMouseEnter: () => setHoveredId(item.id),
-            onMouseLeave: () => setHoveredId(null),
-            'aria-label': item.label,
-          }
+          const cls = [
+            'flex items-center gap-3 pl-3.5 pr-4 h-11 rounded-full shadow-lg',
+            'transition-all duration-200 ease-out',
+            'hover:shadow-xl active:scale-[0.96]',
+            item.color,
+            isOpen
+              ? 'opacity-100 translate-y-0'
+              : 'opacity-0 translate-y-3 pointer-events-none',
+          ].join(' ')
 
-          if (item.href) {
-            if (
-              item.external ||
-              item.href.startsWith('tel:') ||
-              item.href.startsWith('viber:')
-            ) {
-              return (
-                <a
-                  key={item.id}
-                  href={item.href}
-                  target={item.external ? '_blank' : undefined}
-                  rel={item.external ? 'noopener noreferrer' : undefined}
-                  onClick={() => setIsOpen(false)}
-                  {...commonProps}
-                >
-                  <Icon className="w-5 h-5" />
-                </a>
-              )
-            }
+          const content = (
+            <>
+              <span className="shrink-0">{item.icon}</span>
+              <span className="text-sm font-medium whitespace-nowrap">
+                {item.label}
+              </span>
+            </>
+          )
+
+          if (item.onClick) {
             return (
-              <Link
+              <button
+                key={item.id}
+                type="button"
+                onClick={item.onClick}
+                className={cls}
+                style={style}
+                aria-label={item.label}
+              >
+                {content}
+              </button>
+            )
+          }
+
+          const isExternal =
+            item.external ||
+            item.href?.startsWith('tel:') ||
+            item.href?.startsWith('viber:')
+
+          if (isExternal) {
+            return (
+              <a
                 key={item.id}
                 href={item.href}
+                target={item.external ? '_blank' : undefined}
+                rel={item.external ? 'noopener noreferrer' : undefined}
                 onClick={() => setIsOpen(false)}
-                {...commonProps}
+                className={cls}
+                style={style}
+                aria-label={item.label}
               >
-                <Icon className="w-5 h-5" />
-              </Link>
+                {content}
+              </a>
             )
           }
 
           return (
-            <button
+            <Link
               key={item.id}
-              type="button"
-              onClick={() => handleItemClick(item)}
-              {...commonProps}
+              href={item.href!}
+              onClick={() => setIsOpen(false)}
+              className={cls}
+              style={style}
+              aria-label={item.label}
             >
-              <Icon className="w-5 h-5" />
-            </button>
+              {content}
+            </Link>
           )
         })}
       </div>
 
-      {/* Tooltip when hovering over items */}
-      {isOpen && hoveredItem && (
-        <div className="absolute bottom-24 right-16 bg-gray-900 text-white text-sm px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap">
-          {hoveredItem.label}
-          <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900" />
-        </div>
-      )}
-
-      {/* Main toggle button */}
+      {/* Toggle button */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -206,17 +243,19 @@ export default function RadialMenu({
         aria-label={
           isOpen ? t('radialMenu.aria.close') : t('radialMenu.aria.open')
         }
-        className={`relative w-14 h-14 rounded-full shadow-xl flex items-center justify-center text-white 
-          transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500
-          ${isOpen ? 'bg-gray-700 rotate-45' : 'bg-teal-600 hover:bg-teal-700'}`}
+        className={[
+          'w-14 h-14 rounded-full shadow-lg flex items-center justify-center',
+          'transition-all duration-200',
+          'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-400',
+          isOpen
+            ? 'bg-dental-dark text-white rotate-0'
+            : 'bg-dental-primary-600 text-white hover:bg-dental-primary-700',
+        ].join(' ')}
       >
-        {!isOpen && (
-          <span className="absolute inset-0 rounded-full bg-teal-400 animate-ping opacity-25" />
-        )}
         {isOpen ? (
-          <X className="w-6 h-6 -rotate-45" />
+          <X className="w-6 h-6" />
         ) : (
-          <Plus className="w-7 h-7" />
+          <MessageSquare className="w-6 h-6" />
         )}
       </button>
     </div>

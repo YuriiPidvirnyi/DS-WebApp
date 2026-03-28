@@ -377,7 +377,7 @@ const pl = {
   },
   home: {
     hero: {
-      title: 'Twój uśmiech - nasza misja',
+      title: 'Twój uśmiech — nasza misja',
       description:
         'Profesjonalna opieka dentystyczna z wykorzystaniem najnowszych technologii i indywidualnego podejścia do każdego pacjenta.',
       whyChooseUs: 'Dlaczego warto nas wybrać?',
@@ -404,7 +404,7 @@ const pl = {
         orthopedicDescription: 'Protetyka, korony, mosty, licówki',
         orthodonticsDescription: 'Korekta zgryzu, aparaty, alignery',
       },
-      imageAlt: '{{title}} - usługa stomatologiczna',
+      imageAlt: '{{title}} — usługa stomatologiczna',
     },
     pricing: {
       title: 'Przejrzyste ceny',
@@ -432,12 +432,12 @@ const pl = {
     },
     story: {
       title: 'Nasza historia',
-      tagline: 'Twój uśmiech - nasza misja',
+      tagline: 'Twój uśmiech — nasza misja',
       paragraph1:
         'Klinika Dental Story została założona w 2014 roku w celu świadczenia wysokiej jakości opieki stomatologicznej z wykorzystaniem najnowocześniejszych technologii. Nasz zespół skupia doświadczonych lekarzy, którzy stale podnoszą swoje kwalifikacje i śledzą najnowsze trendy w stomatologii.',
       paragraph2:
         'Jesteśmy dumni, że przez lata pracy pomogliśmy tysiącom pacjentów przywrócić zdrowie zębów i piękny uśmiech. Nasza filozofia opiera się na zasadach zaufania, profesjonalizmu i indywidualnego podejścia do każdego pacjenta.',
-      mission: 'Twój uśmiech - nasza misja',
+      mission: 'Twój uśmiech — nasza misja',
     },
     values: {
       title: 'Nasze wartości',
@@ -513,63 +513,13 @@ const pl = {
   testimonials: {
     title: 'Opinie naszych pacjentów',
     subtitle:
-      'Szczęście naszych pacjentów to nasza największa nagroda. Przeczytaj prawdziwe opinie osób, które powierzyły nam swoje zdrowie',
+      'Prawdziwe opinie osób, które powierzyły nam swoje zdrowie i uśmiech',
     rating: 'Ocena: {{rating}} z 5 gwiazdek',
     basedOn: 'na podstawie {{count}} opinii',
     cta: {
-      question: 'Chcesz dołączyć do naszej szczęśliwej rodziny pacjentów?',
+      question: 'Podziel się swoim doświadczeniem w Dental Story',
       button: 'Umów wizytę',
     },
-    items: [
-      {
-        id: '1',
-        name: 'Olena Szewczenko',
-        rating: 5,
-        text: 'Świetna klinika! Lekarze to prawdziwi profesjonaliści. Miałam implantację - wszystko przebiegło bezboleśnie i szybko. Jestem bardzo wdzięczna całemu zespołowi za opiekę i wysoką jakość.',
-        service: 'Implantacja zębów',
-        date: '2024-09-15',
-      },
-      {
-        id: '2',
-        name: 'Andrij Kowalenko',
-        rating: 5,
-        text: 'Najlepsza stomatologia w Kijowie! Zakładaliśmy córce aparat - efekt przerósł wszelkie oczekiwania. Ortodontka jest bardzo uważna i wszystko tłumaczy zrozumiale.',
-        service: 'Ortodoncja',
-        date: '2024-08-28',
-      },
-      {
-        id: '3',
-        name: 'Marija Bondarenko',
-        rating: 5,
-        text: 'Dziękuję za profesjonalne wybielanie! Uśmiech jak u gwiazd Hollywood. Zabieg komfortowy, bez nieprzyjemnych odczuć. Polecam wszystkim!',
-        service: 'Wybielanie zębów',
-        date: '2024-09-02',
-      },
-      {
-        id: '4',
-        name: 'Wiktor Melnyk',
-        rating: 5,
-        text: 'Po raz pierwszy nie bałem się iść do dentysty. Nowoczesny sprzęt, miły personel, dobra anestezja. Leczenie przebiegło szybko i całkowicie bezboleśnie.',
-        service: 'Leczenie zębów',
-        date: '2024-08-10',
-      },
-      {
-        id: '5',
-        name: 'Julia Petrowa',
-        rating: 5,
-        text: 'Miałam profesjonalne czyszczenie zębów. Jestem bardzo zadowolona z efektu! Higienistka pracuje dokładnie i delikatnie. Uczucie świeżości i czystości po zabiegu jest niesamowite.',
-        service: 'Profesjonalna higiena',
-        date: '2024-09-20',
-      },
-      {
-        id: '6',
-        name: 'Ihor Sydorenko',
-        rating: 5,
-        text: 'Zakładałem korony - jakość na najwyższym poziomie. Kolor dobrany idealnie, wyglądają naturalnie. Dziękuję lekarzowi za profesjonalizm i cierpliwość!',
-        service: 'Protetyka',
-        date: '2024-07-25',
-      },
-    ],
   },
   reviews: {
     title: 'Opinie pacjentów',
@@ -1146,9 +1096,9 @@ const pl = {
   },
   meta: {
     title:
-      'Dental Story - Nowoczesna klinika dentystyczna we Lwowie | Sumska, 10',
+      'Dental Story — Nowoczesna klinika dentystyczna we Lwowie | Sumska, 10',
     description:
-      'Profesjonalna klinika dentystyczna na ul. Sumska, 10. Pełen zakres usług: leczenie, implanty, ortodoncja. Bezbolesne leczenie, nowoczesny sprzęt. Rezerwacja: 068 232 38 38',
+      'Nowoczesna stomatologia we Lwowie. Leczenie zębów, implanty, ortodoncja, wybielanie. Przejrzyste ceny, bezbolesne leczenie, gwarancja jakości.',
     keywords:
       'dentysta Lwów, dentysta Sumska, klinika dentystyczna Lwów, leczenie zębów, implanty stomatologiczne, aparaty ortodontyczne, wybielanie zębów, Dental Story',
   },
@@ -1497,14 +1447,11 @@ const pl = {
         today: 'Dziś',
         upcoming: 'Nadchodzące',
         past: 'Minione',
-        statusSelectAria: 'Filtruj według statusu wizyty',
-        dateSelectAria: 'Filtruj według daty wizyty',
       },
       bulk: {
         selected: 'Wybrano: {{count}}',
         moveTo: 'Przenieś do {{status}}',
         apply: 'Zastosuj zbiorczo',
-        targetStatusSelectAria: 'Status docelowy dla zmiany zbiorczej',
       },
       table: {
         selectAllAria: 'Wybierz wszystkie wiersze',
@@ -1542,7 +1489,6 @@ const pl = {
         '30': '30 dni',
         '90': '90 dni',
       },
-      periodSelectAria: 'Okres raportu',
       refresh: 'Odśwież',
       loading: 'Ładowanie analityki...',
       cards: {
@@ -1746,7 +1692,6 @@ const pl = {
       empty: 'Brak zgłoszeń dla bieżących filtrów.',
       card: {
         selectAria: 'Wybierz zgłoszenie {{name}}',
-        statusSelectAria: 'Zmień status zgłoszenia: {{name}}',
         unreadBadge: 'unread',
         markRead: 'Oznacz jako przeczytane',
         markUnread: 'Oznacz jako nieprzeczytane',

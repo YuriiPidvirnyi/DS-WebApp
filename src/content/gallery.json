@@ -1,43 +1,57 @@
 [
   {
     "id": "clinic-1",
-    "url": "/assets/images/gallery/clinic-reception.jpg",
-    "title": "Ресепшн клініки",
+    "url": "/assets/images/clinic/treatment-room.jpg",
+    "title": "Лікувальний кабінет",
     "category": "clinic",
-    "description": "Сучасний ресепшн Dental Story"
+    "description": "Сучасний кабінет із стоматологічним кріслом"
   },
   {
     "id": "clinic-2",
-    "url": "/assets/images/gallery/treatment-room.jpg",
+    "url": "/assets/images/clinic/treatment-room-2.png",
     "title": "Лікувальний кабінет",
     "category": "clinic",
     "description": "Кабінет із сучасним обладнанням"
   },
   {
     "id": "clinic-3",
-    "url": "/assets/images/gallery/clinic-reception.jpg",
+    "url": "/assets/images/clinic/waiting-room.jpg",
     "title": "Зона очікування",
     "category": "clinic",
-    "description": "Комфортна зона очікування"
+    "description": "Комфортна зона очікування з логотипом Dental Story"
+  },
+  {
+    "id": "clinic-4",
+    "url": "/assets/images/clinic/sterilization.jpg",
+    "title": "Стерилізаційна",
+    "category": "clinic",
+    "description": "Стерилізаційне обладнання"
+  },
+  {
+    "id": "clinic-5",
+    "url": "/assets/images/clinic/photo-protocol.jpg",
+    "title": "Фото-протокол",
+    "category": "clinic",
+    "description": "Камера для дентального фото-протоколу"
   },
 
   {
     "id": "equipment-1",
-    "url": "/assets/images/gallery/dental-equipment.jpg",
+    "url": "/assets/images/clinic/treatment-room.jpg",
     "title": "Стоматологічне крісло",
     "category": "equipment",
     "description": "Ергономічне крісло нового покоління"
   },
   {
     "id": "equipment-2",
-    "url": "/assets/images/gallery/dental-equipment.jpg",
-    "title": "3D томограф",
+    "url": "/assets/images/services/microscope-treatment.jpg",
+    "title": "Мікроскоп",
     "category": "equipment",
-    "description": "Точна діагностика в 3D"
+    "description": "Лікування під мікроскопом"
   },
   {
     "id": "equipment-3",
-    "url": "/assets/images/gallery/treatment-room.jpg",
+    "url": "/assets/images/clinic/sterilization.jpg",
     "title": "Стерилізаційна",
     "category": "equipment",
     "description": "Стерильність і безпека"
@@ -45,24 +59,31 @@
 
   {
     "id": "team-1",
-    "url": "/assets/images/gallery/dental-team.jpg",
-    "title": "Наша команда",
+    "url": "/assets/images/brand/happy-patient.jpg",
+    "title": "Щасливий пацієнт",
     "category": "team",
-    "description": "Команда професіоналів"
+    "description": "Пацієнт з лікарем після лікування"
   },
   {
     "id": "team-2",
-    "url": "/assets/images/gallery/dental-team.jpg",
+    "url": "/assets/images/services/treatment.jpg",
     "title": "Робочий процес",
     "category": "team",
     "description": "Лікарі за роботою"
   },
 
   {
-    "id": "beforeafter-1",
-    "url": "/assets/images/services/teeth-whitening.jpg",
-    "title": "Результат відбілювання",
-    "category": "before-after",
-    "description": "До та після процедури"
+    "id": "brand-1",
+    "url": "/assets/images/brand/logo-wall.jpg",
+    "title": "Dental Story",
+    "category": "clinic",
+    "description": "Логотип Dental Story на стіні клініки"
+  },
+  {
+    "id": "brand-2",
+    "url": "/assets/images/brand/pet-friendly.jpg",
+    "title": "Pet-friendly клініка",
+    "category": "clinic",
+    "description": "Наша клініка дружня до домашніх улюбленців"
   }
 ]

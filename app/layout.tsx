@@ -8,6 +8,7 @@ import '../src/styles/globals.css'
 import ClientProviders from './providers'
 import Header from '@/components/SiteHeader'
 import Footer from '@/components/Footer'
+import SidebarNav from '@/components/SidebarNav'
 import ClientFloatingButtons from '@/components/ClientFloatingButtons'
 import CookieConsent from '@/components/CookieConsent'
 import { StructuredData } from '@/components/StructuredData'
@@ -76,6 +77,28 @@ export const metadata: Metadata = {
     description: uk.meta.twitterDescription,
     images: ['/assets/images/og/og-image.svg'],
   },
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      {
+        url: '/assets/images/favicon/favicon-32x32.png',
+        sizes: '32x32',
+        type: 'image/png',
+      },
+      {
+        url: '/assets/images/favicon/favicon-16x16.png',
+        sizes: '16x16',
+        type: 'image/png',
+      },
+    ],
+    apple: [
+      {
+        url: '/assets/images/favicon/favicon-32x32.png',
+        sizes: '32x32',
+        type: 'image/png',
+      },
+    ],
+  },
 }
 
 const GA4_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
@@ -118,7 +141,7 @@ export default async function RootLayout({
           </>
         )}
 
-        <div className="min-h-screen min-w-0 flex flex-col overflow-x-clip">
+        <div className="h-screen flex flex-col overflow-hidden">
           {/* Skip navigation link for accessibility */}
           <a
             href="#main-content"
@@ -128,11 +151,21 @@ export default async function RootLayout({
           </a>
           <ClientProviders>
             <Header />
-            <main id="main-content" className="flex-1" role="main">
-              {children}
-            </main>
-            <Footer />
-            <ClientFloatingButtons />
+            <div className="flex flex-1 min-h-0 relative">
+              <SidebarNav />
+              <main
+                id="main-content"
+                className="flex-1 overflow-y-auto scroll-smooth"
+                role="main"
+              >
+                {children}
+                <Footer />
+              </main>
+            </div>
+            {/* Floating chat/messenger buttons — mobile only (desktop uses SidebarNav) */}
+            <div className="lg:hidden">
+              <ClientFloatingButtons />
+            </div>
             <CookieConsent />
           </ClientProviders>
         </div>

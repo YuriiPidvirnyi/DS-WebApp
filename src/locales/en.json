@@ -360,7 +360,7 @@
   },
   "home": {
     "hero": {
-      "title": "Your Smile - Our Mission",
+      "title": "Your Smile — Our Mission",
       "description": "Professional dental care using the latest technologies and an individual approach to each patient.",
       "whyChooseUs": "Why Choose Us?",
       "benefits": [
@@ -383,7 +383,7 @@
         "orthopedicDescription": "Prosthetics, crowns, bridges, veneers",
         "orthodonticsDescription": "Bite correction, braces, aligners"
       },
-      "imageAlt": "{{title}} - dental service"
+      "imageAlt": "{{title}} — dental service"
     },
     "pricing": {
       "title": "Transparent Pricing"
@@ -409,10 +409,10 @@
     },
     "story": {
       "title": "Our Story",
-      "tagline": "Your Smile - Our Mission",
+      "tagline": "Your Smile — Our Mission",
       "paragraph1": "Dental Story clinic was founded in 2014 with the goal of providing quality dental care using the most advanced technologies. Our team brings together experienced doctors who continuously improve their skills and stay up to date with the latest trends in dentistry.",
       "paragraph2": "We are proud that over the years we have helped thousands of patients restore their dental health and beautiful smiles. Our philosophy is based on the principles of trust, professionalism, and an individual approach to each patient.",
-      "mission": "Your Smile - Our Mission"
+      "mission": "Your Smile — Our Mission"
     },
     "values": {
       "title": "Our Values",
@@ -472,63 +472,13 @@
   },
   "testimonials": {
     "title": "Patient Reviews",
-    "subtitle": "The happiness of our patients is our greatest reward. Read real reviews from people who trusted us with their health",
+    "subtitle": "Real reviews from people who trusted us with their health and smiles",
     "rating": "Rating: {{rating}} out of 5 stars",
     "basedOn": "based on {{count}} reviews",
     "cta": {
-      "question": "Want to become part of our happy patient family?",
+      "question": "Share your experience at Dental Story",
       "button": "Book Appointment"
-    },
-    "items": [
-      {
-        "id": "1",
-        "name": "Olena Shevchenko",
-        "rating": 5,
-        "text": "Excellent clinic! The doctors are true professionals. I had implantation done - everything was painless and quick. I am very grateful to the whole team for their care and quality work.",
-        "service": "Dental implantation",
-        "date": "2024-09-15"
-      },
-      {
-        "id": "2",
-        "name": "Andrii Kovalenko",
-        "rating": 5,
-        "text": "The best dentistry in Kyiv! We got braces for my daughter - the result exceeded all expectations. The orthodontist is very attentive and explains everything clearly.",
-        "service": "Orthodontics",
-        "date": "2024-08-28"
-      },
-      {
-        "id": "3",
-        "name": "Mariia Bondarenko",
-        "rating": 5,
-        "text": "Thank you for the professional whitening! My smile looks like Hollywood stars. The procedure was comfortable without unpleasant sensations. I recommend it to everyone!",
-        "service": "Teeth whitening",
-        "date": "2024-09-02"
-      },
-      {
-        "id": "4",
-        "name": "Viktor Melnyk",
-        "rating": 5,
-        "text": "For the first time I was not afraid to visit the dentist. Modern equipment, friendly staff, quality anesthesia. Treatment was quick and absolutely painless.",
-        "service": "Dental treatment",
-        "date": "2024-08-10"
-      },
-      {
-        "id": "5",
-        "name": "Yuliia Petrova",
-        "rating": 5,
-        "text": "I had professional teeth cleaning. Very satisfied with the result! The hygienist works carefully and thoroughly. The feeling of freshness and cleanliness after the procedure is incredible.",
-        "service": "Professional hygiene",
-        "date": "2024-09-20"
-      },
-      {
-        "id": "6",
-        "name": "Ihor Sydorenko",
-        "rating": 5,
-        "text": "I got crowns - the quality is top level. The color was matched perfectly, they feel natural. Thanks to the doctor for professionalism and patience!",
-        "service": "Prosthetics",
-        "date": "2024-07-25"
-      }
-    ]
+    }
   },
   "reviews": {
     "title": "Patient Reviews",
@@ -878,7 +828,7 @@
     "contacts": "Contacts",
     "appointment": "Book an appointment",
     "appointmentDesc": "Choose a convenient time for your clinic visit",
-    "copyright": "© 2024 Dental Story. All rights reserved.",
+    "copyright": "© {{year}} Dental Story. All rights reserved.",
     "workingHours": {
       "weekdays": "Mon-Fri: 9:00-20:00",
       "saturday": "Sat: 10:00-18:00",
@@ -1074,8 +1024,8 @@
     "decline": "Decline"
   },
   "meta": {
-    "title": "Dental Story - Modern Dental Clinic in Lviv | Sumska St., 10",
-    "description": "Professional dental clinic at Sumska St., 10. Full range of services: treatment, implants, orthodontics. Painless treatment, modern equipment. Booking: 068 232 38 38",
+    "title": "Dental Story — Modern Dental Clinic in Lviv | Sumska St., 10",
+    "description": "Modern dentistry in Lviv. Dental treatment, implants, orthodontics, teeth whitening. Transparent pricing, painless treatment, quality guarantee.",
     "keywords": "dentist Lviv, dentist Sumska, dental clinic Lviv, dental treatment, dental implants, braces, teeth whitening, Dental Story"
   },
   "structuredData": {
