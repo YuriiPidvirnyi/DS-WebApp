@@ -199,7 +199,7 @@ export default function SidebarNav() {
       <div className="hidden lg:block w-16 shrink-0" aria-hidden="true" />
 
       <aside
-        className="hidden lg:flex flex-col absolute top-0 left-0 bottom-0 bg-white border-r border-gray-100 z-40"
+        className="hidden lg:flex flex-col absolute top-0 left-0 bottom-0 bg-white border-r border-gray-100 z-40 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-200"
         style={{
           width: expanded ? 240 : 64,
           transition: 'width 250ms cubic-bezier(0.4, 0, 0.2, 1)',
@@ -330,9 +330,6 @@ export default function SidebarNav() {
           </button>
         </div>
 
-        {/* Spacer */}
-        <div className="flex-1" />
-
         <div className="mx-3 my-2 border-t border-gray-100" />
 
         {/* ─── Social links (vertical) ─── */}
@@ -347,7 +344,7 @@ export default function SidebarNav() {
                 rel="noopener noreferrer"
                 className={[
                   'group flex items-center rounded-xl relative',
-                  'h-10 min-w-0',
+                  'h-9 min-w-0',
                   expanded ? 'px-3' : 'justify-center',
                   'text-gray-400 hover:text-dental-primary-600 hover:bg-gray-50 hover:translate-x-0.5',
                   'transition-all duration-150',
