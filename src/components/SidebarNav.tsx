@@ -222,7 +222,7 @@ export default function SidebarNav() {
         <Link
           href="/"
           aria-label={t('accessibility.homeLink')}
-          className="relative flex items-center justify-center h-12 border-b border-gray-100 shrink-0"
+          className="relative flex items-center justify-center h-16 border-b border-gray-100 shrink-0"
         >
           {/* Tooth icon — visible when collapsed */}
           <Image
@@ -230,7 +230,7 @@ export default function SidebarNav() {
             alt=""
             width={28}
             height={28}
-            className="w-7 h-7 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+            className="w-8 h-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
             style={{
               opacity: expanded ? 0 : 1,
               transition: 'opacity 200ms',
@@ -242,7 +242,7 @@ export default function SidebarNav() {
             alt="Dental Story"
             width={140}
             height={36}
-            className="h-8 w-auto absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+            className="h-9 w-auto absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
             style={{
               opacity: expanded ? 1 : 0,
               transition: 'opacity 250ms',
@@ -251,9 +251,9 @@ export default function SidebarNav() {
         </Link>
 
         {/* ─── Scrollable content area — vertically centered ─── */}
-        <div className="flex-1 flex flex-col justify-center py-2 min-h-0">
+        <div className="flex-1 flex flex-col justify-evenly py-2 min-h-0">
           {/* ─── Page navigation ─── */}
-          <nav className="flex flex-col gap-0.5 px-2 pb-1">
+          <nav className="flex flex-col gap-0.5 px-2">
             {sectionLabel(t('navigation.menu', 'Меню'))}
             {NAV_ITEMS.map(({ href, icon: Icon, labelKey }) => {
               const active = pathname === href
@@ -280,7 +280,7 @@ export default function SidebarNav() {
           </nav>
 
           {/* ─── Зв'язок — subtle background tint to distinguish ─── */}
-          <div className="mx-2 my-2 rounded-xl bg-gray-50/70 px-1 py-1.5">
+          <div className="mx-1 mt-1.5 mb-1 rounded-xl bg-gray-50/70 px-1 py-1">
             <div className="flex flex-col gap-0.5">
               {sectionLabel(t('navigation.contact_us', "Зв'язок"))}
               {messengerItems.map(item =>
@@ -340,10 +340,10 @@ export default function SidebarNav() {
             </div>
           </div>
 
-          <div className="mx-3 my-1 border-t border-gray-100" />
+          <div className="mx-3 my-0.5 border-t border-gray-100" />
 
           {/* ─── Social links (vertical) ─── */}
-          <div className="flex flex-col gap-0.5 px-2 py-1">
+          <div className="flex flex-col gap-0.5 px-2">
             {sectionLabel(t('navigation.socials', 'Соцмережі'))}
             {socialItems.map(({ href, label, icon }) =>
               href ? (
@@ -354,7 +354,7 @@ export default function SidebarNav() {
                   rel="noopener noreferrer"
                   className={[
                     'group flex items-center rounded-xl relative',
-                    'h-9 min-w-0',
+                    'h-10 min-w-0',
                     expanded ? 'px-3' : 'justify-center',
                     'text-gray-400 hover:text-dental-primary-600 hover:bg-gray-50 hover:translate-x-0.5',
                     'transition-all duration-150',
