@@ -78,10 +78,10 @@ export function AccessibilityPanel({
           role="dialog"
           aria-modal="true"
           aria-labelledby="a11y-panel-title"
-          className={`${defaultOpen ? '' : 'absolute bottom-16 right-0'} w-full sm:w-72 bg-white rounded-2xl shadow-2xl border border-dental-secondary-200 overflow-y-auto max-h-[70vh] sm:max-h-96`}
+          className={`${defaultOpen ? '' : 'absolute bottom-16 right-0'} w-full sm:w-80 bg-white rounded-2xl shadow-2xl border border-dental-secondary-200 overflow-visible`}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-dental-secondary-200 bg-[#ddeef1]">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-dental-secondary-200 bg-[#ddeef1] rounded-t-2xl">
             <h3
               id="a11y-panel-title"
               className="text-base font-semibold text-dental-dark"

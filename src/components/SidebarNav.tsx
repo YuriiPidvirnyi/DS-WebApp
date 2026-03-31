@@ -406,7 +406,7 @@ export default function SidebarNav() {
             {activePanel === 'chat-choose' && (
               <div className="bg-white rounded-2xl shadow-2xl border border-dental-secondary-200 w-72 overflow-hidden">
                 {/* Header — unified with accessibility panel */}
-                <div className="flex items-center justify-between px-5 py-4 border-b border-dental-secondary-200 bg-[#ddeef1]">
+                <div className="flex items-center justify-between px-5 py-4 border-b border-dental-secondary-200 bg-[#ddeef1] rounded-t-2xl">
                   <h3
                     className="text-base font-semibold text-dental-dark"
                     style={sidebarFont}
