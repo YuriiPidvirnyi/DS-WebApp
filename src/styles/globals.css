@@ -302,49 +302,33 @@
     scroll-behavior: auto !important;
   }
 
-  /* High contrast mode */
+  /* High contrast mode — enhanced readability without destroying layout */
   .high-contrast {
-    --text-main: #ffffff;
-    --text-secondary: #ffffff;
-    --bg-main: #000000;
-    --bg-secondary: #333333;
-    --accent-color: #ffff00;
+    filter: contrast(1.4);
   }
 
-  .high-contrast body {
-    background-color: var(--bg-main) !important;
-    color: var(--text-main) !important;
+  .high-contrast * {
+    border-color: currentColor !important;
+    outline-color: currentColor !important;
   }
 
-  .high-contrast a,
-  .high-contrast button:not([disabled]) {
-    color: var(--accent-color) !important;
-    background-color: var(--bg-main) !important;
-    border-color: var(--accent-color) !important;
-    outline-color: var(--accent-color) !important;
+  .high-contrast img,
+  .high-contrast video,
+  .high-contrast svg {
+    filter: contrast(1.2);
   }
 
-  .high-contrast input,
-  .high-contrast textarea,
-  .high-contrast select {
-    color: var(--text-main) !important;
-    background-color: var(--bg-secondary) !important;
-    border-color: var(--text-main) !important;
-  }
-
-  /* Font size utilities */
+  /* Font size utilities — use rem to avoid compounding */
   .font-size-normal {
     /* default size, no changes needed */
   }
 
   .font-size-larger {
-    font-size: 1.25em !important;
-    line-height: 1.5 !important;
+    font-size: 112.5% !important;
   }
 
   .font-size-largest {
-    font-size: 1.5em !important;
-    line-height: 1.7 !important;
+    font-size: 125% !important;
   }
 
   /* Color blindness simulation filters */

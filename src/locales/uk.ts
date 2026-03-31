@@ -933,6 +933,7 @@ const uk = {
         tritanopia: 'Тританопія (синій)',
       },
     },
+    resetAll: 'Скинути все',
   },
   faqAccordion: {
     title: 'Поширені питання',

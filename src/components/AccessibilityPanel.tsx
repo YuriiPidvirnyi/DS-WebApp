@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAccessibility } from '@/hooks/useAccessibility'
 import { Accessibility, Minus, Plus, RotateCcw, X } from 'lucide-react'
@@ -35,17 +35,44 @@ export function AccessibilityPanel({
     setColorBlindnessMode,
   } = useAccessibility()
 
+  const closePanel = useCallback(() => {
+    setIsOpen(false)
+    onClose?.()
+    buttonRef.current?.focus()
+  }, [onClose])
+
+  // Check if any setting is non-default
+  const hasCustomSettings =
+    fontSize !== 'normal' ||
+    highContrast ||
+    reducedMotion ||
+    colorBlindnessMode !== 'normal'
+
+  const resetAll = useCallback(() => {
+    resetFontSize()
+    if (highContrast) toggleHighContrast()
+    if (reducedMotion) toggleReducedMotion()
+    if (colorBlindnessMode !== 'normal') setColorBlindnessMode('normal')
+  }, [
+    resetFontSize,
+    highContrast,
+    toggleHighContrast,
+    reducedMotion,
+    toggleReducedMotion,
+    colorBlindnessMode,
+    setColorBlindnessMode,
+  ])
+
   // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
-        setIsOpen(false)
-        buttonRef.current?.focus()
+        closePanel()
       }
     }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen])
+  }, [isOpen, closePanel])
 
   // Focus trap inside panel
   useEffect(() => {
@@ -89,10 +116,7 @@ export function AccessibilityPanel({
               {t('accessibilityPanel.title')}
             </h3>
             <button
-              onClick={() => {
-                setIsOpen(false)
-                onClose?.()
-              }}
+              onClick={closePanel}
               className="w-7 h-7 rounded-full flex items-center justify-center text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-100 transition-colors"
               aria-label={t('accessibilityPanel.close')}
             >
@@ -209,7 +233,7 @@ export function AccessibilityPanel({
             {/* Divider */}
             <hr className="border-dental-secondary-200" />
 
-            {/* Color blindness */}
+            {/* Color blindness adaptation */}
             <div>
               <p className="text-sm font-medium text-dental-dark mb-2">
                 {t('accessibilityPanel.colorPerception.title')}
@@ -255,6 +279,24 @@ export function AccessibilityPanel({
                 aria-label={t('accessibilityPanel.colorPerception.ariaLabel')}
               />
             </div>
+
+            {/* Reset all */}
+            {hasCustomSettings && (
+              <>
+                <hr className="border-dental-secondary-200" />
+                <button
+                  onClick={resetAll}
+                  className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 transition-colors"
+                  aria-label={t(
+                    'accessibilityPanel.resetAll',
+                    'Скинути всі налаштування'
+                  )}
+                >
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  {t('accessibilityPanel.resetAll', 'Скинути все')}
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
