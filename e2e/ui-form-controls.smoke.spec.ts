@@ -47,6 +47,10 @@ test.describe('Public UI: selects & language', () => {
 
     const svc = page.locator('#review-service')
     await expect(svc).toBeVisible({ timeout: 25_000 })
+    // Wait for React Hook Form hydration to complete before interacting
+    await expect(svc).toHaveValue('Терапевтична стоматологія', {
+      timeout: 5_000,
+    })
     await svc.selectOption({ label: 'Пародонтологія' })
     await expect(svc).toHaveValue('Пародонтологія')
   })
