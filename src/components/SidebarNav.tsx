@@ -199,6 +199,11 @@ export default function SidebarNav() {
     },
   ]
 
+  // Hide site sidebar on cabinet and admin routes (they have their own)
+  if (pathname?.startsWith('/cabinet') || pathname?.startsWith('/admin')) {
+    return null
+  }
+
   return (
     <>
       {/* Spacer keeps 64px reserved in the flex flow */}

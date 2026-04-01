@@ -2,6 +2,7 @@
 
 import { memo } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { Phone, Mail, MapPin, Calendar, Clock } from 'lucide-react'
 import { CONTACT_INFO } from '@/utils/constants'
@@ -11,6 +12,12 @@ const MAPS_LINK = `https://maps.google.com/?q=${CONTACT_INFO.coordinates.lat},${
 
 const Footer = memo(() => {
   const { t } = useTranslation()
+  const pathname = usePathname()
+
+  // Hide footer on cabinet and admin routes (they have their own layouts)
+  if (pathname?.startsWith('/cabinet') || pathname?.startsWith('/admin')) {
+    return null
+  }
 
   return (
     <footer className="text-white" role="contentinfo">

@@ -120,6 +120,11 @@ const Header = memo(() => {
     fontFamily: 'var(--font-nunito), Nunito, system-ui, sans-serif',
   }
 
+  // Hide header on cabinet and admin routes (they have their own layouts)
+  if (pathname?.startsWith('/cabinet') || pathname?.startsWith('/admin')) {
+    return null
+  }
+
   return (
     <header
       className="bg-white shadow-sm z-50 min-w-0 overflow-x-clip shrink-0"

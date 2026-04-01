@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import dynamic from 'next/dynamic'
 
 const RadialMenu = dynamic(() => import('./RadialMenu'), { ssr: false })
@@ -20,12 +21,18 @@ export default function ClientFloatingButtons() {
   const [mounted, setMounted] = useState(false)
   const [chatMode, setChatMode] = useState<ChatMode>(null)
   const [accessibilityOpen, setAccessibilityOpen] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
   if (!mounted) return null
+
+  // Hide floating buttons on cabinet and admin routes
+  if (pathname?.startsWith('/cabinet') || pathname?.startsWith('/admin')) {
+    return null
+  }
 
   const showRadial = chatMode === null && !accessibilityOpen
 
