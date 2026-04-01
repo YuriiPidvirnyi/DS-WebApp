@@ -1,11 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
-import { ChevronLeft, Save, User } from 'lucide-react'
+import { Save, User } from 'lucide-react'
 
 interface PatientProfile {
   first_name: string | null
@@ -15,8 +13,33 @@ interface PatientProfile {
   date_of_birth: string | null
 }
 
+function ProfileSkeleton() {
+  return (
+    <div className="max-w-2xl animate-pulse">
+      <div className="h-7 w-48 bg-dental-secondary-200 rounded-lg mb-6" />
+      <div className="bg-white rounded-2xl p-8 shadow-sm border border-dental-secondary-100">
+        <div className="flex items-center gap-4 mb-8 pb-8 border-b border-dental-secondary-100">
+          <div className="w-20 h-20 bg-dental-secondary-100 rounded-full" />
+          <div className="space-y-2">
+            <div className="h-5 w-40 bg-dental-secondary-200 rounded" />
+            <div className="h-4 w-32 bg-dental-secondary-100 rounded" />
+          </div>
+        </div>
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 gap-6">
+            <div className="h-12 bg-dental-secondary-100 rounded-xl" />
+            <div className="h-12 bg-dental-secondary-100 rounded-xl" />
+          </div>
+          <div className="h-12 bg-dental-secondary-100 rounded-xl" />
+          <div className="h-12 bg-dental-secondary-100 rounded-xl" />
+          <div className="h-12 bg-dental-secondary-100 rounded-xl" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function ProfilePage() {
-  const router = useRouter()
   const { t } = useTranslation()
   const [profile, setProfile] = useState<PatientProfile>({
     first_name: '',
@@ -35,18 +58,12 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchProfile = async () => {
       const supabase = createClient()
-      if (!supabase) {
-        router.push('/auth/login')
-        return
-      }
+      if (!supabase) return
 
       const {
         data: { user },
       } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/auth/login')
-        return
-      }
+      if (!user) return
 
       const { data } = await supabase
         .from('patients')
@@ -67,7 +84,7 @@ export default function ProfilePage() {
     }
 
     fetchProfile()
-  }, [router])
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setProfile({ ...profile, [e.target.name]: e.target.value })
@@ -99,18 +116,12 @@ export default function ProfilePage() {
     setMessage(null)
 
     const supabase = createClient()
-    if (!supabase) {
-      router.push('/auth/login')
-      return
-    }
+    if (!supabase) return
+
     const {
       data: { user },
     } = await supabase.auth.getUser()
-
-    if (!user) {
-      router.push('/auth/login')
-      return
-    }
+    if (!user) return
 
     const { error } = await supabase.from('patients').upsert({
       id: user.id,
@@ -133,173 +144,154 @@ export default function ProfilePage() {
     setSaving(false)
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-teal-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    )
-  }
+  const inputClasses =
+    'w-full px-4 py-3 border border-dental-secondary-200 rounded-xl text-dental-dark focus:ring-2 focus:ring-dental-primary-500 focus:border-transparent transition-all placeholder:text-dental-muted/50'
+
+  if (loading) return <ProfileSkeleton />
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <header className="bg-white border-b border-slate-200">
-        <div className="max-w-2xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Link
-              href="/cabinet"
-              className="text-slate-500 hover:text-slate-700"
-              aria-label={t('common.back')}
+    <div className="max-w-2xl">
+      <h1 className="text-2xl font-bold text-dental-dark mb-6">
+        {t('cabinet.profile.title')}
+      </h1>
+
+      <div className="bg-white rounded-2xl shadow-sm border border-dental-secondary-100 p-6 sm:p-8">
+        {/* Avatar */}
+        <div className="flex items-center gap-4 mb-8 pb-8 border-b border-dental-secondary-100">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-dental-primary-50 rounded-full flex items-center justify-center">
+            <User className="w-8 h-8 sm:w-10 sm:h-10 text-dental-primary-600" />
+          </div>
+          <div>
+            <h2 className="font-semibold text-dental-dark">
+              {profile.first_name} {profile.last_name}
+            </h2>
+            <p className="text-sm text-dental-muted">
+              {t('cabinet.profile.patientLabel')}
+            </p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {message && (
+            <div
+              className={`px-4 py-3 rounded-xl text-sm ${
+                message.type === 'success'
+                  ? 'bg-green-50 border border-green-200 text-green-700'
+                  : 'bg-red-50 border border-red-200 text-red-700'
+              }`}
             >
-              <ChevronLeft className="w-6 h-6" />
-            </Link>
-            <h1 className="text-xl font-bold text-slate-900">
-              {t('cabinet.profile.title')}
-            </h1>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-2xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-2xl shadow-soft p-8">
-          {/* Avatar */}
-          <div className="flex items-center gap-4 mb-8 pb-8 border-b border-slate-100">
-            <div className="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center">
-              <User className="w-10 h-10 text-teal-600" />
+              {message.text}
             </div>
-            <div>
-              <h2 className="font-semibold text-slate-900">
-                {profile.first_name} {profile.last_name}
-              </h2>
-              <p className="text-sm text-slate-500">
-                {t('cabinet.profile.patientLabel')}
-              </p>
-            </div>
-          </div>
+          )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {message && (
-              <div
-                className={`px-4 py-3 rounded-xl text-sm ${
-                  message.type === 'success'
-                    ? 'bg-green-50 border border-green-200 text-green-700'
-                    : 'bg-red-50 border border-red-200 text-red-700'
-                }`}
-              >
-                {message.text}
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div>
-                <label
-                  htmlFor="last_name"
-                  className="block text-sm font-medium text-slate-700 mb-2"
-                >
-                  {t('cabinet.profile.lastName')}
-                </label>
-                <input
-                  id="last_name"
-                  name="last_name"
-                  type="text"
-                  value={profile.last_name || ''}
-                  onChange={handleChange}
-                  placeholder={t('cabinet.profile.lastNamePlaceholder')}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="first_name"
-                  className="block text-sm font-medium text-slate-700 mb-2"
-                >
-                  {t('cabinet.profile.firstName')}
-                </label>
-                <input
-                  id="first_name"
-                  name="first_name"
-                  type="text"
-                  value={profile.first_name || ''}
-                  onChange={handleChange}
-                  placeholder={t('cabinet.profile.firstNamePlaceholder')}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                />
-              </div>
-            </div>
-
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
               <label
-                htmlFor="patronymic"
-                className="block text-sm font-medium text-slate-700 mb-2"
+                htmlFor="last_name"
+                className="block text-sm font-medium text-dental-dark mb-1.5"
               >
-                {t('cabinet.profile.patronymic')}
+                {t('cabinet.profile.lastName')}
               </label>
               <input
-                id="patronymic"
-                name="patronymic"
+                id="last_name"
+                name="last_name"
                 type="text"
-                value={profile.patronymic || ''}
+                value={profile.last_name || ''}
                 onChange={handleChange}
-                placeholder={t('cabinet.profile.patronymicPlaceholder')}
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                placeholder={t('cabinet.profile.lastNamePlaceholder')}
+                className={inputClasses}
               />
             </div>
-
             <div>
               <label
-                htmlFor="phone"
-                className="block text-sm font-medium text-slate-700 mb-2"
+                htmlFor="first_name"
+                className="block text-sm font-medium text-dental-dark mb-1.5"
               >
-                {t('cabinet.profile.phone')}
+                {t('cabinet.profile.firstName')}
               </label>
               <input
-                id="phone"
-                name="phone"
-                type="tel"
-                value={profile.phone || ''}
-                onChange={handlePhoneChange}
-                placeholder={t('cabinet.profile.phonePlaceholder')}
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="date_of_birth"
-                className="block text-sm font-medium text-slate-700 mb-2"
-              >
-                {t('cabinet.profile.dateOfBirth')}
-              </label>
-              <input
-                id="date_of_birth"
-                name="date_of_birth"
-                type="date"
-                value={profile.date_of_birth || ''}
+                id="first_name"
+                name="first_name"
+                type="text"
+                value={profile.first_name || ''}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                placeholder={t('cabinet.profile.firstNamePlaceholder')}
+                className={inputClasses}
               />
             </div>
+          </div>
 
-            <div className="pt-4">
-              <button
-                type="submit"
-                disabled={saving}
-                className="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {saving ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <Save className="w-5 h-5" />
-                    {t('cabinet.profile.save')}
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
-      </main>
+          <div>
+            <label
+              htmlFor="patronymic"
+              className="block text-sm font-medium text-dental-dark mb-1.5"
+            >
+              {t('cabinet.profile.patronymic')}
+            </label>
+            <input
+              id="patronymic"
+              name="patronymic"
+              type="text"
+              value={profile.patronymic || ''}
+              onChange={handleChange}
+              placeholder={t('cabinet.profile.patronymicPlaceholder')}
+              className={inputClasses}
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="phone"
+              className="block text-sm font-medium text-dental-dark mb-1.5"
+            >
+              {t('cabinet.profile.phone')}
+            </label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              value={profile.phone || ''}
+              onChange={handlePhoneChange}
+              placeholder={t('cabinet.profile.phonePlaceholder')}
+              className={inputClasses}
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="date_of_birth"
+              className="block text-sm font-medium text-dental-dark mb-1.5"
+            >
+              {t('cabinet.profile.dateOfBirth')}
+            </label>
+            <input
+              id="date_of_birth"
+              name="date_of_birth"
+              type="date"
+              value={profile.date_of_birth || ''}
+              onChange={handleChange}
+              className={inputClasses}
+            />
+          </div>
+
+          <div className="pt-2">
+            <button
+              type="submit"
+              disabled={saving}
+              className="w-full bg-dental-primary-600 hover:bg-dental-primary-700 text-white py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {saving ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <>
+                  <Save className="w-5 h-5" />
+                  {t('cabinet.profile.save')}
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   )
 }

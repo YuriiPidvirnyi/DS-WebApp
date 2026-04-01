@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import uk from '@/locales/uk'
+import CabinetLayoutClient from './CabinetLayoutClient'
 
 export const metadata: Metadata = {
   title: uk.routeMeta.cabinet.title,
@@ -11,5 +12,5 @@ export default function CabinetLayout({
 }: {
   children: React.ReactNode
 }) {
-  return <>{children}</>
+  return <CabinetLayoutClient>{children}</CabinetLayoutClient>
 }
