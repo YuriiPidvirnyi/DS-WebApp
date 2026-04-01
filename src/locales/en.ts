@@ -2169,6 +2169,13 @@ const en = {
     logout: 'Log Out',
     welcome: 'Welcome, {{name}}!',
     subtitle: 'Your personal Dental Story patient account',
+    dashboard: {
+      nextAppointment: 'Next Visit',
+      viewDetails: 'Details',
+      upcoming: 'Upcoming',
+      completed: 'Completed',
+      total: 'Total',
+    },
     defaultPatient: 'Patient',
     bookAppointment: 'Book Appointment',
     chooseTime: 'Choose a convenient time',
@@ -2249,6 +2256,14 @@ const en = {
         waived: 'Waived',
         refunded: 'Refunded',
       },
+    },
+    error: {
+      title: 'Something went wrong',
+      description:
+        'An error occurred while loading the page. Please try refreshing or return to the main page.',
+      devDetails: 'Error details (development):',
+      retry: 'Try again',
+      goHome: 'Go to cabinet home',
     },
     payments: {
       title: 'Payments',

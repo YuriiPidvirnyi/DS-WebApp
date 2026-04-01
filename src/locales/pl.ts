@@ -2178,6 +2178,13 @@ const pl = {
     logout: 'Wyloguj się',
     welcome: 'Witaj, {{name}}!',
     subtitle: 'Twoje osobiste konto pacjenta Dental Story',
+    dashboard: {
+      nextAppointment: 'Następna wizyta',
+      viewDetails: 'Szczegóły',
+      upcoming: 'Zaplanowane',
+      completed: 'Zakończone',
+      total: 'Łącznie',
+    },
     defaultPatient: 'Pacjent',
     bookAppointment: 'Umów wizytę',
     chooseTime: 'Wybierz dogodny termin',
@@ -2258,6 +2265,14 @@ const pl = {
         waived: 'Umorzony',
         refunded: 'Zwrócony',
       },
+    },
+    error: {
+      title: 'Coś poszło nie tak',
+      description:
+        'Wystąpił błąd podczas ładowania strony. Spróbuj odświeżyć lub wróć na stronę główną.',
+      devDetails: 'Szczegóły błędu (programowanie):',
+      retry: 'Spróbuj ponownie',
+      goHome: 'Do strony głównej gabinetu',
     },
     payments: {
       title: 'Płatności',

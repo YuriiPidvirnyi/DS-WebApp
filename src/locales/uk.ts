@@ -1209,6 +1209,8 @@ const uk = {
     cabinet: {
       title: 'Особистий кабінет — Dental Story',
       appointmentsTitle: 'Мої записи — Dental Story',
+      treatmentsTitle: 'Історія лікування — Dental Story',
+      paymentsTitle: 'Платежі — Dental Story',
       profileTitle: 'Мій профіль — Dental Story',
     },
     auth: {
@@ -2302,6 +2304,13 @@ const uk = {
     logout: 'Вийти',
     welcome: 'Вітаємо, {{name}}!',
     subtitle: 'Ваш особистий кабінет пацієнта Dental Story',
+    dashboard: {
+      nextAppointment: 'Наступний візит',
+      viewDetails: 'Деталі',
+      upcoming: 'Заплановано',
+      completed: 'Завершено',
+      total: 'Всього',
+    },
     defaultPatient: 'Пацієнт',
     bookAppointment: 'Записатися на прийом',
     chooseTime: 'Оберіть зручний час',
@@ -2382,6 +2391,14 @@ const uk = {
         waived: 'Списано',
         refunded: 'Повернуто',
       },
+    },
+    error: {
+      title: 'Щось пішло не так',
+      description:
+        'Виникла помилка при завантаженні сторінки. Спробуйте оновити або поверніться на головну.',
+      devDetails: 'Деталі помилки (розробка):',
+      retry: 'Спробувати ще раз',
+      goHome: 'На головну кабінету',
     },
     payments: {
       title: 'Платежі',

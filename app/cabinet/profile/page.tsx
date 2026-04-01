@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
-import { Save, User } from 'lucide-react'
+import { Save, User, Mail } from 'lucide-react'
 
 interface PatientProfile {
   first_name: string | null
@@ -48,6 +48,7 @@ export default function ProfilePage() {
     phone: '',
     date_of_birth: '',
   })
+  const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{
@@ -70,6 +71,8 @@ export default function ProfilePage() {
         .select('*')
         .eq('id', user.id)
         .single()
+
+      setEmail(user.email || '')
 
       if (data) {
         setProfile({
@@ -161,13 +164,13 @@ export default function ProfilePage() {
           <div className="w-16 h-16 sm:w-20 sm:h-20 bg-dental-primary-50 rounded-full flex items-center justify-center">
             <User className="w-8 h-8 sm:w-10 sm:h-10 text-dental-primary-600" />
           </div>
-          <div>
+          <div className="min-w-0">
             <h2 className="font-semibold text-dental-dark">
               {profile.first_name} {profile.last_name}
             </h2>
-            <p className="text-sm text-dental-muted">
-              {t('cabinet.profile.patientLabel')}
-            </p>
+            {email && (
+              <p className="text-sm text-dental-muted truncate">{email}</p>
+            )}
           </div>
         </div>
 
@@ -238,6 +241,27 @@ export default function ProfilePage() {
               className={inputClasses}
             />
           </div>
+
+          {email && (
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-dental-dark mb-1.5"
+              >
+                Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-dental-muted" />
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  readOnly
+                  className="w-full pl-10 pr-4 py-3 border border-dental-secondary-200 rounded-xl text-dental-muted bg-dental-secondary-50 cursor-not-allowed"
+                />
+              </div>
+            </div>
+          )}
 
           <div>
             <label
