@@ -17,6 +17,7 @@ import {
   CreditCard,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import Logo from '@/components/ui/Logo'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 
 interface NavItem {
@@ -163,11 +164,8 @@ export default function CabinetLayoutClient({
         }`}
       >
         <div className="flex items-center justify-between h-16 px-6 border-b border-dental-secondary-100">
-          <Link href="/cabinet" className="flex items-center gap-2">
-            <span className="text-2xl">🦷</span>
-            <span className="font-bold text-dental-dark">
-              {t('cabinet.sidebar.title')}
-            </span>
+          <Link href="/cabinet">
+            <Logo size="sm" />
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -243,11 +241,8 @@ export default function CabinetLayoutClient({
         <div className="flex flex-col flex-1 bg-white border-r border-dental-secondary-100">
           {/* Logo */}
           <div className="flex items-center h-16 px-6 border-b border-dental-secondary-100">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="text-2xl">🦷</span>
-              <span className="font-bold text-dental-dark text-lg">
-                {t('common.brandName')}
-              </span>
+            <Link href="/">
+              <Logo size="sm" />
             </Link>
           </div>
 
