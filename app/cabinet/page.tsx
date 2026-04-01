@@ -14,6 +14,9 @@ import {
   Star,
   Phone,
   Mail,
+  CheckCircle2,
+  CalendarCheck,
+  Activity,
 } from 'lucide-react'
 
 interface Appointment {
@@ -37,39 +40,26 @@ interface PatientProfile {
 function DashboardSkeleton() {
   return (
     <div className="animate-pulse space-y-8">
-      {/* Welcome skeleton */}
       <div>
         <div className="h-8 w-64 bg-dental-secondary-200 rounded-lg mb-2" />
         <div className="h-5 w-96 bg-dental-secondary-100 rounded-lg" />
       </div>
-
+      {/* Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[1, 2, 3, 4].map(i => (
+          <div
+            key={i}
+            className="h-24 bg-white rounded-2xl border border-dental-secondary-100"
+          />
+        ))}
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left column */}
         <div className="space-y-6">
           <div className="h-24 bg-dental-primary-100 rounded-2xl" />
-          <div className="h-20 bg-white rounded-2xl" />
           <div className="h-40 bg-white rounded-2xl" />
-          <div className="h-48 bg-white rounded-2xl" />
         </div>
-        {/* Right column */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-2xl">
-            <div className="p-6 border-b border-dental-secondary-100">
-              <div className="h-5 w-40 bg-dental-secondary-200 rounded" />
-            </div>
-            <div className="divide-y divide-dental-secondary-100">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="p-4 flex gap-4">
-                  <div className="w-14 h-14 bg-dental-secondary-100 rounded-xl" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-4 w-48 bg-dental-secondary-200 rounded" />
-                    <div className="h-3 w-32 bg-dental-secondary-100 rounded" />
-                    <div className="h-3 w-20 bg-dental-secondary-100 rounded" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <div className="bg-white rounded-2xl h-80" />
         </div>
       </div>
     </div>
@@ -93,7 +83,6 @@ export default function CabinetPage() {
       } = await supabase.auth.getUser()
       if (!user) return
 
-      // Fetch profile and appointments in parallel
       const [profileResult, appointmentsResult] = await Promise.all([
         supabase
           .from('patients')
@@ -109,7 +98,7 @@ export default function CabinetPage() {
           )
           .eq('patient_id', user.id)
           .order('appointment_date', { ascending: false })
-          .limit(5),
+          .limit(10),
       ])
 
       const profileData = profileResult.data
@@ -147,6 +136,25 @@ export default function CabinetPage() {
 
   if (loading) return <DashboardSkeleton />
 
+  // Compute stats
+  const now = new Date()
+  const upcomingAppointments = appointments.filter(
+    apt =>
+      new Date(apt.appointment_date) >= now &&
+      apt.status !== 'cancelled' &&
+      apt.status !== 'completed'
+  )
+  const completedCount = appointments.filter(
+    apt => apt.status === 'completed'
+  ).length
+  const nextAppointment = upcomingAppointments.sort(
+    (a, b) =>
+      new Date(a.appointment_date).getTime() -
+      new Date(b.appointment_date).getTime()
+  )[0]
+
+  const recentAppointments = appointments.slice(0, 5)
+
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
@@ -157,29 +165,128 @@ export default function CabinetPage() {
         <p className="text-dental-muted">{t('cabinet.subtitle')}</p>
       </div>
 
+      {/* Next Appointment Highlight */}
+      {nextAppointment && (
+        <div className="bg-gradient-to-r from-dental-primary-600 to-dental-primary-700 rounded-2xl p-5 sm:p-6 text-white shadow-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-4">
+              <div className="w-14 h-14 bg-white/20 rounded-xl flex flex-col items-center justify-center shrink-0">
+                <span className="text-lg font-bold leading-none">
+                  {new Date(nextAppointment.appointment_date).getDate()}
+                </span>
+                <span className="text-[10px] text-white/80">
+                  {new Date(
+                    nextAppointment.appointment_date
+                  ).toLocaleDateString('uk-UA', { month: 'short' })}
+                </span>
+              </div>
+              <div>
+                <p className="text-white/70 text-xs font-medium uppercase tracking-wider mb-1">
+                  {t('cabinet.dashboard.nextAppointment', {
+                    defaultValue: 'Наступний візит',
+                  })}
+                </p>
+                <h3 className="font-semibold text-lg">
+                  {nextAppointment.services?.[0]?.name_uk ||
+                    t('cabinet.consultation')}
+                </h3>
+                <p className="text-white/80 text-sm mt-0.5">
+                  {nextAppointment.doctors?.[0]?.last_name}{' '}
+                  {nextAppointment.doctors?.[0]?.first_name}
+                  {nextAppointment.doctors?.[0]?.specialization &&
+                    ` — ${nextAppointment.doctors[0].specialization}`}
+                </p>
+                <div className="flex items-center gap-1.5 mt-1.5 text-white/70 text-sm">
+                  <Clock className="w-3.5 h-3.5" />
+                  {nextAppointment.appointment_time.slice(0, 5)}
+                </div>
+              </div>
+            </div>
+            <Link
+              href="/cabinet/appointments"
+              className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors shrink-0"
+            >
+              {t('cabinet.dashboard.viewDetails', {
+                defaultValue: 'Деталі',
+              })}
+              <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-dental-secondary-100">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-dental-primary-50 rounded-xl flex items-center justify-center shrink-0">
+              <CalendarCheck className="w-5 h-5 text-dental-primary-600" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-dental-dark">
+                {upcomingAppointments.length}
+              </p>
+              <p className="text-xs text-dental-muted">
+                {t('cabinet.dashboard.upcoming', {
+                  defaultValue: 'Заплановано',
+                })}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-dental-secondary-100">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center shrink-0">
+              <CheckCircle2 className="w-5 h-5 text-green-600" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-dental-dark">
+                {completedCount}
+              </p>
+              <p className="text-xs text-dental-muted">
+                {t('cabinet.dashboard.completed', {
+                  defaultValue: 'Завершено',
+                })}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-dental-secondary-100">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center shrink-0">
+              <Activity className="w-5 h-5 text-violet-600" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-dental-dark">
+                {appointments.length}
+              </p>
+              <p className="text-xs text-dental-muted">
+                {t('cabinet.dashboard.total', { defaultValue: 'Всього' })}
+              </p>
+            </div>
+          </div>
+        </div>
+        <Link
+          href="/booking"
+          className="bg-dental-primary-600 hover:bg-dental-primary-700 rounded-2xl p-4 shadow-sm transition-colors group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-white/30 transition-colors">
+              <Plus className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-white">
+                {t('cabinet.bookAppointment')}
+              </p>
+              <p className="text-xs text-white/70">{t('cabinet.chooseTime')}</p>
+            </div>
+          </div>
+        </Link>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Left Column */}
         <div className="space-y-5">
-          {/* Quick Book CTA */}
-          <Link
-            href="/booking"
-            className="block bg-dental-primary-600 text-white rounded-2xl p-5 hover:bg-dental-primary-700 transition-all shadow-lg hover:shadow-xl group"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold mb-0.5">
-                  {t('cabinet.bookAppointment')}
-                </h3>
-                <p className="text-white/70 text-sm">
-                  {t('cabinet.chooseTime')}
-                </p>
-              </div>
-              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-colors">
-                <Plus className="w-6 h-6" />
-              </div>
-            </div>
-          </Link>
-
           {/* Treatment History link */}
           <Link
             href="/cabinet/treatments"
@@ -219,6 +326,17 @@ export default function CabinetPage() {
                 <Phone className="w-4 h-4 text-dental-secondary-300 shrink-0" />
                 <span>{profile?.phone || t('cabinet.notSpecified')}</span>
               </div>
+              {profile?.date_of_birth && (
+                <div className="flex items-center gap-3 text-dental-muted text-sm">
+                  <Calendar className="w-4 h-4 text-dental-secondary-300 shrink-0" />
+                  <span>
+                    {new Date(profile.date_of_birth).toLocaleDateString(
+                      'uk-UA',
+                      { day: 'numeric', month: 'long', year: 'numeric' }
+                    )}
+                  </span>
+                </div>
+              )}
               <div className="flex items-center gap-3 text-dental-muted text-sm">
                 <Mail className="w-4 h-4 text-dental-secondary-300 shrink-0" />
                 <span className="truncate">{displayName}</span>
@@ -243,7 +361,7 @@ export default function CabinetPage() {
               <ChevronRight className="w-4 h-4 text-dental-muted" />
             </Link>
             <Link
-              href="/booking"
+              href="/cabinet/payments"
               className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors border-b border-dental-secondary-100"
             >
               <div className="flex items-center gap-3">
@@ -251,10 +369,15 @@ export default function CabinetPage() {
                   <FileText className="w-4 h-4 text-dental-primary-600" />
                 </div>
                 <span className="font-medium text-dental-dark text-sm">
-                  {t('cabinet.bookAppointment')}
+                  {t('cabinet.sidebar.payments')}
                 </span>
               </div>
-              <ChevronRight className="w-4 h-4 text-dental-muted" />
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-dental-secondary-200 text-dental-muted font-medium">
+                  {t('cabinet.sidebar.soon')}
+                </span>
+                <ChevronRight className="w-4 h-4 text-dental-muted" />
+              </div>
             </Link>
             <Link
               href="/reviews"
@@ -288,7 +411,7 @@ export default function CabinetPage() {
               </Link>
             </div>
 
-            {appointments.length === 0 ? (
+            {recentAppointments.length === 0 ? (
               <div className="p-8 text-center">
                 <div className="w-16 h-16 bg-dental-secondary-50 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Calendar className="w-8 h-8 text-dental-muted" />
@@ -309,7 +432,7 @@ export default function CabinetPage() {
               </div>
             ) : (
               <div className="divide-y divide-dental-secondary-100">
-                {appointments.map(apt => (
+                {recentAppointments.map(apt => (
                   <div
                     key={apt.id}
                     className="p-4 hover:bg-dental-secondary-50/50 transition-colors"
