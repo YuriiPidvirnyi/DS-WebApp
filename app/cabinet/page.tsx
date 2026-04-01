@@ -72,6 +72,7 @@ export default function CabinetPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(true)
   const [displayName, setDisplayName] = useState('')
+  const [email, setEmail] = useState('')
 
   useEffect(() => {
     const fetchData = async () => {
@@ -112,6 +113,7 @@ export default function CabinetPage() {
           user.user_metadata?.first_name ||
           t('cabinet.defaultPatient')
       )
+      setEmail(user.email || '')
       setLoading(false)
     }
 
@@ -337,10 +339,12 @@ export default function CabinetPage() {
                   </span>
                 </div>
               )}
-              <div className="flex items-center gap-3 text-dental-muted text-sm">
-                <Mail className="w-4 h-4 text-dental-secondary-300 shrink-0" />
-                <span className="truncate">{displayName}</span>
-              </div>
+              {email && (
+                <div className="flex items-center gap-3 text-dental-muted text-sm">
+                  <Mail className="w-4 h-4 text-dental-secondary-300 shrink-0" />
+                  <span className="truncate">{email}</span>
+                </div>
+              )}
             </div>
           </div>
 

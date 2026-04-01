@@ -1276,7 +1276,7 @@
       "hidePassword": "Ukryj hasło",
       "login": "Zaloguj się",
       "loading": "Logowanie...",
-      "backToSite": "← Wróć na stronę",
+      "backToSite": "Wróć na stronę",
       "forgotPassword": "Zapomniałeś hasła?",
       "invalidCredentials": "Nieprawidłowy email lub hasło",
       "errors": {
@@ -1289,7 +1289,7 @@
     "layout": {
       "panel": "Panel administratora",
       "logout": "Wyloguj się",
-      "backToSite": "← Na stronę",
+      "backToSite": "Na stronę",
       "systemOnline": "System online",
       "defaultUser": "Admin"
     },

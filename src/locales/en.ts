@@ -1356,7 +1356,7 @@ const en = {
       hidePassword: 'Hide password',
       login: 'Log In',
       loading: 'Signing in...',
-      backToSite: '← Back to site',
+      backToSite: 'Back to site',
       forgotPassword: 'Forgot Password?',
       invalidCredentials: 'Invalid email or password',
       errors: {
@@ -1369,7 +1369,7 @@ const en = {
     layout: {
       panel: 'Admin Panel',
       logout: 'Log Out',
-      backToSite: '← Back to site',
+      backToSite: 'Back to site',
       systemOnline: 'System online',
       defaultUser: 'Admin',
     },
@@ -2163,7 +2163,7 @@ const en = {
       treatments: 'Treatments',
       payments: 'Payments',
       profile: 'Profile',
-      backToSite: '← Back to site',
+      backToSite: 'Back to site',
       soon: 'soon',
     },
     logout: 'Log Out',

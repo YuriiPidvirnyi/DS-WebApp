@@ -1363,7 +1363,7 @@ const pl = {
       hidePassword: 'Ukryj hasło',
       login: 'Zaloguj się',
       loading: 'Logowanie...',
-      backToSite: '← Wróć na stronę',
+      backToSite: 'Wróć na stronę',
       forgotPassword: 'Zapomniałeś hasła?',
       invalidCredentials: 'Nieprawidłowy email lub hasło',
       errors: {
@@ -1376,7 +1376,7 @@ const pl = {
     layout: {
       panel: 'Panel administratora',
       logout: 'Wyloguj się',
-      backToSite: '← Na stronę',
+      backToSite: 'Na stronę',
       systemOnline: 'System online',
       defaultUser: 'Admin',
     },
@@ -2172,7 +2172,7 @@ const pl = {
       treatments: 'Leczenie',
       payments: 'Płatności',
       profile: 'Profil',
-      backToSite: '← Na stronę',
+      backToSite: 'Na stronę',
       soon: 'wkrótce',
     },
     logout: 'Wyloguj się',

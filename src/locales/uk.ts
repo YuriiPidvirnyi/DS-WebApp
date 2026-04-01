@@ -1487,7 +1487,7 @@ const uk = {
       hidePassword: 'Приховати пароль',
       login: 'Увійти',
       loading: 'Вхід...',
-      backToSite: '← Повернутися на сайт',
+      backToSite: 'Повернутися на сайт',
       forgotPassword: 'Забули пароль?',
       invalidCredentials: 'Невірний email або пароль',
       errors: {
@@ -1500,7 +1500,7 @@ const uk = {
     layout: {
       panel: 'Адмін-панель',
       logout: 'Вийти',
-      backToSite: '← На сайт',
+      backToSite: 'На сайт',
       systemOnline: 'Система онлайн',
       defaultUser: 'Адмін',
     },
@@ -2296,7 +2296,7 @@ const uk = {
       treatments: 'Лікування',
       payments: 'Платежі',
       profile: 'Профіль',
-      backToSite: '← На сайт',
+      backToSite: 'На сайт',
       soon: 'скоро',
     },
     logout: 'Вийти',

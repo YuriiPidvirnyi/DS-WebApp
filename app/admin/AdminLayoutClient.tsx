@@ -22,6 +22,7 @@ import {
   ClipboardList,
   Package,
   ShoppingCart,
+  ArrowLeft,
 } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
 import { AdminAuthProvider } from '@/contexts/AdminAuthContext'
@@ -246,6 +247,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
               href="/"
               className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
             >
+              <ArrowLeft className="w-5 h-5" />
               {t('admin.layout.backToSite')}
             </Link>
           </div>

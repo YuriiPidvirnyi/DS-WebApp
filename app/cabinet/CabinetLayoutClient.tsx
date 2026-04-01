@@ -15,6 +15,7 @@ import {
   ChevronRight,
   Plus,
   CreditCard,
+  ArrowLeft,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import Logo from '@/components/ui/Logo'
@@ -73,6 +74,11 @@ export default function CabinetLayoutClient({
     if (href === '/cabinet') return pathname === '/cabinet'
     return pathname.startsWith(href)
   }
+
+  const pageTitle = (() => {
+    const active = navigation.find(item => isActive(item.href))
+    return active ? t(active.nameKey) : t('cabinet.sidebar.title')
+  })()
 
   // Auth check on mount
   useEffect(() => {
@@ -217,7 +223,7 @@ export default function CabinetLayoutClient({
         </nav>
 
         {/* Mobile book + logout */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-dental-secondary-100 space-y-2 bg-white">
+        <div className="absolute bottom-0 left-0 right-0 p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] border-t border-dental-secondary-100 space-y-1.5 bg-white">
           <Link
             href="/booking"
             onClick={() => setSidebarOpen(false)}
@@ -226,9 +232,17 @@ export default function CabinetLayoutClient({
             <Plus className="w-4 h-4" />
             {t('cabinet.bookAppointment')}
           </Link>
+          <Link
+            href="/"
+            onClick={() => setSidebarOpen(false)}
+            className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 transition-colors text-sm"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            {t('cabinet.sidebar.backToSite')}
+          </Link>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-dental-muted hover:text-red-600 hover:bg-red-50 transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-red-600 hover:bg-red-50 transition-colors text-sm"
           >
             <LogOut className="w-4 h-4" />
             {t('cabinet.logout')}
@@ -290,7 +304,7 @@ export default function CabinetLayoutClient({
           </nav>
 
           {/* Bottom actions */}
-          <div className="p-4 border-t border-dental-secondary-100 space-y-2">
+          <div className="p-4 border-t border-dental-secondary-100 space-y-1.5">
             <Link
               href="/booking"
               className="flex items-center justify-center gap-2 w-full bg-dental-primary-600 hover:bg-dental-primary-700 text-white py-3 rounded-xl font-medium transition-colors"
@@ -298,19 +312,20 @@ export default function CabinetLayoutClient({
               <Plus className="w-4 h-4" />
               {t('cabinet.bookAppointment')}
             </Link>
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-red-600 hover:bg-red-50 transition-colors"
-            >
-              <LogOut className="w-5 h-5" />
-              {t('cabinet.logout')}
-            </button>
             <Link
               href="/"
               className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 transition-colors text-sm"
             >
+              <ArrowLeft className="w-4 h-4" />
               {t('cabinet.sidebar.backToSite')}
             </Link>
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-red-600 hover:bg-red-50 transition-colors text-sm"
+            >
+              <LogOut className="w-4 h-4" />
+              {t('cabinet.logout')}
+            </button>
           </div>
         </div>
       </div>
@@ -327,11 +342,10 @@ export default function CabinetLayoutClient({
           </button>
 
           <div className="flex-1 flex items-center justify-between">
-            <h1 className="text-lg font-semibold text-dental-dark lg:hidden">
-              {t('cabinet.sidebar.title')}
+            <h1 className="text-lg font-semibold text-dental-dark">
+              <span className="lg:hidden">{t('cabinet.sidebar.title')}</span>
+              <span className="hidden lg:inline">{pageTitle}</span>
             </h1>
-
-            <div className="hidden lg:block" />
 
             <div className="flex items-center gap-3 ml-auto">
               <Link
