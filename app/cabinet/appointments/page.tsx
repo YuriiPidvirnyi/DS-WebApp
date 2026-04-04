@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
 import {
@@ -13,6 +14,8 @@ import {
   CalendarClock,
   ChevronLeft,
   ChevronRight,
+  Check,
+  AlertTriangle,
 } from 'lucide-react'
 import { useCSRF } from '@/hooks/useCSRF'
 
@@ -60,6 +63,148 @@ function AppointmentsSkeleton() {
   )
 }
 
+/* ——— Toast Notification ——— */
+
+function Toast({
+  message,
+  type,
+  onClose,
+}: {
+  message: string
+  type: 'success' | 'error'
+  onClose: () => void
+}) {
+  const { t } = useTranslation()
+
+  useEffect(() => {
+    const timer = setTimeout(onClose, 4000)
+    return () => clearTimeout(timer)
+  }, [onClose])
+
+  return (
+    <div
+      role="alert"
+      aria-live="assertive"
+      className="fixed top-4 right-4 z-[60] animate-in slide-in-from-top-2 fade-in duration-300"
+    >
+      <div
+        className={`flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-lg border ${
+          type === 'success'
+            ? 'bg-green-50 border-green-200 text-green-700'
+            : 'bg-red-50 border-red-200 text-red-700'
+        }`}
+      >
+        {type === 'success' ? (
+          <Check className="w-5 h-5 shrink-0" />
+        ) : (
+          <AlertTriangle className="w-5 h-5 shrink-0" />
+        )}
+        <p className="text-sm font-medium">{message}</p>
+        <button
+          onClick={onClose}
+          aria-label={t('common.close')}
+          className="ml-2 p-0.5 rounded hover:bg-black/5 transition-colors focus:outline-none focus:ring-2 focus:ring-current"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+/* ——— Cancel Confirmation Modal ——— */
+
+function CancelConfirmModal({
+  appointment,
+  onClose,
+  onConfirm,
+  cancelling,
+}: {
+  appointment: Appointment
+  onClose: () => void
+  onConfirm: () => void
+  cancelling: boolean
+}) {
+  const { t, i18n } = useTranslation()
+  const dateLocale =
+    (i18n.language || 'uk') === 'uk'
+      ? 'uk-UA'
+      : (i18n.language || 'uk') === 'pl'
+        ? 'pl-PL'
+        : 'en-US'
+
+  return (
+    <div
+      className="fixed inset-0 z-[55] flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cancel-modal-title"
+    >
+      <div
+        className="absolute inset-0 bg-dental-dark/50 backdrop-blur-sm"
+        onClick={onClose}
+        role="presentation"
+        aria-hidden="true"
+      />
+      <div className="relative bg-white rounded-2xl shadow-xl max-w-sm w-full">
+        <div className="p-6 text-center">
+          <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertTriangle className="w-7 h-7 text-red-500" />
+          </div>
+          <h3
+            id="cancel-modal-title"
+            className="text-lg font-semibold text-dental-dark mb-2"
+          >
+            {t('cabinet.appointments.cancelModal.title')}
+          </h3>
+          <p className="text-sm text-dental-muted mb-2">
+            {t('cabinet.appointments.cancelConfirm')}
+          </p>
+          <div className="bg-dental-secondary-50 rounded-xl p-3 mb-6">
+            <p className="text-sm font-medium text-dental-dark">
+              {appointment.services?.[0]?.name_uk ||
+                t('cabinet.appointments.consultation')}
+            </p>
+            <p className="text-xs text-dental-muted mt-0.5">
+              {new Date(appointment.appointment_date).toLocaleDateString(
+                dateLocale,
+                { day: 'numeric', month: 'long', year: 'numeric' }
+              )}{' '}
+              {t('cabinet.appointments.reschedule.at')}{' '}
+              {appointment.appointment_time.slice(0, 5)}
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={onClose}
+              disabled={cancelling}
+              className="flex-1 py-3 rounded-xl border border-dental-secondary-200 text-dental-dark font-medium hover:bg-dental-secondary-50 transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+            >
+              {t('cabinet.appointments.cancelModal.back')}
+            </button>
+            <button
+              onClick={onConfirm}
+              disabled={cancelling}
+              className="flex-1 py-3 rounded-xl bg-red-500 text-white font-medium hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-red-300"
+            >
+              {cancelling ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <>
+                  <X className="w-4 h-4" />
+                  {t('cabinet.appointments.cancelModal.confirm', {
+                    defaultValue: 'Так, скасувати',
+                  })}
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 /* ——— Reschedule Modal ——— */
 
 function RescheduleModal({
@@ -71,7 +216,7 @@ function RescheduleModal({
   onClose: () => void
   onSuccess: (id: string, newDate: string, newTime: string) => void
 }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { getHeaders } = useCSRF()
 
   const [selectedDate, setSelectedDate] = useState(appointment.appointment_date)
@@ -129,23 +274,14 @@ function RescheduleModal({
       const data = await res.json()
 
       if (!res.ok || !data.success) {
-        setError(
-          data.error ||
-            t('cabinet.appointments.reschedule.error', {
-              defaultValue: 'Не вдалося перенести запис',
-            })
-        )
+        setError(data.error || t('cabinet.appointments.reschedule.error'))
         setSubmitting(false)
         return
       }
 
       onSuccess(appointment.id, selectedDate, selectedTime)
     } catch {
-      setError(
-        t('cabinet.appointments.reschedule.error', {
-          defaultValue: 'Не вдалося перенести запис',
-        })
-      )
+      setError(t('cabinet.appointments.reschedule.error'))
       setSubmitting(false)
     }
   }
@@ -153,6 +289,8 @@ function RescheduleModal({
   // Calendar helpers
   const today = new Date()
   today.setHours(0, 0, 0, 0)
+
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
 
   const daysInMonth = new Date(
     calendarMonth.year,
@@ -167,25 +305,47 @@ function RescheduleModal({
     (calendarMonth.year === today.getFullYear() &&
       calendarMonth.month > today.getMonth())
 
-  const weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд']
+  // i18n weekday names
+  const locale = i18n.language || 'uk'
+  const dateLocale =
+    locale === 'uk' ? 'uk-UA' : locale === 'pl' ? 'pl-PL' : 'en-US'
+  const weekDays = Array.from({ length: 7 }, (_, i) => {
+    // Mon=0 to Sun=6 → JS Date: Mon=1, Tue=2, ..., Sun=0
+    // Use a known Monday: 2024-01-01
+    const d = new Date(2024, 0, 1 + i)
+    return d
+      .toLocaleDateString(dateLocale, {
+        weekday: 'short',
+      })
+      .replace('.', '')
+  })
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div
+      className="fixed inset-0 z-[55] flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="reschedule-modal-title"
+    >
       <div
         className="absolute inset-0 bg-dental-dark/50 backdrop-blur-sm"
         onClick={onClose}
+        role="presentation"
+        aria-hidden="true"
       />
       <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-dental-secondary-100">
-          <h3 className="text-lg font-semibold text-dental-dark">
-            {t('cabinet.appointments.reschedule.title', {
-              defaultValue: 'Перенести запис',
-            })}
+          <h3
+            id="reschedule-modal-title"
+            className="text-lg font-semibold text-dental-dark"
+          >
+            {t('cabinet.appointments.reschedule.title')}
           </h3>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 transition-colors"
+            aria-label={t('common.close', { defaultValue: 'Закрити' })}
+            className="p-1.5 rounded-lg text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
           >
             <X className="w-5 h-5" />
           </button>
@@ -195,18 +355,14 @@ function RescheduleModal({
           {/* Current appointment info */}
           <div className="bg-dental-secondary-50 rounded-xl p-3">
             <p className="text-xs text-dental-muted mb-1">
-              {t('cabinet.appointments.reschedule.current', {
-                defaultValue: 'Поточний запис',
-              })}
+              {t('cabinet.appointments.reschedule.current')}
             </p>
             <p className="text-sm font-medium text-dental-dark">
               {new Date(appointment.appointment_date).toLocaleDateString(
-                'uk-UA',
+                dateLocale,
                 { day: 'numeric', month: 'long', year: 'numeric' }
               )}{' '}
-              {t('cabinet.appointments.reschedule.at', {
-                defaultValue: 'о',
-              })}{' '}
+              {t('cabinet.appointments.reschedule.at')}{' '}
               {appointment.appointment_time.slice(0, 5)}
             </p>
           </div>
@@ -222,7 +378,10 @@ function RescheduleModal({
                   })
                 }
                 disabled={!canGoPrev}
-                className="p-1.5 rounded-lg hover:bg-dental-secondary-50 disabled:opacity-30 transition-colors"
+                aria-label={t('common.previous', {
+                  defaultValue: 'Попередній',
+                })}
+                className="p-1.5 rounded-lg hover:bg-dental-secondary-50 disabled:opacity-30 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
               >
                 <ChevronLeft className="w-4 h-4 text-dental-muted" />
               </button>
@@ -230,7 +389,7 @@ function RescheduleModal({
                 {new Date(
                   calendarMonth.year,
                   calendarMonth.month
-                ).toLocaleDateString('uk-UA', {
+                ).toLocaleDateString(dateLocale, {
                   month: 'long',
                   year: 'numeric',
                 })}
@@ -242,7 +401,8 @@ function RescheduleModal({
                     return { year: d.getFullYear(), month: d.getMonth() }
                   })
                 }
-                className="p-1.5 rounded-lg hover:bg-dental-secondary-50 transition-colors"
+                aria-label={t('common.next', { defaultValue: 'Наступний' })}
+                className="p-1.5 rounded-lg hover:bg-dental-secondary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
               >
                 <ChevronRight className="w-4 h-4 text-dental-muted" />
               </button>
@@ -271,6 +431,7 @@ function RescheduleModal({
                 const isPast = dateObj < today
                 const isSunday = dateObj.getDay() === 0
                 const isSelected = dateStr === selectedDate
+                const isToday = dateStr === todayStr
                 const isDisabled = isPast || isSunday
 
                 return (
@@ -278,15 +439,20 @@ function RescheduleModal({
                     key={day}
                     disabled={isDisabled}
                     onClick={() => setSelectedDate(dateStr)}
-                    className={`text-xs py-1.5 rounded-lg transition-colors ${
+                    className={`relative text-xs py-1.5 rounded-lg transition-colors ${
                       isSelected
                         ? 'bg-dental-primary-600 text-white font-semibold'
                         : isDisabled
                           ? 'text-dental-secondary-200 cursor-not-allowed'
-                          : 'text-dental-dark hover:bg-dental-primary-50'
+                          : isToday
+                            ? 'text-dental-primary-600 font-semibold ring-1 ring-dental-primary-400 hover:bg-dental-primary-50'
+                            : 'text-dental-dark hover:bg-dental-primary-50'
                     }`}
                   >
                     {day}
+                    {isToday && !isSelected && (
+                      <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-dental-primary-600 rounded-full" />
+                    )}
                   </button>
                 )
               })}
@@ -296,9 +462,7 @@ function RescheduleModal({
           {/* Time slots */}
           <div>
             <p className="text-sm font-medium text-dental-dark mb-2">
-              {t('cabinet.appointments.reschedule.selectTime', {
-                defaultValue: 'Оберіть час',
-              })}
+              {t('cabinet.appointments.reschedule.selectTime')}
             </p>
             {loadingSlots ? (
               <div className="flex items-center justify-center py-6">
@@ -306,9 +470,7 @@ function RescheduleModal({
               </div>
             ) : slots.length === 0 ? (
               <p className="text-sm text-dental-muted text-center py-4">
-                {t('cabinet.appointments.reschedule.noSlots', {
-                  defaultValue: 'Немає доступних слотів на цю дату',
-                })}
+                {t('cabinet.appointments.reschedule.noSlots')}
               </p>
             ) : (
               <div className="grid grid-cols-4 gap-2">
@@ -340,23 +502,21 @@ function RescheduleModal({
           <div className="flex gap-3 pt-2">
             <button
               onClick={onClose}
-              className="flex-1 py-3 rounded-xl border border-dental-secondary-200 text-dental-dark font-medium hover:bg-dental-secondary-50 transition-colors"
+              className="flex-1 py-3 rounded-xl border border-dental-secondary-200 text-dental-dark font-medium hover:bg-dental-secondary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
             >
               {t('common.cancel', { defaultValue: 'Скасувати' })}
             </button>
             <button
               onClick={handleSubmit}
               disabled={!selectedDate || !selectedTime || submitting}
-              className="flex-1 py-3 rounded-xl bg-dental-primary-600 text-white font-medium hover:bg-dental-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+              className="flex-1 py-3 rounded-xl bg-dental-primary-600 text-white font-medium hover:bg-dental-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-dental-primary-700"
             >
               {submitting ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
                   <CalendarClock className="w-4 h-4" />
-                  {t('cabinet.appointments.reschedule.confirm', {
-                    defaultValue: 'Перенести',
-                  })}
+                  {t('cabinet.appointments.reschedule.confirm')}
                 </>
               )}
             </button>
@@ -370,56 +530,98 @@ function RescheduleModal({
 /* ——— Main Page ——— */
 
 export default function AppointmentsPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const searchParams = useSearchParams()
+  const initialFilter = (['all', 'upcoming', 'past'] as const).includes(
+    searchParams.get('filter') as 'all' | 'upcoming' | 'past'
+  )
+    ? (searchParams.get('filter') as 'all' | 'upcoming' | 'past')
+    : 'all'
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('all')
+  const [fetchError, setFetchError] = useState(false)
+  const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>(
+    initialFilter
+  )
   const [cancellingId, setCancellingId] = useState<string | null>(null)
   const [rescheduleApt, setRescheduleApt] = useState<Appointment | null>(null)
+  const [cancelApt, setCancelApt] = useState<Appointment | null>(null)
+  const [toast, setToast] = useState<{
+    message: string
+    type: 'success' | 'error'
+  } | null>(null)
 
   useEffect(() => {
     const fetchAppointments = async () => {
-      const supabase = createClient()
-      if (!supabase) return
+      try {
+        const supabase = createClient()
+        if (!supabase) return
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) return
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+        if (!user) return
 
-      const { data } = await supabase
-        .from('appointments')
-        .select(
-          `id, appointment_date, appointment_time, status, notes,
-          doctors (first_name, last_name, specialization),
-          services (name_uk, price_uah, duration_minutes)`
-        )
-        .eq('patient_id', user.id)
-        .order('appointment_date', { ascending: false })
+        const { data, error } = await supabase
+          .from('appointments')
+          .select(
+            `id, appointment_date, appointment_time, status, notes,
+            doctors (first_name, last_name, specialization),
+            services (name_uk, price_uah, duration_minutes)`
+          )
+          .eq('patient_id', user.id)
+          .order('appointment_date', { ascending: false })
 
-      setAppointments(data || [])
-      setLoading(false)
+        if (error) {
+          console.error('Appointments fetch error:', error)
+          setFetchError(true)
+        }
+
+        setAppointments(data || [])
+        setLoading(false)
+      } catch (err) {
+        console.error('Appointments fetch error:', err)
+        setFetchError(true)
+        setLoading(false)
+      }
     }
 
     fetchAppointments()
   }, [])
 
-  const handleCancel = async (id: string) => {
-    if (!confirm(t('cabinet.appointments.cancelConfirm'))) return
+  const handleCancelConfirm = async () => {
+    if (!cancelApt) return
+    const id = cancelApt.id
 
     setCancellingId(id)
     const supabase = createClient()
     if (!supabase) return
 
-    await supabase
+    const { error } = await supabase
       .from('appointments')
       .update({ status: 'cancelled' })
       .eq('id', id)
 
-    setAppointments(prev =>
-      prev.map(apt => (apt.id === id ? { ...apt, status: 'cancelled' } : apt))
-    )
+    if (error) {
+      setToast({
+        message: t('cabinet.appointments.cancelModal.error', {
+          defaultValue: 'Не вдалося скасувати запис',
+        }),
+        type: 'error',
+      })
+    } else {
+      setAppointments(prev =>
+        prev.map(apt => (apt.id === id ? { ...apt, status: 'cancelled' } : apt))
+      )
+      setToast({
+        message: t('cabinet.appointments.cancelModal.success', {
+          defaultValue: 'Запис успішно скасовано',
+        }),
+        type: 'success',
+      })
+    }
     setCancellingId(null)
+    setCancelApt(null)
   }
 
   const handleRescheduleSuccess = (
@@ -440,6 +642,25 @@ export default function AppointmentsPage() {
       )
     )
     setRescheduleApt(null)
+    setToast({
+      message: t('cabinet.appointments.reschedule.success', {
+        defaultValue: 'Запис успішно перенесено',
+      }),
+      type: 'success',
+    })
+  }
+
+  // Filter counts
+  const counts = {
+    all: appointments.length,
+    upcoming: appointments.filter(apt => {
+      const isUpcoming = new Date(apt.appointment_date) >= new Date()
+      return isUpcoming && apt.status !== 'cancelled'
+    }).length,
+    past: appointments.filter(apt => {
+      const isUpcoming = new Date(apt.appointment_date) >= new Date()
+      return !isUpcoming || apt.status === 'completed'
+    }).length,
   }
 
   const filteredAppointments = appointments.filter(apt => {
@@ -465,10 +686,52 @@ export default function AppointmentsPage() {
     )
   }
 
+  // Locale helpers
+  const locale = i18n.language || 'uk'
+  const dateLocale =
+    locale === 'uk' ? 'uk-UA' : locale === 'pl' ? 'pl-PL' : 'en-US'
+  const getDayOfWeek = (dateStr: string) => {
+    const d = new Date(dateStr)
+    return d
+      .toLocaleDateString(dateLocale, { weekday: 'short' })
+      .replace('.', '')
+  }
+
   if (loading) return <AppointmentsSkeleton />
+
+  if (fetchError && appointments.length === 0) {
+    return (
+      <div className="bg-white rounded-2xl p-8 sm:p-10 text-center shadow-sm border border-red-100">
+        <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+          <AlertTriangle className="w-8 h-8 text-red-500" />
+        </div>
+        <h2 className="text-lg font-semibold text-dental-dark mb-2">
+          {t('cabinet.error.title')}
+        </h2>
+        <p className="text-dental-muted text-sm mb-6">
+          {t('cabinet.error.description')}
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="inline-flex items-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-700"
+        >
+          {t('cabinet.error.retry')}
+        </button>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
+      {/* Toast */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-dental-dark">
@@ -476,28 +739,46 @@ export default function AppointmentsPage() {
         </h1>
         <Link
           href="/booking"
-          className="inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition-colors"
+          className="inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-700"
         >
           <Plus className="w-4 h-4" />
           {t('cabinet.appointments.newAppointment')}
         </Link>
       </div>
 
-      {/* Filters */}
+      {/* Filters with counts */}
       <div className="flex items-center gap-2">
-        <Filter className="w-4 h-4 text-dental-muted" />
-        <div className="flex gap-2">
+        <Filter
+          className="w-4 h-4 text-dental-muted shrink-0"
+          aria-hidden="true"
+        />
+        <div
+          className="flex gap-2 overflow-x-auto"
+          role="tablist"
+          aria-label={t('cabinet.appointments.filters.all')}
+        >
           {(['all', 'upcoming', 'past'] as const).map(f => (
             <button
               key={f}
+              role="tab"
+              aria-selected={filter === f}
               onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-dental-primary-500 ${
                 filter === f
                   ? 'bg-dental-primary-100 text-dental-primary-600'
                   : 'bg-white text-dental-muted hover:bg-dental-secondary-50 border border-dental-secondary-100'
               }`}
             >
               {t(`cabinet.appointments.filters.${f}`)}
+              <span
+                className={`ml-1.5 text-xs ${
+                  filter === f
+                    ? 'text-dental-primary-500'
+                    : 'text-dental-secondary-300'
+                }`}
+              >
+                ({counts[f]})
+              </span>
             </button>
           ))}
         </div>
@@ -515,7 +796,7 @@ export default function AppointmentsPage() {
           </p>
           <Link
             href="/booking"
-            className="inline-flex items-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-6 py-3 rounded-xl font-medium transition-colors"
+            className="inline-flex items-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-6 py-3 rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-700"
           >
             <Plus className="w-5 h-5" />
             {t('cabinet.appointments.book')}
@@ -533,35 +814,39 @@ export default function AppointmentsPage() {
             return (
               <div
                 key={apt.id}
-                className={`bg-white rounded-2xl p-5 shadow-sm border border-dental-secondary-100 transition-colors hover:border-dental-primary-200 ${
+                className={`bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-dental-secondary-100 transition-colors hover:border-dental-primary-200 ${
                   apt.status === 'cancelled' ? 'opacity-60' : ''
                 }`}
               >
-                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                  <div className="flex gap-4">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 bg-dental-primary-50 rounded-xl flex flex-col items-center justify-center shrink-0">
-                      <span className="text-lg sm:text-xl font-bold text-dental-primary-600 leading-none">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
+                  <div className="flex gap-3 sm:gap-4">
+                    {/* Date block with day-of-week */}
+                    <div className="w-14 h-16 sm:w-16 sm:h-[4.5rem] bg-dental-primary-50 rounded-xl flex flex-col items-center justify-center shrink-0">
+                      <span className="text-[10px] text-dental-primary-500 font-medium uppercase leading-none">
+                        {getDayOfWeek(apt.appointment_date)}
+                      </span>
+                      <span className="text-lg sm:text-xl font-bold text-dental-primary-600 leading-tight">
                         {new Date(apt.appointment_date).getDate()}
                       </span>
-                      <span className="text-[10px] sm:text-xs text-dental-primary-500">
+                      <span className="text-[10px] sm:text-xs text-dental-primary-500 leading-none">
                         {new Date(apt.appointment_date).toLocaleDateString(
-                          'uk-UA',
+                          dateLocale,
                           { month: 'short' }
                         )}
                       </span>
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-dental-dark mb-0.5">
+                    <div className="min-w-0">
+                      <h3 className="font-semibold text-dental-dark mb-0.5 truncate">
                         {apt.services?.[0]?.name_uk ||
                           t('cabinet.appointments.consultation')}
                       </h3>
-                      <p className="text-sm text-dental-muted mb-2">
+                      <p className="text-sm text-dental-muted mb-2 truncate">
                         {apt.doctors?.[0]?.last_name}{' '}
                         {apt.doctors?.[0]?.first_name}
                         {apt.doctors?.[0]?.specialization &&
                           ` — ${apt.doctors[0].specialization}`}
                       </p>
-                      <div className="flex flex-wrap items-center gap-3 text-xs text-dental-muted">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-dental-muted">
                         <div className="flex items-center gap-1">
                           <Clock className="w-3.5 h-3.5" />
                           {apt.appointment_time.slice(0, 5)}
@@ -576,7 +861,7 @@ export default function AppointmentsPage() {
                           apt.services[0].price_uah > 0 && (
                             <span className="font-medium text-dental-dark">
                               {apt.services[0].price_uah.toLocaleString(
-                                'uk-UA'
+                                dateLocale
                               )}{' '}
                               {t('cabinet.appointments.currency')}
                             </span>
@@ -585,31 +870,39 @@ export default function AppointmentsPage() {
                     </div>
                   </div>
 
-                  <div className="flex flex-row sm:flex-col items-center sm:items-end gap-2">
+                  {/* Status + actions */}
+                  <div className="flex items-center gap-2 sm:flex-col sm:items-end sm:gap-2 ml-[calc(3.5rem+0.75rem)] sm:ml-0">
                     {getStatusBadge(apt.status)}
                     {canModify && (
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5 sm:gap-2">
                         <button
                           onClick={() => setRescheduleApt(apt)}
-                          className="flex items-center gap-1 text-xs text-dental-primary-600 hover:text-dental-primary-700 transition-colors"
+                          aria-label={t(
+                            'cabinet.appointments.reschedule.button'
+                          )}
+                          className="flex items-center gap-1 text-xs px-2 py-1 sm:px-0 sm:py-0 rounded-lg sm:rounded-none bg-dental-primary-50 sm:bg-transparent text-dental-primary-600 hover:text-dental-primary-700 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
                         >
                           <CalendarClock className="w-3.5 h-3.5" />
-                          {t('cabinet.appointments.reschedule.button', {
-                            defaultValue: 'Перенести',
-                          })}
+                          <span className="hidden sm:inline">
+                            {t('cabinet.appointments.reschedule.button')}
+                          </span>
                         </button>
-                        <span className="text-dental-secondary-200">|</span>
-                        <button
-                          onClick={() => handleCancel(apt.id)}
-                          disabled={cancellingId === apt.id}
-                          className="flex items-center gap-1 text-xs text-red-500 hover:text-red-600 disabled:opacity-50 transition-colors"
+                        <span
+                          className="hidden sm:inline text-dental-secondary-200"
+                          aria-hidden="true"
                         >
-                          {cancellingId === apt.id ? (
-                            <div className="w-3.5 h-3.5 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
-                          ) : (
-                            <X className="w-3.5 h-3.5" />
-                          )}
-                          {t('cabinet.appointments.cancel')}
+                          |
+                        </span>
+                        <button
+                          onClick={() => setCancelApt(apt)}
+                          disabled={cancellingId === apt.id}
+                          aria-label={t('cabinet.appointments.cancel')}
+                          className="flex items-center gap-1 text-xs px-2 py-1 sm:px-0 sm:py-0 rounded-lg sm:rounded-none bg-red-50 sm:bg-transparent text-red-500 hover:text-red-600 disabled:opacity-50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-300"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                          <span className="hidden sm:inline">
+                            {t('cabinet.appointments.cancel')}
+                          </span>
                         </button>
                       </div>
                     )}
@@ -617,7 +910,7 @@ export default function AppointmentsPage() {
                 </div>
 
                 {apt.notes && (
-                  <div className="mt-4 pt-3 border-t border-dental-secondary-100">
+                  <div className="mt-3 pt-3 border-t border-dental-secondary-100 ml-[calc(3.5rem+0.75rem)] sm:ml-0">
                     <p className="text-xs text-dental-muted">
                       <span className="font-medium text-dental-dark">
                         {t('cabinet.appointments.notes')}:
@@ -630,6 +923,16 @@ export default function AppointmentsPage() {
             )
           })}
         </div>
+      )}
+
+      {/* Cancel Confirmation Modal */}
+      {cancelApt && (
+        <CancelConfirmModal
+          appointment={cancelApt}
+          onClose={() => setCancelApt(null)}
+          onConfirm={handleCancelConfirm}
+          cancelling={cancellingId === cancelApt.id}
+        />
       )}
 
       {/* Reschedule Modal */}

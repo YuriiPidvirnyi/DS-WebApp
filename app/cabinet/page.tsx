@@ -17,6 +17,7 @@ import {
   CheckCircle2,
   CalendarCheck,
   Activity,
+  AlertCircle,
 } from 'lucide-react'
 
 interface Appointment {
@@ -66,55 +67,73 @@ function DashboardSkeleton() {
   )
 }
 
+function getTimeGreetingKey(): string {
+  const hour = new Date().getHours()
+  if (hour >= 5 && hour < 12) return 'cabinet.greeting.morning'
+  if (hour >= 12 && hour < 18) return 'cabinet.greeting.afternoon'
+  return 'cabinet.greeting.evening'
+}
+
 export default function CabinetPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [profile, setProfile] = useState<PatientProfile | null>(null)
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState(false)
   const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
 
   useEffect(() => {
     const fetchData = async () => {
-      const supabase = createClient()
-      if (!supabase) return
+      try {
+        const supabase = createClient()
+        if (!supabase) return
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) return
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+        if (!user) return
 
-      const [profileResult, appointmentsResult] = await Promise.all([
-        supabase
-          .from('patients')
-          .select('first_name, last_name, phone, date_of_birth')
-          .eq('id', user.id)
-          .single(),
-        supabase
-          .from('appointments')
-          .select(
-            `id, appointment_date, appointment_time, status,
-            doctors (first_name, last_name, specialization),
-            services (name_uk, price_uah)`
-          )
-          .eq('patient_id', user.id)
-          .order('appointment_date', { ascending: false })
-          .limit(10),
-      ])
+        const [profileResult, appointmentsResult] = await Promise.all([
+          supabase
+            .from('patients')
+            .select('first_name, last_name, phone, date_of_birth')
+            .eq('id', user.id)
+            .single(),
+          supabase
+            .from('appointments')
+            .select(
+              `id, appointment_date, appointment_time, status,
+              doctors (first_name, last_name, specialization),
+              services (name_uk, price_uah)`
+            )
+            .eq('patient_id', user.id)
+            .order('appointment_date', { ascending: false })
+            .limit(10),
+        ])
 
-      const profileData = profileResult.data
-      setProfile(profileData)
-      setAppointments(
-        (appointmentsResult.data as unknown as Appointment[]) || []
-      )
+        if (appointmentsResult.error) {
+          console.error('Appointments fetch error:', appointmentsResult.error)
+        }
 
-      setDisplayName(
-        profileData?.first_name ||
-          user.user_metadata?.first_name ||
-          t('cabinet.defaultPatient')
-      )
-      setEmail(user.email || '')
-      setLoading(false)
+        const profileData = profileResult.data
+        setProfile(profileData)
+        setAppointments(
+          (appointmentsResult.data as unknown as Appointment[]) || []
+        )
+
+        setDisplayName(
+          profileData?.first_name ||
+            user.user_metadata?.first_name ||
+            t('cabinet.defaultPatient')
+        )
+        setEmail(user.email || '')
+        setLoading(false)
+      } catch (err) {
+        console.error('Dashboard fetch error:', err)
+        setFetchError(true)
+        setLoading(false)
+      }
     }
 
     fetchData()
@@ -136,7 +155,41 @@ export default function CabinetPage() {
     )
   }
 
+  // Locale helper
+  const locale = i18n.language || 'uk'
+  const dateLocale =
+    locale === 'uk' ? 'uk-UA' : locale === 'pl' ? 'pl-PL' : 'en-US'
+
+  const getDayOfWeek = (dateStr: string) => {
+    const d = new Date(dateStr)
+    return d
+      .toLocaleDateString(dateLocale, { weekday: 'short' })
+      .replace('.', '')
+  }
+
   if (loading) return <DashboardSkeleton />
+
+  if (fetchError) {
+    return (
+      <div className="bg-white rounded-2xl p-8 sm:p-10 text-center shadow-sm border border-red-100">
+        <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+          <AlertCircle className="w-8 h-8 text-red-500" />
+        </div>
+        <h2 className="text-lg font-semibold text-dental-dark mb-2">
+          {t('cabinet.error.title')}
+        </h2>
+        <p className="text-dental-muted text-sm mb-6 max-w-md mx-auto">
+          {t('cabinet.error.description')}
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="inline-flex items-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-700"
+        >
+          {t('cabinet.error.retry')}
+        </button>
+      </div>
+    )
+  }
 
   // Compute stats
   const now = new Date()
@@ -157,36 +210,53 @@ export default function CabinetPage() {
 
   const recentAppointments = appointments.slice(0, 5)
 
+  // Profile completeness
+  const profileFields = [
+    { key: 'first_name', filled: !!profile?.first_name },
+    { key: 'last_name', filled: !!profile?.last_name },
+    { key: 'phone', filled: !!profile?.phone },
+    { key: 'date_of_birth', filled: !!profile?.date_of_birth },
+  ]
+  const filledCount = profileFields.filter(f => f.filled).length
+  const profilePercent = Math.round((filledCount / profileFields.length) * 100)
+  const profileComplete = profilePercent === 100
+
+  // Profile display name
+  const profileDisplayName = [profile?.first_name, profile?.last_name]
+    .filter(Boolean)
+    .join(' ')
+
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold text-dental-dark mb-1">
-          {t('cabinet.welcome', { name: displayName })}
+          {t(getTimeGreetingKey(), { name: displayName })}
         </h1>
         <p className="text-dental-muted">{t('cabinet.subtitle')}</p>
       </div>
 
-      {/* Next Appointment Highlight */}
-      {nextAppointment && (
+      {/* Next Appointment Highlight OR Empty CTA */}
+      {nextAppointment ? (
         <div className="bg-gradient-to-r from-dental-primary-600 to-dental-primary-700 rounded-2xl p-5 sm:p-6 text-white shadow-lg">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-start gap-4">
-              <div className="w-14 h-14 bg-white/20 rounded-xl flex flex-col items-center justify-center shrink-0">
-                <span className="text-lg font-bold leading-none">
+              <div className="w-14 h-16 bg-white/20 rounded-xl flex flex-col items-center justify-center shrink-0">
+                <span className="text-[10px] text-white/70 font-medium uppercase leading-none">
+                  {getDayOfWeek(nextAppointment.appointment_date)}
+                </span>
+                <span className="text-lg font-bold leading-tight">
                   {new Date(nextAppointment.appointment_date).getDate()}
                 </span>
-                <span className="text-[10px] text-white/80">
+                <span className="text-[10px] text-white/80 leading-none">
                   {new Date(
                     nextAppointment.appointment_date
-                  ).toLocaleDateString('uk-UA', { month: 'short' })}
+                  ).toLocaleDateString(dateLocale, { month: 'short' })}
                 </span>
               </div>
               <div>
                 <p className="text-white/70 text-xs font-medium uppercase tracking-wider mb-1">
-                  {t('cabinet.dashboard.nextAppointment', {
-                    defaultValue: 'Наступний візит',
-                  })}
+                  {t('cabinet.dashboard.nextAppointment')}
                 </p>
                 <h3 className="font-semibold text-lg">
                   {nextAppointment.services?.[0]?.name_uk ||
@@ -206,20 +276,46 @@ export default function CabinetPage() {
             </div>
             <Link
               href="/cabinet/appointments"
-              className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors shrink-0"
+              className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors shrink-0 focus:outline-none focus:ring-2 focus:ring-white/50"
             >
-              {t('cabinet.dashboard.viewDetails', {
-                defaultValue: 'Деталі',
-              })}
+              {t('cabinet.dashboard.viewDetails')}
               <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-gradient-to-r from-dental-secondary-100 to-dental-secondary-50 rounded-2xl p-5 sm:p-6 border border-dental-secondary-200">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-4">
+              <div className="w-14 h-14 bg-dental-primary-50 rounded-xl flex items-center justify-center shrink-0">
+                <Calendar className="w-7 h-7 text-dental-primary-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-dental-dark text-lg">
+                  {t('cabinet.dashboard.noUpcoming')}
+                </h3>
+                <p className="text-dental-muted text-sm mt-0.5">
+                  {t('cabinet.dashboard.noUpcomingDesc')}
+                </p>
+              </div>
+            </div>
+            <Link
+              href="/booking"
+              className="inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors shrink-0 focus:outline-none focus:ring-2 focus:ring-dental-primary-700"
+            >
+              <Plus className="w-4 h-4" />
+              {t('cabinet.bookAppointment')}
             </Link>
           </div>
         </div>
       )}
 
-      {/* Quick Stats */}
+      {/* Quick Stats — clickable, navigate to filtered appointments */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-dental-secondary-100">
+        <Link
+          href="/cabinet/appointments?filter=upcoming"
+          className="bg-white rounded-2xl p-4 shadow-sm border border-dental-secondary-100 hover:border-dental-primary-200 hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+        >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-dental-primary-50 rounded-xl flex items-center justify-center shrink-0">
               <CalendarCheck className="w-5 h-5 text-dental-primary-600" />
@@ -229,14 +325,15 @@ export default function CabinetPage() {
                 {upcomingAppointments.length}
               </p>
               <p className="text-xs text-dental-muted">
-                {t('cabinet.dashboard.upcoming', {
-                  defaultValue: 'Заплановано',
-                })}
+                {t('cabinet.dashboard.upcoming')}
               </p>
             </div>
           </div>
-        </div>
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-dental-secondary-100">
+        </Link>
+        <Link
+          href="/cabinet/appointments?filter=past"
+          className="bg-white rounded-2xl p-4 shadow-sm border border-dental-secondary-100 hover:border-dental-primary-200 hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+        >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center shrink-0">
               <CheckCircle2 className="w-5 h-5 text-green-600" />
@@ -246,14 +343,15 @@ export default function CabinetPage() {
                 {completedCount}
               </p>
               <p className="text-xs text-dental-muted">
-                {t('cabinet.dashboard.completed', {
-                  defaultValue: 'Завершено',
-                })}
+                {t('cabinet.dashboard.completed')}
               </p>
             </div>
           </div>
-        </div>
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-dental-secondary-100">
+        </Link>
+        <Link
+          href="/cabinet/appointments"
+          className="bg-white rounded-2xl p-4 shadow-sm border border-dental-secondary-100 hover:border-dental-primary-200 hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+        >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center shrink-0">
               <Activity className="w-5 h-5 text-violet-600" />
@@ -263,14 +361,14 @@ export default function CabinetPage() {
                 {appointments.length}
               </p>
               <p className="text-xs text-dental-muted">
-                {t('cabinet.dashboard.total', { defaultValue: 'Всього' })}
+                {t('cabinet.dashboard.total')}
               </p>
             </div>
           </div>
-        </div>
+        </Link>
         <Link
           href="/booking"
-          className="bg-dental-primary-600 hover:bg-dental-primary-700 rounded-2xl p-4 shadow-sm transition-colors group"
+          className="bg-dental-primary-600 hover:bg-dental-primary-700 rounded-2xl p-4 shadow-sm transition-colors group focus:outline-none focus:ring-2 focus:ring-dental-primary-700"
         >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-white/30 transition-colors">
@@ -289,6 +387,39 @@ export default function CabinetPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Left Column */}
         <div className="space-y-5">
+          {/* Profile Completeness */}
+          {!profileComplete && (
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-amber-100">
+              <div className="flex items-center gap-3 mb-3">
+                <AlertCircle className="w-5 h-5 text-amber-500 shrink-0" />
+                <h3 className="font-semibold text-dental-dark text-sm">
+                  {t('cabinet.dashboard.profileIncomplete')}
+                </h3>
+              </div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="flex-1 h-2 bg-dental-secondary-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-amber-400 rounded-full transition-all"
+                    style={{ width: `${profilePercent}%` }}
+                  />
+                </div>
+                <span className="text-xs font-medium text-dental-muted">
+                  {profilePercent}%
+                </span>
+              </div>
+              <p className="text-xs text-dental-muted mb-3">
+                {t('cabinet.dashboard.profileHint')}
+              </p>
+              <Link
+                href="/cabinet/profile"
+                className="text-xs font-medium text-dental-primary-600 hover:text-dental-primary-700 transition-colors"
+              >
+                {t('cabinet.dashboard.completeProfile')}
+                <ChevronRight className="w-3 h-3 inline ml-0.5" />
+              </Link>
+            </div>
+          )}
+
           {/* Treatment History link */}
           <Link
             href="/cabinet/treatments"
@@ -318,22 +449,36 @@ export default function CabinetPage() {
               </Link>
             </div>
             <div className="space-y-3">
-              <div className="flex items-center gap-3 text-dental-muted text-sm">
+              <div className="flex items-center gap-3 text-sm">
                 <User className="w-4 h-4 text-dental-secondary-300 shrink-0" />
-                <span>
-                  {profile?.first_name} {profile?.last_name}
+                <span
+                  className={
+                    profileDisplayName
+                      ? 'text-dental-muted'
+                      : 'text-dental-secondary-300 italic'
+                  }
+                >
+                  {profileDisplayName || t('cabinet.notSpecified')}
                 </span>
               </div>
-              <div className="flex items-center gap-3 text-dental-muted text-sm">
+              <div className="flex items-center gap-3 text-sm">
                 <Phone className="w-4 h-4 text-dental-secondary-300 shrink-0" />
-                <span>{profile?.phone || t('cabinet.notSpecified')}</span>
+                <span
+                  className={
+                    profile?.phone
+                      ? 'text-dental-muted'
+                      : 'text-dental-secondary-300 italic'
+                  }
+                >
+                  {profile?.phone || t('cabinet.notSpecified')}
+                </span>
               </div>
               {profile?.date_of_birth && (
                 <div className="flex items-center gap-3 text-dental-muted text-sm">
                   <Calendar className="w-4 h-4 text-dental-secondary-300 shrink-0" />
                   <span>
                     {new Date(profile.date_of_birth).toLocaleDateString(
-                      'uk-UA',
+                      dateLocale,
                       { day: 'numeric', month: 'long', year: 'numeric' }
                     )}
                   </span>
@@ -428,7 +573,7 @@ export default function CabinetPage() {
                 </p>
                 <Link
                   href="/booking"
-                  className="inline-flex items-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition-colors"
+                  className="inline-flex items-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-700"
                 >
                   <Plus className="w-4 h-4" />
                   {t('cabinet.book')}
@@ -443,13 +588,17 @@ export default function CabinetPage() {
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex gap-3 sm:gap-4 min-w-0">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 bg-dental-primary-50 rounded-xl flex flex-col items-center justify-center shrink-0">
-                          <span className="text-base sm:text-lg font-bold text-dental-primary-600 leading-none">
+                        {/* Date block with day-of-week */}
+                        <div className="w-12 h-14 sm:w-14 sm:h-16 bg-dental-primary-50 rounded-xl flex flex-col items-center justify-center shrink-0">
+                          <span className="text-[9px] sm:text-[10px] text-dental-primary-500 font-medium uppercase leading-none">
+                            {getDayOfWeek(apt.appointment_date)}
+                          </span>
+                          <span className="text-base sm:text-lg font-bold text-dental-primary-600 leading-tight">
                             {new Date(apt.appointment_date).getDate()}
                           </span>
-                          <span className="text-[10px] sm:text-xs text-dental-primary-500">
+                          <span className="text-[10px] sm:text-xs text-dental-primary-500 leading-none">
                             {new Date(apt.appointment_date).toLocaleDateString(
-                              'uk-UA',
+                              dateLocale,
                               { month: 'short' }
                             )}
                           </span>
