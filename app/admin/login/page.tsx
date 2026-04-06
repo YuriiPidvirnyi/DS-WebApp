@@ -45,10 +45,9 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-block mb-4">
+          <div className="inline-block">
             <Logo size="md" />
           </div>
-          <p className="text-dental-text text-sm">{t('admin.login.title')}</p>
         </div>
 
         {/* Login Form */}
