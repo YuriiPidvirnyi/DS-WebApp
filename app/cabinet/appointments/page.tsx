@@ -31,7 +31,7 @@ interface Appointment {
 
 function AppointmentsSkeleton() {
   return (
-    <div className="animate-pulse space-y-6">
+    <div className="animate-pulse space-y-6" role="status" aria-busy="true">
       {/* Header skeleton */}
       <div className="flex items-center justify-between">
         <div className="h-7 w-40 bg-dental-secondary-200 rounded-lg" />

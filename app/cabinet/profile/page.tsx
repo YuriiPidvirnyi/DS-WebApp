@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
-import { Save, User, Mail, Check, AlertTriangle } from 'lucide-react'
+import { Save, User, Mail, Check, AlertTriangle, RefreshCw } from 'lucide-react'
 
 interface PatientProfile {
   first_name: string | null
@@ -15,7 +15,7 @@ interface PatientProfile {
 
 function ProfileSkeleton() {
   return (
-    <div className="max-w-2xl animate-pulse">
+    <div className="max-w-2xl animate-pulse" role="status" aria-busy="true">
       <div className="h-7 w-48 bg-dental-secondary-200 rounded-lg mb-6" />
       <div className="bg-white rounded-2xl p-8 shadow-sm border border-dental-secondary-100">
         <div className="flex items-center gap-4 mb-8 pb-8 border-b border-dental-secondary-100">
@@ -57,38 +57,52 @@ export default function ProfilePage() {
     text: string
   } | null>(null)
   const [phoneError, setPhoneError] = useState<string | null>(null)
+  const [fetchError, setFetchError] = useState(false)
 
   const initialProfileRef = useRef<PatientProfile | null>(null)
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const supabase = createClient()
-      if (!supabase) return
+      try {
+        const supabase = createClient()
+        if (!supabase) return
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) return
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+        if (!user) return
 
-      const { data } = await supabase
-        .from('patients')
-        .select('*')
-        .eq('id', user.id)
-        .single()
+        const { data, error } = await supabase
+          .from('patients')
+          .select('*')
+          .eq('id', user.id)
+          .single()
 
-      setEmail(user.email || '')
+        if (error) {
+          console.error('Profile fetch error:', error)
+          setFetchError(true)
+          setLoading(false)
+          return
+        }
 
-      const profileData: PatientProfile = {
-        first_name: data?.first_name || '',
-        last_name: data?.last_name || '',
-        patronymic: data?.patronymic || '',
-        phone: data?.phone || '',
-        date_of_birth: data?.date_of_birth || '',
+        setEmail(user.email || '')
+
+        const profileData: PatientProfile = {
+          first_name: data?.first_name || '',
+          last_name: data?.last_name || '',
+          patronymic: data?.patronymic || '',
+          phone: data?.phone || '',
+          date_of_birth: data?.date_of_birth || '',
+        }
+
+        setProfile(profileData)
+        initialProfileRef.current = { ...profileData }
+        setLoading(false)
+      } catch (err) {
+        console.error('Profile fetch error:', err)
+        setFetchError(true)
+        setLoading(false)
       }
-
-      setProfile(profileData)
-      initialProfileRef.current = { ...profileData }
-      setLoading(false)
     }
 
     fetchProfile()
@@ -220,6 +234,30 @@ export default function ProfilePage() {
     'w-full px-4 py-3 border border-dental-secondary-200 rounded-xl text-dental-dark focus:ring-2 focus:ring-dental-primary-500 focus:border-transparent transition-all placeholder:text-dental-muted/50'
 
   if (loading) return <ProfileSkeleton />
+
+  if (fetchError) {
+    return (
+      <div className="bg-white rounded-2xl p-10 text-center shadow-sm border border-dental-secondary-100">
+        <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+          <AlertTriangle className="w-8 h-8 text-red-500" />
+        </div>
+        <h2 className="text-lg font-semibold text-dental-dark mb-2">
+          {t('cabinet.error.title')}
+        </h2>
+        <p className="text-dental-muted text-sm mb-6">
+          {t('cabinet.error.description')}
+        </p>
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-dental-primary-600 text-white rounded-xl text-sm font-medium hover:bg-dental-primary-700 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2"
+        >
+          <RefreshCw className="w-4 h-4" />
+          {t('cabinet.error.retry')}
+        </button>
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-2xl">
@@ -433,7 +471,7 @@ export default function ProfilePage() {
               disabled={saving || !!phoneError}
               className={`w-full py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 disabled:cursor-not-allowed ${
                 isDirty
-                  ? 'bg-dental-primary-600 hover:bg-dental-primary-700 text-white disabled:opacity-50'
+                  ? 'bg-dental-primary-600 hover:bg-dental-primary-700 text-white disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2'
                   : 'bg-dental-secondary-100 text-dental-muted cursor-default'
               }`}
             >

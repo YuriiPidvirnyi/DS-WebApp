@@ -40,7 +40,7 @@ interface PatientProfile {
 
 function DashboardSkeleton() {
   return (
-    <div className="animate-pulse space-y-8">
+    <div className="animate-pulse space-y-8" role="status" aria-busy="true">
       <div>
         <div className="h-8 w-64 bg-dental-secondary-200 rounded-lg mb-2" />
         <div className="h-5 w-96 bg-dental-secondary-100 rounded-lg" />
@@ -412,7 +412,7 @@ export default function CabinetPage() {
               </p>
               <Link
                 href="/cabinet/profile"
-                className="text-xs font-medium text-dental-primary-600 hover:text-dental-primary-700 transition-colors"
+                className="text-xs font-medium text-dental-primary-600 hover:text-dental-primary-700 transition-colors rounded focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
               >
                 {t('cabinet.dashboard.completeProfile')}
                 <ChevronRight className="w-3 h-3 inline ml-0.5" />
@@ -423,7 +423,7 @@ export default function CabinetPage() {
           {/* Treatment History link */}
           <Link
             href="/cabinet/treatments"
-            className="block bg-white rounded-2xl p-5 shadow-sm border border-dental-secondary-100 hover:border-dental-primary-200 hover:shadow-md transition-all"
+            className="block bg-white rounded-2xl p-5 shadow-sm border border-dental-secondary-100 hover:border-dental-primary-200 hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
           >
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-dental-dark">
@@ -443,7 +443,7 @@ export default function CabinetPage() {
               </h3>
               <Link
                 href="/cabinet/profile"
-                className="text-dental-primary-600 hover:text-dental-primary-700 text-sm font-medium"
+                className="text-dental-primary-600 hover:text-dental-primary-700 text-sm font-medium rounded focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
               >
                 {t('cabinet.edit')}
               </Link>
@@ -497,7 +497,7 @@ export default function CabinetPage() {
           <div className="bg-white rounded-2xl shadow-sm border border-dental-secondary-100 overflow-hidden">
             <Link
               href="/cabinet/appointments"
-              className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors border-b border-dental-secondary-100"
+              className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors border-b border-dental-secondary-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-dental-primary-500"
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 bg-dental-primary-50 rounded-lg flex items-center justify-center">
@@ -511,7 +511,7 @@ export default function CabinetPage() {
             </Link>
             <Link
               href="/cabinet/payments"
-              className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors border-b border-dental-secondary-100"
+              className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors border-b border-dental-secondary-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-dental-primary-500"
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 bg-dental-primary-50 rounded-lg flex items-center justify-center">
@@ -530,7 +530,7 @@ export default function CabinetPage() {
             </Link>
             <Link
               href="/reviews"
-              className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors"
+              className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-dental-primary-500"
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 bg-amber-50 rounded-lg flex items-center justify-center">
@@ -554,7 +554,7 @@ export default function CabinetPage() {
               </h3>
               <Link
                 href="/cabinet/appointments"
-                className="text-dental-primary-600 hover:text-dental-primary-700 text-sm font-medium"
+                className="text-dental-primary-600 hover:text-dental-primary-700 text-sm font-medium rounded focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
               >
                 {t('cabinet.allAppointments')}
               </Link>
@@ -582,9 +582,10 @@ export default function CabinetPage() {
             ) : (
               <div className="divide-y divide-dental-secondary-100">
                 {recentAppointments.map(apt => (
-                  <div
+                  <Link
                     key={apt.id}
-                    className="p-4 hover:bg-dental-secondary-50/50 transition-colors"
+                    href="/cabinet/appointments"
+                    className="block p-4 hover:bg-dental-secondary-50/50 transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-dental-primary-500"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex gap-3 sm:gap-4 min-w-0">
@@ -622,13 +623,15 @@ export default function CabinetPage() {
                         {getStatusBadge(apt.status)}
                         {apt.services?.[0]?.price_uah && (
                           <p className="text-xs text-dental-muted mt-2">
-                            {apt.services[0].price_uah.toLocaleString()}{' '}
+                            {apt.services[0].price_uah.toLocaleString(
+                              dateLocale
+                            )}{' '}
                             {t('cabinet.currency')}
                           </p>
                         )}
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}

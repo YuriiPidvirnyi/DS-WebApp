@@ -57,7 +57,7 @@ function doctorName(d: TreatmentRecord['doctors']): string {
 
 function TreatmentsSkeleton() {
   return (
-    <div className="animate-pulse space-y-6">
+    <div className="animate-pulse space-y-6" role="status" aria-busy="true">
       <div className="h-7 w-48 bg-dental-secondary-200 rounded-lg" />
       {[1, 2, 3].map(i => (
         <div
