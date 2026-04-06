@@ -12,14 +12,14 @@ const ENV_IG =
   process.env.NEXT_PUBLIC_INSTAGRAM_URL ||
   'https://www.instagram.com/dentalstory_lviv/'
 const ENV_TG =
-  process.env.NEXT_PUBLIC_TELEGRAM_URL || 'https://t.me/dentalstory'
+  process.env.NEXT_PUBLIC_TELEGRAM_URL || 'https://t.me/dentalstorylviv'
 const ENV_TT =
-  process.env.NEXT_PUBLIC_TIKTOK_URL || 'https://www.tiktok.com/@dentalstory'
+  process.env.NEXT_PUBLIC_TIKTOK_URL ||
+  'https://www.tiktok.com/@dentalstory.lviv'
 const ENV_WA =
   process.env.NEXT_PUBLIC_WHATSAPP_URL ||
   `https://wa.me/${(process.env.NEXT_PUBLIC_PHONE_NUMBER || '+380682323838').replace(/\D/g, '')}`
-const ENV_TW =
-  process.env.NEXT_PUBLIC_TWITTER_URL || 'https://twitter.com/dentalstory'
+const ENV_TW = process.env.NEXT_PUBLIC_TWITTER_URL || 'https://x.com'
 
 export const CONTACT_INFO = {
   phone: ENV_PHONE,

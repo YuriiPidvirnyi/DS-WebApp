@@ -33,8 +33,7 @@
   ],
   "clinic": [
     {
-      "src": "/assets/images/clinic/reception-01.webp",
-      "fallback": "/assets/images/clinic/reception-01.jpg",
+      "src": "/assets/images/clinic/waiting-room.jpg",
       "alt": "Сучасний ресепшн клініки Dental Story з зоною очікування",
       "title": "Ресепшн клініки",
       "category": "interior",
@@ -42,8 +41,7 @@
       "height": 1080
     },
     {
-      "src": "/assets/images/clinic/cabinet-main-01.webp",
-      "fallback": "/assets/images/clinic/cabinet-main-01.jpg",
+      "src": "/assets/images/clinic/treatment-room.jpg",
       "alt": "Лікувальний кабінет з сучасним обладнанням",
       "title": "Лікувальний кабінет",
       "category": "interior",
@@ -51,8 +49,7 @@
       "height": 1080
     },
     {
-      "src": "/assets/images/clinic/waiting-area.webp",
-      "fallback": "/assets/images/clinic/waiting-area.jpg",
+      "src": "/assets/images/clinic/treatment-room-2.png",
       "alt": "Комфортна зона очікування пацієнтів",
       "title": "Зона очікування",
       "category": "interior",
@@ -62,24 +59,21 @@
   ],
   "equipment": [
     {
-      "src": "/assets/images/equipment/dental-chair.webp",
-      "fallback": "/assets/images/equipment/dental-chair.jpg",
+      "src": "/assets/images/clinic/treatment-room.jpg",
       "alt": "Сучасне стоматологічне крісло для комфорту пацієнтів",
       "title": "Стоматологічне крісло",
       "width": 1200,
       "height": 800
     },
     {
-      "src": "/assets/images/equipment/xray-3d.webp",
-      "fallback": "/assets/images/equipment/xray-3d.jpg",
+      "src": "/assets/images/clinic/photo-protocol.jpg",
       "alt": "3D томограф для точної діагностики",
       "title": "3D томограф",
       "width": 1200,
       "height": 800
     },
     {
-      "src": "/assets/images/equipment/microscope.webp",
-      "fallback": "/assets/images/equipment/microscope.jpg",
+      "src": "/assets/images/services/microscope-treatment.jpg",
       "alt": "Мікроскоп для прецизійного лікування",
       "title": "Стоматологічний мікроскоп",
       "width": 1200,
@@ -88,8 +82,7 @@
   ],
   "services": [
     {
-      "src": "/assets/images/services/dental-cleaning.jpg",
-      "fallback": "/assets/images/services/dental-cleaning.jpg",
+      "src": "/assets/images/services/therapy.jpg",
       "alt": "Терапевтична стоматологія - лікування карієсу та пульпіту",
       "title": "Терапевтична стоматологія",
       "category": "Терапевтична стоматологія",
@@ -97,8 +90,7 @@
       "height": 800
     },
     {
-      "src": "/assets/images/services/dental-implants.jpg",
-      "fallback": "/assets/images/services/dental-implants.jpg",
+      "src": "/assets/images/services/treatment.jpg",
       "alt": "Хірургічна стоматологія - імплантація та видалення зубів",
       "title": "Хірургічна стоматологія",
       "category": "Хірургічна стоматологія",
@@ -106,8 +98,7 @@
       "height": 800
     },
     {
-      "src": "/assets/images/services/teeth-whitening.jpg",
-      "fallback": "/assets/images/services/teeth-whitening.jpg",
+      "src": "/assets/images/services/microscope-treatment.jpg",
       "alt": "Ортопедична стоматологія - протезування та коронки",
       "title": "Ортопедична стоматологія",
       "category": "Ортопедична стоматологія",
@@ -116,36 +107,11 @@
     },
     {
       "src": "/assets/images/services/orthodontics.jpg",
-      "fallback": "/assets/images/services/orthodontics.jpg",
       "alt": "Ортодонтія - брекети та виправлення прикусу",
       "title": "Ортодонтія",
       "category": "Ортодонтія",
       "width": 1200,
       "height": 800
-    }
-  ],
-  "beforeAfter": [
-    {
-      "before": "/assets/images/before-after/whitening-before-01.webp",
-      "after": "/assets/images/before-after/whitening-after-01.webp",
-      "beforeFallback": "/assets/images/before-after/whitening-before-01.jpg",
-      "afterFallback": "/assets/images/before-after/whitening-after-01.jpg",
-      "alt": "Результат професійного відбілювання зубів",
-      "title": "Професійне відбілювання",
-      "category": "whitening",
-      "width": 800,
-      "height": 600
-    },
-    {
-      "before": "/assets/images/before-after/restoration-before-01.webp",
-      "after": "/assets/images/before-after/restoration-after-01.webp",
-      "beforeFallback": "/assets/images/before-after/restoration-before-01.jpg",
-      "afterFallback": "/assets/images/before-after/restoration-after-01.jpg",
-      "alt": "Результат реставрації зубів",
-      "title": "Естетична реставрація",
-      "category": "restoration",
-      "width": 800,
-      "height": 600
     }
   ]
 }

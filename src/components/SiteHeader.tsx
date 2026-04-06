@@ -4,7 +4,20 @@ import { useState, useCallback, useMemo, memo, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
-import { Menu, X, Phone, Mail, User, LogIn, Calendar } from 'lucide-react'
+import {
+  Menu,
+  X,
+  Phone,
+  Mail,
+  User,
+  LogIn,
+  Calendar,
+  Home,
+  Stethoscope,
+  Users,
+  GalleryVertical,
+  MapPin,
+} from 'lucide-react'
 import { CONTACT_INFO } from '@/utils/constants'
 import Logo from '@/components/ui/Logo'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
@@ -15,12 +28,8 @@ const Header = memo(() => {
   const { t } = useTranslation()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [user, setUser] = useState<SupabaseUser | null>(null)
-  const [mainBarVisible, setMainBarVisible] = useState(true)
   const pathname = usePathname()
   const menuRef = useRef<HTMLDivElement>(null)
-  const lastScrollY = useRef(typeof window !== 'undefined' ? window.scrollY : 0)
-  const ticking = useRef(false)
-  const scrollReady = useRef(false)
 
   // Check auth state (only when Supabase is configured)
   useEffect(() => {
@@ -87,70 +96,17 @@ const Header = memo(() => {
     return () => document.removeEventListener('keydown', handleEscape)
   }, [isMenuOpen])
 
-  // Hide/show main bar on scroll direction with debounce
-  useEffect(() => {
-    let scrollAccumulator = 0
-    const THRESHOLD = 60 // px of consistent scroll before toggling
-
-    // Initialize scroll position to prevent jitter on reload
-    lastScrollY.current = window.scrollY
-    // Skip the first few scroll events after mount to avoid jitter
-    const initTimer = setTimeout(() => {
-      scrollReady.current = true
-    }, 300)
-
-    const onScroll = () => {
-      if (!scrollReady.current) {
-        lastScrollY.current = window.scrollY
-        return
-      }
-      if (ticking.current) return
-      ticking.current = true
-      requestAnimationFrame(() => {
-        const currentY = window.scrollY
-        const delta = currentY - lastScrollY.current
-
-        // Always show when near top or menu is open
-        if (currentY < 150 || isMenuOpen) {
-          setMainBarVisible(true)
-          scrollAccumulator = 0
-        } else {
-          // Accumulate scroll in one direction; reset on direction change
-          if (delta > 0) {
-            scrollAccumulator =
-              scrollAccumulator > 0 ? scrollAccumulator + delta : delta
-          } else if (delta < 0) {
-            scrollAccumulator =
-              scrollAccumulator < 0 ? scrollAccumulator + delta : delta
-          }
-
-          if (scrollAccumulator > THRESHOLD) {
-            setMainBarVisible(false)
-            scrollAccumulator = 0
-          } else if (scrollAccumulator < -THRESHOLD) {
-            setMainBarVisible(true)
-            scrollAccumulator = 0
-          }
-        }
-
-        lastScrollY.current = currentY
-        ticking.current = false
-      })
-    }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => {
-      clearTimeout(initTimer)
-      window.removeEventListener('scroll', onScroll)
-    }
-  }, [isMenuOpen])
-
   const navigation = useMemo(
     () => [
-      { name: t('navigation.home'), href: '/' },
-      { name: t('navigation.services'), href: '/services' },
-      { name: t('navigation.about'), href: '/about' },
-      { name: t('navigation.gallery'), href: '/gallery' },
-      { name: t('navigation.contact'), href: '/contact' },
+      { name: t('navigation.home'), href: '/', icon: Home },
+      { name: t('navigation.services'), href: '/services', icon: Stethoscope },
+      { name: t('navigation.about'), href: '/about', icon: Users },
+      {
+        name: t('navigation.gallery'),
+        href: '/gallery',
+        icon: GalleryVertical,
+      },
+      { name: t('navigation.contact'), href: '/contact', icon: MapPin },
     ],
     [t]
   )
@@ -160,64 +116,75 @@ const Header = memo(() => {
   const toggleMenu = useCallback(() => setIsMenuOpen(prev => !prev), [])
   const closeMenu = useCallback(() => setIsMenuOpen(false), [])
 
-  // Nunito font for nav links — inline style needed because
-  // body CSS sets font-family: var(--font-rubik) which overrides Tailwind classes
   const nunitoFont = {
     fontFamily: 'var(--font-nunito), Nunito, system-ui, sans-serif',
   }
 
+  // Hide header on cabinet and admin routes (they have their own layouts)
+  if (pathname?.startsWith('/cabinet') || pathname?.startsWith('/admin')) {
+    return null
+  }
+
   return (
     <header
-      className="bg-white shadow-sm sticky top-0 z-50 min-w-0 overflow-x-clip"
+      className="bg-white shadow-sm z-50 min-w-0 overflow-x-clip shrink-0"
       role="banner"
     >
-      {/* Top bar — hidden on mobile */}
+      {/* Top contact bar — visible on sm+ */}
       <div
-        className="hidden sm:block bg-dental-primary-900 text-white py-2"
+        className="hidden sm:block bg-dental-primary-900 text-white"
         role="complementary"
         aria-label={t('accessibility.contactInfo')}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center text-sm">
-            <div className="flex items-center gap-5">
+        <div className="mx-auto px-4 sm:px-6 lg:px-4 xl:px-8 py-2">
+          <div className="flex items-center text-sm">
+            {/* Left: contacts */}
+            <div className="flex items-center gap-5 flex-1 min-w-0">
               <a
                 href={`tel:${CONTACT_INFO.phoneRaw}`}
                 className="flex items-center gap-1.5 text-white/90 hover:text-white transition-colors"
               >
-                <Phone className="h-3.5 w-3.5" aria-hidden="true" />
+                <Phone className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="font-medium tracking-wide">
                   {CONTACT_INFO.phone}
                 </span>
               </a>
               <a
                 href={`mailto:${CONTACT_INFO.email}`}
-                className="hidden md:flex items-center gap-1.5 text-white/90 hover:text-white transition-colors"
+                className="hidden xl:flex items-center gap-1.5 text-white/90 hover:text-white transition-colors"
               >
-                <Mail className="h-3.5 w-3.5" aria-hidden="true" />
+                <Mail className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="font-medium">{CONTACT_INFO.email}</span>
               </a>
             </div>
-            <div className="flex items-center gap-4">
-              <span className="text-white/85 font-medium text-xs lg:text-sm">
+
+            {/* Center: hours + booking CTA */}
+            <div className="hidden lg:flex items-center gap-4 justify-center">
+              <span className="text-white/85 font-medium text-xs lg:text-sm whitespace-nowrap">
                 {CONTACT_INFO.workingHours.weekdays} |{' '}
                 {CONTACT_INFO.workingHours.saturday}
               </span>
               <Link
                 href="/booking"
-                className="hidden lg:flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-4 py-1 rounded-full font-semibold text-xs transition-all duration-200 whitespace-nowrap border border-white/30 hover:border-white/50"
+                className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-4 py-1 rounded-full font-semibold text-xs transition-all duration-200 whitespace-nowrap border border-white/30 hover:border-white/50"
                 style={nunitoFont}
-                data-track-id="cta_book_now"
-                data-track-category="navigation"
-                data-track-label="header_cta"
                 aria-label={t('buttons.bookAppointment')}
               >
                 <Calendar className="w-3.5 h-3.5 shrink-0" />
                 <span>{t('buttons.bookAppointment')}</span>
               </Link>
+            </div>
+
+            {/* Right: auth + language */}
+            <div className="flex items-center gap-3 flex-1 min-w-0 justify-end">
+              <span className="lg:hidden text-white/85 font-medium text-xs whitespace-nowrap">
+                {CONTACT_INFO.workingHours.weekdays} |{' '}
+                {CONTACT_INFO.workingHours.saturday}
+              </span>
               {user ? (
                 <Link
                   href="/cabinet"
-                  className="hidden lg:flex items-center gap-1.5 text-white/90 hover:text-white transition-colors"
+                  className="hidden xl:flex items-center gap-1.5 text-white/90 hover:text-white transition-colors"
                   title={t('cabinet.myProfile')}
                 >
                   <User className="w-3.5 h-3.5" />
@@ -228,7 +195,7 @@ const Header = memo(() => {
               ) : (
                 <Link
                   href="/auth/login"
-                  className="hidden lg:flex items-center gap-1.5 text-white/90 hover:text-white transition-colors"
+                  className="hidden xl:flex items-center gap-1.5 text-white/90 hover:text-white transition-colors"
                   title={t('auth.login.submit')}
                 >
                   <LogIn className="w-3.5 h-3.5" />
@@ -237,94 +204,64 @@ const Header = memo(() => {
                   </span>
                 </Link>
               )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main header — collapses/expands on scroll via grid trick */}
-      <div
-        className="grid transition-[grid-template-rows] duration-300 ease-in-out"
-        style={{ gridTemplateRows: mainBarVisible ? '1fr' : '0fr' }}
-      >
-        <div className="overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between py-3 lg:py-4 gap-4">
-              {/* Logo */}
-              <Link
-                href="/"
-                aria-label={t('accessibility.homeLink')}
-                className="shrink-0"
-              >
-                <Logo variant="default" size="sm" />
-              </Link>
-
-              {/* Desktop navigation — centered */}
-              <nav
-                className="hidden lg:flex items-center gap-1"
-                role="navigation"
-                aria-label={t('accessibility.mainNavigation')}
-              >
-                {navigation.map(item => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`px-3 py-2 rounded-lg text-sm transition-colors duration-200 font-medium whitespace-nowrap ${
-                      isActive(item.href)
-                        ? 'text-dental-primary-600 bg-dental-primary-50'
-                        : 'text-dental-dark hover:text-dental-primary-600 hover:bg-gray-50'
-                    }`}
-                    style={nunitoFont}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </nav>
-
-              {/* Right side: Language */}
-              <div className="hidden lg:flex items-center gap-2 shrink-0">
+              <div className="hidden lg:block [&_button]:!min-h-0 [&_button]:!py-0.5 [&_button]:!text-white/90 [&_button]:hover:!text-white [&_button]:!border-white/20">
                 <LanguageSwitcher variant="dropdown" />
               </div>
-
-              {/* Mobile: CTA + burger */}
-              <div className="flex lg:hidden items-center gap-2">
-                <Link
-                  href="/booking"
-                  className="flex items-center gap-1.5 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-4 py-2 rounded-full font-semibold text-sm transition-colors"
-                  style={nunitoFont}
-                >
-                  <Calendar className="w-4 h-4" />
-                  <span className="hidden sm:inline">
-                    {t('buttons.bookAppointment')}
-                  </span>
-                </Link>
-                <button
-                  onClick={toggleMenu}
-                  className="p-2 text-dental-text hover:text-dental-primary-600 focus:outline-none focus:ring-2 focus:ring-dental-primary-400 focus:ring-offset-2 rounded-lg transition-colors"
-                  aria-label={
-                    isMenuOpen
-                      ? t('accessibility.closeMenu')
-                      : t('accessibility.openMenu')
-                  }
-                  aria-expanded={isMenuOpen}
-                  aria-controls="mobile-menu"
-                >
-                  {isMenuOpen ? (
-                    <X className="h-6 w-6" aria-hidden="true" />
-                  ) : (
-                    <Menu className="h-6 w-6" aria-hidden="true" />
-                  )}
-                </button>
-              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Mobile menu with backdrop */}
+      {/* Main bar: Logo + CTA + Burger — mobile only (desktop has logo in sidebar) */}
+      <div className="lg:hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between py-3 lg:py-3 gap-4">
+            {/* Logo */}
+            <Link
+              href="/"
+              aria-label={t('accessibility.homeLink')}
+              className="shrink-0"
+            >
+              <Logo variant="default" size="sm" />
+            </Link>
+
+            {/* Mobile: CTA + burger */}
+            <div className="flex lg:hidden items-center gap-2">
+              <Link
+                href="/booking"
+                className="flex items-center gap-1.5 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-4 py-2 rounded-full font-semibold text-sm transition-colors"
+                style={nunitoFont}
+              >
+                <Calendar className="w-4 h-4" />
+                <span className="hidden sm:inline">
+                  {t('buttons.bookAppointment')}
+                </span>
+              </Link>
+              <button
+                onClick={toggleMenu}
+                className="p-2 text-dental-text hover:text-dental-primary-600 focus:outline-none focus:ring-2 focus:ring-dental-primary-400 focus:ring-offset-2 rounded-lg transition-colors"
+                aria-label={
+                  isMenuOpen
+                    ? t('accessibility.closeMenu')
+                    : t('accessibility.openMenu')
+                }
+                aria-expanded={isMenuOpen}
+                aria-controls="mobile-menu"
+              >
+                {isMenuOpen ? (
+                  <X className="h-6 w-6" aria-hidden="true" />
+                ) : (
+                  <Menu className="h-6 w-6" aria-hidden="true" />
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile menu — nav + messengers + auth + language */}
       {isMenuOpen && (
         <>
-          {/* Backdrop overlay */}
           <div
             className="fixed inset-0 bg-black/20 z-40 lg:hidden"
             aria-hidden="true"
@@ -335,31 +272,87 @@ const Header = memo(() => {
             ref={menuRef}
             className="lg:hidden absolute left-0 right-0 z-50 bg-white border-t shadow-lg"
             id="mobile-menu"
-            role="navigation"
-            aria-label={t('accessibility.mobileMenu')}
           >
-            <div className="px-4 pt-2 pb-4 max-h-[calc(100vh-4rem)] overflow-y-auto">
+            <div className="px-4 pt-2 pb-4">
+              {/* Page links with icons */}
               <div className="space-y-1">
-                {navigation.map(item => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`block px-4 py-3 rounded-xl transition-colors duration-200 ${
-                      isActive(item.href)
-                        ? 'text-dental-primary-600 bg-dental-primary-50 font-semibold'
-                        : 'text-dental-dark hover:text-dental-primary-600 hover:bg-gray-50'
-                    }`}
-                    style={nunitoFont}
-                    onClick={closeMenu}
-                    tabIndex={0}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
+                {navigation.map(item => {
+                  const Icon = item.icon
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors duration-200 ${
+                        isActive(item.href)
+                          ? 'text-dental-primary-600 bg-dental-primary-50 font-semibold'
+                          : 'text-dental-dark hover:text-dental-primary-600 hover:bg-gray-50'
+                      }`}
+                      style={nunitoFont}
+                      onClick={closeMenu}
+                    >
+                      <Icon className="w-5 h-5" />
+                      {item.name}
+                    </Link>
+                  )
+                })}
               </div>
 
-              {/* Auth + Language in mobile */}
-              <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
+              {/* Messengers */}
+              <div className="mt-3 pt-3 border-t border-gray-100 space-y-1">
+                <a
+                  href={`tel:${CONTACT_INFO.phoneRaw}`}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-dental-dark hover:text-dental-primary-600 hover:bg-gray-50 transition-colors"
+                  onClick={closeMenu}
+                >
+                  <Phone className="w-5 h-5" />
+                  <span className="font-medium text-sm" style={nunitoFont}>
+                    {t('radialMenu.actions.phone')}
+                  </span>
+                </a>
+                {CONTACT_INFO.social?.whatsapp && (
+                  <a
+                    href={CONTACT_INFO.social.whatsapp}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-dental-dark hover:text-[#25D366] hover:bg-gray-50 transition-colors"
+                    onClick={closeMenu}
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="w-5 h-5"
+                    >
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                    </svg>
+                    <span className="font-medium text-sm" style={nunitoFont}>
+                      WhatsApp
+                    </span>
+                  </a>
+                )}
+                {CONTACT_INFO.social?.telegram && (
+                  <a
+                    href={CONTACT_INFO.social.telegram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-dental-dark hover:text-[#26A5E4] hover:bg-gray-50 transition-colors"
+                    onClick={closeMenu}
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="w-5 h-5"
+                    >
+                      <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+                    </svg>
+                    <span className="font-medium text-sm" style={nunitoFont}>
+                      Telegram
+                    </span>
+                  </a>
+                )}
+              </div>
+
+              {/* Auth + Language */}
+              <div className="mt-3 pt-3 border-t border-gray-100 space-y-3">
                 {user ? (
                   <Link
                     href="/cabinet"

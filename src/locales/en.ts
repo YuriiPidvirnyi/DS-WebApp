@@ -375,7 +375,7 @@ const en = {
   },
   home: {
     hero: {
-      title: 'Your Smile - Our Mission',
+      title: 'Your Smile — Our Mission',
       description:
         'Professional dental care using the latest technologies and an individual approach to each patient.',
       whyChooseUs: 'Why Choose Us?',
@@ -401,7 +401,7 @@ const en = {
         orthopedicDescription: 'Prosthetics, crowns, bridges, veneers',
         orthodonticsDescription: 'Bite correction, braces, aligners',
       },
-      imageAlt: '{{title}} - dental service',
+      imageAlt: '{{title}} — dental service',
     },
     pricing: {
       title: 'Transparent Pricing',
@@ -429,12 +429,12 @@ const en = {
     },
     story: {
       title: 'Our Story',
-      tagline: 'Your Smile - Our Mission',
+      tagline: 'Your Smile — Our Mission',
       paragraph1:
         'Dental Story clinic was founded in 2014 with the goal of providing quality dental care using the most advanced technologies. Our team brings together experienced doctors who continuously improve their skills and stay up to date with the latest trends in dentistry.',
       paragraph2:
         'We are proud that over the years we have helped thousands of patients restore their dental health and beautiful smiles. Our philosophy is based on the principles of trust, professionalism, and an individual approach to each patient.',
-      mission: 'Your Smile - Our Mission',
+      mission: 'Your Smile — Our Mission',
     },
     values: {
       title: 'Our Values',
@@ -511,63 +511,13 @@ const en = {
   testimonials: {
     title: 'Patient Reviews',
     subtitle:
-      'The happiness of our patients is our greatest reward. Read real reviews from people who trusted us with their health',
+      'Real reviews from people who trusted us with their health and smiles',
     rating: 'Rating: {{rating}} out of 5 stars',
     basedOn: 'based on {{count}} reviews',
     cta: {
-      question: 'Want to become part of our happy patient family?',
+      question: 'Share your experience at Dental Story',
       button: 'Book Appointment',
     },
-    items: [
-      {
-        id: '1',
-        name: 'Olena Shevchenko',
-        rating: 5,
-        text: 'Excellent clinic! The doctors are true professionals. I had implantation done - everything was painless and quick. I am very grateful to the whole team for their care and quality work.',
-        service: 'Dental implantation',
-        date: '2024-09-15',
-      },
-      {
-        id: '2',
-        name: 'Andrii Kovalenko',
-        rating: 5,
-        text: 'The best dentistry in Kyiv! We got braces for my daughter - the result exceeded all expectations. The orthodontist is very attentive and explains everything clearly.',
-        service: 'Orthodontics',
-        date: '2024-08-28',
-      },
-      {
-        id: '3',
-        name: 'Mariia Bondarenko',
-        rating: 5,
-        text: 'Thank you for the professional whitening! My smile looks like Hollywood stars. The procedure was comfortable without unpleasant sensations. I recommend it to everyone!',
-        service: 'Teeth whitening',
-        date: '2024-09-02',
-      },
-      {
-        id: '4',
-        name: 'Viktor Melnyk',
-        rating: 5,
-        text: 'For the first time I was not afraid to visit the dentist. Modern equipment, friendly staff, quality anesthesia. Treatment was quick and absolutely painless.',
-        service: 'Dental treatment',
-        date: '2024-08-10',
-      },
-      {
-        id: '5',
-        name: 'Yuliia Petrova',
-        rating: 5,
-        text: 'I had professional teeth cleaning. Very satisfied with the result! The hygienist works carefully and thoroughly. The feeling of freshness and cleanliness after the procedure is incredible.',
-        service: 'Professional hygiene',
-        date: '2024-09-20',
-      },
-      {
-        id: '6',
-        name: 'Ihor Sydorenko',
-        rating: 5,
-        text: 'I got crowns - the quality is top level. The color was matched perfectly, they feel natural. Thanks to the doctor for professionalism and patience!',
-        service: 'Prosthetics',
-        date: '2024-07-25',
-      },
-    ],
   },
   reviews: {
     title: 'Patient Reviews',
@@ -1141,9 +1091,9 @@ const en = {
     decline: 'Decline',
   },
   meta: {
-    title: 'Dental Story - Modern Dental Clinic in Lviv | Sumska St., 10',
+    title: 'Dental Story — Modern Dental Clinic in Lviv | Sumska St., 10',
     description:
-      'Professional dental clinic at Sumska St., 10. Full range of services: treatment, implants, orthodontics. Painless treatment, modern equipment. Booking: 068 232 38 38',
+      'Modern dentistry in Lviv. Dental treatment, implants, orthodontics, teeth whitening. Transparent pricing, painless treatment, quality guarantee.',
     keywords:
       'dentist Lviv, dentist Sumska, dental clinic Lviv, dental treatment, dental implants, braces, teeth whitening, Dental Story',
   },
@@ -1406,7 +1356,7 @@ const en = {
       hidePassword: 'Hide password',
       login: 'Log In',
       loading: 'Signing in...',
-      backToSite: '← Back to site',
+      backToSite: 'Back to site',
       forgotPassword: 'Forgot Password?',
       invalidCredentials: 'Invalid email or password',
       errors: {
@@ -1419,7 +1369,7 @@ const en = {
     layout: {
       panel: 'Admin Panel',
       logout: 'Log Out',
-      backToSite: '← Back to site',
+      backToSite: 'Back to site',
       systemOnline: 'System online',
       defaultUser: 'Admin',
     },
@@ -1490,14 +1440,11 @@ const en = {
         today: 'Today',
         upcoming: 'Upcoming',
         past: 'Past',
-        statusSelectAria: 'Filter by appointment status',
-        dateSelectAria: 'Filter by appointment date',
       },
       bulk: {
         selected: 'Selected: {{count}}',
         moveTo: 'Move to {{status}}',
         apply: 'Apply in bulk',
-        targetStatusSelectAria: 'Target status for bulk update',
       },
       table: {
         selectAllAria: 'Select all rows',
@@ -1536,7 +1483,6 @@ const en = {
         '30': '30 days',
         '90': '90 days',
       },
-      periodSelectAria: 'Reporting period',
       refresh: 'Refresh',
       loading: 'Loading analytics...',
       cards: {
@@ -1740,7 +1686,6 @@ const en = {
       empty: 'No inquiries found for current filters.',
       card: {
         selectAria: 'Select inquiry {{name}}',
-        statusSelectAria: 'Change inquiry status: {{name}}',
         unreadBadge: 'unread',
         markRead: 'Mark as read',
         markUnread: 'Mark as unread',
@@ -2211,9 +2156,39 @@ const en = {
     },
   },
   cabinet: {
+    sidebar: {
+      title: 'My Cabinet',
+      dashboard: 'Dashboard',
+      appointments: 'My Appointments',
+      treatments: 'Treatments',
+      payments: 'Payments',
+      profile: 'Profile',
+      backToSite: 'Back to site',
+      soon: 'soon',
+      navigation: 'Cabinet navigation',
+      openMenu: 'Open menu',
+    },
     logout: 'Log Out',
     welcome: 'Welcome, {{name}}!',
+    greeting: {
+      morning: 'Good morning, {{name}}!',
+      afternoon: 'Good afternoon, {{name}}!',
+      evening: 'Good evening, {{name}}!',
+    },
     subtitle: 'Your personal Dental Story patient account',
+    dashboard: {
+      nextAppointment: 'Next Visit',
+      viewDetails: 'Details',
+      upcoming: 'Upcoming',
+      completed: 'Completed',
+      total: 'Total',
+      noUpcoming: 'No upcoming visits',
+      noUpcomingDesc: 'Book an appointment — choose a convenient time',
+      profileIncomplete: 'Complete your profile',
+      profileHint:
+        'Complete information helps your doctor prepare for the visit',
+      completeProfile: 'Complete',
+    },
     defaultPatient: 'Patient',
     bookAppointment: 'Book Appointment',
     chooseTime: 'Choose a convenient time',
@@ -2263,10 +2238,73 @@ const en = {
         past: 'No past appointments',
         cta: 'Book an appointment with our specialists',
       },
+      cancelModal: {
+        title: 'Cancel appointment?',
+        back: 'No, keep it',
+        confirm: 'Yes, cancel',
+        success: 'Appointment cancelled successfully',
+        error: 'Failed to cancel appointment',
+      },
+      reschedule: {
+        button: 'Reschedule',
+        title: 'Reschedule Appointment',
+        current: 'Current appointment',
+        at: 'at',
+        selectTime: 'Select time',
+        noSlots: 'No available slots for this date',
+        confirm: 'Reschedule',
+        error: 'Failed to reschedule appointment',
+        success: 'Appointment rescheduled successfully',
+      },
+    },
+    treatments: {
+      title: 'Treatment History',
+      empty: 'No treatment records yet',
+      doctor: 'Doctor',
+      diagnosis: 'Diagnosis',
+      procedures: 'Procedures',
+      tooth: 'tooth',
+      teeth: 'Teeth',
+      status: {
+        draft: 'Draft',
+        signed: 'Signed',
+        completed: 'Completed',
+      },
+      payment: {
+        unpaid: 'Unpaid',
+        partial: 'Partial',
+        paid: 'Paid',
+        waived: 'Waived',
+        refunded: 'Refunded',
+      },
+    },
+    error: {
+      title: 'Something went wrong',
+      description:
+        'An error occurred while loading the page. Please try refreshing or return to the main page.',
+      devDetails: 'Error details (development):',
+      retry: 'Try again',
+      goHome: 'Go to cabinet home',
+    },
+    payments: {
+      title: 'Payments',
+      comingSoon: 'Coming Soon',
+      description:
+        'We are working on a convenient payment system. Soon you will be able to view invoices and pay online.',
+      feature1Title: 'Invoices',
+      feature1Desc: 'View payment history',
+      feature2Title: 'Online Payment',
+      feature2Desc: 'Convenient card payment',
+      feature3Title: 'Reminders',
+      feature3Desc: 'Payment notifications',
+      meanwhile: 'Meanwhile you can view your treatment history',
     },
     profile: {
       title: 'Edit Profile',
       patientLabel: 'Dental Story Patient',
+      personalInfo: 'Personal details',
+      contactInfo: 'Contact information',
+      additionalInfo: 'Additional',
       lastName: 'Last Name',
       lastNamePlaceholder: 'Smith',
       firstName: 'First Name',
@@ -2278,8 +2316,10 @@ const en = {
       dateOfBirth: 'Date of Birth',
       save: 'Save Changes',
       saveSuccess: 'Profile updated successfully!',
+      unsavedChanges: 'You have unsaved changes',
       errors: {
         saveFailed: 'Failed to save. Please try again later.',
+        invalidPhone: 'Please enter a valid phone number',
       },
     },
   },

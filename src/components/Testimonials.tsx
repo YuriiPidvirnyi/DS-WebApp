@@ -1,9 +1,10 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import { Star } from 'lucide-react'
-import type { Testimonial } from '@/types'
+import { getReviews, type Review } from '@/services/reviews'
 
 const StarRating = ({
   rating,
@@ -29,16 +30,14 @@ const StarRating = ({
   )
 }
 
-const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
+const TestimonialCard = ({ review }: { review: Review }) => {
   const { t } = useTranslation()
-  // Generate initials for avatar fallback
-  const initials = testimonial.name
+  const initials = review.name
     .split(' ')
     .map(n => n[0])
     .join('')
     .toUpperCase()
 
-  // Generate deterministic background color from name
   const colors = [
     'bg-teal-800',
     'bg-slate-800',
@@ -47,40 +46,41 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
     'bg-pink-700',
     'bg-indigo-700',
   ]
-  const colorIndex = testimonial.name.charCodeAt(0) % colors.length
-  const bgColor = colors[colorIndex]
+  const bgColor = colors[review.name.charCodeAt(0) % colors.length]
+
+  const dateLabel = review.visitDate
+    ? new Date(review.visitDate).toLocaleDateString('uk-UA', {
+        month: 'long',
+        year: 'numeric',
+      })
+    : new Date(review.createdAt).toLocaleDateString('uk-UA', {
+        month: 'long',
+        year: 'numeric',
+      })
 
   return (
     <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6">
       <div className="flex items-start gap-4 mb-4">
-        {/* Avatar */}
         <div
           className={`${bgColor} w-12 h-12 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0`}
         >
           {initials}
         </div>
-
-        {/* Name and Rating */}
         <div className="flex-1">
-          <h4 className="font-semibold text-gray-900 mb-1">
-            {testimonial.name}
-          </h4>
+          <h4 className="font-semibold text-gray-900 mb-1">{review.name}</h4>
           <StarRating
-            rating={testimonial.rating}
-            ariaLabel={t('testimonials.rating', { rating: testimonial.rating })}
+            rating={review.rating}
+            ariaLabel={t('testimonials.rating', { rating: review.rating })}
           />
         </div>
+        <span className="text-xs text-gray-400 shrink-0">{dateLabel}</span>
       </div>
 
-      {/* Review Text */}
-      <p className="text-gray-600 leading-relaxed mb-3">{testimonial.text}</p>
+      <p className="text-gray-600 leading-relaxed mb-3">{review.comment}</p>
 
-      {/* Service */}
-      {testimonial.service && (
+      {review.service && (
         <div className="pt-3 border-t border-gray-100">
-          <p className="text-sm text-teal-800 font-medium">
-            {testimonial.service}
-          </p>
+          <p className="text-sm text-teal-800 font-medium">{review.service}</p>
         </div>
       )}
     </div>
@@ -89,17 +89,40 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
 
 const Testimonials = () => {
   const { t } = useTranslation()
-  const translatedItems = t('testimonials.items', {
-    returnObjects: true,
-  }) as unknown
-  const testimonials = Array.isArray(translatedItems)
-    ? (translatedItems as Testimonial[])
-    : []
+  const [reviews, setReviews] = useState<Review[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    getReviews()
+      .then(res => {
+        if (res.success && res.data) setReviews(res.data.items)
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  const avgRating =
+    reviews.length > 0
+      ? Math.round(
+          (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length) * 10
+        ) / 10
+      : null
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-gray-400">{t('home.testimonials.loadingTitle')}</p>
+        </div>
+      </section>
+    )
+  }
+
+  if (reviews.length === 0) return null
 
   return (
     <section className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
             {t('testimonials.title')}
@@ -108,27 +131,28 @@ const Testimonials = () => {
             {t('testimonials.subtitle')}
           </p>
 
-          {/* Rating Summary */}
-          <div className="mt-8 inline-flex items-center gap-3 bg-white px-6 py-3 rounded-full shadow-sm">
-            <StarRating
-              rating={5}
-              ariaLabel={t('testimonials.rating', { rating: 5 })}
-            />
-            <span className="text-2xl font-bold text-gray-900">4.9</span>
-            <span className="text-gray-500">
-              {t('testimonials.basedOn', { count: 523 })}
-            </span>
-          </div>
+          {avgRating !== null && (
+            <div className="mt-8 inline-flex items-center gap-3 bg-white px-6 py-3 rounded-full shadow-sm">
+              <StarRating
+                rating={Math.round(avgRating)}
+                ariaLabel={t('testimonials.rating', { rating: avgRating })}
+              />
+              <span className="text-2xl font-bold text-gray-900">
+                {avgRating}
+              </span>
+              <span className="text-gray-500">
+                {t('testimonials.basedOn', { count: reviews.length })}
+              </span>
+            </div>
+          )}
         </div>
 
-        {/* Testimonials Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {testimonials.map(testimonial => (
-            <TestimonialCard key={testimonial.id} testimonial={testimonial} />
+          {reviews.slice(0, 6).map(review => (
+            <TestimonialCard key={review.id} review={review} />
           ))}
         </div>
 
-        {/* CTA */}
         <div className="text-center">
           <p className="text-gray-600 mb-4">{t('testimonials.cta.question')}</p>
           <Link

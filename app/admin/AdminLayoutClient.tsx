@@ -22,7 +22,9 @@ import {
   ClipboardList,
   Package,
   ShoppingCart,
+  ArrowLeft,
 } from 'lucide-react'
+import Logo from '@/components/ui/Logo'
 import { AdminAuthProvider } from '@/contexts/AdminAuthContext'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 
@@ -169,11 +171,8 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
         }`}
       >
         <div className="flex items-center justify-between h-16 px-6 border-b">
-          <Link href="/admin" className="flex items-center gap-2">
-            <span className="text-2xl">🦷</span>
-            <span className="font-bold text-gray-900">
-              {t('admin.layout.panel')}
-            </span>
+          <Link href="/admin">
+            <Logo size="sm" />
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -208,11 +207,8 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-72 lg:flex-col">
         <div className="flex flex-col flex-1 bg-white border-r border-gray-200">
           <div className="flex items-center h-16 px-6 border-b">
-            <Link href="/admin" className="flex items-center gap-2">
-              <span className="text-2xl">🦷</span>
-              <span className="font-bold text-gray-900 text-lg">
-                {t('common.brandName')}
-              </span>
+            <Link href="/admin">
+              <Logo size="sm" />
             </Link>
           </div>
           <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
@@ -251,6 +247,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
               href="/"
               className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
             >
+              <ArrowLeft className="w-5 h-5" />
               {t('admin.layout.backToSite')}
             </Link>
           </div>

@@ -353,14 +353,14 @@ export default function SignUpPage() {
                 {t('auth.signUp.agreePrefix')}{' '}
                 <Link
                   href="/terms-of-service"
-                  className="text-teal-600 hover:text-teal-700"
+                  className="text-teal-700 hover:text-teal-800 underline"
                 >
                   {t('auth.signUp.termsLink')}
                 </Link>{' '}
                 {t('auth.signUp.agreeAnd')}{' '}
                 <Link
                   href="/privacy-policy"
-                  className="text-teal-600 hover:text-teal-700"
+                  className="text-teal-700 hover:text-teal-800 underline"
                 >
                   {t('auth.signUp.privacyLink')}
                 </Link>
@@ -388,7 +388,7 @@ export default function SignUpPage() {
               {t('auth.signUp.hasAccount')}{' '}
               <Link
                 href="/auth/login"
-                className="text-teal-600 hover:text-teal-700 font-semibold"
+                className="text-teal-700 hover:text-teal-800 font-semibold underline"
               >
                 {t('auth.signUp.loginLink')}
               </Link>

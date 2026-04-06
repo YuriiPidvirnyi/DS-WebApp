@@ -52,7 +52,7 @@ interface AIAssistantProps {
 
 export default function AIAssistant({ onClose }: AIAssistantProps) {
   const { t, i18n } = useTranslation()
-  const [isOpen, setIsOpen] = useState(!onClose) // Auto-open if controlled externally
+  const [isOpen, setIsOpen] = useState(!!onClose) // Auto-open if controlled externally
   const [input, setInput] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)

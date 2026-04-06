@@ -47,8 +47,16 @@ test.describe('Public UI: selects & language', () => {
 
     const svc = page.locator('#review-service')
     await expect(svc).toBeVisible({ timeout: 25_000 })
-    await svc.selectOption({ label: 'Пародонтологія' })
-    await expect(svc).toHaveValue('Пародонтологія')
+    // Wait for React Hook Form hydration to fully stabilise — RHF re-renders
+    // the select after register() attaches, which can reset a premature selection.
+    await expect(svc).toHaveValue('Терапевтична стоматологія', {
+      timeout: 5_000,
+    })
+    // Use toPass to retry select+assert until RHF stops resetting the value
+    await expect(async () => {
+      await svc.selectOption({ label: 'Пародонтологія' })
+      await expect(svc).toHaveValue('Пародонтологія')
+    }).toPass({ timeout: 10_000 })
   })
 
   test('header: LanguageSwitcher — перехід на EN', async ({ page }) => {

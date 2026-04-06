@@ -1,38 +1,39 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { Award, Users, Clock, Heart } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import images from '@/content/images.json'
+import { getDoctors, type Doctor } from '@/services/doctors'
+
+function experienceLabel(years: number): string {
+  const mod10 = years % 10
+  const mod100 = years % 100
+  if (mod100 >= 11 && mod100 <= 19) return `${years} років досвіду`
+  if (mod10 === 1) return `${years} рік досвіду`
+  if (mod10 >= 2 && mod10 <= 4) return `${years} роки досвіду`
+  return `${years} років досвіду`
+}
 
 const About = () => {
   const { t } = useTranslation()
+  const [doctors, setDoctors] = useState<Doctor[]>([])
+  const [doctorsLoading, setDoctorsLoading] = useState(true)
+
+  useEffect(() => {
+    getDoctors()
+      .then(res => {
+        if (res.success && Array.isArray(res.data)) setDoctors(res.data)
+      })
+      .catch(() => {})
+      .finally(() => setDoctorsLoading(false))
+  }, [])
 
   const stats = [
     { number: '10+', labelKey: 'about.stats.experience' },
     { number: '5000+', labelKey: 'about.stats.patients' },
     { number: '15+', labelKey: 'about.stats.specialists' },
     { number: '98%', labelKey: 'about.stats.positiveReviews' },
-  ]
-
-  const team = [
-    {
-      nameKey: 'about.team.members.member1.name',
-      positionKey: 'about.team.members.member1.position',
-      experienceKey: 'about.team.members.member1.experience',
-      educationKey: 'about.team.members.member1.education',
-    },
-    {
-      nameKey: 'about.team.members.member2.name',
-      positionKey: 'about.team.members.member2.position',
-      experienceKey: 'about.team.members.member2.experience',
-      educationKey: 'about.team.members.member2.education',
-    },
-    {
-      nameKey: 'about.team.members.member3.name',
-      positionKey: 'about.team.members.member3.position',
-      experienceKey: 'about.team.members.member3.experience',
-      educationKey: 'about.team.members.member3.education',
-    },
   ]
 
   // Map photos from images.json to team members by name
@@ -82,6 +83,8 @@ const About = () => {
       descriptionKey: 'about.values.punctuality.description',
     },
   ]
+
+  const fallbackPhoto = '/assets/images/gallery/dental-team.jpg'
 
   return (
     <div className="py-16">
@@ -172,49 +175,69 @@ const About = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {team.map((doctor, index) => {
-              const doctorName = t(doctor.nameKey)
-              const photo = teamPhotos[doctorName]
-              const fallback =
-                photo?.fallback || '/assets/images/gallery/dental-team.jpg'
-              return (
+          {doctorsLoading ? (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {[1, 2, 3].map(i => (
                 <div
-                  key={index}
-                  className="bg-white rounded-xl shadow-lg p-8 text-center hover:shadow-xl transition-shadow"
+                  key={i}
+                  className="bg-white rounded-xl shadow-lg p-8 text-center animate-pulse"
                 >
-                  <div className="w-24 h-24 rounded-full mx-auto mb-6 overflow-hidden bg-dental-blue/20">
-                    {/* eslint-disable-next-line @next/next/no-img-element -- onError fallback requires native img */}
-                    <img
-                      src={photo?.src || fallback}
-                      onError={e => {
-                        const img = e.currentTarget as HTMLImageElement
-                        if (img.src !== window.location.origin + fallback)
-                          img.src = fallback
-                      }}
-                      alt={photo?.alt || doctorName}
-                      className="w-full h-full object-cover"
-                      width={96}
-                      height={96}
-                      loading="lazy"
-                    />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    {doctorName}
-                  </h3>
-                  <p className="text-teal-800 font-medium mb-2">
-                    {t(doctor.positionKey)}
-                  </p>
-                  <p className="text-gray-600 text-sm mb-3">
-                    {t(doctor.experienceKey)}
-                  </p>
-                  <p className="text-gray-500 text-sm">
-                    {t(doctor.educationKey)}
-                  </p>
+                  <div className="w-24 h-24 rounded-full mx-auto mb-6 bg-gray-200" />
+                  <div className="h-5 bg-gray-200 rounded mx-auto w-40 mb-3" />
+                  <div className="h-4 bg-gray-100 rounded mx-auto w-32 mb-2" />
+                  <div className="h-3 bg-gray-100 rounded mx-auto w-24" />
                 </div>
-              )
-            })}
-          </div>
+              ))}
+            </div>
+          ) : doctors.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {doctors.map(doctor => {
+                const photo = teamPhotos[doctor.fullName]
+                const photoSrc =
+                  doctor.photo || photo?.src || photo?.fallback || fallbackPhoto
+                return (
+                  <div
+                    key={doctor.id}
+                    className="bg-white rounded-xl shadow-lg p-8 text-center hover:shadow-xl transition-shadow"
+                  >
+                    <div className="w-24 h-24 rounded-full mx-auto mb-6 overflow-hidden bg-dental-blue/20">
+                      {/* eslint-disable-next-line @next/next/no-img-element -- onError fallback requires native img */}
+                      <img
+                        src={photoSrc}
+                        onError={e => {
+                          const img = e.currentTarget as HTMLImageElement
+                          if (
+                            img.src !==
+                            window.location.origin + fallbackPhoto
+                          )
+                            img.src = fallbackPhoto
+                        }}
+                        alt={photo?.alt || doctor.fullName}
+                        className="w-full h-full object-cover"
+                        width={96}
+                        height={96}
+                        loading="lazy"
+                      />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                      {doctor.fullName}
+                    </h3>
+                    <p className="text-teal-800 font-medium mb-2">
+                      {doctor.specialization}
+                    </p>
+                    <p className="text-gray-600 text-sm mb-3">
+                      {experienceLabel(doctor.experience)}
+                    </p>
+                    {doctor.education && (
+                      <p className="text-gray-500 text-sm">
+                        {doctor.education}
+                      </p>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          ) : null}
         </div>
 
         {/* Equipment */}

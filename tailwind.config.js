@@ -48,10 +48,18 @@ export default {
           'info-dark': '#1565C0',
 
           // TEXT COLORS
-          dark: '#2C3E42', // Headings
+          dark: '#2C3E42', // Headings (impl value; WCAG-safe on white)
           text: '#4A5E63', // Body text
           muted: '#4f6970', // Secondary text (AA on white)
           'text-light': '#8FA3A8', // Placeholder text
+
+          // BRAND SPEC EXACT VALUES (v2 brandbook)
+          // navy-brand: brand spec Deep Navy — use for decorative/large-text only
+          // (impl uses dental.dark #2C3E42 which is WCAG-safe for all text)
+          'navy-brand': '#1B3A4B',
+          // accent: brand spec Accent Teal — 3.56:1 on white, AA large-text only
+          // (impl uses dental.primary-600 #3f6f79 for interactive/button use)
+          accent: '#4C9487',
 
           // LEGACY ALIASES
           'primary-dark': '#7BA8B0',
