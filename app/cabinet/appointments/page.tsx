@@ -538,6 +538,7 @@ function RescheduleModal({
 
 export default function AppointmentsPage() {
   const { t, i18n } = useTranslation()
+  const { getHeaders } = useCSRF()
   const searchParams = useSearchParams()
   const initialFilter = (['all', 'upcoming', 'past'] as const).includes(
     searchParams.get('filter') as 'all' | 'upcoming' | 'past'
@@ -601,26 +602,33 @@ export default function AppointmentsPage() {
     const id = cancelApt.id
 
     setCancellingId(id)
-    const supabase = createClient()
-    if (!supabase) return
+    try {
+      const res = await fetch(`/api/appointments/${id}/cancel`, {
+        method: 'POST',
+        headers: getHeaders(),
+      })
+      const data = await res.json()
 
-    const { error } = await supabase
-      .from('appointments')
-      .update({ status: 'cancelled' })
-      .eq('id', id)
-
-    if (error) {
+      if (!res.ok || !data.success) {
+        setToast({
+          message: t('cabinet.appointments.cancelModal.error'),
+          type: 'error',
+        })
+      } else {
+        setAppointments(prev =>
+          prev.map(apt =>
+            apt.id === id ? { ...apt, status: 'cancelled' } : apt
+          )
+        )
+        setToast({
+          message: t('cabinet.appointments.cancelModal.success'),
+          type: 'success',
+        })
+      }
+    } catch {
       setToast({
         message: t('cabinet.appointments.cancelModal.error'),
         type: 'error',
-      })
-    } else {
-      setAppointments(prev =>
-        prev.map(apt => (apt.id === id ? { ...apt, status: 'cancelled' } : apt))
-      )
-      setToast({
-        message: t('cabinet.appointments.cancelModal.success'),
-        type: 'success',
       })
     }
     setCancellingId(null)
