@@ -1,10 +1,14 @@
 import type { SupabaseClient, User } from '@supabase/supabase-js'
+import type { AdminRole } from '@/lib/permissions'
 
-export type AdminRole = 'admin' | 'superadmin'
+export type { AdminRole }
 
 export interface AdminAccess {
   role: AdminRole
   displayName: string | null
+  doctorId: string | null
+  phone: string | null
+  specialization: string | null
 }
 
 export interface AdminIdentity {
@@ -12,6 +16,7 @@ export interface AdminIdentity {
   email: string
   name: string
   role: AdminRole
+  doctorId: string | null
 }
 
 /**
@@ -24,15 +29,18 @@ export async function getAdminAccess(
 ): Promise<AdminAccess | null> {
   const { data, error } = await supabase
     .from('admin_users')
-    .select('role, display_name')
+    .select('role, display_name, doctor_id, phone, specialization')
     .eq('id', userId)
     .maybeSingle()
 
   if (error || !data) return null
 
   return {
-    role: data.role === 'superadmin' ? 'superadmin' : 'admin',
+    role: data.role as AdminRole,
     displayName: data.display_name ?? null,
+    doctorId: data.doctor_id ?? null,
+    phone: data.phone ?? null,
+    specialization: data.specialization ?? null,
   }
 }
 
@@ -45,5 +53,6 @@ export function buildAdminIdentity(
     email: user.email || '',
     name: access.displayName || user.user_metadata?.name || 'Admin',
     role: access.role,
+    doctorId: access.doctorId,
   }
 }
