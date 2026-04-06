@@ -3,16 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
-import {
-  Shield,
-  Plus,
-  Pencil,
-  Trash2,
-  X,
-  Check,
-  AlertCircle,
-} from 'lucide-react'
-import { Button } from '@/components/ui'
+import { Shield, Pencil, Trash2, X, Check, AlertCircle } from 'lucide-react'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { useCSRF } from '@/hooks/useCSRF'
 import {
@@ -176,28 +167,13 @@ export default function AdminUsersPage() {
           <Shield className="w-6 h-6 text-dental-teal" aria-hidden="true" />
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              {t('admin.users.title', {
-                defaultValue: 'Управління персоналом',
-              })}
+              {t('admin.users.title')}
             </h1>
             <p className="text-sm text-gray-500 mt-0.5">
-              {t('admin.users.subtitle', {
-                defaultValue: 'Ролі та рівні доступу адміністраторів',
-              })}
+              {t('admin.users.subtitle')}
             </p>
           </div>
         </div>
-        {canManage && (
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => router.push('/admin/users/invite')}
-            className="flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            {t('admin.users.addUser', { defaultValue: 'Додати' })}
-          </Button>
-        )}
       </div>
 
       {/* Error banner */}
@@ -222,7 +198,7 @@ export default function AdminUsersPage() {
             key={role}
             className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${ROLE_BADGE_CLASSES[role]}`}
           >
-            {t(`admin.roles.${role}`, { defaultValue: role })}
+            {t(`admin.roles.${role}`)}
           </span>
         ))}
       </div>
@@ -234,24 +210,20 @@ export default function AdminUsersPage() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t('admin.users.columns.name', { defaultValue: "Ім'я" })}
+                  {t('admin.users.columns.name')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t('admin.users.columns.role', { defaultValue: 'Роль' })}
+                  {t('admin.users.columns.role')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
-                  {t('admin.users.columns.specialization', {
-                    defaultValue: 'Спеціалізація',
-                  })}
+                  {t('admin.users.columns.specialization')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
-                  {t('admin.users.columns.lastLogin', {
-                    defaultValue: 'Останній вхід',
-                  })}
+                  {t('admin.users.columns.lastLogin')}
                 </th>
                 {canManage && (
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t('common.actions', { defaultValue: 'Дії' })}
+                    {t('common.actions')}
                   </th>
                 )}
               </tr>
@@ -281,20 +253,16 @@ export default function AdminUsersPage() {
                             )
                           }
                           className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-dental-teal focus:border-dental-teal"
-                          aria-label={t('admin.users.columns.name', {
-                            defaultValue: "Ім'я",
-                          })}
+                          aria-label={t('admin.users.columns.name')}
                         />
                       ) : (
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {u.display_name || '—'}
-                            {isCurrentUser && (
-                              <span className="ml-2 text-xs text-gray-400">
-                                ({t('admin.users.you', { defaultValue: 'ви' })})
-                              </span>
-                            )}
-                          </div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {u.display_name || '—'}
+                          {isCurrentUser && (
+                            <span className="ml-2 text-xs text-gray-400">
+                              ({t('admin.users.you')})
+                            </span>
+                          )}
                         </div>
                       )}
                     </td>
@@ -310,15 +278,13 @@ export default function AdminUsersPage() {
                             )
                           }
                           className="border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-dental-teal focus:border-dental-teal"
-                          aria-label={t('admin.users.columns.role', {
-                            defaultValue: 'Роль',
-                          })}
+                          aria-label={t('admin.users.columns.role')}
                         >
                           {ADMIN_ROLES.filter(
                             r => r !== 'superadmin' || isSuperadmin
                           ).map(r => (
                             <option key={r} value={r}>
-                              {t(`admin.roles.${r}`, { defaultValue: r })}
+                              {t(`admin.roles.${r}`)}
                             </option>
                           ))}
                         </select>
@@ -326,7 +292,7 @@ export default function AdminUsersPage() {
                         <span
                           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ROLE_BADGE_CLASSES[u.role]}`}
                         >
-                          {t(`admin.roles.${u.role}`, { defaultValue: u.role })}
+                          {t(`admin.roles.${u.role}`)}
                         </span>
                       )}
                     </td>
@@ -340,9 +306,7 @@ export default function AdminUsersPage() {
                               d ? { ...d, specialization: e.target.value } : d
                             )
                           }
-                          placeholder={t('admin.users.columns.specialization', {
-                            defaultValue: 'Спеціалізація',
-                          })}
+                          placeholder={t('admin.users.columns.specialization')}
                           className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-dental-teal focus:border-dental-teal"
                         />
                       ) : (
@@ -362,9 +326,7 @@ export default function AdminUsersPage() {
                               onClick={saveEdit}
                               disabled={saving}
                               className="p-2 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 disabled:opacity-50 transition-colors"
-                              aria-label={t('common.save', {
-                                defaultValue: 'Зберегти',
-                              })}
+                              aria-label={t('common.save')}
                             >
                               <Check className="w-4 h-4" />
                             </button>
@@ -380,17 +342,13 @@ export default function AdminUsersPage() {
                         ) : deleteConfirmId === u.id ? (
                           <div className="flex items-center justify-end gap-2">
                             <span className="text-xs text-red-600 mr-1">
-                              {t('admin.users.deleteConfirm', {
-                                defaultValue: 'Видалити?',
-                              })}
+                              {t('admin.users.deleteConfirm')}
                             </span>
                             <button
                               onClick={() => handleDelete(u.id)}
                               disabled={deleting}
                               className="p-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 disabled:opacity-50 transition-colors"
-                              aria-label={t('common.confirm', {
-                                defaultValue: 'Підтвердити',
-                              })}
+                              aria-label={t('common.confirm')}
                             >
                               <Check className="w-4 h-4" />
                             </button>
@@ -407,9 +365,7 @@ export default function AdminUsersPage() {
                             <button
                               onClick={() => startEdit(u)}
                               className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors"
-                              aria-label={t('common.edit', {
-                                defaultValue: 'Редагувати',
-                              })}
+                              aria-label={t('common.edit')}
                             >
                               <Pencil className="w-4 h-4" />
                             </button>
@@ -417,9 +373,7 @@ export default function AdminUsersPage() {
                               <button
                                 onClick={() => setDeleteConfirmId(u.id)}
                                 className="p-2 rounded-lg text-red-500 hover:bg-red-50 transition-colors"
-                                aria-label={t('common.delete', {
-                                  defaultValue: 'Видалити',
-                                })}
+                                aria-label={t('common.delete')}
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -437,9 +391,7 @@ export default function AdminUsersPage() {
                     colSpan={canManage ? 5 : 4}
                     className="px-6 py-12 text-center text-gray-400 text-sm"
                   >
-                    {t('admin.users.empty', {
-                      defaultValue: 'Немає адміністраторів',
-                    })}
+                    {t('admin.users.empty')}
                   </td>
                 </tr>
               )}
@@ -448,12 +400,7 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      <p className="text-xs text-gray-400">
-        {t('admin.users.note', {
-          defaultValue:
-            'Щоб додати нового адміністратора, спочатку створіть обліковий запис у Supabase Auth, потім додайте його тут.',
-        })}
-      </p>
+      <p className="text-xs text-gray-400">{t('admin.users.note')}</p>
     </div>
   )
 }

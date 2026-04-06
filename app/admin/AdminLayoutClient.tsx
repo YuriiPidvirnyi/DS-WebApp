@@ -57,6 +57,31 @@ const ALL_NAV_ITEMS: NavItem[] = [
     icon: <Users className="w-5 h-5" />,
   },
   {
+    nameKey: 'admin.sidebar.doctors',
+    href: '/admin/doctors',
+    icon: <User className="w-5 h-5" />,
+  },
+  {
+    nameKey: 'admin.sidebar.services',
+    href: '/admin/services',
+    icon: <Stethoscope className="w-5 h-5" />,
+  },
+  {
+    nameKey: 'admin.sidebar.reviews',
+    href: '/admin/reviews',
+    icon: <Star className="w-5 h-5" />,
+  },
+  {
+    nameKey: 'admin.sidebar.contacts',
+    href: '/admin/contacts',
+    icon: <Phone className="w-5 h-5" />,
+  },
+  {
+    nameKey: 'admin.sidebar.chat',
+    href: '/admin/chat',
+    icon: <MessageSquare className="w-5 h-5" />,
+  },
+  {
     nameKey: 'admin.sidebar.treatments',
     href: '/admin/treatments',
     icon: <ClipboardList className="w-5 h-5" />,
@@ -72,35 +97,9 @@ const ALL_NAV_ITEMS: NavItem[] = [
     icon: <ShoppingCart className="w-5 h-5" />,
   },
   {
-    nameKey: 'admin.sidebar.contacts',
-    href: '/admin/contacts',
-    icon: <Phone className="w-5 h-5" />,
-  },
-  {
-    nameKey: 'admin.sidebar.chat',
-    href: '/admin/chat',
-    icon: <MessageSquare className="w-5 h-5" />,
-  },
-  {
     nameKey: 'admin.sidebar.analytics',
     href: '/admin/analytics',
     icon: <BarChart3 className="w-5 h-5" />,
-  },
-  // Admin+ only
-  {
-    nameKey: 'admin.sidebar.doctors',
-    href: '/admin/doctors',
-    icon: <User className="w-5 h-5" />,
-  },
-  {
-    nameKey: 'admin.sidebar.services',
-    href: '/admin/services',
-    icon: <Stethoscope className="w-5 h-5" />,
-  },
-  {
-    nameKey: 'admin.sidebar.reviews',
-    href: '/admin/reviews',
-    icon: <Star className="w-5 h-5" />,
   },
   {
     nameKey: 'admin.sidebar.settings',
@@ -120,7 +119,7 @@ function RoleBadge({ role }: { role: AdminRole }) {
     <span
       className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${ROLE_BADGE_CLASSES[role]}`}
     >
-      {t(`admin.roles.${role}`, { defaultValue: role })}
+      {t(`admin.roles.${role}`)}
     </span>
   )
 }

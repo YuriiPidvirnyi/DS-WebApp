@@ -238,11 +238,13 @@ export function hasDoctorScope(role: AdminRole): boolean {
  * Navigation items that each role can see in the sidebar.
  * Keep in sync with AdminLayoutClient navigation array.
  */
-export const ROLE_NAV_PERMISSIONS: Record<string, Permission> = {
+// A nav item may require ANY ONE of the listed permissions (OR logic).
+export const ROLE_NAV_PERMISSIONS: Record<string, Permission | Permission[]> = {
   '/admin': 'dashboard:view',
-  '/admin/appointments': 'appointments:view_all',
+  // Doctors have view_own; all others have view_all — either grants access
+  '/admin/appointments': ['appointments:view_all', 'appointments:view_own'],
   '/admin/patients': 'patients:view',
-  '/admin/treatments': 'treatments:view_all',
+  '/admin/treatments': ['treatments:view_all', 'treatments:view_own'],
   '/admin/materials': 'inventory:view',
   '/admin/orders': 'orders:view',
   '/admin/analytics': 'analytics:view',
@@ -258,9 +260,12 @@ export const ROLE_NAV_PERMISSIONS: Record<string, Permission> = {
 }
 
 export function canAccessNavItem(role: AdminRole, href: string): boolean {
-  const permission = ROLE_NAV_PERMISSIONS[href]
-  if (!permission) return true // unknown routes are not gated
-  return hasPermission(role, permission)
+  const required = ROLE_NAV_PERMISSIONS[href]
+  if (!required) return true // unknown routes are not gated
+  if (Array.isArray(required)) {
+    return required.some(p => hasPermission(role, p))
+  }
+  return hasPermission(role, required)
 }
 
 // ─── Role display helpers ────────────────────────────────────────────────────
