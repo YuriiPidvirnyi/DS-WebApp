@@ -172,7 +172,14 @@ const uk = {
       treatment: 'Лікування зубів',
       cleaning: 'Професійна гігієна',
       implants: 'Імплантація',
-      orthodontics: 'Ортодонтія',
+      orthodontics: {
+        metalBraces: 'Металеві брекети',
+        ceramicBraces: 'Керамічні брекети',
+        sapphireBraces: 'Сапфірові брекети',
+        lingualBraces: 'Лінгвальні брекети',
+        aligners: 'Елайнери (капи)',
+        retainers: 'Ретейнери',
+      },
       prosthetics: 'Протезування',
       whitening: 'Відбілювання',
       surgery: 'Хірургія',
@@ -199,14 +206,6 @@ const uk = {
         removableDentures: 'Знімні протези',
         veneers: 'Вінири',
         lumineers: 'Люмінири',
-      },
-      orthodonticsItems: {
-        metalBraces: 'Металеві брекети',
-        ceramicBraces: 'Керамічні брекети',
-        sapphireBraces: 'Сапфірові брекети',
-        lingualBraces: 'Лінгвальні брекети',
-        aligners: 'Елайнери (капи)',
-        retainers: 'Ретейнери',
       },
       aesthetic: {
         whitening: 'Відбілювання зубів',
@@ -940,6 +939,7 @@ const uk = {
         tritanopia: 'Тританопія (синій)',
       },
     },
+    resetAll: 'Скинути все',
   },
   faqAccordion: {
     title: 'Поширені питання',

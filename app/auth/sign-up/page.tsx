@@ -15,6 +15,7 @@ import {
   ArrowRight,
   Check,
 } from 'lucide-react'
+import Logo from '@/components/ui/Logo'
 
 export default function SignUpPage() {
   const router = useRouter()
@@ -154,16 +155,16 @@ export default function SignUpPage() {
   const { strength, label, color } = passwordStrength()
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-12">
+    <div className="flex items-center justify-center min-h-[calc(100vh-180px)] px-4 py-8">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <h1 className="text-3xl font-bold text-slate-900">
-              {t('common.brandName')}
-            </h1>
+            <Logo variant="default" size="md" />
           </Link>
-          <p className="mt-2 text-slate-600">{t('auth.signUp.subtitle')}</p>
+          <h1 className="text-sm text-dental-muted mt-2">
+            {t('auth.signUp.subtitle')}
+          </h1>
         </div>
 
         {/* Sign Up Form */}
@@ -179,12 +180,12 @@ export default function SignUpPage() {
               <div>
                 <label
                   htmlFor="firstName"
-                  className="block text-sm font-medium text-slate-700 mb-2"
+                  className="block text-sm font-medium text-dental-dark mb-2"
                 >
                   {t('auth.signUp.firstName')}
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-dental-muted" />
                   <input
                     id="firstName"
                     name="firstName"
@@ -193,14 +194,14 @@ export default function SignUpPage() {
                     onChange={handleChange}
                     placeholder={t('auth.signUp.firstNamePlaceholder')}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                    className="w-full pl-10 pr-4 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-2 focus:ring-dental-primary-100 focus:border-dental-primary-600 transition-all"
                   />
                 </div>
               </div>
               <div>
                 <label
                   htmlFor="lastName"
-                  className="block text-sm font-medium text-slate-700 mb-2"
+                  className="block text-sm font-medium text-dental-dark mb-2"
                 >
                   {t('auth.signUp.lastName')}
                 </label>
@@ -212,7 +213,7 @@ export default function SignUpPage() {
                   onChange={handleChange}
                   placeholder={t('auth.signUp.lastNamePlaceholder')}
                   required
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-2 focus:ring-dental-primary-100 focus:border-dental-primary-600 transition-all"
                 />
               </div>
             </div>
@@ -220,13 +221,13 @@ export default function SignUpPage() {
             <div>
               <label
                 htmlFor="phone"
-                className="block text-sm font-medium text-slate-700 mb-2"
+                className="block text-sm font-medium text-dental-dark mb-2"
               >
                 {t('auth.signUp.phone')}
               </label>
               <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-                <span className="absolute left-10 top-1/2 -translate-y-1/2 text-slate-500">
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-dental-muted" />
+                <span className="absolute left-10 top-1/2 -translate-y-1/2 text-dental-text">
                   +380
                 </span>
                 <input
@@ -238,7 +239,7 @@ export default function SignUpPage() {
                   placeholder={t('auth.signUp.phonePlaceholder')}
                   required
                   maxLength={13}
-                  className="w-full pl-20 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  className="w-full pl-20 pr-4 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-2 focus:ring-dental-primary-100 focus:border-dental-primary-600 transition-all"
                 />
               </div>
             </div>
@@ -246,12 +247,12 @@ export default function SignUpPage() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-slate-700 mb-2"
+                className="block text-sm font-medium text-dental-dark mb-2"
               >
                 {t('auth.signUp.emailLabel')}
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-dental-muted" />
                 <input
                   id="email"
                   name="email"
@@ -260,7 +261,7 @@ export default function SignUpPage() {
                   onChange={handleChange}
                   placeholder={t('auth.signUp.emailPlaceholder')}
                   required
-                  className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-2 focus:ring-dental-primary-100 focus:border-dental-primary-600 transition-all"
                 />
               </div>
             </div>
@@ -268,12 +269,12 @@ export default function SignUpPage() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-slate-700 mb-2"
+                className="block text-sm font-medium text-dental-dark mb-2"
               >
                 {t('auth.signUp.passwordLabel')}
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-dental-muted" />
                 <input
                   id="password"
                   name="password"
@@ -282,12 +283,12 @@ export default function SignUpPage() {
                   onChange={handleChange}
                   placeholder={t('auth.signUp.passwordPlaceholder')}
                   required
-                  className="w-full pl-10 pr-12 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-12 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-2 focus:ring-dental-primary-100 focus:border-dental-primary-600 transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-dental-muted hover:text-dental-text"
                   aria-label={
                     showPassword
                       ? t('auth.login.hidePassword')
@@ -311,7 +312,7 @@ export default function SignUpPage() {
                       />
                     ))}
                   </div>
-                  <p className="text-xs text-slate-500">{label}</p>
+                  <p className="text-xs text-dental-text">{label}</p>
                 </div>
               )}
             </div>
@@ -319,12 +320,12 @@ export default function SignUpPage() {
             <div>
               <label
                 htmlFor="confirmPassword"
-                className="block text-sm font-medium text-slate-700 mb-2"
+                className="block text-sm font-medium text-dental-dark mb-2"
               >
                 {t('auth.signUp.confirmPasswordLabel')}
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-dental-muted" />
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
@@ -333,7 +334,7 @@ export default function SignUpPage() {
                   onChange={handleChange}
                   placeholder={t('auth.signUp.confirmPasswordPlaceholder')}
                   required
-                  className="w-full pl-10 pr-12 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-12 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-2 focus:ring-dental-primary-100 focus:border-dental-primary-600 transition-all"
                 />
                 {formData.confirmPassword &&
                   formData.password === formData.confirmPassword && (
@@ -347,20 +348,21 @@ export default function SignUpPage() {
                 type="checkbox"
                 checked={agreeToTerms}
                 onChange={e => setAgreeToTerms(e.target.checked)}
-                className="mt-1 w-4 h-4 text-teal-600 border-slate-300 rounded focus:ring-teal-500"
+                required
+                className="mt-1 w-4 h-4 text-dental-primary-600 border-dental-secondary-300 rounded focus:ring-dental-primary-300"
               />
-              <span className="text-sm text-slate-600">
+              <span className="text-sm text-dental-text">
                 {t('auth.signUp.agreePrefix')}{' '}
                 <Link
                   href="/terms-of-service"
-                  className="text-teal-700 hover:text-teal-800 underline"
+                  className="text-dental-primary-600 hover:text-dental-primary-700 underline"
                 >
                   {t('auth.signUp.termsLink')}
                 </Link>{' '}
                 {t('auth.signUp.agreeAnd')}{' '}
                 <Link
                   href="/privacy-policy"
-                  className="text-teal-700 hover:text-teal-800 underline"
+                  className="text-dental-primary-600 hover:text-dental-primary-700 underline"
                 >
                   {t('auth.signUp.privacyLink')}
                 </Link>
@@ -370,7 +372,7 @@ export default function SignUpPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-dental-primary-600 hover:bg-dental-primary-700 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -384,11 +386,11 @@ export default function SignUpPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-slate-600">
+            <p className="text-dental-text">
               {t('auth.signUp.hasAccount')}{' '}
               <Link
                 href="/auth/login"
-                className="text-teal-700 hover:text-teal-800 font-semibold underline"
+                className="text-dental-primary-600 hover:text-dental-primary-700 font-semibold underline"
               >
                 {t('auth.signUp.loginLink')}
               </Link>

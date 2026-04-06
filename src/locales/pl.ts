@@ -172,7 +172,14 @@ const pl = {
       treatment: 'Leczenie zębów',
       cleaning: 'Higiena zawodowa',
       implants: 'Implanty stomatologiczne',
-      orthodontics: 'Ortodoncja',
+      orthodontics: {
+        metalBraces: 'Aparaty metalowe',
+        ceramicBraces: 'Aparaty ceramiczne',
+        sapphireBraces: 'Aparaty szafirowe',
+        lingualBraces: 'Aparaty lingwalne',
+        aligners: 'Nakładki (alignery)',
+        retainers: 'Retainery',
+      },
       prosthetics: 'Protetyka',
       whitening: 'Wybielanie zębów',
       surgery: 'Chirurgia jamy ustnej',
@@ -199,14 +206,6 @@ const pl = {
         removableDentures: 'Protezy ruchome',
         veneers: 'Licówki',
         lumineers: 'Lumineery',
-      },
-      orthodonticsItems: {
-        metalBraces: 'Aparaty metalowe',
-        ceramicBraces: 'Aparaty ceramiczne',
-        sapphireBraces: 'Aparaty szafirowe',
-        lingualBraces: 'Aparaty lingwalne',
-        aligners: 'Nakładki (alignery)',
-        retainers: 'Retainery',
       },
       aesthetic: {
         whitening: 'Wybielanie zębów',
@@ -945,6 +944,7 @@ const pl = {
         tritanopia: 'Tritanopia (niebieski)',
       },
     },
+    resetAll: 'Resetuj wszystko',
   },
   faqAccordion: {
     title: 'Najczęściej zadawane pytania',

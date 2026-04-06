@@ -165,7 +165,14 @@
       "treatment": "Dental Treatment",
       "cleaning": "Professional Hygiene",
       "implants": "Dental Implants",
-      "orthodontics": "Orthodontics",
+      "orthodontics": {
+        "metalBraces": "Metal Braces",
+        "ceramicBraces": "Ceramic Braces",
+        "sapphireBraces": "Sapphire Braces",
+        "lingualBraces": "Lingual Braces",
+        "aligners": "Aligners (Clear Trays)",
+        "retainers": "Retainers"
+      },
       "prosthetics": "Prosthetics",
       "whitening": "Teeth Whitening",
       "surgery": "Oral Surgery",
@@ -192,14 +199,6 @@
         "removableDentures": "Removable Dentures",
         "veneers": "Veneers",
         "lumineers": "Lumineers"
-      },
-      "orthodonticsItems": {
-        "metalBraces": "Metal Braces",
-        "ceramicBraces": "Ceramic Braces",
-        "sapphireBraces": "Sapphire Braces",
-        "lingualBraces": "Lingual Braces",
-        "aligners": "Aligners (Clear Trays)",
-        "retainers": "Retainers"
       },
       "aesthetic": {
         "whitening": "Teeth Whitening",

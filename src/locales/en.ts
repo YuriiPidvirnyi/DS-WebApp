@@ -172,7 +172,14 @@ const en = {
       treatment: 'Dental Treatment',
       cleaning: 'Professional Hygiene',
       implants: 'Dental Implants',
-      orthodontics: 'Orthodontics',
+      orthodontics: {
+        metalBraces: 'Metal Braces',
+        ceramicBraces: 'Ceramic Braces',
+        sapphireBraces: 'Sapphire Braces',
+        lingualBraces: 'Lingual Braces',
+        aligners: 'Aligners (Clear Trays)',
+        retainers: 'Retainers',
+      },
       prosthetics: 'Prosthetics',
       whitening: 'Teeth Whitening',
       surgery: 'Oral Surgery',
@@ -199,14 +206,6 @@ const en = {
         removableDentures: 'Removable Dentures',
         veneers: 'Veneers',
         lumineers: 'Lumineers',
-      },
-      orthodonticsItems: {
-        metalBraces: 'Metal Braces',
-        ceramicBraces: 'Ceramic Braces',
-        sapphireBraces: 'Sapphire Braces',
-        lingualBraces: 'Lingual Braces',
-        aligners: 'Aligners (Clear Trays)',
-        retainers: 'Retainers',
       },
       aesthetic: {
         whitening: 'Teeth Whitening',
@@ -942,6 +941,7 @@ const en = {
         tritanopia: 'Tritanopia (blue)',
       },
     },
+    resetAll: 'Reset all',
   },
   faqAccordion: {
     title: 'Frequently Asked Questions',

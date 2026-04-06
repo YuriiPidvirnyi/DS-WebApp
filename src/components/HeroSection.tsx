@@ -25,6 +25,17 @@ function useCounter(end: number, duration: number = 2000) {
   useEffect(() => {
     const el = ref.current
     if (!el) return
+    // Trigger immediately if already in viewport (e.g. hero stats visible on load)
+    const rect = el.getBoundingClientRect()
+    if (
+      rect.top < window.innerHeight &&
+      rect.bottom > 0 &&
+      !hasAnimated.current
+    ) {
+      hasAnimated.current = true
+      setIsVisible(true)
+      return
+    }
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !hasAnimated.current) {
