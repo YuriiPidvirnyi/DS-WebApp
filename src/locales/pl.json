@@ -462,11 +462,21 @@
       "title": "Nowoczesny sprzęt",
       "defaultAlt": "Sprzęt stomatologiczny",
       "items": {
-        "xray": { "name": "Cyfrowa diagnostyka rentgenowska" },
-        "tomography": { "name": "Tomografia 3D" },
-        "laser": { "name": "Stomatologia laserowa" },
-        "cadcam": { "name": "System CAD/CAM do protetyki" },
-        "ultrasonic": { "name": "Czyszczenie ultradźwiękowe" }
+        "xray": {
+          "name": "Cyfrowa diagnostyka rentgenowska"
+        },
+        "tomography": {
+          "name": "Tomografia 3D"
+        },
+        "laser": {
+          "name": "Stomatologia laserowa"
+        },
+        "cadcam": {
+          "name": "System CAD/CAM do protetyki"
+        },
+        "ultrasonic": {
+          "name": "Czyszczenie ultradźwiękowe"
+        }
       }
     }
   },
@@ -1302,7 +1312,9 @@
       "logout": "Wyloguj się",
       "backToSite": "Na stronę",
       "systemOnline": "System online",
-      "defaultUser": "Admin"
+      "defaultUser": "Admin",
+      "openSidebar": "Otwórz menu",
+      "sidebarNav": "Nawigacja panelu admina"
     },
     "modal": {
       "closeAria": "Zamknij okno modalne"
@@ -1959,6 +1971,7 @@
       "cancel": "Anuluj",
       "save": "Zapisz",
       "saving": "Zapisywanie…",
+      "deactivate": "Dezaktywuj",
       "deactivateConfirm": "Dezaktywowac ten material?",
       "image": {
         "upload": "Zdjecie",
@@ -2089,6 +2102,72 @@
         "quantity": "Ilosc",
         "stockLabel": "stan"
       }
+    },
+    "treatmentsPage": {
+      "title": "Akty robót",
+      "subtitle": "Śledzenie procedur i płatności",
+      "refresh": "Odśwież",
+      "createAct": "Utwórz akt",
+      "searchPlaceholder": "Szukaj po nazwisku pacjenta",
+      "statusFilterAria": "Filtruj według statusu aktu",
+      "loading": "Ładowanie…",
+      "empty": "Brak rekordów",
+      "columns": {
+        "date": "Data",
+        "patient": "Pacjent",
+        "doctor": "Lekarz",
+        "diagnosis": "Diagnoza",
+        "procedures": "Procedury",
+        "totalCost": "Koszt całkowity",
+        "payStatus": "Status płatności",
+        "status": "Status",
+        "actions": "Akcje"
+      },
+      "statuses": {
+        "draft": "Szkic",
+        "signed": "Podpisano",
+        "completed": "Zakończono"
+      },
+      "payStatuses": {
+        "unpaid": "Nieopłacone",
+        "partial": "Częściowo",
+        "paid": "Opłacone",
+        "waived": "Umorzone",
+        "refunded": "Zwrócone"
+      },
+      "filterAll": "Wszystkie statusy",
+      "modal": {
+        "editTitle": "Edytuj akt",
+        "createTitle": "Utwórz akt",
+        "patient": "Pacjent",
+        "doctor": "Lekarz",
+        "visit": "Wizyta (opcjonalnie)",
+        "diagnosis": "Diagnoza",
+        "teeth": "Zęby (oddzielone przecinkami)",
+        "notes": "Uwagi",
+        "procedures": "Procedury",
+        "addLine": "Dodaj wiersz",
+        "service": "Usługa",
+        "tooth": "Ząb",
+        "quantity": "Ilość",
+        "price": "Cena",
+        "actStatus": "Status aktu",
+        "payStatus": "Status płatności",
+        "cancel": "Anuluj",
+        "save": "Zapisz",
+        "saving": "Zapisywanie…"
+      },
+      "errors": {
+        "loadFailed": "Nie udało się załadować aktów",
+        "saveFailed": "Nie udało się zapisać",
+        "deleteFailed": "Nie udało się usunąć",
+        "csrfRefresh": "Błąd CSRF: odśwież stronę",
+        "selectPatientDoctor": "Wybierz pacjenta i lekarza"
+      },
+      "deleteConfirm": "Usunąć ten akt? Tej akcji nie można cofnąć.",
+      "editAria": "Edytuj",
+      "deleteAria": "Usuń",
+      "removeLineAria": "Usuń wiersz"
     }
   },
   "auth": {
@@ -2222,7 +2301,6 @@
     "edit": "Edytuj",
     "notSpecified": "Nie podano",
     "myAppointments": "Moje wizyty",
-    "bookAppointment": "Umów wizytę",
     "treatmentHistory": "Historia leczenia",
     "myReviews": "Moje opinie",
     "recentAppointments": "Ostatnie wizyty",
@@ -2594,21 +2672,51 @@
         "title": "Co Cię niepokoi?"
       },
       "quickConcerns": [
-        { "id": "checkup", "label": "Rutynowa kontrola" },
-        { "id": "pain", "label": "Ból zęba" },
-        { "id": "whitening", "label": "Wybielanie" },
-        { "id": "cleaning", "label": "Czyszczenie zębów" },
-        { "id": "braces", "label": "Prostowanie zębów" },
-        { "id": "implant", "label": "Brakujący ząb" }
+        {
+          "id": "checkup",
+          "label": "Rutynowa kontrola"
+        },
+        {
+          "id": "pain",
+          "label": "Ból zęba"
+        },
+        {
+          "id": "whitening",
+          "label": "Wybielanie"
+        },
+        {
+          "id": "cleaning",
+          "label": "Czyszczenie zębów"
+        },
+        {
+          "id": "braces",
+          "label": "Prostowanie zębów"
+        },
+        {
+          "id": "implant",
+          "label": "Brakujący ząb"
+        }
       ],
       "step2": {
         "title": "Kiedy ostatnio byłeś u dentysty?"
       },
       "lastVisitOptions": [
-        { "value": "less6months", "label": "Mniej niż 6 miesięcy temu" },
-        { "value": "6to12months", "label": "6-12 miesięcy temu" },
-        { "value": "more1year", "label": "Ponad rok temu" },
-        { "value": "never", "label": "Nie pamiętam" }
+        {
+          "value": "less6months",
+          "label": "Mniej niż 6 miesięcy temu"
+        },
+        {
+          "value": "6to12months",
+          "label": "6-12 miesięcy temu"
+        },
+        {
+          "value": "more1year",
+          "label": "Ponad rok temu"
+        },
+        {
+          "value": "never",
+          "label": "Nie pamiętam"
+        }
       ],
       "step3": {
         "title": "Coś dodatkowego?",

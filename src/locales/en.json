@@ -462,11 +462,21 @@
       "title": "Modern Equipment",
       "defaultAlt": "Dental equipment",
       "items": {
-        "xray": { "name": "Digital X-Ray Diagnostics" },
-        "tomography": { "name": "3D Tomography" },
-        "laser": { "name": "Laser Dentistry" },
-        "cadcam": { "name": "CAD/CAM Prosthetics System" },
-        "ultrasonic": { "name": "Ultrasonic Cleaning" }
+        "xray": {
+          "name": "Digital X-Ray Diagnostics"
+        },
+        "tomography": {
+          "name": "3D Tomography"
+        },
+        "laser": {
+          "name": "Laser Dentistry"
+        },
+        "cadcam": {
+          "name": "CAD/CAM Prosthetics System"
+        },
+        "ultrasonic": {
+          "name": "Ultrasonic Cleaning"
+        }
       }
     }
   },
@@ -1300,7 +1310,9 @@
       "logout": "Log Out",
       "backToSite": "Back to site",
       "systemOnline": "System online",
-      "defaultUser": "Admin"
+      "defaultUser": "Admin",
+      "openSidebar": "Open menu",
+      "sidebarNav": "Admin panel navigation"
     },
     "modal": {
       "closeAria": "Close modal window"
@@ -1957,6 +1969,7 @@
       "cancel": "Cancel",
       "save": "Save",
       "saving": "Saving…",
+      "deactivate": "Deactivate",
       "deactivateConfirm": "Deactivate this material?",
       "image": {
         "upload": "Photo",
@@ -2087,6 +2100,72 @@
         "quantity": "Quantity",
         "stockLabel": "stock"
       }
+    },
+    "treatmentsPage": {
+      "title": "Treatment Records",
+      "subtitle": "Procedures and payment tracking",
+      "refresh": "Refresh",
+      "createAct": "Create record",
+      "searchPlaceholder": "Search by patient name",
+      "statusFilterAria": "Filter by record status",
+      "loading": "Loading…",
+      "empty": "No records",
+      "columns": {
+        "date": "Date",
+        "patient": "Patient",
+        "doctor": "Doctor",
+        "diagnosis": "Diagnosis",
+        "procedures": "Procedures",
+        "totalCost": "Total cost",
+        "payStatus": "Payment status",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "statuses": {
+        "draft": "Draft",
+        "signed": "Signed",
+        "completed": "Completed"
+      },
+      "payStatuses": {
+        "unpaid": "Unpaid",
+        "partial": "Partial",
+        "paid": "Paid",
+        "waived": "Waived",
+        "refunded": "Refunded"
+      },
+      "filterAll": "All statuses",
+      "modal": {
+        "editTitle": "Edit record",
+        "createTitle": "Create record",
+        "patient": "Patient",
+        "doctor": "Doctor",
+        "visit": "Visit (optional)",
+        "diagnosis": "Diagnosis",
+        "teeth": "Teeth (comma-separated)",
+        "notes": "Notes",
+        "procedures": "Procedures",
+        "addLine": "Add line",
+        "service": "Service",
+        "tooth": "Tooth",
+        "quantity": "Quantity",
+        "price": "Price",
+        "actStatus": "Record status",
+        "payStatus": "Payment status",
+        "cancel": "Cancel",
+        "save": "Save",
+        "saving": "Saving…"
+      },
+      "errors": {
+        "loadFailed": "Failed to load records",
+        "saveFailed": "Failed to save",
+        "deleteFailed": "Failed to delete",
+        "csrfRefresh": "CSRF error: please refresh the page",
+        "selectPatientDoctor": "Select a patient and doctor"
+      },
+      "deleteConfirm": "Delete this record? This action cannot be undone.",
+      "editAria": "Edit",
+      "deleteAria": "Delete",
+      "removeLineAria": "Remove line"
     }
   },
   "auth": {
@@ -2220,7 +2299,6 @@
     "edit": "Edit",
     "notSpecified": "Not specified",
     "myAppointments": "My Appointments",
-    "bookAppointment": "Book Appointment",
     "treatmentHistory": "Treatment History",
     "myReviews": "My Reviews",
     "recentAppointments": "Recent Appointments",
@@ -2592,21 +2670,51 @@
         "title": "What concerns you?"
       },
       "quickConcerns": [
-        { "id": "checkup", "label": "Routine checkup" },
-        { "id": "pain", "label": "Toothache" },
-        { "id": "whitening", "label": "Whitening" },
-        { "id": "cleaning", "label": "Teeth cleaning" },
-        { "id": "braces", "label": "Teeth alignment" },
-        { "id": "implant", "label": "Missing tooth" }
+        {
+          "id": "checkup",
+          "label": "Routine checkup"
+        },
+        {
+          "id": "pain",
+          "label": "Toothache"
+        },
+        {
+          "id": "whitening",
+          "label": "Whitening"
+        },
+        {
+          "id": "cleaning",
+          "label": "Teeth cleaning"
+        },
+        {
+          "id": "braces",
+          "label": "Teeth alignment"
+        },
+        {
+          "id": "implant",
+          "label": "Missing tooth"
+        }
       ],
       "step2": {
         "title": "When did you last visit a dentist?"
       },
       "lastVisitOptions": [
-        { "value": "less6months", "label": "Less than 6 months ago" },
-        { "value": "6to12months", "label": "6-12 months ago" },
-        { "value": "more1year", "label": "More than a year ago" },
-        { "value": "never", "label": "Don't remember" }
+        {
+          "value": "less6months",
+          "label": "Less than 6 months ago"
+        },
+        {
+          "value": "6to12months",
+          "label": "6-12 months ago"
+        },
+        {
+          "value": "more1year",
+          "label": "More than a year ago"
+        },
+        {
+          "value": "never",
+          "label": "Don't remember"
+        }
       ],
       "step3": {
         "title": "Anything else?",

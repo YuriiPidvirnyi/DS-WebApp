@@ -24,8 +24,10 @@ import {
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import { Button, Input, Select } from '@/components/ui'
+import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { useCSRF } from '@/hooks/useCSRF'
+import { hasPermission } from '@/lib/permissions'
 import { captureException } from '@/utils/sentry'
 import AdminModal from './components/AdminModal'
 
@@ -101,8 +103,11 @@ const upd =
 
 export default function AdminMaterialsPage() {
   const { t } = useTranslation()
+  const { user } = useAdminAuth()
   const { preferences } = useAdminPreferences()
   const { token, refreshToken } = useCSRF()
+  const canViewAnalytics =
+    !!user?.role && hasPermission(user.role, 'analytics:view')
   const [rows, setRows] = useState<Row[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -142,17 +147,17 @@ export default function AdminMaterialsPage() {
           error?: string
         }
         if (!res.ok || !j.success || !j.data)
-          throw new Error(j.error || 'Не вдалося завантажити матеріали')
+          throw new Error(j.error || t('common.error'))
         setRows(j.data)
       } catch (e) {
         captureException(e instanceof Error ? e : new Error(String(e)))
-        setError(e instanceof Error ? e.message : 'Помилка завантаження')
+        setError(e instanceof Error ? e.message : t('common.error'))
       } finally {
         setLoading(false)
         setRefreshing(false)
       }
     },
-    [catF, statF]
+    [catF, statF, t]
   )
 
   useEffect(() => {
@@ -258,7 +263,7 @@ export default function AdminMaterialsPage() {
     if (raw === undefined) return
     const n = Number(raw)
     if (Number.isNaN(n) || n < 0) {
-      setError('Некоректна кількість')
+      setError(t('common.error'))
       return
     }
     setStockId(id)
@@ -399,17 +404,19 @@ export default function AdminMaterialsPage() {
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link href="/admin/analytics/inventory">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="border-dental-secondary-300 gap-1"
-            >
-              <BarChart3 className="h-4 w-4" />
-              {t('admin.materialsPage.analytics')}
-            </Button>
-          </Link>
+          {canViewAnalytics && (
+            <Link href="/admin/analytics/inventory">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="border-dental-secondary-300 gap-1"
+              >
+                <BarChart3 className="h-4 w-4" />
+                {t('admin.materialsPage.analytics')}
+              </Button>
+            </Link>
+          )}
           <Button
             type="button"
             variant="outline"
@@ -417,7 +424,7 @@ export default function AdminMaterialsPage() {
             onClick={() => void load(true)}
             disabled={refreshing}
             className="border-dental-secondary-300"
-            aria-label={t('admin.analyticsPage.refresh')}
+            aria-label={t('admin.materialsPage.refresh')}
           >
             <RefreshCw
               className={`mr-2 h-4 w-4 ${refreshing ? 'animate-spin' : ''}`}
@@ -613,9 +620,7 @@ export default function AdminMaterialsPage() {
                             type="button"
                             onClick={() => void deactivate(r.id)}
                             className="rounded-lg p-2 text-red-600 hover:bg-red-50"
-                            aria-label={t(
-                              'admin.materialsPage.deactivateConfirm'
-                            )}
+                            aria-label={t('admin.materialsPage.deactivate')}
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>

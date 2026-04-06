@@ -462,11 +462,21 @@
       "title": "Сучасне обладнання",
       "defaultAlt": "Обладнання стоматології",
       "items": {
-        "xray": { "name": "Цифрова рентген-діагностика" },
-        "tomography": { "name": "3D-томографія" },
-        "laser": { "name": "Лазерна стоматологія" },
-        "cadcam": { "name": "CAD/CAM система для протезування" },
-        "ultrasonic": { "name": "Ультразвукове чищення" }
+        "xray": {
+          "name": "Цифрова рентген-діагностика"
+        },
+        "tomography": {
+          "name": "3D-томографія"
+        },
+        "laser": {
+          "name": "Лазерна стоматологія"
+        },
+        "cadcam": {
+          "name": "CAD/CAM система для протезування"
+        },
+        "ultrasonic": {
+          "name": "Ультразвукове чищення"
+        }
       }
     }
   },
@@ -1408,7 +1418,9 @@
       "logout": "Вийти",
       "backToSite": "На сайт",
       "systemOnline": "Система онлайн",
-      "defaultUser": "Адмін"
+      "defaultUser": "Адмін",
+      "openSidebar": "Відкрити меню",
+      "sidebarNav": "Навігація адмін-панелі"
     },
     "modal": {
       "closeAria": "Закрити модальне вікно"
@@ -2065,6 +2077,7 @@
       "cancel": "Скасувати",
       "save": "Зберегти",
       "saving": "Збереження…",
+      "deactivate": "Деактивувати",
       "deactivateConfirm": "Деактивувати цей матеріал?",
       "image": {
         "upload": "Фото",
@@ -2195,6 +2208,72 @@
         "quantity": "Кількість",
         "stockLabel": "залишок"
       }
+    },
+    "treatmentsPage": {
+      "title": "Акти виконаних робіт",
+      "subtitle": "Облік процедур та оплати",
+      "refresh": "Оновити",
+      "createAct": "Створити акт",
+      "searchPlaceholder": "Пошук за іменем пацієнта",
+      "statusFilterAria": "Фільтр за статусом акту",
+      "loading": "Завантаження…",
+      "empty": "Немає записів",
+      "columns": {
+        "date": "Дата",
+        "patient": "Пацієнт",
+        "doctor": "Лікар",
+        "diagnosis": "Діагноз",
+        "procedures": "Процедури",
+        "totalCost": "Загальна вартість",
+        "payStatus": "Статус оплати",
+        "status": "Статус",
+        "actions": "Дії"
+      },
+      "statuses": {
+        "draft": "Чернетка",
+        "signed": "Підписано",
+        "completed": "Завершено"
+      },
+      "payStatuses": {
+        "unpaid": "Не оплачено",
+        "partial": "Частково",
+        "paid": "Оплачено",
+        "waived": "Списано",
+        "refunded": "Повернено"
+      },
+      "filterAll": "Усі статуси",
+      "modal": {
+        "editTitle": "Редагувати акт",
+        "createTitle": "Створити акт",
+        "patient": "Пацієнт",
+        "doctor": "Лікар",
+        "visit": "Візит (необов'язково)",
+        "diagnosis": "Діагноз",
+        "teeth": "Зуби (через кому)",
+        "notes": "Примітки",
+        "procedures": "Процедури",
+        "addLine": "Додати рядок",
+        "service": "Послуга",
+        "tooth": "Зуб",
+        "quantity": "Кількість",
+        "price": "Ціна",
+        "actStatus": "Статус акту",
+        "payStatus": "Статус оплати",
+        "cancel": "Скасувати",
+        "save": "Зберегти",
+        "saving": "Збереження…"
+      },
+      "errors": {
+        "loadFailed": "Не вдалося завантажити акти",
+        "saveFailed": "Не вдалося зберегти",
+        "deleteFailed": "Не вдалося видалити",
+        "csrfRefresh": "CSRF: оновіть сторінку",
+        "selectPatientDoctor": "Оберіть пацієнта та лікаря"
+      },
+      "deleteConfirm": "Видалити цей акт? Дію не скасувати.",
+      "editAria": "Редагувати",
+      "deleteAria": "Видалити",
+      "removeLineAria": "Прибрати рядок"
     }
   },
   "auth": {
@@ -2328,7 +2407,6 @@
     "edit": "Редагувати",
     "notSpecified": "Не вказано",
     "myAppointments": "Мої записи",
-    "bookAppointment": "Записатися на прийом",
     "treatmentHistory": "Історія лікування",
     "myReviews": "Мої відгуки",
     "recentAppointments": "Останні записи",
@@ -2700,21 +2778,51 @@
         "title": "Що вас турбує?"
       },
       "quickConcerns": [
-        { "id": "checkup", "label": "Плановий огляд" },
-        { "id": "pain", "label": "Біль у зубі" },
-        { "id": "whitening", "label": "Відбілювання" },
-        { "id": "cleaning", "label": "Чистка зубів" },
-        { "id": "braces", "label": "Вирівнювання зубів" },
-        { "id": "implant", "label": "Відсутній зуб" }
+        {
+          "id": "checkup",
+          "label": "Плановий огляд"
+        },
+        {
+          "id": "pain",
+          "label": "Біль у зубі"
+        },
+        {
+          "id": "whitening",
+          "label": "Відбілювання"
+        },
+        {
+          "id": "cleaning",
+          "label": "Чистка зубів"
+        },
+        {
+          "id": "braces",
+          "label": "Вирівнювання зубів"
+        },
+        {
+          "id": "implant",
+          "label": "Відсутній зуб"
+        }
       ],
       "step2": {
         "title": "Коли ви востаннє відвідували стоматолога?"
       },
       "lastVisitOptions": [
-        { "value": "less6months", "label": "Менше 6 місяців тому" },
-        { "value": "6to12months", "label": "6-12 місяців тому" },
-        { "value": "more1year", "label": "Більше року тому" },
-        { "value": "never", "label": "Не пам'ятаю" }
+        {
+          "value": "less6months",
+          "label": "Менше 6 місяців тому"
+        },
+        {
+          "value": "6to12months",
+          "label": "6-12 місяців тому"
+        },
+        {
+          "value": "more1year",
+          "label": "Більше року тому"
+        },
+        {
+          "value": "never",
+          "label": "Не пам'ятаю"
+        }
       ],
       "step3": {
         "title": "Щось додаткове?",
