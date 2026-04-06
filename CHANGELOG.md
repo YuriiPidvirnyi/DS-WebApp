@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - RBAC nav bug and dead route cleanup
+- Admin login page: replaced dark `bg-slate-900` theme with dental brand gradient and `<Logo />` component
 - Cabinet reschedule flow (slots parsing, doctorId, timeouts, i18n)
 - Cabinet filter logic and defaultValue fallbacks
 - Cabinet dashboard email display bug
@@ -45,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - AI assistant opening correctly when controlled via sidebar
 - High-contrast mode non-destructive behavior, reset-all, proper close handling
 - Sidebar icon spacing, section gaps, social links visibility, logo rendering
+- 80+ missing i18n keys across cabinet, admin users, sidebar, accessibility panel
 - Security: bumped serialize-javascript, brace-expansion, picomatch overrides
 
 ### Security
