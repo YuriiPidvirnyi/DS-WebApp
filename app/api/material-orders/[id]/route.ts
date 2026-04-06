@@ -1,6 +1,7 @@
 import type { SupabaseClient, User } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
-import { getAdminAccess } from '@/lib/supabase/admin'
+import { getAdminAccess, type AdminAccess } from '@/lib/supabase/admin'
+import { hasPermission } from '@/lib/permissions'
 import { createClient } from '@/lib/supabase/server'
 import {
   checkRateLimit,
@@ -45,7 +46,7 @@ const ORDER_DETAIL_SELECT = `
 `
 
 type AdminResult =
-  | { supabase: SupabaseClient; user: User }
+  | { supabase: SupabaseClient; user: User; access: AdminAccess }
   | { error: NextResponse }
 
 async function requireAdmin(): Promise<AdminResult> {
@@ -83,7 +84,7 @@ async function requireAdmin(): Promise<AdminResult> {
     }
   }
 
-  return { supabase, user }
+  return { supabase, user, access: adminAccess }
 }
 
 async function applyInventoryForDeliveredOrder(
@@ -216,7 +217,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
   const auth = await requireAdmin()
   if ('error' in auth) return auth.error
-  const { supabase } = auth
+  const { supabase, access } = auth
 
   const { id } = await params
 
@@ -228,6 +229,20 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       { success: false, error: 'Невірний формат запиту' },
       { status: 400 }
     )
+  }
+
+  // Approval transitions require orders:approve permission
+  const APPROVAL_STATUSES = new Set(['approved', 'ordered', 'delivered'])
+  if (typeof body.status === 'string' && APPROVAL_STATUSES.has(body.status)) {
+    if (!hasPermission(access.role, 'orders:approve')) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Недостатньо прав для затвердження замовлення',
+        },
+        { status: 403 }
+      )
+    }
   }
 
   const unknownKeys = Object.keys(body).filter(k => !PATCHABLE_KEYS.has(k))

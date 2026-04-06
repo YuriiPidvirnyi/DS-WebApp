@@ -1,6 +1,7 @@
 import type { SupabaseClient, User } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
-import { getAdminAccess } from '@/lib/supabase/admin'
+import { getAdminAccess, type AdminAccess } from '@/lib/supabase/admin'
+import { hasPermission } from '@/lib/permissions'
 import { createClient } from '@/lib/supabase/server'
 import {
   checkRateLimit,
@@ -16,7 +17,7 @@ export const dynamic = 'force-dynamic'
 type Params = { params: Promise<{ id: string }> }
 
 type AdminResult =
-  | { supabase: SupabaseClient; user: User }
+  | { supabase: SupabaseClient; user: User; access: AdminAccess }
   | { error: NextResponse }
 
 async function requireAdmin(): Promise<AdminResult> {
@@ -54,7 +55,7 @@ async function requireAdmin(): Promise<AdminResult> {
     }
   }
 
-  return { supabase, user }
+  return { supabase, user, access: adminAccess }
 }
 
 const PATCHABLE = new Set([
@@ -120,7 +121,14 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
   const auth = await requireAdmin()
   if ('error' in auth) return auth.error
-  const { supabase } = auth
+  const { supabase, access } = auth
+
+  if (!hasPermission(access.role, 'inventory:edit')) {
+    return NextResponse.json(
+      { success: false, error: 'Недостатньо прав для редагування матеріалів' },
+      { status: 403 }
+    )
+  }
 
   const { id } = await params
 
@@ -285,7 +293,14 @@ export async function DELETE(request: NextRequest, { params }: Params) {
 
   const auth = await requireAdmin()
   if ('error' in auth) return auth.error
-  const { supabase } = auth
+  const { supabase, access } = auth
+
+  if (!hasPermission(access.role, 'inventory:edit')) {
+    return NextResponse.json(
+      { success: false, error: 'Недостатньо прав для видалення матеріалів' },
+      { status: 403 }
+    )
+  }
 
   const { id } = await params
 

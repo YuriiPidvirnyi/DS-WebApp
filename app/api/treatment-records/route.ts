@@ -101,7 +101,7 @@ async function requireAdmin() {
     }
   }
 
-  return { supabase }
+  return { supabase, access: adminAccess }
 }
 
 /** GET /api/treatment-records — admin-only list */
@@ -126,8 +126,19 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status')
     if (status) query = query.eq('status', status)
 
-    const doctorId = searchParams.get('doctorId')
-    if (doctorId) query = query.eq('doctor_id', doctorId)
+    // Doctors see only their own treatment records
+    if (auth.access.role === 'doctor') {
+      if (!auth.access.doctorId) {
+        return NextResponse.json(
+          { success: false, error: "Лікар не прив'язаний до запису в системі" },
+          { status: 403 }
+        )
+      }
+      query = query.eq('doctor_id', auth.access.doctorId)
+    } else {
+      const doctorId = searchParams.get('doctorId')
+      if (doctorId) query = query.eq('doctor_id', doctorId)
+    }
 
     const { data, error, count } = await query
       .order('created_at', { ascending: false })
