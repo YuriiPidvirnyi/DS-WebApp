@@ -33,7 +33,9 @@
     "next": "Dalej",
     "previous": "Poprzedni",
     "required": "Wymagane",
-    "optional": "Opcjonalne"
+    "optional": "Opcjonalne",
+    "confirm": "Potwierdź",
+    "actions": "Akcje"
   },
   "asyncState": {
     "loading": {
@@ -2168,6 +2170,20 @@
       "editAria": "Edytuj",
       "deleteAria": "Usuń",
       "removeLineAria": "Usuń wiersz"
+    },
+    "users": {
+      "title": "Zarządzanie użytkownikami",
+      "subtitle": "Role i prawa dostępu panelu admina",
+      "columns": {
+        "name": "Imię",
+        "role": "Rola",
+        "specialization": "Specjalizacja",
+        "lastLogin": "Ostatnie logowanie"
+      },
+      "you": "ty",
+      "deleteConfirm": "Usuń tego użytkownika?",
+      "empty": "Brak użytkowników",
+      "note": "Zmiany ról wchodzą w życie przy następnym logowaniu."
     }
   },
   "auth": {
@@ -2342,6 +2358,24 @@
         "upcoming": "Brak nadchodzących wizyt",
         "past": "Brak minionych wizyt",
         "cta": "Umów wizytę u naszych specjalistów"
+      },
+      "cancelModal": {
+        "title": "Anulować wizytę?",
+        "confirm": "Tak, anuluj",
+        "back": "Zachowaj wizytę",
+        "success": "Wizyta anulowana",
+        "error": "Nie udało się anulować wizyty"
+      },
+      "reschedule": {
+        "title": "Przesuń wizytę",
+        "button": "Przesuń",
+        "current": "Aktualna wizyta",
+        "selectTime": "Wybierz nowy termin",
+        "noSlots": "Brak dostępnych terminów",
+        "confirm": "Potwierdź przesunięcie",
+        "success": "Wizyta została przeniesiona",
+        "error": "Nie udało się przenieść wizyty",
+        "at": "o"
       }
     },
     "profile": {
@@ -2360,7 +2394,85 @@
       "saveSuccess": "Profil został zaktualizowany!",
       "errors": {
         "saveFailed": "Nie udało się zapisać. Spróbuj ponownie później."
+      },
+      "personalInfo": "Dane osobowe",
+      "contactInfo": "Informacje kontaktowe",
+      "additionalInfo": "Dodatkowe informacje",
+      "unsavedChanges": "Masz niezapisane zmiany"
+    },
+    "title": "Gabinet pacjenta",
+    "profileTitle": "Mój profil",
+    "appointmentsTitle": "Moje wizyty",
+    "treatmentsTitle": "Leczenie",
+    "paymentsTitle": "Płatności",
+    "greeting": {
+      "morning": "Dzień dobry, {{name}}!",
+      "afternoon": "Miłego dnia, {{name}}!",
+      "evening": "Dobry wieczór, {{name}}!"
+    },
+    "dashboard": {
+      "nextAppointment": "Następna wizyta",
+      "upcoming": "Nadchodzących",
+      "completed": "Zakończonych",
+      "total": "Łącznie wizyt",
+      "noUpcoming": "Brak zaplanowanych wizyt",
+      "noUpcomingDesc": "Umów wizytę w dogodnym terminie",
+      "viewDetails": "Szczegóły",
+      "profileIncomplete": "Uzupełnij profil",
+      "profileHint": "Pełne informacje pomagają lekarzom lepiej przygotować się do wizyty",
+      "completeProfile": "Uzupełnij profil"
+    },
+    "error": {
+      "title": "Coś poszło nie tak",
+      "description": "Nie udało się załadować danych. Spróbuj odświeżyć stronę.",
+      "retry": "Spróbuj ponownie",
+      "goHome": "Strona główna",
+      "devDetails": "Szczegóły błędu"
+    },
+    "sidebar": {
+      "title": "Gabinet pacjenta",
+      "dashboard": "Panel",
+      "appointments": "Moje wizyty",
+      "treatments": "Leczenie",
+      "payments": "Płatności",
+      "profile": "Profil",
+      "soon": "Wkrótce",
+      "navigation": "Nawigacja gabinetu",
+      "openMenu": "Otwórz menu",
+      "backToSite": "Na stronę"
+    },
+    "treatments": {
+      "title": "Leczenie",
+      "empty": "Brak zapisów leczenia",
+      "doctor": "Lekarz",
+      "diagnosis": "Diagnoza",
+      "procedures": "Procedury",
+      "teeth": "Zęby",
+      "tooth": "ząb",
+      "status": {
+        "draft": "Szkic",
+        "signed": "Podpisano",
+        "completed": "Zakończono"
+      },
+      "payment": {
+        "unpaid": "Nieopłacono",
+        "partial": "Częściowa płatność",
+        "paid": "Opłacono",
+        "waived": "Zwolniono",
+        "refunded": "Zwrócono"
       }
+    },
+    "payments": {
+      "title": "Płatności",
+      "comingSoon": "Wkrótce",
+      "description": "Płatności online za usługi kliniczne są w trakcie realizacji.",
+      "feature1Title": "Faktury",
+      "feature1Desc": "Przeglądaj swoje faktury",
+      "feature2Title": "Płatność",
+      "feature2Desc": "Wygodna płatność online",
+      "feature3Title": "Przypomnienia",
+      "feature3Desc": "Powiadomienia o płatnościach",
+      "meanwhile": "Obecnie płatności dokonuje się w klinice."
     }
   },
   "patientDashboard": {

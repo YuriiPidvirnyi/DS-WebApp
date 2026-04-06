@@ -33,7 +33,9 @@
     "next": "Next",
     "previous": "Previous",
     "required": "Required",
-    "optional": "Optional"
+    "optional": "Optional",
+    "confirm": "Confirm",
+    "actions": "Actions"
   },
   "asyncState": {
     "loading": {
@@ -2166,6 +2168,20 @@
       "editAria": "Edit",
       "deleteAria": "Delete",
       "removeLineAria": "Remove line"
+    },
+    "users": {
+      "title": "User Management",
+      "subtitle": "Admin panel roles and access rights",
+      "columns": {
+        "name": "Name",
+        "role": "Role",
+        "specialization": "Specialization",
+        "lastLogin": "Last login"
+      },
+      "you": "you",
+      "deleteConfirm": "Delete this user?",
+      "empty": "No users found",
+      "note": "Role changes take effect on next login."
     }
   },
   "auth": {
@@ -2340,6 +2356,24 @@
         "upcoming": "No upcoming appointments",
         "past": "No past appointments",
         "cta": "Book an appointment with our specialists"
+      },
+      "cancelModal": {
+        "title": "Cancel appointment?",
+        "confirm": "Yes, cancel",
+        "back": "Keep appointment",
+        "success": "Appointment cancelled",
+        "error": "Failed to cancel appointment"
+      },
+      "reschedule": {
+        "title": "Reschedule appointment",
+        "button": "Reschedule",
+        "current": "Current appointment",
+        "selectTime": "Select a new time",
+        "noSlots": "No available slots",
+        "confirm": "Confirm reschedule",
+        "success": "Appointment successfully rescheduled",
+        "error": "Failed to reschedule appointment",
+        "at": "at"
       }
     },
     "profile": {
@@ -2358,7 +2392,85 @@
       "saveSuccess": "Profile updated successfully!",
       "errors": {
         "saveFailed": "Failed to save. Please try again later."
+      },
+      "personalInfo": "Personal information",
+      "contactInfo": "Contact information",
+      "additionalInfo": "Additional information",
+      "unsavedChanges": "You have unsaved changes"
+    },
+    "title": "Patient Cabinet",
+    "profileTitle": "My Profile",
+    "appointmentsTitle": "My Appointments",
+    "treatmentsTitle": "Treatments",
+    "paymentsTitle": "Payments",
+    "greeting": {
+      "morning": "Good morning, {{name}}!",
+      "afternoon": "Good afternoon, {{name}}!",
+      "evening": "Good evening, {{name}}!"
+    },
+    "dashboard": {
+      "nextAppointment": "Next Appointment",
+      "upcoming": "Upcoming",
+      "completed": "Completed",
+      "total": "Total appointments",
+      "noUpcoming": "No upcoming appointments",
+      "noUpcomingDesc": "Book an appointment at a convenient time",
+      "viewDetails": "View details",
+      "profileIncomplete": "Complete your profile",
+      "profileHint": "Full information helps doctors prepare better for your appointment",
+      "completeProfile": "Complete profile"
+    },
+    "error": {
+      "title": "Something went wrong",
+      "description": "Failed to load data. Please try refreshing the page.",
+      "retry": "Try again",
+      "goHome": "Go home",
+      "devDetails": "Error details"
+    },
+    "sidebar": {
+      "title": "Patient Cabinet",
+      "dashboard": "Dashboard",
+      "appointments": "My Appointments",
+      "treatments": "Treatments",
+      "payments": "Payments",
+      "profile": "Profile",
+      "soon": "Soon",
+      "navigation": "Cabinet navigation",
+      "openMenu": "Open menu",
+      "backToSite": "Back to site"
+    },
+    "treatments": {
+      "title": "Treatments",
+      "empty": "No treatment records yet",
+      "doctor": "Doctor",
+      "diagnosis": "Diagnosis",
+      "procedures": "Procedures",
+      "teeth": "Teeth",
+      "tooth": "tooth",
+      "status": {
+        "draft": "Draft",
+        "signed": "Signed",
+        "completed": "Completed"
+      },
+      "payment": {
+        "unpaid": "Unpaid",
+        "partial": "Partial payment",
+        "paid": "Paid",
+        "waived": "Waived",
+        "refunded": "Refunded"
       }
+    },
+    "payments": {
+      "title": "Payments",
+      "comingSoon": "Coming soon",
+      "description": "Online payment for clinic services is coming soon.",
+      "feature1Title": "Invoices",
+      "feature1Desc": "View your invoices",
+      "feature2Title": "Payment",
+      "feature2Desc": "Convenient online payment",
+      "feature3Title": "Reminders",
+      "feature3Desc": "Payment notifications",
+      "meanwhile": "Currently, payment is made at the clinic."
     }
   },
   "patientDashboard": {
