@@ -257,6 +257,7 @@ export default function CabinetLayoutClient({
 
       {/* Mobile sidebar */}
       <aside
+        id="mobile-sidebar"
         ref={sidebarRef}
         role="dialog"
         aria-modal={sidebarOpen}
@@ -488,7 +489,7 @@ export default function CabinetLayoutClient({
               </Link>
               <Link
                 href="/cabinet/profile"
-                className="lg:hidden"
+                className="lg:hidden rounded-full focus:outline-none focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2"
                 aria-label={t('cabinet.sidebar.profile')}
               >
                 <div className="w-8 h-8 rounded-full bg-dental-primary-600 flex items-center justify-center text-white font-semibold text-xs">
