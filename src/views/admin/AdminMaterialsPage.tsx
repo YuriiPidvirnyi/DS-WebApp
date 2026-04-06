@@ -246,13 +246,12 @@ export default function AdminMaterialsPage() {
         body: JSON.stringify(body),
       })
       const j = (await res.json()) as { success?: boolean; error?: string }
-      if (!res.ok || !j.success)
-        throw new Error(j.error || 'Збереження не вдалося')
+      if (!res.ok || !j.success) throw new Error(j.error || t('common.error'))
       setOpen(false)
       void load(true)
     } catch (err) {
       captureException(err instanceof Error ? err : new Error(String(err)))
-      setError(err instanceof Error ? err.message : 'Помилка збереження')
+      setError(err instanceof Error ? err.message : t('common.error'))
     } finally {
       setSaving(false)
     }
@@ -279,7 +278,7 @@ export default function AdminMaterialsPage() {
         data?: Row
       }
       if (!res.ok || !j.success || !j.data)
-        throw new Error(j.error || 'Не вдалося оновити залишок')
+        throw new Error(j.error || t('common.error'))
       setRows(p =>
         p.map(x =>
           x.id === id ? { ...x, current_quantity: j.data!.current_quantity } : x
@@ -292,7 +291,7 @@ export default function AdminMaterialsPage() {
       })
     } catch (err) {
       captureException(err instanceof Error ? err : new Error(String(err)))
-      setError(err instanceof Error ? err.message : 'Помилка залишку')
+      setError(err instanceof Error ? err.message : t('common.error'))
     } finally {
       setStockId(null)
     }
@@ -306,12 +305,11 @@ export default function AdminMaterialsPage() {
         headers: csrf(),
       })
       const j = (await res.json()) as { success?: boolean; error?: string }
-      if (!res.ok || !j.success)
-        throw new Error(j.error || 'Не вдалося деактивувати')
+      if (!res.ok || !j.success) throw new Error(j.error || t('common.error'))
       void load(true)
     } catch (err) {
       captureException(err instanceof Error ? err : new Error(String(err)))
-      setError(err instanceof Error ? err.message : 'Помилка')
+      setError(err instanceof Error ? err.message : t('common.error'))
     }
   }
 
@@ -331,7 +329,7 @@ export default function AdminMaterialsPage() {
         error?: string
       }
       if (!res.ok || !j.success || !j.data)
-        throw new Error(j.error || 'Не вдалося завантажити зображення')
+        throw new Error(j.error || t('common.error'))
       setImagePreview(j.data.imageUrl)
       setRows(p =>
         p.map(x =>
@@ -340,9 +338,7 @@ export default function AdminMaterialsPage() {
       )
     } catch (err) {
       captureException(err instanceof Error ? err : new Error(String(err)))
-      setError(
-        err instanceof Error ? err.message : 'Помилка завантаження зображення'
-      )
+      setError(err instanceof Error ? err.message : t('common.error'))
     } finally {
       setUploadingImage(false)
     }
@@ -357,15 +353,14 @@ export default function AdminMaterialsPage() {
         body: JSON.stringify({ imageUrl: null }),
       })
       const j = (await res.json()) as { success?: boolean; error?: string }
-      if (!res.ok || !j.success)
-        throw new Error(j.error || 'Не вдалося видалити зображення')
+      if (!res.ok || !j.success) throw new Error(j.error || t('common.error'))
       setImagePreview(null)
       setRows(p =>
         p.map(x => (x.id === editId ? { ...x, image_url: null } : x))
       )
     } catch (err) {
       captureException(err instanceof Error ? err : new Error(String(err)))
-      setError(err instanceof Error ? err.message : 'Помилка')
+      setError(err instanceof Error ? err.message : t('common.error'))
     }
   }
 
@@ -462,7 +457,7 @@ export default function AdminMaterialsPage() {
             <Input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Назва…"
+              placeholder={t('admin.materialsPage.searchByName')}
               className="pl-9"
             />
           </div>

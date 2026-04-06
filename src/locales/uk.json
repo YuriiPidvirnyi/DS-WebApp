@@ -6,7 +6,10 @@
     "gallery": "Галерея",
     "contact": "Контакти",
     "privacyPolicy": "Політика конфіденційності",
-    "termsOfService": "Умови використання"
+    "termsOfService": "Умови використання",
+    "menu": "Меню",
+    "contact_us": "Зв'язок",
+    "socials": "Соцмережі"
   },
   "social": {
     "facebook": "Facebook",
@@ -35,7 +38,8 @@
     "required": "Обов'язково",
     "optional": "Необов'язково",
     "confirm": "Підтвердити",
-    "actions": "Дії"
+    "actions": "Дії",
+    "guest": "Гість"
   },
   "asyncState": {
     "loading": {
@@ -859,7 +863,8 @@
     "closeMenu": "Закрити меню",
     "prevCase": "Попередній випадок",
     "nextCase": "Наступний випадок",
-    "goToCase": "Перейти до випадку"
+    "goToCase": "Перейти до випадку",
+    "title": "Доступність"
   },
   "accessibilityPanel": {
     "regionLabel": "Налаштування доступності",
@@ -899,7 +904,8 @@
         "deuteranopia": "Дейтеранопія (зелений)",
         "tritanopia": "Тританопія (синій)"
       }
-    }
+    },
+    "resetAll": "Скинути все"
   },
   "faqAccordion": {
     "title": "Поширені питання"

@@ -6,7 +6,10 @@
     "gallery": "Galeria",
     "contact": "Kontakt",
     "privacyPolicy": "Polityka prywatności",
-    "termsOfService": "Warunki użytkowania"
+    "termsOfService": "Warunki użytkowania",
+    "menu": "Menu",
+    "contact_us": "Kontakt",
+    "socials": "Media społecznościowe"
   },
   "social": {
     "facebook": "Facebook",
@@ -35,7 +38,8 @@
     "required": "Wymagane",
     "optional": "Opcjonalne",
     "confirm": "Potwierdź",
-    "actions": "Akcje"
+    "actions": "Akcje",
+    "guest": "Gość"
   },
   "asyncState": {
     "loading": {
@@ -861,7 +865,8 @@
     "closeMenu": "Zamknij menu",
     "prevCase": "Poprzedni przypadek",
     "nextCase": "Następny przypadek",
-    "goToCase": "Przejdź do przypadku"
+    "goToCase": "Przejdź do przypadku",
+    "title": "Dostępność"
   },
   "accessibilityPanel": {
     "regionLabel": "Ustawienia dostępności",
@@ -901,7 +906,8 @@
         "deuteranopia": "Deuteranopia (zielony)",
         "tritanopia": "Tritanopia (niebieski)"
       }
-    }
+    },
+    "resetAll": "Resetuj wszystko"
   },
   "faqAccordion": {
     "title": "Najczęściej zadawane pytania"

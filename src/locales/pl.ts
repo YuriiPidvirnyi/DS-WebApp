@@ -11,6 +11,9 @@ const pl = {
     contact: 'Kontakt',
     privacyPolicy: 'Polityka prywatności',
     termsOfService: 'Warunki użytkowania',
+    menu: 'Menu',
+    contact_us: 'Kontakt',
+    socials: 'Media społecznościowe',
   },
   social: {
     facebook: 'Facebook',
@@ -40,6 +43,7 @@ const pl = {
     optional: 'Opcjonalne',
     confirm: 'Potwierdź',
     actions: 'Akcje',
+    guest: 'Gość',
   },
   asyncState: {
     loading: {
@@ -900,6 +904,7 @@ const pl = {
     prevCase: 'Poprzedni przypadek',
     nextCase: 'Następny przypadek',
     goToCase: 'Przejdź do przypadku',
+    title: 'Dostępność',
   },
   accessibilityPanel: {
     regionLabel: 'Ustawienia dostępności',

@@ -11,6 +11,9 @@ const en = {
     contact: 'Contact',
     privacyPolicy: 'Privacy Policy',
     termsOfService: 'Terms of Service',
+    menu: 'Menu',
+    contact_us: 'Contact',
+    socials: 'Socials',
   },
   social: {
     facebook: 'Facebook',
@@ -40,6 +43,7 @@ const en = {
     optional: 'Optional',
     confirm: 'Confirm',
     actions: 'Actions',
+    guest: 'Guest',
   },
   asyncState: {
     loading: {
@@ -897,6 +901,7 @@ const en = {
     prevCase: 'Previous case',
     nextCase: 'Next case',
     goToCase: 'Go to case',
+    title: 'Accessibility',
   },
   accessibilityPanel: {
     regionLabel: 'Accessibility settings',

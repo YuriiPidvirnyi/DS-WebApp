@@ -11,6 +11,9 @@ const uk = {
     contact: 'Контакти',
     privacyPolicy: 'Політика конфіденційності',
     termsOfService: 'Умови використання',
+    menu: 'Меню',
+    contact_us: "Зв'язок",
+    socials: 'Соцмережі',
   },
   social: {
     facebook: 'Facebook',
@@ -40,6 +43,7 @@ const uk = {
     optional: "Необов'язково",
     confirm: 'Підтвердити',
     actions: 'Дії',
+    guest: 'Гість',
   },
   asyncState: {
     loading: {
@@ -895,6 +899,7 @@ const uk = {
     prevCase: 'Попередній випадок',
     nextCase: 'Наступний випадок',
     goToCase: 'Перейти до випадку',
+    title: 'Доступність',
   },
   accessibilityPanel: {
     regionLabel: 'Налаштування доступності',

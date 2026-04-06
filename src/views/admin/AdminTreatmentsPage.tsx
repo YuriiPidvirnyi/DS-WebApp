@@ -720,7 +720,7 @@ export default function AdminTreatmentsPage() {
                   {appts.map(a => (
                     <option key={a.id} value={a.id}>
                       {a.appointment_date} {a.appointment_time?.slice(0, 5)} —{' '}
-                      {a.patient_name || a.guest_name || 'Гість'}
+                      {a.patient_name || a.guest_name || t('common.guest')}
                     </option>
                   ))}
                 </Select>
