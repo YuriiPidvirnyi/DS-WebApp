@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sidebar icon spacing, section gaps, social links visibility, logo rendering
 - 80+ missing i18n keys across cabinet, admin users, sidebar, accessibility panel
 - Security: bumped serialize-javascript, brace-expansion, picomatch overrides
+- Booking: slots fetch now times out after 8s with an error state instead of loading indefinitely when the API hangs
 
 ### Security
 

@@ -122,13 +122,18 @@ export function useBookingForm() {
     }
 
     const slotsErrorMessage = t('booking.slots.loadError')
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 8_000)
 
     setLoadingSlots(true)
+    setSlotsLoadError(null)
     getAvailableSlots(
       selectedDate,
-      selectedDoctor === 'any' ? undefined : selectedDoctor
+      selectedDoctor === 'any' ? undefined : selectedDoctor,
+      controller.signal
     )
       .then(res => {
+        if (controller.signal.aborted) return
         if (res.success && res.data) {
           setSlots(res.data)
           const selectedTime = getValues('time')
@@ -147,7 +152,15 @@ export function useBookingForm() {
         setValue('time', '', { shouldValidate: true })
         setSlotsLoadError(slotsErrorMessage)
       })
-      .finally(() => setLoadingSlots(false))
+      .finally(() => {
+        clearTimeout(timeoutId)
+        setLoadingSlots(false)
+      })
+
+    return () => {
+      controller.abort()
+      clearTimeout(timeoutId)
+    }
   }, [getValues, selectedDate, selectedDoctor, setValue, t])
 
   // --- Multi-step wizard ---

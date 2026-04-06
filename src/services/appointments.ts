@@ -14,11 +14,13 @@ export async function createAppointment(
 
 export async function getAvailableSlots(
   date: string,
-  doctorId?: string
+  doctorId?: string,
+  signal?: AbortSignal
 ): Promise<ApiResponse<string[]>> {
   const params = new URLSearchParams({ date })
   if (doctorId) params.set('doctorId', doctorId)
   return api.get<ApiResponse<string[]>>(
-    `${ENDPOINTS.slots}?${params.toString()}`
+    `${ENDPOINTS.slots}?${params.toString()}`,
+    signal ? { signal } : undefined
   )
 }
