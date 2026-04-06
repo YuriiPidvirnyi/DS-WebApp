@@ -1217,6 +1217,15 @@
     }
   },
   "admin": {
+    "roles": {
+      "superadmin": "Super Admin",
+      "admin": "Admin",
+      "receptionist": "Receptionist",
+      "doctor": "Doctor",
+      "senior_assistant": "Senior Assistant",
+      "assistant": "Assistant",
+      "staff": "Staff"
+    },
     "dashboard": {
       "title": "Dashboard",
       "welcome": "Welcome to Admin Panel",
@@ -1245,7 +1254,9 @@
       "serviceCategories": "Service Categories",
       "noData": "No data",
       "doctors": "Doctors",
-      "priceList": "Price List"
+      "priceList": "Price List",
+      "doctorNotLinked": "Your account is not linked to a doctor profile. Please contact an administrator.",
+      "loadError": "Failed to load dashboard data."
     },
     "sidebar": {
       "dashboard": "Dashboard",
@@ -1343,6 +1354,7 @@
     "appointmentsPage": {
       "title": "Appointment Management",
       "description": "Search, filter, and update appointment statuses in real time.",
+      "doctorScopeNotice": "Showing only your appointments.",
       "refresh": "Refresh",
       "summary": {
         "total": "Total",
@@ -1923,6 +1935,157 @@
       "diagnostics": {
         "appName": "Dental Story Admin",
         "fileName": "admin-diagnostics.json"
+      }
+    },
+    "materialsPage": {
+      "title": "Materials & Supplies",
+      "subtitle": "Catalog and stock levels",
+      "addMaterial": "Add material",
+      "refresh": "Refresh",
+      "analytics": "Analytics",
+      "searchByName": "Search by name",
+      "categoryFilter": "Category",
+      "allCategories": "All categories",
+      "statusFilter": "Status",
+      "allStatuses": "All",
+      "active": "Active",
+      "inactive": "Inactive",
+      "loading": "Loading…",
+      "empty": "Nothing found",
+      "editMaterial": "Edit material",
+      "newMaterial": "New material",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving…",
+      "deactivateConfirm": "Deactivate this material?",
+      "image": {
+        "upload": "Photo",
+        "formats": "JPEG, PNG or WebP, max 2 MB",
+        "replace": "Replace",
+        "uploading": "Uploading..."
+      },
+      "columns": {
+        "image": "",
+        "name": "Name",
+        "category": "Category",
+        "unit": "Unit",
+        "sku": "SKU",
+        "stock": "Stock",
+        "minStock": "Min stock",
+        "supplier": "Supplier",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "form": {
+        "nameUk": "Name (UK) *",
+        "nameEn": "Name (EN)",
+        "namePl": "Name (PL)",
+        "category": "Category",
+        "unit": "Unit",
+        "sku": "SKU",
+        "minStockLevel": "Min stock level",
+        "supplierName": "Supplier",
+        "supplierContact": "Supplier contact",
+        "supplierEmail": "Supplier email"
+      },
+      "categories": {
+        "composite": "Composite",
+        "filling": "Filling",
+        "instrument": "Instruments",
+        "implant": "Implants",
+        "hygiene": "Hygiene",
+        "anesthesia": "Anesthesia",
+        "other": "Other"
+      },
+      "statusLabels": {
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
+    "ordersPage": {
+      "title": "Material Orders",
+      "createOrder": "Create order",
+      "refresh": "Refresh",
+      "statusFilter": "Status",
+      "allStatuses": "All",
+      "loading": "Loading",
+      "empty": "No orders matching the filter.",
+      "items": "items",
+      "notes": "Notes",
+      "approvedAt": "Approved",
+      "history": "History",
+      "historyTitle": "Change history",
+      "noHistory": "No records",
+      "deleteConfirm": "Delete this draft order?",
+      "delivery": {
+        "received": "Received",
+        "save": "Save delivery"
+      },
+      "create": {
+        "title": "Create order",
+        "material": "Material",
+        "quantity": "Quantity",
+        "unitPrice": "Unit price",
+        "addItem": "Add item",
+        "urgency": "Urgency",
+        "notes": "Notes",
+        "totalCost": "Total cost",
+        "cancel": "Cancel",
+        "save": "Save"
+      },
+      "statuses": {
+        "draft": "Draft",
+        "pending_approval": "Pending approval",
+        "approved": "Approved",
+        "ordered": "Ordered",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled"
+      },
+      "urgency": {
+        "low": "Low",
+        "normal": "Normal",
+        "high": "High",
+        "critical": "Critical"
+      },
+      "actions": {
+        "sendForApproval": "Send for approval",
+        "approve": "Approve",
+        "cancel": "Cancel",
+        "markOrdered": "Mark ordered",
+        "markDelivered": "Mark delivered",
+        "delete": "Delete"
+      }
+    },
+    "inventory": {
+      "analyticsTitle": "Inventory Analytics",
+      "analyticsSubtitle": "Spending, consumption and stock levels",
+      "period30": "30 days",
+      "period90": "90 days",
+      "period365": "1 year",
+      "kpi": {
+        "totalMaterials": "Materials",
+        "lowStock": "Low stock",
+        "totalSpent": "Spent this period",
+        "pendingOrders": "Active orders"
+      },
+      "charts": {
+        "spendingByCategory": "Spending by category",
+        "topConsumed": "Most consumed",
+        "noData": "No data for this period"
+      },
+      "stockLevels": "Stock levels",
+      "stockColumns": {
+        "material": "Material",
+        "category": "Category",
+        "stock": "Stock",
+        "level": "Level"
+      },
+      "consumption": {
+        "title": "Materials used",
+        "addMaterial": "Add material",
+        "material": "Material",
+        "quantity": "Quantity",
+        "stockLabel": "stock"
       }
     }
   },

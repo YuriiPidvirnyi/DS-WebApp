@@ -1219,6 +1219,15 @@
     }
   },
   "admin": {
+    "roles": {
+      "superadmin": "Super Administrator",
+      "admin": "Administrator",
+      "receptionist": "Recepcjonista",
+      "doctor": "Lekarz",
+      "senior_assistant": "Starszy asystent",
+      "assistant": "Asystent",
+      "staff": "Personel"
+    },
     "dashboard": {
       "title": "Panel kontrolny",
       "welcome": "Witamy w panelu administratora",
@@ -1247,7 +1256,9 @@
       "serviceCategories": "Kategorie usług",
       "noData": "Brak danych",
       "doctors": "Lekarze",
-      "priceList": "Cennik"
+      "priceList": "Cennik",
+      "doctorNotLinked": "Twoje konto nie jest powiązane z profilem lekarza. Skontaktuj się z administratorem.",
+      "loadError": "Nie udało się załadować danych pulpitu."
     },
     "sidebar": {
       "dashboard": "Dashboard",
@@ -1345,6 +1356,7 @@
     "appointmentsPage": {
       "title": "Zarządzanie wizytami",
       "description": "Wyszukiwanie, filtrowanie i zmiana statusów wizyt w czasie rzeczywistym.",
+      "doctorScopeNotice": "Wyświetlane są tylko Twoje wizyty.",
       "refresh": "Odśwież",
       "summary": {
         "total": "Łącznie",
@@ -1925,6 +1937,157 @@
       "diagnostics": {
         "appName": "Dental Story Admin",
         "fileName": "admin-diagnostics.json"
+      }
+    },
+    "materialsPage": {
+      "title": "Materialy i artykuly",
+      "subtitle": "Katalog i stany magazynowe",
+      "addMaterial": "Dodaj material",
+      "refresh": "Odswiez",
+      "analytics": "Analityka",
+      "searchByName": "Szukaj po nazwie",
+      "categoryFilter": "Kategoria",
+      "allCategories": "Wszystkie kategorie",
+      "statusFilter": "Status",
+      "allStatuses": "Wszystkie",
+      "active": "Aktywne",
+      "inactive": "Nieaktywne",
+      "loading": "Ladowanie…",
+      "empty": "Nic nie znaleziono",
+      "editMaterial": "Edytuj material",
+      "newMaterial": "Nowy material",
+      "cancel": "Anuluj",
+      "save": "Zapisz",
+      "saving": "Zapisywanie…",
+      "deactivateConfirm": "Dezaktywowac ten material?",
+      "image": {
+        "upload": "Zdjecie",
+        "formats": "JPEG, PNG lub WebP, maks. 2 MB",
+        "replace": "Zamien",
+        "uploading": "Przesylanie..."
+      },
+      "columns": {
+        "image": "",
+        "name": "Nazwa",
+        "category": "Kategoria",
+        "unit": "Jednostka",
+        "sku": "SKU",
+        "stock": "Stan",
+        "minStock": "Min. stan",
+        "supplier": "Dostawca",
+        "status": "Status",
+        "actions": "Akcje"
+      },
+      "form": {
+        "nameUk": "Nazwa (UK) *",
+        "nameEn": "Nazwa (EN)",
+        "namePl": "Nazwa (PL)",
+        "category": "Kategoria",
+        "unit": "Jednostka",
+        "sku": "SKU",
+        "minStockLevel": "Min. stan",
+        "supplierName": "Dostawca",
+        "supplierContact": "Kontakt dostawcy",
+        "supplierEmail": "Email dostawcy"
+      },
+      "categories": {
+        "composite": "Kompozyt",
+        "filling": "Plomby",
+        "instrument": "Instrumenty",
+        "implant": "Implanty",
+        "hygiene": "Higiena",
+        "anesthesia": "Znieczulenie",
+        "other": "Inne"
+      },
+      "statusLabels": {
+        "active": "Aktywny",
+        "inactive": "Nieaktywny"
+      }
+    },
+    "ordersPage": {
+      "title": "Zamowienia materialow",
+      "createOrder": "Utworz zamowienie",
+      "refresh": "Odswiez",
+      "statusFilter": "Status",
+      "allStatuses": "Wszystkie",
+      "loading": "Ladowanie",
+      "empty": "Brak zamowien pasujacych do filtra.",
+      "items": "poz.",
+      "notes": "Uwagi",
+      "approvedAt": "Zatwierdzone",
+      "history": "Historia",
+      "historyTitle": "Historia zmian",
+      "noHistory": "Brak wpisow",
+      "deleteConfirm": "Usunac ten szkic zamowienia?",
+      "delivery": {
+        "received": "Otrzymano",
+        "save": "Zapisz dostawe"
+      },
+      "create": {
+        "title": "Utworz zamowienie",
+        "material": "Material",
+        "quantity": "Ilosc",
+        "unitPrice": "Cena jednostkowa",
+        "addItem": "Dodaj pozycje",
+        "urgency": "Pilnosc",
+        "notes": "Uwagi",
+        "totalCost": "Koszt calkowity",
+        "cancel": "Anuluj",
+        "save": "Zapisz"
+      },
+      "statuses": {
+        "draft": "Szkic",
+        "pending_approval": "Do zatwierdzenia",
+        "approved": "Zatwierdzony",
+        "ordered": "Zamowiony",
+        "delivered": "Dostarczony",
+        "cancelled": "Anulowany"
+      },
+      "urgency": {
+        "low": "Niska",
+        "normal": "Normalna",
+        "high": "Wysoka",
+        "critical": "Krytyczna"
+      },
+      "actions": {
+        "sendForApproval": "Wyslij do zatwierdzenia",
+        "approve": "Zatwierdz",
+        "cancel": "Anuluj",
+        "markOrdered": "Zamowiony",
+        "markDelivered": "Dostarczony",
+        "delete": "Usun"
+      }
+    },
+    "inventory": {
+      "analyticsTitle": "Analityka zapasow",
+      "analyticsSubtitle": "Wydatki, zuzycie i poziomy zapasow",
+      "period30": "30 dni",
+      "period90": "90 dni",
+      "period365": "1 rok",
+      "kpi": {
+        "totalMaterials": "Materialow",
+        "lowStock": "Niski stan",
+        "totalSpent": "Wydano w okresie",
+        "pendingOrders": "Aktywne zamowienia"
+      },
+      "charts": {
+        "spendingByCategory": "Wydatki wg kategorii",
+        "topConsumed": "Najczesciej uzywane",
+        "noData": "Brak danych w tym okresie"
+      },
+      "stockLevels": "Poziomy zapasow",
+      "stockColumns": {
+        "material": "Material",
+        "category": "Kategoria",
+        "stock": "Stan",
+        "level": "Poziom"
+      },
+      "consumption": {
+        "title": "Uzyte materialy",
+        "addMaterial": "Dodaj material",
+        "material": "Material",
+        "quantity": "Ilosc",
+        "stockLabel": "stan"
       }
     }
   },

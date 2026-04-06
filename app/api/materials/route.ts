@@ -66,6 +66,7 @@ const MATERIAL_SELECT = `
   sku,
   min_stock_level,
   is_active,
+  image_url,
   supplier_name,
   supplier_contact,
   supplier_email,

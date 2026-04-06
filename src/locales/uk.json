@@ -1116,7 +1116,9 @@
     "cabinet": {
       "title": "Особистий кабінет — Dental Story",
       "appointmentsTitle": "Мої записи — Dental Story",
-      "profileTitle": "Мій профіль — Dental Story"
+      "profileTitle": "Мій профіль — Dental Story",
+      "paymentsTitle": "Мої платежі — Dental Story",
+      "treatmentsTitle": "Моє лікування — Dental Story"
     },
     "auth": {
       "loginTitle": "Вхід — Dental Story",
@@ -1323,6 +1325,15 @@
     }
   },
   "admin": {
+    "roles": {
+      "superadmin": "Суперадміністратор",
+      "admin": "Адміністратор",
+      "receptionist": "Рецепціоніст",
+      "doctor": "Лікар",
+      "senior_assistant": "Старший асистент",
+      "assistant": "Асистент",
+      "staff": "Персонал"
+    },
     "dashboard": {
       "title": "Панель керування",
       "welcome": "Ласкаво просимо до адмін-панелі",
@@ -1351,7 +1362,9 @@
       "serviceCategories": "Категорії послуг",
       "noData": "Немає даних",
       "doctors": "Лікарі",
-      "priceList": "Прайс-лист"
+      "priceList": "Прайс-лист",
+      "doctorNotLinked": "Ваш обліковий запис не прив'язаний до профілю лікаря. Зверніться до адміністратора.",
+      "loadError": "Не вдалося завантажити дані дашборду."
     },
     "sidebar": {
       "dashboard": "Дашборд",
@@ -1449,6 +1462,7 @@
     "appointmentsPage": {
       "title": "Управління записами",
       "description": "Пошук, фільтрація та зміна статусів прийомів у реальному часі.",
+      "doctorScopeNotice": "Відображаються лише ваші записи.",
       "refresh": "Оновити",
       "summary": {
         "total": "Всього",
@@ -2029,6 +2043,157 @@
       "diagnostics": {
         "appName": "Dental Story Admin",
         "fileName": "admin-diagnostics.json"
+      }
+    },
+    "materialsPage": {
+      "title": "Матеріали та витратники",
+      "subtitle": "Каталог і залишки на складі",
+      "addMaterial": "Додати матеріал",
+      "refresh": "Оновити",
+      "analytics": "Аналітика",
+      "searchByName": "Пошук за назвою",
+      "categoryFilter": "Категорія",
+      "allCategories": "Усі категорії",
+      "statusFilter": "Статус",
+      "allStatuses": "Усі",
+      "active": "Активні",
+      "inactive": "Неактивні",
+      "loading": "Завантаження…",
+      "empty": "Нічого не знайдено",
+      "editMaterial": "Редагувати матеріал",
+      "newMaterial": "Новий матеріал",
+      "cancel": "Скасувати",
+      "save": "Зберегти",
+      "saving": "Збереження…",
+      "deactivateConfirm": "Деактивувати цей матеріал?",
+      "image": {
+        "upload": "Фото",
+        "formats": "JPEG, PNG або WebP, макс. 2 МБ",
+        "replace": "Замінити",
+        "uploading": "Завантаження..."
+      },
+      "columns": {
+        "image": "",
+        "name": "Назва",
+        "category": "Категорія",
+        "unit": "Одиниця виміру",
+        "sku": "Артикул",
+        "stock": "Залишок на складі",
+        "minStock": "Мін. запас",
+        "supplier": "Постачальник",
+        "status": "Статус",
+        "actions": "Дії"
+      },
+      "form": {
+        "nameUk": "Назва (UK) *",
+        "nameEn": "Назва (EN)",
+        "namePl": "Назва (PL)",
+        "category": "Категорія",
+        "unit": "Одиниця виміру",
+        "sku": "Артикул",
+        "minStockLevel": "Мін. запас",
+        "supplierName": "Постачальник",
+        "supplierContact": "Контакт постачальника",
+        "supplierEmail": "Email постачальника"
+      },
+      "categories": {
+        "composite": "Композит",
+        "filling": "Пломбувальні",
+        "instrument": "Інструменти",
+        "implant": "Імпланти",
+        "hygiene": "Гігієна",
+        "anesthesia": "Анестезія",
+        "other": "Інше"
+      },
+      "statusLabels": {
+        "active": "Активний",
+        "inactive": "Неактивний"
+      }
+    },
+    "ordersPage": {
+      "title": "Замовлення матеріалів",
+      "createOrder": "Створити замовлення",
+      "refresh": "Оновити",
+      "statusFilter": "Статус",
+      "allStatuses": "Усі",
+      "loading": "Завантаження",
+      "empty": "Немає замовлень за обраним фільтром.",
+      "items": "поз.",
+      "notes": "Примітки",
+      "approvedAt": "Затверджено",
+      "history": "Історія",
+      "historyTitle": "Історія змін",
+      "noHistory": "Немає записів",
+      "deleteConfirm": "Видалити це замовлення-чернетку?",
+      "delivery": {
+        "received": "Отримано",
+        "save": "Зберегти доставку"
+      },
+      "create": {
+        "title": "Створити замовлення",
+        "material": "Матеріал",
+        "quantity": "Кількість",
+        "unitPrice": "Ціна за одиницю",
+        "addItem": "Додати позицію",
+        "urgency": "Терміновість",
+        "notes": "Примітки",
+        "totalCost": "Загальна вартість",
+        "cancel": "Скасувати",
+        "save": "Зберегти"
+      },
+      "statuses": {
+        "draft": "Чернетка",
+        "pending_approval": "На затвердженні",
+        "approved": "Затверджено",
+        "ordered": "Замовлено",
+        "delivered": "Доставлено",
+        "cancelled": "Скасовано"
+      },
+      "urgency": {
+        "low": "Низька",
+        "normal": "Звичайна",
+        "high": "Висока",
+        "critical": "Критична"
+      },
+      "actions": {
+        "sendForApproval": "Відправити на затвердження",
+        "approve": "Затвердити",
+        "cancel": "Скасувати",
+        "markOrdered": "Замовлено",
+        "markDelivered": "Доставлено",
+        "delete": "Видалити"
+      }
+    },
+    "inventory": {
+      "analyticsTitle": "Аналітика запасів",
+      "analyticsSubtitle": "Витрати, споживання та рівень запасів",
+      "period30": "30 днів",
+      "period90": "90 днів",
+      "period365": "1 рік",
+      "kpi": {
+        "totalMaterials": "Матеріалів",
+        "lowStock": "Низький залишок",
+        "totalSpent": "Витрачено за період",
+        "pendingOrders": "Активних замовлень"
+      },
+      "charts": {
+        "spendingByCategory": "Витрати за категоріями",
+        "topConsumed": "Найбільш використовувані",
+        "noData": "Немає даних за період"
+      },
+      "stockLevels": "Рівні запасів",
+      "stockColumns": {
+        "material": "Матеріал",
+        "category": "Категорія",
+        "stock": "Залишок",
+        "level": "Рівень"
+      },
+      "consumption": {
+        "title": "Використані матеріали",
+        "addMaterial": "Додати матеріал",
+        "material": "Матеріал",
+        "quantity": "Кількість",
+        "stockLabel": "залишок"
       }
     }
   },

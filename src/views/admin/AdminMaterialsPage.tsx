@@ -4,19 +4,24 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ChangeEvent,
   type FormEvent,
 } from 'react'
 import {
   AlertTriangle,
+  BarChart3,
+  ImagePlus,
   Package,
   Pencil,
   Plus,
   RefreshCw,
   Search,
   Trash2,
+  X,
 } from 'lucide-react'
+import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import { Button, Input, Select } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
@@ -33,27 +38,7 @@ const CATS = [
   'anesthesia',
   'other',
 ] as const
-const CAT_UK: Record<(typeof CATS)[number], string> = {
-  composite: 'Композит',
-  filling: 'Пломбувальні',
-  instrument: 'Інструменти',
-  implant: 'Імпланти',
-  hygiene: 'Гігієна',
-  anesthesia: 'Анестезія',
-  other: 'Інше',
-}
 const UNITS = ['шт', 'мл', 'г', 'упак', 'пара', 'набір'] as const
-const HEAD = [
-  'Назва',
-  'Категорія',
-  'Одиниця виміру',
-  'Артикул',
-  'Залишок на складі',
-  'Мін. запас',
-  'Постачальник',
-  'Статус',
-  'Дії',
-] as const
 
 type Row = {
   id: string
@@ -65,6 +50,7 @@ type Row = {
   sku: string | null
   min_stock_level: number
   is_active: boolean
+  image_url: string | null
   supplier_name: string | null
   supplier_contact: string | null
   supplier_email: string | null
@@ -130,6 +116,9 @@ export default function AdminMaterialsPage() {
   const [saving, setSaving] = useState(false)
   const [draft, setDraft] = useState<Record<string, string>>({})
   const [stockId, setStockId] = useState<string | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const csrf = useCallback(() => {
     const tok = token || refreshToken()
@@ -191,7 +180,7 @@ export default function AdminMaterialsPage() {
           >
             {CATS.map(v => (
               <option key={v} value={v}>
-                {CAT_UK[v]}
+                {catLab(v)}
               </option>
             ))}
           </Select>
@@ -305,7 +294,7 @@ export default function AdminMaterialsPage() {
   }
 
   const deactivate = async (id: string) => {
-    if (!confirm('Деактивувати цей матеріал?')) return
+    if (!confirm(t('admin.materialsPage.deactivateConfirm'))) return
     try {
       const res = await fetch(`/api/materials/${id}`, {
         method: 'DELETE',
@@ -321,7 +310,77 @@ export default function AdminMaterialsPage() {
     }
   }
 
-  const catLab = (x: string) => CAT_UK[x as (typeof CATS)[number]] ?? x
+  const uploadImage = async (file: File) => {
+    if (!editId) return
+    setUploadingImage(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch(`/api/materials/${editId}/upload-image`, {
+        method: 'POST',
+        body: fd,
+      })
+      const j = (await res.json()) as {
+        success?: boolean
+        data?: { imageUrl: string }
+        error?: string
+      }
+      if (!res.ok || !j.success || !j.data)
+        throw new Error(j.error || 'Не вдалося завантажити зображення')
+      setImagePreview(j.data.imageUrl)
+      setRows(p =>
+        p.map(x =>
+          x.id === editId ? { ...x, image_url: j.data!.imageUrl } : x
+        )
+      )
+    } catch (err) {
+      captureException(err instanceof Error ? err : new Error(String(err)))
+      setError(
+        err instanceof Error ? err.message : 'Помилка завантаження зображення'
+      )
+    } finally {
+      setUploadingImage(false)
+    }
+  }
+
+  const removeImage = async () => {
+    if (!editId) return
+    try {
+      const res = await fetch(`/api/materials/${editId}`, {
+        method: 'PATCH',
+        headers: csrf(),
+        body: JSON.stringify({ imageUrl: null }),
+      })
+      const j = (await res.json()) as { success?: boolean; error?: string }
+      if (!res.ok || !j.success)
+        throw new Error(j.error || 'Не вдалося видалити зображення')
+      setImagePreview(null)
+      setRows(p =>
+        p.map(x => (x.id === editId ? { ...x, image_url: null } : x))
+      )
+    } catch (err) {
+      captureException(err instanceof Error ? err : new Error(String(err)))
+      setError(err instanceof Error ? err.message : 'Помилка')
+    }
+  }
+
+  const catLab = (x: string) => {
+    const key = `admin.materialsPage.categories.${x}`
+    const translated = t(key)
+    return translated !== key ? translated : x
+  }
+  const HEAD = [
+    '',
+    t('admin.materialsPage.columns.name'),
+    t('admin.materialsPage.columns.category'),
+    t('admin.materialsPage.columns.unit'),
+    t('admin.materialsPage.columns.sku'),
+    t('admin.materialsPage.columns.stock'),
+    t('admin.materialsPage.columns.minStock'),
+    t('admin.materialsPage.columns.supplier'),
+    t('admin.materialsPage.columns.status'),
+    t('admin.materialsPage.columns.actions'),
+  ]
 
   return (
     <div className="space-y-6">
@@ -332,14 +391,25 @@ export default function AdminMaterialsPage() {
           </div>
           <div>
             <h1 className="font-nunito text-2xl font-bold text-dental-dark">
-              Матеріали та витратники
+              {t('admin.materialsPage.title')}
             </h1>
             <p className="text-sm text-dental-text">
-              Каталог і залишки на складі
+              {t('admin.materialsPage.subtitle')}
             </p>
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Link href="/admin/analytics/inventory">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="border-dental-secondary-300 gap-1"
+            >
+              <BarChart3 className="h-4 w-4" />
+              {t('admin.materialsPage.analytics')}
+            </Button>
+          </Link>
           <Button
             type="button"
             variant="outline"
@@ -352,7 +422,7 @@ export default function AdminMaterialsPage() {
             <RefreshCw
               className={`mr-2 h-4 w-4 ${refreshing ? 'animate-spin' : ''}`}
             />
-            Оновити
+            {t('admin.materialsPage.refresh')}
           </Button>
           <Button
             type="button"
@@ -360,12 +430,13 @@ export default function AdminMaterialsPage() {
             onClick={() => {
               setEditId(null)
               setForm(emptyForm())
+              setImagePreview(null)
               setOpen(true)
             }}
             className="bg-dental-teal hover:bg-dental-primary-600"
           >
             <Plus className="mr-2 h-4 w-4" />
-            Додати матеріал
+            {t('admin.materialsPage.addMaterial')}
           </Button>
         </div>
       </div>
@@ -377,7 +448,7 @@ export default function AdminMaterialsPage() {
       <div className="flex flex-col gap-3 rounded-xl border border-dental-secondary-200 bg-white p-4 shadow-sm lg:flex-row lg:flex-wrap lg:items-end">
         <div className="min-w-[200px] flex-1">
           <label className="mb-1 block text-xs font-medium text-dental-text">
-            Пошук за назвою
+            {t('admin.materialsPage.searchByName')}
           </label>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -391,46 +462,52 @@ export default function AdminMaterialsPage() {
         </div>
         <div className="w-full min-w-[160px] lg:w-48">
           <label className="mb-1 block text-xs font-medium text-dental-text">
-            Категорія
+            {t('admin.materialsPage.categoryFilter')}
           </label>
           <Select
             selectSize="compact"
             fullWidth
             value={catF}
             onChange={e => setCatF(e.target.value)}
-            aria-label="Категорія фільтр"
+            aria-label={t('admin.materialsPage.categoryFilter')}
           >
-            <option value="all">Усі категорії</option>
+            <option value="all">
+              {t('admin.materialsPage.allCategories')}
+            </option>
             {CATS.map(v => (
               <option key={v} value={v}>
-                {CAT_UK[v]}
+                {catLab(v)}
               </option>
             ))}
           </Select>
         </div>
         <div className="w-full min-w-[160px] lg:w-40">
           <label className="mb-1 block text-xs font-medium text-dental-text">
-            Статус
+            {t('admin.materialsPage.statusFilter')}
           </label>
           <Select
             selectSize="compact"
             fullWidth
             value={statF}
             onChange={e => setStatF(e.target.value as typeof statF)}
-            aria-label="Статус фільтр"
+            aria-label={t('admin.materialsPage.statusFilter')}
           >
-            <option value="all">Усі</option>
-            <option value="active">Активні</option>
-            <option value="inactive">Неактивні</option>
+            <option value="all">{t('admin.materialsPage.allStatuses')}</option>
+            <option value="active">{t('admin.materialsPage.active')}</option>
+            <option value="inactive">
+              {t('admin.materialsPage.inactive')}
+            </option>
           </Select>
         </div>
       </div>
       <div className="overflow-x-auto rounded-xl border border-dental-secondary-200 bg-white shadow-sm">
         {loading ? (
-          <p className="p-8 text-center text-dental-text">Завантаження…</p>
+          <p className="p-8 text-center text-dental-text">
+            {t('admin.materialsPage.loading')}
+          </p>
         ) : list.length === 0 ? (
           <p className="p-8 text-center text-dental-text-light">
-            Нічого не знайдено
+            {t('admin.materialsPage.empty')}
           </p>
         ) : (
           <table className="w-full min-w-[960px] text-sm">
@@ -454,13 +531,26 @@ export default function AdminMaterialsPage() {
                     key={r.id}
                     className={`border-t border-dental-secondary-100 ${low ? 'bg-red-50/80' : ''}`}
                   >
+                    <td className={`${c} w-12`}>
+                      {r.image_url ? (
+                        <img
+                          src={r.image_url}
+                          alt={r.name_uk}
+                          className="h-10 w-10 rounded-lg object-cover border border-dental-secondary-200"
+                        />
+                      ) : (
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-dental-secondary-50 text-dental-text-light">
+                          <Package className="h-5 w-5" />
+                        </div>
+                      )}
+                    </td>
                     <td className={`${c} font-medium text-dental-dark`}>
                       <span className="inline-flex items-center gap-1">
                         {r.name_uk}
                         {low ? (
                           <AlertTriangle
                             className="h-4 w-4 shrink-0 text-red-600"
-                            aria-label="Низький залишок"
+                            aria-label={t('admin.inventory.kpi.lowStock')}
                           />
                         ) : null}
                       </span>
@@ -498,7 +588,9 @@ export default function AdminMaterialsPage() {
                             : 'text-dental-text-light'
                         }
                       >
-                        {r.is_active ? 'Активний' : 'Неактивний'}
+                        {r.is_active
+                          ? t('admin.materialsPage.statusLabels.active')
+                          : t('admin.materialsPage.statusLabels.inactive')}
                       </span>
                     </td>
                     <td className={c}>
@@ -508,10 +600,11 @@ export default function AdminMaterialsPage() {
                           onClick={() => {
                             setEditId(r.id)
                             setForm(toForm(r))
+                            setImagePreview(r.image_url)
                             setOpen(true)
                           }}
                           className="rounded-lg p-2 text-dental-teal hover:bg-dental-primary-50"
-                          aria-label="Редагувати"
+                          aria-label={t('common.edit')}
                         >
                           <Pencil className="h-4 w-4" />
                         </button>
@@ -520,7 +613,9 @@ export default function AdminMaterialsPage() {
                             type="button"
                             onClick={() => void deactivate(r.id)}
                             className="rounded-lg p-2 text-red-600 hover:bg-red-50"
-                            aria-label="Деактивувати"
+                            aria-label={t(
+                              'admin.materialsPage.deactivateConfirm'
+                            )}
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
@@ -537,27 +632,99 @@ export default function AdminMaterialsPage() {
       <AdminModal
         open={open}
         onClose={() => setOpen(false)}
-        title={editId ? 'Редагувати матеріал' : 'Новий матеріал'}
+        title={
+          editId
+            ? t('admin.materialsPage.editMaterial')
+            : t('admin.materialsPage.newMaterial')
+        }
         maxWidthClassName="max-w-lg"
       >
         <form onSubmit={onSave} className="space-y-3">
-          {F('nameUk', 'Назва (UK) *')}
+          {/* Image upload zone (only for edit mode) */}
+          {editId && (
+            <div className="flex items-center gap-4">
+              {imagePreview ? (
+                <div className="relative">
+                  <img
+                    src={imagePreview}
+                    alt={t('admin.materialsPage.editMaterial')}
+                    className="h-20 w-20 rounded-xl object-cover border border-dental-secondary-200"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => void removeImage()}
+                    className="absolute -right-2 -top-2 rounded-full bg-red-500 p-0.5 text-white shadow hover:bg-red-600"
+                    aria-label={t('common.delete')}
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingImage}
+                  className="flex h-20 w-20 flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-dental-secondary-300 text-dental-text-light hover:border-dental-teal hover:text-dental-teal transition-colors"
+                >
+                  <ImagePlus className="h-6 w-6" />
+                  <span className="text-[10px]">
+                    {t('admin.materialsPage.image.upload')}
+                  </span>
+                </button>
+              )}
+              <div className="flex-1 text-sm text-dental-text-light">
+                {uploadingImage ? (
+                  <span className="text-dental-teal">
+                    {t('admin.materialsPage.image.uploading')}
+                  </span>
+                ) : (
+                  <>
+                    {t('admin.materialsPage.image.formats')}
+                    {imagePreview && (
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="ml-2 text-dental-teal underline hover:no-underline"
+                      >
+                        {t('admin.materialsPage.image.replace')}
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={e => {
+                  const file = e.target.files?.[0]
+                  if (file) void uploadImage(file)
+                  e.target.value = ''
+                }}
+              />
+            </div>
+          )}
+          {F('nameUk', t('admin.materialsPage.form.nameUk'))}
           <div className="grid gap-3 sm:grid-cols-2">
-            {F('nameEn', 'Назва (EN)')}
-            {F('namePl', 'Назва (PL)')}
+            {F('nameEn', t('admin.materialsPage.form.nameEn'))}
+            {F('namePl', t('admin.materialsPage.form.namePl'))}
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            {F('category', 'Категорія')}
-            {F('unit', 'Одиниця виміру')}
+            {F('category', t('admin.materialsPage.form.category'))}
+            {F('unit', t('admin.materialsPage.form.unit'))}
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            {F('sku', 'Артикул')}
-            {F('minStockLevel', 'Мін. запас')}
+            {F('sku', t('admin.materialsPage.form.sku'))}
+            {F('minStockLevel', t('admin.materialsPage.form.minStockLevel'))}
           </div>
-          {F('supplierName', 'Постачальник')}
+          {F('supplierName', t('admin.materialsPage.form.supplierName'))}
           <div className="grid gap-3 sm:grid-cols-2">
-            {F('supplierContact', 'Контакт постачальника')}
-            {F('supplierEmail', 'Email постачальника')}
+            {F(
+              'supplierContact',
+              t('admin.materialsPage.form.supplierContact')
+            )}
+            {F('supplierEmail', t('admin.materialsPage.form.supplierEmail'))}
           </div>
           <div className="flex justify-end gap-2 pt-2">
             <Button
@@ -565,14 +732,16 @@ export default function AdminMaterialsPage() {
               variant="outline"
               onClick={() => setOpen(false)}
             >
-              Скасувати
+              {t('admin.materialsPage.cancel')}
             </Button>
             <Button
               type="submit"
               disabled={saving}
               className="bg-dental-teal hover:bg-dental-primary-600"
             >
-              {saving ? 'Збереження…' : 'Зберегти'}
+              {saving
+                ? t('admin.materialsPage.saving')
+                : t('admin.materialsPage.save')}
             </Button>
           </div>
         </form>

@@ -71,6 +71,7 @@ const PATCHABLE = new Set([
   'supplierEmail',
   'isActive',
   'currentQuantity',
+  'imageUrl',
 ])
 
 async function setMaterialInventoryTotal(
@@ -178,6 +179,10 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   if (typeof body.supplierEmail === 'string')
     update.supplier_email = body.supplierEmail.trim() || null
   if (typeof body.isActive === 'boolean') update.is_active = body.isActive
+  if (body.imageUrl !== undefined) {
+    update.image_url =
+      typeof body.imageUrl === 'string' ? body.imageUrl.trim() || null : null
+  }
 
   let inventoryTotal: number | undefined
   if (body.currentQuantity !== undefined && body.currentQuantity !== null) {
@@ -212,7 +217,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       .update(update)
       .eq('id', id)
       .select(
-        'id, name_uk, name_en, name_pl, category, unit, sku, min_stock_level, is_active, supplier_name, supplier_contact, supplier_email, created_at'
+        'id, name_uk, name_en, name_pl, category, unit, sku, min_stock_level, is_active, image_url, supplier_name, supplier_contact, supplier_email, created_at'
       )
       .maybeSingle()
 

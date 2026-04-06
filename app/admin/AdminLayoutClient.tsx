@@ -145,12 +145,20 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const isLoginPage = pathname === '/admin/login'
 
   useEffect(() => {
-    if (isLoginPage || isLoading || isAuthenticated) {
+    if (isLoginPage || isLoading) return
+
+    if (!isAuthenticated) {
+      router.replace('/admin/login')
       return
     }
 
-    router.replace('/admin/login')
-  }, [isAuthenticated, isLoading, isLoginPage, router])
+    // Route-level permission guard: redirect to dashboard if user lacks access
+    if (user && pathname !== '/admin') {
+      if (!canAccessNavItem(user.role, pathname)) {
+        router.replace('/admin')
+      }
+    }
+  }, [isAuthenticated, isLoading, isLoginPage, pathname, router, user])
 
   if (isLoading && !isLoginPage) {
     return (

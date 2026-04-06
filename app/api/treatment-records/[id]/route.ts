@@ -83,7 +83,7 @@ async function requireAdmin() {
     }
   }
 
-  return { supabase }
+  return { supabase, user, access: adminAccess }
 }
 
 /** GET /api/treatment-records/:id — admin or owning patient */
@@ -282,6 +282,79 @@ export async function PATCH(request: NextRequest, { params }: Params) {
             { success: false, error: 'Не вдалося зберегти нові позиції' },
             { status: 500 }
           )
+        }
+      }
+    }
+
+    // --- Handle materials used (consumption tracking) ---
+    if (Array.isArray(body.materialsUsed)) {
+      const materialsUsed = body.materialsUsed as Array<{
+        materialId: string
+        quantityUsed: number
+      }>
+
+      // Reverse previous deductions: load existing entries and add back
+      const { data: oldMaterials } = await auth
+        .supabase!.from('treatment_materials_used')
+        .select('material_id, quantity_used')
+        .eq('treatment_record_id', id)
+
+      if (oldMaterials?.length) {
+        for (const old of oldMaterials) {
+          await auth.supabase!.rpc('add_inventory', {
+            p_material_id: old.material_id,
+            p_qty: Number(old.quantity_used),
+            p_location: '',
+          })
+        }
+      }
+
+      // Delete old entries
+      await auth
+        .supabase!.from('treatment_materials_used')
+        .delete()
+        .eq('treatment_record_id', id)
+
+      // Insert new entries and deduct inventory
+      if (materialsUsed.length > 0) {
+        const matRows = materialsUsed
+          .filter(m => m.materialId && Number(m.quantityUsed) > 0)
+          .map(m => ({
+            treatment_record_id: id,
+            material_id: m.materialId,
+            quantity_used: Number(m.quantityUsed),
+            registered_by: auth.user!.id,
+          }))
+
+        if (matRows.length > 0) {
+          const { error: matInsErr } = await auth
+            .supabase!.from('treatment_materials_used')
+            .insert(matRows)
+
+          if (matInsErr) {
+            captureException(
+              new Error('[treatment-records/[id]] insert materials used'),
+              { supabaseError: matInsErr }
+            )
+            return NextResponse.json(
+              {
+                success: false,
+                error: 'Не вдалося зберегти використані матеріали',
+              },
+              { status: 500 }
+            )
+          }
+
+          // Deduct from inventory
+          for (const m of materialsUsed.filter(
+            x => x.materialId && Number(x.quantityUsed) > 0
+          )) {
+            await auth.supabase!.rpc('deduct_inventory', {
+              p_material_id: m.materialId,
+              p_qty: Number(m.quantityUsed),
+              p_location: '',
+            })
+          }
         }
       }
     }

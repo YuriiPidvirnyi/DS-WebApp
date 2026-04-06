@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Edit, Plus, RefreshCw, Trash2 } from 'lucide-react'
+import { Edit, Package, Plus, RefreshCw, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button, Input, Select, Textarea } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
@@ -34,6 +34,10 @@ interface TreatmentRow {
   patients: { first_name: string | null; last_name: string | null } | null
   doctors: { first_name: string | null; last_name: string | null } | null
   treatment_record_items: TrItem[] | null
+  treatment_materials_used?: Array<{
+    material_id: string
+    quantity_used: number
+  }> | null
 }
 interface FormLine {
   serviceId: string
@@ -54,6 +58,17 @@ type ApptOpt = {
   appointment_time: string
   patient_name: string | null
   guest_name: string | null
+}
+type MatOpt = {
+  id: string
+  name_uk: string
+  unit: string
+  current_quantity: number
+  image_url: string | null
+}
+interface MatUsedLine {
+  materialId: string
+  quantityUsed: string
 }
 
 const ST: Record<TreatmentStatus, [string, string]> = {
@@ -127,6 +142,7 @@ const emptyLine = (): FormLine => ({
   quantity: '1',
   price: '',
 })
+const emptyMatLine = (): MatUsedLine => ({ materialId: '', quantityUsed: '1' })
 
 export default function AdminTreatmentsPage() {
   const { t } = useTranslation()
@@ -156,6 +172,8 @@ export default function AdminTreatmentsPage() {
   const [doctors, setDoctors] = useState<DocOpt[]>([])
   const [services, setServices] = useState<SvcOpt[]>([])
   const [appts, setAppts] = useState<ApptOpt[]>([])
+  const [matCatalog, setMatCatalog] = useState<MatOpt[]>([])
+  const [matLines, setMatLines] = useState<MatUsedLine[]>([])
 
   const csrf = useCallback(() => {
     return (
@@ -199,6 +217,17 @@ export default function AdminTreatmentsPage() {
       if (d.data) setDoctors(d.data as DocOpt[])
       if (s.data) setServices(s.data as SvcOpt[])
       if (a.data) setAppts(a.data as ApptOpt[])
+      // Load materials catalog for consumption tracking
+      try {
+        const mRes = await fetch('/api/materials?isActive=true')
+        const mJson = (await mRes.json()) as {
+          success?: boolean
+          data?: MatOpt[]
+        }
+        if (mJson.success && mJson.data) setMatCatalog(mJson.data)
+      } catch {
+        /* non-critical */
+      }
     } catch (e) {
       captureException(e instanceof Error ? e : new Error(String(e)))
     }
@@ -258,6 +287,7 @@ export default function AdminTreatmentsPage() {
     setStatus('draft')
     setPayStatus('unpaid')
     setLines([emptyLine()])
+    setMatLines([])
   }
 
   const openEdit = (r: TreatmentRow) => {
@@ -280,6 +310,16 @@ export default function AdminTreatmentsPage() {
             price: String(i.price_at_time ?? ''),
           }))
         : [emptyLine()]
+    )
+    // Load materials used for this record
+    const mats = r.treatment_materials_used ?? []
+    setMatLines(
+      mats.length
+        ? mats.map(m => ({
+            materialId: m.material_id,
+            quantityUsed: String(m.quantity_used),
+          }))
+        : []
     )
     setModalOpen(true)
   }
@@ -328,6 +368,12 @@ export default function AdminTreatmentsPage() {
             diagnosis: diagnosis.trim() || null,
             notes: notes.trim() || null,
             items,
+            materialsUsed: matLines
+              .filter(m => m.materialId && Number(m.quantityUsed) > 0)
+              .map(m => ({
+                materialId: m.materialId,
+                quantityUsed: Number(m.quantityUsed),
+              })),
           }),
         })
         const pj = (await post.json()) as {
@@ -368,6 +414,12 @@ export default function AdminTreatmentsPage() {
             status,
             paymentStatus: payStatus,
             items,
+            materialsUsed: matLines
+              .filter(m => m.materialId && Number(m.quantityUsed) > 0)
+              .map(m => ({
+                materialId: m.materialId,
+                quantityUsed: Number(m.quantityUsed),
+              })),
           }),
         })
         const tj = (await patch.json()) as { success?: boolean; error?: string }
@@ -768,6 +820,117 @@ export default function AdminTreatmentsPage() {
                 </div>
               ))}
             </div>
+          </div>
+          {/* Materials used section */}
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <span className="text-sm font-medium text-dental-dark">
+                {t('admin.inventory.consumption.title')}
+              </span>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="border-dental-teal text-dental-teal"
+                onClick={() => setMatLines(prev => [...prev, emptyMatLine()])}
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                {t('admin.inventory.consumption.addMaterial')}
+              </Button>
+            </div>
+            {matLines.length > 0 && (
+              <div className="space-y-2">
+                {matLines.map((ml, idx) => {
+                  const mat = matCatalog.find(m => m.id === ml.materialId)
+                  return (
+                    <div
+                      key={idx}
+                      className="grid gap-2 rounded-lg border border-dental-secondary-200 p-2 md:grid-cols-12 md:items-end"
+                    >
+                      <label className="md:col-span-6">
+                        <span className="text-xs text-dental-text-light">
+                          {t('admin.inventory.consumption.material')}
+                        </span>
+                        <Select
+                          selectSize="compact"
+                          fullWidth
+                          value={ml.materialId}
+                          onChange={e =>
+                            setMatLines(prev =>
+                              prev.map((m, i) =>
+                                i === idx
+                                  ? { ...m, materialId: e.target.value }
+                                  : m
+                              )
+                            )
+                          }
+                          aria-label={t('admin.inventory.consumption.material')}
+                        >
+                          <option value="">—</option>
+                          {matCatalog.map(m => (
+                            <option key={m.id} value={m.id}>
+                              {m.name_uk} (
+                              {t('admin.inventory.consumption.stockLabel')}:{' '}
+                              {m.current_quantity} {m.unit})
+                            </option>
+                          ))}
+                        </Select>
+                      </label>
+                      <label className="md:col-span-3">
+                        <span className="text-xs text-dental-text-light">
+                          {t('admin.inventory.consumption.quantity')}
+                        </span>
+                        <Input
+                          type="number"
+                          min={0}
+                          step="0.01"
+                          value={ml.quantityUsed}
+                          onChange={e =>
+                            setMatLines(prev =>
+                              prev.map((m, i) =>
+                                i === idx
+                                  ? { ...m, quantityUsed: e.target.value }
+                                  : m
+                              )
+                            )
+                          }
+                        />
+                      </label>
+                      <div className="md:col-span-2 flex items-end">
+                        {mat && (
+                          <span className="flex items-center gap-1 text-xs text-dental-text-light pb-2">
+                            {mat.image_url ? (
+                              <img
+                                src={mat.image_url}
+                                alt=""
+                                className="h-5 w-5 rounded object-cover"
+                              />
+                            ) : (
+                              <Package className="h-4 w-4" />
+                            )}
+                            {mat.unit}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex justify-end md:col-span-1">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setMatLines(prev =>
+                              prev.filter((_, i) => i !== idx)
+                            )
+                          }
+                          className="rounded-lg p-2 text-red-600 hover:bg-red-50"
+                          aria-label={t('common.delete')}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </div>
           <div className="grid gap-3 md:grid-cols-2">
             <label className="block text-sm font-medium text-dental-dark">

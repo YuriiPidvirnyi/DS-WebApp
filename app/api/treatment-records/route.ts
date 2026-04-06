@@ -14,7 +14,7 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 const LIST_SELECT =
-  'id, appointment_id, patient_id, doctor_id, tooth_numbers, diagnosis, notes, status, total_cost, payment_status, created_at, patients(first_name,last_name), doctors(first_name,last_name), treatment_record_items(service_id, tooth_number, quantity, price_at_time, services(name_uk))'
+  'id, appointment_id, patient_id, doctor_id, tooth_numbers, diagnosis, notes, status, total_cost, payment_status, created_at, patients(first_name,last_name), doctors(first_name,last_name), treatment_record_items(service_id, tooth_number, quantity, price_at_time, services(name_uk)), treatment_materials_used(material_id, quantity_used)'
 
 const CREATED_SELECT =
   'id, appointment_id, patient_id, doctor_id, tooth_numbers, diagnosis, notes, status, total_cost, payment_status, created_at, patients(first_name,last_name), doctors(first_name,last_name), treatment_record_items(service_id, tooth_number, quantity, price_at_time, services(name_uk))'
@@ -101,7 +101,7 @@ async function requireAdmin() {
     }
   }
 
-  return { supabase, access: adminAccess }
+  return { supabase, user, access: adminAccess }
 }
 
 /** GET /api/treatment-records — admin-only list */
@@ -274,6 +274,48 @@ export async function POST(request: NextRequest) {
           },
           { status: 500 }
         )
+      }
+    }
+
+    // --- Handle materials used (consumption tracking) ---
+    const materialsUsed = (body as Record<string, unknown>).materialsUsed
+    if (Array.isArray(materialsUsed) && materialsUsed.length > 0) {
+      const matRows = (
+        materialsUsed as Array<{ materialId: string; quantityUsed: number }>
+      )
+        .filter(m => m.materialId && Number(m.quantityUsed) > 0)
+        .map(m => ({
+          treatment_record_id: recordId,
+          material_id: m.materialId,
+          quantity_used: Number(m.quantityUsed),
+          registered_by: auth.user!.id,
+        }))
+
+      if (matRows.length > 0) {
+        const { error: matInsErr } = await auth
+          .supabase!.from('treatment_materials_used')
+          .insert(matRows)
+
+        if (matInsErr) {
+          captureException(
+            new Error('[treatment-records] insert materials used error'),
+            { supabaseError: matInsErr }
+          )
+        } else {
+          // Deduct from inventory
+          for (const m of materialsUsed as Array<{
+            materialId: string
+            quantityUsed: number
+          }>) {
+            if (m.materialId && Number(m.quantityUsed) > 0) {
+              await auth.supabase!.rpc('deduct_inventory', {
+                p_material_id: m.materialId,
+                p_qty: Number(m.quantityUsed),
+                p_location: '',
+              })
+            }
+          }
+        }
       }
     }
 
