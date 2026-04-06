@@ -25,6 +25,7 @@ interface Appointment {
   appointment_time: string
   status: string
   notes: string | null
+  doctor_id: string | null
   doctors: { first_name: string; last_name: string; specialization: string }[]
   services: { name_uk: string; price_uah: number; duration_minutes: number }[]
 }
@@ -230,20 +231,30 @@ function RescheduleModal({
     return { year: d.getFullYear(), month: d.getMonth() }
   })
 
-  const fetchSlots = useCallback(async (date: string) => {
-    setLoadingSlots(true)
-    setSlots([])
-    setSelectedTime(null)
-    try {
-      const res = await fetch(`/api/appointments/slots?date=${date}`)
-      const data = await res.json()
-      setSlots(data.slots || [])
-    } catch {
+  const fetchSlots = useCallback(
+    async (date: string) => {
+      setLoadingSlots(true)
       setSlots([])
-    } finally {
-      setLoadingSlots(false)
-    }
-  }, [])
+      setSelectedTime(null)
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 10_000)
+      try {
+        const params = new URLSearchParams({ date })
+        if (appointment.doctor_id) params.set('doctorId', appointment.doctor_id)
+        const res = await fetch(`/api/appointments/slots?${params}`, {
+          signal: controller.signal,
+        })
+        const data = await res.json()
+        setSlots(data.data || [])
+      } catch {
+        setSlots([])
+      } finally {
+        clearTimeout(timeout)
+        setLoadingSlots(false)
+      }
+    },
+    [appointment.doctor_id]
+  )
 
   useEffect(() => {
     if (selectedDate) {
@@ -342,7 +353,7 @@ function RescheduleModal({
           </h3>
           <button
             onClick={onClose}
-            aria-label={t('common.close', { defaultValue: 'Закрити' })}
+            aria-label={t('common.close')}
             className="p-1.5 rounded-lg text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
           >
             <X className="w-5 h-5" />
@@ -376,9 +387,7 @@ function RescheduleModal({
                   })
                 }
                 disabled={!canGoPrev}
-                aria-label={t('common.previous', {
-                  defaultValue: 'Попередній',
-                })}
+                aria-label={t('common.previous')}
                 className="p-1.5 rounded-lg hover:bg-dental-secondary-50 disabled:opacity-30 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
               >
                 <ChevronLeft className="w-4 h-4 text-dental-muted" />
@@ -399,7 +408,7 @@ function RescheduleModal({
                     return { year: d.getFullYear(), month: d.getMonth() }
                   })
                 }
-                aria-label={t('common.next', { defaultValue: 'Наступний' })}
+                aria-label={t('common.next')}
                 className="p-1.5 rounded-lg hover:bg-dental-secondary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
               >
                 <ChevronRight className="w-4 h-4 text-dental-muted" />
@@ -502,7 +511,7 @@ function RescheduleModal({
               onClick={onClose}
               className="flex-1 py-3 rounded-xl border border-dental-secondary-200 text-dental-dark font-medium hover:bg-dental-secondary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
             >
-              {t('common.cancel', { defaultValue: 'Скасувати' })}
+              {t('common.cancel')}
             </button>
             <button
               onClick={handleSubmit}
@@ -563,7 +572,7 @@ export default function AppointmentsPage() {
         const { data, error } = await supabase
           .from('appointments')
           .select(
-            `id, appointment_date, appointment_time, status, notes,
+            `id, appointment_date, appointment_time, status, notes, doctor_id,
             doctors (first_name, last_name, specialization),
             services (name_uk, price_uah, duration_minutes)`
           )
