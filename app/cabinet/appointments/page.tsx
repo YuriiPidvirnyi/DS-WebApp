@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
 import {
   Calendar,
+  CalendarPlus,
   Clock,
   Filter,
   Plus,
@@ -18,6 +19,7 @@ import {
   AlertTriangle,
 } from 'lucide-react'
 import { useCSRF } from '@/hooks/useCSRF'
+import { createICSEvent, downloadICS } from '@/utils/calendar'
 
 interface Appointment {
   id: string
@@ -659,6 +661,34 @@ export default function AppointmentsPage() {
     })
   }
 
+  const handleAddToCalendar = (apt: Appointment) => {
+    // Parse appointment time as Kyiv local time (UTC+3 / EEST)
+    const timePart = apt.appointment_time.slice(0, 5)
+    const start = new Date(`${apt.appointment_date}T${timePart}:00+03:00`)
+    const duration = apt.services?.[0]?.duration_minutes || 60
+    const end = new Date(start.getTime() + duration * 60 * 1000)
+
+    const doctor = apt.doctors?.[0]
+    const doctorName = doctor
+      ? `${doctor.last_name} ${doctor.first_name}`.trim()
+      : ''
+    const serviceName =
+      apt.services?.[0]?.name_uk || t('cabinet.appointments.consultation')
+
+    const ics = createICSEvent({
+      uid: `${apt.id}@dentalstory.com.ua`,
+      title: serviceName,
+      description: doctorName
+        ? `${t('cabinet.treatments.doctor')}: ${doctorName}`
+        : serviceName,
+      location: t('booking.successPage.calendarLocation'),
+      start,
+      end,
+    })
+
+    downloadICS(`appointment-${apt.id}.ics`, ics)
+  }
+
   // Filter counts
   const counts = {
     all: appointments.length,
@@ -894,6 +924,19 @@ export default function AppointmentsPage() {
                     {getStatusBadge(apt.status)}
                     {canModify && (
                       <div className="flex items-center gap-1.5 sm:gap-2">
+                        <button
+                          onClick={() => handleAddToCalendar(apt)}
+                          aria-label={t('booking.successPage.addToCalendar')}
+                          className="flex items-center gap-1 text-xs px-2 py-1 sm:px-0 sm:py-0 rounded-lg sm:rounded-none bg-dental-secondary-50 sm:bg-transparent text-dental-muted hover:text-dental-dark transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+                        >
+                          <CalendarPlus className="w-3.5 h-3.5" />
+                        </button>
+                        <span
+                          className="hidden sm:inline text-dental-secondary-200"
+                          aria-hidden="true"
+                        >
+                          |
+                        </span>
                         <button
                           onClick={() => setRescheduleApt(apt)}
                           aria-label={t(
