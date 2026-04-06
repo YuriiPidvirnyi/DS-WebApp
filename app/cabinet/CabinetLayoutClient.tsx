@@ -277,7 +277,7 @@ export default function CabinetLayoutClient({
             data-sidebar-close
             onClick={closeSidebar}
             tabIndex={sidebarOpen ? 0 : -1}
-            aria-label={t('common.close', { defaultValue: 'Закрити' })}
+            aria-label={t('common.close')}
             className="p-2 rounded-lg text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
           >
             <X className="w-5 h-5" />
@@ -303,9 +303,7 @@ export default function CabinetLayoutClient({
         </div>
 
         <nav
-          aria-label={t('cabinet.sidebar.navigation', {
-            defaultValue: 'Навігація кабінету',
-          })}
+          aria-label={t('cabinet.sidebar.navigation')}
           className="px-3 py-4 space-y-1"
         >
           {navigation.map(item => (
@@ -404,9 +402,7 @@ export default function CabinetLayoutClient({
 
           {/* Navigation */}
           <nav
-            aria-label={t('cabinet.sidebar.navigation', {
-              defaultValue: 'Навігація кабінету',
-            })}
+            aria-label={t('cabinet.sidebar.navigation')}
             className="flex-1 px-3 py-4 space-y-1 overflow-y-auto"
           >
             {navigation.map(item => (
@@ -468,9 +464,7 @@ export default function CabinetLayoutClient({
           <button
             ref={menuButtonRef}
             onClick={() => setSidebarOpen(true)}
-            aria-label={t('cabinet.sidebar.openMenu', {
-              defaultValue: 'Відкрити меню',
-            })}
+            aria-label={t('cabinet.sidebar.openMenu')}
             aria-expanded={sidebarOpen}
             aria-controls="mobile-sidebar"
             className="p-2 -ml-2 rounded-lg text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 lg:hidden transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"

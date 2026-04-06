@@ -192,9 +192,7 @@ function CancelConfirmModal({
               ) : (
                 <>
                   <X className="w-4 h-4" />
-                  {t('cabinet.appointments.cancelModal.confirm', {
-                    defaultValue: 'Так, скасувати',
-                  })}
+                  {t('cabinet.appointments.cancelModal.confirm')}
                 </>
               )}
             </button>
@@ -604,9 +602,7 @@ export default function AppointmentsPage() {
 
     if (error) {
       setToast({
-        message: t('cabinet.appointments.cancelModal.error', {
-          defaultValue: 'Не вдалося скасувати запис',
-        }),
+        message: t('cabinet.appointments.cancelModal.error'),
         type: 'error',
       })
     } else {
@@ -614,9 +610,7 @@ export default function AppointmentsPage() {
         prev.map(apt => (apt.id === id ? { ...apt, status: 'cancelled' } : apt))
       )
       setToast({
-        message: t('cabinet.appointments.cancelModal.success', {
-          defaultValue: 'Запис успішно скасовано',
-        }),
+        message: t('cabinet.appointments.cancelModal.success'),
         type: 'success',
       })
     }
@@ -643,9 +637,7 @@ export default function AppointmentsPage() {
     )
     setRescheduleApt(null)
     setToast({
-      message: t('cabinet.appointments.reschedule.success', {
-        defaultValue: 'Запис успішно перенесено',
-      }),
+      message: t('cabinet.appointments.reschedule.success'),
       type: 'success',
     })
   }
@@ -655,18 +647,28 @@ export default function AppointmentsPage() {
     all: appointments.length,
     upcoming: appointments.filter(apt => {
       const isUpcoming = new Date(apt.appointment_date) >= new Date()
-      return isUpcoming && apt.status !== 'cancelled'
+      return (
+        isUpcoming && apt.status !== 'cancelled' && apt.status !== 'completed'
+      )
     }).length,
     past: appointments.filter(apt => {
       const isUpcoming = new Date(apt.appointment_date) >= new Date()
-      return !isUpcoming || apt.status === 'completed'
+      return (
+        !isUpcoming || apt.status === 'completed' || apt.status === 'cancelled'
+      )
     }).length,
   }
 
   const filteredAppointments = appointments.filter(apt => {
     const isUpcoming = new Date(apt.appointment_date) >= new Date()
-    if (filter === 'upcoming') return isUpcoming && apt.status !== 'cancelled'
-    if (filter === 'past') return !isUpcoming || apt.status === 'completed'
+    if (filter === 'upcoming')
+      return (
+        isUpcoming && apt.status !== 'cancelled' && apt.status !== 'completed'
+      )
+    if (filter === 'past')
+      return (
+        !isUpcoming || apt.status === 'completed' || apt.status === 'cancelled'
+      )
     return true
   })
 
