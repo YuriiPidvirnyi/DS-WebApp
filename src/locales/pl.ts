@@ -1525,6 +1525,7 @@ const pl = {
         refreshFailed: 'Nie udało się odświeżyć analityki',
         loadFailed: 'Nie udało się załadować analityki',
         loadFailedFallback: 'Nie udało się załadować analityki.',
+        chartFailed: 'Nie udało się załadować tej sekcji.',
       },
     },
     patientManagement: {
