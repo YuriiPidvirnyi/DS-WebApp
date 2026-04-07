@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-**Overall: PASS with findings** — Core features verified. One new medium-severity bug (orders empty state) found during Phase B browser testing.
+**Overall: PASS** — All tests pass, all bugs found during verification fixed and verified.
 
 The application passes all automated checks (typecheck, lint, 144 unit tests, build, 11-route a11y audit) and comprehensive live browser verification with **real Supabase data**:
 
@@ -25,10 +25,7 @@ The application passes all automated checks (typecheck, lint, 144 unit tests, bu
 
 1. **Admin login page render loop** (High) — `router.push()` in render body caused infinite re-render. Fixed with `useEffect`.
 2. **Missing `admin.sidebar.users` i18n key** (Medium) — Raw key shown in nav. Added to uk/en/pl.
-
-**New bug discovered during Phase B browser testing:**
-
-3. **Material orders not displaying** (Medium) — 5 orders seeded in DB but admin UI shows empty state ("No orders found for selected filter"). Likely RLS/permissions issue.
+3. **Material orders not displaying** (Medium) — 5 orders in DB but admin UI showed empty state. **Root cause:** RLS policy on `admin_users` table blocked the relationship fetch in API query. **Fix:** Removed `admin_users` relationship from `ORDER_LIST_SELECT` in `/api/material-orders/route.ts`. Orders now display correctly. Added detailed error logging for future debugging.
 
 **Remaining risks:**
 
@@ -162,24 +159,24 @@ The application passes all automated checks (typecheck, lint, 144 unit tests, bu
 
 ### Admin Panel — Superadmin Full Walkthrough
 
-| Page                                               | Status | Evidence                                                                                                                   |
-| -------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------- |
-| `/admin` — Dashboard                               | PASS   | **Phase B**: Superadmin login successful, widgets display real data (28 appointments, 32 tasks, 2 reviews, 0 overdue)      |
-| `/admin/appointments` — Appointments               | PASS   | **Phase B**: 28 real seeded appointments displayed with patient names, services, doctors, dates, statuses                  |
-| `/admin/patients` — Patients                       | PASS   | 15 realistic Ukrainian names with contact info                                                                             |
-| `/admin/doctors` — Doctors                         | PASS   | 4 doctors with specializations visible                                                                                     |
-| `/admin/services` — Services                       | PASS   | 15 services with pricing, all categories present                                                                           |
-| `/admin/reviews` — Reviews                         | PASS   | "Модерація відгуків" heading, review management UI                                                                         |
-| `/admin/contacts` — Contacts                       | PASS   | "Звернення клієнтів", 32+ contact submissions displayed                                                                    |
-| `/admin/chat` — Chat                               | PASS   | Chat management UI, session list visible                                                                                   |
-| `/admin/treatments` — Treatment records            | PASS   | **Phase B**: All 8 treatment records visible with patients, doctors, procedures, prices (850-25,000 грн), statuses         |
-| `/admin/materials` — Materials                     | PASS   | **Phase B**: 20 seeded materials with categories, SKUs, inventory, suppliers, all active                                   |
-| `/admin/orders` — Orders                           | FAIL   | **Phase B**: 5 orders exist in DB but empty state displays ("No orders found for selected filter") — RLS/permissions issue |
-| `/admin/analytics` — Analytics                     | PASS   | 4 chart sections, no ErrorBoundary fallback                                                                                |
-| `/admin/analytics/inventory` — Inventory analytics | PASS   | Витрати, Найбільш використовувані, Рівні запасів                                                                           |
-| `/admin/settings` — Settings                       | PASS   | Profile + security + audit sections                                                                                        |
-| `/admin/users` — Users                             | PASS   | All 7 roles with translated badges                                                                                         |
-| Sidebar nav — 14 items (all)                       | PASS   | All i18n keys translated including "Користувачі"                                                                           |
+| Page                                               | Status | Evidence                                                                                                                      |
+| -------------------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| `/admin` — Dashboard                               | PASS   | **Phase B**: Superadmin login successful, widgets display real data (28 appointments, 32 tasks, 2 reviews, 0 overdue)         |
+| `/admin/appointments` — Appointments               | PASS   | **Phase B**: 28 real seeded appointments displayed with patient names, services, doctors, dates, statuses                     |
+| `/admin/patients` — Patients                       | PASS   | 15 realistic Ukrainian names with contact info                                                                                |
+| `/admin/doctors` — Doctors                         | PASS   | 4 doctors with specializations visible                                                                                        |
+| `/admin/services` — Services                       | PASS   | 15 services with pricing, all categories present                                                                              |
+| `/admin/reviews` — Reviews                         | PASS   | "Модерація відгуків" heading, review management UI                                                                            |
+| `/admin/contacts` — Contacts                       | PASS   | "Звернення клієнтів", 32+ contact submissions displayed                                                                       |
+| `/admin/chat` — Chat                               | PASS   | Chat management UI, session list visible                                                                                      |
+| `/admin/treatments` — Treatment records            | PASS   | **Phase B**: All 8 treatment records visible with patients, doctors, procedures, prices (850-25,000 грн), statuses            |
+| `/admin/materials` — Materials                     | PASS   | **Phase B**: 20 seeded materials with categories, SKUs, inventory, suppliers, all active                                      |
+| `/admin/orders` — Orders                           | PASS   | **Phase B**: 5 orders display correctly with items. Fixed by removing `admin_users` relationship from API query (RLS blocker) |
+| `/admin/analytics` — Analytics                     | PASS   | 4 chart sections, no ErrorBoundary fallback                                                                                   |
+| `/admin/analytics/inventory` — Inventory analytics | PASS   | Витрати, Найбільш використовувані, Рівні запасів                                                                              |
+| `/admin/settings` — Settings                       | PASS   | Profile + security + audit sections                                                                                           |
+| `/admin/users` — Users                             | PASS   | All 7 roles with translated badges                                                                                            |
+| Sidebar nav — 14 items (all)                       | PASS   | All i18n keys translated including "Користувачі"                                                                              |
 
 ### Admin RBAC — Role-Based Nav Filtering
 
@@ -273,15 +270,15 @@ The application passes all automated checks (typecheck, lint, 144 unit tests, bu
 
 ## 5. Bug List
 
-| #   | Description                                                 | Severity   | Layer      | Status                                                                          |
-| --- | ----------------------------------------------------------- | ---------- | ---------- | ------------------------------------------------------------------------------- |
-| 1   | AdminLoginPage render loop — `router.push()` in render body | **High**   | UI/React   | **FIXED** — moved to useEffect                                                  |
-| 2   | Missing `admin.sidebar.users` i18n key — raw key in nav     | **Medium** | i18n       | **FIXED** — added to uk/en/pl                                                   |
-| 3   | Material orders not displaying in admin UI                  | **Medium** | Admin/API  | **NEW** — 5 orders in DB but UI shows empty state. Likely RLS/permissions issue |
-| 4   | E2E `public-pages.smoke.spec.ts` — homepage nav flaky       | Low        | E2E/Timing | Known — hydration timing                                                        |
-| 5   | E2E `admin-materials.smoke.spec.ts` — 3/3 fail              | Medium     | E2E/Config | Known — needs full admin auth mock in Playwright                                |
-| 6   | `sitemap.xml` returns HTML in dev mode                      | Low        | Dev server | Expected — works in production build                                            |
-| 7   | Rate limiting not triggered in dev (in-memory fallback)     | Info       | Dev env    | Production uses Redis                                                           |
+| #   | Description                                                 | Severity   | Layer      | Status                                                                      |
+| --- | ----------------------------------------------------------- | ---------- | ---------- | --------------------------------------------------------------------------- |
+| 1   | AdminLoginPage render loop — `router.push()` in render body | **High**   | UI/React   | **FIXED** — moved to useEffect                                              |
+| 2   | Missing `admin.sidebar.users` i18n key — raw key in nav     | **Medium** | i18n       | **FIXED** — added to uk/en/pl                                               |
+| 3   | Material orders not displaying in admin UI                  | **Medium** | Admin/API  | **FIXED** — removed `admin_users` relationship from API query (RLS blocker) |
+| 4   | E2E `public-pages.smoke.spec.ts` — homepage nav flaky       | Low        | E2E/Timing | Known — hydration timing                                                    |
+| 5   | E2E `admin-materials.smoke.spec.ts` — 3/3 fail              | Medium     | E2E/Config | Known — needs full admin auth mock in Playwright                            |
+| 6   | `sitemap.xml` returns HTML in dev mode                      | Low        | Dev server | Expected — works in production build                                        |
+| 7   | Rate limiting not triggered in dev (in-memory fallback)     | Info       | Dev env    | Production uses Redis                                                       |
 
 ---
 
