@@ -37,6 +37,7 @@ type MaterialOrder = {
   approved_by: string | null
   approved_at: string | null
   created_at: string
+  ordered_by: string
   material_order_items: Array<{
     id: string
     quantity_requested: number
@@ -49,7 +50,6 @@ type MaterialOrder = {
       image_url: string | null
     } | null
   }> | null
-  admin_users: { display_name: string | null } | null
 }
 type AuditEntry = {
   id: string
@@ -461,7 +461,7 @@ export default function AdminOrdersPage() {
                     {formatDateTime(order.created_at)}
                   </span>
                   <span className="text-sm font-medium text-dental-navy">
-                    {order.admin_users?.display_name?.trim() || '—'}
+                    —
                   </span>
                   <span
                     className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${ST_BADGE[order.status]}`}

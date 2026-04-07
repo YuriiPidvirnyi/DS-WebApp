@@ -32,8 +32,7 @@ const ORDER_LIST_SELECT = `
     unit_price,
     created_at,
     materials ( name_uk, name_en, name_pl )
-  ),
-  admin_users ( id, display_name, role )
+  )
 `
 
 type AdminResult =
@@ -112,6 +111,12 @@ export async function GET(request: NextRequest) {
   const { data, error, count } = await query.range(from, to)
 
   if (error) {
+    console.error('[material-orders] Supabase GET error:', {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+    })
     captureException(new Error('[material-orders] Supabase GET error'), {
       supabaseError: error,
     })
