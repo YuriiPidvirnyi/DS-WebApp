@@ -1290,7 +1290,8 @@
       "materials": "Materiały",
       "orders": "Zamówienia",
       "analytics": "Analityka",
-      "settings": "Ustawienia"
+      "settings": "Ustawienia",
+      "users": "Użytkownicy"
     },
     "login": {
       "title": "Logowanie do panelu",

@@ -1362,6 +1362,7 @@ const en = {
       orders: 'Orders',
       analytics: 'Analytics',
       settings: 'Settings',
+      users: 'Users',
     },
     login: {
       title: 'Admin Login',

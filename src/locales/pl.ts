@@ -1369,6 +1369,7 @@ const pl = {
       orders: 'Zamówienia',
       analytics: 'Analityka',
       settings: 'Ustawienia',
+      users: 'Użytkownicy',
     },
     login: {
       title: 'Logowanie do panelu',

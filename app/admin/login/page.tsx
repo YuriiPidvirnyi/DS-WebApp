@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, Lock, Mail, AlertCircle, ArrowLeft } from 'lucide-react'
@@ -19,9 +19,14 @@ export default function AdminLoginPage() {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  // Redirect if already authenticated
+  // Redirect if already authenticated (must be in useEffect, not render body)
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace('/admin')
+    }
+  }, [isAuthenticated, router])
+
   if (isAuthenticated) {
-    router.push('/admin')
     return null
   }
 

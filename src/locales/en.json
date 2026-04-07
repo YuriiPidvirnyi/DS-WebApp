@@ -1288,7 +1288,8 @@
       "materials": "Materials",
       "orders": "Orders",
       "analytics": "Analytics",
-      "settings": "Settings"
+      "settings": "Settings",
+      "users": "Users"
     },
     "login": {
       "title": "Admin Login",
