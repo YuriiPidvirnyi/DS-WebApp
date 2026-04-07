@@ -2995,6 +2995,7 @@ const uk = {
     forNewPatients: 'Для нових пацієнтів',
     workingNow: 'Працюємо зараз',
     closedNow: 'Зараз зачинено',
+    opensAt: 'Відкриємося о {{time}}',
     qualityGuarantee: 'Гарантія якості',
   },
   hero: {

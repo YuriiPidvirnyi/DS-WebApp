@@ -19,7 +19,7 @@ const ENV_TT =
 const ENV_WA =
   process.env.NEXT_PUBLIC_WHATSAPP_URL ||
   `https://wa.me/${(process.env.NEXT_PUBLIC_PHONE_NUMBER || '+380682323838').replace(/\D/g, '')}`
-const ENV_TW = process.env.NEXT_PUBLIC_TWITTER_URL || 'https://x.com'
+const ENV_TW = process.env.NEXT_PUBLIC_TWITTER_URL || ''
 
 export const CONTACT_INFO = {
   phone: ENV_PHONE,

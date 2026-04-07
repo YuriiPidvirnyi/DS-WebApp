@@ -2867,6 +2867,7 @@ const pl = {
     forNewPatients: 'Dla nowych pacjentów',
     workingNow: 'Teraz otwarte',
     closedNow: 'Teraz zamknięte',
+    opensAt: 'Otwieramy o {{time}}',
     qualityGuarantee: 'Gwarancja jakości',
   },
   hero: {

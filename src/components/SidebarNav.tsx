@@ -197,7 +197,7 @@ export default function SidebarNav() {
       label: 'TikTok',
       icon: <TikTokIcon />,
     },
-  ]
+  ].filter(item => Boolean(item.href))
 
   // Hide site sidebar on cabinet and admin routes (they have their own)
   if (pathname?.startsWith('/cabinet') || pathname?.startsWith('/admin')) {

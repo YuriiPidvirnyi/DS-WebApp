@@ -13,6 +13,7 @@ import {
   Phone,
 } from 'lucide-react'
 import { UKRAINE_CONFIG } from '@/utils/constants'
+import { CLINIC_OPENING_HOURS } from '@/config/clinicSchedule'
 
 import { memo } from 'react'
 
@@ -125,8 +126,8 @@ function HeroSection() {
     return () => clearTimeout(timeout)
   }, [])
 
-  const isClinicOpen = useMemo(() => {
-    if (!now) return false
+  const { isClinicOpen, nextOpenTime } = useMemo(() => {
+    if (!now) return { isClinicOpen: false, nextOpenTime: null }
     const kyiv = new Date(
       now.toLocaleString('en-US', { timeZone: UKRAINE_CONFIG.timezone })
     )
@@ -135,9 +136,20 @@ function HeroSection() {
     const minutes = kyiv.getMinutes()
     const time = hours * 60 + minutes
 
-    if (day === 0) return false
-    if (day === 6) return time >= 540 && time < 1080
-    return time >= 540 && time < 1260
+    const open =
+      day === 0
+        ? false
+        : day === 6
+          ? time >= 540 && time < 1080
+          : time >= 540 && time < 1260
+
+    let next: string | null = null
+    if (!open) {
+      if (day === 6 && time < 540) next = CLINIC_OPENING_HOURS.saturday.open
+      else next = CLINIC_OPENING_HOURS.weekday.open
+    }
+
+    return { isClinicOpen: open, nextOpenTime: next }
   }, [now])
 
   return (
@@ -188,6 +200,12 @@ function HeroSection() {
                     {isClinicOpen
                       ? t('stats.workingNow')
                       : t('stats.closedNow')}
+                    {!isClinicOpen && nextOpenTime && (
+                      <span className="font-normal ml-1 opacity-80">
+                        {'· '}
+                        {t('stats.opensAt', { time: nextOpenTime })}
+                      </span>
+                    )}
                   </span>
                 </span>
               )}

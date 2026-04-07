@@ -2858,6 +2858,7 @@ const en = {
     forNewPatients: 'For new patients',
     workingNow: 'Open Now',
     closedNow: 'Closed Now',
+    opensAt: 'Opens at {{time}}',
     qualityGuarantee: 'Quality Guarantee',
   },
   hero: {
