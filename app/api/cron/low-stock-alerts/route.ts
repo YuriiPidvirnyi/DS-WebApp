@@ -25,14 +25,18 @@ function getServiceClient(): ServiceClient | null {
  * and inserts notification_events for admin alerting.
  */
 export async function GET(request: NextRequest) {
-  if (CRON_SECRET) {
-    const authHeader = request.headers.get('authorization')
-    if (authHeader !== `Bearer ${CRON_SECRET}`) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
+  if (!CRON_SECRET) {
+    return NextResponse.json(
+      { error: 'CRON_SECRET not configured' },
+      { status: 500 }
+    )
+  }
+  const authHeader = request.headers.get('authorization')
+  if (authHeader !== `Bearer ${CRON_SECRET}`) {
+    return NextResponse.json(
+      { success: false, error: 'Unauthorized' },
+      { status: 401 }
+    )
   }
 
   const supabase = getServiceClient()
@@ -44,7 +48,6 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Get all active materials with their inventory
     const { data: materials, error: matErr } = await supabase
       .from('materials')
       .select(
@@ -91,7 +94,7 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    // Check for existing unprocessed alerts today to avoid duplicates
+    // Avoid duplicate alerts on the same day
     const today = new Date().toISOString().slice(0, 10)
     const { data: existing } = await supabase
       .from('notification_events')
@@ -110,7 +113,6 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    // Build alert content
     const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL
     if (!adminEmail) {
       return NextResponse.json({

@@ -54,6 +54,9 @@ function isGenerateLinkPayload(value: unknown): value is GenerateLinkPayload {
 }
 
 export async function POST(request: NextRequest) {
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ error: 'Not available' }, { status: 404 })
+  }
   if (!HELPERS_ENABLED) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
@@ -129,6 +132,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ error: 'Not available' }, { status: 404 })
+  }
   if (!HELPERS_ENABLED) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
