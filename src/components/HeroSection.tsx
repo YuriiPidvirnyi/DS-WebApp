@@ -110,7 +110,7 @@ function HeroSection() {
     98,
     2000
   )
-  const { count: yearsCount, ref: yearsRef } = useCounter(10, 1500)
+  const { count: yearsCount, ref: yearsRef } = useCounter(6, 1500)
 
   const [now, setNow] = useState<Date | null>(null)
 
