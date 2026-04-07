@@ -240,7 +240,7 @@ export function useBookingForm() {
             message: sanitizedMessage,
             preferredDate: data.date,
             preferredTime: data.time,
-            doctorId: data.doctor || undefined,
+            doctorId: data.doctor === 'any' ? undefined : data.doctor,
           })
           if (!res.success || !res.data)
             throw new Error(t('booking.errors.createFailed'))

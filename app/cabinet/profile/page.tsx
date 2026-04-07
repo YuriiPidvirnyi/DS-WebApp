@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
 import { ChevronLeft, Save, User } from 'lucide-react'
+import DatePicker from '@/components/ui/DatePicker'
 
 interface PatientProfile {
   first_name: string | null
@@ -271,13 +272,15 @@ export default function ProfilePage() {
               >
                 {t('cabinet.profile.dateOfBirth')}
               </label>
-              <input
-                id="date_of_birth"
-                name="date_of_birth"
-                type="date"
+              {/* Custom date picker component for date of birth field */}
+              <DatePicker
                 value={profile.date_of_birth || ''}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                onChange={date =>
+                  setProfile({ ...profile, date_of_birth: date })
+                }
+                placeholder={
+                  t('cabinet.profile.dateOfBirthPlaceholder') || 'MM/DD/YYYY'
+                }
               />
             </div>
 
