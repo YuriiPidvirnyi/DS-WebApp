@@ -1673,6 +1673,7 @@ const uk = {
         refreshFailed: 'Не вдалося оновити аналітику',
         loadFailed: 'Не вдалося завантажити аналітику',
         loadFailedFallback: 'Не вдалося завантажити аналітику.',
+        chartFailed: 'Цей розділ не вдалося завантажити.',
       },
     },
     patientManagement: {

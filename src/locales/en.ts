@@ -1541,6 +1541,7 @@ const en = {
         refreshFailed: 'Failed to refresh analytics',
         loadFailed: 'Failed to load analytics',
         loadFailedFallback: 'Failed to load analytics.',
+        chartFailed: 'This section failed to load.',
       },
     },
     patientManagement: {
