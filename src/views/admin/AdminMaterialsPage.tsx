@@ -9,6 +9,7 @@ import {
   type ChangeEvent,
   type FormEvent,
 } from 'react'
+import Image from 'next/image'
 import {
   AlertTriangle,
   BarChart3,
@@ -535,9 +536,11 @@ export default function AdminMaterialsPage() {
                   >
                     <td className={`${c} w-12`}>
                       {r.image_url ? (
-                        <img
+                        <Image
                           src={r.image_url}
                           alt={r.name_uk}
+                          width={40}
+                          height={40}
                           className="h-10 w-10 rounded-lg object-cover border border-dental-secondary-200"
                         />
                       ) : (
@@ -645,9 +648,11 @@ export default function AdminMaterialsPage() {
             <div className="flex items-center gap-4">
               {imagePreview ? (
                 <div className="relative">
-                  <img
+                  <Image
                     src={imagePreview}
                     alt={t('admin.materialsPage.editMaterial')}
+                    width={80}
+                    height={80}
                     className="h-20 w-20 rounded-xl object-cover border border-dental-secondary-200"
                   />
                   <button

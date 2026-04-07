@@ -7,6 +7,7 @@ import { captureException } from '@/utils/sentry'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
+// CSRF validation is not required for GET — idempotent read, no state mutation.
 /** GET /api/admin/audit-logs?table=...&recordId=... */
 export async function GET(request: NextRequest) {
   const { allowed, remaining } = await checkRateLimit(request, 30, 60_000)

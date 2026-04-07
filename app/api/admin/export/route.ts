@@ -24,6 +24,7 @@ function toCSV(rows: Record<string, unknown>[], columns: string[]): string {
   return `${header}\n${body}`
 }
 
+// CSRF validation is not required for GET — idempotent read, no state mutation.
 export async function GET(request: NextRequest) {
   const { allowed, remaining } = await checkRateLimit(request, 5, 60_000)
   if (!allowed) return rateLimitResponse(remaining)

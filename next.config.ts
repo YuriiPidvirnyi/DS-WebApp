@@ -98,6 +98,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'fonts.gstatic.com',
       },
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+      },
     ],
     formats: ['image/avif', 'image/webp'],
     // Allow SVG images (used for placeholder assets until real photos are provided)

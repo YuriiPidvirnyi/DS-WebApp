@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import Image from 'next/image'
 import {
   ChevronDown,
   ChevronUp,
@@ -501,9 +502,11 @@ export default function AdminOrdersPage() {
                             <div className="flex flex-wrap gap-2 justify-between items-center">
                               <span className="inline-flex items-center gap-2 text-dental-navy font-medium">
                                 {row.materials?.image_url ? (
-                                  <img
+                                  <Image
                                     src={row.materials.image_url}
                                     alt=""
+                                    width={24}
+                                    height={24}
                                     className="h-6 w-6 rounded object-cover"
                                   />
                                 ) : null}

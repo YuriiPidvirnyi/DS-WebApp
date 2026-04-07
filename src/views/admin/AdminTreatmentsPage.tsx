@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import Image from 'next/image'
 import { Edit, Package, Plus, RefreshCw, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button, Input, Select, Textarea } from '@/components/ui'
@@ -920,9 +921,11 @@ export default function AdminTreatmentsPage() {
                         {mat && (
                           <span className="flex items-center gap-1 text-xs text-dental-text-light pb-2">
                             {mat.image_url ? (
-                              <img
+                              <Image
                                 src={mat.image_url}
                                 alt=""
+                                width={20}
+                                height={20}
                                 className="h-5 w-5 rounded object-cover"
                               />
                             ) : (
