@@ -268,6 +268,25 @@ export function canAccessNavItem(role: AdminRole, href: string): boolean {
   return hasPermission(role, required)
 }
 
+/**
+ * Check if a role can access a specific feature/route.
+ * Used for page-level access control redirects.
+ */
+export function canAccessFeature(
+  role: AdminRole | null | undefined,
+  featureOrPath: string
+): boolean {
+  if (!role) return false
+
+  // If it's a path (starts with /), use ROLE_NAV_PERMISSIONS
+  if (featureOrPath.startsWith('/')) {
+    return canAccessNavItem(role, featureOrPath)
+  }
+
+  // Otherwise treat as permission name
+  return hasPermission(role, featureOrPath as Permission)
+}
+
 // ─── Role display helpers ────────────────────────────────────────────────────
 
 /** Tailwind badge colour for each role (bg + text pairing). */

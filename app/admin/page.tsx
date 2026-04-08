@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
+import { useAdminPageAccess } from '@/hooks/useAdminPageAccess'
 import { hasPermission } from '@/lib/permissions'
 import {
   Calendar,
@@ -80,6 +81,7 @@ const SERVICE_COLORS = [
 export default function AdminDashboard() {
   const { t } = useTranslation()
   const { user, isAuthenticated, isLoading: authLoading } = useAdminAuth()
+  const pageAccessLoading = useAdminPageAccess('dashboard:view')
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([])
   const [serviceStats, setServiceStats] = useState<ServiceStat[]>([])
@@ -270,7 +272,7 @@ export default function AdminDashboard() {
     return href ? <Link href={href}>{content}</Link> : content
   }
 
-  if (isLoading) {
+  if (isLoading || pageAccessLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-slate-100">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
