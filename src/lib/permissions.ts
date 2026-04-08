@@ -22,6 +22,9 @@ export const ADMIN_ROLES = [
   'senior_assistant',
   'assistant',
   'staff',
+  'billing_manager',
+  'inventory_manager',
+  'analyst',
 ] as const
 
 export type AdminRole = (typeof ADMIN_ROLES)[number]
@@ -81,7 +84,7 @@ export type Permission = (typeof PERMISSIONS)[number]
 
 // ─── Permission matrix ───────────────────────────────────────────────────────
 
-const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
+export const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
   superadmin: [
     'dashboard:view',
     'appointments:view_all',
@@ -132,6 +135,7 @@ const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
     'settings:view',
     'settings:edit',
     'users:view',
+    'users:manage',
     'chat:view',
     'chat:reply',
   ],
@@ -145,7 +149,6 @@ const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
     'patients:view',
     'patients:edit',
     'treatments:view_all',
-    'orders:view',
     'chat:view',
     'chat:reply',
   ],
@@ -205,6 +208,43 @@ const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
     'orders:create',
     'chat:view',
     'chat:reply',
+  ],
+
+  // Billing / Finance Officer — views analytics and financial data without management access
+  billing_manager: [
+    'dashboard:view',
+    'analytics:view',
+    'appointments:view_all', // for billing tracking
+    'patients:view', // patient account info
+    'treatments:view_all', // treatment costs
+    'orders:view', // expense tracking
+    'inventory:view', // cost of materials
+    'chat:view',
+    'chat:reply',
+  ],
+
+  // Inventory/Supply Chain Coordinator — manages materials, orders, and stock levels
+  inventory_manager: [
+    'dashboard:view',
+    'inventory:view',
+    'inventory:edit',
+    'orders:view',
+    'orders:create',
+    'chat:view',
+    'chat:reply',
+  ],
+
+  // Business Analyst — read-only access to analytics and reporting data
+  analyst: [
+    'dashboard:view',
+    'analytics:view',
+    'appointments:view_all', // for reporting
+    'patients:view', // for demographics
+    'treatments:view_all', // for outcome analysis
+    'orders:view', // for supply analysis
+    'inventory:view', // for stock analysis
+    'chat:view', // for discussing insights with managers
+    'chat:reply', // for collaborative analysis
   ],
 }
 
@@ -298,4 +338,7 @@ export const ROLE_BADGE_CLASSES: Record<AdminRole, string> = {
   senior_assistant: 'bg-amber-100 text-amber-800',
   assistant: 'bg-orange-100 text-orange-800',
   staff: 'bg-gray-100 text-gray-700',
+  billing_manager: 'bg-green-100 text-green-800',
+  inventory_manager: 'bg-cyan-100 text-cyan-800',
+  analyst: 'bg-indigo-100 text-indigo-800',
 }
