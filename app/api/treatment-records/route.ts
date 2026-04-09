@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminAccess } from '@/lib/supabase/admin'
+import { hasPermission, hasAnyPermission } from '@/lib/permissions'
 import {
   checkRateLimit,
   rateLimitResponse,
@@ -113,6 +114,18 @@ export async function GET(request: NextRequest) {
     const auth = await requireAdmin()
     if ('error' in auth && auth.error) return auth.error
 
+    if (
+      !hasAnyPermission(auth.access!.role, [
+        'treatments:view_all',
+        'treatments:view_own',
+      ])
+    ) {
+      return NextResponse.json(
+        { success: false, error: 'Insufficient permissions' },
+        { status: 403 }
+      )
+    }
+
     const { searchParams } = request.nextUrl
     const { page, pageSize, from, to } = parsePagination(searchParams)
 
@@ -185,6 +198,13 @@ export async function POST(request: NextRequest) {
   try {
     const auth = await requireAdmin()
     if ('error' in auth && auth.error) return auth.error
+
+    if (!hasPermission(auth.access!.role, 'treatments:create')) {
+      return NextResponse.json(
+        { success: false, error: 'Insufficient permissions' },
+        { status: 403 }
+      )
+    }
 
     let body: unknown
     try {

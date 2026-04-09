@@ -2,16 +2,17 @@
  * Role-Based Access Control (RBAC) for DentalStory admin panel.
  *
  * Role hierarchy (highest → lowest):
- *   superadmin > admin > receptionist | doctor | senior_assistant > assistant | staff
+ *   superadmin > admin > receptionist | doctor > assistant
  *
  * Roles map to real clinic positions:
- *   superadmin       — practice owner / IT administrator
- *   admin            — practice manager
- *   receptionist     — front-desk / scheduling
- *   doctor           — dentist (sees own patients only by default)
- *   senior_assistant — head dental assistant (can approve orders)
- *   assistant        — dental assistant
- *   staff            — legacy alias for assistant (backwards compat)
+ *   superadmin        — practice owner / IT administrator (only role that manages users)
+ *   admin             — practice manager
+ *   receptionist      — front-desk / scheduling
+ *   doctor            — dentist (sees own patients only by default)
+ *   assistant         — dental assistant
+ *   billing_manager   — finance officer (read-only analytics)
+ *   inventory_manager — supply chain coordinator
+ *   analyst           — business intelligence / reporting (read-only)
  */
 
 export const ADMIN_ROLES = [
@@ -19,9 +20,7 @@ export const ADMIN_ROLES = [
   'admin',
   'receptionist',
   'doctor',
-  'senior_assistant',
   'assistant',
-  'staff',
   'billing_manager',
   'inventory_manager',
   'analyst',
@@ -61,7 +60,7 @@ export const PERMISSIONS = [
   // Material orders
   'orders:view',
   'orders:create',
-  'orders:approve', // senior_assistant+ can approve orders
+  'orders:approve', // admin+ can approve orders
   'orders:delete',
 
   // Analytics & reports
@@ -134,8 +133,6 @@ export const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
     'analytics:view',
     'settings:view',
     'settings:edit',
-    'users:view',
-    'users:manage',
     'chat:view',
     'chat:reply',
   ],
@@ -168,36 +165,7 @@ export const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
     'chat:reply',
   ],
 
-  senior_assistant: [
-    'dashboard:view',
-    'appointments:view_all',
-    'patients:view',
-    'treatments:view_all',
-    'treatments:edit_draft',
-    'inventory:view',
-    'inventory:edit',
-    'orders:view',
-    'orders:create',
-    'orders:approve',
-    'chat:view',
-    'chat:reply',
-  ],
-
   assistant: [
-    'dashboard:view',
-    'appointments:view_all',
-    'patients:view',
-    'treatments:view_all',
-    'treatments:edit_draft',
-    'inventory:view',
-    'orders:view',
-    'orders:create',
-    'chat:view',
-    'chat:reply',
-  ],
-
-  // Legacy alias — same as assistant
-  staff: [
     'dashboard:view',
     'appointments:view_all',
     'patients:view',
@@ -335,9 +303,7 @@ export const ROLE_BADGE_CLASSES: Record<AdminRole, string> = {
   admin: 'bg-dental-primary text-dental-dark',
   receptionist: 'bg-blue-100 text-blue-800',
   doctor: 'bg-emerald-100 text-emerald-800',
-  senior_assistant: 'bg-amber-100 text-amber-800',
   assistant: 'bg-orange-100 text-orange-800',
-  staff: 'bg-gray-100 text-gray-700',
   billing_manager: 'bg-green-100 text-green-800',
   inventory_manager: 'bg-cyan-100 text-cyan-800',
   analyst: 'bg-indigo-100 text-indigo-800',

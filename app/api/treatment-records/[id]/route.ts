@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminAccess } from '@/lib/supabase/admin'
+import { hasPermission, hasDoctorScope } from '@/lib/permissions'
 import {
   checkRateLimit,
   rateLimitResponse,
@@ -173,7 +174,29 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     const auth = await requireAdmin()
     if ('error' in auth && auth.error) return auth.error
 
+    if (!hasPermission(auth.access!.role, 'treatments:edit_draft')) {
+      return NextResponse.json(
+        { success: false, error: 'Insufficient permissions' },
+        { status: 403 }
+      )
+    }
+
     const { id } = await params
+
+    // Doctor scope: verify ownership before allowing edit
+    if (hasDoctorScope(auth.access!.role)) {
+      const { data: record } = await auth
+        .supabase!.from('treatment_records')
+        .select('doctor_id')
+        .eq('id', id)
+        .maybeSingle()
+      if (!record || record.doctor_id !== auth.access!.doctorId) {
+        return NextResponse.json(
+          { success: false, error: 'Insufficient permissions' },
+          { status: 403 }
+        )
+      }
+    }
 
     let body: Record<string, unknown>
     try {
@@ -409,6 +432,13 @@ export async function DELETE(request: NextRequest, { params }: Params) {
   try {
     const auth = await requireAdmin()
     if ('error' in auth && auth.error) return auth.error
+
+    if (!hasPermission(auth.access!.role, 'treatments:edit_draft')) {
+      return NextResponse.json(
+        { success: false, error: 'Insufficient permissions' },
+        { status: 403 }
+      )
+    }
 
     const { id } = await params
 

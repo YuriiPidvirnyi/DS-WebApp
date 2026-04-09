@@ -1,7 +1,8 @@
 import type { SupabaseClient, User } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
-import { getAdminAccess } from '@/lib/supabase/admin'
+import { getAdminAccess, type AdminAccess } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import { hasPermission } from '@/lib/permissions'
 import {
   checkRateLimit,
   csrfErrorResponse,
@@ -36,7 +37,7 @@ const ORDER_LIST_SELECT = `
 `
 
 type AdminResult =
-  | { supabase: SupabaseClient; user: User }
+  | { supabase: SupabaseClient; user: User; access: AdminAccess }
   | { error: NextResponse }
 
 async function requireAdmin(): Promise<AdminResult> {
@@ -74,7 +75,7 @@ async function requireAdmin(): Promise<AdminResult> {
     }
   }
 
-  return { supabase, user }
+  return { supabase, user, access: adminAccess }
 }
 
 function roundMoney(n: number): number {
@@ -88,6 +89,14 @@ export async function GET(request: NextRequest) {
 
   const auth = await requireAdmin()
   if ('error' in auth) return auth.error
+
+  if (!hasPermission(auth.access.role, 'orders:view')) {
+    return NextResponse.json(
+      { success: false, error: 'Insufficient permissions' },
+      { status: 403 }
+    )
+  }
+
   const { supabase } = auth
 
   const { searchParams } = request.nextUrl
@@ -142,6 +151,14 @@ export async function POST(request: NextRequest) {
 
   const auth = await requireAdmin()
   if ('error' in auth) return auth.error
+
+  if (!hasPermission(auth.access.role, 'orders:create')) {
+    return NextResponse.json(
+      { success: false, error: 'Insufficient permissions' },
+      { status: 403 }
+    )
+  }
+
   const { supabase, user } = auth
 
   let body: Record<string, unknown>
