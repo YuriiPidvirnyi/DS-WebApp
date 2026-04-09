@@ -114,6 +114,14 @@ jobs:
       - name: Playwright UI smoke
         run: npm run test:e2e:ui-smoke
 
+      - name: Upload Playwright traces on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: test-results/
+          retention-days: 7
+
   security-audit:
     name: Security Audit
     runs-on: ubuntu-latest

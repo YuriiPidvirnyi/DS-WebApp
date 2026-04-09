@@ -38,10 +38,6 @@ updates:
         patterns:
           - 'storybook*'
           - '@storybook/*'
-      vite:
-        patterns:
-          - 'vite*'
-          - '@vitejs/*'
 
   # Enable version updates for GitHub Actions
   - package-ecosystem: 'github-actions'

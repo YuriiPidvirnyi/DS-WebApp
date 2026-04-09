@@ -14,8 +14,11 @@ test.describe('Public UI: selects & language', () => {
 
     const timeSelect = page.locator('#cb-time')
     await expect(timeSelect).toBeVisible()
-    await timeSelect.selectOption('evening')
-    await expect(timeSelect).toHaveValue('evening')
+    // Use toPass to retry select+assert until RHF hydration stops resetting the value
+    await expect(async () => {
+      await timeSelect.selectOption('evening')
+      await expect(timeSelect).toHaveValue('evening')
+    }).toPass({ timeout: 10_000 })
     await timeSelect.selectOption('morning')
     await expect(timeSelect).toHaveValue('morning')
   })
