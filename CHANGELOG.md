@@ -153,3 +153,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Performance monitoring with Web Vitals
 - Error tracking with Sentry integration
 - Analytics integration
+
+## [v2.0.0] - 2026-03-24
+
+## [v2.0.0] - 2026-03-24
+
+## [v2.0.0] - 2026-03-24
+
+## [v2.0.0] - 2026-03-24
+
+## [v2.0.0] - 2026-03-24
+
+## [v2.0.0] - 2026-03-25
+
+## [v2.0.0] - 2026-04-06
