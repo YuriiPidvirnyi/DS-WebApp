@@ -456,9 +456,13 @@ export default function ProfilePage() {
               {/* Custom date picker component for date of birth field */}
               <DatePicker
                 value={profile.date_of_birth || ''}
-                onChange={date =>
-                  setProfile({ ...profile, date_of_birth: date })
-                }
+                onChange={date => {
+                  const newProfile = { ...profile, date_of_birth: date }
+                  setProfile(newProfile)
+                  checkDirty(newProfile)
+                  setMessage(null)
+                }}
+                className={inputClasses}
                 placeholder={
                   t('cabinet.profile.dateOfBirthPlaceholder') || 'MM/DD/YYYY'
                 }
