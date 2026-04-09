@@ -179,7 +179,7 @@ export default function LanguageSwitcher({
 
       {isOpen && (
         <div
-          className="absolute right-0 top-full z-50 w-[min(18rem,calc(100vw-1rem))] sm:w-48 bg-white rounded-b-2xl border border-dental-primary-400 border-t-0 py-1 shadow-xl"
+          className="absolute right-0 top-full z-50 mt-0 w-56 origin-top-right bg-white rounded-b-2xl border border-dental-primary-400 border-t-0 py-1 shadow-xl"
           role="listbox"
           aria-label={
             isMounted

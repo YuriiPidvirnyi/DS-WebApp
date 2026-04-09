@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
 import { Save, User, Mail, Check, AlertTriangle, RefreshCw } from 'lucide-react'
+import DatePicker from '@/components/ui/DatePicker'
 
 interface PatientProfile {
   first_name: string | null
@@ -452,14 +453,15 @@ export default function ProfilePage() {
               >
                 {t('cabinet.profile.dateOfBirth')}
               </label>
-              <input
-                id="date_of_birth"
-                name="date_of_birth"
-                type="date"
+              {/* Custom date picker component for date of birth field */}
+              <DatePicker
                 value={profile.date_of_birth || ''}
-                onChange={handleChange}
-                max={new Date().toISOString().split('T')[0]}
-                className={inputClasses}
+                onChange={date =>
+                  setProfile({ ...profile, date_of_birth: date })
+                }
+                placeholder={
+                  t('cabinet.profile.dateOfBirthPlaceholder') || 'MM/DD/YYYY'
+                }
               />
             </div>
           </fieldset>
