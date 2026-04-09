@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAdminAccess } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import {
+  hasPermission,
+  hasAnyPermission,
+  hasDoctorScope,
+} from '@/lib/permissions'
+import {
   checkRateLimit,
   csrfErrorResponse,
   rateLimitResponse,
@@ -61,7 +66,7 @@ async function requireAdmin() {
     }
   }
 
-  return { supabase }
+  return { supabase, access: adminAccess }
 }
 
 /** GET /api/appointments/:id */
@@ -71,6 +76,18 @@ export async function GET(request: NextRequest, { params }: Params) {
 
   const auth = await requireAdmin()
   if ('error' in auth && auth.error) return auth.error
+
+  if (
+    !hasAnyPermission(auth.access!.role, [
+      'appointments:view_all',
+      'appointments:view_own',
+    ])
+  ) {
+    return NextResponse.json(
+      { success: false, error: 'Insufficient permissions' },
+      { status: 403 }
+    )
+  }
 
   const { id } = await params
   const { data, error } = await auth
@@ -96,6 +113,17 @@ export async function GET(request: NextRequest, { params }: Params) {
     )
   }
 
+  // Doctor scope: can only view own appointments
+  if (
+    hasDoctorScope(auth.access!.role) &&
+    (data as Record<string, unknown>).doctor_id !== auth.access!.doctorId
+  ) {
+    return NextResponse.json(
+      { success: false, error: 'Insufficient permissions' },
+      { status: 403 }
+    )
+  }
+
   return NextResponse.json({ success: true, data })
 }
 
@@ -118,6 +146,13 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
   const auth = await requireAdmin()
   if ('error' in auth && auth.error) return auth.error
+
+  if (!hasPermission(auth.access!.role, 'appointments:edit')) {
+    return NextResponse.json(
+      { success: false, error: 'Insufficient permissions' },
+      { status: 403 }
+    )
+  }
 
   const { id } = await params
 
@@ -234,6 +269,13 @@ export async function DELETE(request: NextRequest, { params }: Params) {
 
   const auth = await requireAdmin()
   if ('error' in auth && auth.error) return auth.error
+
+  if (!hasPermission(auth.access!.role, 'appointments:cancel')) {
+    return NextResponse.json(
+      { success: false, error: 'Insufficient permissions' },
+      { status: 403 }
+    )
+  }
 
   const { id } = await params
 

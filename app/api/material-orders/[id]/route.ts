@@ -178,6 +178,14 @@ export async function GET(request: NextRequest, { params }: Params) {
 
   const auth = await requireAdmin()
   if ('error' in auth) return auth.error
+
+  if (!hasPermission(auth.access.role, 'orders:view')) {
+    return NextResponse.json(
+      { success: false, error: 'Insufficient permissions' },
+      { status: 403 }
+    )
+  }
+
   const { supabase } = auth
 
   const { id } = await params
@@ -417,6 +425,14 @@ export async function DELETE(request: NextRequest, { params }: Params) {
 
   const auth = await requireAdmin()
   if ('error' in auth) return auth.error
+
+  if (!hasPermission(auth.access.role, 'orders:delete')) {
+    return NextResponse.json(
+      { success: false, error: 'Insufficient permissions' },
+      { status: 403 }
+    )
+  }
+
   const { supabase } = auth
 
   const { id } = await params

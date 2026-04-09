@@ -1,7 +1,8 @@
 import type { SupabaseClient, User } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
-import { getAdminAccess } from '@/lib/supabase/admin'
+import { getAdminAccess, type AdminAccess } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import { hasPermission } from '@/lib/permissions'
 import {
   checkRateLimit,
   csrfErrorResponse,
@@ -32,12 +33,11 @@ const ORDER_LIST_SELECT = `
     unit_price,
     created_at,
     materials ( name_uk, name_en, name_pl )
-  ),
-  admin_users ( id, display_name, role )
+  )
 `
 
 type AdminResult =
-  | { supabase: SupabaseClient; user: User }
+  | { supabase: SupabaseClient; user: User; access: AdminAccess }
   | { error: NextResponse }
 
 async function requireAdmin(): Promise<AdminResult> {
@@ -75,7 +75,7 @@ async function requireAdmin(): Promise<AdminResult> {
     }
   }
 
-  return { supabase, user }
+  return { supabase, user, access: adminAccess }
 }
 
 function roundMoney(n: number): number {
@@ -89,6 +89,14 @@ export async function GET(request: NextRequest) {
 
   const auth = await requireAdmin()
   if ('error' in auth) return auth.error
+
+  if (!hasPermission(auth.access.role, 'orders:view')) {
+    return NextResponse.json(
+      { success: false, error: 'Insufficient permissions' },
+      { status: 403 }
+    )
+  }
+
   const { supabase } = auth
 
   const { searchParams } = request.nextUrl
@@ -112,6 +120,12 @@ export async function GET(request: NextRequest) {
   const { data, error, count } = await query.range(from, to)
 
   if (error) {
+    console.error('[material-orders] Supabase GET error:', {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+    })
     captureException(new Error('[material-orders] Supabase GET error'), {
       supabaseError: error,
     })
@@ -137,6 +151,14 @@ export async function POST(request: NextRequest) {
 
   const auth = await requireAdmin()
   if ('error' in auth) return auth.error
+
+  if (!hasPermission(auth.access.role, 'orders:create')) {
+    return NextResponse.json(
+      { success: false, error: 'Insufficient permissions' },
+      { status: 403 }
+    )
+  }
+
   const { supabase, user } = auth
 
   let body: Record<string, unknown>

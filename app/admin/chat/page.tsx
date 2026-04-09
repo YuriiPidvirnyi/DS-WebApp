@@ -13,6 +13,7 @@ import {
   ChevronLeft,
 } from 'lucide-react'
 import { useAdminChat, type ChatSession } from '@/hooks/useAdminChat'
+import { useAdminPageAccess } from '@/hooks/useAdminPageAccess'
 
 function formatTime(iso: string) {
   const d = new Date(iso)
@@ -102,6 +103,7 @@ function SessionItem({
 
 export default function AdminChatPage() {
   const { t, i18n } = useTranslation()
+  const pageAccessLoading = useAdminPageAccess('chat:view')
   const [input, setInput] = useState('')
   const [filter, setFilter] = useState<'active' | 'all'>('active')
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -162,6 +164,14 @@ export default function AdminChatPage() {
     statusClosed: t('admin.chat.status.closed'),
     today: t('admin.chat.date.today'),
     yesterday: t('admin.chat.date.yesterday'),
+  }
+
+  if (pageAccessLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
+      </div>
+    )
   }
 
   return (

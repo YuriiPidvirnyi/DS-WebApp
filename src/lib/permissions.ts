@@ -2,16 +2,17 @@
  * Role-Based Access Control (RBAC) for DentalStory admin panel.
  *
  * Role hierarchy (highest → lowest):
- *   superadmin > admin > receptionist | doctor | senior_assistant > assistant | staff
+ *   superadmin > admin > receptionist | doctor > assistant
  *
  * Roles map to real clinic positions:
- *   superadmin       — practice owner / IT administrator
- *   admin            — practice manager
- *   receptionist     — front-desk / scheduling
- *   doctor           — dentist (sees own patients only by default)
- *   senior_assistant — head dental assistant (can approve orders)
- *   assistant        — dental assistant
- *   staff            — legacy alias for assistant (backwards compat)
+ *   superadmin        — practice owner / IT administrator (only role that manages users)
+ *   admin             — practice manager
+ *   receptionist      — front-desk / scheduling
+ *   doctor            — dentist (sees own patients only by default)
+ *   assistant         — dental assistant
+ *   billing_manager   — finance officer (read-only analytics)
+ *   inventory_manager — supply chain coordinator
+ *   analyst           — business intelligence / reporting (read-only)
  */
 
 export const ADMIN_ROLES = [
@@ -19,9 +20,10 @@ export const ADMIN_ROLES = [
   'admin',
   'receptionist',
   'doctor',
-  'senior_assistant',
   'assistant',
-  'staff',
+  'billing_manager',
+  'inventory_manager',
+  'analyst',
 ] as const
 
 export type AdminRole = (typeof ADMIN_ROLES)[number]
@@ -58,7 +60,7 @@ export const PERMISSIONS = [
   // Material orders
   'orders:view',
   'orders:create',
-  'orders:approve', // senior_assistant+ can approve orders
+  'orders:approve', // admin+ can approve orders
   'orders:delete',
 
   // Analytics & reports
@@ -81,7 +83,7 @@ export type Permission = (typeof PERMISSIONS)[number]
 
 // ─── Permission matrix ───────────────────────────────────────────────────────
 
-const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
+export const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
   superadmin: [
     'dashboard:view',
     'appointments:view_all',
@@ -131,7 +133,6 @@ const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
     'analytics:view',
     'settings:view',
     'settings:edit',
-    'users:view',
     'chat:view',
     'chat:reply',
   ],
@@ -145,7 +146,6 @@ const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
     'patients:view',
     'patients:edit',
     'treatments:view_all',
-    'orders:view',
     'chat:view',
     'chat:reply',
   ],
@@ -165,21 +165,6 @@ const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
     'chat:reply',
   ],
 
-  senior_assistant: [
-    'dashboard:view',
-    'appointments:view_all',
-    'patients:view',
-    'treatments:view_all',
-    'treatments:edit_draft',
-    'inventory:view',
-    'inventory:edit',
-    'orders:view',
-    'orders:create',
-    'orders:approve',
-    'chat:view',
-    'chat:reply',
-  ],
-
   assistant: [
     'dashboard:view',
     'appointments:view_all',
@@ -193,18 +178,41 @@ const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
     'chat:reply',
   ],
 
-  // Legacy alias — same as assistant
-  staff: [
+  // Billing / Finance Officer — views analytics and financial data without management access
+  billing_manager: [
     'dashboard:view',
-    'appointments:view_all',
-    'patients:view',
-    'treatments:view_all',
-    'treatments:edit_draft',
+    'analytics:view',
+    'appointments:view_all', // for billing tracking
+    'patients:view', // patient account info
+    'treatments:view_all', // treatment costs
+    'orders:view', // expense tracking
+    'inventory:view', // cost of materials
+    'chat:view',
+    'chat:reply',
+  ],
+
+  // Inventory/Supply Chain Coordinator — manages materials, orders, and stock levels
+  inventory_manager: [
+    'dashboard:view',
     'inventory:view',
+    'inventory:edit',
     'orders:view',
     'orders:create',
     'chat:view',
     'chat:reply',
+  ],
+
+  // Business Analyst — read-only access to analytics and reporting data
+  analyst: [
+    'dashboard:view',
+    'analytics:view',
+    'appointments:view_all', // for reporting
+    'patients:view', // for demographics
+    'treatments:view_all', // for outcome analysis
+    'orders:view', // for supply analysis
+    'inventory:view', // for stock analysis
+    'chat:view', // for discussing insights with managers
+    'chat:reply', // for collaborative analysis
   ],
 }
 
@@ -268,6 +276,25 @@ export function canAccessNavItem(role: AdminRole, href: string): boolean {
   return hasPermission(role, required)
 }
 
+/**
+ * Check if a role can access a specific feature/route.
+ * Used for page-level access control redirects.
+ */
+export function canAccessFeature(
+  role: AdminRole | null | undefined,
+  featureOrPath: string
+): boolean {
+  if (!role) return false
+
+  // If it's a path (starts with /), use ROLE_NAV_PERMISSIONS
+  if (featureOrPath.startsWith('/')) {
+    return canAccessNavItem(role, featureOrPath)
+  }
+
+  // Otherwise treat as permission name
+  return hasPermission(role, featureOrPath as Permission)
+}
+
 // ─── Role display helpers ────────────────────────────────────────────────────
 
 /** Tailwind badge colour for each role (bg + text pairing). */
@@ -276,7 +303,8 @@ export const ROLE_BADGE_CLASSES: Record<AdminRole, string> = {
   admin: 'bg-dental-primary text-dental-dark',
   receptionist: 'bg-blue-100 text-blue-800',
   doctor: 'bg-emerald-100 text-emerald-800',
-  senior_assistant: 'bg-amber-100 text-amber-800',
   assistant: 'bg-orange-100 text-orange-800',
-  staff: 'bg-gray-100 text-gray-700',
+  billing_manager: 'bg-green-100 text-green-800',
+  inventory_manager: 'bg-cyan-100 text-cyan-800',
+  analyst: 'bg-indigo-100 text-indigo-800',
 }

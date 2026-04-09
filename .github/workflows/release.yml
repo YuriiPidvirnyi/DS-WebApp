@@ -25,7 +25,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
@@ -52,7 +52,7 @@ jobs:
 
       - name: Create GitHub Release
         if: steps.version.outputs.changed == 'true'
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.version.outputs.current }}
           name: Release v${{ steps.version.outputs.current }}
@@ -78,7 +78,16 @@ jobs:
       - name: Update CHANGELOG
         if: steps.version.outputs.changed == 'true'
         run: |
-          echo "## [v${{ steps.version.outputs.current }}] - $(date +'%Y-%m-%d')" >> CHANGELOG.md
+          ENTRY="## [v${{ steps.version.outputs.current }}] - $(date +'%Y-%m-%d')"
+          if [ -f CHANGELOG.md ]; then
+            TEMP=$(mktemp)
+            echo "$ENTRY" > "$TEMP"
+            echo "" >> "$TEMP"
+            cat CHANGELOG.md >> "$TEMP"
+            mv "$TEMP" CHANGELOG.md
+          else
+            echo "$ENTRY" > CHANGELOG.md
+          fi
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add CHANGELOG.md

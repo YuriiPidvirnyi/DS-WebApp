@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { createClient as createSupabaseClient } from '@/lib/supabase/server'
 import { getAdminAccess } from '@/lib/supabase/admin'
+import { hasAnyPermission } from '@/lib/permissions'
 import {
   checkRateLimit,
   rateLimitResponse,
@@ -220,6 +221,18 @@ export async function GET(request: NextRequest) {
     if (!adminAccess) {
       return NextResponse.json(
         { success: false, error: 'Недостатньо прав доступу' },
+        { status: 403 }
+      )
+    }
+
+    if (
+      !hasAnyPermission(adminAccess.role, [
+        'appointments:view_all',
+        'appointments:view_own',
+      ])
+    ) {
+      return NextResponse.json(
+        { success: false, error: 'Insufficient permissions' },
         { status: 403 }
       )
     }
