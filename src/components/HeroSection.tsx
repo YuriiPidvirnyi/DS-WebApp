@@ -201,7 +201,7 @@ function HeroSection() {
                       ? t('stats.workingNow')
                       : t('stats.closedNow')}
                     {!isClinicOpen && nextOpenTime && (
-                      <span className="font-normal ml-1 opacity-80">
+                      <span className="font-normal ml-1">
                         {'· '}
                         {t('stats.opensAt', { time: nextOpenTime })}
                       </span>
