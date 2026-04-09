@@ -149,6 +149,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
           <Input
             id="name"
             fullWidth
+            required
             placeholder={t('contact.form.fields.fullNamePlaceholder')}
             disabled={isSubmitting}
             error={errors.name?.message}
@@ -167,6 +168,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
             id="phone"
             type="tel"
             fullWidth
+            required
             placeholder={t('contact.form.fields.phonePlaceholder')}
             disabled={isSubmitting}
             error={errors.phone?.message}
@@ -190,6 +192,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
             id="email"
             type="email"
             fullWidth
+            required
             placeholder={t('contact.form.fields.emailPlaceholder')}
             disabled={isSubmitting}
             error={errors.email?.message}
@@ -208,6 +211,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
             id="message"
             rows={4}
             fullWidth
+            required
             placeholder={t('contact.form.fields.messagePlaceholder')}
             disabled={isSubmitting}
             error={errors.message?.message}
@@ -220,6 +224,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
             <input
               id="consent"
               type="checkbox"
+              required
               className="w-4 h-4 border border-dental-secondary-300 rounded bg-dental-secondary-50 focus:ring-3 focus:ring-dental-primary-300"
               disabled={isSubmitting}
               {...register('consent')}

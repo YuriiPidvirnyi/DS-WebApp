@@ -1,6 +1,7 @@
 import type { SupabaseClient, User } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
-import { getAdminAccess } from '@/lib/supabase/admin'
+import { getAdminAccess, type AdminAccess } from '@/lib/supabase/admin'
+import { hasPermission } from '@/lib/permissions'
 import { createClient } from '@/lib/supabase/server'
 import {
   checkRateLimit,
@@ -31,6 +32,8 @@ const ORDER_DETAIL_SELECT = `
   total_estimated_cost,
   notes,
   urgency,
+  approved_by,
+  approved_at,
   created_at,
   material_order_items (
     id,
@@ -39,13 +42,13 @@ const ORDER_DETAIL_SELECT = `
     quantity_delivered,
     unit_price,
     created_at,
-    materials ( name_uk, name_en, name_pl )
+    materials ( name_uk, name_en, name_pl, image_url )
   ),
   admin_users ( id, display_name, role )
 `
 
 type AdminResult =
-  | { supabase: SupabaseClient; user: User }
+  | { supabase: SupabaseClient; user: User; access: AdminAccess }
   | { error: NextResponse }
 
 async function requireAdmin(): Promise<AdminResult> {
@@ -83,7 +86,7 @@ async function requireAdmin(): Promise<AdminResult> {
     }
   }
 
-  return { supabase, user }
+  return { supabase, user, access: adminAccess }
 }
 
 async function applyInventoryForDeliveredOrder(
@@ -175,6 +178,14 @@ export async function GET(request: NextRequest, { params }: Params) {
 
   const auth = await requireAdmin()
   if ('error' in auth) return auth.error
+
+  if (!hasPermission(auth.access.role, 'orders:view')) {
+    return NextResponse.json(
+      { success: false, error: 'Insufficient permissions' },
+      { status: 403 }
+    )
+  }
+
   const { supabase } = auth
 
   const { id } = await params
@@ -205,7 +216,7 @@ export async function GET(request: NextRequest, { params }: Params) {
   return NextResponse.json({ success: true, data })
 }
 
-const PATCHABLE_KEYS = new Set(['status', 'notes'])
+const PATCHABLE_KEYS = new Set(['status', 'notes', 'items'])
 
 /** PATCH /api/material-orders/:id */
 export async function PATCH(request: NextRequest, { params }: Params) {
@@ -216,7 +227,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
   const auth = await requireAdmin()
   if ('error' in auth) return auth.error
-  const { supabase } = auth
+  const { supabase, user, access } = auth
 
   const { id } = await params
 
@@ -228,6 +239,20 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       { success: false, error: 'Невірний формат запиту' },
       { status: 400 }
     )
+  }
+
+  // Approval transitions require orders:approve permission
+  const APPROVAL_STATUSES = new Set(['approved', 'ordered', 'delivered'])
+  if (typeof body.status === 'string' && APPROVAL_STATUSES.has(body.status)) {
+    if (!hasPermission(access.role, 'orders:approve')) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Недостатньо прав для затвердження замовлення',
+        },
+        { status: 403 }
+      )
+    }
   }
 
   const unknownKeys = Object.keys(body).filter(k => !PATCHABLE_KEYS.has(k))
@@ -261,6 +286,38 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     )
   }
 
+  // --- Handle partial delivery: update quantity_delivered per item ---
+  if (Array.isArray(body.items)) {
+    for (const item of body.items as Array<{
+      id?: string
+      quantityDelivered?: number
+    }>) {
+      if (!item.id || item.quantityDelivered === undefined) continue
+      const qty = Number(item.quantityDelivered)
+      if (Number.isNaN(qty) || qty < 0) {
+        return NextResponse.json(
+          { success: false, error: 'Невалідна кількість доставки' },
+          { status: 400 }
+        )
+      }
+      const { error: itemErr } = await supabase
+        .from('material_order_items')
+        .update({ quantity_delivered: qty })
+        .eq('id', item.id)
+        .eq('material_order_id', id)
+      if (itemErr) {
+        captureException(
+          new Error('[material-orders/[id]] update item delivery'),
+          { supabaseError: itemErr }
+        )
+        return NextResponse.json(
+          { success: false, error: 'Не вдалося оновити кількість доставки' },
+          { status: 500 }
+        )
+      }
+    }
+  }
+
   const update: Record<string, unknown> = {}
   if (typeof body.status === 'string') {
     if (!ORDER_STATUSES.has(body.status)) {
@@ -275,7 +332,14 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     update.notes = body.notes.trim() || null
   }
 
-  if (Object.keys(update).length === 0) {
+  // When approving: set approved_by and approved_at
+  if (update.status === 'approved' && existing.status !== 'approved') {
+    update.approved_by = user.id
+    update.approved_at = new Date().toISOString()
+  }
+
+  // Allow items-only PATCH (no status/notes change)
+  if (Object.keys(update).length === 0 && !Array.isArray(body.items)) {
     return NextResponse.json(
       { success: false, error: 'Немає полів для оновлення' },
       { status: 400 }
@@ -297,31 +361,59 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     }
   }
 
-  const { data, error } = await supabase
-    .from('material_orders')
-    .update(update)
-    .eq('id', id)
-    .select(ORDER_DETAIL_SELECT)
-    .maybeSingle()
-
-  if (error) {
-    captureException(new Error('[material-orders/[id]] Supabase PATCH error'), {
-      supabaseError: error,
-    })
-    return NextResponse.json(
-      { success: false, error: 'Не вдалося оновити замовлення' },
-      { status: 500 }
-    )
+  // Only update order record if there are fields to change
+  if (Object.keys(update).length > 0) {
+    const { error } = await supabase
+      .from('material_orders')
+      .update(update)
+      .eq('id', id)
+    if (error) {
+      captureException(
+        new Error('[material-orders/[id]] Supabase PATCH error'),
+        { supabaseError: error }
+      )
+      return NextResponse.json(
+        { success: false, error: 'Не вдалося оновити замовлення' },
+        { status: 500 }
+      )
+    }
   }
 
-  if (!data) {
+  // --- Audit trail: log status changes ---
+  if (typeof update.status === 'string' && update.status !== existing.status) {
+    try {
+      await supabase.from('admin_audit_logs').insert({
+        table_name: 'material_orders',
+        record_id: id,
+        action: 'UPDATE',
+        before_data: { status: existing.status },
+        after_data: { status: update.status },
+        changed_by: user.id,
+      })
+    } catch (auditErr) {
+      // Non-blocking: log but don't fail the request
+      captureException(
+        auditErr instanceof Error ? auditErr : new Error(String(auditErr)),
+        { context: 'material-orders audit log' }
+      )
+    }
+  }
+
+  // Refresh full order data
+  const { data: refreshed, error: refErr } = await supabase
+    .from('material_orders')
+    .select(ORDER_DETAIL_SELECT)
+    .eq('id', id)
+    .maybeSingle()
+
+  if (refErr || !refreshed) {
     return NextResponse.json(
       { success: false, error: 'Замовлення не знайдено' },
       { status: 404 }
     )
   }
 
-  return NextResponse.json({ success: true, data })
+  return NextResponse.json({ success: true, data: refreshed })
 }
 
 /** DELETE /api/material-orders/:id — лише draft */
@@ -333,6 +425,14 @@ export async function DELETE(request: NextRequest, { params }: Params) {
 
   const auth = await requireAdmin()
   if ('error' in auth) return auth.error
+
+  if (!hasPermission(auth.access.role, 'orders:delete')) {
+    return NextResponse.json(
+      { success: false, error: 'Insufficient permissions' },
+      { status: 403 }
+    )
+  }
+
   const { supabase } = auth
 
   const { id } = await params

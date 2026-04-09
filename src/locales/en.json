@@ -6,7 +6,10 @@
     "gallery": "Gallery",
     "contact": "Contact",
     "privacyPolicy": "Privacy Policy",
-    "termsOfService": "Terms of Service"
+    "termsOfService": "Terms of Service",
+    "menu": "Menu",
+    "contact_us": "Contact",
+    "socials": "Socials"
   },
   "social": {
     "facebook": "Facebook",
@@ -33,7 +36,10 @@
     "next": "Next",
     "previous": "Previous",
     "required": "Required",
-    "optional": "Optional"
+    "optional": "Optional",
+    "confirm": "Confirm",
+    "actions": "Actions",
+    "guest": "Guest"
   },
   "asyncState": {
     "loading": {
@@ -159,7 +165,14 @@
       "treatment": "Dental Treatment",
       "cleaning": "Professional Hygiene",
       "implants": "Dental Implants",
-      "orthodontics": "Orthodontics",
+      "orthodontics": {
+        "metalBraces": "Metal Braces",
+        "ceramicBraces": "Ceramic Braces",
+        "sapphireBraces": "Sapphire Braces",
+        "lingualBraces": "Lingual Braces",
+        "aligners": "Aligners (Clear Trays)",
+        "retainers": "Retainers"
+      },
       "prosthetics": "Prosthetics",
       "whitening": "Teeth Whitening",
       "surgery": "Oral Surgery",
@@ -186,14 +199,6 @@
         "removableDentures": "Removable Dentures",
         "veneers": "Veneers",
         "lumineers": "Lumineers"
-      },
-      "orthodonticsItems": {
-        "metalBraces": "Metal Braces",
-        "ceramicBraces": "Ceramic Braces",
-        "sapphireBraces": "Sapphire Braces",
-        "lingualBraces": "Lingual Braces",
-        "aligners": "Aligners (Clear Trays)",
-        "retainers": "Retainers"
       },
       "aesthetic": {
         "whitening": "Teeth Whitening",
@@ -410,7 +415,7 @@
     "story": {
       "title": "Our Story",
       "tagline": "Your Smile — Our Mission",
-      "paragraph1": "Dental Story clinic was founded in 2014 with the goal of providing quality dental care using the most advanced technologies. Our team brings together experienced doctors who continuously improve their skills and stay up to date with the latest trends in dentistry.",
+      "paragraph1": "Dental Story clinic was founded in 2020 with the goal of providing quality dental care using the most advanced technologies. Our team brings together experienced doctors who continuously improve their skills and stay up to date with the latest trends in dentistry.",
       "paragraph2": "We are proud that over the years we have helped thousands of patients restore their dental health and beautiful smiles. Our philosophy is based on the principles of trust, professionalism, and an individual approach to each patient.",
       "mission": "Your Smile — Our Mission"
     },
@@ -462,11 +467,21 @@
       "title": "Modern Equipment",
       "defaultAlt": "Dental equipment",
       "items": {
-        "xray": { "name": "Digital X-Ray Diagnostics" },
-        "tomography": { "name": "3D Tomography" },
-        "laser": { "name": "Laser Dentistry" },
-        "cadcam": { "name": "CAD/CAM Prosthetics System" },
-        "ultrasonic": { "name": "Ultrasonic Cleaning" }
+        "xray": {
+          "name": "Digital X-Ray Diagnostics"
+        },
+        "tomography": {
+          "name": "3D Tomography"
+        },
+        "laser": {
+          "name": "Laser Dentistry"
+        },
+        "cadcam": {
+          "name": "CAD/CAM Prosthetics System"
+        },
+        "ultrasonic": {
+          "name": "Ultrasonic Cleaning"
+        }
       }
     }
   },
@@ -847,7 +862,8 @@
     "closeMenu": "Close menu",
     "prevCase": "Previous case",
     "nextCase": "Next case",
-    "goToCase": "Go to case"
+    "goToCase": "Go to case",
+    "title": "Accessibility"
   },
   "accessibilityPanel": {
     "regionLabel": "Accessibility settings",
@@ -887,7 +903,8 @@
         "deuteranopia": "Deuteranopia (green)",
         "tritanopia": "Tritanopia (blue)"
       }
-    }
+    },
+    "resetAll": "Reset all"
   },
   "faqAccordion": {
     "title": "Frequently Asked Questions"
@@ -1217,6 +1234,16 @@
     }
   },
   "admin": {
+    "roles": {
+      "superadmin": "Super Admin",
+      "admin": "Admin",
+      "receptionist": "Receptionist",
+      "doctor": "Doctor",
+      "assistant": "Assistant",
+      "billing_manager": "Billing Manager",
+      "inventory_manager": "Inventory Manager",
+      "analyst": "Analyst"
+    },
     "dashboard": {
       "title": "Dashboard",
       "welcome": "Welcome to Admin Panel",
@@ -1245,7 +1272,9 @@
       "serviceCategories": "Service Categories",
       "noData": "No data",
       "doctors": "Doctors",
-      "priceList": "Price List"
+      "priceList": "Price List",
+      "doctorNotLinked": "Your account is not linked to a doctor profile. Please contact an administrator.",
+      "loadError": "Failed to load dashboard data."
     },
     "sidebar": {
       "dashboard": "Dashboard",
@@ -1260,7 +1289,8 @@
       "materials": "Materials",
       "orders": "Orders",
       "analytics": "Analytics",
-      "settings": "Settings"
+      "settings": "Settings",
+      "users": "Users"
     },
     "login": {
       "title": "Admin Login",
@@ -1289,7 +1319,9 @@
       "logout": "Log Out",
       "backToSite": "Back to site",
       "systemOnline": "System online",
-      "defaultUser": "Admin"
+      "defaultUser": "Admin",
+      "openSidebar": "Open menu",
+      "sidebarNav": "Admin panel navigation"
     },
     "modal": {
       "closeAria": "Close modal window"
@@ -1343,6 +1375,7 @@
     "appointmentsPage": {
       "title": "Appointment Management",
       "description": "Search, filter, and update appointment statuses in real time.",
+      "doctorScopeNotice": "Showing only your appointments.",
       "refresh": "Refresh",
       "summary": {
         "total": "Total",
@@ -1431,7 +1464,8 @@
         "secureRefreshFailed": "Failed to prepare secure refresh. Please try again.",
         "refreshFailed": "Failed to refresh analytics",
         "loadFailed": "Failed to load analytics",
-        "loadFailedFallback": "Failed to load analytics."
+        "loadFailedFallback": "Failed to load analytics.",
+        "chartFailed": "This section failed to load."
       }
     },
     "patientManagement": {
@@ -1924,6 +1958,238 @@
         "appName": "Dental Story Admin",
         "fileName": "admin-diagnostics.json"
       }
+    },
+    "materialsPage": {
+      "title": "Materials & Supplies",
+      "subtitle": "Catalog and stock levels",
+      "addMaterial": "Add material",
+      "refresh": "Refresh",
+      "analytics": "Analytics",
+      "searchByName": "Search by name",
+      "categoryFilter": "Category",
+      "allCategories": "All categories",
+      "statusFilter": "Status",
+      "allStatuses": "All",
+      "active": "Active",
+      "inactive": "Inactive",
+      "loading": "Loading…",
+      "empty": "Nothing found",
+      "editMaterial": "Edit material",
+      "newMaterial": "New material",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving…",
+      "deactivate": "Deactivate",
+      "deactivateConfirm": "Deactivate this material?",
+      "image": {
+        "upload": "Photo",
+        "formats": "JPEG, PNG or WebP, max 2 MB",
+        "replace": "Replace",
+        "uploading": "Uploading..."
+      },
+      "columns": {
+        "image": "",
+        "name": "Name",
+        "category": "Category",
+        "unit": "Unit",
+        "sku": "SKU",
+        "stock": "Stock",
+        "minStock": "Min stock",
+        "supplier": "Supplier",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "form": {
+        "nameUk": "Name (UK) *",
+        "nameEn": "Name (EN)",
+        "namePl": "Name (PL)",
+        "category": "Category",
+        "unit": "Unit",
+        "sku": "SKU",
+        "minStockLevel": "Min stock level",
+        "supplierName": "Supplier",
+        "supplierContact": "Supplier contact",
+        "supplierEmail": "Supplier email"
+      },
+      "categories": {
+        "composite": "Composite",
+        "filling": "Filling",
+        "instrument": "Instruments",
+        "implant": "Implants",
+        "hygiene": "Hygiene",
+        "anesthesia": "Anesthesia",
+        "other": "Other"
+      },
+      "statusLabels": {
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
+    "ordersPage": {
+      "title": "Material Orders",
+      "createOrder": "Create order",
+      "refresh": "Refresh",
+      "statusFilter": "Status",
+      "allStatuses": "All",
+      "loading": "Loading",
+      "empty": "No orders matching the filter.",
+      "items": "items",
+      "notes": "Notes",
+      "approvedAt": "Approved",
+      "history": "History",
+      "historyTitle": "Change history",
+      "noHistory": "No records",
+      "deleteConfirm": "Delete this draft order?",
+      "delivery": {
+        "received": "Received",
+        "save": "Save delivery"
+      },
+      "create": {
+        "title": "Create order",
+        "material": "Material",
+        "quantity": "Quantity",
+        "unitPrice": "Unit price",
+        "addItem": "Add item",
+        "urgency": "Urgency",
+        "notes": "Notes",
+        "totalCost": "Total cost",
+        "cancel": "Cancel",
+        "save": "Save"
+      },
+      "statuses": {
+        "draft": "Draft",
+        "pending_approval": "Pending approval",
+        "approved": "Approved",
+        "ordered": "Ordered",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled"
+      },
+      "urgency": {
+        "low": "Low",
+        "normal": "Normal",
+        "high": "High",
+        "critical": "Critical"
+      },
+      "actions": {
+        "sendForApproval": "Send for approval",
+        "approve": "Approve",
+        "cancel": "Cancel",
+        "markOrdered": "Mark ordered",
+        "markDelivered": "Mark delivered",
+        "delete": "Delete"
+      }
+    },
+    "inventory": {
+      "analyticsTitle": "Inventory Analytics",
+      "analyticsSubtitle": "Spending, consumption and stock levels",
+      "period30": "30 days",
+      "period90": "90 days",
+      "period365": "1 year",
+      "kpi": {
+        "totalMaterials": "Materials",
+        "lowStock": "Low stock",
+        "totalSpent": "Spent this period",
+        "pendingOrders": "Active orders"
+      },
+      "charts": {
+        "spendingByCategory": "Spending by category",
+        "topConsumed": "Most consumed",
+        "noData": "No data for this period"
+      },
+      "stockLevels": "Stock levels",
+      "stockColumns": {
+        "material": "Material",
+        "category": "Category",
+        "stock": "Stock",
+        "level": "Level"
+      },
+      "consumption": {
+        "title": "Materials used",
+        "addMaterial": "Add material",
+        "material": "Material",
+        "quantity": "Quantity",
+        "stockLabel": "stock"
+      }
+    },
+    "treatmentsPage": {
+      "title": "Treatment Records",
+      "subtitle": "Procedures and payment tracking",
+      "refresh": "Refresh",
+      "createAct": "Create record",
+      "searchPlaceholder": "Search by patient name",
+      "statusFilterAria": "Filter by record status",
+      "loading": "Loading…",
+      "empty": "No records",
+      "columns": {
+        "date": "Date",
+        "patient": "Patient",
+        "doctor": "Doctor",
+        "diagnosis": "Diagnosis",
+        "procedures": "Procedures",
+        "totalCost": "Total cost",
+        "payStatus": "Payment status",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "statuses": {
+        "draft": "Draft",
+        "signed": "Signed",
+        "completed": "Completed"
+      },
+      "payStatuses": {
+        "unpaid": "Unpaid",
+        "partial": "Partial",
+        "paid": "Paid",
+        "waived": "Waived",
+        "refunded": "Refunded"
+      },
+      "filterAll": "All statuses",
+      "modal": {
+        "editTitle": "Edit record",
+        "createTitle": "Create record",
+        "patient": "Patient",
+        "doctor": "Doctor",
+        "visit": "Visit (optional)",
+        "diagnosis": "Diagnosis",
+        "teeth": "Teeth (comma-separated)",
+        "notes": "Notes",
+        "procedures": "Procedures",
+        "addLine": "Add line",
+        "service": "Service",
+        "tooth": "Tooth",
+        "quantity": "Quantity",
+        "price": "Price",
+        "actStatus": "Record status",
+        "payStatus": "Payment status",
+        "cancel": "Cancel",
+        "save": "Save",
+        "saving": "Saving…"
+      },
+      "errors": {
+        "loadFailed": "Failed to load records",
+        "saveFailed": "Failed to save",
+        "deleteFailed": "Failed to delete",
+        "csrfRefresh": "CSRF error: please refresh the page",
+        "selectPatientDoctor": "Select a patient and doctor"
+      },
+      "deleteConfirm": "Delete this record? This action cannot be undone.",
+      "editAria": "Edit",
+      "deleteAria": "Delete",
+      "removeLineAria": "Remove line"
+    },
+    "users": {
+      "title": "User Management",
+      "subtitle": "Admin panel roles and access rights",
+      "columns": {
+        "name": "Name",
+        "role": "Role",
+        "specialization": "Specialization",
+        "lastLogin": "Last login"
+      },
+      "you": "you",
+      "deleteConfirm": "Delete this user?",
+      "empty": "No users found",
+      "note": "Role changes take effect on next login."
     }
   },
   "auth": {
@@ -2057,7 +2323,6 @@
     "edit": "Edit",
     "notSpecified": "Not specified",
     "myAppointments": "My Appointments",
-    "bookAppointment": "Book Appointment",
     "treatmentHistory": "Treatment History",
     "myReviews": "My Reviews",
     "recentAppointments": "Recent Appointments",
@@ -2099,6 +2364,24 @@
         "upcoming": "No upcoming appointments",
         "past": "No past appointments",
         "cta": "Book an appointment with our specialists"
+      },
+      "cancelModal": {
+        "title": "Cancel appointment?",
+        "confirm": "Yes, cancel",
+        "back": "Keep appointment",
+        "success": "Appointment cancelled",
+        "error": "Failed to cancel appointment"
+      },
+      "reschedule": {
+        "title": "Reschedule appointment",
+        "button": "Reschedule",
+        "current": "Current appointment",
+        "selectTime": "Select a new time",
+        "noSlots": "No available slots",
+        "confirm": "Confirm reschedule",
+        "success": "Appointment successfully rescheduled",
+        "error": "Failed to reschedule appointment",
+        "at": "at"
       }
     },
     "profile": {
@@ -2117,7 +2400,85 @@
       "saveSuccess": "Profile updated successfully!",
       "errors": {
         "saveFailed": "Failed to save. Please try again later."
+      },
+      "personalInfo": "Personal information",
+      "contactInfo": "Contact information",
+      "additionalInfo": "Additional information",
+      "unsavedChanges": "You have unsaved changes"
+    },
+    "title": "Patient Cabinet",
+    "profileTitle": "My Profile",
+    "appointmentsTitle": "My Appointments",
+    "treatmentsTitle": "Treatments",
+    "paymentsTitle": "Payments",
+    "greeting": {
+      "morning": "Good morning, {{name}}!",
+      "afternoon": "Good afternoon, {{name}}!",
+      "evening": "Good evening, {{name}}!"
+    },
+    "dashboard": {
+      "nextAppointment": "Next Appointment",
+      "upcoming": "Upcoming",
+      "completed": "Completed",
+      "total": "Total appointments",
+      "noUpcoming": "No upcoming appointments",
+      "noUpcomingDesc": "Book an appointment at a convenient time",
+      "viewDetails": "View details",
+      "profileIncomplete": "Complete your profile",
+      "profileHint": "Full information helps doctors prepare better for your appointment",
+      "completeProfile": "Complete profile"
+    },
+    "error": {
+      "title": "Something went wrong",
+      "description": "Failed to load data. Please try refreshing the page.",
+      "retry": "Try again",
+      "goHome": "Go home",
+      "devDetails": "Error details"
+    },
+    "sidebar": {
+      "title": "Patient Cabinet",
+      "dashboard": "Dashboard",
+      "appointments": "My Appointments",
+      "treatments": "Treatments",
+      "payments": "Payments",
+      "profile": "Profile",
+      "soon": "Soon",
+      "navigation": "Cabinet navigation",
+      "openMenu": "Open menu",
+      "backToSite": "Back to site"
+    },
+    "treatments": {
+      "title": "Treatments",
+      "empty": "No treatment records yet",
+      "doctor": "Doctor",
+      "diagnosis": "Diagnosis",
+      "procedures": "Procedures",
+      "teeth": "Teeth",
+      "tooth": "tooth",
+      "status": {
+        "draft": "Draft",
+        "signed": "Signed",
+        "completed": "Completed"
+      },
+      "payment": {
+        "unpaid": "Unpaid",
+        "partial": "Partial payment",
+        "paid": "Paid",
+        "waived": "Waived",
+        "refunded": "Refunded"
       }
+    },
+    "payments": {
+      "title": "Payments",
+      "comingSoon": "Coming soon",
+      "description": "Online payment for clinic services is coming soon.",
+      "feature1Title": "Invoices",
+      "feature1Desc": "View your invoices",
+      "feature2Title": "Payment",
+      "feature2Desc": "Convenient online payment",
+      "feature3Title": "Reminders",
+      "feature3Desc": "Payment notifications",
+      "meanwhile": "Currently, payment is made at the clinic."
     }
   },
   "patientDashboard": {
@@ -2388,6 +2749,7 @@
     "forNewPatients": "For new patients",
     "workingNow": "Open Now",
     "closedNow": "Closed Now",
+    "opensAt": "Opens at {{time}}",
     "qualityGuarantee": "Quality Guarantee"
   },
   "hero": {
@@ -2429,21 +2791,51 @@
         "title": "What concerns you?"
       },
       "quickConcerns": [
-        { "id": "checkup", "label": "Routine checkup" },
-        { "id": "pain", "label": "Toothache" },
-        { "id": "whitening", "label": "Whitening" },
-        { "id": "cleaning", "label": "Teeth cleaning" },
-        { "id": "braces", "label": "Teeth alignment" },
-        { "id": "implant", "label": "Missing tooth" }
+        {
+          "id": "checkup",
+          "label": "Routine checkup"
+        },
+        {
+          "id": "pain",
+          "label": "Toothache"
+        },
+        {
+          "id": "whitening",
+          "label": "Whitening"
+        },
+        {
+          "id": "cleaning",
+          "label": "Teeth cleaning"
+        },
+        {
+          "id": "braces",
+          "label": "Teeth alignment"
+        },
+        {
+          "id": "implant",
+          "label": "Missing tooth"
+        }
       ],
       "step2": {
         "title": "When did you last visit a dentist?"
       },
       "lastVisitOptions": [
-        { "value": "less6months", "label": "Less than 6 months ago" },
-        { "value": "6to12months", "label": "6-12 months ago" },
-        { "value": "more1year", "label": "More than a year ago" },
-        { "value": "never", "label": "Don't remember" }
+        {
+          "value": "less6months",
+          "label": "Less than 6 months ago"
+        },
+        {
+          "value": "6to12months",
+          "label": "6-12 months ago"
+        },
+        {
+          "value": "more1year",
+          "label": "More than a year ago"
+        },
+        {
+          "value": "never",
+          "label": "Don't remember"
+        }
       ],
       "step3": {
         "title": "Anything else?",

@@ -6,7 +6,10 @@
     "gallery": "Galeria",
     "contact": "Kontakt",
     "privacyPolicy": "Polityka prywatności",
-    "termsOfService": "Warunki użytkowania"
+    "termsOfService": "Warunki użytkowania",
+    "menu": "Menu",
+    "contact_us": "Kontakt",
+    "socials": "Media społecznościowe"
   },
   "social": {
     "facebook": "Facebook",
@@ -33,7 +36,10 @@
     "next": "Dalej",
     "previous": "Poprzedni",
     "required": "Wymagane",
-    "optional": "Opcjonalne"
+    "optional": "Opcjonalne",
+    "confirm": "Potwierdź",
+    "actions": "Akcje",
+    "guest": "Gość"
   },
   "asyncState": {
     "loading": {
@@ -159,7 +165,14 @@
       "treatment": "Leczenie zębów",
       "cleaning": "Higiena zawodowa",
       "implants": "Implanty stomatologiczne",
-      "orthodontics": "Ortodoncja",
+      "orthodontics": {
+        "metalBraces": "Aparaty metalowe",
+        "ceramicBraces": "Aparaty ceramiczne",
+        "sapphireBraces": "Aparaty szafirowe",
+        "lingualBraces": "Aparaty lingwalne",
+        "aligners": "Nakładki (alignery)",
+        "retainers": "Retainery"
+      },
       "prosthetics": "Protetyka",
       "whitening": "Wybielanie zębów",
       "surgery": "Chirurgia jamy ustnej",
@@ -186,14 +199,6 @@
         "removableDentures": "Protezy ruchome",
         "veneers": "Licówki",
         "lumineers": "Lumineery"
-      },
-      "orthodonticsItems": {
-        "metalBraces": "Aparaty metalowe",
-        "ceramicBraces": "Aparaty ceramiczne",
-        "sapphireBraces": "Aparaty szafirowe",
-        "lingualBraces": "Aparaty lingwalne",
-        "aligners": "Nakładki (alignery)",
-        "retainers": "Retainery"
       },
       "aesthetic": {
         "whitening": "Wybielanie zębów",
@@ -410,7 +415,7 @@
     "story": {
       "title": "Nasza historia",
       "tagline": "Twój uśmiech — nasza misja",
-      "paragraph1": "Klinika Dental Story została założona w 2014 roku w celu świadczenia wysokiej jakości opieki stomatologicznej z wykorzystaniem najnowocześniejszych technologii. Nasz zespół skupia doświadczonych lekarzy, którzy stale podnoszą swoje kwalifikacje i śledzą najnowsze trendy w stomatologii.",
+      "paragraph1": "Klinika Dental Story została założona w 2020 roku w celu świadczenia wysokiej jakości opieki stomatologicznej z wykorzystaniem najnowocześniejszych technologii. Nasz zespół skupia doświadczonych lekarzy, którzy stale podnoszą swoje kwalifikacje i śledzą najnowsze trendy w stomatologii.",
       "paragraph2": "Jesteśmy dumni, że przez lata pracy pomogliśmy tysiącom pacjentów przywrócić zdrowie zębów i piękny uśmiech. Nasza filozofia opiera się na zasadach zaufania, profesjonalizmu i indywidualnego podejścia do każdego pacjenta.",
       "mission": "Twój uśmiech — nasza misja"
     },
@@ -462,11 +467,21 @@
       "title": "Nowoczesny sprzęt",
       "defaultAlt": "Sprzęt stomatologiczny",
       "items": {
-        "xray": { "name": "Cyfrowa diagnostyka rentgenowska" },
-        "tomography": { "name": "Tomografia 3D" },
-        "laser": { "name": "Stomatologia laserowa" },
-        "cadcam": { "name": "System CAD/CAM do protetyki" },
-        "ultrasonic": { "name": "Czyszczenie ultradźwiękowe" }
+        "xray": {
+          "name": "Cyfrowa diagnostyka rentgenowska"
+        },
+        "tomography": {
+          "name": "Tomografia 3D"
+        },
+        "laser": {
+          "name": "Stomatologia laserowa"
+        },
+        "cadcam": {
+          "name": "System CAD/CAM do protetyki"
+        },
+        "ultrasonic": {
+          "name": "Czyszczenie ultradźwiękowe"
+        }
       }
     }
   },
@@ -849,7 +864,8 @@
     "closeMenu": "Zamknij menu",
     "prevCase": "Poprzedni przypadek",
     "nextCase": "Następny przypadek",
-    "goToCase": "Przejdź do przypadku"
+    "goToCase": "Przejdź do przypadku",
+    "title": "Dostępność"
   },
   "accessibilityPanel": {
     "regionLabel": "Ustawienia dostępności",
@@ -889,7 +905,8 @@
         "deuteranopia": "Deuteranopia (zielony)",
         "tritanopia": "Tritanopia (niebieski)"
       }
-    }
+    },
+    "resetAll": "Resetuj wszystko"
   },
   "faqAccordion": {
     "title": "Najczęściej zadawane pytania"
@@ -1219,6 +1236,16 @@
     }
   },
   "admin": {
+    "roles": {
+      "superadmin": "Super Administrator",
+      "admin": "Administrator",
+      "receptionist": "Recepcjonista",
+      "doctor": "Lekarz",
+      "assistant": "Asystent",
+      "billing_manager": "Kierownik finansowy",
+      "inventory_manager": "Kierownik magazynu",
+      "analyst": "Analityk"
+    },
     "dashboard": {
       "title": "Panel kontrolny",
       "welcome": "Witamy w panelu administratora",
@@ -1247,7 +1274,9 @@
       "serviceCategories": "Kategorie usług",
       "noData": "Brak danych",
       "doctors": "Lekarze",
-      "priceList": "Cennik"
+      "priceList": "Cennik",
+      "doctorNotLinked": "Twoje konto nie jest powiązane z profilem lekarza. Skontaktuj się z administratorem.",
+      "loadError": "Nie udało się załadować danych pulpitu."
     },
     "sidebar": {
       "dashboard": "Dashboard",
@@ -1262,7 +1291,8 @@
       "materials": "Materiały",
       "orders": "Zamówienia",
       "analytics": "Analityka",
-      "settings": "Ustawienia"
+      "settings": "Ustawienia",
+      "users": "Użytkownicy"
     },
     "login": {
       "title": "Logowanie do panelu",
@@ -1291,7 +1321,9 @@
       "logout": "Wyloguj się",
       "backToSite": "Na stronę",
       "systemOnline": "System online",
-      "defaultUser": "Admin"
+      "defaultUser": "Admin",
+      "openSidebar": "Otwórz menu",
+      "sidebarNav": "Nawigacja panelu admina"
     },
     "modal": {
       "closeAria": "Zamknij okno modalne"
@@ -1345,6 +1377,7 @@
     "appointmentsPage": {
       "title": "Zarządzanie wizytami",
       "description": "Wyszukiwanie, filtrowanie i zmiana statusów wizyt w czasie rzeczywistym.",
+      "doctorScopeNotice": "Wyświetlane są tylko Twoje wizyty.",
       "refresh": "Odśwież",
       "summary": {
         "total": "Łącznie",
@@ -1433,7 +1466,8 @@
         "secureRefreshFailed": "Nie udało się przygotować bezpiecznego odświeżenia. Spróbuj ponownie.",
         "refreshFailed": "Nie udało się odświeżyć analityki",
         "loadFailed": "Nie udało się załadować analityki",
-        "loadFailedFallback": "Nie udało się załadować analityki."
+        "loadFailedFallback": "Nie udało się załadować analityki.",
+        "chartFailed": "Nie udało się załadować tej sekcji."
       }
     },
     "patientManagement": {
@@ -1926,6 +1960,238 @@
         "appName": "Dental Story Admin",
         "fileName": "admin-diagnostics.json"
       }
+    },
+    "materialsPage": {
+      "title": "Materialy i artykuly",
+      "subtitle": "Katalog i stany magazynowe",
+      "addMaterial": "Dodaj material",
+      "refresh": "Odswiez",
+      "analytics": "Analityka",
+      "searchByName": "Szukaj po nazwie",
+      "categoryFilter": "Kategoria",
+      "allCategories": "Wszystkie kategorie",
+      "statusFilter": "Status",
+      "allStatuses": "Wszystkie",
+      "active": "Aktywne",
+      "inactive": "Nieaktywne",
+      "loading": "Ladowanie…",
+      "empty": "Nic nie znaleziono",
+      "editMaterial": "Edytuj material",
+      "newMaterial": "Nowy material",
+      "cancel": "Anuluj",
+      "save": "Zapisz",
+      "saving": "Zapisywanie…",
+      "deactivate": "Dezaktywuj",
+      "deactivateConfirm": "Dezaktywowac ten material?",
+      "image": {
+        "upload": "Zdjecie",
+        "formats": "JPEG, PNG lub WebP, maks. 2 MB",
+        "replace": "Zamien",
+        "uploading": "Przesylanie..."
+      },
+      "columns": {
+        "image": "",
+        "name": "Nazwa",
+        "category": "Kategoria",
+        "unit": "Jednostka",
+        "sku": "SKU",
+        "stock": "Stan",
+        "minStock": "Min. stan",
+        "supplier": "Dostawca",
+        "status": "Status",
+        "actions": "Akcje"
+      },
+      "form": {
+        "nameUk": "Nazwa (UK) *",
+        "nameEn": "Nazwa (EN)",
+        "namePl": "Nazwa (PL)",
+        "category": "Kategoria",
+        "unit": "Jednostka",
+        "sku": "SKU",
+        "minStockLevel": "Min. stan",
+        "supplierName": "Dostawca",
+        "supplierContact": "Kontakt dostawcy",
+        "supplierEmail": "Email dostawcy"
+      },
+      "categories": {
+        "composite": "Kompozyt",
+        "filling": "Plomby",
+        "instrument": "Instrumenty",
+        "implant": "Implanty",
+        "hygiene": "Higiena",
+        "anesthesia": "Znieczulenie",
+        "other": "Inne"
+      },
+      "statusLabels": {
+        "active": "Aktywny",
+        "inactive": "Nieaktywny"
+      }
+    },
+    "ordersPage": {
+      "title": "Zamowienia materialow",
+      "createOrder": "Utworz zamowienie",
+      "refresh": "Odswiez",
+      "statusFilter": "Status",
+      "allStatuses": "Wszystkie",
+      "loading": "Ladowanie",
+      "empty": "Brak zamowien pasujacych do filtra.",
+      "items": "poz.",
+      "notes": "Uwagi",
+      "approvedAt": "Zatwierdzone",
+      "history": "Historia",
+      "historyTitle": "Historia zmian",
+      "noHistory": "Brak wpisow",
+      "deleteConfirm": "Usunac ten szkic zamowienia?",
+      "delivery": {
+        "received": "Otrzymano",
+        "save": "Zapisz dostawe"
+      },
+      "create": {
+        "title": "Utworz zamowienie",
+        "material": "Material",
+        "quantity": "Ilosc",
+        "unitPrice": "Cena jednostkowa",
+        "addItem": "Dodaj pozycje",
+        "urgency": "Pilnosc",
+        "notes": "Uwagi",
+        "totalCost": "Koszt calkowity",
+        "cancel": "Anuluj",
+        "save": "Zapisz"
+      },
+      "statuses": {
+        "draft": "Szkic",
+        "pending_approval": "Do zatwierdzenia",
+        "approved": "Zatwierdzony",
+        "ordered": "Zamowiony",
+        "delivered": "Dostarczony",
+        "cancelled": "Anulowany"
+      },
+      "urgency": {
+        "low": "Niska",
+        "normal": "Normalna",
+        "high": "Wysoka",
+        "critical": "Krytyczna"
+      },
+      "actions": {
+        "sendForApproval": "Wyslij do zatwierdzenia",
+        "approve": "Zatwierdz",
+        "cancel": "Anuluj",
+        "markOrdered": "Zamowiony",
+        "markDelivered": "Dostarczony",
+        "delete": "Usun"
+      }
+    },
+    "inventory": {
+      "analyticsTitle": "Analityka zapasow",
+      "analyticsSubtitle": "Wydatki, zuzycie i poziomy zapasow",
+      "period30": "30 dni",
+      "period90": "90 dni",
+      "period365": "1 rok",
+      "kpi": {
+        "totalMaterials": "Materialow",
+        "lowStock": "Niski stan",
+        "totalSpent": "Wydano w okresie",
+        "pendingOrders": "Aktywne zamowienia"
+      },
+      "charts": {
+        "spendingByCategory": "Wydatki wg kategorii",
+        "topConsumed": "Najczesciej uzywane",
+        "noData": "Brak danych w tym okresie"
+      },
+      "stockLevels": "Poziomy zapasow",
+      "stockColumns": {
+        "material": "Material",
+        "category": "Kategoria",
+        "stock": "Stan",
+        "level": "Poziom"
+      },
+      "consumption": {
+        "title": "Uzyte materialy",
+        "addMaterial": "Dodaj material",
+        "material": "Material",
+        "quantity": "Ilosc",
+        "stockLabel": "stan"
+      }
+    },
+    "treatmentsPage": {
+      "title": "Akty robót",
+      "subtitle": "Śledzenie procedur i płatności",
+      "refresh": "Odśwież",
+      "createAct": "Utwórz akt",
+      "searchPlaceholder": "Szukaj po nazwisku pacjenta",
+      "statusFilterAria": "Filtruj według statusu aktu",
+      "loading": "Ładowanie…",
+      "empty": "Brak rekordów",
+      "columns": {
+        "date": "Data",
+        "patient": "Pacjent",
+        "doctor": "Lekarz",
+        "diagnosis": "Diagnoza",
+        "procedures": "Procedury",
+        "totalCost": "Koszt całkowity",
+        "payStatus": "Status płatności",
+        "status": "Status",
+        "actions": "Akcje"
+      },
+      "statuses": {
+        "draft": "Szkic",
+        "signed": "Podpisano",
+        "completed": "Zakończono"
+      },
+      "payStatuses": {
+        "unpaid": "Nieopłacone",
+        "partial": "Częściowo",
+        "paid": "Opłacone",
+        "waived": "Umorzone",
+        "refunded": "Zwrócone"
+      },
+      "filterAll": "Wszystkie statusy",
+      "modal": {
+        "editTitle": "Edytuj akt",
+        "createTitle": "Utwórz akt",
+        "patient": "Pacjent",
+        "doctor": "Lekarz",
+        "visit": "Wizyta (opcjonalnie)",
+        "diagnosis": "Diagnoza",
+        "teeth": "Zęby (oddzielone przecinkami)",
+        "notes": "Uwagi",
+        "procedures": "Procedury",
+        "addLine": "Dodaj wiersz",
+        "service": "Usługa",
+        "tooth": "Ząb",
+        "quantity": "Ilość",
+        "price": "Cena",
+        "actStatus": "Status aktu",
+        "payStatus": "Status płatności",
+        "cancel": "Anuluj",
+        "save": "Zapisz",
+        "saving": "Zapisywanie…"
+      },
+      "errors": {
+        "loadFailed": "Nie udało się załadować aktów",
+        "saveFailed": "Nie udało się zapisać",
+        "deleteFailed": "Nie udało się usunąć",
+        "csrfRefresh": "Błąd CSRF: odśwież stronę",
+        "selectPatientDoctor": "Wybierz pacjenta i lekarza"
+      },
+      "deleteConfirm": "Usunąć ten akt? Tej akcji nie można cofnąć.",
+      "editAria": "Edytuj",
+      "deleteAria": "Usuń",
+      "removeLineAria": "Usuń wiersz"
+    },
+    "users": {
+      "title": "Zarządzanie użytkownikami",
+      "subtitle": "Role i prawa dostępu panelu admina",
+      "columns": {
+        "name": "Imię",
+        "role": "Rola",
+        "specialization": "Specjalizacja",
+        "lastLogin": "Ostatnie logowanie"
+      },
+      "you": "ty",
+      "deleteConfirm": "Usuń tego użytkownika?",
+      "empty": "Brak użytkowników",
+      "note": "Zmiany ról wchodzą w życie przy następnym logowaniu."
     }
   },
   "auth": {
@@ -2059,7 +2325,6 @@
     "edit": "Edytuj",
     "notSpecified": "Nie podano",
     "myAppointments": "Moje wizyty",
-    "bookAppointment": "Umów wizytę",
     "treatmentHistory": "Historia leczenia",
     "myReviews": "Moje opinie",
     "recentAppointments": "Ostatnie wizyty",
@@ -2101,6 +2366,24 @@
         "upcoming": "Brak nadchodzących wizyt",
         "past": "Brak minionych wizyt",
         "cta": "Umów wizytę u naszych specjalistów"
+      },
+      "cancelModal": {
+        "title": "Anulować wizytę?",
+        "confirm": "Tak, anuluj",
+        "back": "Zachowaj wizytę",
+        "success": "Wizyta anulowana",
+        "error": "Nie udało się anulować wizyty"
+      },
+      "reschedule": {
+        "title": "Przesuń wizytę",
+        "button": "Przesuń",
+        "current": "Aktualna wizyta",
+        "selectTime": "Wybierz nowy termin",
+        "noSlots": "Brak dostępnych terminów",
+        "confirm": "Potwierdź przesunięcie",
+        "success": "Wizyta została przeniesiona",
+        "error": "Nie udało się przenieść wizyty",
+        "at": "o"
       }
     },
     "profile": {
@@ -2119,7 +2402,85 @@
       "saveSuccess": "Profil został zaktualizowany!",
       "errors": {
         "saveFailed": "Nie udało się zapisać. Spróbuj ponownie później."
+      },
+      "personalInfo": "Dane osobowe",
+      "contactInfo": "Informacje kontaktowe",
+      "additionalInfo": "Dodatkowe informacje",
+      "unsavedChanges": "Masz niezapisane zmiany"
+    },
+    "title": "Gabinet pacjenta",
+    "profileTitle": "Mój profil",
+    "appointmentsTitle": "Moje wizyty",
+    "treatmentsTitle": "Leczenie",
+    "paymentsTitle": "Płatności",
+    "greeting": {
+      "morning": "Dzień dobry, {{name}}!",
+      "afternoon": "Miłego dnia, {{name}}!",
+      "evening": "Dobry wieczór, {{name}}!"
+    },
+    "dashboard": {
+      "nextAppointment": "Następna wizyta",
+      "upcoming": "Nadchodzących",
+      "completed": "Zakończonych",
+      "total": "Łącznie wizyt",
+      "noUpcoming": "Brak zaplanowanych wizyt",
+      "noUpcomingDesc": "Umów wizytę w dogodnym terminie",
+      "viewDetails": "Szczegóły",
+      "profileIncomplete": "Uzupełnij profil",
+      "profileHint": "Pełne informacje pomagają lekarzom lepiej przygotować się do wizyty",
+      "completeProfile": "Uzupełnij profil"
+    },
+    "error": {
+      "title": "Coś poszło nie tak",
+      "description": "Nie udało się załadować danych. Spróbuj odświeżyć stronę.",
+      "retry": "Spróbuj ponownie",
+      "goHome": "Strona główna",
+      "devDetails": "Szczegóły błędu"
+    },
+    "sidebar": {
+      "title": "Gabinet pacjenta",
+      "dashboard": "Panel",
+      "appointments": "Moje wizyty",
+      "treatments": "Leczenie",
+      "payments": "Płatności",
+      "profile": "Profil",
+      "soon": "Wkrótce",
+      "navigation": "Nawigacja gabinetu",
+      "openMenu": "Otwórz menu",
+      "backToSite": "Na stronę"
+    },
+    "treatments": {
+      "title": "Leczenie",
+      "empty": "Brak zapisów leczenia",
+      "doctor": "Lekarz",
+      "diagnosis": "Diagnoza",
+      "procedures": "Procedury",
+      "teeth": "Zęby",
+      "tooth": "ząb",
+      "status": {
+        "draft": "Szkic",
+        "signed": "Podpisano",
+        "completed": "Zakończono"
+      },
+      "payment": {
+        "unpaid": "Nieopłacono",
+        "partial": "Częściowa płatność",
+        "paid": "Opłacono",
+        "waived": "Zwolniono",
+        "refunded": "Zwrócono"
       }
+    },
+    "payments": {
+      "title": "Płatności",
+      "comingSoon": "Wkrótce",
+      "description": "Płatności online za usługi kliniczne są w trakcie realizacji.",
+      "feature1Title": "Faktury",
+      "feature1Desc": "Przeglądaj swoje faktury",
+      "feature2Title": "Płatność",
+      "feature2Desc": "Wygodna płatność online",
+      "feature3Title": "Przypomnienia",
+      "feature3Desc": "Powiadomienia o płatnościach",
+      "meanwhile": "Obecnie płatności dokonuje się w klinice."
     }
   },
   "patientDashboard": {
@@ -2390,6 +2751,7 @@
     "forNewPatients": "Dla nowych pacjentów",
     "workingNow": "Teraz otwarte",
     "closedNow": "Teraz zamknięte",
+    "opensAt": "Otwieramy o {{time}}",
     "qualityGuarantee": "Gwarancja jakości"
   },
   "hero": {
@@ -2431,21 +2793,51 @@
         "title": "Co Cię niepokoi?"
       },
       "quickConcerns": [
-        { "id": "checkup", "label": "Rutynowa kontrola" },
-        { "id": "pain", "label": "Ból zęba" },
-        { "id": "whitening", "label": "Wybielanie" },
-        { "id": "cleaning", "label": "Czyszczenie zębów" },
-        { "id": "braces", "label": "Prostowanie zębów" },
-        { "id": "implant", "label": "Brakujący ząb" }
+        {
+          "id": "checkup",
+          "label": "Rutynowa kontrola"
+        },
+        {
+          "id": "pain",
+          "label": "Ból zęba"
+        },
+        {
+          "id": "whitening",
+          "label": "Wybielanie"
+        },
+        {
+          "id": "cleaning",
+          "label": "Czyszczenie zębów"
+        },
+        {
+          "id": "braces",
+          "label": "Prostowanie zębów"
+        },
+        {
+          "id": "implant",
+          "label": "Brakujący ząb"
+        }
       ],
       "step2": {
         "title": "Kiedy ostatnio byłeś u dentysty?"
       },
       "lastVisitOptions": [
-        { "value": "less6months", "label": "Mniej niż 6 miesięcy temu" },
-        { "value": "6to12months", "label": "6-12 miesięcy temu" },
-        { "value": "more1year", "label": "Ponad rok temu" },
-        { "value": "never", "label": "Nie pamiętam" }
+        {
+          "value": "less6months",
+          "label": "Mniej niż 6 miesięcy temu"
+        },
+        {
+          "value": "6to12months",
+          "label": "6-12 miesięcy temu"
+        },
+        {
+          "value": "more1year",
+          "label": "Ponad rok temu"
+        },
+        {
+          "value": "never",
+          "label": "Nie pamiętam"
+        }
       ],
       "step3": {
         "title": "Coś dodatkowego?",

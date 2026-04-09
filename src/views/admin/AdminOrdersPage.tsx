@@ -1,13 +1,16 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import Image from 'next/image'
 import {
   ChevronDown,
   ChevronUp,
+  Clock,
   Loader2,
   Package,
   Plus,
   RefreshCw,
+  Save,
   Trash2,
   X,
 } from 'lucide-react'
@@ -31,17 +34,29 @@ type MaterialOrder = {
   total_estimated_cost: number
   notes: string | null
   urgency: Urgency
+  approved_by: string | null
+  approved_at: string | null
   created_at: string
+  ordered_by: string
   material_order_items: Array<{
     id: string
     quantity_requested: number
+    quantity_delivered: number | null
     unit_price: number
     materials: {
       name_uk: string | null
       name_en: string | null
       name_pl: string | null
+      image_url: string | null
     } | null
   }> | null
+}
+type AuditEntry = {
+  id: string
+  action: string
+  before_data: { status?: string } | null
+  after_data: { status?: string } | null
+  changed_at: string
   admin_users: { display_name: string | null } | null
 }
 type LineDraft = {
@@ -51,13 +66,13 @@ type LineDraft = {
 }
 type OrderItem = NonNullable<MaterialOrder['material_order_items']>[number]
 
-const STATUS_LABELS: Record<OrderStatus, string> = {
-  draft: 'Чернетка',
-  pending_approval: 'На затвердженні',
-  approved: 'Затверджено',
-  ordered: 'Замовлено',
-  delivered: 'Доставлено',
-  cancelled: 'Скасовано',
+const STATUS_I18N: Record<OrderStatus, string> = {
+  draft: 'admin.ordersPage.statuses.draft',
+  pending_approval: 'admin.ordersPage.statuses.pending_approval',
+  approved: 'admin.ordersPage.statuses.approved',
+  ordered: 'admin.ordersPage.statuses.ordered',
+  delivered: 'admin.ordersPage.statuses.delivered',
+  cancelled: 'admin.ordersPage.statuses.cancelled',
 }
 const ST_BADGE: Record<OrderStatus, string> = {
   draft: 'bg-gray-100 text-gray-700',
@@ -67,11 +82,11 @@ const ST_BADGE: Record<OrderStatus, string> = {
   delivered: 'bg-emerald-100 text-emerald-800',
   cancelled: 'bg-red-100 text-red-800',
 }
-const URGENCY_LABELS: Record<Urgency, string> = {
-  low: 'Низька',
-  normal: 'Звичайна',
-  high: 'Висока',
-  critical: 'Критична',
+const URGENCY_I18N: Record<Urgency, string> = {
+  low: 'admin.ordersPage.urgency.low',
+  normal: 'admin.ordersPage.urgency.normal',
+  high: 'admin.ordersPage.urgency.high',
+  critical: 'admin.ordersPage.urgency.critical',
 }
 const URG_CLR: Record<Urgency, string> = {
   low: 'text-gray-600',
@@ -89,26 +104,30 @@ const PATCH_ACTS: PatchAct[] = [
   {
     from: 'draft',
     next: 'pending_approval',
-    label: 'Відправити на затвердження',
+    label: 'admin.ordersPage.actions.sendForApproval',
     cls: 'bg-amber-600 hover:bg-amber-700 text-white border-0 focus:ring-amber-500',
   },
   {
     from: 'pending_approval',
     next: 'approved',
-    label: 'Затвердити',
+    label: 'admin.ordersPage.actions.approve',
     cls: 'bg-sky-600 hover:bg-sky-700 text-white border-0 focus:ring-sky-500',
   },
-  { from: 'pending_approval', next: 'cancelled', label: 'Скасувати' },
+  {
+    from: 'pending_approval',
+    next: 'cancelled',
+    label: 'admin.ordersPage.actions.cancel',
+  },
   {
     from: 'approved',
     next: 'ordered',
-    label: 'Замовлено',
+    label: 'admin.ordersPage.actions.markOrdered',
     cls: 'bg-violet-600 hover:bg-violet-700 text-white border-0 focus:ring-violet-500',
   },
   {
     from: 'ordered',
     next: 'delivered',
-    label: 'Доставлено',
+    label: 'admin.ordersPage.actions.markDelivered',
     cls: 'bg-emerald-600 hover:bg-emerald-700 text-white border-0 focus:ring-emerald-500',
   },
 ]
@@ -137,6 +156,12 @@ export default function AdminOrdersPage() {
   const [urgency, setUrgency] = useState<Urgency>('normal')
   const [saving, setSaving] = useState(false)
   const [patchingId, setPatchingId] = useState<string | null>(null)
+  const [deliveryDraft, setDeliveryDraft] = useState<
+    Record<string, Record<string, string>>
+  >({})
+  const [savingDelivery, setSavingDelivery] = useState(false)
+  const [auditLogs, setAuditLogs] = useState<Record<string, AuditEntry[]>>({})
+  const [auditOpen, setAuditOpen] = useState<string | null>(null)
   const csrf = useCallback(
     () =>
       csrfToken ||
@@ -265,7 +290,7 @@ export default function AdminOrdersPage() {
     }
   }
   const deleteDraft = async (id: string) => {
-    if (!window.confirm('Видалити це замовлення-чернетку?')) return
+    if (!window.confirm(t('admin.ordersPage.deleteConfirm'))) return
     const token = csrf()
     if (!token) return
     setPatchingId(id)
@@ -285,8 +310,69 @@ export default function AdminOrdersPage() {
       setPatchingId(null)
     }
   }
-  const stKeys = Object.keys(STATUS_LABELS) as OrderStatus[]
-  const urgKeys = Object.keys(URGENCY_LABELS) as Urgency[]
+  const saveDeliveryQty = async (orderId: string) => {
+    const token = csrf()
+    if (!token) return
+    const draft = deliveryDraft[orderId]
+    if (!draft || !Object.keys(draft).length) return
+    setSavingDelivery(true)
+    setError(null)
+    try {
+      const items = Object.entries(draft).map(([itemId, val]) => ({
+        id: itemId,
+        quantityDelivered: Number(val) || 0,
+      }))
+      const res = await fetch(`/api/material-orders/${orderId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+        body: JSON.stringify({ items }),
+      })
+      const json = (await res.json()) as {
+        success?: boolean
+        data?: MaterialOrder
+        error?: string
+      }
+      if (!res.ok || !json.success)
+        throw new Error(json.error || t('common.error'))
+      if (json.data)
+        setOrders(prev => prev.map(o => (o.id === orderId ? json.data! : o)))
+      setDeliveryDraft(d => {
+        const n = { ...d }
+        delete n[orderId]
+        return n
+      })
+    } catch (e) {
+      fail(e)
+    } finally {
+      setSavingDelivery(false)
+    }
+  }
+
+  const loadAuditLog = async (orderId: string) => {
+    if (auditOpen === orderId) {
+      setAuditOpen(null)
+      return
+    }
+    setAuditOpen(orderId)
+    if (auditLogs[orderId]) return
+    try {
+      const res = await fetch(
+        `/api/admin/audit-logs?table=material_orders&recordId=${orderId}`
+      )
+      const json = (await res.json()) as {
+        success?: boolean
+        data?: AuditEntry[]
+      }
+      if (json.success && json.data) {
+        setAuditLogs(prev => ({ ...prev, [orderId]: json.data! }))
+      }
+    } catch {
+      // silent — audit is non-critical
+    }
+  }
+
+  const stKeys = Object.keys(STATUS_I18N) as OrderStatus[]
+  const urgKeys = Object.keys(URGENCY_I18N) as Urgency[]
   const tot = lines.reduce(
     (a, l) => a + Math.max(0, l.quantityRequested) * Math.max(0, l.unitPrice),
     0
@@ -295,21 +381,21 @@ export default function AdminOrdersPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold text-dental-navy">
-          Замовлення матеріалів
+          {t('admin.ordersPage.title')}
         </h1>
         <div className="flex flex-wrap items-center gap-2">
           <label className="flex items-center gap-2 text-sm text-dental-text">
-            Статус
+            {t('admin.ordersPage.statusFilter')}
             <Select
               selectSize="compact"
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value)}
-              aria-label="Фільтр за статусом замовлення"
+              aria-label={t('admin.ordersPage.statusFilter')}
             >
-              <option value="">Усі</option>
+              <option value="">{t('admin.ordersPage.allStatuses')}</option>
               {stKeys.map(s => (
                 <option key={s} value={s}>
-                  {STATUS_LABELS[s]}
+                  {t(STATUS_I18N[s])}
                 </option>
               ))}
             </Select>
@@ -324,7 +410,7 @@ export default function AdminOrdersPage() {
             <RefreshCw
               className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`}
             />
-            Оновити
+            {t('admin.ordersPage.refresh')}
           </Button>
           <Button
             type="button"
@@ -332,7 +418,7 @@ export default function AdminOrdersPage() {
             className="gap-2 bg-dental-teal hover:bg-dental-teal/90"
           >
             <Plus className="w-4 h-4" />
-            Створити замовлення
+            {t('admin.ordersPage.createOrder')}
           </Button>
         </div>
       </div>
@@ -349,7 +435,7 @@ export default function AdminOrdersPage() {
       ) : !orders.length ? (
         <div className="rounded-xl border border-dashed border-dental-secondary bg-white p-10 text-center text-dental-text">
           <Package className="w-10 h-10 mx-auto mb-3 text-dental-teal opacity-70" />
-          Немає замовлень за обраним фільтром.
+          {t('admin.ordersPage.empty')}
         </div>
       ) : (
         <div className="space-y-3">
@@ -375,21 +461,21 @@ export default function AdminOrdersPage() {
                     {formatDateTime(order.created_at)}
                   </span>
                   <span className="text-sm font-medium text-dental-navy">
-                    {order.admin_users?.display_name?.trim() || '—'}
+                    —
                   </span>
                   <span
                     className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${ST_BADGE[order.status]}`}
                   >
-                    {STATUS_LABELS[order.status]}
+                    {t(STATUS_I18N[order.status])}
                   </span>
                   <span className={`text-xs ${URG_CLR[order.urgency]}`}>
-                    {URGENCY_LABELS[order.urgency]}
+                    {t(URGENCY_I18N[order.urgency])}
                   </span>
                   <span className="text-sm font-semibold text-dental-navy ml-auto">
                     {formatCurrency(order.total_estimated_cost)}
                   </span>
                   <span className="text-xs text-gray-500">
-                    {items.length} поз.
+                    {items.length} {t('admin.ordersPage.items')}
                   </span>
                   {ex ? (
                     <ChevronUp className="w-5 h-5 text-gray-400" />
@@ -400,31 +486,118 @@ export default function AdminOrdersPage() {
                 {ex && (
                   <div className="border-t border-gray-100 px-4 py-4 bg-dental-primary/20 space-y-3">
                     <div className="text-sm space-y-1">
-                      {items.map(row => (
-                        <div
-                          key={row.id}
-                          className="flex flex-wrap gap-2 justify-between border-b border-gray-100 py-2"
-                        >
-                          <span className="text-dental-navy font-medium">
-                            {mname(row.materials)}
-                          </span>
-                          <span className="text-dental-text">
-                            {row.quantity_requested} ×{' '}
-                            {formatCurrency(row.unit_price)} ={' '}
-                            {formatCurrency(
-                              row.quantity_requested * row.unit_price
+                      {items.map(row => {
+                        const deliv = Number(row.quantity_delivered || 0)
+                        const req = Number(row.quantity_requested)
+                        const pct =
+                          req > 0 ? Math.min(100, (deliv / req) * 100) : 0
+                        const showDelivery =
+                          order.status === 'ordered' ||
+                          order.status === 'delivered'
+                        return (
+                          <div
+                            key={row.id}
+                            className="border-b border-gray-100 py-2 space-y-1"
+                          >
+                            <div className="flex flex-wrap gap-2 justify-between items-center">
+                              <span className="inline-flex items-center gap-2 text-dental-navy font-medium">
+                                {row.materials?.image_url ? (
+                                  <Image
+                                    src={row.materials.image_url}
+                                    alt=""
+                                    width={24}
+                                    height={24}
+                                    className="h-6 w-6 rounded object-cover"
+                                  />
+                                ) : null}
+                                {mname(row.materials)}
+                              </span>
+                              <span className="text-dental-text">
+                                {req} × {formatCurrency(row.unit_price)} ={' '}
+                                {formatCurrency(req * row.unit_price)}
+                              </span>
+                            </div>
+                            {showDelivery && (
+                              <div className="flex items-center gap-3">
+                                <div className="flex-1">
+                                  <div className="h-1.5 rounded-full bg-gray-200 overflow-hidden">
+                                    <div
+                                      className="h-full rounded-full bg-emerald-500 transition-all"
+                                      style={{ width: `${pct}%` }}
+                                    />
+                                  </div>
+                                </div>
+                                {order.status === 'ordered' ? (
+                                  <div className="flex items-center gap-1 text-xs">
+                                    <span className="text-dental-text">
+                                      {t('admin.ordersPage.delivery.received')}:
+                                    </span>
+                                    <input
+                                      type="number"
+                                      min={0}
+                                      max={req}
+                                      className="w-16 rounded border border-dental-secondary-200 px-1.5 py-0.5 text-xs text-dental-dark"
+                                      value={
+                                        deliveryDraft[order.id]?.[row.id] ??
+                                        String(deliv)
+                                      }
+                                      onChange={e =>
+                                        setDeliveryDraft(d => ({
+                                          ...d,
+                                          [order.id]: {
+                                            ...d[order.id],
+                                            [row.id]: e.target.value,
+                                          },
+                                        }))
+                                      }
+                                    />
+                                    <span className="text-dental-text-light">
+                                      / {req}
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <span className="text-xs text-dental-text">
+                                    {deliv} / {req}
+                                  </span>
+                                )}
+                              </div>
                             )}
-                          </span>
-                        </div>
-                      ))}
+                          </div>
+                        )
+                      })}
                     </div>
                     {order.notes && (
                       <p className="text-sm text-dental-text">
-                        <span className="font-medium">Примітки:</span>{' '}
+                        <span className="font-medium">
+                          {t('admin.ordersPage.notes')}:
+                        </span>{' '}
                         {order.notes}
                       </p>
                     )}
+                    {order.approved_at && (
+                      <p className="text-xs text-dental-text-light">
+                        {t('admin.ordersPage.approvedAt')}:{' '}
+                        {formatDateTime(order.approved_at)}
+                      </p>
+                    )}
                     <div className="flex flex-wrap gap-2">
+                      {order.status === 'ordered' &&
+                        deliveryDraft[order.id] &&
+                        Object.keys(deliveryDraft[order.id]).length > 0 && (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            disabled={savingDelivery}
+                            onClick={() => void saveDeliveryQty(order.id)}
+                            className="gap-1 border-emerald-300 text-emerald-700"
+                          >
+                            <Save className="w-3.5 h-3.5" />
+                            {savingDelivery
+                              ? '...'
+                              : t('admin.ordersPage.delivery.save')}
+                          </Button>
+                        )}
                       {flow.map(a => (
                         <Button
                           key={`${a.from}-${a.next}`}
@@ -435,7 +608,7 @@ export default function AdminOrdersPage() {
                           onClick={() => void patchStatus(order.id, a.next)}
                           className={a.cls}
                         >
-                          {a.label}
+                          {t(a.label)}
                         </Button>
                       ))}
                       {order.status === 'draft' && (
@@ -448,10 +621,80 @@ export default function AdminOrdersPage() {
                           className="text-red-600 border-red-200"
                         >
                           <Trash2 className="w-4 h-4 mr-1 inline" />
-                          Видалити
+                          {t('admin.ordersPage.actions.delete')}
                         </Button>
                       )}
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => void loadAuditLog(order.id)}
+                        className="gap-1 ml-auto text-dental-text"
+                      >
+                        <Clock className="w-3.5 h-3.5" />
+                        {t('admin.ordersPage.history')}
+                      </Button>
                     </div>
+                    {/* Audit history timeline */}
+                    {auditOpen === order.id && (
+                      <div className="rounded-lg border border-gray-200 bg-white p-3 text-xs space-y-2">
+                        <p className="font-medium text-dental-navy text-sm">
+                          {t('admin.ordersPage.historyTitle')}
+                        </p>
+                        {!auditLogs[order.id]?.length ? (
+                          <p className="text-dental-text-light">
+                            {t('admin.ordersPage.noHistory')}
+                          </p>
+                        ) : (
+                          <div className="space-y-1.5">
+                            {auditLogs[order.id].map(log => (
+                              <div
+                                key={log.id}
+                                className="flex items-start gap-2"
+                              >
+                                <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-dental-teal" />
+                                <div>
+                                  <span className="text-dental-text-light">
+                                    {formatDateTime(log.changed_at)}
+                                  </span>
+                                  {' — '}
+                                  <span className="font-medium text-dental-dark">
+                                    {log.admin_users?.display_name || '—'}
+                                  </span>
+                                  {log.before_data?.status &&
+                                    log.after_data?.status && (
+                                      <>
+                                        {': '}
+                                        <span
+                                          className={`inline-flex px-1.5 py-0.5 rounded text-[10px] font-medium ${ST_BADGE[log.before_data.status as OrderStatus] || 'bg-gray-100'}`}
+                                        >
+                                          {t(
+                                            STATUS_I18N[
+                                              log.before_data
+                                                .status as OrderStatus
+                                            ] || log.before_data.status
+                                          )}
+                                        </span>
+                                        {' → '}
+                                        <span
+                                          className={`inline-flex px-1.5 py-0.5 rounded text-[10px] font-medium ${ST_BADGE[log.after_data.status as OrderStatus] || 'bg-gray-100'}`}
+                                        >
+                                          {t(
+                                            STATUS_I18N[
+                                              log.after_data
+                                                .status as OrderStatus
+                                            ] || log.after_data.status
+                                          )}
+                                        </span>
+                                      </>
+                                    )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -464,13 +707,13 @@ export default function AdminOrdersPage() {
           <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-200">
             <div className="flex items-center justify-between px-4 py-3 border-b">
               <h2 className="text-lg font-semibold text-dental-navy">
-                Створити замовлення
+                {t('admin.ordersPage.create.title')}
               </h2>
               <button
                 type="button"
                 onClick={() => !saving && setCreateOpen(false)}
                 className="p-2 rounded-lg hover:bg-gray-100"
-                aria-label="Закрити"
+                aria-label={t('common.close')}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -480,7 +723,7 @@ export default function AdminOrdersPage() {
                 <div key={i} className={grid}>
                   <label className="sm:col-span-5 block text-sm">
                     <span className="text-dental-text font-medium">
-                      Матеріал
+                      {t('admin.ordersPage.create.material')}
                     </span>
                     <Select
                       selectSize="compact"
@@ -488,7 +731,7 @@ export default function AdminOrdersPage() {
                       className="mt-1"
                       value={line.materialId}
                       onChange={e => setLine(i, { materialId: e.target.value })}
-                      aria-label="Матеріал"
+                      aria-label={t('admin.ordersPage.create.material')}
                     >
                       <option value="">—</option>
                       {materials.map(m => (
@@ -500,7 +743,7 @@ export default function AdminOrdersPage() {
                   </label>
                   <label className="sm:col-span-3 block text-sm">
                     <span className="text-dental-text font-medium">
-                      Кількість
+                      {t('admin.ordersPage.create.quantity')}
                     </span>
                     <Input
                       type="number"
@@ -517,7 +760,7 @@ export default function AdminOrdersPage() {
                   </label>
                   <label className="sm:col-span-3 block text-sm">
                     <span className="text-dental-text font-medium">
-                      Ціна за одиницю
+                      {t('admin.ordersPage.create.unitPrice')}
                     </span>
                     <Input
                       type="number"
@@ -540,7 +783,7 @@ export default function AdminOrdersPage() {
                         )
                       }
                       className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
-                      aria-label="Видалити рядок"
+                      aria-label={t('common.delete')}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -559,11 +802,11 @@ export default function AdminOrdersPage() {
                 }
               >
                 <Plus className="w-4 h-4 mr-1 inline" />
-                Додати позицію
+                {t('admin.ordersPage.create.addItem')}
               </Button>
               <label className="block text-sm">
                 <span className="text-dental-text font-medium">
-                  Терміновість
+                  {t('admin.ordersPage.create.urgency')}
                 </span>
                 <Select
                   selectSize="compact"
@@ -571,17 +814,19 @@ export default function AdminOrdersPage() {
                   className="mt-1"
                   value={urgency}
                   onChange={e => setUrgency(e.target.value as Urgency)}
-                  aria-label="Терміновість"
+                  aria-label={t('admin.ordersPage.create.urgency')}
                 >
                   {urgKeys.map(u => (
                     <option key={u} value={u}>
-                      {URGENCY_LABELS[u]}
+                      {t(URGENCY_I18N[u])}
                     </option>
                   ))}
                 </Select>
               </label>
               <label className="block text-sm">
-                <span className="text-dental-text font-medium">Примітки</span>
+                <span className="text-dental-text font-medium">
+                  {t('admin.ordersPage.create.notes')}
+                </span>
                 <Textarea
                   value={notes}
                   onChange={e => setNotes(e.target.value)}
@@ -591,7 +836,8 @@ export default function AdminOrdersPage() {
               </label>
               <div className="flex items-center justify-between pt-2 border-t">
                 <p className="text-dental-navy font-semibold">
-                  Загальна вартість: {formatCurrency(tot)}
+                  {t('admin.ordersPage.create.totalCost')}:{' '}
+                  {formatCurrency(tot)}
                 </p>
                 <div className="flex gap-2">
                   <Button
@@ -599,7 +845,7 @@ export default function AdminOrdersPage() {
                     variant="outline"
                     onClick={() => !saving && setCreateOpen(false)}
                   >
-                    Скасувати
+                    {t('admin.ordersPage.create.cancel')}
                   </Button>
                   <Button
                     type="button"
@@ -607,7 +853,9 @@ export default function AdminOrdersPage() {
                     onClick={() => void submitCreate()}
                     className="bg-dental-teal hover:bg-dental-teal/90"
                   >
-                    {saving ? t('common.loading') : 'Зберегти'}
+                    {saving
+                      ? t('common.loading')
+                      : t('admin.ordersPage.create.save')}
                   </Button>
                 </div>
               </div>

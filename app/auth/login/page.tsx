@@ -59,9 +59,9 @@ export default function LoginPage() {
           <Link href="/" className="inline-block">
             <Logo variant="default" size="md" />
           </Link>
-          <p className="text-dental-muted text-sm mt-2">
+          <h1 className="text-dental-muted text-sm mt-2">
             {t('auth.login.subtitle')}
-          </p>
+          </h1>
         </div>
 
         {/* Form Card */}

@@ -5,6 +5,59 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-04-07
+
+### Added
+
+- **Sidebar navigation**: collapsible sidebar with logo crossfade, social links, section labels, vertical centering, contact section highlight
+- **Patient cabinet**: full patient portal with dashboard stats, sidebar layout, reschedule UI, payments page, error boundary
+- **Cabinet: cancel & calendar**: patient appointment cancellation API, "Add to calendar" (.ics) download for upcoming appointments
+- **Cabinet UX polish**: focus rings, error handling, a11y improvements (mobile sidebar id, avatar link focus ring), email field, missing i18n keys
+- **Admin RBAC system**: 7 roles (superadmin, admin, manager, doctor, assistant, receptionist, staff), permission matrix with 20+ permissions, role-filtered navigation
+- **Materials ordering system**: full internal inventory workflow
+  - Material image upload (Supabase Storage, drag-and-drop, preview)
+  - Partial delivery tracking with per-item quantity inputs and progress bars
+  - Audit trail on order status changes (timeline UI with admin_audit_logs)
+  - Material consumption tracking in treatment records (deduct/add inventory via RPC)
+  - Inventory analytics page with KPI cards, spending-by-category pie chart, top-consumed bar chart, stock levels table
+  - Low-stock cron alerts via notification_events
+- **Database migration**: `20260407_materials_enhancement.sql` — image_url column, approval tracking columns, Supabase Storage bucket, atomic `deduct_inventory`/`add_inventory` RPC functions
+- **Testing**: unit tests for AccessibilityPanel and AIAssistant, E2E hydration race fixes for reviews select
+
+### Changed
+
+- Admin navigation filtered by role permissions instead of showing all items
+- Treatment record API accepts `materialsUsed` array for consumption tracking
+- Materials page fully i18n-ized (removed hardcoded Ukrainian labels)
+- Orders page fully i18n-ized (status/urgency labels use i18n key maps)
+- Inventory analytics page fully i18n-ized
+- Site header, footer, and sidebar hidden on cabinet/admin routes for clean layout
+- Replaced emoji+text logos with `Logo` component across branding
+- Role permissions enforced on existing API routes (materials, orders, treatments, analytics)
+
+### Fixed
+
+- RBAC nav bug and dead route cleanup
+- Admin login page: replaced dark `bg-slate-900` theme with dental brand gradient and `<Logo />` component
+- Cabinet reschedule flow (slots parsing, doctorId, timeouts, i18n)
+- Cabinet filter logic and defaultValue fallbacks
+- Cabinet dashboard email display bug
+- E2E reviews select hydration race (toPass retry pattern)
+- AI assistant opening correctly when controlled via sidebar
+- High-contrast mode non-destructive behavior, reset-all, proper close handling
+- Sidebar icon spacing, section gaps, social links visibility, logo rendering
+- 80+ missing i18n keys across cabinet, admin users, sidebar, accessibility panel
+- Security: bumped serialize-javascript, brace-expansion, picomatch overrides
+- Booking: slots fetch now times out after 8s with an error state instead of loading indefinitely when the API hangs
+- Hero badge: "Зараз зачинено" now shows next open time inline ("Відкриємося о 09:00")
+- Social sidebar: Twitter/X removed from defaults — only shown when `NEXT_PUBLIC_TWITTER_URL` env var is set
+
+### Security
+
+- Role-based permission checks on all admin API routes
+- `hasPermission()` guard integrated into materials, orders, treatments, analytics endpoints
+- Atomic inventory functions prevent race conditions on stock updates
+
 ## [2.0.0] - 2026-03-23
 
 ### Added
@@ -100,17 +153,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Performance monitoring with Web Vitals
 - Error tracking with Sentry integration
 - Analytics integration
-
-## [v2.0.0] - 2026-03-24
-
-## [v2.0.0] - 2026-03-24
-
-## [v2.0.0] - 2026-03-24
-
-## [v2.0.0] - 2026-03-24
-
-## [v2.0.0] - 2026-03-24
-
-## [v2.0.0] - 2026-03-25
-
-## [v2.0.0] - 2026-04-06

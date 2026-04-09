@@ -206,14 +206,18 @@ async function processEvent(
  * Processes queued notification_events and sends emails via Resend.
  */
 export async function GET(request: NextRequest) {
-  if (CRON_SECRET) {
-    const authHeader = request.headers.get('authorization')
-    if (authHeader !== `Bearer ${CRON_SECRET}`) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
+  if (!CRON_SECRET) {
+    return NextResponse.json(
+      { error: 'CRON_SECRET not configured' },
+      { status: 500 }
+    )
+  }
+  const authHeader = request.headers.get('authorization')
+  if (authHeader !== `Bearer ${CRON_SECRET}`) {
+    return NextResponse.json(
+      { success: false, error: 'Unauthorized' },
+      { status: 401 }
+    )
   }
 
   if (!isEmailConfigured()) {

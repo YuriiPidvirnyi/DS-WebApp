@@ -7,6 +7,7 @@ import { Button, Select } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { useCSRF } from '@/hooks/useCSRF'
 import { captureException } from '@/utils/sentry'
+import ErrorBoundary from '@/components/ErrorBoundary'
 import { formatCurrency } from './utils'
 
 interface AnalyticsModel {
@@ -37,6 +38,15 @@ const PERIODS: Array<{ value: 7 | 30 | 90 }> = [
   { value: 30 },
   { value: 90 },
 ]
+
+function ChartErrorFallback() {
+  const { t } = useTranslation()
+  return (
+    <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-6 text-center text-sm text-red-700">
+      {t('admin.analyticsPage.errors.chartFailed')}
+    </div>
+  )
+}
 
 export default function AdminAnalyticsPage() {
   const { t } = useTranslation()
@@ -193,153 +203,159 @@ export default function AdminAnalyticsPage() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
-            <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-              <p className="text-xs text-dental-text-light">
-                {t('admin.analyticsPage.cards.appointments')}
-              </p>
-              <p className="text-2xl font-bold text-dental-dark">
-                {model.totalAppointments}
-              </p>
+          <ErrorBoundary fallback={<ChartErrorFallback />}>
+            <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+              <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
+                <p className="text-xs text-dental-text-light">
+                  {t('admin.analyticsPage.cards.appointments')}
+                </p>
+                <p className="text-2xl font-bold text-dental-dark">
+                  {model.totalAppointments}
+                </p>
+              </div>
+              <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
+                <p className="text-xs text-dental-text-light">
+                  {t('admin.analyticsPage.cards.completionRate')}
+                </p>
+                <p className="text-2xl font-bold text-green-600">
+                  {model.completionRate.toFixed(1)}%
+                </p>
+              </div>
+              <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
+                <p className="text-xs text-dental-text-light">
+                  {t('admin.analyticsPage.cards.revenue')}
+                </p>
+                <p className="text-xl font-bold text-dental-dark">
+                  {formatCurrency(model.revenue)}
+                </p>
+              </div>
+              <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
+                <p className="text-xs text-dental-text-light">
+                  {t('admin.analyticsPage.cards.avgTicket')}
+                </p>
+                <p className="text-xl font-bold text-dental-dark">
+                  {formatCurrency(model.averageTicket)}
+                </p>
+              </div>
+              <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
+                <p className="text-xs text-dental-text-light">
+                  {t('admin.analyticsPage.cards.patients')}
+                </p>
+                <p className="text-2xl font-bold text-dental-dark">
+                  {model.totalPatients}
+                </p>
+              </div>
             </div>
-            <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-              <p className="text-xs text-dental-text-light">
-                {t('admin.analyticsPage.cards.completionRate')}
-              </p>
-              <p className="text-2xl font-bold text-green-600">
-                {model.completionRate.toFixed(1)}%
-              </p>
-            </div>
-            <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-              <p className="text-xs text-dental-text-light">
-                {t('admin.analyticsPage.cards.revenue')}
-              </p>
-              <p className="text-xl font-bold text-dental-dark">
-                {formatCurrency(model.revenue)}
-              </p>
-            </div>
-            <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-              <p className="text-xs text-dental-text-light">
-                {t('admin.analyticsPage.cards.avgTicket')}
-              </p>
-              <p className="text-xl font-bold text-dental-dark">
-                {formatCurrency(model.averageTicket)}
-              </p>
-            </div>
-            <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-              <p className="text-xs text-dental-text-light">
-                {t('admin.analyticsPage.cards.patients')}
-              </p>
-              <p className="text-2xl font-bold text-dental-dark">
-                {model.totalPatients}
-              </p>
-            </div>
-          </div>
+          </ErrorBoundary>
 
-          <div className="grid gap-4 lg:grid-cols-3">
-            <div className="rounded-xl border border-dental-secondary-200 bg-white p-4 lg:col-span-2">
+          <ErrorBoundary fallback={<ChartErrorFallback />}>
+            <div className="grid gap-4 lg:grid-cols-3">
+              <div className="rounded-xl border border-dental-secondary-200 bg-white p-4 lg:col-span-2">
+                <h2 className="text-lg font-semibold text-dental-dark">
+                  {t('admin.analyticsPage.timeline.title')}
+                </h2>
+                <div className="mt-4 space-y-2">
+                  {model.timeline.map(item => (
+                    <div key={item.date}>
+                      <div className="mb-1 flex items-center justify-between text-xs text-dental-text-light">
+                        <span>{item.date}</span>
+                        <span>
+                          {t('admin.analyticsPage.timeline.appointmentsCount', {
+                            count: item.count,
+                          })}
+                        </span>
+                      </div>
+                      <div className="h-2 overflow-hidden rounded-full bg-dental-primary-100">
+                        <div
+                          className="h-full rounded-full bg-dental-primary-600"
+                          style={{
+                            width: `${(item.count / maxDailyAppointments) * 100}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
+                  <h2 className="text-lg font-semibold text-dental-dark">
+                    {t('admin.analyticsPage.statuses.title')}
+                  </h2>
+                  <ul className="mt-3 space-y-2 text-sm text-dental-text">
+                    <li>
+                      {t('admin.analyticsPage.statuses.pending')}:{' '}
+                      {model.pendingAppointments}
+                    </li>
+                    <li>
+                      {t('admin.analyticsPage.statuses.completed')}:{' '}
+                      {model.completedAppointments}
+                    </li>
+                    <li>
+                      {t('admin.analyticsPage.statuses.cancelledNoShow')}:{' '}
+                      {model.cancelledAppointments}
+                    </li>
+                    <li>
+                      {t('admin.analyticsPage.statuses.unreadContacts')}:{' '}
+                      {model.unreadContacts}
+                    </li>
+                    <li>
+                      {t('admin.analyticsPage.statuses.pendingReviews')}:{' '}
+                      {model.pendingReviews}
+                    </li>
+                  </ul>
+                </div>
+                <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
+                  <h2 className="text-lg font-semibold text-dental-dark">
+                    {t('admin.analyticsPage.sources.title')}
+                  </h2>
+                  <ul className="mt-3 space-y-2 text-sm text-dental-text">
+                    {model.sourceBreakdown.length === 0 ? (
+                      <li>{t('admin.analyticsPage.common.noData')}</li>
+                    ) : (
+                      model.sourceBreakdown.map(source => (
+                        <li
+                          key={source.name}
+                          className="flex justify-between gap-2"
+                        >
+                          <span>{source.name}</span>
+                          <span className="font-semibold">{source.count}</span>
+                        </li>
+                      ))
+                    )}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </ErrorBoundary>
+
+          <ErrorBoundary fallback={<ChartErrorFallback />}>
+            <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
               <h2 className="text-lg font-semibold text-dental-dark">
-                {t('admin.analyticsPage.timeline.title')}
+                {t('admin.analyticsPage.topServices.title')}
               </h2>
-              <div className="mt-4 space-y-2">
-                {model.timeline.map(item => (
-                  <div key={item.date}>
-                    <div className="mb-1 flex items-center justify-between text-xs text-dental-text-light">
-                      <span>{item.date}</span>
-                      <span>
-                        {t('admin.analyticsPage.timeline.appointmentsCount', {
-                          count: item.count,
-                        })}
+              <div className="mt-3 grid gap-2 md:grid-cols-2">
+                {model.topServices.length === 0 ? (
+                  <p className="text-sm text-dental-text-light">
+                    {t('admin.analyticsPage.common.noData')}
+                  </p>
+                ) : (
+                  model.topServices.map(service => (
+                    <div
+                      key={service.name}
+                      className="flex items-center justify-between rounded-lg bg-dental-primary-50 px-3 py-2 text-sm"
+                    >
+                      <span className="text-dental-text">{service.name}</span>
+                      <span className="font-semibold text-dental-dark">
+                        {service.count}
                       </span>
                     </div>
-                    <div className="h-2 overflow-hidden rounded-full bg-dental-primary-100">
-                      <div
-                        className="h-full rounded-full bg-dental-primary-600"
-                        style={{
-                          width: `${(item.count / maxDailyAppointments) * 100}%`,
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
-
-            <div className="space-y-4">
-              <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-                <h2 className="text-lg font-semibold text-dental-dark">
-                  {t('admin.analyticsPage.statuses.title')}
-                </h2>
-                <ul className="mt-3 space-y-2 text-sm text-dental-text">
-                  <li>
-                    {t('admin.analyticsPage.statuses.pending')}:{' '}
-                    {model.pendingAppointments}
-                  </li>
-                  <li>
-                    {t('admin.analyticsPage.statuses.completed')}:{' '}
-                    {model.completedAppointments}
-                  </li>
-                  <li>
-                    {t('admin.analyticsPage.statuses.cancelledNoShow')}:{' '}
-                    {model.cancelledAppointments}
-                  </li>
-                  <li>
-                    {t('admin.analyticsPage.statuses.unreadContacts')}:{' '}
-                    {model.unreadContacts}
-                  </li>
-                  <li>
-                    {t('admin.analyticsPage.statuses.pendingReviews')}:{' '}
-                    {model.pendingReviews}
-                  </li>
-                </ul>
-              </div>
-              <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-                <h2 className="text-lg font-semibold text-dental-dark">
-                  {t('admin.analyticsPage.sources.title')}
-                </h2>
-                <ul className="mt-3 space-y-2 text-sm text-dental-text">
-                  {model.sourceBreakdown.length === 0 ? (
-                    <li>{t('admin.analyticsPage.common.noData')}</li>
-                  ) : (
-                    model.sourceBreakdown.map(source => (
-                      <li
-                        key={source.name}
-                        className="flex justify-between gap-2"
-                      >
-                        <span>{source.name}</span>
-                        <span className="font-semibold">{source.count}</span>
-                      </li>
-                    ))
-                  )}
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-            <h2 className="text-lg font-semibold text-dental-dark">
-              {t('admin.analyticsPage.topServices.title')}
-            </h2>
-            <div className="mt-3 grid gap-2 md:grid-cols-2">
-              {model.topServices.length === 0 ? (
-                <p className="text-sm text-dental-text-light">
-                  {t('admin.analyticsPage.common.noData')}
-                </p>
-              ) : (
-                model.topServices.map(service => (
-                  <div
-                    key={service.name}
-                    className="flex items-center justify-between rounded-lg bg-dental-primary-50 px-3 py-2 text-sm"
-                  >
-                    <span className="text-dental-text">{service.name}</span>
-                    <span className="font-semibold text-dental-dark">
-                      {service.count}
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
+          </ErrorBoundary>
         </>
       )}
     </div>

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { createClient as createSupabaseClient } from '@/lib/supabase/server'
 import { getAdminAccess } from '@/lib/supabase/admin'
+import { hasAnyPermission } from '@/lib/permissions'
 import {
   checkRateLimit,
   rateLimitResponse,
@@ -224,6 +225,18 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    if (
+      !hasAnyPermission(adminAccess.role, [
+        'appointments:view_all',
+        'appointments:view_own',
+      ])
+    ) {
+      return NextResponse.json(
+        { success: false, error: 'Insufficient permissions' },
+        { status: 403 }
+      )
+    }
+
     const { searchParams } = request.nextUrl
     const { page, pageSize, from, to } = parsePagination(searchParams)
 
@@ -237,8 +250,19 @@ export async function GET(request: NextRequest) {
     const date = searchParams.get('date')
     if (date) query = query.eq('appointment_date', date)
 
-    const doctorId = searchParams.get('doctorId')
-    if (doctorId) query = query.eq('doctor_id', doctorId)
+    // Doctors see only their own appointments — enforce via server-side filter
+    if (adminAccess.role === 'doctor') {
+      if (!adminAccess.doctorId) {
+        return NextResponse.json(
+          { success: false, error: "Лікар не прив'язаний до запису в системі" },
+          { status: 403 }
+        )
+      }
+      query = query.eq('doctor_id', adminAccess.doctorId)
+    } else {
+      const doctorId = searchParams.get('doctorId')
+      if (doctorId) query = query.eq('doctor_id', doctorId)
+    }
 
     const patientId = searchParams.get('patientId')
     if (patientId) query = query.eq('patient_id', patientId)

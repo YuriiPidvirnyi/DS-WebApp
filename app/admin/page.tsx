@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
+import { useAdminAuth } from '@/hooks/useAdminAuth'
+import { useAdminPageAccess } from '@/hooks/useAdminPageAccess'
+import { hasPermission } from '@/lib/permissions'
 import {
   Calendar,
   Users,
@@ -17,7 +19,6 @@ import {
   ArrowUpRight,
   MessageSquare,
   Star,
-  LogOut,
   Settings,
 } from 'lucide-react'
 
@@ -79,58 +80,39 @@ const SERVICE_COLORS = [
 
 export default function AdminDashboard() {
   const { t } = useTranslation()
-  const router = useRouter()
+  const { user, isAuthenticated, isLoading: authLoading } = useAdminAuth()
+  const pageAccessLoading = useAdminPageAccess('dashboard:view')
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([])
   const [serviceStats, setServiceStats] = useState<ServiceStat[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [isAdmin, setIsAdmin] = useState(false)
   const [lastUpdated, setLastUpdated] = useState<string>('')
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const checkAdminAndFetchData = async () => {
+    if (authLoading) return
+    if (!isAuthenticated || !user) {
+      setIsLoading(false)
+      return
+    }
+
+    const fetchData = async () => {
       const supabase = createClient()
-      if (!supabase) {
-        router.push('/admin/login')
+      if (!supabase) return
+
+      // Doctor without a linked doctor_id cannot see appointments
+      if (user.role === 'doctor' && !user.doctorId) {
+        setError(t('admin.dashboard.doctorNotLinked'))
+        setIsLoading(false)
         return
       }
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/admin/login')
-        return
-      }
-
-      const { data: adminMembership } = await supabase
-        .from('admin_users')
-        .select('id')
-        .eq('id', user.id)
-        .maybeSingle()
-
-      if (!adminMembership) {
-        router.push('/cabinet')
-        return
-      }
-
-      setIsAdmin(true)
 
       try {
         const today = new Date().toISOString().split('T')[0]
+        const canSeeContacts = hasPermission(user.role, 'appointments:view_all')
+        const canSeeReviews = hasPermission(user.role, 'settings:view')
 
-        const [
-          { count: totalAppointments },
-          { count: todayCount },
-          { count: pendingAppointments },
-          { count: completedAppointments },
-          { count: totalDoctors },
-          { count: unreadContacts },
-          { count: pendingReviews },
-          { data: todayAppts },
-          { data: serviceData },
-        ] = await Promise.all([
+        const appointmentsResults = await Promise.all([
           supabase
             .from('appointments')
             .select('*', { count: 'exact', head: true }),
@@ -147,18 +129,6 @@ export default function AdminDashboard() {
             .select('*', { count: 'exact', head: true })
             .eq('status', 'completed'),
           supabase
-            .from('doctors')
-            .select('*', { count: 'exact', head: true })
-            .eq('is_active', true),
-          supabase
-            .from('contact_submissions')
-            .select('*', { count: 'exact', head: true })
-            .eq('is_read', false),
-          supabase
-            .from('reviews')
-            .select('*', { count: 'exact', head: true })
-            .eq('status', 'pending'),
-          supabase
             .from('appointments')
             .select(
               'id, patient_name, appointment_time, status, services(name_uk)'
@@ -166,17 +136,54 @@ export default function AdminDashboard() {
             .eq('appointment_date', today)
             .order('appointment_time', { ascending: true })
             .limit(5),
-          supabase.from('services').select('category').eq('is_active', true),
         ])
+
+        const [
+          { count: totalAppointments },
+          { count: todayCount },
+          { count: pendingAppointments },
+          { count: completedAppointments },
+          { data: todayAppts },
+        ] = appointmentsResults
+
+        let totalDoctors = 0
+        let unreadContacts = 0
+        let pendingReviews = 0
+        let serviceData = null
+
+        if (canSeeContacts) {
+          const [doctorsRes, contactsRes, servicesRes] = await Promise.all([
+            supabase
+              .from('doctors')
+              .select('*', { count: 'exact', head: true })
+              .eq('is_active', true),
+            supabase
+              .from('contact_submissions')
+              .select('*', { count: 'exact', head: true })
+              .eq('is_read', false),
+            supabase.from('services').select('category').eq('is_active', true),
+          ])
+          totalDoctors = doctorsRes.count || 0
+          unreadContacts = contactsRes.count || 0
+          serviceData = servicesRes.data
+        }
+
+        if (canSeeReviews) {
+          const { count } = await supabase
+            .from('reviews')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'pending')
+          pendingReviews = count || 0
+        }
 
         setStats({
           totalAppointments: totalAppointments || 0,
           todayAppointments: todayCount || 0,
           pendingAppointments: pendingAppointments || 0,
           completedAppointments: completedAppointments || 0,
-          totalDoctors: totalDoctors || 0,
-          unreadContacts: unreadContacts || 0,
-          pendingReviews: pendingReviews || 0,
+          totalDoctors,
+          unreadContacts,
+          pendingReviews,
         })
 
         setTodayAppointments(todayAppts || [])
@@ -209,21 +216,14 @@ export default function AdminDashboard() {
             ? fetchError
             : new Error(String(fetchError))
         )
-        setError(t('admin.dashboard.loadError', 'Не вдалося завантажити дані'))
+        setError(t('admin.dashboard.loadError'))
       } finally {
         setIsLoading(false)
       }
     }
 
-    checkAdminAndFetchData()
-  }, [router, t])
-
-  const handleLogout = async () => {
-    const supabase = createClient()
-    if (!supabase) return
-    await supabase.auth.signOut()
-    router.push('/')
-  }
+    void fetchData()
+  }, [authLoading, isAuthenticated, user, t])
 
   const StatCard = ({
     title,
@@ -272,7 +272,7 @@ export default function AdminDashboard() {
     return href ? <Link href={href}>{content}</Link> : content
   }
 
-  if (isLoading) {
+  if (isLoading || pageAccessLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-slate-100">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
@@ -280,7 +280,7 @@ export default function AdminDashboard() {
     )
   }
 
-  if (!isAdmin) {
+  if (!isAuthenticated || !user) {
     return null
   }
 
@@ -309,15 +309,6 @@ export default function AdminDashboard() {
               >
                 <Settings className="w-5 h-5" />
               </Link>
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-2 text-dental-text hover:text-dental-primary-600 transition-colors"
-              >
-                <LogOut className="w-5 h-5" />
-                <span className="hidden sm:inline">
-                  {t('admin.dashboard.logout')}
-                </span>
-              </button>
             </div>
           </div>
         </div>

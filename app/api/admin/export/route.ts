@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminAccess } from '@/lib/supabase/admin'
+import { hasPermission } from '@/lib/permissions'
 import { checkRateLimit, rateLimitResponse } from '@/lib/api-security'
 
 export const runtime = 'nodejs'
@@ -23,6 +24,7 @@ function toCSV(rows: Record<string, unknown>[], columns: string[]): string {
   return `${header}\n${body}`
 }
 
+// CSRF validation is not required for GET — idempotent read, no state mutation.
 export async function GET(request: NextRequest) {
   const { allowed, remaining } = await checkRateLimit(request, 5, 60_000)
   if (!allowed) return rateLimitResponse(remaining)
@@ -47,7 +49,7 @@ export async function GET(request: NextRequest) {
   }
 
   const admin = await getAdminAccess(supabase, user.id)
-  if (!admin) {
+  if (!admin || !hasPermission(admin.role, 'analytics:view')) {
     return NextResponse.json(
       { success: false, error: 'Forbidden' },
       { status: 403 }

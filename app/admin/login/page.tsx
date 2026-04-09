@@ -1,19 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import {
-  Eye,
-  EyeOff,
-  Lock,
-  Mail,
-  AlertCircle,
-  ShieldCheck,
-  ArrowLeft,
-} from 'lucide-react'
+import { Eye, EyeOff, Lock, Mail, AlertCircle, ArrowLeft } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
+import Logo from '@/components/ui/Logo'
 
 export default function AdminLoginPage() {
   const router = useRouter()
@@ -26,9 +19,14 @@ export default function AdminLoginPage() {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  // Redirect if already authenticated
+  // Redirect if already authenticated (must be in useEffect, not render body)
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace('/admin')
+    }
+  }, [isAuthenticated, router])
+
   if (isAuthenticated) {
-    router.push('/admin')
     return null
   }
 
@@ -48,27 +46,23 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-900 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-dental-primary/40 via-dental-secondary/30 to-dental-primary/20 px-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-dental-teal rounded-2xl mb-4">
-            <ShieldCheck className="w-8 h-8 text-white" />
+          <div className="inline-block">
+            <Logo size="md" />
           </div>
-          <h1 className="text-2xl font-bold text-white">
-            {t('common.brandName')}
-          </h1>
-          <p className="text-slate-400 mt-1">{t('admin.login.title')}</p>
         </div>
 
         {/* Login Form */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6 text-center">
+        <div className="bg-white rounded-2xl shadow-lg border border-dental-secondary/60 p-8">
+          <h2 className="text-xl font-semibold text-dental-dark mb-6 text-center font-nunito">
             {t('admin.login.systemLogin')}
           </h2>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3 text-red-700">
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3 text-red-700">
               <AlertCircle className="w-5 h-5 flex-shrink-0" />
               <span className="text-sm">{error}</span>
             </div>
@@ -79,19 +73,19 @@ export default function AdminLoginPage() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-dental-text mb-2"
               >
                 {t('admin.login.email')}
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-dental-text/50" />
                 <input
                   id="email"
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   required
-                  className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dental-teal focus:border-dental-teal transition-colors"
+                  className="w-full pl-11 pr-4 py-3 border border-dental-secondary rounded-xl focus:ring-2 focus:ring-dental-teal focus:border-dental-teal transition-colors text-dental-dark placeholder:text-dental-text/40"
                   placeholder={t('admin.login.emailPlaceholder')}
                   autoComplete="email"
                 />
@@ -102,26 +96,26 @@ export default function AdminLoginPage() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-dental-text mb-2"
               >
                 {t('admin.login.password')}
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-dental-text/50" />
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   required
-                  className="w-full pl-11 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dental-teal focus:border-dental-teal transition-colors"
+                  className="w-full pl-11 pr-12 py-3 border border-dental-secondary rounded-xl focus:ring-2 focus:ring-dental-teal focus:border-dental-teal transition-colors text-dental-dark placeholder:text-dental-text/40"
                   placeholder={t('admin.login.passwordPlaceholder')}
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-dental-text/50 hover:text-dental-text transition-colors"
                   aria-label={
                     showPassword
                       ? t('admin.login.hidePassword')
@@ -141,7 +135,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 px-4 bg-dental-teal hover:bg-teal-700 disabled:bg-gray-400 text-white font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dental-teal"
+              className="w-full py-3 px-4 bg-dental-teal hover:bg-dental-dark disabled:opacity-50 text-white font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dental-teal"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -174,7 +168,7 @@ export default function AdminLoginPage() {
         <div className="text-center mt-6">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-slate-400 hover:text-white text-sm transition-colors"
+            className="inline-flex items-center gap-1.5 text-dental-text hover:text-dental-dark text-sm transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             {t('admin.login.backToSite')}

@@ -1,7 +1,8 @@
 import type { SupabaseClient, User } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
-import { getAdminAccess } from '@/lib/supabase/admin'
+import { getAdminAccess, type AdminAccess } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import { hasPermission } from '@/lib/permissions'
 import {
   checkRateLimit,
   csrfErrorResponse,
@@ -15,7 +16,7 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 type AdminResult =
-  | { supabase: SupabaseClient; user: User }
+  | { supabase: SupabaseClient; user: User; access: AdminAccess }
   | { error: NextResponse }
 
 async function requireAdmin(): Promise<AdminResult> {
@@ -53,7 +54,7 @@ async function requireAdmin(): Promise<AdminResult> {
     }
   }
 
-  return { supabase, user }
+  return { supabase, user, access: adminAccess }
 }
 
 const MATERIAL_SELECT = `
@@ -66,6 +67,7 @@ const MATERIAL_SELECT = `
   sku,
   min_stock_level,
   is_active,
+  image_url,
   supplier_name,
   supplier_contact,
   supplier_email,
@@ -87,6 +89,14 @@ export async function GET(request: NextRequest) {
 
   const auth = await requireAdmin()
   if ('error' in auth) return auth.error
+
+  if (!hasPermission(auth.access.role, 'inventory:view')) {
+    return NextResponse.json(
+      { success: false, error: 'Insufficient permissions' },
+      { status: 403 }
+    )
+  }
+
   const { supabase } = auth
 
   const { searchParams } = request.nextUrl
@@ -147,6 +157,14 @@ export async function POST(request: NextRequest) {
 
   const auth = await requireAdmin()
   if ('error' in auth) return auth.error
+
+  if (!hasPermission(auth.access.role, 'inventory:edit')) {
+    return NextResponse.json(
+      { success: false, error: 'Insufficient permissions' },
+      { status: 403 }
+    )
+  }
+
   const { supabase } = auth
 
   let body: Record<string, unknown>

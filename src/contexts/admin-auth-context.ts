@@ -1,11 +1,15 @@
 import { createContext } from 'react'
-import type { AdminRole } from '@/lib/supabase/admin'
+import type { AdminRole } from '@/lib/permissions'
+
+export type { AdminRole }
 
 export interface AdminUser {
   id: string
   email: string
   name: string
   role: AdminRole
+  /** Set for `doctor` role — links to the doctors table record. */
+  doctorId: string | null
 }
 
 export interface AdminAuthContextType {

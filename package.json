@@ -1,6 +1,6 @@
 {
   "name": "dental-story-webapp",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Modern webapp for Dental Story dental clinic",
   "type": "module",
   "scripts": {
@@ -9,6 +9,7 @@
     "dev:clear-turbo": "node ./scripts/clean-turbopack-cache.mjs",
     "dev:restart": "npm run dev:kill && npm run dev:clear-turbo && npm run dev",
     "build": "next build",
+    "build:check": "npm run typecheck && npm run lint && npm run build",
     "analyze": "ANALYZE=true next build",
     "start": "next start",
     "lint": "eslint src/ app/ --report-unused-disable-directives --max-warnings 100",

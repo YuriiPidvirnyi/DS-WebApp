@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 import { getAdminAccess } from '@/lib/supabase/admin'
+import { hasPermission } from '@/lib/permissions'
 import { createClient } from '@/lib/supabase/server'
 import {
   CACHE_KEYS,
@@ -141,7 +142,7 @@ async function requireAdmin(): Promise<
   }
 
   const adminAccess = await getAdminAccess(supabase, user.id)
-  if (!adminAccess) {
+  if (!adminAccess || !hasPermission(adminAccess.role, 'analytics:view')) {
     return {
       response: NextResponse.json(
         { success: false, error: 'Недостатньо прав доступу' },

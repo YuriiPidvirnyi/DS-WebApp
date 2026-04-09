@@ -72,7 +72,7 @@ export const SITE_INFO = {
   description: uk.meta.description,
   tagline: uk.about.story.mission,
   url: 'https://dentalstory.com.ua',
-  foundedYear: 2024,
+  foundedYear: 2020,
   googleMaps: 'https://maps.app.goo.gl/gprGw94tfAJH7xFSA',
   businessType: uk.structuredData.medicalClinicNameSuffix,
   rating: 4.7,

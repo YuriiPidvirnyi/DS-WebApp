@@ -6,6 +6,7 @@ import { RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button, Input, Select } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
+import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
 import {
@@ -54,6 +55,8 @@ export default function AdminAppointmentsPage() {
   const { t } = useTranslation()
   const searchParams = useSearchParams()
   const { preferences } = useAdminPreferences()
+  const { user } = useAdminAuth()
+  const isDoctor = user?.role === 'doctor'
   const [rows, setRows] = useState<AppointmentRow[]>([])
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [searchTerm, setSearchTerm] = useState('')
@@ -320,6 +323,11 @@ export default function AdminAppointmentsPage() {
 
   return (
     <div className="space-y-6">
+      {isDoctor && (
+        <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+          {t('admin.appointmentsPage.doctorScopeNotice')}
+        </div>
+      )}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-dental-dark">

@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createClient } from '@/lib/supabase/client'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
+import { useAdminAuth } from '@/hooks/useAdminAuth'
 import i18n from '@/i18n/config'
 import {
   listAdminAuditLogs,
@@ -21,6 +22,10 @@ vi.mock('@/lib/supabase/client', () => ({
 
 vi.mock('@/hooks/useAdminPreferences', () => ({
   useAdminPreferences: vi.fn(),
+}))
+
+vi.mock('@/hooks/useAdminAuth', () => ({
+  useAdminAuth: vi.fn(),
 }))
 
 vi.mock('@/lib/supabase/audit', () => ({
@@ -62,6 +67,7 @@ function createListBuilder<T>(rows: T[]) {
 
 const createClientMock = vi.mocked(createClient)
 const useAdminPreferencesMock = vi.mocked(useAdminPreferences)
+const useAdminAuthMock = vi.mocked(useAdminAuth)
 const listAdminAuditLogsMock = vi.mocked(listAdminAuditLogs)
 const restoreFromAuditLogMock = vi.mocked(restoreFromAuditLog)
 const t = i18n.t.bind(i18n)
@@ -73,6 +79,14 @@ const DEFAULT_PREFS = {
   defaultAnalyticsPeriod: 30 as const,
 }
 
+const DEFAULT_AUTH = {
+  user: null,
+  isLoading: false,
+  isAuthenticated: false,
+  login: vi.fn(),
+  logout: vi.fn(),
+}
+
 describe('Admin pages UI smoke', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -80,6 +94,7 @@ describe('Admin pages UI smoke', () => {
       preferences: DEFAULT_PREFS,
       updatePreferences: vi.fn(),
     })
+    useAdminAuthMock.mockReturnValue(DEFAULT_AUTH)
   })
 
   it('runs doctors toggle and bulk actions against Supabase', async () => {
