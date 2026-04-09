@@ -33,7 +33,7 @@
     "@ducanh2912/next-pwa": "^10.2.9",
     "@hookform/resolvers": "^5.2.2",
     "@sentry/nextjs": "^10.45.0",
-    "@supabase/ssr": "^0.8.0",
+    "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.99.3",
     "@types/dompurify": "^3.0.5",
     "@upstash/redis": "^1.36.3",
