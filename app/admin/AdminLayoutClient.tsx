@@ -23,6 +23,7 @@ import {
   Package,
   ShoppingCart,
   ArrowLeft,
+  ShieldCheck,
 } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
 import { AdminAuthProvider } from '@/contexts/AdminAuthContext'

@@ -168,7 +168,7 @@ export default function AdminLoginPage() {
         <div className="text-center mt-6">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-slate-400 hover:text-white text-sm transition-colors"
+            className="inline-flex items-center gap-1.5 text-dental-text hover:text-dental-dark text-sm transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             {t('admin.login.backToSite')}
