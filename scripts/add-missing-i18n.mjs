@@ -3,7 +3,13 @@ import { readFileSync, writeFileSync } from 'fs'
 function deepMerge(target, source) {
   const result = { ...target }
   for (const [k, v] of Object.entries(source)) {
-    if (v && typeof v === 'object' && !Array.isArray(v) && result[k] && typeof result[k] === 'object') {
+    if (
+      v &&
+      typeof v === 'object' &&
+      !Array.isArray(v) &&
+      result[k] &&
+      typeof result[k] === 'object'
+    ) {
       result[k] = deepMerge(result[k], v)
     } else if (!(k in result)) {
       result[k] = v
@@ -54,7 +60,8 @@ const additions = {
         noUpcomingDesc: 'Запишіться до лікаря у зручний для вас час',
         viewDetails: 'Переглянути',
         profileIncomplete: 'Заповніть профіль',
-        profileHint: 'Повна інформація допомагає лікарям краще підготуватися до прийому',
+        profileHint:
+          'Повна інформація допомагає лікарям краще підготуватися до прийому',
         completeProfile: 'Заповнити профіль',
       },
       error: {
@@ -178,7 +185,8 @@ const additions = {
         noUpcomingDesc: 'Book an appointment at a convenient time',
         viewDetails: 'View details',
         profileIncomplete: 'Complete your profile',
-        profileHint: 'Full information helps doctors prepare better for your appointment',
+        profileHint:
+          'Full information helps doctors prepare better for your appointment',
         completeProfile: 'Complete profile',
       },
       error: {
@@ -302,12 +310,14 @@ const additions = {
         noUpcomingDesc: 'Umów wizytę w dogodnym terminie',
         viewDetails: 'Szczegóły',
         profileIncomplete: 'Uzupełnij profil',
-        profileHint: 'Pełne informacje pomagają lekarzom lepiej przygotować się do wizyty',
+        profileHint:
+          'Pełne informacje pomagają lekarzom lepiej przygotować się do wizyty',
         completeProfile: 'Uzupełnij profil',
       },
       error: {
         title: 'Coś poszło nie tak',
-        description: 'Nie udało się załadować danych. Spróbuj odświeżyć stronę.',
+        description:
+          'Nie udało się załadować danych. Spróbuj odświeżyć stronę.',
         retry: 'Spróbuj ponownie',
         goHome: 'Strona główna',
         devDetails: 'Szczegóły błędu',
@@ -368,7 +378,8 @@ const additions = {
       payments: {
         title: 'Płatności',
         comingSoon: 'Wkrótce',
-        description: 'Płatności online za usługi kliniczne są w trakcie realizacji.',
+        description:
+          'Płatności online za usługi kliniczne są w trakcie realizacji.',
         feature1Title: 'Faktury',
         feature1Desc: 'Przeglądaj swoje faktury',
         feature2Title: 'Płatność',
