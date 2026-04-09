@@ -3,15 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import {
-  Eye,
-  EyeOff,
-  Lock,
-  Mail,
-  AlertCircle,
-  ShieldCheck,
-  ArrowLeft,
-} from 'lucide-react'
+import { Eye, EyeOff, Lock, Mail, AlertCircle, ArrowLeft } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import Logo from '@/components/ui/Logo'
