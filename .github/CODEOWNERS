@@ -1,0 +1,9 @@
+# Default owner for all files
+* @YuriiPidvirnyi
+
+# CI/CD and infrastructure
+.github/ @YuriiPidvirnyi
+vercel.json @YuriiPidvirnyi
+
+# Database migrations require owner review
+supabase/ @YuriiPidvirnyi

@@ -39,23 +39,49 @@ const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
 const PASSWORD = 'RbacTest!2026'
 
 const TEST_USERS = [
-  { email: 'rbac.superadmin@dentalstory.ua', role: 'superadmin', displayName: 'Super Admin' },
-  { email: 'rbac.admin@dentalstory.ua',      role: 'admin',       displayName: 'Admin' },
-  { email: 'rbac.receptionist@dentalstory.ua', role: 'receptionist', displayName: 'Receptionist' },
-  { email: 'rbac.doctor@dentalstory.ua',     role: 'doctor',      displayName: 'Dr. Test', specialization: 'Терапевт' },
-  { email: 'rbac.seniorasst@dentalstory.ua', role: 'senior_assistant', displayName: 'Senior Assistant' },
-  { email: 'rbac.assistant@dentalstory.ua',  role: 'assistant',   displayName: 'Assistant' },
-  { email: 'rbac.staff@dentalstory.ua',      role: 'staff',       displayName: 'Staff' },
+  {
+    email: 'rbac.superadmin@dentalstory.ua',
+    role: 'superadmin',
+    displayName: 'Super Admin',
+  },
+  { email: 'rbac.admin@dentalstory.ua', role: 'admin', displayName: 'Admin' },
+  {
+    email: 'rbac.receptionist@dentalstory.ua',
+    role: 'receptionist',
+    displayName: 'Receptionist',
+  },
+  {
+    email: 'rbac.doctor@dentalstory.ua',
+    role: 'doctor',
+    displayName: 'Dr. Test',
+    specialization: 'Терапевт',
+  },
+  {
+    email: 'rbac.seniorasst@dentalstory.ua',
+    role: 'senior_assistant',
+    displayName: 'Senior Assistant',
+  },
+  {
+    email: 'rbac.assistant@dentalstory.ua',
+    role: 'assistant',
+    displayName: 'Assistant',
+  },
+  { email: 'rbac.staff@dentalstory.ua', role: 'staff', displayName: 'Staff' },
 ]
 
 async function run() {
-  console.log(`🔑  Seeding ${TEST_USERS.length} RBAC test users against ${SUPABASE_URL}\n`)
+  console.log(
+    `🔑  Seeding ${TEST_USERS.length} RBAC test users against ${SUPABASE_URL}\n`
+  )
 
   for (const u of TEST_USERS) {
     process.stdout.write(`  [${u.role.padEnd(16)}]  ${u.email}  … `)
 
     // 1. Check if auth user already exists
-    const { data: listData } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 })
+    const { data: listData } = await supabase.auth.admin.listUsers({
+      page: 1,
+      perPage: 1000,
+    })
     const existing = listData?.users?.find(x => x.email === u.email)
 
     let userId = existing?.id
@@ -63,11 +89,12 @@ async function run() {
     if (userId) {
       process.stdout.write('auth exists  ')
     } else {
-      const { data: created, error: createErr } = await supabase.auth.admin.createUser({
-        email: u.email,
-        password: PASSWORD,
-        email_confirm: true,
-      })
+      const { data: created, error: createErr } =
+        await supabase.auth.admin.createUser({
+          email: u.email,
+          password: PASSWORD,
+          email_confirm: true,
+        })
       if (createErr) {
         console.log(`❌  ${createErr.message}`)
         continue

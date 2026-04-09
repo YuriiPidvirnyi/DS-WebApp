@@ -1,8 +1,9 @@
 version: 2
 updates:
-  # Enable version updates for npm
+  # Enable version updates for npm — PRs target develop (preproduction)
   - package-ecosystem: 'npm'
     directory: '/'
+    target-branch: 'develop'
     schedule:
       interval: 'weekly'
       day: 'monday'
@@ -39,9 +40,10 @@ updates:
           - 'storybook*'
           - '@storybook/*'
 
-  # Enable version updates for GitHub Actions
+  # Enable version updates for GitHub Actions — PRs target develop
   - package-ecosystem: 'github-actions'
     directory: '/'
+    target-branch: 'develop'
     schedule:
       interval: 'weekly'
       day: 'monday'
