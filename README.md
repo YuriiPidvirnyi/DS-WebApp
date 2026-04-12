@@ -49,7 +49,7 @@ A modern, fully-featured website for a dental clinic (Dental Story) built with N
 
 ## Prerequisites
 
-- Node.js 18+ and npm/pnpm/yarn/bun
+- Node.js 20.9+ and npm/pnpm/yarn/bun
 - Supabase account (free tier available)
 - Upstash Redis (for rate limiting)
 - Cloudflare Turnstile account (for CAPTCHA, optional)
