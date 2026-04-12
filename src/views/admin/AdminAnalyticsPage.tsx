@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { RefreshCw } from 'lucide-react'
+import { Loader2, RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button, Select } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
@@ -42,7 +42,10 @@ const PERIODS: Array<{ value: 7 | 30 | 90 }> = [
 function ChartErrorFallback() {
   const { t } = useTranslation()
   return (
-    <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-6 text-center text-sm text-red-700">
+    <div
+      role="alert"
+      className="rounded-xl border border-red-200 bg-red-50 px-4 py-6 text-center text-sm text-red-700"
+    >
       {t('admin.analyticsPage.errors.chartFailed')}
     </div>
   )
@@ -160,7 +163,7 @@ export default function AdminAnalyticsPage() {
           <h1 className="text-2xl font-bold text-dental-dark">
             {t('admin.analyticsPage.title')}
           </h1>
-          <p className="text-sm text-dental-text-light">
+          <p className="text-sm text-dental-muted">
             {t('admin.analyticsPage.description')}
           </p>
         </div>
@@ -192,21 +195,25 @@ export default function AdminAnalyticsPage() {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div
+          role="alert"
+          className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+        >
           {error}
         </div>
       )}
 
       {isLoading || !model ? (
-        <div className="rounded-xl border border-dental-secondary-200 bg-white px-4 py-8 text-center text-dental-text-light">
-          {t('admin.analyticsPage.loading')}
+        <div className="rounded-xl border border-dental-secondary-200 bg-white px-4 py-12 flex flex-col items-center gap-3 text-dental-muted">
+          <Loader2 className="w-8 h-8 animate-spin text-dental-teal" />
+          <span className="text-sm">{t('admin.analyticsPage.loading')}</span>
         </div>
       ) : (
         <>
           <ErrorBoundary fallback={<ChartErrorFallback />}>
             <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
               <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-                <p className="text-xs text-dental-text-light">
+                <p className="text-xs text-dental-muted">
                   {t('admin.analyticsPage.cards.appointments')}
                 </p>
                 <p className="text-2xl font-bold text-dental-dark">
@@ -214,7 +221,7 @@ export default function AdminAnalyticsPage() {
                 </p>
               </div>
               <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-                <p className="text-xs text-dental-text-light">
+                <p className="text-xs text-dental-muted">
                   {t('admin.analyticsPage.cards.completionRate')}
                 </p>
                 <p className="text-2xl font-bold text-green-600">
@@ -222,7 +229,7 @@ export default function AdminAnalyticsPage() {
                 </p>
               </div>
               <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-                <p className="text-xs text-dental-text-light">
+                <p className="text-xs text-dental-muted">
                   {t('admin.analyticsPage.cards.revenue')}
                 </p>
                 <p className="text-xl font-bold text-dental-dark">
@@ -230,7 +237,7 @@ export default function AdminAnalyticsPage() {
                 </p>
               </div>
               <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-                <p className="text-xs text-dental-text-light">
+                <p className="text-xs text-dental-muted">
                   {t('admin.analyticsPage.cards.avgTicket')}
                 </p>
                 <p className="text-xl font-bold text-dental-dark">
@@ -238,7 +245,7 @@ export default function AdminAnalyticsPage() {
                 </p>
               </div>
               <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-                <p className="text-xs text-dental-text-light">
+                <p className="text-xs text-dental-muted">
                   {t('admin.analyticsPage.cards.patients')}
                 </p>
                 <p className="text-2xl font-bold text-dental-dark">
@@ -257,7 +264,7 @@ export default function AdminAnalyticsPage() {
                 <div className="mt-4 space-y-2">
                   {model.timeline.map(item => (
                     <div key={item.date}>
-                      <div className="mb-1 flex items-center justify-between text-xs text-dental-text-light">
+                      <div className="mb-1 flex items-center justify-between text-xs text-dental-muted">
                         <span>{item.date}</span>
                         <span>
                           {t('admin.analyticsPage.timeline.appointmentsCount', {
@@ -337,7 +344,7 @@ export default function AdminAnalyticsPage() {
               </h2>
               <div className="mt-3 grid gap-2 md:grid-cols-2">
                 {model.topServices.length === 0 ? (
-                  <p className="text-sm text-dental-text-light">
+                  <p className="text-sm text-dental-muted">
                     {t('admin.analyticsPage.common.noData')}
                   </p>
                 ) : (

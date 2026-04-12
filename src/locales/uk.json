@@ -67,6 +67,12 @@
     "aria": {
       "open": "Відкрити меню швидких дій",
       "close": "Закрити меню"
+    },
+    "chatChooser": {
+      "title": "Чат підтримки",
+      "subtitle": "Оберіть спосіб зв'язку:",
+      "human": "Написати адміністратору",
+      "closeAccessibilityPanel": "Закрити панель доступності"
     }
   },
   "languageSwitcher": {

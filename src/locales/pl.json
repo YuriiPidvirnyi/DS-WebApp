@@ -67,6 +67,12 @@
     "aria": {
       "open": "Otwórz menu szybkich akcji",
       "close": "Zamknij menu"
+    },
+    "chatChooser": {
+      "title": "Czat wsparcia",
+      "subtitle": "Wybierz sposób kontaktu:",
+      "human": "Napisz do administratora",
+      "closeAccessibilityPanel": "Zamknij panel dostępności"
     }
   },
   "languageSwitcher": {

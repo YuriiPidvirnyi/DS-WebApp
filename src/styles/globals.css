@@ -249,14 +249,14 @@
   /* Focus visible styles for accessibility */
   *:focus-visible {
     @apply outline-none ring-2 ring-offset-2;
-    --tw-ring-color: #aeced3; /* dental-primary */
+    --tw-ring-color: #3f6f79; /* dental-primary-600 — meets WCAG 3:1 focus contrast */
   }
 
   /* Improved focus styles for interactive elements */
   a:focus-visible,
   button:focus-visible {
     @apply ring-2 ring-offset-2 outline-none;
-    --tw-ring-color: #aeced3; /* dental-primary */
+    --tw-ring-color: #3f6f79; /* dental-primary-600 */
   }
 
   /* Remove outline for mouse users but keep for keyboard users */
@@ -276,7 +276,7 @@
 
   /* Ensure sufficient color contrast */
   ::selection {
-    background-color: #aeced3; /* dental-primary */
+    background-color: #c5dde1; /* dental-primary-200 — light tint for selection */
     color: #2c3e42; /* dental-dark */
   }
 

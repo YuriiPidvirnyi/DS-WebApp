@@ -380,7 +380,7 @@ export default function AdminOrdersPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold text-dental-navy">
+        <h1 className="text-2xl font-bold text-dental-dark">
           {t('admin.ordersPage.title')}
         </h1>
         <div className="flex flex-wrap items-center gap-2">
@@ -423,7 +423,10 @@ export default function AdminOrdersPage() {
         </div>
       </div>
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+        <div
+          role="alert"
+          className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+        >
           {error}
         </div>
       )}
@@ -460,7 +463,7 @@ export default function AdminOrdersPage() {
                   <span className="text-sm text-dental-text">
                     {formatDateTime(order.created_at)}
                   </span>
-                  <span className="text-sm font-medium text-dental-navy">
+                  <span className="text-sm font-medium text-dental-dark">
                     —
                   </span>
                   <span
@@ -471,7 +474,7 @@ export default function AdminOrdersPage() {
                   <span className={`text-xs ${URG_CLR[order.urgency]}`}>
                     {t(URGENCY_I18N[order.urgency])}
                   </span>
-                  <span className="text-sm font-semibold text-dental-navy ml-auto">
+                  <span className="text-sm font-semibold text-dental-dark ml-auto">
                     {formatCurrency(order.total_estimated_cost)}
                   </span>
                   <span className="text-xs text-gray-500">
@@ -500,7 +503,7 @@ export default function AdminOrdersPage() {
                             className="border-b border-gray-100 py-2 space-y-1"
                           >
                             <div className="flex flex-wrap gap-2 justify-between items-center">
-                              <span className="inline-flex items-center gap-2 text-dental-navy font-medium">
+                              <span className="inline-flex items-center gap-2 text-dental-dark font-medium">
                                 {row.materials?.image_url ? (
                                   <Image
                                     src={row.materials.image_url}
@@ -551,7 +554,7 @@ export default function AdminOrdersPage() {
                                         }))
                                       }
                                     />
-                                    <span className="text-dental-text-light">
+                                    <span className="text-dental-muted">
                                       / {req}
                                     </span>
                                   </div>
@@ -575,7 +578,7 @@ export default function AdminOrdersPage() {
                       </p>
                     )}
                     {order.approved_at && (
-                      <p className="text-xs text-dental-text-light">
+                      <p className="text-xs text-dental-muted">
                         {t('admin.ordersPage.approvedAt')}:{' '}
                         {formatDateTime(order.approved_at)}
                       </p>
@@ -638,11 +641,11 @@ export default function AdminOrdersPage() {
                     {/* Audit history timeline */}
                     {auditOpen === order.id && (
                       <div className="rounded-lg border border-gray-200 bg-white p-3 text-xs space-y-2">
-                        <p className="font-medium text-dental-navy text-sm">
+                        <p className="font-medium text-dental-dark text-sm">
                           {t('admin.ordersPage.historyTitle')}
                         </p>
                         {!auditLogs[order.id]?.length ? (
-                          <p className="text-dental-text-light">
+                          <p className="text-dental-text">
                             {t('admin.ordersPage.noHistory')}
                           </p>
                         ) : (
@@ -654,7 +657,7 @@ export default function AdminOrdersPage() {
                               >
                                 <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-dental-teal" />
                                 <div>
-                                  <span className="text-dental-text-light">
+                                  <span className="text-dental-muted">
                                     {formatDateTime(log.changed_at)}
                                   </span>
                                   {' — '}
@@ -703,10 +706,10 @@ export default function AdminOrdersPage() {
         </div>
       )}
       {createOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-dental-navy/40">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-dental-dark/40">
           <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-200">
             <div className="flex items-center justify-between px-4 py-3 border-b">
-              <h2 className="text-lg font-semibold text-dental-navy">
+              <h2 className="text-lg font-semibold text-dental-dark">
                 {t('admin.ordersPage.create.title')}
               </h2>
               <button
@@ -835,7 +838,7 @@ export default function AdminOrdersPage() {
                 />
               </label>
               <div className="flex items-center justify-between pt-2 border-t">
-                <p className="text-dental-navy font-semibold">
+                <p className="text-dental-dark font-semibold">
                   {t('admin.ordersPage.create.totalCost')}:{' '}
                   {formatCurrency(tot)}
                 </p>

@@ -162,16 +162,20 @@ export default function SignUpPage() {
           <Link href="/" className="inline-block">
             <Logo variant="default" size="md" />
           </Link>
-          <h1 className="text-sm text-dental-muted mt-2">
+          <p className="text-sm text-dental-muted mt-2">
             {t('auth.signUp.subtitle')}
-          </h1>
+          </p>
         </div>
 
         {/* Sign Up Form */}
         <div className="bg-white rounded-2xl shadow-soft p-8">
           <form onSubmit={handleSignUp} className="space-y-5">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+              <div
+                role="alert"
+                aria-live="polite"
+                className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm"
+              >
                 {error}
               </div>
             )}
@@ -190,11 +194,12 @@ export default function SignUpPage() {
                     id="firstName"
                     name="firstName"
                     type="text"
+                    autoComplete="given-name"
                     value={formData.firstName}
                     onChange={handleChange}
                     placeholder={t('auth.signUp.firstNamePlaceholder')}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-2 focus:ring-dental-primary-100 focus:border-dental-primary-600 transition-all"
+                    className="w-full pl-10 pr-4 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-dental-primary-400 focus:border-dental-primary-600 transition-all"
                   />
                 </div>
               </div>
@@ -209,11 +214,12 @@ export default function SignUpPage() {
                   id="lastName"
                   name="lastName"
                   type="text"
+                  autoComplete="family-name"
                   value={formData.lastName}
                   onChange={handleChange}
                   placeholder={t('auth.signUp.lastNamePlaceholder')}
                   required
-                  className="w-full px-4 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-2 focus:ring-dental-primary-100 focus:border-dental-primary-600 transition-all"
+                  className="w-full px-4 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-dental-primary-400 focus:border-dental-primary-600 transition-all"
                 />
               </div>
             </div>
@@ -234,12 +240,13 @@ export default function SignUpPage() {
                   id="phone"
                   name="phone"
                   type="tel"
+                  autoComplete="tel-national"
                   value={formData.phone}
                   onChange={handlePhoneChange}
                   placeholder={t('auth.signUp.phonePlaceholder')}
                   required
                   maxLength={13}
-                  className="w-full pl-20 pr-4 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-2 focus:ring-dental-primary-100 focus:border-dental-primary-600 transition-all"
+                  className="w-full pl-20 pr-4 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-dental-primary-400 focus:border-dental-primary-600 transition-all"
                 />
               </div>
             </div>
@@ -257,11 +264,12 @@ export default function SignUpPage() {
                   id="email"
                   name="email"
                   type="email"
+                  autoComplete="email"
                   value={formData.email}
                   onChange={handleChange}
                   placeholder={t('auth.signUp.emailPlaceholder')}
                   required
-                  className="w-full pl-10 pr-4 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-2 focus:ring-dental-primary-100 focus:border-dental-primary-600 transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-dental-primary-400 focus:border-dental-primary-600 transition-all"
                 />
               </div>
             </div>
@@ -279,11 +287,12 @@ export default function SignUpPage() {
                   id="password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
                   value={formData.password}
                   onChange={handleChange}
                   placeholder={t('auth.signUp.passwordPlaceholder')}
                   required
-                  className="w-full pl-10 pr-12 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-2 focus:ring-dental-primary-100 focus:border-dental-primary-600 transition-all"
+                  className="w-full pl-10 pr-12 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-dental-primary-400 focus:border-dental-primary-600 transition-all"
                 />
                 <button
                   type="button"
@@ -330,11 +339,12 @@ export default function SignUpPage() {
                   id="confirmPassword"
                   name="confirmPassword"
                   type={showPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder={t('auth.signUp.confirmPasswordPlaceholder')}
                   required
-                  className="w-full pl-10 pr-12 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-2 focus:ring-dental-primary-100 focus:border-dental-primary-600 transition-all"
+                  className="w-full pl-10 pr-12 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-dental-primary-400 focus:border-dental-primary-600 transition-all"
                 />
                 {formData.confirmPassword &&
                   formData.password === formData.confirmPassword && (
@@ -349,7 +359,7 @@ export default function SignUpPage() {
                 checked={agreeToTerms}
                 onChange={e => setAgreeToTerms(e.target.checked)}
                 required
-                className="mt-1 w-4 h-4 text-dental-primary-600 border-dental-secondary-300 rounded focus:ring-dental-primary-300"
+                className="mt-1 w-4 h-4 text-dental-primary-600 border-dental-secondary-300 rounded focus:ring-dental-primary-400"
               />
               <span className="text-sm text-dental-text">
                 {t('auth.signUp.agreePrefix')}{' '}

@@ -391,7 +391,7 @@ export default function AdminMaterialsPage() {
             <Package className="h-7 w-7" aria-hidden />
           </div>
           <div>
-            <h1 className="font-nunito text-2xl font-bold text-dental-dark">
+            <h1 className="text-2xl font-bold text-dental-dark">
               {t('admin.materialsPage.title')}
             </h1>
             <p className="text-sm text-dental-text">
@@ -444,7 +444,10 @@ export default function AdminMaterialsPage() {
         </div>
       </div>
       {error ? (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+        <div
+          role="alert"
+          className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+        >
           {error}
         </div>
       ) : null}
@@ -509,7 +512,7 @@ export default function AdminMaterialsPage() {
             {t('admin.materialsPage.loading')}
           </p>
         ) : list.length === 0 ? (
-          <p className="p-8 text-center text-dental-text-light">
+          <p className="p-8 text-center text-dental-text">
             {t('admin.materialsPage.empty')}
           </p>
         ) : (
@@ -544,7 +547,7 @@ export default function AdminMaterialsPage() {
                           className="h-10 w-10 rounded-lg object-cover border border-dental-secondary-200"
                         />
                       ) : (
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-dental-secondary-50 text-dental-text-light">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-dental-secondary-50 text-dental-muted">
                           <Package className="h-5 w-5" />
                         </div>
                       )}
@@ -588,9 +591,7 @@ export default function AdminMaterialsPage() {
                     <td className={c}>
                       <span
                         className={
-                          r.is_active
-                            ? 'text-green-700'
-                            : 'text-dental-text-light'
+                          r.is_active ? 'text-green-700' : 'text-dental-muted'
                         }
                       >
                         {r.is_active
@@ -669,7 +670,7 @@ export default function AdminMaterialsPage() {
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploadingImage}
-                  className="flex h-20 w-20 flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-dental-secondary-300 text-dental-text-light hover:border-dental-teal hover:text-dental-teal transition-colors"
+                  className="flex h-20 w-20 flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-dental-secondary-300 text-dental-muted hover:border-dental-teal hover:text-dental-teal transition-colors"
                 >
                   <ImagePlus className="h-6 w-6" />
                   <span className="text-[10px]">
@@ -677,7 +678,7 @@ export default function AdminMaterialsPage() {
                   </span>
                 </button>
               )}
-              <div className="flex-1 text-sm text-dental-text-light">
+              <div className="flex-1 text-sm text-dental-muted">
                 {uploadingImage ? (
                   <span className="text-dental-teal">
                     {t('admin.materialsPage.image.uploading')}

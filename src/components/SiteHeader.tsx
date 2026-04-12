@@ -30,6 +30,7 @@ const Header = memo(() => {
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const pathname = usePathname()
   const menuRef = useRef<HTMLDivElement>(null)
+  const toggleButtonRef = useRef<HTMLButtonElement>(null)
 
   // Check auth state (only when Supabase is configured)
   useEffect(() => {
@@ -74,11 +75,15 @@ const Header = memo(() => {
     return () => document.body.classList.remove('menu-open')
   }, [isMenuOpen])
 
-  // Close menu on click outside
+  // Close menu on click outside — exclude the toggle button itself so
+  // its own onClick (toggleMenu) handles open/close without a race condition.
   useEffect(() => {
     if (!isMenuOpen) return
     const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+      const target = e.target as Node
+      const insideMenu = menuRef.current?.contains(target)
+      const insideToggle = toggleButtonRef.current?.contains(target)
+      if (!insideMenu && !insideToggle) {
         setIsMenuOpen(false)
       }
     }
@@ -238,6 +243,7 @@ const Header = memo(() => {
                 </span>
               </Link>
               <button
+                ref={toggleButtonRef}
                 onClick={toggleMenu}
                 className="p-2 text-dental-text hover:text-dental-primary-600 focus:outline-none focus:ring-2 focus:ring-dental-primary-400 focus:ring-offset-2 rounded-lg transition-colors"
                 aria-label={

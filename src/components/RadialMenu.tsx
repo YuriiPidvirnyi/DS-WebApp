@@ -65,59 +65,66 @@ export default function RadialMenu({
   const telegram = CONTACT_INFO.social?.telegram
 
   const items: MenuItem[] = useMemo(
-    () => [
-      {
-        id: 'phone',
-        icon: <Phone className="w-5 h-5" />,
-        label: t('radialMenu.actions.phone'),
-        href: `tel:${phone}`,
-        color: 'bg-dental-primary-600 text-white',
-      },
-      {
-        id: 'whatsapp',
-        icon: <WhatsAppIcon />,
-        label: 'WhatsApp',
-        href: whatsapp,
-        external: true,
-        color: 'bg-[#25D366] text-white',
-      },
-      {
-        id: 'viber',
-        icon: <ViberIcon />,
-        label: 'Viber',
-        href: viber,
-        external: true,
-        color: 'bg-[#7360F2] text-white',
-      },
-      {
-        id: 'telegram',
-        icon: <TelegramIcon />,
-        label: 'Telegram',
-        href: telegram,
-        external: true,
-        color: 'bg-[#26A5E4] text-white',
-      },
-      {
-        id: 'chat',
-        icon: <MessageCircle className="w-5 h-5" />,
-        label: t('radialMenu.actions.chat'),
-        onClick: () => {
-          onOpenChat?.()
-          setIsOpen(false)
-        },
-        color: 'bg-dental-dark text-white',
-      },
-      {
-        id: 'accessibility',
-        icon: <Accessibility className="w-5 h-5" />,
-        label: t('accessibilityPanel.title'),
-        onClick: () => {
-          onOpenAccessibility?.()
-          setIsOpen(false)
-        },
-        color: 'bg-gray-700 text-white',
-      },
-    ],
+    () =>
+      (
+        [
+          {
+            id: 'phone',
+            icon: <Phone className="w-5 h-5" />,
+            label: t('radialMenu.actions.phone'),
+            href: `tel:${phone}`,
+            color: 'bg-dental-primary-600 text-white',
+          },
+          whatsapp
+            ? {
+                id: 'whatsapp',
+                icon: <WhatsAppIcon />,
+                label: 'WhatsApp',
+                href: whatsapp,
+                external: true,
+                color: 'bg-[#25D366] text-white',
+              }
+            : null,
+          {
+            id: 'viber',
+            icon: <ViberIcon />,
+            label: 'Viber',
+            href: viber,
+            external: true,
+            color: 'bg-[#7360F2] text-white',
+          },
+          telegram
+            ? {
+                id: 'telegram',
+                icon: <TelegramIcon />,
+                label: 'Telegram',
+                href: telegram,
+                external: true,
+                color: 'bg-[#26A5E4] text-white',
+              }
+            : null,
+          {
+            id: 'chat',
+            icon: <MessageCircle className="w-5 h-5" />,
+            label: t('radialMenu.actions.chat'),
+            onClick: () => {
+              onOpenChat?.()
+              setIsOpen(false)
+            },
+            color: 'bg-dental-dark text-white',
+          },
+          {
+            id: 'accessibility',
+            icon: <Accessibility className="w-5 h-5" />,
+            label: t('accessibilityPanel.title'),
+            onClick: () => {
+              onOpenAccessibility?.()
+              setIsOpen(false)
+            },
+            color: 'bg-gray-700 text-white',
+          },
+        ] as (MenuItem | null)[]
+      ).filter((item): item is MenuItem => item !== null),
     [t, phone, whatsapp, viber, telegram, onOpenChat, onOpenAccessibility]
   )
 

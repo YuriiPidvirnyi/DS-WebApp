@@ -172,7 +172,7 @@ export default function AdminAppointmentsPage() {
   const tableHeadClass = `${tableCellClass} text-left text-xs font-semibold uppercase text-gray-500`
   const tableEmptyStateClass = `${
     preferences.compactTables ? 'px-3 py-6' : 'px-4 py-8'
-  } text-center text-dental-text-light`
+  } text-center text-dental-text`
   const getStatusLabel = useCallback(
     (status: AppointmentStatus) => t(`admin.appointmentStatuses.${status}`),
     [t]
@@ -333,7 +333,7 @@ export default function AdminAppointmentsPage() {
           <h1 className="text-2xl font-bold text-dental-dark">
             {t('admin.appointmentsPage.title')}
           </h1>
-          <p className="text-sm text-dental-text-light">
+          <p className="text-sm text-dental-text">
             {t('admin.appointmentsPage.description')}
           </p>
         </div>
@@ -350,13 +350,13 @@ export default function AdminAppointmentsPage() {
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">
+          <p className="text-xs text-dental-muted">
             {t('admin.appointmentsPage.summary.total')}
           </p>
           <p className="text-2xl font-bold text-dental-dark">{summary.total}</p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">
+          <p className="text-xs text-dental-muted">
             {t('admin.appointmentsPage.summary.today')}
           </p>
           <p className="text-2xl font-bold text-dental-dark">
@@ -364,13 +364,13 @@ export default function AdminAppointmentsPage() {
           </p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">
+          <p className="text-xs text-dental-muted">
             {t('admin.appointmentsPage.summary.pending')}
           </p>
           <p className="text-2xl font-bold text-amber-600">{summary.pending}</p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">
+          <p className="text-xs text-dental-muted">
             {t('admin.appointmentsPage.summary.completed')}
           </p>
           <p className="text-2xl font-bold text-green-600">
@@ -429,7 +429,7 @@ export default function AdminAppointmentsPage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-2 rounded-xl border border-dental-secondary-200 bg-white px-4 py-3">
-        <span className="text-sm text-dental-text-light">
+        <span className="text-sm text-dental-text">
           {t('admin.appointmentsPage.bulk.selected', {
             count: selectedIds.length,
           })}
@@ -461,7 +461,10 @@ export default function AdminAppointmentsPage() {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div
+          role="alert"
+          className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+        >
           {error}
         </div>
       )}
@@ -536,14 +539,14 @@ export default function AdminAppointmentsPage() {
                         {resolvePatientName(row)}
                       </div>
                       {row.notes ? (
-                        <p className="mt-1 max-w-xs truncate text-xs text-dental-text-light">
+                        <p className="mt-1 max-w-xs truncate text-xs text-dental-muted">
                           {row.notes}
                         </p>
                       ) : null}
                     </td>
                     <td className={tableCellClass}>
                       <div>{row.guest_phone || '—'}</div>
-                      <div className="text-xs text-dental-text-light">
+                      <div className="text-xs text-dental-muted">
                         {row.guest_email || '—'}
                       </div>
                     </td>
@@ -555,7 +558,7 @@ export default function AdminAppointmentsPage() {
                     </td>
                     <td className={tableCellClass}>
                       <div>{formatDate(row.appointment_date)}</div>
-                      <div className="text-xs text-dental-text-light">
+                      <div className="text-xs text-dental-muted">
                         {formatTime(row.appointment_time)}
                       </div>
                     </td>
@@ -590,7 +593,7 @@ export default function AdminAppointmentsPage() {
                       </div>
                     </td>
                     <td
-                      className={`${tableCellClass} text-xs text-dental-text-light`}
+                      className={`${tableCellClass} text-xs text-dental-muted`}
                     >
                       <div>{formatDateTime(row.created_at)}</div>
                       <div className="mt-1">{row.source || '—'}</div>

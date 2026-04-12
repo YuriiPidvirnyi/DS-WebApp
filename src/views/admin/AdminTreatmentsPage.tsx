@@ -475,7 +475,7 @@ export default function AdminTreatmentsPage() {
           <h1 className="text-2xl font-bold text-dental-dark">
             {t('admin.treatmentsPage.title')}
           </h1>
-          <p className="text-sm text-dental-text-light">
+          <p className="text-sm text-dental-text">
             {t('admin.treatmentsPage.subtitle')}
           </p>
         </div>
@@ -529,7 +529,10 @@ export default function AdminTreatmentsPage() {
         </Select>
       </div>
       {error ? (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-800">
+        <div
+          role="alert"
+          className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-800"
+        >
           {error}
         </div>
       ) : null}
@@ -549,7 +552,7 @@ export default function AdminTreatmentsPage() {
               <tr>
                 <td
                   colSpan={9}
-                  className="px-4 py-8 text-center text-dental-text-light"
+                  className="px-4 py-8 text-center text-dental-text"
                 >
                   {t('admin.treatmentsPage.loading')}
                 </td>
@@ -558,7 +561,7 @@ export default function AdminTreatmentsPage() {
               <tr>
                 <td
                   colSpan={9}
-                  className="px-4 py-8 text-center text-dental-text-light"
+                  className="px-4 py-8 text-center text-dental-text"
                 >
                   {t('admin.treatmentsPage.empty')}
                 </td>
@@ -653,7 +656,7 @@ export default function AdminTreatmentsPage() {
           {editId ? (
             <div className="grid gap-3 rounded-lg bg-dental-primary/20 p-3 text-sm md:grid-cols-2">
               <div>
-                <span className="text-dental-text-light">
+                <span className="text-dental-muted">
                   {t('admin.treatmentsPage.modal.patient')}:{' '}
                 </span>
                 <span className="font-medium text-dental-dark">
@@ -661,7 +664,7 @@ export default function AdminTreatmentsPage() {
                 </span>
               </div>
               <div>
-                <span className="text-dental-text-light">
+                <span className="text-dental-muted">
                   {t('admin.treatmentsPage.modal.doctor')}:{' '}
                 </span>
                 <span className="font-medium text-dental-dark">
@@ -776,7 +779,7 @@ export default function AdminTreatmentsPage() {
                   className="grid gap-2 rounded-lg border border-dental-secondary-200 p-2 md:grid-cols-12 md:items-end"
                 >
                   <label className="md:col-span-5">
-                    <span className="text-xs text-dental-text-light">
+                    <span className="text-xs text-dental-muted">
                       {t('admin.treatmentsPage.modal.service')}
                     </span>
                     <Select
@@ -795,7 +798,7 @@ export default function AdminTreatmentsPage() {
                     </Select>
                   </label>
                   <label className="md:col-span-2">
-                    <span className="text-xs text-dental-text-light">
+                    <span className="text-xs text-dental-muted">
                       {t('admin.treatmentsPage.modal.tooth')}
                     </span>
                     <Input
@@ -806,7 +809,7 @@ export default function AdminTreatmentsPage() {
                     />
                   </label>
                   <label className="md:col-span-2">
-                    <span className="text-xs text-dental-text-light">
+                    <span className="text-xs text-dental-muted">
                       {t('admin.treatmentsPage.modal.quantity')}
                     </span>
                     <Input
@@ -817,7 +820,7 @@ export default function AdminTreatmentsPage() {
                     />
                   </label>
                   <label className="md:col-span-2">
-                    <span className="text-xs text-dental-text-light">
+                    <span className="text-xs text-dental-muted">
                       {t('admin.treatmentsPage.modal.price')}
                     </span>
                     <Input
@@ -869,7 +872,7 @@ export default function AdminTreatmentsPage() {
                       className="grid gap-2 rounded-lg border border-dental-secondary-200 p-2 md:grid-cols-12 md:items-end"
                     >
                       <label className="md:col-span-6">
-                        <span className="text-xs text-dental-text-light">
+                        <span className="text-xs text-dental-muted">
                           {t('admin.inventory.consumption.material')}
                         </span>
                         <Select
@@ -898,7 +901,7 @@ export default function AdminTreatmentsPage() {
                         </Select>
                       </label>
                       <label className="md:col-span-3">
-                        <span className="text-xs text-dental-text-light">
+                        <span className="text-xs text-dental-muted">
                           {t('admin.inventory.consumption.quantity')}
                         </span>
                         <Input
@@ -919,7 +922,7 @@ export default function AdminTreatmentsPage() {
                       </label>
                       <div className="md:col-span-2 flex items-end">
                         {mat && (
-                          <span className="flex items-center gap-1 text-xs text-dental-text-light pb-2">
+                          <span className="flex items-center gap-1 text-xs text-dental-muted pb-2">
                             {mat.image_url ? (
                               <Image
                                 src={mat.image_url}
