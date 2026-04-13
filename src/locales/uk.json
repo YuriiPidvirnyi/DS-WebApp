@@ -71,8 +71,7 @@
     "chatChooser": {
       "title": "Чат підтримки",
       "subtitle": "Оберіть спосіб зв'язку:",
-      "human": "Написати адміністратору",
-      "closeAccessibilityPanel": "Закрити панель доступності"
+      "human": "Написати адміністратору"
     }
   },
   "languageSwitcher": {

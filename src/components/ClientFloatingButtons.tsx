@@ -53,7 +53,6 @@ export default function ClientFloatingButtons() {
         <div className="fixed z-50 bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))] right-[calc(1.5rem+env(safe-area-inset-right,0px))]">
           <div
             role="dialog"
-            aria-modal="true"
             aria-labelledby="chat-chooser-title"
             className="bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 w-72"
           >
@@ -153,7 +152,7 @@ export default function ClientFloatingButtons() {
             <button
               onClick={() => setAccessibilityOpen(false)}
               className="absolute top-2 right-2 w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors z-10"
-              aria-label={t('radialMenu.chatChooser.closeAccessibilityPanel')}
+              aria-label={t('accessibilityPanel.close')}
             >
               <svg
                 className="w-4 h-4"

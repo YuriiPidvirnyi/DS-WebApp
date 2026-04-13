@@ -71,8 +71,7 @@
     "chatChooser": {
       "title": "Czat wsparcia",
       "subtitle": "Wybierz sposób kontaktu:",
-      "human": "Napisz do administratora",
-      "closeAccessibilityPanel": "Zamknij panel dostępności"
+      "human": "Napisz do administratora"
     }
   },
   "languageSwitcher": {

@@ -71,8 +71,7 @@
     "chatChooser": {
       "title": "Support Chat",
       "subtitle": "Choose a contact method:",
-      "human": "Write to administrator",
-      "closeAccessibilityPanel": "Close accessibility panel"
+      "human": "Write to administrator"
     }
   },
   "languageSwitcher": {
