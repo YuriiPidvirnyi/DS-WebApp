@@ -1,0 +1,41 @@
+name: Preview Validate
+
+# Runs against every successful Vercel deployment (preview + preprod + production).
+# This replaces the old localhost-based a11y + smoke runs in ci.yml.
+on:
+  deployment_status:
+
+jobs:
+  validate:
+    name: A11y + smoke (${{ github.event.deployment.environment }})
+    runs-on: ubuntu-latest
+
+    # Only fire when Vercel finishes successfully and gives us a URL
+    if: >-
+      github.event.deployment_status.state == 'success' &&
+      github.event.deployment_status.environment_url != ''
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci --legacy-peer-deps
+
+      - name: Install Chromium
+        run: npx playwright install chromium --with-deps
+
+      - name: Accessibility audit
+        run: npm run a11y:audit
+        env:
+          BASE_URL: ${{ github.event.deployment_status.environment_url }}
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Preview Validation" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ github.event.deployment.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "**URL:** ${{ github.event.deployment_status.environment_url }}" >> $GITHUB_STEP_SUMMARY

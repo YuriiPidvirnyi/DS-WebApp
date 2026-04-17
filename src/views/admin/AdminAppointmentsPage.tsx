@@ -100,6 +100,12 @@ export default function AdminAppointmentsPage() {
             'id, patient_name, guest_name, guest_phone, guest_email, appointment_date, appointment_time, status, source, created_at, notes, services(name_uk), doctors(first_name,last_name)'
           )
 
+        // Defense-in-depth: RLS already scopes doctors, but apply the filter
+        // at the app layer too so any RLS regression doesn't silently leak data.
+        if (isDoctor && user?.doctorId) {
+          query = query.eq('doctor_id', user.doctorId)
+        }
+
         if (statusFilter !== 'all') {
           query = query.eq('status', statusFilter)
         }
