@@ -26,6 +26,9 @@
     "test:e2e:auth:links:live": "playwright test e2e/auth-email-links.live.spec.ts --config=playwright.auth.links.live.config.ts",
     "a11y:install": "npx playwright install chromium",
     "a11y:audit": "node scripts/a11y-audit.mjs",
+    "seed:preprod": "npx tsx scripts/seed/preprod/index.ts",
+    "seed:preprod:wipe": "SEED_WIPE=1 npx tsx scripts/seed/preprod/index.ts",
+    "seed:rbac": "node scripts/seed-rbac-test-users.mjs",
     "prepare": "husky"
   },
   "dependencies": {
@@ -62,6 +65,7 @@
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
     "@eslint/js": "^10.0.1",
+    "@faker-js/faker": "^10.4.0",
     "@next/bundle-analyzer": "^16.2.1",
     "@next/eslint-plugin-next": "^16.2.1",
     "@playwright/test": "^1.58.2",
