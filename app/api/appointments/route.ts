@@ -93,7 +93,7 @@ async function createSupabaseAppointment(payload: BookingPayload) {
     supabase.auth.getUser(),
     supabase
       .from('services')
-      .select('id')
+      .select('id, price_uah')
       .eq('name_uk', payload.service)
       .eq('is_active', true)
       .maybeSingle(),
@@ -128,6 +128,30 @@ async function createSupabaseAppointment(payload: BookingPayload) {
       { success: false, error: 'Не вдалося створити запис' },
       { status: 500 }
     )
+  }
+
+  // Look up payment config for the service (per-service first, then global default)
+  let paymentConfig: { mode: string; amountKopecks: number } | null = null
+  if (serviceRecord?.id) {
+    const { data: config } = await supabase
+      .from('payment_configs')
+      .select('payment_mode, deposit_percent')
+      .or(`service_id.eq.${serviceRecord.id},service_id.is.null`)
+      .order('service_id', { ascending: false, nullsFirst: false }) // prefer service-specific over global default
+      .limit(1)
+      .maybeSingle()
+
+    if (config && config.payment_mode !== 'none') {
+      const priceUah = Number(serviceRecord.price_uah ?? 0)
+      if (priceUah > 0) {
+        const fullKopecks = Math.round(priceUah * 100)
+        const amountKopecks =
+          config.payment_mode === 'deposit' && config.deposit_percent
+            ? Math.round((fullKopecks * config.deposit_percent) / 100)
+            : fullKopecks
+        paymentConfig = { mode: config.payment_mode, amountKopecks }
+      }
+    }
   }
 
   const guestEmail = payload.email.trim()
@@ -182,6 +206,7 @@ async function createSupabaseAppointment(payload: BookingPayload) {
         preferredTime: payload.preferredTime,
         status: 'pending',
         createdAt,
+        paymentConfig,
       },
     },
     { status: 201 }
