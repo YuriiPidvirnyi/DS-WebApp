@@ -79,7 +79,9 @@ const TEST_USERS = [
 ]
 
 async function run() {
-  console.log(`🔑  Seeding ${TEST_USERS.length} RBAC test users (8 canonical roles) against ${SUPABASE_URL}\n`)
+  console.log(
+    `🔑  Seeding ${TEST_USERS.length} RBAC test users (8 canonical roles) against ${SUPABASE_URL}\n`
+  )
 
   for (const u of TEST_USERS) {
     process.stdout.write(`  [${u.role.padEnd(16)}]  ${u.email}  … `)
