@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { createContact } from '../contacts'
 import { subscribeNewsletter } from '../subscriptions'
-import { getReviews, createReview } from '../reviews'
 import { sendFormFeedback } from '../feedback'
 
 vi.mock('../api', () => ({
@@ -50,38 +49,6 @@ describe('Service layer', () => {
         email: 'test@example.com',
       })
       expect(result.data!.subscribed).toBe(true)
-    })
-  })
-
-  describe('reviews', () => {
-    it('fetches reviews with timeout signal', async () => {
-      vi.mocked(api.get).mockResolvedValue({
-        success: true,
-        data: { items: [] },
-      })
-
-      const result = await getReviews()
-
-      expect(api.get).toHaveBeenCalledWith('/reviews', expect.any(Object))
-      expect(result.success).toBe(true)
-    })
-
-    it('creates review via POST', async () => {
-      vi.mocked(api.post).mockResolvedValue({
-        success: true,
-        data: { created: true, id: 'r1' },
-      })
-
-      const result = await createReview({
-        name: 'Test',
-        rating: 5,
-        service: 'Терапія',
-        comment: 'Great!',
-        wouldRecommend: true,
-      })
-
-      expect(api.post).toHaveBeenCalledWith('/reviews', expect.any(Object))
-      expect(result.data!.created).toBe(true)
     })
   })
 

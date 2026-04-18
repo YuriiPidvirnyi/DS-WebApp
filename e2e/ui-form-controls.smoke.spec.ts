@@ -42,26 +42,6 @@ test.describe('Public UI: selects & language', () => {
     await expect(doctor).toHaveValue('mykola-kovalchuk')
   })
 
-  test('reviews: Select послуги у формі відгуку', async ({ page }) => {
-    await page.goto('/reviews')
-    await expect(
-      page.getByRole('heading', { name: 'Відгуки пацієнтів', level: 1 })
-    ).toBeVisible({ timeout: 25_000 })
-
-    const svc = page.locator('#review-service')
-    await expect(svc).toBeVisible({ timeout: 25_000 })
-    // Wait for React Hook Form hydration to fully stabilise — RHF re-renders
-    // the select after register() attaches, which can reset a premature selection.
-    await expect(svc).toHaveValue('Терапевтична стоматологія', {
-      timeout: 5_000,
-    })
-    // Use toPass to retry select+assert until RHF stops resetting the value
-    await expect(async () => {
-      await svc.selectOption({ label: 'Пародонтологія' })
-      await expect(svc).toHaveValue('Пародонтологія')
-    }).toPass({ timeout: 10_000 })
-  })
-
   test('header: LanguageSwitcher — перехід на EN', async ({ page }) => {
     await page.goto('/')
     await page.getByRole('button', { name: 'Обрати мову' }).click()

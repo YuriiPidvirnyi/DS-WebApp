@@ -12,7 +12,6 @@ const PAGES = [
   '/about',
   '/contact',
   '/booking',
-  '/reviews',
   '/gallery',
   '/auth/login',
   '/auth/sign-up',

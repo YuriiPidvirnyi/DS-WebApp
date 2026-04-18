@@ -1,35 +1,10 @@
-import type { Metadata } from 'next'
-import Reviews from '@/views/Reviews'
-import { generateBreadcrumbSchema } from '@/utils/seo'
-import uk from '@/locales/uk'
+import { permanentRedirect } from 'next/navigation'
 
-const reviewsMeta = uk.routeMeta.reviews
-
-export const metadata: Metadata = {
-  title: reviewsMeta.title,
-  description: reviewsMeta.description,
-  keywords: reviewsMeta.keywords,
-  alternates: { canonical: '/reviews' },
-  openGraph: {
-    title: reviewsMeta.openGraphTitle,
-    description: reviewsMeta.openGraphDescription,
-    url: '/reviews',
-  },
-}
-
-const breadcrumb = generateBreadcrumbSchema([
-  { name: uk.navigation.home, url: 'https://dentalstory.com.ua/' },
-  { name: reviewsMeta.breadcrumb, url: 'https://dentalstory.com.ua/reviews' },
-])
-
+/**
+ * The public reviews page has been removed.
+ * Patients can no longer submit reviews directly on the site.
+ * Reviews are managed via the admin panel only.
+ */
 export default function ReviewsPage() {
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
-      />
-      <Reviews />
-    </>
-  )
+  permanentRedirect('/')
 }

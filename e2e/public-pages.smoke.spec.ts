@@ -37,11 +37,10 @@ test.describe('Public pages navigation and content', () => {
     })
   })
 
-  test('reviews page displays approved reviews', async ({ page }) => {
+  test('/reviews redirects to homepage', async ({ page }) => {
     await page.goto('/reviews')
-    await expect(page.getByRole('heading', { level: 1 })).toBeVisible({
-      timeout: 20_000,
-    })
+    await page.waitForURL(url => url.pathname === '/', { timeout: 10_000 })
+    expect(new URL(page.url()).pathname).toBe('/')
   })
 
   test('booking page shows appointment form', async ({ page }) => {
