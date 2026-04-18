@@ -57,21 +57,30 @@ const TEST_USERS = [
     specialization: 'Терапевт',
   },
   {
-    email: 'rbac.seniorasst@dentalstory.ua',
-    role: 'senior_assistant',
-    displayName: 'Senior Assistant',
-  },
-  {
     email: 'rbac.assistant@dentalstory.ua',
     role: 'assistant',
     displayName: 'Assistant',
   },
-  { email: 'rbac.staff@dentalstory.ua', role: 'staff', displayName: 'Staff' },
+  {
+    email: 'rbac.billing@dentalstory.ua',
+    role: 'billing_manager',
+    displayName: 'Billing Manager',
+  },
+  {
+    email: 'rbac.inventory@dentalstory.ua',
+    role: 'inventory_manager',
+    displayName: 'Inventory Manager',
+  },
+  {
+    email: 'rbac.analyst@dentalstory.ua',
+    role: 'analyst',
+    displayName: 'Analyst',
+  },
 ]
 
 async function run() {
   console.log(
-    `🔑  Seeding ${TEST_USERS.length} RBAC test users against ${SUPABASE_URL}\n`
+    `🔑  Seeding ${TEST_USERS.length} RBAC test users (8 canonical roles) against ${SUPABASE_URL}\n`
   )
 
   for (const u of TEST_USERS) {

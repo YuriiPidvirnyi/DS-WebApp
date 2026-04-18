@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import * as Sentry from '@sentry/nextjs'
 import { sendEmail, isEmailConfigured } from '@/lib/email'
 import {
   bookingConfirmationEmail,
@@ -17,6 +18,8 @@ const CRON_SECRET = process.env.CRON_SECRET ?? ''
 const ADMIN_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL ?? ''
 const BATCH_SIZE = 20
 const MAX_ATTEMPTS = 3
+// Rows stuck in 'processing' longer than this are re-queued (guards crashed workers)
+const STUCK_TIMEOUT_MS = 10 * 60 * 1000
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ServiceClient = SupabaseClient<any, 'public', any>
@@ -186,6 +189,18 @@ async function processEvent(
         attempts: event.attempts + 1,
       })
       .eq('id', event.id)
+
+    console.info('[cron/notifications] delivered', {
+      id: event.id,
+      type: event.type,
+      resendId: result.id,
+    })
+    Sentry.addBreadcrumb({
+      category: 'email',
+      message: 'delivered',
+      level: 'info',
+      data: { id: event.id, type: event.type, resendId: result.id },
+    })
   } else {
     const newAttempts = event.attempts + 1
     await supabase
@@ -204,6 +219,10 @@ async function processEvent(
  * GET /api/cron/notifications
  * Called by Vercel Cron every 5 minutes.
  * Processes queued notification_events and sends emails via Resend.
+ *
+ * Idempotency: rows are claimed (status → 'processing') before being sent so a
+ * concurrent re-fire cannot double-send. Stuck 'processing' rows older than
+ * STUCK_TIMEOUT_MS are recycled back to 'queued' at the start of each run.
  */
 export async function GET(request: NextRequest) {
   if (!CRON_SECRET) {
@@ -237,20 +256,27 @@ export async function GET(request: NextRequest) {
     })
   }
 
-  const { data: events, error } = await supabase
+  // Recycle rows stuck in 'processing' from a previous crashed run
+  const stuckCutoff = new Date(Date.now() - STUCK_TIMEOUT_MS).toISOString()
+  await supabase
     .from('notification_events')
-    .select(
-      'id, type, appointment_id, recipient_email, status, details, attempts'
-    )
+    .update({ status: 'queued', claimed_at: null })
+    .eq('status', 'processing')
+    .lt('claimed_at', stuckCutoff)
+
+  // Step 1: Select candidate IDs
+  const { data: candidates, error: selectError } = await supabase
+    .from('notification_events')
+    .select('id')
     .eq('status', 'queued')
     .lt('attempts', MAX_ATTEMPTS)
     .lte('scheduled_at', new Date().toISOString())
     .order('created_at', { ascending: true })
     .limit(BATCH_SIZE)
 
-  if (error) {
+  if (selectError) {
     captureException(new Error('[cron/notifications] Query error'), {
-      supabaseError: error,
+      supabaseError: selectError,
     })
     return NextResponse.json(
       { success: false, error: 'Failed to query events' },
@@ -258,10 +284,45 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  if (!events?.length) {
+  if (!candidates?.length) {
     return NextResponse.json({
       success: true,
       message: 'No queued notifications',
+      processed: 0,
+    })
+  }
+
+  const candidateIds = candidates.map(r => r.id as string)
+
+  // Step 2: Claim rows atomically — the .eq('status', 'queued') guard means
+  // a concurrent cron that selected the same IDs will update 0 rows for any
+  // already claimed here.
+  const { data: events, error: claimError } = await supabase
+    .from('notification_events')
+    .update({
+      status: 'processing',
+      claimed_at: new Date().toISOString(),
+    })
+    .in('id', candidateIds)
+    .eq('status', 'queued')
+    .select(
+      'id, type, appointment_id, recipient_email, status, details, attempts'
+    )
+
+  if (claimError) {
+    captureException(new Error('[cron/notifications] Claim error'), {
+      supabaseError: claimError,
+    })
+    return NextResponse.json(
+      { success: false, error: 'Failed to claim events' },
+      { status: 500 }
+    )
+  }
+
+  if (!events?.length) {
+    return NextResponse.json({
+      success: true,
+      message: 'No notifications claimed (concurrent run took them)',
       processed: 0,
     })
   }
@@ -310,6 +371,12 @@ export async function GET(request: NextRequest) {
           ? err
           : new Error(`[cron/notifications] Failed to process ${event.id}`)
       )
+      // Reset claimed row so it can be retried next run
+      await supabase
+        .from('notification_events')
+        .update({ status: 'queued', claimed_at: null })
+        .eq('id', event.id)
+        .eq('status', 'processing')
     }
   }
 

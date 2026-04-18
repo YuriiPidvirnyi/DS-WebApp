@@ -71,7 +71,7 @@ export default tseslint.config(
       ],
 
       // Code quality rules
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
       'no-debugger': 'error',
       'no-empty': ['error', { allowEmptyCatch: true }],
       'no-useless-escape': 'warn',
