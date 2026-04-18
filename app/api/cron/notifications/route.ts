@@ -225,14 +225,10 @@ async function processEvent(
  * STUCK_TIMEOUT_MS are recycled back to 'queued' at the start of each run.
  */
 export async function GET(request: NextRequest) {
-  if (!CRON_SECRET) {
-    return NextResponse.json(
-      { error: 'CRON_SECRET not configured' },
-      { status: 500 }
-    )
-  }
+  // Auth gate: missing config and wrong credentials both return 401.
+  // Callers should not be able to distinguish "unconfigured" from "wrong token".
   const authHeader = request.headers.get('authorization')
-  if (authHeader !== `Bearer ${CRON_SECRET}`) {
+  if (!CRON_SECRET || authHeader !== `Bearer ${CRON_SECRET}`) {
     return NextResponse.json(
       { success: false, error: 'Unauthorized' },
       { status: 401 }

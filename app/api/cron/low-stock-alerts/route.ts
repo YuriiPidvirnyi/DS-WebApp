@@ -25,14 +25,8 @@ function getServiceClient(): ServiceClient | null {
  * and inserts notification_events for admin alerting.
  */
 export async function GET(request: NextRequest) {
-  if (!CRON_SECRET) {
-    return NextResponse.json(
-      { error: 'CRON_SECRET not configured' },
-      { status: 500 }
-    )
-  }
   const authHeader = request.headers.get('authorization')
-  if (authHeader !== `Bearer ${CRON_SECRET}`) {
+  if (!CRON_SECRET || authHeader !== `Bearer ${CRON_SECRET}`) {
     return NextResponse.json(
       { success: false, error: 'Unauthorized' },
       { status: 401 }
