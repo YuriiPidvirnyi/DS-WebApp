@@ -82,6 +82,27 @@ jobs:
       - name: Playwright UI smoke
         run: npm run test:e2e:ui-smoke
 
+  e2e-feature-suites:
+    name: E2E feature suites (booking, cabinet, admin RBAC, cron)
+    runs-on: ubuntu-latest
+    needs: [test]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci --legacy-peer-deps
+
+      - name: Install Chromium
+        run: npx playwright install chromium --with-deps
+
+      - name: Run feature E2E suites
+        run: npx playwright test e2e/cron-notifications.spec.ts e2e/booking-flow.spec.ts e2e/cabinet-flows.spec.ts e2e/admin-rbac.spec.ts --config=playwright.auth.config.ts
+
 # NOTE: The production build job has been removed.
 # Vercel's GitHub integration already builds and checks every PR —
 # its check is the authoritative build gate. Duplicating it here

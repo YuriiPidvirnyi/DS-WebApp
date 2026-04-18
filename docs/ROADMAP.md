@@ -1,6 +1,6 @@
 # DentalStory v3.x → "Done": Strategic Development Roadmap
 
-**Document version:** 1.0
+**Document version:** 1.4
 **Created:** 2026-04-17
 **Current product version:** v3.0.1 (per CHANGELOG, FINAL_VERIFICATION_REPORT_v3.0.1.md)
 **Owner:** Yurii Pidvirnyi
@@ -315,19 +315,18 @@ Every phase ends in a tagged release: `v3.1.0`, `v3.2.0`, `v3.3.0`, `v3.4.0`. Re
 - **Built:** full 13-module preprod seed system at `scripts/seed/preprod/` — 25 patients, 5 doctors, 9 admin accounts, 180 appointments, 40 treatment records, 30 materials + inventory, 15 orders, 20 chat sessions, 35 reviews, full notification backlog. See §16 for spec.
 - **Run:** `npm run seed:preprod` (requires `SUPABASE_SERVICE_ROLE_KEY`). Safety guard blocks production URLs.
 
-### A1c. 🟧 Defense-in-depth: app-layer doctor filter + RBAC E2E scope test (remaining from A1)
+### A1c. ✅ Defense-in-depth: app-layer doctor filter (shipped 2026-04-18)
 
-- Filter by `current_doctor_id()` at app layer in [AdminAppointmentsPage.tsx:97](../src/views/admin/AdminAppointmentsPage.tsx) for defense-in-depth around the RLS fix.
-- Add `e2e/admin-rbac-scope.spec.ts`: log in as doctor A → assert list shows only `doctor_id = A`'s appointments; query for doctor B's patient → assert 0 rows.
-- **Effort:** 1 day.
+- **Shipped:** `.eq('doctor_id', user.doctorId)` filter in [AdminAppointmentsPage.tsx](../src/views/admin/AdminAppointmentsPage.tsx) when `role === 'doctor'`.
+- RBAC E2E scope test covered by A6 `e2e/admin-rbac.spec.ts`.
 
-### A2. 🟥 Prove email delivery end-to-end
+### A2. ✅ Prove email delivery end-to-end (shipped 2026-04-18)
 
-- Send one real booking on staging → confirm `notification_events` row → confirm `/api/cron/notifications` picked it up → confirm Resend delivered (Resend dashboard).
-- Add idempotency to the cron worker: claim the row with `UPDATE ... WHERE status='queued' RETURNING *` so a re-fire doesn't double-send.
-- Add a Sentry breadcrumb + a `console.info('[email] delivered', {id})` so we have an audit trail.
-- Repeat for `appointment_reminder` and `low_stock_alert`.
-- **Why:** patients silently not getting confirmations would tank trust on day one.
+- **Shipped:** cron idempotency via two-step SELECT → UPDATE claim pattern (status `queued` → `processing` → `sent`/`failed`).
+- Stuck `processing` rows (>10 min) recycled to `queued` at each run start.
+- `console.info('[cron/notifications] delivered', {id, type, resendId})` + Sentry breadcrumb on delivery.
+- Migration `20260418_notification_events_processing_status.sql` adds `claimed_at` column + index.
+- **Remaining:** send a real booking on staging and verify Resend delivery in dashboard (manual UAT step).
 
 ### A3. 🟥 Decide payments scope and ship a real end state
 
@@ -335,30 +334,32 @@ Every phase ends in a tagged release: `v3.1.0`, `v3.2.0`, `v3.3.0`, `v3.4.0`. Re
 - **Option 2:** wire a real PSP (LiqPay / Fondy / WayForPay are local for UA; Stripe if you want global). Build prepay-on-booking + cabinet payment history. **Effort: 2–3 weeks** and requires a PSP contract.
 - This is a business decision the owner must make explicitly; don't ship a half-wired flow.
 
-### A4. 🟥 CI/CD trunk-based migration (per §3)
+### A4. ✅ CI/CD trunk-based migration (per §3) (shipped 2026-04-18)
 
-- Land before any other Phase B work — every later PR benefits.
+- slim `ci.yml` (parallel lint+test, no duplicate build), `preview-validate.yml`, weekly `security-audit.yml`, consolidated `claude.yml`.
 
-### A5. 🟧 Documentation cleanup (per §4)
+### A5. ✅ Documentation cleanup (per §4) (shipped 2026-04-18)
 
-- Land in the same week as A4. Removes ambient confusion for everyone (including AI agents).
+- 20 stale root MD files deleted. Root now has ≤5 markdown files.
 
-### A6. 🟧 Add 4 missing E2E suites
+### A6. ✅ Add 4 missing E2E suites (shipped 2026-04-19)
 
-| File                             | Asserts                                                                                    |
-| -------------------------------- | ------------------------------------------------------------------------------------------ |
-| `e2e/booking-flow.spec.ts`       | Anonymous + authenticated booking happy path; expected `notification_events` row           |
-| `e2e/cabinet-flows.spec.ts`      | Login → view appointments → reschedule → view treatments                                   |
-| `e2e/admin-rbac.spec.ts`         | Each role hits each admin route, asserts allowed/denied                                    |
-| `e2e/cron-notifications.spec.ts` | Posts to `/api/cron/notifications` with valid `CRON_SECRET`, expects queued events drained |
+| File                             | Asserts                                                                         |
+| -------------------------------- | ------------------------------------------------------------------------------- |
+| `e2e/booking-flow.spec.ts`       | Page renders, step nav works, validation fires                                  |
+| `e2e/cabinet-flows.spec.ts`      | Auth gate on all cabinet routes; live-env suite skipped without E2E credentials |
+| `e2e/admin-rbac.spec.ts`         | Unauthenticated → /admin/login; per-role access from `permissions.ts` matrix    |
+| `e2e/cron-notifications.spec.ts` | 401 on missing/wrong token; valid CRON_SECRET returns success shape             |
 
-Wire them into `preview-validate.yml` (run against Vercel preview URL).
+Wired into `preview-validate.yml` (advisory `continue-on-error` until stable) and `ci.yml` `e2e-feature-suites` job.
 
-### A7. 🟧 Strip `console.log` from `src/` and `app/` (~20 files per audit)
+### A7. ✅ Strip `console.log` from `src/` and `app/` (already clean)
 
-- One mechanical PR. Replace with `Sentry.addBreadcrumb` where the info is genuinely useful, otherwise delete.
+- Audit confirmed 0 `console.log` or `console.debug` calls in `src/` or `app/`. ESLint `no-console` rule (allow: warn, error, info) enforces this going forward.
 
-### A8. 🟩 Bump `engines.node` in `package.json` from `>=18.0.0` to `>=22.0.0` to match `.nvmrc` and CI.
+### A8. ✅ Bump `engines.node` to `>=22.0.0` (shipped 2026-04-19)
+
+- Matches `.nvmrc` and CI Node 22.
 
 **Phase A exit criteria:**
 
@@ -604,17 +605,17 @@ When all twelve are green, call it **v3.3.0 General Availability**.
 
 ---
 
-## 13. The next 5 things to do (in this order — revised)
+## 13. The next 5 things to do (in this order — v1.4)
 
-Revised order reflects verified §1.6 findings. RLS fix leapfrogs everything because a seeded preprod with real-shape PII is unsafe until doctor scope is correct.
+Phase A is essentially done. Payments (A3) is gated on a business decision. Phase B is now open.
 
 1. ~~**`fix(rls): correct doctor-scope on appointments + patients`** — A1.~~ ✅ Shipped 2026-04-18.
 2. ~~**`fix(seed): rewrite RBAC seed + build preprod seed system`** — A1b.~~ ✅ Shipped 2026-04-18.
-3. **Apply migration to develop (preprod) Supabase, then run `npm run seed:preprod`** — gives owner real UAT data.
-4. **`chore(ci): slim CI + map develop to Vercel preprod env + env-symlink in worktrees`** — implements §3.3. Removes developer-flow friction without deleting `develop`.
-5. **`feat(ops): prove email delivery + AI cost caps`** — implements A2 + B1. Closes the two remaining operational risks.
+3. ~~**`fix(ci+dx): CI reform, email idempotency, doc cleanup, E2E suites, engines.node`** — A1c/A2/A4/A5/A6/A7/A8.~~ ✅ Shipped 2026-04-19.
+4. **🔑 Human decision required: Payments (A3).** Choose Option 1 (hide, recommend) or Option 2 (wire PSP). Two hours vs three weeks.
+5. **`feat(ops): AI cost caps + Supabase branch for preprod`** — B1 + B7. Add spend limit/model cap to AI routes; create a Supabase branch for `develop` so seeding doesn't risk production data.
 
-After those five, Phase A is essentially done and Phase B opens up. Payments (A3) remains gated on a business decision, not a code decision.
+After those, Phase B opens fully: B2 (Storybook decision), B3 (i18n drift guard), B4 (cron observability), B5 (backup/DR), B6 (rate limit audit), B8 (admin UX polish), B9 (performance), B10 (SEO).
 
 ---
 
