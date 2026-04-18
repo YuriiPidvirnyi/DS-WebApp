@@ -1,6 +1,5 @@
 'use client'
 
-import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { Smile, Shield, Users, Award, ArrowRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -11,8 +10,6 @@ import {
   useScrollAnimation,
   useStaggeredAnimation,
 } from '@/hooks/useScrollAnimation'
-import { AsyncState } from '@/components/ui'
-import i18n from '@/i18n/config'
 import images from '@/content/images.json'
 
 // Type for service images from images.json
@@ -33,22 +30,6 @@ interface ImagesData {
 }
 
 const typedImages = images as ImagesData
-
-const Testimonials = dynamic(() => import('@/components/Testimonials'), {
-  loading: () => (
-    <div className="py-20 bg-dental-secondary-50">
-      <div className="mx-auto max-w-7xl px-4">
-        <AsyncState
-          variant="loading"
-          title={i18n.t('home.testimonials.loadingTitle')}
-          message={i18n.t('home.testimonials.loadingMessage')}
-          className="mx-auto max-w-xl"
-        />
-      </div>
-    </div>
-  ),
-  ssr: true,
-})
 
 const Home = () => {
   const { t } = useTranslation()
@@ -396,9 +377,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-
-      {/* Text Testimonials Section */}
-      <Testimonials />
 
       {/* CTA Section */}
       <section
