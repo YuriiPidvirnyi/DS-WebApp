@@ -150,7 +150,7 @@ export default function AdminAppointmentsPage() {
         setIsRefreshing(false)
       }
     },
-    [dateFilter, searchTerm, statusFilter, t]
+    [dateFilter, isDoctor, searchTerm, statusFilter, t, user?.doctorId]
   )
 
   useEffect(() => {

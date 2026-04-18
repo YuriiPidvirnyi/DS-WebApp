@@ -16,9 +16,9 @@ import { resolve, dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const projectRoot  = resolve(__dirname, '..')
+const projectRoot = resolve(__dirname, '..')
 const worktreesDir = join(projectRoot, '.claude', 'worktrees')
-const envSource    = join(projectRoot, '.env.local')
+const envSource = join(projectRoot, '.env.local')
 
 if (!existsSync(envSource)) {
   console.log('ℹ️   No .env.local in project root — nothing to link.')
@@ -51,7 +51,9 @@ for (const wt of worktrees) {
         continue
       }
       // Real file exists — don't overwrite
-      console.log(`⚠️   ${target} — real file exists, skipping (delete it to use project root .env.local)`)
+      console.log(
+        `⚠️   ${target} — real file exists, skipping (delete it to use project root .env.local)`
+      )
       continue
     } catch {
       // lstat failed — stale symlink, fall through to re-create
@@ -63,4 +65,6 @@ for (const wt of worktrees) {
   console.log(`🔗  Linked ${target} → ${envSource}`)
 }
 
-console.log('\nDone. Restart the dev server in each worktree to pick up env changes.')
+console.log(
+  '\nDone. Restart the dev server in each worktree to pick up env changes.'
+)
