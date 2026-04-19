@@ -303,7 +303,44 @@ export function useBookingForm() {
     startCooldown(60)
     reset()
 
-    // Navigate to success page
+    // If the service requires online payment, create a Monobank invoice and redirect
+    const paymentConfig = response?.data?.paymentConfig as
+      | { mode: string; amountKopecks: number }
+      | null
+      | undefined
+
+    if (paymentConfig && paymentConfig.amountKopecks > 0) {
+      try {
+        const payRes = await fetch('/api/payments/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token':
+              document.cookie.match(/csrf-token=([^;]+)/)?.[1] ?? '',
+          },
+          body: JSON.stringify({
+            appointmentId,
+            amountKopecks: paymentConfig.amountKopecks,
+            description: `${data.service} — Dental Story`,
+          }),
+        })
+
+        if (payRes.ok) {
+          const payBody = (await payRes.json()) as {
+            success: boolean
+            data?: { pageUrl: string }
+          }
+          if (payBody.success && payBody.data?.pageUrl) {
+            window.location.href = payBody.data.pageUrl
+            return
+          }
+        }
+      } catch {
+        // Payment creation failed — fall through to success page without payment
+      }
+    }
+
+    // Navigate to success page (no payment, or payment API unavailable)
     router.push(`/booking/success?ref=${encodeURIComponent(appointmentId)}`)
   }
 
