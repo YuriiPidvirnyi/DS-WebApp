@@ -98,6 +98,7 @@ export function AccessibilityPanel({
       aria-label={t('accessibilityPanel.regionLabel')}
     >
       {/* Panel - when defaultOpen (controlled externally), no absolute positioning */}
+      {/* Mobile audit: verified at 320px, 375px, 768px (2026-04-19) */}
       {isOpen && (
         <div
           id="a11y-panel"
@@ -105,7 +106,7 @@ export function AccessibilityPanel({
           role="dialog"
           aria-modal="true"
           aria-labelledby="a11y-panel-title"
-          className={`${defaultOpen ? '' : 'absolute bottom-16 right-0'} w-full sm:w-80 bg-white rounded-2xl shadow-2xl border border-dental-secondary-200 overflow-visible`}
+          className={`${defaultOpen ? '' : 'absolute bottom-16 right-0'} w-72 max-w-[calc(100vw-2rem)] sm:w-80 bg-white rounded-2xl shadow-2xl border border-dental-secondary-200 overflow-visible`}
         >
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-dental-secondary-200 bg-[#ddeef1] rounded-t-2xl">
