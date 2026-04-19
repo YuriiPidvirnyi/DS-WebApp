@@ -1,9 +1,8 @@
 import type { Metadata } from 'next'
-import uk from '@/locales/uk'
 import CabinetSettingsPage from '@/views/cabinet/CabinetSettingsPage'
 
 export const metadata: Metadata = {
-  title: uk.cabinet.settings.title,
+  title: 'Конфіденційність та дані',
   robots: { index: false, follow: false },
 }
 

@@ -43,7 +43,7 @@ export default function CabinetSettingsPage() {
 
       router.push('/')
     } catch (err) {
-      captureException(err)
+      captureException(err instanceof Error ? err : new Error(String(err)))
       setDeleteError(t('cabinet.error.description'))
       setDeleting(false)
     }
