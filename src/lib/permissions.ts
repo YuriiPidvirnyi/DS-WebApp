@@ -256,6 +256,7 @@ export const ROLE_NAV_PERMISSIONS: Record<string, Permission | Permission[]> = {
   '/admin/materials': 'inventory:view',
   '/admin/orders': 'orders:view',
   '/admin/analytics': 'analytics:view',
+  '/admin/data-quality': 'analytics:view',
   '/admin/chat': 'chat:view',
   '/admin/settings': 'settings:view',
   '/admin/users': 'users:view',

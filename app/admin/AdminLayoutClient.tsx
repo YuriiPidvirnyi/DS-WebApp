@@ -24,6 +24,7 @@ import {
   ShoppingCart,
   ArrowLeft,
   ShieldCheck,
+  DatabaseZap,
 } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
 import { AdminAuthProvider } from '@/contexts/AdminAuthContext'
@@ -100,6 +101,11 @@ const ALL_NAV_ITEMS: NavItem[] = [
     nameKey: 'admin.sidebar.analytics',
     href: '/admin/analytics',
     icon: <BarChart3 className="w-5 h-5" />,
+  },
+  {
+    nameKey: 'admin.sidebar.dataQuality',
+    href: '/admin/data-quality',
+    icon: <DatabaseZap className="w-5 h-5" />,
   },
   {
     nameKey: 'admin.sidebar.settings',

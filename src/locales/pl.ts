@@ -1503,6 +1503,7 @@ const pl = {
       materials: 'Materiały',
       orders: 'Zamówienia',
       analytics: 'Analityka',
+      dataQuality: 'Jakość danych',
       settings: 'Ustawienia',
       users: 'Użytkownicy',
     },
@@ -2428,6 +2429,14 @@ const pl = {
       deleteConfirm: 'Usuń tego użytkownika?',
       empty: 'Brak użytkowników',
       note: 'Zmiany ról wchodzą w życie przy następnym logowaniu.',
+    },
+    dataQuality: {
+      title: 'Jakość danych',
+      lastChecked: 'Ostatnie sprawdzenie',
+      refresh: 'Odśwież',
+      allClean: 'Nie znaleziono problemów z jakością danych',
+      issuesFound: '{{count}} problem(y) wymaga(ją) uwagi',
+      cleanDescription: 'Dane kliniki są poprawne i spójne.',
     },
   },
   auth: {
