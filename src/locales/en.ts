@@ -1494,6 +1494,7 @@ const en = {
       materials: 'Materials',
       orders: 'Orders',
       analytics: 'Analytics',
+      dataQuality: 'Data Quality',
       settings: 'Settings',
       users: 'Users',
     },
@@ -2418,6 +2419,14 @@ const en = {
       deleteConfirm: 'Delete this user?',
       empty: 'No users found',
       note: 'Role changes take effect on next login.',
+    },
+    dataQuality: {
+      title: 'Data Quality',
+      lastChecked: 'Last checked',
+      refresh: 'Refresh',
+      allClean: 'No data quality issues found',
+      issuesFound: '{{count}} issue(s) require attention',
+      cleanDescription: 'Your clinic data is clean and consistent.',
     },
   },
   auth: {
