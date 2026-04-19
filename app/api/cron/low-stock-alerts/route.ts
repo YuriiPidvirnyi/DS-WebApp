@@ -18,6 +18,44 @@ function getServiceClient(): ServiceClient | null {
   return createClient(url, key)
 }
 
+async function startCronRun(
+  supabase: ServiceClient,
+  name: string
+): Promise<string | null> {
+  try {
+    const { data } = await supabase
+      .from('cron_runs')
+      .insert({ name, status: 'running' })
+      .select('id')
+      .single()
+    return (data as { id: string } | null)?.id ?? null
+  } catch {
+    return null
+  }
+}
+
+async function finishCronRun(
+  supabase: ServiceClient,
+  runId: string | null,
+  processed: number,
+  error?: string
+): Promise<void> {
+  if (!runId) return
+  try {
+    await supabase
+      .from('cron_runs')
+      .update({
+        status: error ? 'error' : 'ok',
+        finished_at: new Date().toISOString(),
+        processed,
+        ...(error ? { error } : {}),
+      })
+      .eq('id', runId)
+  } catch {
+    // non-blocking
+  }
+}
+
 /**
  * GET /api/cron/low-stock-alerts
  * Runs weekdays at 08:00 UTC (10:00 Kyiv).
@@ -40,6 +78,8 @@ export async function GET(request: NextRequest) {
       { status: 503 }
     )
   }
+
+  const runId = await startCronRun(supabase, 'low-stock-alerts')
 
   try {
     const { data: materials, error: matErr } = await supabase
@@ -137,6 +177,8 @@ export async function GET(request: NextRequest) {
 
     if (insertErr) throw insertErr
 
+    await finishCronRun(supabase, runId, lowStock.length)
+
     return NextResponse.json({
       success: true,
       checked: materials.length,
@@ -146,6 +188,12 @@ export async function GET(request: NextRequest) {
     captureException(err instanceof Error ? err : new Error(String(err)), {
       context: 'cron/low-stock-alerts',
     })
+    await finishCronRun(
+      supabase,
+      runId,
+      0,
+      err instanceof Error ? err.message : String(err)
+    )
     return NextResponse.json(
       { success: false, error: 'Internal error' },
       { status: 500 }
