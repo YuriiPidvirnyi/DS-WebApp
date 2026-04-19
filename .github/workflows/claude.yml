@@ -40,10 +40,11 @@ jobs:
           additional_permissions: |
             actions: read
 
-  # Automatic code review on every PR open/update
+  # Automatic code review on every PR open/update (advisory — never blocks merge)
   claude-review:
     name: Claude PR review
     if: github.event_name == 'pull_request'
+    continue-on-error: true
     runs-on: ubuntu-latest
     permissions:
       contents: read

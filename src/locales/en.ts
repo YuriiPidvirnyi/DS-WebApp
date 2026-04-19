@@ -1103,6 +1103,138 @@ const en = {
       'Modern dentistry in Lviv. Dental treatment, implants, orthodontics, teeth whitening. Transparent pricing, painless treatment, quality guarantee.',
     keywords:
       'dentist Lviv, dentist Sumska, dental clinic Lviv, dental treatment, dental implants, braces, teeth whitening, Dental Story',
+    openGraphTitle: 'Dental Story — Modern Dental Clinic in Lviv',
+    openGraphDescription:
+      'Modern dentistry in Lviv. Painless dental treatment, implants, whitening. Experienced doctors, state-of-the-art equipment.',
+    twitterTitle: 'Dental Story — Modern Dental Clinic in Lviv',
+    twitterDescription:
+      'Modern dentistry in Lviv. Painless treatment, experienced doctors, quality guarantee.',
+    ogImageAlt: 'Dental Story — Modern Dental Clinic in Lviv',
+  },
+  routeMeta: {
+    home: {
+      title: 'Dental Story — Modern Dental Clinic in Lviv',
+      description:
+        'Professional dentistry in Lviv. Painless dental treatment, implants, whitening. Experienced doctors, state-of-the-art equipment.',
+      keywords:
+        'dentist lviv, dental treatment, implants, teeth whitening, dental story',
+      openGraphTitle: 'Dental Story — Modern Dental Clinic in Lviv',
+      openGraphDescription:
+        'Professional dentistry in Lviv. Painless dental treatment, implants, whitening.',
+    },
+    about: {
+      title: 'About Us — Dental Story Lviv',
+      description:
+        'Dental Story — a team of professionals with 10 years of experience. Modern equipment, European treatment standards.',
+      keywords: 'dental clinic about us lviv, dental story team',
+      openGraphTitle: 'About Us — Dental Story Lviv',
+      openGraphDescription:
+        'Dental Story — a team of professionals with 10 years of experience.',
+      breadcrumb: 'About Us',
+    },
+    contact: {
+      title: 'Contact — Dental Story Lviv',
+      description:
+        'Address, phone, and opening hours of Dental Story dental clinic in Lviv. Directions and map.',
+      keywords: 'dental story address, dental clinic phone, contact lviv',
+      openGraphTitle: 'Contact — Dental Story Lviv',
+      openGraphDescription:
+        'Address, phone, and opening hours of Dental Story.',
+      breadcrumb: 'Contact',
+    },
+    booking: {
+      title: 'Book Online — Dental Story',
+      description:
+        'Book a dental appointment online. Choose a convenient time and doctor. Fast and secure.',
+      keywords: 'book dentist, online booking, dental story lviv',
+      openGraphTitle: 'Book a Dental Appointment at Dental Story',
+      openGraphDescription:
+        'Book your appointment online. Choose a convenient time and doctor.',
+      breadcrumb: 'Book Appointment',
+    },
+    bookingSuccess: {
+      title: 'Booking Created — Dental Story',
+      description:
+        'Thank you! We will contact you to confirm your booking. Add the event to your calendar and enable reminders.',
+    },
+    services: {
+      title: 'Dental Story Services — Full Range',
+      description:
+        'All types of dental services: therapy, prosthetics, implants, orthodontics, pediatric dentistry. Transparent pricing.',
+      keywords: 'dental services, dental treatment prices, dental implants',
+      openGraphTitle: 'Dental Story Services',
+      openGraphDescription:
+        'All types of dental services: therapy, prosthetics, implants, orthodontics. Transparent pricing.',
+      breadcrumb: 'Services',
+    },
+    reviews: {
+      title: 'Patient Reviews — Dental Story',
+      description:
+        'Rate our service and read patient reviews about treatment at Dental Story.',
+      keywords:
+        'dental clinic reviews, dental story reviews, dental treatment lviv',
+      openGraphTitle: 'Patient Reviews — Dental Story',
+      openGraphDescription: 'Rate our service and read patient reviews.',
+      breadcrumb: 'Reviews',
+    },
+    gallery: {
+      title: 'Gallery — Treatment Results at Dental Story',
+      description:
+        'Portfolio of our work: before and after treatment photos. Implants, restorations, teeth whitening.',
+      keywords:
+        'dental treatment results, before and after photos, dental story portfolio',
+      openGraphTitle: 'Dental Story Gallery',
+      openGraphDescription:
+        'Portfolio of our work: before and after treatment photos.',
+      breadcrumb: 'Gallery',
+    },
+    privacyPolicy: {
+      title: 'Privacy Policy — Dental Story',
+      description:
+        'How we collect, store, and process your personal data. Patient privacy is our priority.',
+    },
+    termsOfService: {
+      title: 'Terms of Service — Dental Story',
+      description:
+        'Terms of use of the website and dental services provided by Dental Story.',
+    },
+    symptomChecker: {
+      title: 'Symptom Checker — Dental Story',
+      description:
+        'Free online dental symptom checker. Find out what your pain might mean.',
+    },
+    admin: {
+      title: 'Admin Panel — Dental Story',
+      loginTitle: 'Admin Login — Dental Story',
+      patientsTitle: 'Patients — Dental Story',
+    },
+    patientCard: {
+      title: 'Patient Card — Dental Story',
+    },
+    cabinet: {
+      title: 'Patient Portal — Dental Story',
+      appointmentsTitle: 'My Appointments — Dental Story',
+      profileTitle: 'My Profile — Dental Story',
+      paymentsTitle: 'My Payments — Dental Story',
+      treatmentsTitle: 'My Treatment — Dental Story',
+    },
+    auth: {
+      loginTitle: 'Sign In — Dental Story',
+      loginDescription: 'Sign in to your Dental Story patient portal',
+      signUpTitle: 'Sign Up — Dental Story',
+      signUpDescription: 'Create your Dental Story patient account',
+      signUpSuccessTitle: 'Registration Successful — Dental Story',
+      forgotPasswordTitle: 'Forgot Password — Dental Story',
+      forgotPasswordDescription:
+        'Receive a password reset email and restore access to your portal.',
+      resetPasswordTitle: 'New Password — Dental Story',
+      resetPasswordDescription:
+        'Set a new password for your Dental Story patient account.',
+    },
+    openGraphImage: {
+      alt: 'Dental Story — Modern Dentistry in Lviv',
+      tagline: 'Modern dentistry in Lviv',
+    },
   },
   structuredData: {
     organizationAlternateName: 'Dental clinic',
