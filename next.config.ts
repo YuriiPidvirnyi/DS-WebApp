@@ -96,6 +96,10 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'dentalstory.ua',
+      },
+      {
+        protocol: 'https',
         hostname: 'fonts.gstatic.com',
       },
       {
@@ -109,6 +113,24 @@ const nextConfig: NextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+  },
+
+  // Canonical domain redirect: dentalstory.com.ua → dentalstory.ua
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'dentalstory.com.ua' }],
+        destination: 'https://dentalstory.ua/:path*',
+        permanent: true,
+      },
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.dentalstory.com.ua' }],
+        destination: 'https://dentalstory.ua/:path*',
+        permanent: true,
+      },
+    ]
   },
 
   // Static asset cache headers — security headers are set by middleware.ts
@@ -192,7 +214,7 @@ const nextConfig: NextConfig = {
   // Environment variables exposed to the browser (type-safe access)
   env: {
     NEXT_PUBLIC_SITE_URL:
-      process.env.NEXT_PUBLIC_SITE_URL || 'https://dentalstory.com.ua',
+      process.env.NEXT_PUBLIC_SITE_URL || 'https://dentalstory.ua',
   },
 }
 

@@ -12,6 +12,7 @@ import SidebarNav from '@/components/SidebarNav'
 import ClientFloatingButtons from '@/components/ClientFloatingButtons'
 import CookieConsent from '@/components/CookieConsent'
 import { StructuredData } from '@/components/StructuredData'
+import { getReviewStats } from '@/lib/review-stats'
 import uk from '@/locales/uk'
 
 // Project typography system
@@ -110,6 +111,7 @@ export default async function RootLayout({
 }) {
   // Read CSP nonce injected by root proxy (`proxy.ts`) — makes this layout dynamically rendered
   const nonce = (await headers()).get('x-nonce') ?? ''
+  const reviewStats = await getReviewStats()
 
   return (
     <html
@@ -120,7 +122,11 @@ export default async function RootLayout({
       <body>
         {/* Organization JSON-LD structured data (server-rendered) */}
         <StructuredData type="organization" />
-        <StructuredData type="localBusiness" />
+        <StructuredData
+          type="localBusiness"
+          rating={reviewStats.rating}
+          reviewCount={reviewStats.reviewCount}
+        />
 
         {/* Google Analytics 4 — lazyOnload to avoid blocking hydration */}
         {GA4_ID && (
