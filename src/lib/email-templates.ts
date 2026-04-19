@@ -3,6 +3,124 @@ const SITE_URL =
 const CLINIC_PHONE = '+38 (044) 123-45-67'
 const CLINIC_ADDRESS = 'м. Київ, вул. Стоматологічна, 1'
 
+type Locale = 'uk' | 'en' | 'pl'
+
+const EMAIL_STRINGS: Record<
+  Locale,
+  {
+    confirmed: string
+    thanks: (name: string) => string
+    service: string
+    date: string
+    time: string
+    doctor: string
+    myCabinet: string
+    changeTime: (phone: string) => string
+    confirmedSubject: (date: string, time: string) => string
+    reminder: string
+    reminderMsg: (name: string) => string
+    cantCome: (phone: string) => string
+    reminderSubject: (date: string, time: string) => string
+    cancelled: string
+    cancelledMsg: (name: string) => string
+    reason: string
+    bookAgain: string
+    cancelledSubject: (date: string) => string
+    newBooking: string
+    patient: string
+    phone: string
+    email: string
+    viewAdmin: string
+    newBookingSubject: (name: string, date: string) => string
+    copyright: (year: number) => string
+  }
+> = {
+  uk: {
+    confirmed: 'Запис підтверджено ✓',
+    thanks: name => `Дякуємо, ${name}! Ваш запис створено.`,
+    service: 'Послуга',
+    date: 'Дата',
+    time: 'Час',
+    doctor: 'Лікар',
+    myCabinet: 'Мій кабінет',
+    changeTime: phone => `Якщо потрібно змінити час — зателефонуйте ${phone}`,
+    confirmedSubject: (date, time) => `Запис підтверджено — ${date}, ${time}`,
+    reminder: 'Нагадування про візит',
+    reminderMsg: name => `${name}, нагадуємо про ваш запис.`,
+    cantCome: phone =>
+      `Не зможете прийти? Зателефонуйте ${phone} щоб перенести візит.`,
+    reminderSubject: (date, time) => `Нагадування — ${date}, ${time}`,
+    cancelled: 'Запис скасовано',
+    cancelledMsg: name => `${name}, ваш запис було скасовано.`,
+    reason: 'Причина',
+    bookAgain: 'Записатися знову',
+    cancelledSubject: date => `Запис скасовано — ${date}`,
+    newBooking: 'Новий запис з сайту',
+    patient: 'Пацієнт',
+    phone: 'Телефон',
+    email: 'Email',
+    viewAdmin: 'Переглянути в адмін-панелі',
+    newBookingSubject: (name, date) => `Новий запис — ${name}, ${date}`,
+    copyright: year => `© ${year} DentalStory. Усі права захищено.`,
+  },
+  en: {
+    confirmed: 'Appointment confirmed ✓',
+    thanks: name => `Thank you, ${name}! Your appointment has been created.`,
+    service: 'Service',
+    date: 'Date',
+    time: 'Time',
+    doctor: 'Doctor',
+    myCabinet: 'My Cabinet',
+    changeTime: phone => `Need to reschedule? Please call us at ${phone}`,
+    confirmedSubject: (date, time) =>
+      `Appointment confirmed — ${date}, ${time}`,
+    reminder: 'Appointment reminder',
+    reminderMsg: name => `${name}, this is a reminder about your appointment.`,
+    cantCome: phone => `Can't make it? Call ${phone} to reschedule.`,
+    reminderSubject: (date, time) => `Reminder — ${date}, ${time}`,
+    cancelled: 'Appointment cancelled',
+    cancelledMsg: name => `${name}, your appointment has been cancelled.`,
+    reason: 'Reason',
+    bookAgain: 'Book again',
+    cancelledSubject: date => `Appointment cancelled — ${date}`,
+    newBooking: 'New online booking',
+    patient: 'Patient',
+    phone: 'Phone',
+    email: 'Email',
+    viewAdmin: 'View in admin panel',
+    newBookingSubject: (name, date) => `New booking — ${name}, ${date}`,
+    copyright: year => `© ${year} DentalStory. All rights reserved.`,
+  },
+  pl: {
+    confirmed: 'Wizyta potwierdzona ✓',
+    thanks: name => `Dziękujemy, ${name}! Twoja wizyta została utworzona.`,
+    service: 'Usługa',
+    date: 'Data',
+    time: 'Godzina',
+    doctor: 'Lekarz',
+    myCabinet: 'Mój gabinet',
+    changeTime: phone => `Chcesz zmienić termin? Zadzwoń pod numer ${phone}`,
+    confirmedSubject: (date, time) => `Wizyta potwierdzona — ${date}, ${time}`,
+    reminder: 'Przypomnienie o wizycie',
+    reminderMsg: name => `${name}, przypominamy o Twojej wizycie.`,
+    cantCome: phone =>
+      `Nie możesz przyjść? Zadzwoń pod ${phone}, aby przełożyć wizytę.`,
+    reminderSubject: (date, time) => `Przypomnienie — ${date}, ${time}`,
+    cancelled: 'Wizyta anulowana',
+    cancelledMsg: name => `${name}, Twoja wizyta została anulowana.`,
+    reason: 'Powód',
+    bookAgain: 'Zarezerwuj ponownie',
+    cancelledSubject: date => `Wizyta anulowana — ${date}`,
+    newBooking: 'Nowa rezerwacja ze strony',
+    patient: 'Pacjent',
+    phone: 'Telefon',
+    email: 'Email',
+    viewAdmin: 'Zobacz w panelu admina',
+    newBookingSubject: (name, date) => `Nowa rezerwacja — ${name}, ${date}`,
+    copyright: year => `© ${year} DentalStory. Wszelkie prawa zastrzeżone.`,
+  },
+}
+
 const COLORS = {
   primary: '#AECED3',
   teal: '#5A8A94',
@@ -17,7 +135,12 @@ const COLORS = {
   danger: '#EF4444',
 }
 
-function baseLayout(content: string, preheader?: string): string {
+function baseLayout(
+  content: string,
+  preheader?: string,
+  locale: Locale = 'uk'
+): string {
+  const s = EMAIL_STRINGS[locale]
   return `<!DOCTYPE html>
 <html lang="uk" dir="ltr">
 <head>
@@ -61,7 +184,7 @@ function baseLayout(content: string, preheader?: string): string {
                 ${CLINIC_ADDRESS} &bull; <a href="tel:${CLINIC_PHONE.replace(/\s/g, '')}" style="color:${COLORS.teal};">${CLINIC_PHONE}</a>
               </p>
               <p style="margin:0;font-size:12px;color:#9CA3AF;">
-                &copy; ${new Date().getFullYear()} DentalStory. Усі права захищено.
+                ${s.copyright(new Date().getFullYear())}
               </p>
             </td>
           </tr>
@@ -102,58 +225,66 @@ export type BookingConfirmationData = {
   doctorName?: string
 }
 
-export function bookingConfirmationEmail(data: BookingConfirmationData) {
+export function bookingConfirmationEmail(
+  data: BookingConfirmationData,
+  locale: Locale = 'uk'
+) {
+  const s = EMAIL_STRINGS[locale]
+  const fmtDate = formatDateUk(data.date)
+  const fmtTime = formatTime(data.time)
+
   const html = baseLayout(
     `
-    <h1 style="margin:0 0 8px;font-size:22px;color:${COLORS.navy};">Запис підтверджено ✓</h1>
+    <h1 style="margin:0 0 8px;font-size:22px;color:${COLORS.navy};">${s.confirmed}</h1>
     <p style="margin:0 0 24px;font-size:15px;color:${COLORS.text};">
-      Дякуємо, ${data.patientName}! Ваш запис створено.
+      ${s.thanks(data.patientName)}
     </p>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${COLORS.bg};border-radius:8px;margin-bottom:24px;">
       <tr>
         <td style="padding:20px 24px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
             <tr>
-              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};width:120px;">Послуга</td>
+              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};width:120px;">${s.service}</td>
               <td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${data.service}</td>
             </tr>
             <tr>
-              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">Дата</td>
-              <td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${formatDateUk(data.date)}</td>
+              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">${s.date}</td>
+              <td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${fmtDate}</td>
             </tr>
             <tr>
-              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">Час</td>
-              <td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${formatTime(data.time)}</td>
+              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">${s.time}</td>
+              <td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${fmtTime}</td>
             </tr>
-            ${data.doctorName ? `<tr><td style="padding:6px 0;font-size:13px;color:${COLORS.text};">Лікар</td><td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${data.doctorName}</td></tr>` : ''}
+            ${data.doctorName ? `<tr><td style="padding:6px 0;font-size:13px;color:${COLORS.text};">${s.doctor}</td><td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${data.doctorName}</td></tr>` : ''}
           </table>
         </td>
       </tr>
     </table>
     <div style="text-align:center;margin-bottom:24px;">
-      <a href="${SITE_URL}/cabinet" class="btn">Мій кабінет</a>
+      <a href="${SITE_URL}/cabinet" class="btn">${s.myCabinet}</a>
     </div>
     <p style="margin:0;font-size:13px;color:#9CA3AF;text-align:center;">
-      Якщо потрібно змінити час — зателефонуйте ${CLINIC_PHONE}
+      ${s.changeTime(CLINIC_PHONE)}
     </p>
     `,
-    `Ваш запис на ${formatDateUk(data.date)} о ${formatTime(data.time)} підтверджено`
+    `${s.confirmed} ${fmtDate} ${fmtTime}`,
+    locale
   )
 
-  const text = `Запис підтверджено
+  const text = `${s.confirmed}
 
-Дякуємо, ${data.patientName}! Ваш запис створено.
+${s.thanks(data.patientName)}
 
-Послуга: ${data.service}
-Дата: ${formatDateUk(data.date)}
-Час: ${formatTime(data.time)}${data.doctorName ? `\nЛікар: ${data.doctorName}` : ''}
+${s.service}: ${data.service}
+${s.date}: ${fmtDate}
+${s.time}: ${fmtTime}${data.doctorName ? `\n${s.doctor}: ${data.doctorName}` : ''}
 
-Якщо потрібно змінити час — зателефонуйте ${CLINIC_PHONE}
+${s.changeTime(CLINIC_PHONE)}
 
 ${SITE_URL}/cabinet`
 
   return {
-    subject: `Запис підтверджено — ${formatDateUk(data.date)}, ${formatTime(data.time)}`,
+    subject: s.confirmedSubject(fmtDate, fmtTime),
     html,
     text,
   }
@@ -170,58 +301,66 @@ export type ReminderData = {
   doctorName?: string
 }
 
-export function appointmentReminderEmail(data: ReminderData) {
+export function appointmentReminderEmail(
+  data: ReminderData,
+  locale: Locale = 'uk'
+) {
+  const s = EMAIL_STRINGS[locale]
+  const fmtDate = formatDateUk(data.date)
+  const fmtTime = formatTime(data.time)
+
   const html = baseLayout(
     `
-    <h1 style="margin:0 0 8px;font-size:22px;color:${COLORS.navy};">Нагадування про візит</h1>
+    <h1 style="margin:0 0 8px;font-size:22px;color:${COLORS.navy};">${s.reminder}</h1>
     <p style="margin:0 0 24px;font-size:15px;color:${COLORS.text};">
-      ${data.patientName}, нагадуємо про ваш запис.
+      ${s.reminderMsg(data.patientName)}
     </p>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${COLORS.bg};border-radius:8px;margin-bottom:24px;">
       <tr>
         <td style="padding:20px 24px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
             <tr>
-              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};width:120px;">Послуга</td>
+              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};width:120px;">${s.service}</td>
               <td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${data.service}</td>
             </tr>
             <tr>
-              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">Дата</td>
-              <td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${formatDateUk(data.date)}</td>
+              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">${s.date}</td>
+              <td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${fmtDate}</td>
             </tr>
             <tr>
-              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">Час</td>
-              <td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${formatTime(data.time)}</td>
+              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">${s.time}</td>
+              <td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${fmtTime}</td>
             </tr>
-            ${data.doctorName ? `<tr><td style="padding:6px 0;font-size:13px;color:${COLORS.text};">Лікар</td><td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${data.doctorName}</td></tr>` : ''}
+            ${data.doctorName ? `<tr><td style="padding:6px 0;font-size:13px;color:${COLORS.text};">${s.doctor}</td><td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${data.doctorName}</td></tr>` : ''}
           </table>
         </td>
       </tr>
     </table>
     <div style="text-align:center;margin-bottom:16px;">
-      <a href="${SITE_URL}/cabinet" class="btn">Мій кабінет</a>
+      <a href="${SITE_URL}/cabinet" class="btn">${s.myCabinet}</a>
     </div>
     <p style="margin:0;font-size:13px;color:#9CA3AF;text-align:center;">
-      Не зможете прийти? Зателефонуйте ${CLINIC_PHONE} щоб перенести візит.
+      ${s.cantCome(CLINIC_PHONE)}
     </p>
     `,
-    `Нагадуємо: ${formatDateUk(data.date)} о ${formatTime(data.time)} — візит до DentalStory`
+    `${s.reminder}: ${fmtDate} ${fmtTime}`,
+    locale
   )
 
-  const text = `Нагадування про візит
+  const text = `${s.reminder}
 
-${data.patientName}, нагадуємо про ваш запис.
+${s.reminderMsg(data.patientName)}
 
-Послуга: ${data.service}
-Дата: ${formatDateUk(data.date)}
-Час: ${formatTime(data.time)}${data.doctorName ? `\nЛікар: ${data.doctorName}` : ''}
+${s.service}: ${data.service}
+${s.date}: ${fmtDate}
+${s.time}: ${fmtTime}${data.doctorName ? `\n${s.doctor}: ${data.doctorName}` : ''}
 
-Не зможете прийти? Зателефонуйте ${CLINIC_PHONE} щоб перенести візит.
+${s.cantCome(CLINIC_PHONE)}
 
 ${SITE_URL}/cabinet`
 
   return {
-    subject: `Нагадування — ${formatDateUk(data.date)}, ${formatTime(data.time)}`,
+    subject: s.reminderSubject(fmtDate, fmtTime),
     html,
     text,
   }
@@ -237,53 +376,61 @@ export type CancellationData = {
   reason?: string
 }
 
-export function appointmentCancellationEmail(data: CancellationData) {
+export function appointmentCancellationEmail(
+  data: CancellationData,
+  locale: Locale = 'uk'
+) {
+  const s = EMAIL_STRINGS[locale]
+  const fmtDate = formatDateUk(data.date)
+  const fmtTime = formatTime(data.time)
+
   const html = baseLayout(
     `
-    <h1 style="margin:0 0 8px;font-size:22px;color:${COLORS.navy};">Запис скасовано</h1>
+    <h1 style="margin:0 0 8px;font-size:22px;color:${COLORS.navy};">${s.cancelled}</h1>
     <p style="margin:0 0 24px;font-size:15px;color:${COLORS.text};">
-      ${data.patientName}, ваш запис було скасовано.
+      ${s.cancelledMsg(data.patientName)}
     </p>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${COLORS.bg};border-radius:8px;margin-bottom:24px;">
       <tr>
         <td style="padding:20px 24px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
             <tr>
-              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};width:120px;">Послуга</td>
+              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};width:120px;">${s.service}</td>
               <td style="padding:6px 0;font-size:15px;color:${COLORS.navy};">${data.service}</td>
             </tr>
             <tr>
-              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">Дата</td>
-              <td style="padding:6px 0;font-size:15px;color:${COLORS.navy};">${formatDateUk(data.date)}</td>
+              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">${s.date}</td>
+              <td style="padding:6px 0;font-size:15px;color:${COLORS.navy};">${fmtDate}</td>
             </tr>
             <tr>
-              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">Час</td>
-              <td style="padding:6px 0;font-size:15px;color:${COLORS.navy};">${formatTime(data.time)}</td>
+              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">${s.time}</td>
+              <td style="padding:6px 0;font-size:15px;color:${COLORS.navy};">${fmtTime}</td>
             </tr>
-            ${data.reason ? `<tr><td style="padding:6px 0;font-size:13px;color:${COLORS.text};">Причина</td><td style="padding:6px 0;font-size:15px;color:${COLORS.navy};">${data.reason}</td></tr>` : ''}
+            ${data.reason ? `<tr><td style="padding:6px 0;font-size:13px;color:${COLORS.text};">${s.reason}</td><td style="padding:6px 0;font-size:15px;color:${COLORS.navy};">${data.reason}</td></tr>` : ''}
           </table>
         </td>
       </tr>
     </table>
     <div style="text-align:center;margin-bottom:16px;">
-      <a href="${SITE_URL}/booking" class="btn" style="background-color:${COLORS.navy};">Записатися знову</a>
+      <a href="${SITE_URL}/booking" class="btn" style="background-color:${COLORS.navy};">${s.bookAgain}</a>
     </div>
     `,
-    `Ваш запис на ${formatDateUk(data.date)} скасовано`
+    `${s.cancelled} ${fmtDate}`,
+    locale
   )
 
-  const text = `Запис скасовано
+  const text = `${s.cancelled}
 
-${data.patientName}, ваш запис було скасовано.
+${s.cancelledMsg(data.patientName)}
 
-Послуга: ${data.service}
-Дата: ${formatDateUk(data.date)}
-Час: ${formatTime(data.time)}${data.reason ? `\nПричина: ${data.reason}` : ''}
+${s.service}: ${data.service}
+${s.date}: ${fmtDate}
+${s.time}: ${fmtTime}${data.reason ? `\n${s.reason}: ${data.reason}` : ''}
 
-Щоб записатися знову: ${SITE_URL}/booking`
+${SITE_URL}/booking`
 
   return {
-    subject: `Запис скасовано — ${formatDateUk(data.date)}`,
+    subject: s.cancelledSubject(fmtDate),
     html,
     text,
   }
@@ -301,62 +448,70 @@ export type NewBookingAdminData = {
   appointmentId: string
 }
 
-export function newBookingAdminEmail(data: NewBookingAdminData) {
+export function newBookingAdminEmail(
+  data: NewBookingAdminData,
+  locale: Locale = 'uk'
+) {
+  const s = EMAIL_STRINGS[locale]
+  const fmtDate = formatDateUk(data.date)
+  const fmtTime = formatTime(data.time)
+
   const html = baseLayout(
     `
-    <h1 style="margin:0 0 8px;font-size:22px;color:${COLORS.navy};">Новий запис з сайту</h1>
+    <h1 style="margin:0 0 8px;font-size:22px;color:${COLORS.navy};">${s.newBooking}</h1>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${COLORS.bg};border-radius:8px;margin-bottom:24px;">
       <tr>
         <td style="padding:20px 24px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
             <tr>
-              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};width:120px;">Пацієнт</td>
+              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};width:120px;">${s.patient}</td>
               <td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${data.patientName}</td>
             </tr>
             <tr>
-              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">Телефон</td>
+              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">${s.phone}</td>
               <td style="padding:6px 0;font-size:15px;color:${COLORS.navy};">${data.phone}</td>
             </tr>
             <tr>
-              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">Email</td>
+              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">${s.email}</td>
               <td style="padding:6px 0;font-size:15px;color:${COLORS.navy};">${data.email}</td>
             </tr>
             <tr>
-              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">Послуга</td>
+              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">${s.service}</td>
               <td style="padding:6px 0;font-size:15px;color:${COLORS.navy};">${data.service}</td>
             </tr>
             <tr>
-              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">Дата</td>
-              <td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${formatDateUk(data.date)}</td>
+              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">${s.date}</td>
+              <td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${fmtDate}</td>
             </tr>
             <tr>
-              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">Час</td>
-              <td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${formatTime(data.time)}</td>
+              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">${s.time}</td>
+              <td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${fmtTime}</td>
             </tr>
           </table>
         </td>
       </tr>
     </table>
     <div style="text-align:center;">
-      <a href="${SITE_URL}/admin?tab=appointments&filter=today" class="btn">Переглянути в адмін-панелі</a>
+      <a href="${SITE_URL}/admin?tab=appointments&filter=today" class="btn">${s.viewAdmin}</a>
     </div>
     `,
-    `Новий запис: ${data.patientName} — ${formatDateUk(data.date)}`
+    `${s.newBooking}: ${data.patientName} — ${fmtDate}`,
+    locale
   )
 
-  const text = `Новий запис з сайту
+  const text = `${s.newBooking}
 
-Пацієнт: ${data.patientName}
-Телефон: ${data.phone}
-Email: ${data.email}
-Послуга: ${data.service}
-Дата: ${formatDateUk(data.date)}
-Час: ${formatTime(data.time)}
+${s.patient}: ${data.patientName}
+${s.phone}: ${data.phone}
+${s.email}: ${data.email}
+${s.service}: ${data.service}
+${s.date}: ${fmtDate}
+${s.time}: ${fmtTime}
 
 ${SITE_URL}/admin?tab=appointments`
 
   return {
-    subject: `Новий запис — ${data.patientName}, ${formatDateUk(data.date)}`,
+    subject: s.newBookingSubject(data.patientName, fmtDate),
     html,
     text,
   }
