@@ -5,10 +5,14 @@ import uk from '@/locales/uk'
 interface StructuredDataProps {
   type?: 'organization' | 'localBusiness' | 'medicalClinic' | 'service'
   data?: Record<string, unknown>
+  rating?: number
+  reviewCount?: number
 }
 
 export const StructuredData = ({
   type = 'organization',
+  rating,
+  reviewCount,
 }: StructuredDataProps) => {
   const schemaCopy = uk.structuredData
 
@@ -81,8 +85,8 @@ export const StructuredData = ({
     priceRange: '$$',
     aggregateRating: {
       '@type': 'AggregateRating',
-      ratingValue: String(SITE_INFO.rating || '4.7'),
-      reviewCount: String(SITE_INFO.reviewCount || '71'),
+      ratingValue: String(rating ?? SITE_INFO.rating),
+      reviewCount: String(reviewCount ?? SITE_INFO.reviewCount),
       bestRating: '5',
       worstRating: '1',
     },
