@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { trackEvent, AIEvent, AnalyticsEventCategory } from '@/utils/analytics'
 import Link from 'next/link'
 import {
   Stethoscope,
@@ -146,6 +147,14 @@ export default function SymptomCheckerPage() {
   const [duration, setDuration] = useState<string>('')
   const [showResults, setShowResults] = useState(false)
   const [expandedConditions, setExpandedConditions] = useState<string[]>([])
+
+  useEffect(() => {
+    try {
+      trackEvent(AIEvent.SymptomCheckerStarted, AnalyticsEventCategory.AI)
+    } catch {
+      // analytics may fail silently
+    }
+  }, [])
 
   const toggleSymptom = (id: string) => {
     setSelectedSymptoms(prev =>
