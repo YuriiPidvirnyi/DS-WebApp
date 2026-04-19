@@ -90,6 +90,16 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  if (typeof concerns === 'string' && concerns.length > 2000) {
+    return Response.json(
+      {
+        success: false,
+        error: 'Поле concerns занадто довге (макс. 2000 символів)',
+      },
+      { status: 400 }
+    )
+  }
+
   // Fetch available services from database
   const supabase = await createClient()
   let services:

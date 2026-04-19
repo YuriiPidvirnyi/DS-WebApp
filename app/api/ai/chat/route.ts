@@ -328,6 +328,21 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  const lastParts = messages[messages.length - 1]?.parts ?? []
+  const lastText = lastParts
+    .filter((p): p is { type: 'text'; text: string } => p.type === 'text')
+    .map(p => p.text)
+    .join('')
+  if (lastText.length > 2000) {
+    return Response.json(
+      {
+        success: false,
+        error: 'Повідомлення занадто довге (макс. 2000 символів)',
+      },
+      { status: 400 }
+    )
+  }
+
   const languageInstruction =
     language === 'en'
       ? '\n\nIMPORTANT: The user prefers English. Respond in English.'
