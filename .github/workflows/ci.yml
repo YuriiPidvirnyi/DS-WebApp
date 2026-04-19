@@ -91,6 +91,8 @@ jobs:
           NEXT_TELEMETRY_DISABLED: '1'
           NEXT_PUBLIC_SUPABASE_URL: http://localhost:3000/supabase-mock
           NEXT_PUBLIC_SUPABASE_ANON_KEY: test-anon-key
+          # Cap Node heap during build to leave room for subsequent server + Chromium
+          NODE_OPTIONS: --max-old-space-size=3072
 
       - name: Install Chromium
         run: npx playwright install chromium --with-deps
@@ -98,6 +100,7 @@ jobs:
       - name: Start server and wait for ready
         run: |
           PORT=3000 NEXT_TELEMETRY_DISABLED=1 \
+            NODE_OPTIONS=--max-old-space-size=512 \
             NEXT_PUBLIC_SITE_URL=http://localhost:3000 \
             NEXT_PUBLIC_SUPABASE_URL=http://localhost:3000/supabase-mock \
             NEXT_PUBLIC_SUPABASE_ANON_KEY=test-anon-key \
@@ -137,6 +140,7 @@ jobs:
           NEXT_TELEMETRY_DISABLED: '1'
           NEXT_PUBLIC_SUPABASE_URL: http://localhost:3000/supabase-mock
           NEXT_PUBLIC_SUPABASE_ANON_KEY: test-anon-key
+          NODE_OPTIONS: --max-old-space-size=3072
 
       - name: Install Chromium
         run: npx playwright install chromium --with-deps
@@ -144,6 +148,7 @@ jobs:
       - name: Start server and wait for ready
         run: |
           PORT=3000 NEXT_TELEMETRY_DISABLED=1 \
+            NODE_OPTIONS=--max-old-space-size=512 \
             NEXT_PUBLIC_SITE_URL=http://localhost:3000 \
             NEXT_PUBLIC_SUPABASE_URL=http://localhost:3000/supabase-mock \
             NEXT_PUBLIC_SUPABASE_ANON_KEY=test-anon-key \
