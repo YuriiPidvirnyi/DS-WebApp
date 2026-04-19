@@ -16,6 +16,7 @@ import {
   Plus,
   CreditCard,
   ArrowLeft,
+  Settings,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import Logo from '@/components/ui/Logo'
@@ -54,6 +55,11 @@ const navigation: NavItem[] = [
     nameKey: 'cabinet.sidebar.profile',
     href: '/cabinet/profile',
     icon: <User className="w-5 h-5" />,
+  },
+  {
+    nameKey: 'cabinet.settings.navLink',
+    href: '/cabinet/settings',
+    icon: <Settings className="w-5 h-5" />,
   },
 ]
 

@@ -2435,6 +2435,25 @@
       "goHome": "Go home",
       "devDetails": "Error details"
     },
+    "settings": {
+      "title": "Privacy & data",
+      "subtitle": "Manage your personal data",
+      "exportSection": {
+        "title": "Download my data",
+        "description": "Get a copy of all your data in JSON format (appointments, reviews, messages).",
+        "button": "Download my data"
+      },
+      "deleteSection": {
+        "title": "Delete account",
+        "description": "This is an irreversible action. All your data will be deleted.",
+        "button": "Delete account",
+        "confirm": "Are you sure? This action cannot be undone.",
+        "confirmButton": "Yes, delete my account",
+        "cancel": "Cancel",
+        "deleting": "Deleting..."
+      },
+      "navLink": "Settings"
+    },
     "sidebar": {
       "title": "Patient Cabinet",
       "dashboard": "Dashboard",
@@ -2442,6 +2461,7 @@
       "treatments": "Treatments",
       "payments": "Payments",
       "profile": "Profile",
+      "settings": "Settings",
       "soon": "Soon",
       "navigation": "Cabinet navigation",
       "openMenu": "Open menu",

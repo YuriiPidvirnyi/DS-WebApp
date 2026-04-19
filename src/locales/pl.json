@@ -2437,6 +2437,25 @@
       "goHome": "Strona główna",
       "devDetails": "Szczegóły błędu"
     },
+    "settings": {
+      "title": "Prywatność i dane",
+      "subtitle": "Zarządzaj swoimi danymi osobowymi",
+      "exportSection": {
+        "title": "Pobierz moje dane",
+        "description": "Pobierz kopię wszystkich swoich danych w formacie JSON (wizyty, opinie, wiadomości).",
+        "button": "Pobierz moje dane"
+      },
+      "deleteSection": {
+        "title": "Usuń konto",
+        "description": "To jest nieodwracalna akcja. Wszystkie Twoje dane zostaną usunięte.",
+        "button": "Usuń konto",
+        "confirm": "Czy jesteś pewny? Tej akcji nie można cofnąć.",
+        "confirmButton": "Tak, usuń moje konto",
+        "cancel": "Anuluj",
+        "deleting": "Usuwanie..."
+      },
+      "navLink": "Ustawienia"
+    },
     "sidebar": {
       "title": "Gabinet pacjenta",
       "dashboard": "Panel",
@@ -2444,6 +2463,7 @@
       "treatments": "Leczenie",
       "payments": "Płatności",
       "profile": "Profil",
+      "settings": "Ustawienia",
       "soon": "Wkrótce",
       "navigation": "Nawigacja gabinetu",
       "openMenu": "Otwórz menu",
