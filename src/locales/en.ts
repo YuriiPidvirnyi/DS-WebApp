@@ -1495,6 +1495,7 @@ const en = {
       orders: 'Orders',
       analytics: 'Analytics',
       dataQuality: 'Data Quality',
+      health: 'Service Health',
       settings: 'Settings',
       users: 'Users',
     },
