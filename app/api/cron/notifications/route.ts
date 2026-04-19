@@ -224,6 +224,45 @@ async function processEvent(
  * concurrent re-fire cannot double-send. Stuck 'processing' rows older than
  * STUCK_TIMEOUT_MS are recycled back to 'queued' at the start of each run.
  */
+async function startCronRun(
+  supabase: ServiceClient,
+  name: string
+): Promise<string | null> {
+  try {
+    const { data } = await supabase
+      .from('cron_runs')
+      .insert({ name, status: 'running' })
+      .select('id')
+      .single()
+    return (data as { id: string } | null)?.id ?? null
+  } catch {
+    return null
+  }
+}
+
+async function finishCronRun(
+  supabase: ServiceClient,
+  runId: string | null,
+  status: 'ok' | 'error',
+  processed: number,
+  error?: string
+): Promise<void> {
+  if (!runId) return
+  try {
+    await supabase
+      .from('cron_runs')
+      .update({
+        status,
+        finished_at: new Date().toISOString(),
+        processed,
+        ...(error ? { error } : {}),
+      })
+      .eq('id', runId)
+  } catch {
+    // non-blocking — cron_runs is observability only
+  }
+}
+
 export async function GET(request: NextRequest) {
   // Auth gate: missing config and wrong credentials both return 401.
   // Callers should not be able to distinguish "unconfigured" from "wrong token".
@@ -251,6 +290,8 @@ export async function GET(request: NextRequest) {
       processed: 0,
     })
   }
+
+  const runId = await startCronRun(supabase, 'notifications')
 
   // Recycle rows stuck in 'processing' from a previous crashed run
   const stuckCutoff = new Date(Date.now() - STUCK_TIMEOUT_MS).toISOString()
@@ -375,6 +416,8 @@ export async function GET(request: NextRequest) {
         .eq('status', 'processing')
     }
   }
+
+  await finishCronRun(supabase, runId, 'ok', processed)
 
   return NextResponse.json({
     success: true,

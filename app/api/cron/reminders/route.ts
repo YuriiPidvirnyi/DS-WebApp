@@ -18,6 +18,44 @@ function getServiceClient(): ServiceClient | null {
   return createClient(url, key)
 }
 
+async function startCronRun(
+  supabase: ServiceClient,
+  name: string
+): Promise<string | null> {
+  try {
+    const { data } = await supabase
+      .from('cron_runs')
+      .insert({ name, status: 'running' })
+      .select('id')
+      .single()
+    return (data as { id: string } | null)?.id ?? null
+  } catch {
+    return null
+  }
+}
+
+async function finishCronRun(
+  supabase: ServiceClient,
+  runId: string | null,
+  processed: number,
+  error?: string
+): Promise<void> {
+  if (!runId) return
+  try {
+    await supabase
+      .from('cron_runs')
+      .update({
+        status: error ? 'error' : 'ok',
+        finished_at: new Date().toISOString(),
+        processed,
+        ...(error ? { error } : {}),
+      })
+      .eq('id', runId)
+  } catch {
+    // non-blocking
+  }
+}
+
 /**
  * GET /api/cron/reminders
  * Runs daily at 18:00 UTC (20:00 Kyiv).
@@ -41,6 +79,8 @@ export async function GET(request: NextRequest) {
       scheduled: 0,
     })
   }
+
+  const runId = await startCronRun(supabase, 'reminders')
 
   const tomorrow = new Date()
   tomorrow.setDate(tomorrow.getDate() + 1)
@@ -126,11 +166,14 @@ export async function GET(request: NextRequest) {
     captureException(new Error('[cron/reminders] Insert error'), {
       supabaseError: insertError,
     })
+    await finishCronRun(supabase, runId, 0, insertError.message)
     return NextResponse.json(
       { success: false, error: 'Failed to insert reminder events' },
       { status: 500 }
     )
   }
+
+  await finishCronRun(supabase, runId, events.length)
 
   return NextResponse.json({
     success: true,
