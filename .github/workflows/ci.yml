@@ -76,6 +76,22 @@ jobs:
 
       - run: npm ci --legacy-peer-deps
 
+      - name: Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ hashFiles('**/*.ts','**/*.tsx') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
+            nextjs-${{ runner.os }}-
+
+      - name: Build for E2E
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+          NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:3000/supabase-mock
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: test-anon-key
+
       - name: Install Chromium
         run: npx playwright install chromium --with-deps
 
@@ -96,6 +112,22 @@ jobs:
           cache: 'npm'
 
       - run: npm ci --legacy-peer-deps
+
+      - name: Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ hashFiles('**/*.ts','**/*.tsx') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
+            nextjs-${{ runner.os }}-
+
+      - name: Build for E2E
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+          NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:3000/supabase-mock
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: test-anon-key
 
       - name: Install Chromium
         run: npx playwright install chromium --with-deps

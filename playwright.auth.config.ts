@@ -19,11 +19,14 @@ export default defineConfig({
     ...devices['Desktop Chrome'],
   },
   webServer: {
-    command: `npm run dev -- --port ${port}`,
+    // In CI: `npm run build` runs first so `npm start` boots from pre-built artifacts (<5s).
+    // Locally: reuseExistingServer means a running dev server on :3000 is reused automatically.
+    command: `PORT=${port} npm start`,
     url: baseURL,
     reuseExistingServer: true,
-    timeout: 120_000,
+    timeout: 60_000,
     env: {
+      NEXT_TELEMETRY_DISABLED: '1',
       NEXT_PUBLIC_SITE_URL: baseURL,
       NEXT_PUBLIC_SUPABASE_URL: `${baseURL}/supabase-mock`,
       NEXT_PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key',
