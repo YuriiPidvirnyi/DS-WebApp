@@ -12,8 +12,7 @@ import { captureException } from '@/utils/sentry'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || 'https://dentalstory.com.ua'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://dentalstory.ua'
 
 function getServiceClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL

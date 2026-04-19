@@ -90,7 +90,7 @@ export default function OGImage() {
             fontWeight: 500,
           }}
         >
-          dentalstory.com.ua
+          dentalstory.ua
         </div>
       </div>
     </div>,

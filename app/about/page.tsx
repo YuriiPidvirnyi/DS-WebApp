@@ -18,8 +18,8 @@ export const metadata: Metadata = {
 }
 
 const breadcrumb = generateBreadcrumbSchema([
-  { name: uk.navigation.home, url: 'https://dentalstory.com.ua/' },
-  { name: aboutMeta.breadcrumb, url: 'https://dentalstory.com.ua/about' },
+  { name: uk.navigation.home, url: 'https://dentalstory.ua/' },
+  { name: aboutMeta.breadcrumb, url: 'https://dentalstory.ua/about' },
 ])
 
 export default function AboutPage() {

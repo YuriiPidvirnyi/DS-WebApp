@@ -25,8 +25,8 @@ const allFaqItems: Array<{ question: string; answer: string }> = [
 ]
 
 const breadcrumb = generateBreadcrumbSchema([
-  { name: uk.navigation.home, url: 'https://dentalstory.com.ua/' },
-  { name: servicesMeta.breadcrumb, url: 'https://dentalstory.com.ua/services' },
+  { name: uk.navigation.home, url: 'https://dentalstory.ua/' },
+  { name: servicesMeta.breadcrumb, url: 'https://dentalstory.ua/services' },
 ])
 
 export default function ServicesPage() {
