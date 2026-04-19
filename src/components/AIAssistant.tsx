@@ -5,6 +5,7 @@ import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport } from 'ai'
 import { useTranslation } from 'react-i18next'
 import { useFocusTrap } from '@/hooks/useFocusTrap'
+import { trackEvent, AIEvent, AnalyticsEventCategory } from '@/utils/analytics'
 import {
   X,
   Send,
@@ -98,6 +99,11 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
     if (!input.trim() || isLoading) return
     sendMessage({ text: input })
     setInput('')
+    try {
+      trackEvent(AIEvent.AIMessageSent, AnalyticsEventCategory.AI)
+    } catch {
+      // analytics may fail silently
+    }
   }
 
   const handleQuickAction = (actionId: string) => {

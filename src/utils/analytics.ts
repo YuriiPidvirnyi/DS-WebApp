@@ -1,7 +1,8 @@
 /**
- * Google Analytics 4 Integration Utility
+ * Analytics utility — dual-emits to GA4 (consent-gated) and Vercel Analytics.
  */
 
+import { track as vaTrack } from '@vercel/analytics'
 import { hasConsent } from '@/utils/cookieConsent'
 
 // Event categories
@@ -11,6 +12,9 @@ export enum AnalyticsEventCategory {
   Forms = 'forms',
   Booking = 'booking',
   Outbound = 'outbound',
+  Chat = 'chat',
+  Cabinet = 'cabinet',
+  AI = 'ai',
 }
 
 // Engagement events
@@ -20,6 +24,7 @@ export enum EngagementEvent {
   ClickElement = 'click',
   TimeOnPage = 'time_on_page',
   ServiceView = 'service_view',
+  LanguageChanged = 'language_changed',
 }
 
 // Form events
@@ -40,32 +45,46 @@ export enum BookingEvent {
   BookingComplete = 'booking_complete',
 }
 
+// Live chat events
+export enum ChatEvent {
+  ChatSessionStarted = 'chat_session_started',
+  ChatMessageSent = 'chat_message_sent',
+}
+
+// Symptom checker / AI events
+export enum AIEvent {
+  SymptomCheckerStarted = 'symptom_checker_started',
+  AIMessageSent = 'ai_message_sent',
+}
+
+// Cabinet events
+export enum CabinetEvent {
+  TreatmentViewed = 'treatment_viewed',
+  ProfileUpdated = 'cabinet_profile_updated',
+}
+
 // Initialize Google Analytics
 export const initializeAnalytics = (): void => {
   if (typeof window === 'undefined') return
   if (!hasConsent()) return
 
-  // Check if GA ID exists in environment variables
   const gaId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
   if (!gaId) return
 
-  // Load the GA script dynamically (canonical GA4 snippet)
   const loadGoogleAnalytics = (): void => {
     const script = document.createElement('script')
     script.async = true
     script.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`
     document.head.appendChild(script)
 
-    // Initialize the dataLayer array
     window.dataLayer = window.dataLayer || []
     window.gtag = function gtag(...args: unknown[]) {
       window.dataLayer.push(args)
     }
 
-    // Initialize Google Analytics with your tracking ID
     window.gtag('js', new Date())
     window.gtag('config', gaId, {
-      send_page_view: false, // We'll track page views manually with the router
+      send_page_view: false,
     })
   }
 
@@ -76,11 +95,6 @@ export const initializeAnalytics = (): void => {
   }
 }
 
-/**
- * Track a page view in Google Analytics
- * @param pagePath The path of the current page (e.g. /about)
- * @param pageTitle The title of the current page
- */
 export const trackPageView = (pagePath: string, pageTitle: string): void => {
   if (typeof window === 'undefined' || !window.gtag) return
 
@@ -96,18 +110,22 @@ export const trackPageView = (pagePath: string, pageTitle: string): void => {
 }
 
 /**
- * Track a generic event in Google Analytics
- * @param eventName The name of the event to track
- * @param category The category of the event
- * @param parameters Additional parameters to send with the event
+ * Track a generic event — emits to GA4 (when consented) and Vercel Analytics.
  */
 export const trackEvent = (
   eventName: string,
   category: AnalyticsEventCategory,
   parameters?: Record<string, unknown>
 ): void => {
-  if (typeof window === 'undefined' || !window.gtag) return
+  // Vercel Analytics — always fires (no PII, no consent required)
+  try {
+    vaTrack(eventName, { category, ...parameters })
+  } catch {
+    // VA may be unavailable in non-browser environments
+  }
 
+  // GA4 — consent-gated
+  if (typeof window === 'undefined' || !window.gtag) return
   try {
     window.gtag('event', eventName, {
       event_category: category,
@@ -118,12 +136,6 @@ export const trackEvent = (
   }
 }
 
-/**
- * Track a form submission event
- * @param formName The name of the form
- * @param isSuccess Whether the form submission was successful
- * @param data Additional data about the form submission
- */
 export const trackFormSubmission = (
   formName: string,
   isSuccess: boolean,
@@ -140,11 +152,6 @@ export const trackFormSubmission = (
   )
 }
 
-/**
- * Track a booking event
- * @param eventName The name of the booking event
- * @param bookingData Data about the booking
- */
 export const trackBooking = (
   eventName: BookingEvent,
   bookingData: Record<string, unknown>
@@ -152,11 +159,6 @@ export const trackBooking = (
   trackEvent(eventName, AnalyticsEventCategory.Booking, bookingData)
 }
 
-/**
- * Track an outbound link click
- * @param url The URL being navigated to
- * @param linkText The text of the link that was clicked
- */
 export const trackOutboundLink = (url: string, linkText: string): void => {
   trackEvent('outbound_link_click', AnalyticsEventCategory.Outbound, {
     outbound_url: url,

@@ -2,6 +2,11 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import {
+  trackEvent,
+  ChatEvent,
+  AnalyticsEventCategory,
+} from '@/utils/analytics'
 
 export interface ChatMessage {
   id: string
@@ -141,6 +146,11 @@ export function useLiveChat({ enabled }: UseLiveChatOptions) {
 
       setSessionId(data.id)
       sessionStorage.setItem('ds_chat_session', data.id)
+      try {
+        trackEvent(ChatEvent.ChatSessionStarted, AnalyticsEventCategory.Chat)
+      } catch {
+        // analytics may fail silently
+      }
       return data.id
     },
     [supabase]
@@ -192,6 +202,11 @@ export function useLiveChat({ enabled }: UseLiveChatOptions) {
         setMessages(prev =>
           prev.map(m => (m.id === optimisticMsg.id ? (data as ChatMessage) : m))
         )
+        try {
+          trackEvent(ChatEvent.ChatMessageSent, AnalyticsEventCategory.Chat)
+        } catch {
+          // analytics may fail silently
+        }
       }
     },
     [supabase, sessionId, createSession]

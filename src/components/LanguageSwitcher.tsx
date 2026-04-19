@@ -5,6 +5,11 @@ import { useTranslation } from 'react-i18next'
 import { Globe, ChevronDown, Check } from 'lucide-react'
 import uk from '@/locales/uk'
 import { setLanguage } from '@/i18n/config'
+import {
+  trackEvent,
+  EngagementEvent,
+  AnalyticsEventCategory,
+} from '@/utils/analytics'
 
 interface Language {
   code: 'uk' | 'en' | 'pl'
@@ -47,9 +52,20 @@ export default function LanguageSwitcher({
     void setLanguage(langCode)
     setIsOpen(false)
 
-    // Update HTML lang attribute
     if (typeof document !== 'undefined') {
       document.documentElement.lang = langCode
+    }
+
+    try {
+      trackEvent(
+        EngagementEvent.LanguageChanged,
+        AnalyticsEventCategory.Engagement,
+        {
+          language: langCode,
+        }
+      )
+    } catch {
+      // analytics may fail silently
     }
   }, [])
 

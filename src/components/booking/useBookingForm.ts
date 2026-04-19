@@ -23,6 +23,7 @@ import {
   FormEvent,
   AnalyticsEventCategory,
   trackEvent,
+  trackBooking,
 } from '@/utils/analytics'
 import { useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
@@ -166,6 +167,14 @@ export function useBookingForm() {
   // --- Multi-step wizard ---
   const [step, setStep] = useState(0)
 
+  useEffect(() => {
+    try {
+      trackBooking(BookingEvent.BookingStart, {})
+    } catch {
+      // analytics may fail silently
+    }
+  }, [])
+
   const next = async () => {
     const ok = await trigger(
       FIELDS_BY_STEP[step] as unknown as FieldPath<BookingFormValues>[],
@@ -259,12 +268,10 @@ export function useBookingForm() {
             throw new Error(t('booking.errors.createFailed'))
           // Track booking complete
           try {
-            if (window.gtag) {
-              window.gtag('event', BookingEvent.BookingComplete, {
-                appointment_id: res.data.id,
-                service: data.service,
-              })
-            }
+            trackBooking(BookingEvent.BookingComplete, {
+              appointment_id: res.data.id,
+              service: data.service,
+            })
           } catch {
             // Analytics may fail silently
           }
