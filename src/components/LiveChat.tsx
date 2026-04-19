@@ -187,7 +187,12 @@ export default function LiveChat({ onClose }: LiveChatProps) {
         ) : (
           <>
             {/* Messages */}
-            <div className="h-80 overflow-y-auto p-4 space-y-3 bg-gray-50">
+            <div
+              role="log"
+              aria-live="polite"
+              aria-label={t('chat.messagesLabel')}
+              className="h-80 overflow-y-auto p-4 space-y-3 bg-gray-50"
+            >
               {/* System welcome */}
               {messages.length === 0 && (
                 <div className="text-center py-8">
@@ -242,6 +247,7 @@ export default function LiveChat({ onClose }: LiveChatProps) {
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={t('chat.inputPlaceholder')}
+                aria-label={t('chat.messageInputLabel')}
                 className="flex-1 bg-dental-secondary-100 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button

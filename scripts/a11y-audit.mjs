@@ -88,6 +88,68 @@ async function waitForServer(url, timeoutMs = 20000) {
     }
   }
 
+  // Admin accessibility audit (requires A11Y_ADMIN_EMAIL + A11Y_ADMIN_PASSWORD env vars)
+  const adminEmail = process.env.A11Y_ADMIN_EMAIL
+  const adminPassword = process.env.A11Y_ADMIN_PASSWORD
+
+  if (adminEmail && adminPassword) {
+    console.log('\n🔐 Admin a11y audit (authenticated)...')
+
+    const adminContext = await browser.newContext()
+    const adminPage = await adminContext.newPage()
+
+    // Log in via the admin login form (selectors match app/admin/login/page.tsx)
+    await adminPage.goto(BASE + '/admin/login')
+    await adminPage.fill('#email', adminEmail)
+    await adminPage.fill('#password', adminPassword)
+    await adminPage.click('button[type="submit"]')
+    await adminPage.waitForURL('**/admin', { timeout: 15000 })
+
+    const ADMIN_PAGES = [
+      '/admin',
+      '/admin/appointments',
+      '/admin/patients',
+      '/admin/services',
+      '/admin/users',
+      '/admin/chat',
+    ]
+
+    for (const path of ADMIN_PAGES) {
+      const url = BASE + path
+      console.log(`\nChecking ${url}`)
+      await adminPage.goto(url)
+      const results = await new AxeBuilder({ page: adminPage })
+        .withTags(['wcag2a', 'wcag2aa'])
+        .analyze()
+      const violations = results.violations || []
+      total += violations.length
+
+      if (violations.length) {
+        failed += violations.length
+        for (const v of violations) {
+          console.log(`- [${v.impact}] ${v.id}: ${v.description}`)
+          console.log(`  Help: ${v.helpUrl}`)
+          if (v.nodes?.length) {
+            console.log(`  Nodes:`)
+            for (const n of v.nodes.slice(0, 3)) {
+              console.log(`    - ${n.target?.join(' ')}`)
+            }
+            if (v.nodes.length > 3)
+              console.log(`    ...and ${v.nodes.length - 3} more`)
+          }
+        }
+      } else {
+        console.log('  No violations found ✅')
+      }
+    }
+
+    await adminContext.close()
+  } else {
+    console.log(
+      '\n⚠️  Admin a11y audit skipped (set A11Y_ADMIN_EMAIL + A11Y_ADMIN_PASSWORD to enable)'
+    )
+  }
+
   await browser.close()
 
   console.log(`\nA11y audit finished. Violations: ${failed}`)
