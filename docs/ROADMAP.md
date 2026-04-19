@@ -382,10 +382,9 @@ Wired into `preview-validate.yml` (advisory `continue-on-error` until stable) an
 - Migrate AI calls behind **Vercel AI Gateway** — gives observability, model fallback, and a kill switch from the dashboard. (See §10.)
 - Cap user-facing prompt length; reject obvious abuse patterns at the route handler.
 
-### B2. 🟧 Storybook decision
+### B2. ✅ Storybook — removed from scope
 
-- Either: bring Storybook into CI (build storybook on every PR + a chromatic-style visual diff), or remove it. A drifted, out-of-CI Storybook is worse than none.
-- Recommendation: **remove** unless the team uses it weekly. Frees ~60MB of devDeps.
+- Audit (2026-04-19): 0 story files found, Storybook is not installed, no `@storybook/*` dependencies in `package.json`. Nothing to remove or migrate. Closed as N/A.
 
 ### B3. 🟧 i18n drift guard
 
