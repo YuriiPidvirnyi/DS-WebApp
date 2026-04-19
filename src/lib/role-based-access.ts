@@ -1,6 +1,10 @@
 /**
  * Role-based access control matrix and helper functions
  * Defines what each admin role can access in the system
+ *
+ * NOTE: This file is a legacy compatibility layer. The canonical role list,
+ * permission matrix, and type definitions live in `src/lib/permissions.ts`.
+ * Prefer importing from there for new code.
  */
 
 export type AdminRole =
@@ -8,9 +12,10 @@ export type AdminRole =
   | 'admin'
   | 'receptionist'
   | 'doctor'
-  | 'senior_assistant'
   | 'assistant'
-  | 'staff'
+  | 'billing_manager'
+  | 'inventory_manager'
+  | 'analyst'
 
 export interface RolePermissions {
   canAccessChat: boolean
@@ -74,35 +79,7 @@ export const ROLE_PERMISSIONS: Record<AdminRole, RolePermissions> = {
     canAccessAnalytics: false,
     canAccessSettings: false,
   },
-  senior_assistant: {
-    canAccessChat: true,
-    canAccessAllChats: false,
-    canAccessDoctors: false,
-    canAccessServices: false,
-    canAccessReviews: false,
-    canAccessPatients: true,
-    canAccessAppointments: true,
-    canAccessTreatments: true,
-    canAccessMaterials: true,
-    canAccessOrders: true,
-    canAccessAnalytics: false,
-    canAccessSettings: false,
-  },
   assistant: {
-    canAccessChat: true,
-    canAccessAllChats: false,
-    canAccessDoctors: false,
-    canAccessServices: false,
-    canAccessReviews: false,
-    canAccessPatients: true,
-    canAccessAppointments: true,
-    canAccessTreatments: true,
-    canAccessMaterials: true,
-    canAccessOrders: true,
-    canAccessAnalytics: false,
-    canAccessSettings: false,
-  },
-  staff: {
     canAccessChat: true,
     canAccessAllChats: false,
     canAccessDoctors: false,
@@ -128,6 +105,48 @@ export const ROLE_PERMISSIONS: Record<AdminRole, RolePermissions> = {
     canAccessMaterials: false,
     canAccessOrders: false,
     canAccessAnalytics: false,
+    canAccessSettings: false,
+  },
+  billing_manager: {
+    canAccessChat: true,
+    canAccessAllChats: false,
+    canAccessDoctors: false,
+    canAccessServices: false,
+    canAccessReviews: false,
+    canAccessPatients: true,
+    canAccessAppointments: true,
+    canAccessTreatments: true,
+    canAccessMaterials: true,
+    canAccessOrders: true,
+    canAccessAnalytics: true,
+    canAccessSettings: false,
+  },
+  inventory_manager: {
+    canAccessChat: true,
+    canAccessAllChats: false,
+    canAccessDoctors: false,
+    canAccessServices: false,
+    canAccessReviews: false,
+    canAccessPatients: false,
+    canAccessAppointments: false,
+    canAccessTreatments: false,
+    canAccessMaterials: true,
+    canAccessOrders: true,
+    canAccessAnalytics: false,
+    canAccessSettings: false,
+  },
+  analyst: {
+    canAccessChat: true,
+    canAccessAllChats: false,
+    canAccessDoctors: false,
+    canAccessServices: false,
+    canAccessReviews: false,
+    canAccessPatients: true,
+    canAccessAppointments: true,
+    canAccessTreatments: true,
+    canAccessMaterials: true,
+    canAccessOrders: true,
+    canAccessAnalytics: true,
     canAccessSettings: false,
   },
 }

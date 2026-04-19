@@ -1311,9 +1311,10 @@ const en = {
       admin: 'Admin',
       receptionist: 'Receptionist',
       doctor: 'Doctor',
-      senior_assistant: 'Senior Assistant',
       assistant: 'Assistant',
-      staff: 'Staff',
+      billing_manager: 'Billing Manager',
+      inventory_manager: 'Inventory Manager',
+      analyst: 'Analyst',
     },
     dashboard: {
       title: 'Dashboard',
