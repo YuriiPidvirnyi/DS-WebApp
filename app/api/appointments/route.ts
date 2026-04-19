@@ -11,6 +11,7 @@ import {
 } from '@/lib/api-security'
 import { parsePagination, paginationMeta } from '@/lib/pagination'
 import { captureException } from '@/utils/sentry'
+import { logger } from '@/utils/logger'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -182,13 +183,12 @@ async function createSupabaseAppointment(payload: BookingPayload) {
     )
       .then(({ error: notifErr }) => {
         if (notifErr)
-          console.warn(
-            '[appointments] Failed to queue notifications:',
-            notifErr.message
-          )
+          logger.warn('[appointments] Failed to queue notifications:', {
+            data: notifErr.message,
+          })
       })
       .catch((err: unknown) =>
-        console.error('Failed to queue notification:', err)
+        logger.error('Failed to queue notification:', { data: err })
       )
   }
 

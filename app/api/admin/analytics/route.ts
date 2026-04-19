@@ -16,6 +16,7 @@ import {
   rateLimitResponse,
   validateCSRF,
 } from '@/lib/api-security'
+import { logger } from '@/utils/logger'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -209,7 +210,7 @@ async function buildAnalyticsModel(
       captureException(
         r.reason instanceof Error ? r.reason : new Error(String(r.reason))
       )
-      console.error(`[analytics] Query ${i} failed:`, r.reason)
+      logger.error(`[analytics] Query ${i} failed:`, { data: r.reason })
     }
   })
 

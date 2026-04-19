@@ -3,6 +3,7 @@ import { getAvailableSlots, CliniCardsError } from '@/lib/clinicards-client'
 import { getCachedData, CACHE_KEYS, CACHE_TTL } from '@/lib/redis'
 import { checkRateLimit, rateLimitResponse } from '@/lib/api-security'
 import { captureException } from '@/utils/sentry'
+import { logger } from '@/utils/logger'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -105,7 +106,7 @@ export async function GET(request: NextRequest) {
     if (error instanceof CliniCardsError) {
       if (error.code === 'MISSING_API_KEY') {
         if (!hasLoggedMissingCliniCardsConfig) {
-          console.warn(
+          logger.warn(
             '[appointments/slots] CLINICARDS_API_KEY is missing; using deterministic fallback slots.'
           )
           hasLoggedMissingCliniCardsConfig = true
@@ -117,7 +118,7 @@ export async function GET(request: NextRequest) {
         })
       }
 
-      console.warn(
+      logger.warn(
         '[appointments/slots] CliniCards unavailable, using fallback slots:',
         {
           status: error.status,

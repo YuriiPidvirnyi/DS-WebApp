@@ -11,6 +11,7 @@ import {
 } from '@/lib/api-security'
 import { parsePagination, paginationMeta } from '@/lib/pagination'
 import { captureException } from '@/utils/sentry'
+import { logger } from '@/utils/logger'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -120,7 +121,7 @@ export async function GET(request: NextRequest) {
   const { data, error, count } = await query.range(from, to)
 
   if (error) {
-    console.error('[material-orders] Supabase GET error:', {
+    logger.error('[material-orders] Supabase GET error:', {
       code: error.code,
       message: error.message,
       details: error.details,

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { captureException } from '@/utils/sentry'
+import { logger } from '@/utils/logger'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -38,10 +39,9 @@ export async function GET(
     .single()
 
   if (error || !payment) {
-    console.warn(
-      '[payments/status] Payment not found for invoiceId:',
-      invoiceId
-    )
+    logger.warn('[payments/status] Payment not found for invoiceId:', {
+      invoiceId,
+    })
     return NextResponse.json(
       { success: false, error: 'Платіж не знайдено' },
       { status: 404 }

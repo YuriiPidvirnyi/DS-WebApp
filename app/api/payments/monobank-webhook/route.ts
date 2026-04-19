@@ -5,6 +5,7 @@ import {
   type MonobankWebhookPayload,
 } from '@/lib/monobank'
 import { captureException } from '@/utils/sentry'
+import { logger } from '@/utils/logger'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -21,7 +22,7 @@ export async function POST(request: NextRequest) {
 
   const xSign = request.headers.get('x-sign')
   if (!xSign) {
-    console.warn('[monobank-webhook] Missing x-sign header')
+    logger.warn('[monobank-webhook] Missing x-sign header')
     return NextResponse.json(
       { ok: false, error: 'Missing signature' },
       { status: 401 }
@@ -63,10 +64,9 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (findError || !payment) {
-      console.warn(
-        '[monobank-webhook] Payment not found for invoiceId:',
-        payload.invoiceId
-      )
+      logger.warn('[monobank-webhook] Payment not found for invoiceId:', {
+        invoiceId: payload.invoiceId,
+      })
       // Return 200 to avoid Monobank retries — this is a data anomaly
       return NextResponse.json({ ok: true })
     }
