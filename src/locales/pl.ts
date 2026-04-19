@@ -1108,6 +1108,140 @@ const pl = {
       'Nowoczesna stomatologia we Lwowie. Leczenie zębów, implanty, ortodoncja, wybielanie. Przejrzyste ceny, bezbolesne leczenie, gwarancja jakości.',
     keywords:
       'dentysta Lwów, dentysta Sumska, klinika dentystyczna Lwów, leczenie zębów, implanty stomatologiczne, aparaty ortodontyczne, wybielanie zębów, Dental Story',
+    openGraphTitle: 'Dental Story — Nowoczesna klinika dentystyczna we Lwowie',
+    openGraphDescription:
+      'Nowoczesna stomatologia we Lwowie. Bezbolesne leczenie, implanty, wybielanie. Doświadczeni lekarze, nowoczesny sprzęt.',
+    twitterTitle: 'Dental Story — Nowoczesna klinika dentystyczna we Lwowie',
+    twitterDescription:
+      'Nowoczesna stomatologia we Lwowie. Bezbolesne leczenie, doświadczeni lekarze, gwarancja jakości.',
+    ogImageAlt: 'Dental Story — Nowoczesna klinika dentystyczna we Lwowie',
+  },
+  routeMeta: {
+    home: {
+      title: 'Dental Story — Nowoczesna klinika dentystyczna we Lwowie',
+      description:
+        'Profesjonalna stomatologia we Lwowie. Bezbolesne leczenie, implanty, wybielanie. Doświadczeni lekarze, nowoczesny sprzęt.',
+      keywords:
+        'dentysta lwów, leczenie zębów, implanty, wybielanie zębów, dental story',
+      openGraphTitle:
+        'Dental Story — Nowoczesna klinika dentystyczna we Lwowie',
+      openGraphDescription:
+        'Profesjonalna stomatologia we Lwowie. Bezbolesne leczenie, implanty, wybielanie.',
+    },
+    about: {
+      title: 'O nas — Dental Story Lwów',
+      description:
+        'Dental Story — zespół profesjonalistów z 10-letnim doświadczeniem. Nowoczesny sprzęt, europejskie standardy leczenia.',
+      keywords: 'klinika dentystyczna o nas lwów, zespół dental story',
+      openGraphTitle: 'O nas — Dental Story Lwów',
+      openGraphDescription:
+        'Dental Story — zespół profesjonalistów z 10-letnim doświadczeniem.',
+      breadcrumb: 'O nas',
+    },
+    contact: {
+      title: 'Kontakt — Dental Story Lwów',
+      description:
+        'Adres, telefon i godziny pracy kliniki dentystycznej Dental Story we Lwowie. Jak do nas dojechać, mapa dojazdu.',
+      keywords:
+        'dental story adres, telefon kliniki dentystycznej, kontakt lwów',
+      openGraphTitle: 'Kontakt — Dental Story Lwów',
+      openGraphDescription: 'Adres, telefon i godziny pracy Dental Story.',
+      breadcrumb: 'Kontakt',
+    },
+    booking: {
+      title: 'Rezerwacja online — Dental Story',
+      description:
+        'Zarezerwuj wizytę u dentysty online. Wybierz dogodny termin i lekarza. Szybko i bezpiecznie.',
+      keywords: 'rezerwacja dentysty, rezerwacja online, dental story lwów',
+      openGraphTitle: 'Zarezerwuj wizytę w Dental Story',
+      openGraphDescription:
+        'Zarezerwuj wizytę online. Wybierz dogodny termin i lekarza.',
+      breadcrumb: 'Rezerwacja wizyty',
+    },
+    bookingSuccess: {
+      title: 'Rezerwacja utworzona — Dental Story',
+      description:
+        'Dziękujemy! Skontaktujemy się w celu potwierdzenia rezerwacji. Dodaj wydarzenie do kalendarza i włącz przypomnienia.',
+    },
+    services: {
+      title: 'Usługi Dental Story — Pełny zakres',
+      description:
+        'Wszystkie rodzaje usług stomatologicznych: terapia, protetyka, implanty, ortodoncja, stomatologia dziecięca. Przejrzyste ceny.',
+      keywords:
+        'usługi stomatologiczne, ceny leczenia zębów, implanty stomatologiczne',
+      openGraphTitle: 'Usługi Dental Story',
+      openGraphDescription:
+        'Wszystkie rodzaje usług stomatologicznych: terapia, protetyka, implanty, ortodoncja. Przejrzyste ceny.',
+      breadcrumb: 'Usługi',
+    },
+    reviews: {
+      title: 'Opinie pacjentów — Dental Story',
+      description:
+        'Oceń nasze usługi i przeczytaj opinie pacjentów o leczeniu w Dental Story.',
+      keywords:
+        'opinie kliniki dentystycznej, dental story opinie, leczenie zębów lwów',
+      openGraphTitle: 'Opinie pacjentów — Dental Story',
+      openGraphDescription: 'Oceń nasze usługi i przeczytaj opinie pacjentów.',
+      breadcrumb: 'Opinie',
+    },
+    gallery: {
+      title: 'Galeria — Wyniki leczenia Dental Story',
+      description:
+        'Portfolio naszych prac: zdjęcia przed i po leczeniu. Implanty, odbudowy, wybielanie zębów.',
+      keywords:
+        'wyniki leczenia zębów, zdjęcia przed i po, dental story portfolio',
+      openGraphTitle: 'Galeria Dental Story',
+      openGraphDescription:
+        'Portfolio naszych prac: zdjęcia przed i po leczeniu.',
+      breadcrumb: 'Galeria',
+    },
+    privacyPolicy: {
+      title: 'Polityka prywatności — Dental Story',
+      description:
+        'Jak zbieramy, przechowujemy i przetwarzamy Twoje dane osobowe. Prywatność pacjentów to nasz priorytet.',
+    },
+    termsOfService: {
+      title: 'Regulamin — Dental Story',
+      description:
+        'Zasady korzystania ze strony internetowej i świadczenia usług stomatologicznych przez Dental Story.',
+    },
+    symptomChecker: {
+      title: 'Sprawdzanie objawów — Dental Story',
+      description:
+        'Bezpłatne sprawdzanie objawów stomatologicznych online. Dowiedz się, co może oznaczać Twój ból.',
+    },
+    admin: {
+      title: 'Panel administracyjny — Dental Story',
+      loginTitle: 'Logowanie do panelu — Dental Story',
+      patientsTitle: 'Pacjenci — Dental Story',
+    },
+    patientCard: {
+      title: 'Karta pacjenta — Dental Story',
+    },
+    cabinet: {
+      title: 'Moje konto — Dental Story',
+      appointmentsTitle: 'Moje wizyty — Dental Story',
+      profileTitle: 'Mój profil — Dental Story',
+      paymentsTitle: 'Moje płatności — Dental Story',
+      treatmentsTitle: 'Moje leczenie — Dental Story',
+    },
+    auth: {
+      loginTitle: 'Logowanie — Dental Story',
+      loginDescription: 'Zaloguj się do swojego konta pacjenta Dental Story',
+      signUpTitle: 'Rejestracja — Dental Story',
+      signUpDescription: 'Utwórz swoje konto pacjenta Dental Story',
+      signUpSuccessTitle: 'Rejestracja zakończona sukcesem — Dental Story',
+      forgotPasswordTitle: 'Przypomnij hasło — Dental Story',
+      forgotPasswordDescription:
+        'Otrzymaj email do resetowania hasła i przywróć dostęp do konta.',
+      resetPasswordTitle: 'Nowe hasło — Dental Story',
+      resetPasswordDescription:
+        'Ustaw nowe hasło dla swojego konta pacjenta Dental Story.',
+    },
+    openGraphImage: {
+      alt: 'Dental Story — Nowoczesna stomatologia we Lwowie',
+      tagline: 'Nowoczesna stomatologia we Lwowie',
+    },
   },
   structuredData: {
     organizationAlternateName: 'Klinika stomatologiczna',
