@@ -2192,6 +2192,31 @@
       "deleteConfirm": "Usuń tego użytkownika?",
       "empty": "Brak użytkowników",
       "note": "Zmiany ról wchodzą w życie przy następnym logowaniu."
+    },
+    "onboarding": {
+      "step1": {
+        "title": "Witamy w DentalStory Admin",
+        "body": "Witamy! Skonfigurujmy system — zajmie to tylko kilka minut."
+      },
+      "step2": {
+        "title": "Dodaj usługi",
+        "body": "Przejdź do sekcji Usługi i dodaj usługi stomatologiczne swojej kliniki."
+      },
+      "step3": {
+        "title": "Dodaj lekarzy",
+        "body": "Przejdź do sekcji Lekarze i dodaj członków swojego zespołu."
+      },
+      "step4": {
+        "title": "Test rezerwacji",
+        "body": "Spróbuj wykonać rezerwację testową na dentalstory.ua/booking, aby zweryfikować formularz."
+      },
+      "step5": {
+        "title": "Sprawdź email",
+        "body": "Otrzymasz email z potwierdzeniem rezerwacji — upewnij się, że powiadomienia email działają poprawnie."
+      },
+      "skip": "Pomiń tour",
+      "next": "Dalej",
+      "finish": "Gotowe!"
     }
   },
   "auth": {

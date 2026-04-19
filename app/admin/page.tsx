@@ -9,6 +9,7 @@ import { captureException } from '@/utils/sentry'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { useAdminPageAccess } from '@/hooks/useAdminPageAccess'
 import { hasPermission } from '@/lib/permissions'
+import OnboardingTour from '@/components/admin/OnboardingTour'
 import {
   Calendar,
   Users,
@@ -286,6 +287,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-dental-primary-50">
+      <OnboardingTour role={user?.role} />
       {/* Header */}
       <header className="bg-white border-b border-dental-secondary-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">

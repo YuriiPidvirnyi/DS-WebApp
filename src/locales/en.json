@@ -2190,6 +2190,31 @@
       "deleteConfirm": "Delete this user?",
       "empty": "No users found",
       "note": "Role changes take effect on next login."
+    },
+    "onboarding": {
+      "step1": {
+        "title": "Welcome to DentalStory Admin",
+        "body": "Welcome! Let's get you set up — this will only take a few minutes."
+      },
+      "step2": {
+        "title": "Add services",
+        "body": "Go to Services and add your dental services."
+      },
+      "step3": {
+        "title": "Add doctors",
+        "body": "Go to Doctors and add your team members."
+      },
+      "step4": {
+        "title": "Test a booking",
+        "body": "Try a test booking at dentalstory.ua/booking to verify the booking form works."
+      },
+      "step5": {
+        "title": "Check email",
+        "body": "You will receive a booking confirmation email — confirm that email notifications are working correctly."
+      },
+      "skip": "Skip tour",
+      "next": "Next",
+      "finish": "Done!"
     }
   },
   "auth": {
