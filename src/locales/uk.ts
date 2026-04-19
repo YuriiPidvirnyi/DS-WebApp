@@ -1495,6 +1495,7 @@ const uk = {
       orders: 'Замовлення',
       analytics: 'Аналітика',
       dataQuality: 'Якість даних',
+      health: 'Стан сервісів',
       settings: 'Налаштування',
       users: 'Користувачі',
     },

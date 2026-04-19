@@ -1504,6 +1504,7 @@ const pl = {
       orders: 'Zamówienia',
       analytics: 'Analityka',
       dataQuality: 'Jakość danych',
+      health: 'Stan serwisów',
       settings: 'Ustawienia',
       users: 'Użytkownicy',
     },
