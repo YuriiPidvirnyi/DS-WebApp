@@ -95,6 +95,17 @@ jobs:
       - name: Install Chromium
         run: npx playwright install chromium --with-deps
 
+      - name: Start server
+        run: PORT=3000 npm start &
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+          NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
+          NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:3000/supabase-mock
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: test-anon-key
+
+      - name: Wait for server
+        run: npx wait-on http://127.0.0.1:3000 --timeout 120000
+
       - name: Playwright UI smoke
         run: npm run test:e2e:ui-smoke
 
@@ -131,6 +142,17 @@ jobs:
 
       - name: Install Chromium
         run: npx playwright install chromium --with-deps
+
+      - name: Start server
+        run: PORT=3000 npm start &
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+          NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
+          NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:3000/supabase-mock
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: test-anon-key
+
+      - name: Wait for server
+        run: npx wait-on http://127.0.0.1:3000 --timeout 120000
 
       - name: Run feature E2E suites
         run: npx playwright test e2e/cron-notifications.spec.ts e2e/booking-flow.spec.ts e2e/cabinet-flows.spec.ts e2e/admin-rbac.spec.ts --config=playwright.auth.config.ts
