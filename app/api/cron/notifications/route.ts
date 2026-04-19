@@ -9,6 +9,7 @@ import {
   newBookingAdminEmail,
 } from '@/lib/email-templates'
 import { captureException } from '@/utils/sentry'
+import { logger } from '@/utils/logger'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -190,7 +191,7 @@ async function processEvent(
       })
       .eq('id', event.id)
 
-    console.info('[cron/notifications] delivered', {
+    logger.info('[cron/notifications] delivered', {
       id: event.id,
       type: event.type,
       resendId: result.id,

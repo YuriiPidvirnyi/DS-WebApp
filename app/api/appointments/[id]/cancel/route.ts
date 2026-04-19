@@ -7,6 +7,7 @@ import {
   csrfErrorResponse,
 } from '@/lib/api-security'
 import { captureException } from '@/utils/sentry'
+import { logger } from '@/utils/logger'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -99,10 +100,9 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         })
         .then(({ error: notifErr }) => {
           if (notifErr) {
-            console.warn(
-              '[cancel] Failed to queue cancellation email:',
-              notifErr.message
-            )
+            logger.warn('[cancel] Failed to queue cancellation email:', {
+              data: notifErr.message,
+            })
           }
         })
     }

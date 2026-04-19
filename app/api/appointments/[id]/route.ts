@@ -13,6 +13,7 @@ import {
   validateCSRF,
 } from '@/lib/api-security'
 import { captureException } from '@/utils/sentry'
+import { logger } from '@/utils/logger'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -249,9 +250,9 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       })
       .then(({ error: notifErr }) => {
         if (notifErr) {
-          console.warn(
+          logger.warn(
             '[appointments/[id]] Failed to queue cancellation email:',
-            notifErr.message
+            { data: notifErr.message }
           )
         }
       })

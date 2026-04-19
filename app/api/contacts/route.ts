@@ -13,6 +13,7 @@ import {
   csrfErrorResponse,
 } from '@/lib/api-security'
 import { captureException } from '@/utils/sentry'
+import { logger } from '@/utils/logger'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -89,7 +90,7 @@ function normalizeContactPayload(body: IncomingContactPayload): {
 function logCliniCardsFallback(error: unknown): void {
   if (error instanceof CliniCardsError && error.code === 'MISSING_API_KEY') {
     if (!hasLoggedMissingCliniCardsConfig) {
-      console.warn(
+      logger.warn(
         '[contacts] CLINICARDS_API_KEY is missing; continuing with Supabase-only contact flow.'
       )
       hasLoggedMissingCliniCardsConfig = true
@@ -97,10 +98,9 @@ function logCliniCardsFallback(error: unknown): void {
     return
   }
 
-  console.warn(
-    '[contacts] CliniCards failed; using Supabase submission:',
-    error
-  )
+  logger.warn('[contacts] CliniCards failed; using Supabase submission:', {
+    data: error,
+  })
 }
 
 /** POST /api/contacts */
