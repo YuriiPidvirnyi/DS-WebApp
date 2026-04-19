@@ -8,6 +8,7 @@ import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { useCSRF } from '@/hooks/useCSRF'
 import { captureException } from '@/utils/sentry'
 import ErrorBoundary from '@/components/ErrorBoundary'
+import CronHealthWidget from '@/components/admin/CronHealthWidget'
 import { formatCurrency } from './utils'
 
 interface AnalyticsModel {
@@ -356,6 +357,8 @@ export default function AdminAnalyticsPage() {
               </div>
             </div>
           </ErrorBoundary>
+
+          <CronHealthWidget />
         </>
       )}
     </div>
