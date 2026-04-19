@@ -2188,6 +2188,7 @@
       },
       "you": "you",
       "deleteConfirm": "Delete this user?",
+      "loading": "Loading users…",
       "empty": "No users found",
       "note": "Role changes take effect on next login."
     }

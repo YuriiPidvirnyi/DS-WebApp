@@ -13,6 +13,7 @@ import {
   type AdminRole,
 } from '@/lib/permissions'
 import { captureException } from '@/utils/sentry'
+import { AsyncState } from '@/components/ui'
 
 interface AdminUserRow {
   id: string
@@ -153,9 +154,11 @@ export default function AdminUsersPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-10 h-10 border-4 border-dental-teal border-t-transparent rounded-full animate-spin" />
-      </div>
+      <AsyncState
+        variant="loading"
+        message={t('admin.users.loading')}
+        className="my-8"
+      />
     )
   }
 
