@@ -508,13 +508,11 @@ Wired into `preview-validate.yml` (advisory `continue-on-error` until stable) an
 
 **Theme:** keep it healthy and grow it. Output: `v3.4.0` and onward.
 
-### D1. 🟨 Feature backlog (from `GAPS_AND_RECOMMENDATIONS.md` v3.1+ list)
+### D1. 🟩 Feature backlog — **defined**
 
-- `records_manager` role (only if a 3+ doctor clinic asks).
-- Auto-reorder for materials when stock < min for N consecutive days.
-- Treatment plan PDF export from `/admin/treatments/[id]`.
-- Patient referral / loyalty program.
-- Multi-clinic support (would touch RLS heavily — only if business needs it).
+Full prioritized 12-month backlog with ICE scores, sizing, and explicit "not doing" list lives in [`POST_LAUNCH_BACKLOG.md`](./POST_LAUNCH_BACKLOG.md).
+
+**Q1 headline items** (revenue defense): Telegram/Viber notifications, 6-month recall system, deposit-on-booking + waitlist, family accounts, treatment-plan PDF + e-signature.
 
 ### D2. 🟨 Observability maturity
 
@@ -534,9 +532,11 @@ Wired into `preview-validate.yml` (advisory `continue-on-error` until stable) an
 
 - Admin "data quality" page: orphan records, broken FKs, patients with 0 appointments, doctors with 0 services.
 
-### D6. 🟩 Marketing site
+### D6. 🟩 Marketing site — **defined**
 
-- A/B test homepage variants via Vercel Edge Config + Vercel Analytics.
+Full A/B testing playbook (5 first tests, sample-size math, anti-patterns, marketing companion plays) lives in [`AB_TESTING_PLAYBOOK.md`](./AB_TESTING_PLAYBOOK.md).
+
+**Stack:** Vercel Edge Config (variant flags) + cookie-based sticky assignment + existing Phase-C5 analytics events. ~2 dev-days to wire; one live test at a time, ~3-week cycle.
 
 ---
 
