@@ -14,6 +14,7 @@ import {
   validateCSRF,
   csrfErrorResponse,
 } from '@/lib/api-security'
+import { hashIp, checkDailyBudget, logAiUsage } from '@/lib/ai-usage'
 import { CONTACT_INFO, SITE_INFO } from '@/utils/constants'
 
 export const maxDuration = 30
@@ -292,6 +293,19 @@ export async function POST(req: NextRequest) {
   const { allowed, remaining } = await checkRateLimit(req, 10, 60_000)
   if (!allowed) return rateLimitResponse(remaining)
 
+  // Daily token budget guard (50k tokens/IP/day)
+  const ipHash = hashIp(req)
+  const { allowed: budgetAllowed } = await checkDailyBudget(ipHash)
+  if (!budgetAllowed) {
+    return Response.json(
+      {
+        success: false,
+        error: 'Daily AI usage limit reached. Try again tomorrow.',
+      },
+      { status: 429 }
+    )
+  }
+
   let body: { messages?: UIMessage[]; language?: string }
   try {
     body = await req.json()
@@ -329,6 +343,9 @@ export async function POST(req: NextRequest) {
       tools,
       stopWhen: stepCountIs(5),
       abortSignal: req.signal,
+      onFinish: ({ usage }) => {
+        logAiUsage('chat', 'openai/gpt-4o-mini', usage, ipHash)
+      },
     })
 
     return result.toUIMessageStreamResponse()
