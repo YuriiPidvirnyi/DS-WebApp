@@ -1,5 +1,5 @@
 import { unstable_cache } from 'next/cache'
-import { createClient } from '@/lib/supabase/server'
+import { createClient } from '@supabase/supabase-js'
 
 export interface ReviewStats {
   rating: number
@@ -9,8 +9,11 @@ export interface ReviewStats {
 const FALLBACK: ReviewStats = { rating: 4.7, reviewCount: 71 }
 
 async function fetchReviewStats(): Promise<ReviewStats> {
-  const supabase = await createClient()
-  if (!supabase) return FALLBACK
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!url || !key) return FALLBACK
+
+  const supabase = createClient(url, key)
 
   const { data, error } = await supabase
     .from('reviews')
