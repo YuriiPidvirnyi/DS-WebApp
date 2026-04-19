@@ -29,3 +29,4 @@ export type { SpinnerProps } from './Spinner'
 
 export { default as LoadingOverlay } from './LoadingOverlay'
 export { AsyncState } from './AsyncState'
+export { TableSkeleton } from './TableSkeleton'

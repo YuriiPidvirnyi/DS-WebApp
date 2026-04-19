@@ -13,6 +13,7 @@ import { Button, Input, Select, Textarea } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
+import { TableSkeleton } from '@/components/ui'
 import AdminModal from './components/AdminModal'
 import { formatDateTime, getStatusTone } from './utils'
 
@@ -578,11 +579,7 @@ export default function AdminDoctorsPage() {
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white text-sm">
               {isLoading ? (
-                <tr>
-                  <td colSpan={8} className={tableEmptyStateClass}>
-                    {t('admin.doctorsPage.table.loading')}
-                  </td>
-                </tr>
+                <TableSkeleton cols={8} />
               ) : rows.length === 0 ? (
                 <tr>
                   <td colSpan={8} className={tableEmptyStateClass}>

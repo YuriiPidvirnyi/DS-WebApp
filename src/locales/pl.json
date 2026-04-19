@@ -2190,6 +2190,7 @@
       },
       "you": "ty",
       "deleteConfirm": "Usuń tego użytkownika?",
+      "loading": "Ładowanie użytkowników…",
       "empty": "Brak użytkowników",
       "note": "Zmiany ról wchodzą w życie przy następnym logowaniu."
     },

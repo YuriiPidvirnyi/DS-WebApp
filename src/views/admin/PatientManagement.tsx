@@ -9,7 +9,7 @@ import {
 } from 'react'
 import { Edit, Eye, Plus, RefreshCw, Search, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button, Input, Select, Textarea } from '@/components/ui'
+import { Button, Input, Select, TableSkeleton, Textarea } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
@@ -399,11 +399,7 @@ export default function PatientManagement() {
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white text-sm">
               {isLoading ? (
-                <tr>
-                  <td colSpan={6} className={tableEmptyStateClass}>
-                    {t('admin.patientManagement.table.loading')}
-                  </td>
-                </tr>
+                <TableSkeleton cols={6} />
               ) : rows.length === 0 ? (
                 <tr>
                   <td colSpan={6} className={tableEmptyStateClass}>

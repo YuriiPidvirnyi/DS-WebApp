@@ -9,6 +9,7 @@ import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
+import { TableSkeleton } from '@/components/ui'
 import {
   formatDate,
   formatDateTime,
@@ -510,11 +511,7 @@ export default function AdminAppointmentsPage() {
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white text-sm">
               {isLoading ? (
-                <tr>
-                  <td colSpan={8} className={tableEmptyStateClass}>
-                    {t('admin.appointmentsPage.table.loading')}
-                  </td>
-                </tr>
+                <TableSkeleton cols={8} />
               ) : rows.length === 0 ? (
                 <tr>
                   <td colSpan={8} className={tableEmptyStateClass}>
