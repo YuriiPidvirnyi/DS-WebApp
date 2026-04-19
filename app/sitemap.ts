@@ -1,7 +1,6 @@
 import type { MetadataRoute } from 'next'
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || 'https://dentalstory.com.ua'
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://dentalstory.ua'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

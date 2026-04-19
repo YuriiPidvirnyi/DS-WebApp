@@ -18,8 +18,8 @@ export const metadata: Metadata = {
 }
 
 const breadcrumb = generateBreadcrumbSchema([
-  { name: uk.navigation.home, url: 'https://dentalstory.com.ua/' },
-  { name: galleryMeta.breadcrumb, url: 'https://dentalstory.com.ua/gallery' },
+  { name: uk.navigation.home, url: 'https://dentalstory.ua/' },
+  { name: galleryMeta.breadcrumb, url: 'https://dentalstory.ua/gallery' },
 ])
 
 export default function GalleryPage() {

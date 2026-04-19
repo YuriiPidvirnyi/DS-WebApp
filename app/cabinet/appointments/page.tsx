@@ -676,7 +676,7 @@ export default function AppointmentsPage() {
       apt.services?.[0]?.name_uk || t('cabinet.appointments.consultation')
 
     const ics = createICSEvent({
-      uid: `${apt.id}@dentalstory.com.ua`,
+      uid: `${apt.id}@dentalstory.ua`,
       title: serviceName,
       description: doctorName
         ? `${t('cabinet.treatments.doctor')}: ${doctorName}`

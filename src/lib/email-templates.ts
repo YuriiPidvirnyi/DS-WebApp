@@ -1,5 +1,4 @@
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://dentalstory.com.ua'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://dentalstory.ua'
 const CLINIC_PHONE = '+38 (044) 123-45-67'
 const CLINIC_ADDRESS = 'м. Київ, вул. Стоматологічна, 1'
 

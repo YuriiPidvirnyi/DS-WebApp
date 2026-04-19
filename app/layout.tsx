@@ -38,7 +38,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || 'https://dentalstory.com.ua'
+    process.env.NEXT_PUBLIC_SITE_URL || 'https://dentalstory.ua'
   ),
   manifest: '/manifest.json',
   appleWebApp: {
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
   openGraph: {
     type: 'website',
-    url: 'https://dentalstory.com.ua/',
+    url: 'https://dentalstory.ua/',
     title: uk.meta.openGraphTitle,
     description: uk.meta.openGraphDescription,
     images: [

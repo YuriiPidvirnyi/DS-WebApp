@@ -2,7 +2,7 @@ import { Resend } from 'resend'
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY ?? ''
 const FROM_EMAIL =
-  process.env.RESEND_FROM_EMAIL ?? 'DentalStory <noreply@dentalstory.com.ua>'
+  process.env.RESEND_FROM_EMAIL ?? 'DentalStory <noreply@dentalstory.ua>'
 
 let _resend: Resend | null = null
 
