@@ -1452,9 +1452,10 @@ const pl = {
       admin: 'Administrator',
       receptionist: 'Recepcjonista',
       doctor: 'Lekarz',
-      senior_assistant: 'Starszy asystent',
       assistant: 'Asystent',
-      staff: 'Personel',
+      billing_manager: 'Menedżer ds. rozliczeń',
+      inventory_manager: 'Menedżer magazynu',
+      analyst: 'Analityk',
     },
     dashboard: {
       title: 'Panel kontrolny',

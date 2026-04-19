@@ -1443,9 +1443,10 @@ const uk = {
       admin: 'Адміністратор',
       receptionist: 'Рецепціоніст',
       doctor: 'Лікар',
-      senior_assistant: 'Старший асистент',
       assistant: 'Асистент',
-      staff: 'Персонал',
+      billing_manager: 'Фінансовий менеджер',
+      inventory_manager: 'Менеджер запасів',
+      analyst: 'Аналітик',
     },
     dashboard: {
       title: 'Панель керування',
