@@ -2830,6 +2830,7 @@ const en = {
     consentText: 'I agree to receive news and promotions via email',
     subscribeError: 'Failed to subscribe',
     successMessage: 'Thank you! You are subscribed.',
+    turnstileError: 'Security check failed. Please try again.',
   },
   feedback: {
     question: 'Was this form helpful?',

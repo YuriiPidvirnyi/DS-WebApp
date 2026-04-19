@@ -2833,6 +2833,7 @@ const uk = {
     consentText: 'Погоджуюся отримувати новини та акції на email',
     subscribeError: 'Не вдалося підписатися',
     successMessage: 'Дякуємо! Ви підписані.',
+    turnstileError: 'Перевірка безпеки не пройдена. Спробуйте ще раз.',
   },
   feedback: {
     question: 'Ця форма була корисною?',

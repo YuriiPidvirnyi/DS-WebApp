@@ -2842,6 +2842,8 @@ const pl = {
     consentText: 'Zgadzam się na otrzymywanie wiadomości i promocji na email',
     subscribeError: 'Nie udało się zasubskrybować',
     successMessage: 'Dziękujemy! Jesteś zapisany.',
+    turnstileError:
+      'Weryfikacja bezpieczeństwa nie powiodła się. Spróbuj ponownie.',
   },
   feedback: {
     question: 'Czy ten formularz był pomocny?',
