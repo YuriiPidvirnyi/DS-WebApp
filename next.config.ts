@@ -27,10 +27,9 @@ const withPWAConfig = withPWA({
           cacheableResponse: { statuses: [0, 200] },
         },
       },
-      // Remote images (CliniCards CDN, clinic domain) — cache-first, 30 days
+      // Remote images (clinic domain) — cache-first, 30 days
       {
-        urlPattern:
-          /^https:\/\/(?:api\.cliniccards\.com|dentalstory\.com\.ua)\/.*/i,
+        urlPattern: /^https:\/\/(?:dentalstory\.com\.ua|dentalstory\.ua)\/.*/i,
         handler: 'CacheFirst',
         options: {
           cacheName: 'remote-images',
@@ -86,10 +85,6 @@ const nextConfig: NextConfig = {
   // Image optimization
   images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'api.cliniccards.com',
-      },
       {
         protocol: 'https',
         hostname: 'dentalstory.com.ua',

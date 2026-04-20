@@ -1,9 +1,8 @@
 /**
  * E2E: Anonymous booking flow
  *
- * Tests the multi-step booking form without requiring a live Supabase or
- * CliniCards connection. Validates UI rendering, navigation between steps,
- * and form validation. The final submission step is skipped in mock CI.
+ * Tests the multi-step booking form. Validates UI rendering, navigation between steps,
+ * and form validation.
  */
 import { expect, test } from '@playwright/test'
 

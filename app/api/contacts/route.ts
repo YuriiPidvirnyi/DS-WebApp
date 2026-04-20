@@ -2,18 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
 import {
-  createContact,
-  CliniCardsError,
-  type ContactPayload,
-} from '@/lib/clinicards-client'
-import {
   checkRateLimit,
   rateLimitResponse,
   validateCSRF,
   csrfErrorResponse,
 } from '@/lib/api-security'
 import { captureException } from '@/utils/sentry'
-import { logger } from '@/utils/logger'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -31,16 +25,6 @@ const contactSchema = z.object({
 
 type ContactSchemaInput = z.infer<typeof contactSchema>
 
-let hasLoggedMissingCliniCardsConfig = false
-
-type IncomingContactPayload = Partial<
-  ContactPayload & {
-    name?: string
-    email?: string
-    message?: string
-  }
->
-
 function splitFullName(fullName: string): {
   firstName: string
   lastName?: string
@@ -55,9 +39,13 @@ function splitFullName(fullName: string): {
   return { firstName, lastName: lastName || undefined }
 }
 
-function normalizeContactPayload(body: IncomingContactPayload): {
+function normalizeContactPayload(body: ContactSchemaInput): {
   displayName: string
-  payload: ContactPayload
+  firstName: string
+  lastName?: string
+  phone: string
+  email?: string
+  message?: string
 } {
   const providedName = typeof body.name === 'string' ? body.name.trim() : ''
   const providedFirstName =
@@ -76,31 +64,12 @@ function normalizeContactPayload(body: IncomingContactPayload): {
 
   return {
     displayName,
-    payload: {
-      firstName,
-      lastName,
-      phone,
-      email: email || undefined,
-      message: message || undefined,
-      source: 'webapp',
-    },
+    firstName,
+    lastName,
+    phone,
+    email: email || undefined,
+    message: message || undefined,
   }
-}
-
-function logCliniCardsFallback(error: unknown): void {
-  if (error instanceof CliniCardsError && error.code === 'MISSING_API_KEY') {
-    if (!hasLoggedMissingCliniCardsConfig) {
-      logger.warn(
-        '[contacts] CLINICARDS_API_KEY is missing; continuing with Supabase-only contact flow.'
-      )
-      hasLoggedMissingCliniCardsConfig = true
-    }
-    return
-  }
-
-  logger.warn('[contacts] CliniCards failed; using Supabase submission:', {
-    data: error,
-  })
 }
 
 /** POST /api/contacts */
@@ -137,79 +106,59 @@ export async function POST(request: NextRequest) {
   }
 
   const body: ContactSchemaInput = parseResult.data
-  const normalized = normalizeContactPayload(body as IncomingContactPayload)
+  const normalized = normalizeContactPayload(body)
 
   // Required: name + phone (post-normalize checks kept for safety)
-  if (!normalized.payload.firstName) {
+  if (!normalized.firstName) {
     return NextResponse.json(
       { success: false, error: "Ім'я є обов'язковим" },
       { status: 400 }
     )
   }
 
-  let savedSubmissionId: string | null = null
-
   try {
     // Save to Supabase
     const supabase = await createClient()
-    if (supabase) {
-      const submissionId = crypto.randomUUID()
-      const { error: dbError } = await supabase
-        .from('contact_submissions')
-        .insert({
-          id: submissionId,
-          name: normalized.displayName || normalized.payload.firstName,
-          phone: normalized.payload.phone,
-          email: normalized.payload.email || null,
-          message: normalized.payload.message || null,
-        })
-
-      if (dbError) {
-        captureException(new Error('[contacts] Supabase insert error'), {
-          supabaseError: dbError,
-        })
-      } else {
-        savedSubmissionId = submissionId
-      }
-    }
-
-    // Also send to CliniCards if configured
-    try {
-      const data = await createContact(normalized.payload)
+    if (!supabase) {
       return NextResponse.json(
-        {
-          success: true,
-          data: { id: data.id || savedSubmissionId || crypto.randomUUID() },
-        },
-        { status: 201 }
+        { success: false, error: 'Внутрішня помилка сервера' },
+        { status: 500 }
       )
-    } catch (cliniCardsError) {
-      // If CliniCards fails, we still saved to Supabase
-      if (savedSubmissionId) {
-        logCliniCardsFallback(cliniCardsError)
-        return NextResponse.json(
-          {
-            success: true,
-            data: { id: savedSubmissionId },
-            message: "Дякуємо! Ми зв'яжемося з вами найближчим часом.",
-          },
-          { status: 201 }
-        )
-      }
-
-      throw cliniCardsError
     }
-  } catch (error) {
-    if (error instanceof CliniCardsError) {
+
+    const submissionId = crypto.randomUUID()
+    const { error: dbError } = await supabase
+      .from('contact_submissions')
+      .insert({
+        id: submissionId,
+        name: normalized.displayName || normalized.firstName,
+        phone: normalized.phone,
+        email: normalized.email || null,
+        message: normalized.message || null,
+      })
+
+    if (dbError) {
+      captureException(new Error('[contacts] Supabase insert error'), {
+        supabaseError: dbError,
+      })
       return NextResponse.json(
         {
           success: false,
           error: 'Не вдалося зберегти звернення. Спробуйте ще раз.',
-          code: error.code,
         },
-        { status: error.status || 503 }
+        { status: 500 }
       )
     }
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: { id: submissionId },
+        message: "Дякуємо! Ми зв'яжемося з вами найближчим часом.",
+      },
+      { status: 201 }
+    )
+  } catch (error) {
     captureException(error instanceof Error ? error : new Error(String(error)))
     return NextResponse.json(
       { success: false, error: 'Внутрішня помилка сервера' },
