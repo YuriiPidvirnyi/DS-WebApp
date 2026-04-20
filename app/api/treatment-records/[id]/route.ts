@@ -442,6 +442,21 @@ export async function DELETE(request: NextRequest, { params }: Params) {
 
     const { id } = await params
 
+    // Doctor scope: verify ownership before allowing delete
+    if (hasDoctorScope(auth.access!.role)) {
+      const { data: record } = await auth
+        .supabase!.from('treatment_records')
+        .select('doctor_id')
+        .eq('id', id)
+        .maybeSingle()
+      if (!record || record.doctor_id !== auth.access!.doctorId) {
+        return NextResponse.json(
+          { success: false, error: 'Insufficient permissions' },
+          { status: 403 }
+        )
+      }
+    }
+
     const { error } = await auth
       .supabase!.from('treatment_records')
       .delete()
