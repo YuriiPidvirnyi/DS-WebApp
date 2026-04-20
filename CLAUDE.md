@@ -2,6 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Git Workflow
+
+**Always base work on `develop`, never on `main`.**
+
+- Feature branches: `git checkout -b feature/name develop`
+- All PRs target `develop`, never `main`
+- Flow: `feature/* → develop → main`
+- `develop` is the preprod environment — do NOT propose removing or skipping it
+
 ## Common Development Commands
 
 ### Build and Development
@@ -192,17 +201,18 @@ Colors defined in `tailwind.config.js` and `src/styles/globals.css`:
 
 ### Environment Variables
 
-| Variable                          | Required  | Description                                                          |
-| --------------------------------- | --------- | -------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SITE_URL`            | No        | Site URL (default: `https://dentalstory.com.ua`)                     |
-| `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` | No        | GA4 measurement ID                                                   |
-| `NEXT_PUBLIC_SUPABASE_URL`        | For auth  | Supabase project URL                                                 |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY`   | For auth  | Supabase anon key                                                    |
-| `UPSTASH_REDIS_REST_URL`          | For cache | Upstash Redis URL                                                    |
-| `UPSTASH_REDIS_REST_TOKEN`        | For cache | Upstash Redis token                                                  |
-| `SENTRY_AUTH_TOKEN`               | No        | For source map upload (skipped if missing)                           |
-| `RESEND_API_KEY`                  | For email | Resend API key                                                       |
-| `RESEND_FROM_EMAIL`               | No        | Sender address (default: `DentalStory <noreply@dentalstory.com.ua>`) |
-| `ADMIN_NOTIFICATION_EMAIL`        | No        | Email for admin booking alerts                                       |
-| `CRON_SECRET`                     | For cron  | Bearer token for `/api/cron/*` routes                                |
-| `SUPABASE_SERVICE_ROLE_KEY`       | For cron  | Service role key for server-side Supabase calls                      |
+| Variable                          | Required     | Description                                                             |
+| --------------------------------- | ------------ | ----------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL`            | No           | Site URL (default: `https://dentalstory.com.ua`)                        |
+| `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` | No           | GA4 measurement ID                                                      |
+| `NEXT_PUBLIC_SUPABASE_URL`        | For auth     | Supabase project URL                                                    |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`   | For auth     | Supabase anon key                                                       |
+| `UPSTASH_REDIS_REST_URL`          | For cache    | Upstash Redis URL                                                       |
+| `UPSTASH_REDIS_REST_TOKEN`        | For cache    | Upstash Redis token                                                     |
+| `SENTRY_AUTH_TOKEN`               | No           | For source map upload (skipped if missing)                              |
+| `RESEND_API_KEY`                  | For email    | Resend API key                                                          |
+| `RESEND_FROM_EMAIL`               | No           | Sender address (default: `DentalStory <noreply@dentalstory.com.ua>`)    |
+| `ADMIN_NOTIFICATION_EMAIL`        | No           | Email for admin booking alerts                                          |
+| `CRON_SECRET`                     | For cron     | Bearer token for `/api/cron/*` routes                                   |
+| `SUPABASE_SERVICE_ROLE_KEY`       | For cron     | Service role key for server-side Supabase calls                         |
+| `MONOBANK_TOKEN`                  | For payments | Monobank acquiring token (test: api.monobank.ua, prod: web.monobank.ua) |

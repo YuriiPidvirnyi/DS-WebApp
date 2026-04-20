@@ -335,9 +335,18 @@ export function useBookingForm() {
         if (payRes.ok) {
           const payBody = (await payRes.json()) as {
             success: boolean
-            data?: { pageUrl: string }
+            data?: { invoiceId: string; pageUrl: string }
           }
           if (payBody.success && payBody.data?.pageUrl) {
+            // Store invoiceId so payment-result page can poll after Monobank redirects back
+            try {
+              sessionStorage.setItem(
+                'pending_payment_invoice_id',
+                payBody.data.invoiceId
+              )
+            } catch {
+              // sessionStorage unavailable — page will still work via URL param if monobank adds it
+            }
             window.location.href = payBody.data.pageUrl
             return
           }

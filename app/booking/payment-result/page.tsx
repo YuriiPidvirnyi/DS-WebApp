@@ -28,10 +28,27 @@ export default function PaymentResultPage() {
 
   const [state, setState] = useState<PollState>({ phase: 'polling' })
 
+  // Resolve invoiceId: URL param first, sessionStorage fallback (set before Monobank redirect)
+  const resolvedInvoiceId =
+    invoiceId ||
+    (() => {
+      try {
+        return sessionStorage.getItem('pending_payment_invoice_id')
+      } catch {
+        return null
+      }
+    })()
+
   useEffect(() => {
-    if (!invoiceId) {
+    if (!resolvedInvoiceId) {
       setState({ phase: 'failed', status: 'failure' })
       return
+    }
+    // Clean up once we have it
+    try {
+      sessionStorage.removeItem('pending_payment_invoice_id')
+    } catch {
+      // ignore
     }
 
     let attempts = 0
@@ -44,11 +61,14 @@ export default function PaymentResultPage() {
 
       try {
         const res = await fetch(
-          `/api/payments/status/${encodeURIComponent(invoiceId)}`
+          `/api/payments/status/${encodeURIComponent(resolvedInvoiceId)}`
         )
         if (!cancelled && res.ok) {
-          const json = (await res.json()) as { status?: PaymentStatus }
-          const status = json.status
+          const json = (await res.json()) as {
+            success?: boolean
+            data?: { status?: PaymentStatus }
+          }
+          const status = json.data?.status
 
           if (status === 'success') {
             setState({ phase: 'success' })
@@ -78,7 +98,7 @@ export default function PaymentResultPage() {
     return () => {
       cancelled = true
     }
-  }, [invoiceId])
+  }, [resolvedInvoiceId])
 
   return (
     <div className="min-h-screen bg-dental-primary-50 flex items-center justify-center px-4 py-16">

@@ -124,21 +124,23 @@ export async function verifyMonobankWebhook(
   body: Buffer,
   signature: string
 ): Promise<boolean> {
-  try {
+  const attemptVerify = async (): Promise<boolean> => {
     const pubkeyBase64 = await getMonobankPublicKey()
-    if (!pubkeyBase64) {
-      return false
-    }
-
-    const pubkeyBuffer = Buffer.from(pubkeyBase64, 'base64')
-    const signatureBuffer = Buffer.from(signature, 'base64')
-
-    const verify = createVerify('ed25519')
+    if (!pubkeyBase64) return false
+    // The key from monobank is base64(PEM), decode to get PEM text for ECDSA P-256
+    const pubkeyPem = Buffer.from(pubkeyBase64, 'base64').toString('utf8')
+    const verify = createVerify('SHA256')
     verify.update(body)
-    return verify.verify(
-      { key: pubkeyBuffer, format: 'der', type: 'spki' },
-      signatureBuffer
-    )
+    return verify.verify(pubkeyPem, Buffer.from(signature, 'base64'))
+  }
+
+  try {
+    const ok = await attemptVerify()
+    if (ok) return true
+    // Verification failed — key may have rotated, clear cache and retry once
+    cachedPubkey = null
+    cachedPubkeyAt = 0
+    return attemptVerify()
   } catch {
     return false
   }
