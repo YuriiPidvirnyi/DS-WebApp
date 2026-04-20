@@ -12,9 +12,7 @@ import {
   Users,
   GalleryVertical,
   MapPin,
-  Facebook,
-  Instagram,
-  Twitter,
+  ExternalLink,
   Phone,
   MessageCircle,
   Accessibility,
@@ -180,17 +178,17 @@ export default function SidebarNav() {
     {
       href: CONTACT_INFO.social.facebook,
       label: 'Facebook',
-      icon: <Facebook className="w-5 h-5 shrink-0" />,
+      icon: <ExternalLink className="w-5 h-5 shrink-0" />,
     },
     {
       href: CONTACT_INFO.social.instagram,
       label: 'Instagram',
-      icon: <Instagram className="w-5 h-5 shrink-0" />,
+      icon: <ExternalLink className="w-5 h-5 shrink-0" />,
     },
     {
       href: CONTACT_INFO.social.twitter,
       label: 'Twitter / X',
-      icon: <Twitter className="w-5 h-5 shrink-0" />,
+      icon: <ExternalLink className="w-5 h-5 shrink-0" />,
     },
     {
       href: CONTACT_INFO.social.tiktok,
