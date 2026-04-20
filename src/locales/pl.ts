@@ -904,6 +904,7 @@ const pl = {
     nextCase: 'Następny przypadek',
     goToCase: 'Przejdź do przypadku',
     title: 'Dostępność',
+    closePanel: 'Zamknij panel dostępności',
   },
   accessibilityPanel: {
     regionLabel: 'Ustawienia dostępności',
@@ -1538,6 +1539,31 @@ const pl = {
       defaultUser: 'Admin',
       openSidebar: 'Otwórz menu',
       sidebarNav: 'Nawigacja panelu admina',
+    },
+    onboarding: {
+      step1: {
+        title: 'Witaj w DentalStory!',
+        body: 'Szybko skonfigurujmy Twoją klinikę. Ten krótki przewodnik przeprowadzi Cię przez podstawowe pierwsze kroki.',
+      },
+      step2: {
+        title: 'Dodaj swoje usługi',
+        body: 'Przejdź do sekcji Usługi i dodaj usługi stomatologiczne — nazwę, cenę i czas trwania.',
+      },
+      step3: {
+        title: 'Dodaj lekarzy',
+        body: 'Przejdź do sekcji Lekarze i dodaj swój zespół. Pacjenci będą mogli wybrać lekarza podczas rejestracji.',
+      },
+      step4: {
+        title: 'Przetestuj rejestrację online',
+        body: 'Otwórz stronę i spróbuj dokonać testowej rejestracji przez formularz. Upewnij się, że wszystko działa poprawnie.',
+      },
+      step5: {
+        title: 'Sprawdź powiadomienia email',
+        body: 'Po testowej rejestracji otrzymasz e-mail z potwierdzeniem. Upewnij się, że wiadomości przychodzą i wyglądają poprawnie.',
+      },
+      skip: 'Pomiń',
+      next: 'Dalej',
+      finish: 'Gotowe',
     },
     modal: {
       closeAria: 'Zamknij okno modalne',
@@ -2700,6 +2726,7 @@ const pl = {
       navigation: 'Nawigacja gabinetu',
       openMenu: 'Otwórz menu',
       backToSite: 'Na stronę',
+      settings: 'Ustawienia',
     },
     treatments: {
       title: 'Leczenie',
@@ -2734,6 +2761,27 @@ const pl = {
       feature3Title: 'Przypomnienia',
       feature3Desc: 'Powiadomienia o płatnościach',
       meanwhile: 'Obecnie płatności dokonuje się w klinice.',
+    },
+    settings: {
+      title: 'Ustawienia i prywatność',
+      subtitle: 'Zarządzaj swoimi danymi i kontem',
+      navLink: 'Ustawienia',
+      exportSection: {
+        title: 'Pobierz moje dane',
+        description:
+          'Otrzymasz plik JSON ze wszystkimi swoimi danymi: wizytami, leczeniem i wiadomościami.',
+        button: 'Pobierz dane',
+      },
+      deleteSection: {
+        title: 'Usuń konto',
+        description:
+          'Trwale usuń swoje konto i wszystkie powiązane dane. Tej operacji nie można cofnąć.',
+        button: 'Usuń konto',
+        confirm: 'Wpisz DELETE, aby potwierdzić',
+        confirmButton: 'Usuń na zawsze',
+        cancel: 'Anuluj',
+        deleting: 'Usuwanie...',
+      },
     },
   },
   patientDashboard: {
@@ -2913,6 +2961,12 @@ const pl = {
     },
   },
   chat: {
+    chooser: {
+      title: 'Czat wsparcia',
+      subtitle: 'Wybierz sposób kontaktu:',
+      human: 'Napisz do administratora',
+      ai: 'Asystent AI',
+    },
     openChat: 'Otwórz czat',
     closeChat: 'Zamknij czat',
     onlineChat: 'Czat online',

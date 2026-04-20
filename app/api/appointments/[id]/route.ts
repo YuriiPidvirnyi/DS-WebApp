@@ -181,13 +181,33 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     )
   }
 
-  const { data: currentRow } = updates.status
+  const needsCurrentRow = !!updates.status || hasDoctorScope(auth.access!.role)
+  const { data: currentRow } = needsCurrentRow
     ? await auth
         .supabase!.from('appointments')
-        .select('status, guest_email')
+        .select('status, guest_email, doctor_id')
         .eq('id', id)
         .maybeSingle()
     : { data: null }
+
+  // Doctor scope: only allow edits to own appointments
+  if (hasDoctorScope(auth.access!.role)) {
+    if (!currentRow) {
+      return NextResponse.json(
+        { success: false, error: 'Запис не знайдено' },
+        { status: 404 }
+      )
+    }
+    if (
+      (currentRow as Record<string, unknown>).doctor_id !==
+      auth.access!.doctorId
+    ) {
+      return NextResponse.json(
+        { success: false, error: 'Insufficient permissions' },
+        { status: 403 }
+      )
+    }
+  }
 
   if (updates.status) {
     if (!currentRow) {
@@ -210,10 +230,15 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     }
   }
 
+  // Optimistic lock on status: ensure no concurrent transition occurred
+  const statusFilter =
+    updates.status && currentRow?.status ? { status: currentRow.status } : {}
+
   const { data, error } = await auth
     .supabase!.from('appointments')
     .update(updates)
     .eq('id', id)
+    .match(statusFilter)
     .select(APPOINTMENT_SELECT)
     .maybeSingle()
 
@@ -228,9 +253,16 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   }
 
   if (!data) {
+    // Distinguish optimistic-lock conflict (status changed concurrently) from genuine 404
+    const isConflict = !!(updates.status && currentRow?.status)
     return NextResponse.json(
-      { success: false, error: 'Запис не знайдено' },
-      { status: 404 }
+      {
+        success: false,
+        error: isConflict
+          ? 'Статус запису змінився — оновіть сторінку і спробуйте знову'
+          : 'Запис не знайдено',
+      },
+      { status: isConflict ? 409 : 404 }
     )
   }
 

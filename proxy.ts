@@ -29,6 +29,7 @@ function buildCSP(nonce: string): string {
     "img-src 'self' data: blob: https://www.google-analytics.com https://*.supabase.co https://api.cliniccards.com",
     "font-src 'self' https://fonts.gstatic.com",
     "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://*.sentry.io https://*.vercel-insights.com https://api.cliniccards.com https://challenges.cloudflare.com",
+    "worker-src blob: 'self'",
     "frame-src 'self' https://www.google.com https://maps.google.com https://challenges.cloudflare.com",
     "object-src 'none'",
     "base-uri 'self'",

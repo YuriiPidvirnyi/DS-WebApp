@@ -901,6 +901,7 @@ const en = {
     nextCase: 'Next case',
     goToCase: 'Go to case',
     title: 'Accessibility',
+    closePanel: 'Close accessibility panel',
   },
   accessibilityPanel: {
     regionLabel: 'Accessibility settings',
@@ -1529,6 +1530,31 @@ const en = {
       defaultUser: 'Admin',
       openSidebar: 'Open menu',
       sidebarNav: 'Admin panel navigation',
+    },
+    onboarding: {
+      step1: {
+        title: 'Welcome to DentalStory!',
+        body: "Let's quickly set up your clinic. This short guide will walk you through the essential first steps.",
+      },
+      step2: {
+        title: 'Add your services',
+        body: 'Go to the Services section and add your dental services — name, price, and duration.',
+      },
+      step3: {
+        title: 'Add your doctors',
+        body: 'Go to the Doctors section and add your team. Patients will be able to choose a doctor when booking.',
+      },
+      step4: {
+        title: 'Test online booking',
+        body: 'Open the website and try making a test booking through the form. Make sure everything works correctly.',
+      },
+      step5: {
+        title: 'Check email notifications',
+        body: "After the test booking, you'll receive a confirmation email. Make sure the emails arrive and look correct.",
+      },
+      skip: 'Skip tour',
+      next: 'Next',
+      finish: 'Done',
     },
     modal: {
       closeAria: 'Close modal window',
@@ -2689,6 +2715,7 @@ const en = {
       navigation: 'Cabinet navigation',
       openMenu: 'Open menu',
       backToSite: 'Back to site',
+      settings: 'Settings',
     },
     treatments: {
       title: 'Treatments',
@@ -2722,6 +2749,27 @@ const en = {
       feature3Title: 'Reminders',
       feature3Desc: 'Payment notifications',
       meanwhile: 'Currently, payment is made at the clinic.',
+    },
+    settings: {
+      title: 'Settings & Privacy',
+      subtitle: 'Manage your data and account',
+      navLink: 'Settings',
+      exportSection: {
+        title: 'Download my data',
+        description:
+          'You will receive a JSON file with all your data: appointments, treatments and messages.',
+        button: 'Download data',
+      },
+      deleteSection: {
+        title: 'Delete account',
+        description:
+          'Permanently delete your account and all associated data. This action cannot be undone.',
+        button: 'Delete account',
+        confirm: 'Type DELETE to confirm',
+        confirmButton: 'Delete permanently',
+        cancel: 'Cancel',
+        deleting: 'Deleting...',
+      },
     },
   },
   patientDashboard: {
@@ -2901,6 +2949,12 @@ const en = {
     },
   },
   chat: {
+    chooser: {
+      title: 'Support Chat',
+      subtitle: 'Choose a contact method:',
+      human: 'Write to administrator',
+      ai: 'AI Assistant',
+    },
     openChat: 'Open Chat',
     closeChat: 'Close Chat',
     onlineChat: 'Online Chat',

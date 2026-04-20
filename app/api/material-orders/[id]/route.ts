@@ -114,10 +114,7 @@ async function applyInventoryForDeliveredOrder(
   const today = new Date().toISOString().slice(0, 10)
 
   for (const item of items) {
-    const delivered =
-      Number(item.quantity_delivered) > 0
-        ? Number(item.quantity_delivered)
-        : Number(item.quantity_requested)
+    const delivered = Number(item.quantity_delivered)
     if (delivered <= 0) continue
 
     const { data: inv, error: invFetchErr } = await supabase

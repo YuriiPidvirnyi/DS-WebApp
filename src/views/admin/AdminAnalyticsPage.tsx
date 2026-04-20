@@ -52,7 +52,7 @@ function ChartErrorFallback() {
 export default function AdminAnalyticsPage() {
   const { t } = useTranslation()
   const { preferences } = useAdminPreferences()
-  const { token: csrfToken, refreshToken } = useCSRF()
+  const { token: csrfToken } = useCSRF()
   const [periodDays, setPeriodDays] = useState<7 | 30 | 90>(30)
   const [model, setModel] = useState<AnalyticsModel | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -77,7 +77,7 @@ export default function AdminAnalyticsPage() {
           const token =
             csrfToken ||
             (typeof window !== 'undefined'
-              ? sessionStorage.getItem('csrf_token') || refreshToken()
+              ? (sessionStorage.getItem('csrf_token') ?? '')
               : '')
 
           if (!token) {
@@ -142,7 +142,7 @@ export default function AdminAnalyticsPage() {
         setIsRefreshing(false)
       }
     },
-    [csrfToken, periodDays, refreshToken, t]
+    [csrfToken, periodDays, t]
   )
 
   useEffect(() => {
