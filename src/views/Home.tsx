@@ -10,6 +10,7 @@ import {
   useScrollAnimation,
   useStaggeredAnimation,
 } from '@/hooks/useScrollAnimation'
+import BeforeAfterGallery from '@/components/BeforeAfterGallery'
 import images from '@/content/images.json'
 
 // Type for service images from images.json
@@ -244,6 +245,9 @@ const Home = () => {
           </AnimatedSection>
         </div>
       </section>
+
+      {/* Before/After Gallery Section */}
+      <BeforeAfterGallery />
 
       {/* Pricing Section */}
       <section
