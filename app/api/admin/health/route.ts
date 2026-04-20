@@ -76,19 +76,6 @@ function checkResend(): ServiceHealth {
   }
 }
 
-function checkCliniCards(): ServiceHealth {
-  const configured = Boolean(process.env.CLINICARDS_API_KEY)
-  if (!configured) {
-    return { name: 'CliniCards', status: 'unconfigured', latencyMs: null }
-  }
-  return {
-    name: 'CliniCards',
-    status: 'ok',
-    latencyMs: null,
-    message: 'API key present',
-  }
-}
-
 function checkSentry(): ServiceHealth {
   const configured = Boolean(
     process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN
@@ -143,7 +130,6 @@ export async function GET() {
       supabaseHealth,
       redisHealth,
       checkResend(),
-      checkCliniCards(),
       checkSentry(),
     ]
 
