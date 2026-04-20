@@ -163,6 +163,17 @@ export async function GET(request: NextRequest) {
     .insert(events)
 
   if (insertError) {
+    // code 23505 = unique_violation — a concurrent run already inserted these
+    // (the uniq_active_reminder_per_appt partial index makes this safe)
+    if ((insertError as { code?: string }).code === '23505') {
+      await finishCronRun(supabase, runId, 0)
+      return NextResponse.json({
+        success: true,
+        scheduled: 0,
+        message: 'Concurrent run already scheduled reminders',
+        date: tomorrowDate,
+      })
+    }
     captureException(new Error('[cron/reminders] Insert error'), {
       supabaseError: insertError,
     })
