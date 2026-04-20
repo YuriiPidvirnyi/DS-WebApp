@@ -26,6 +26,7 @@ import { seedMaterialOrders } from './08_material_orders.ts'
 import { seedChat } from './09_chat.ts'
 import { seedReviews } from './10_reviews.ts'
 import { seedNotifications } from './11_notifications.ts'
+import { seedI18nPatients } from './12_i18n_patients.ts'
 
 // ─── Parse CLI flags ──────────────────────────────────────────────────────────
 const args = process.argv.slice(2)
@@ -117,11 +118,16 @@ async function main() {
     await seedNotifications(appointments, patients)
   }
 
+  if (shouldRun('i18n_patients')) {
+    await seedI18nPatients()
+  }
+
   console.log('\n═══════════════════════════════════════════════════════')
   console.log('  ✅  Preprod seed complete!')
   console.log('\n  Credentials:')
   console.log('    Admin accounts   → PreprodTest!2026')
-  console.log('    Patient accounts → Patient!2026')
+  console.log('    UA patient accounts → Patient!2026')
+  console.log('    EN/PL patient accts → PatientTest!2026')
   console.log('    Domain: @preprod.dentalstory.ua (patients)')
   console.log('            @dentalstory.ua (admins)')
   console.log('═══════════════════════════════════════════════════════\n')

@@ -1,0 +1,44 @@
+name: Reseed Preprod
+
+# Runs automatically after every merge to develop.
+# Wipes transactional data and re-seeds so the staging environment
+# always reflects the latest schema and a clean realistic dataset.
+
+on:
+  push:
+    branches: [develop]
+
+concurrency:
+  group: reseed-preprod
+  cancel-in-progress: true
+
+jobs:
+  reseed:
+    name: Wipe & reseed preprod
+    runs-on: ubuntu-latest
+
+    # Skip if the commit message opts out (useful for hotfix / schema-only merges)
+    if: "!contains(github.event.head_commit.message, '[skip reseed]')"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci --legacy-peer-deps
+
+      - name: Wipe and reseed
+        run: SEED_WIPE=1 npx tsx scripts/seed/preprod/index.ts
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.PREPROD_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.PREPROD_SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Preprod Reseed" >> $GITHUB_STEP_SUMMARY
+          echo "Triggered by: \`${{ github.event.head_commit.message }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "Commit: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
