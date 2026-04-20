@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { checkRateLimit, rateLimitResponse } from '@/lib/api-security'
 import { captureException } from '@/utils/sentry'
 import { logger } from '@/utils/logger'
 
@@ -14,9 +15,12 @@ function getServiceClient() {
 }
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ invoiceId: string }> }
 ) {
+  const { allowed, remaining } = await checkRateLimit(request, 30, 60_000)
+  if (!allowed) return rateLimitResponse(remaining)
+
   const { invoiceId } = await params
 
   const supabase = getServiceClient()
@@ -34,7 +38,7 @@ export async function GET(
 
   const { data: payment, error } = await supabase
     .from('payments')
-    .select('status, amount_kopecks, paid_at')
+    .select('status')
     .eq('invoice_id', invoiceId)
     .single()
 
@@ -48,12 +52,5 @@ export async function GET(
     )
   }
 
-  return NextResponse.json({
-    success: true,
-    data: {
-      status: payment.status,
-      amountKopecks: payment.amount_kopecks,
-      paidAt: payment.paid_at,
-    },
-  })
+  return NextResponse.json({ success: true, data: { status: payment.status } })
 }
