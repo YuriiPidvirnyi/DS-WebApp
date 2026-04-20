@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
   const body = Buffer.from(await request.arrayBuffer())
 
   if (!(await verifyMonobankWebhook(body, xSign))) {
-    console.warn('[monobank-webhook] Invalid signature')
+    logger.warn('[monobank-webhook] Invalid signature')
     return NextResponse.json(
       { ok: false, error: 'Invalid signature' },
       { status: 403 }
@@ -68,6 +68,12 @@ export async function POST(request: NextRequest) {
         invoiceId: payload.invoiceId,
       })
       // Return 200 to avoid Monobank retries — this is a data anomaly
+      return NextResponse.json({ ok: true })
+    }
+
+    // Idempotency guard: skip if already in a terminal state (duplicate delivery)
+    const TERMINAL = ['success', 'failure', 'reversed', 'expired'] as const
+    if (TERMINAL.includes(payment.status as (typeof TERMINAL)[number])) {
       return NextResponse.json({ ok: true })
     }
 
