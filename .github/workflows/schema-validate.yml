@@ -1,0 +1,96 @@
+name: Schema Validate
+
+# Runs whenever migration files change on a PR or push.
+# Catches naming convention violations, duplicate timestamps, and
+# dangerous DDL patterns before they reach the database.
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'supabase/migrations/**'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'supabase/migrations/**'
+
+concurrency:
+  group: schema-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate SQL migrations
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check filename convention
+        run: |
+          errors=0
+          for f in supabase/migrations/*.sql; do
+            name=$(basename "$f")
+            # Accept 8-digit (YYYYMMDD) or 14-digit (YYYYMMDDHHmmss) prefix
+            if ! [[ "$name" =~ ^[0-9]{8,14}[_-].+\.sql$ ]]; then
+              echo "::error file=$f::Non-standard migration name '$name'. Expected: YYYYMMDD_description.sql"
+              errors=$((errors + 1))
+            fi
+          done
+          [ "$errors" -eq 0 ] && echo "Filename convention OK" || exit 1
+
+      - name: Check for duplicate timestamp prefixes
+        run: |
+          dupes=$(
+            ls supabase/migrations/*.sql \
+              | xargs -I{} basename {} \
+              | grep -oE '^[0-9]+' \
+              | sort \
+              | uniq -d
+          )
+          if [ -n "$dupes" ]; then
+            echo "::error::Duplicate migration timestamp(s): $dupes"
+            exit 1
+          fi
+          echo "No duplicate timestamps"
+
+      - name: Check for dangerous DDL patterns
+        run: |
+          warnings=0
+          while IFS= read -r -d '' f; do
+            name=$(basename "$f")
+
+            # NOT NULL column added without a DEFAULT — locks the table on large datasets
+            # (Postgres 11+ avoids this for simple defaults, but complex expressions still lock)
+            if grep -qiP 'ADD\s+COLUMN\s+\S+\s+\S+[^;]*NOT\s+NULL' "$f"; then
+              if ! grep -qiP 'ADD\s+COLUMN\s+\S+\s+\S+[^;]*NOT\s+NULL[^;]*DEFAULT' "$f"; then
+                echo "::warning file=$f::$name — ADD COLUMN ... NOT NULL without DEFAULT (can lock table on large datasets; ensure backfill exists)"
+                warnings=$((warnings + 1))
+              fi
+            fi
+
+            # DROP TABLE without IF EXISTS — hard fail in idempotent migrations
+            if grep -qiP 'DROP\s+TABLE\s+(?!IF\s+EXISTS)' "$f"; then
+              echo "::warning file=$f::$name — DROP TABLE without IF EXISTS"
+              warnings=$((warnings + 1))
+            fi
+
+            # DROP COLUMN without IF EXISTS
+            if grep -qiP 'DROP\s+COLUMN\s+(?!IF\s+EXISTS)' "$f"; then
+              echo "::warning file=$f::$name — DROP COLUMN without IF EXISTS"
+              warnings=$((warnings + 1))
+            fi
+
+          done < <(find supabase/migrations -name '*.sql' -print0 | sort -z)
+
+          total=$(find supabase/migrations -name '*.sql' | wc -l)
+          echo "Checked $total migration(s) — $warnings warning(s)"
+          # Warnings are advisory; we don't fail the job on them.
+          exit 0
+
+      - name: Summary
+        if: always()
+        run: |
+          total=$(find supabase/migrations -name '*.sql' | wc -l)
+          echo "## Schema Validate" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Migrations checked:** $total" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Dialect:** PostgreSQL (Supabase)" >> "$GITHUB_STEP_SUMMARY"

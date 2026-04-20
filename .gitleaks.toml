@@ -1,0 +1,19 @@
+# Gitleaks configuration for DentalStory WebApp
+# Docs: https://github.com/gitleaks/gitleaks/blob/master/config/gitleaks.toml
+
+title = "DentalStory Gitleaks Config"
+
+[extend]
+# Inherit the upstream default ruleset maintained by gitleaks
+useDefault = true
+
+[[allowlists]]
+description = "Test / fixture values used in CI and seed scripts"
+regexes = [
+  # Placeholder Supabase anon key used in CI workflows and Playwright config
+  "test-anon-key",
+  # RBAC seed script test password (not a real credential)
+  "RbacTest!2026",
+  # Mock Supabase URL path used in E2E test configuration
+  "supabase-mock",
+]
