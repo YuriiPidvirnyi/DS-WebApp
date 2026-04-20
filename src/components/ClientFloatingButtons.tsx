@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
+import { useTranslation } from 'react-i18next'
 import dynamic from 'next/dynamic'
 
 const RadialMenu = dynamic(() => import('./RadialMenu'), { ssr: false })
@@ -18,6 +19,7 @@ const AccessibilityPanelDynamic = dynamic(
 type ChatMode = null | 'choose' | 'human' | 'ai'
 
 export default function ClientFloatingButtons() {
+  const { t } = useTranslation()
   const [mounted, setMounted] = useState(false)
   const [chatMode, setChatMode] = useState<ChatMode>(null)
   const [accessibilityOpen, setAccessibilityOpen] = useState(false)
@@ -52,12 +54,12 @@ export default function ClientFloatingButtons() {
           <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 w-72">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-dental-dark font-semibold text-base">
-                Чат підтримки
+                {t('chat.chooser.title')}
               </h3>
               <button
                 onClick={() => setChatMode(null)}
                 className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
-                aria-label="Закрити"
+                aria-label={t('common.close')}
               >
                 <svg
                   className="w-4 h-4"
@@ -75,7 +77,7 @@ export default function ClientFloatingButtons() {
               </button>
             </div>
             <p className="text-sm text-dental-text mb-4">
-              Оберіть спосіб зв&apos;язку:
+              {t('chat.chooser.subtitle')}
             </p>
             <div className="flex flex-col gap-2">
               <button
@@ -95,7 +97,7 @@ export default function ClientFloatingButtons() {
                     d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
                   />
                 </svg>
-                Написати адміністратору
+                {t('chat.chooser.human')}
               </button>
               <button
                 onClick={() => setChatMode('ai')}
@@ -114,7 +116,7 @@ export default function ClientFloatingButtons() {
                     d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456Z"
                   />
                 </svg>
-                AI-асистент
+                {t('chat.chooser.ai')}
               </button>
             </div>
           </div>
@@ -143,7 +145,7 @@ export default function ClientFloatingButtons() {
             <button
               onClick={() => setAccessibilityOpen(false)}
               className="absolute top-2 right-2 w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors z-10"
-              aria-label="Закрити панель доступності"
+              aria-label={t('accessibility.closePanel')}
             >
               <svg
                 className="w-4 h-4"

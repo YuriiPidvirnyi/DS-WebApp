@@ -42,7 +42,10 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  if (!hasPermission(adminAccess.role, 'settings:view')) {
+  if (
+    !hasPermission(adminAccess.role, 'orders:view') &&
+    !hasPermission(adminAccess.role, 'settings:view')
+  ) {
     return NextResponse.json(
       { success: false, error: 'Insufficient permissions' },
       { status: 403 }

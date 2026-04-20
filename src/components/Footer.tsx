@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { Phone, Mail, MapPin, Calendar, Clock } from 'lucide-react'
 import { CONTACT_INFO } from '@/utils/constants'
+import Logo from '@/components/ui/Logo'
 
 const MAPS_EMBED_URL = `https://www.google.com/maps?q=${CONTACT_INFO.coordinates.lat},${CONTACT_INFO.coordinates.lng}&t=k&z=17&ie=UTF8&iwloc=&output=embed`
 const MAPS_LINK = `https://maps.google.com/?q=${CONTACT_INFO.coordinates.lat},${CONTACT_INFO.coordinates.lng}`
@@ -40,10 +41,10 @@ const Footer = memo(() => {
         {/* Contact card overlay on map */}
         <div className="absolute bottom-6 left-6 right-6 md:right-auto md:left-8 md:bottom-8 md:w-[380px]">
           <div className="bg-dental-primary-900/95 backdrop-blur-md rounded-2xl p-6 border border-white/10 shadow-2xl">
-            <h3 className="text-white font-semibold text-base mb-4 flex items-center gap-2">
-              <MapPin className="w-4.5 h-4.5 text-dental-primary-400" />
-              Dental Story
-            </h3>
+            <div className="mb-4 flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-dental-primary-400 shrink-0" />
+              <Logo className="h-5 w-auto brightness-0 invert" />
+            </div>
 
             <div className="space-y-3">
               <a

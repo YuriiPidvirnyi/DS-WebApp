@@ -125,10 +125,20 @@ const PATCH_ACTS: PatchAct[] = [
     cls: 'bg-violet-600 hover:bg-violet-700 text-white border-0 focus:ring-violet-500',
   },
   {
+    from: 'approved',
+    next: 'cancelled',
+    label: 'admin.ordersPage.actions.cancel',
+  },
+  {
     from: 'ordered',
     next: 'delivered',
     label: 'admin.ordersPage.actions.markDelivered',
     cls: 'bg-emerald-600 hover:bg-emerald-700 text-white border-0 focus:ring-emerald-500',
+  },
+  {
+    from: 'ordered',
+    next: 'cancelled',
+    label: 'admin.ordersPage.actions.cancel',
   },
 ]
 const mname = (m: OrderItem['materials']) =>

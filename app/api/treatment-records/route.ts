@@ -328,11 +328,20 @@ export async function POST(request: NextRequest) {
             quantityUsed: number
           }>) {
             if (m.materialId && Number(m.quantityUsed) > 0) {
-              await auth.supabase!.rpc('deduct_inventory', {
-                p_material_id: m.materialId,
-                p_qty: Number(m.quantityUsed),
-                p_location: '',
-              })
+              const { error: rpcErr } = await auth.supabase!.rpc(
+                'deduct_inventory',
+                {
+                  p_material_id: m.materialId,
+                  p_qty: Number(m.quantityUsed),
+                  p_location: '',
+                }
+              )
+              if (rpcErr) {
+                captureException(
+                  new Error('[treatment-records] deduct_inventory RPC error'),
+                  { supabaseError: rpcErr, materialId: m.materialId }
+                )
+              }
             }
           }
         }
