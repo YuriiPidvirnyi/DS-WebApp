@@ -4,7 +4,7 @@ import { useAdminPageAccess } from '@/hooks/useAdminPageAccess'
 import AdminAppointmentsPage from '@/views/admin/AdminAppointmentsPage'
 
 export default function AdminRoute() {
-  const isLoading = useAdminPageAccess('appointments:view_all')
+  const isLoading = useAdminPageAccess('/admin/appointments')
 
   if (isLoading) {
     return (

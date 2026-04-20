@@ -248,6 +248,17 @@ describe('Doctor scope', () => {
     expect(canAccessNavItem('doctor', '/admin/appointments')).toBe(true)
     expect(canAccessNavItem('doctor', '/admin/treatments')).toBe(true)
   })
+
+  it('page-level access for doctor must use path-based check, not bare view_all', () => {
+    // Regression guard: useAdminPageAccess on these pages must pass the path
+    // ('/admin/appointments', '/admin/treatments') so canAccessNavItem uses OR
+    // logic (view_all OR view_own). Passing the bare permission 'view_all'
+    // silently redirects doctors even though the nav shows them the link.
+    expect(hasPermission('doctor', 'appointments:view_all')).toBe(false)
+    expect(hasPermission('doctor', 'treatments:view_all')).toBe(false)
+    expect(canAccessNavItem('doctor', '/admin/appointments')).toBe(true)
+    expect(canAccessNavItem('doctor', '/admin/treatments')).toBe(true)
+  })
 })
 
 // ─── Helper functions ────────────────────────────────────────────────────
