@@ -153,6 +153,7 @@ export const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
   doctor: [
     'dashboard:view',
     'appointments:view_own',
+    'appointments:edit', // doctors can reschedule/update their own appointments
     'patients:view',
     'treatments:view_own',
     'treatments:create',
