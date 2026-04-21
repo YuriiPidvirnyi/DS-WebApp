@@ -1045,7 +1045,12 @@
   "meta": {
     "title": "Dental Story — Nowoczesna klinika dentystyczna we Lwowie | Sumska, 10",
     "description": "Nowoczesna stomatologia we Lwowie. Leczenie zębów, implanty, ortodoncja, wybielanie. Przejrzyste ceny, bezbolesne leczenie, gwarancja jakości.",
-    "keywords": "dentysta Lwów, dentysta Sumska, klinika dentystyczna Lwów, leczenie zębów, implanty stomatologiczne, aparaty ortodontyczne, wybielanie zębów, Dental Story"
+    "keywords": "dentysta Lwów, dentysta Sumska, klinika dentystyczna Lwów, leczenie zębów, implanty stomatologiczne, aparaty ortodontyczne, wybielanie zębów, Dental Story",
+    "openGraphTitle": "Dental Story — Nowoczesna klinika dentystyczna we Lwowie",
+    "openGraphDescription": "Nowoczesna stomatologia we Lwowie. Bezbolesne leczenie zębów, implanty, wybielanie. Doświadczeni lekarze, nowoczesny sprzęt.",
+    "ogImageAlt": "Dental Story — Nowoczesna klinika dentystyczna we Lwowie",
+    "twitterTitle": "Dental Story — Nowoczesna klinika dentystyczna we Lwowie",
+    "twitterDescription": "Nowoczesna stomatologia we Lwowie. Bezbolesne leczenie, doświadczeni lekarze, gwarancja jakości."
   },
   "structuredData": {
     "organizationAlternateName": "Klinika stomatologiczna",

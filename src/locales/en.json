@@ -1043,7 +1043,12 @@
   "meta": {
     "title": "Dental Story — Modern Dental Clinic in Lviv | Sumska St., 10",
     "description": "Modern dentistry in Lviv. Dental treatment, implants, orthodontics, teeth whitening. Transparent pricing, painless treatment, quality guarantee.",
-    "keywords": "dentist Lviv, dentist Sumska, dental clinic Lviv, dental treatment, dental implants, braces, teeth whitening, Dental Story"
+    "keywords": "dentist Lviv, dentist Sumska, dental clinic Lviv, dental treatment, dental implants, braces, teeth whitening, Dental Story",
+    "openGraphTitle": "Dental Story — Modern Dental Clinic in Lviv",
+    "openGraphDescription": "Modern dentistry in Lviv. Painless dental treatment, implants, whitening. Experienced doctors, modern equipment.",
+    "ogImageAlt": "Dental Story — Modern Dental Clinic in Lviv",
+    "twitterTitle": "Dental Story — Modern Dental Clinic in Lviv",
+    "twitterDescription": "Modern dentistry in Lviv. Painless treatment, experienced doctors, quality guarantee."
   },
   "structuredData": {
     "organizationAlternateName": "Dental clinic",
