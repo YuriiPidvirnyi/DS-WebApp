@@ -21,6 +21,7 @@ import {
   logAiUsage,
 } from '@/lib/ai-usage'
 import { CONTACT_INFO, SITE_INFO } from '@/utils/constants'
+import { DEFAULT_CHAT_MODEL } from '@/lib/ai'
 
 export const maxDuration = 30
 
@@ -367,14 +368,14 @@ export async function POST(req: NextRequest) {
 
   try {
     const result = streamText({
-      model: 'openai/gpt-4o-mini',
+      model: DEFAULT_CHAT_MODEL,
       system: systemPrompt + languageInstruction,
       messages: await convertToModelMessages(messages),
       tools,
       stopWhen: stepCountIs(5),
       abortSignal: req.signal,
       onFinish: ({ usage }) => {
-        logAiUsage('chat', 'openai/gpt-4o-mini', usage, ipHash)
+        logAiUsage('chat', DEFAULT_CHAT_MODEL, usage, ipHash)
       },
     })
 

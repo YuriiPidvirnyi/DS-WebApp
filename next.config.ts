@@ -76,6 +76,12 @@ const nextConfig: NextConfig = {
   // React strict mode for catching issues early
   reactStrictMode: true,
 
+  // Gzip/Brotli compression for all responses
+  compress: true,
+
+  // Remove the X-Powered-By header (security + marginal byte saving)
+  poweredByHeader: false,
+
   // Allow preview tools accessing via 127.0.0.1 in dev
   allowedDevOrigins: ['127.0.0.1'],
 

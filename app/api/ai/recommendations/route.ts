@@ -16,6 +16,7 @@ import {
 } from '@/lib/ai-usage'
 import { captureException } from '@/utils/sentry'
 import { SITE_INFO } from '@/utils/constants'
+import { DEFAULT_CHAT_MODEL } from '@/lib/ai'
 
 export const maxDuration = 30
 
@@ -177,13 +178,13 @@ Be helpful and professional. Do not diagnose - only recommend services based on 
 
   try {
     const result = await generateText({
-      model: 'openai/gpt-4o-mini',
+      model: DEFAULT_CHAT_MODEL,
       prompt,
       output: Output.object({ schema: RecommendationSchema }),
       abortSignal: req.signal,
     })
 
-    logAiUsage('recommendations', 'openai/gpt-4o-mini', result.usage, ipHash)
+    logAiUsage('recommendations', DEFAULT_CHAT_MODEL, result.usage, ipHash)
 
     return Response.json({
       success: true,
