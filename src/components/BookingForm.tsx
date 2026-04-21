@@ -47,7 +47,7 @@ export default function BookingForm() {
   } = form
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-8 relative">
+    <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-8 relative">
       <h2 className="text-2xl font-bold text-dental-dark mb-6">
         {t('booking.form.heading')}
       </h2>

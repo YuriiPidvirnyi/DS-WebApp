@@ -168,7 +168,7 @@ export default function SignUpPage() {
         </div>
 
         {/* Sign Up Form */}
-        <div className="bg-white rounded-2xl shadow-soft p-8">
+        <div className="bg-white rounded-2xl shadow-soft p-5 sm:p-8">
           <form onSubmit={handleSignUp} className="space-y-5">
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
@@ -176,7 +176,7 @@ export default function SignUpPage() {
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <label
                   htmlFor="firstName"

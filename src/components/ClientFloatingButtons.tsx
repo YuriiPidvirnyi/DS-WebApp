@@ -51,7 +51,7 @@ export default function ClientFloatingButtons() {
       {/* Chat mode chooser */}
       {chatMode === 'choose' && (
         <div className="fixed z-50 bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))] right-[calc(1.5rem+env(safe-area-inset-right,0px))]">
-          <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 w-72">
+          <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 w-72 max-w-[calc(100vw-3rem)]">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-dental-dark font-semibold text-base">
                 {t('chat.chooser.title')}
