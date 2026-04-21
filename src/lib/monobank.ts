@@ -8,12 +8,59 @@ const MONOBANK_STATUS_URL = `${MONOBANK_BASE_URL}/api/merchant/invoice/status`
 const MONOBANK_REMOVE_URL = `${MONOBANK_BASE_URL}/api/merchant/invoice/remove`
 const MONOBANK_FINALIZE_URL = `${MONOBANK_BASE_URL}/api/merchant/invoice/finalize`
 const MONOBANK_CANCEL_URL = `${MONOBANK_BASE_URL}/api/merchant/invoice/cancel`
+const MONOBANK_FISCAL_URL = `${MONOBANK_BASE_URL}/api/merchant/invoice/fiscal-checks`
 const MONOBANK_WALLET_URL = `${MONOBANK_BASE_URL}/api/merchant/wallet`
 const MONOBANK_WALLET_CARD_URL = `${MONOBANK_BASE_URL}/api/merchant/wallet/card`
 const MONOBANK_WALLET_PAY_URL = `${MONOBANK_BASE_URL}/api/merchant/wallet/payment`
 
 export const HOLD_EXPIRY_DAYS = 9
 export const HOLD_WARNING_DAYS = 8
+
+// ── Fiscalization (пРРО) ────────────────────────────────────────────────────
+
+export interface BasketDiscount {
+  type: 'discount' | 'extra' // discount = знижка, extra = надбавка
+  mode: 'value' | 'percent' // value = фіксована сума в копійках, percent = відсоток
+  value: number
+}
+
+export interface BasketOrderItem {
+  name: string
+  qty: number // кількість (float, напр. 1.5 для 1.5 кг)
+  sum: number // ціна за одиницю в копійках
+  total: number // загальна сума (sum * qty) в копійках, до знижок
+  code?: string // внутрішній код товару
+  barcode?: string
+  tax: number[] // [0]=без ПДВ, [1]=20%, [2]=7%, [3]=0%
+  uktzed?: string // код УКТЗЕД
+  header?: string // текст на початку рядка чека
+  footer?: string // текст в кінці рядка чека
+  discounts?: BasketDiscount[] // знижки/надбавки на конкретний товар
+}
+
+export interface BasketOrder {
+  items: BasketOrderItem[]
+  discounts?: BasketDiscount[] // знижки/надбавки на рівні кошика
+  header?: string // текст на початку чека
+  footer?: string // текст в кінці чека
+}
+
+/**
+ * Розраховує фінальну суму платежу з урахуванням знижок на рівні кошика.
+ * Знижки на рівні товарів вже враховані в item.total.
+ */
+export function calculateBasketAmount(basket: BasketOrder): number {
+  const subtotal = basket.items.reduce((acc, item) => acc + item.total, 0)
+  if (!basket.discounts?.length) return subtotal
+
+  return basket.discounts.reduce((acc, d) => {
+    const delta =
+      d.mode === 'value' ? d.value : Math.round((acc * d.value) / 100)
+    return d.type === 'discount' ? acc - delta : acc + delta
+  }, subtotal)
+}
+
+// ── Invoice params ──────────────────────────────────────────────────────────
 
 export interface MonobankInvoiceParams {
   appointmentId: string
@@ -24,6 +71,7 @@ export interface MonobankInvoiceParams {
   validitySeconds?: number
   saveCardData?: { saveCard: boolean; walletId: string }
   paymentType?: 'debit' | 'hold'
+  basket?: BasketOrder
 }
 
 export interface MonobankInvoiceResult {
@@ -106,6 +154,7 @@ export async function createMonobankInvoice(
     validitySeconds = 3600,
     saveCardData,
     paymentType,
+    basket,
   } = params
 
   const response = await fetch(MONOBANK_INVOICE_URL, {
@@ -120,6 +169,14 @@ export async function createMonobankInvoice(
       merchantPaymInfo: {
         reference: appointmentId,
         destination: description,
+        ...(basket
+          ? {
+              basketOrder: basket.items,
+              ...(basket.discounts ? { discounts: basket.discounts } : {}),
+              ...(basket.header ? { header: basket.header } : {}),
+              ...(basket.footer ? { footer: basket.footer } : {}),
+            }
+          : {}),
       },
       redirectUrl,
       webHookUrl,
@@ -306,9 +363,11 @@ export async function payWithCardToken(params: {
 
 // Finalize a held invoice (capture funds). Returns true on success.
 // Pass amount for partial capture; omit to capture the full held amount.
+// Pass items ONLY when amount differs from original — required for updated fiscal receipt.
 export async function finalizeMonobankInvoice(
   invoiceId: string,
-  amount?: number
+  amount?: number,
+  items?: BasketOrderItem[]
 ): Promise<boolean> {
   if (!MONOBANK_TOKEN) return false
 
@@ -322,6 +381,7 @@ export async function finalizeMonobankInvoice(
       body: JSON.stringify({
         invoiceId,
         ...(amount !== undefined ? { amount } : {}),
+        ...(items?.length ? { items } : {}),
       }),
     })
     return response.ok
@@ -332,9 +392,11 @@ export async function finalizeMonobankInvoice(
 
 // Cancel / refund a FINALIZED (success) payment. Not for holds — holds auto-expire.
 // Pass amount for partial refund; omit to refund the full amount.
+// Pass items for the return fiscal receipt (required when пРРО is active).
 export async function cancelMonobankPayment(
   invoiceId: string,
-  amount?: number
+  amount?: number,
+  items?: BasketOrderItem[]
 ): Promise<boolean> {
   if (!MONOBANK_TOKEN) return false
 
@@ -348,11 +410,33 @@ export async function cancelMonobankPayment(
       body: JSON.stringify({
         invoiceId,
         ...(amount !== undefined ? { amount } : {}),
+        ...(items?.length ? { items } : {}),
       }),
     })
     return response.ok
   } catch {
     return false
+  }
+}
+
+// Fetch fiscal check URLs (PDF links) for a paid invoice.
+// Returns array of URLs — send to customer via email/Telegram.
+export async function getMonobankFiscalChecks(
+  invoiceId: string
+): Promise<string[]> {
+  if (!MONOBANK_TOKEN) return []
+
+  try {
+    const url = new URL(MONOBANK_FISCAL_URL)
+    url.searchParams.set('invoiceId', invoiceId)
+    const response = await fetch(url.toString(), {
+      headers: { 'X-Token': MONOBANK_TOKEN },
+    })
+    if (!response.ok) return []
+    const data = (await response.json()) as { fiscalChecks: string[] }
+    return data.fiscalChecks ?? []
+  } catch {
+    return []
   }
 }
 

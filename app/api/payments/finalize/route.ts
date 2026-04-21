@@ -4,6 +4,7 @@ import {
   finalizeMonobankInvoice,
   isHoldExpiringSoon,
   isMonobankConfigured,
+  type BasketOrderItem,
 } from '@/lib/monobank'
 import { captureException } from '@/utils/sentry'
 import { logger } from '@/utils/logger'
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  let body: { invoiceId?: string; amount?: number }
+  let body: { invoiceId?: string; amount?: number; items?: BasketOrderItem[] }
   try {
     body = await request.json()
   } catch {
@@ -65,7 +66,7 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { invoiceId, amount } = body
+  const { invoiceId, amount, items } = body
 
   const svc = getServiceClient()
   if (!svc) {
@@ -109,7 +110,7 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const ok = await finalizeMonobankInvoice(invoiceId, amount)
+  const ok = await finalizeMonobankInvoice(invoiceId, amount, items)
 
   if (!ok) {
     captureException(

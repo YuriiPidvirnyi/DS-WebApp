@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { cancelMonobankPayment, isMonobankConfigured } from '@/lib/monobank'
+import {
+  cancelMonobankPayment,
+  isMonobankConfigured,
+  type BasketOrderItem,
+} from '@/lib/monobank'
 import { captureException } from '@/utils/sentry'
 import { logger } from '@/utils/logger'
 
@@ -45,7 +49,7 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  let body: { invoiceId?: string; amount?: number }
+  let body: { invoiceId?: string; amount?: number; items?: BasketOrderItem[] }
   try {
     body = await request.json()
   } catch {
@@ -62,7 +66,7 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { invoiceId, amount } = body
+  const { invoiceId, amount, items } = body
 
   const svc = getServiceClient()
   if (!svc) {
@@ -101,7 +105,7 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const ok = await cancelMonobankPayment(invoiceId, amount)
+  const ok = await cancelMonobankPayment(invoiceId, amount, items)
 
   if (!ok) {
     captureException(new Error('[payments/refund] Monobank cancel failed'), {
