@@ -1,6 +1,8 @@
-import { createVerify } from 'crypto'
+import { createVerify, createSign, randomUUID } from 'crypto'
 
 const MONOBANK_TOKEN = process.env.MONOBANK_TOKEN
+const MONOBANK_KEY_ID = process.env.MONOBANK_KEY_ID
+const MONOBANK_PRIVATE_KEY = process.env.MONOBANK_PRIVATE_KEY
 const MONOBANK_BASE_URL = 'https://api.monobank.ua'
 const MONOBANK_PUBKEY_URL = `${MONOBANK_BASE_URL}/api/merchant/pubkey`
 const MONOBANK_INVOICE_URL = `${MONOBANK_BASE_URL}/api/merchant/invoice/create`
@@ -602,4 +604,87 @@ export function analyzeStatement(
     summary.successful.netRevenue - summary.refunded.totalAmount
 
   return summary
+}
+
+// ── MonoPay JS button widget ──────────────────────────────────────────────────
+
+export interface MonoPayInitParams {
+  appointmentId: string
+  amountKopecks: number
+  description: string
+  redirectUrl: string
+  webHookUrl: string
+  paymentType?: 'debit' | 'hold'
+  basket?: BasketOrder
+}
+
+export interface MonoPayInitResult {
+  keyId: string
+  /** ECDSA-P256/SHA256 signature over `requestId\ntimestamp\npayloadBase64` */
+  signature: string
+  requestId: string
+  /** Base64-encoded JSON invoice payload (TTL ~10 min) */
+  payloadBase64: string
+  /** Unix timestamp used during signing — widget forwards it to Monobank */
+  timestamp: number
+}
+
+export function isMonoPayConfigured(): boolean {
+  return Boolean(MONOBANK_KEY_ID && MONOBANK_PRIVATE_KEY)
+}
+
+/**
+ * Generate a signed MonoPay button payload.
+ * Requires MONOBANK_KEY_ID + MONOBANK_PRIVATE_KEY (PEM, EC P-256) env vars.
+ * The result is passed directly to window.MonoPay.init() on the frontend.
+ */
+export function generateMonoPayPayload(
+  params: MonoPayInitParams
+): MonoPayInitResult {
+  if (!MONOBANK_KEY_ID || !MONOBANK_PRIVATE_KEY) {
+    throw new Error('MONOBANK_KEY_ID or MONOBANK_PRIVATE_KEY not configured')
+  }
+
+  const requestId = randomUUID()
+  const timestamp = Math.floor(Date.now() / 1000)
+
+  const invoicePayload = {
+    amount: params.amountKopecks,
+    ccy: 980,
+    merchantPaymInfo: {
+      reference: params.appointmentId,
+      destination: params.description,
+      ...(params.basket
+        ? {
+            basketOrder: params.basket.items,
+            ...(params.basket.discounts
+              ? { discounts: params.basket.discounts }
+              : {}),
+            ...(params.basket.header ? { header: params.basket.header } : {}),
+            ...(params.basket.footer ? { footer: params.basket.footer } : {}),
+          }
+        : {}),
+    },
+    redirectUrl: params.redirectUrl,
+    webHookUrl: params.webHookUrl,
+    validity: 600, // 10 minutes
+    ...(params.paymentType ? { paymentType: params.paymentType } : {}),
+  }
+
+  const payloadBase64 = Buffer.from(JSON.stringify(invoicePayload)).toString(
+    'base64'
+  )
+  const message = `${requestId}\n${timestamp}\n${payloadBase64}`
+
+  const signer = createSign('SHA256')
+  signer.update(message)
+  const signature = signer.sign(MONOBANK_PRIVATE_KEY, 'base64')
+
+  return {
+    keyId: MONOBANK_KEY_ID,
+    signature,
+    requestId,
+    payloadBase64,
+    timestamp,
+  }
 }
