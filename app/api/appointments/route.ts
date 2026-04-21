@@ -54,6 +54,7 @@ const bookingSchema = z.object({
     .union([z.string().uuid('doctorId повинен бути UUID'), z.literal('')])
     .optional()
     .transform(v => v ?? ''),
+  locale: z.enum(['uk', 'en', 'pl']).optional().default('uk'),
 })
 
 type BookingPayload = z.infer<typeof bookingSchema>
@@ -164,7 +165,7 @@ async function createSupabaseAppointment(payload: BookingPayload) {
         appointment_id: appointmentId,
         recipient_email: guestEmail,
         status: 'queued',
-        details: { source: 'webapp' },
+        details: { source: 'webapp', locale: payload.locale },
       },
       ...(adminEmail
         ? [
