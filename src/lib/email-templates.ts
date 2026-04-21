@@ -141,7 +141,7 @@ function baseLayout(
 ): string {
   const s = EMAIL_STRINGS[locale]
   return `<!DOCTYPE html>
-<html lang="uk" dir="ltr">
+<html lang="${locale}" dir="ltr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -195,10 +195,16 @@ function baseLayout(
 </html>`
 }
 
-function formatDateUk(dateStr: string): string {
+const LOCALE_DATE_MAP: Record<Locale, string> = {
+  uk: 'uk-UA',
+  en: 'en-GB',
+  pl: 'pl-PL',
+}
+
+function formatDate(dateStr: string, locale: Locale = 'uk'): string {
   try {
     const d = new Date(dateStr + 'T00:00:00')
-    return d.toLocaleDateString('uk-UA', {
+    return d.toLocaleDateString(LOCALE_DATE_MAP[locale], {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
@@ -229,7 +235,7 @@ export function bookingConfirmationEmail(
   locale: Locale = 'uk'
 ) {
   const s = EMAIL_STRINGS[locale]
-  const fmtDate = formatDateUk(data.date)
+  const fmtDate = formatDate(data.date, locale)
   const fmtTime = formatTime(data.time)
 
   const html = baseLayout(
@@ -305,7 +311,7 @@ export function appointmentReminderEmail(
   locale: Locale = 'uk'
 ) {
   const s = EMAIL_STRINGS[locale]
-  const fmtDate = formatDateUk(data.date)
+  const fmtDate = formatDate(data.date, locale)
   const fmtTime = formatTime(data.time)
 
   const html = baseLayout(
@@ -380,7 +386,7 @@ export function appointmentCancellationEmail(
   locale: Locale = 'uk'
 ) {
   const s = EMAIL_STRINGS[locale]
-  const fmtDate = formatDateUk(data.date)
+  const fmtDate = formatDate(data.date, locale)
   const fmtTime = formatTime(data.time)
 
   const html = baseLayout(
@@ -452,7 +458,7 @@ export function newBookingAdminEmail(
   locale: Locale = 'uk'
 ) {
   const s = EMAIL_STRINGS[locale]
-  const fmtDate = formatDateUk(data.date)
+  const fmtDate = formatDate(data.date, locale)
   const fmtTime = formatTime(data.time)
 
   const html = baseLayout(
