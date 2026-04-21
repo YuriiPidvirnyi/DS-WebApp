@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
     appointmentId?: string
     amountKopecks?: number
     description?: string
+    paymentType?: 'debit' | 'hold'
   }
 
   try {
@@ -57,7 +58,8 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { appointmentId, amountKopecks, description } = body
+  const { appointmentId, amountKopecks, description, paymentType } = body
+  const resolvedPaymentType = paymentType === 'hold' ? 'hold' : 'debit'
 
   // Try to get the authenticated user for card tokenization
   let authenticatedUserId: string | null = null
@@ -118,6 +120,7 @@ export async function POST(request: NextRequest) {
       description: description || 'Оплата стоматологічних послуг - DentalStory',
       redirectUrl: `${SITE_URL}/booking/payment-result`,
       webHookUrl: `${SITE_URL}/api/payments/monobank-webhook`,
+      paymentType: resolvedPaymentType,
       ...(authenticatedUserId
         ? { saveCardData: { saveCard: true, walletId: authenticatedUserId } }
         : {}),
@@ -129,6 +132,7 @@ export async function POST(request: NextRequest) {
       invoice_id: result.invoiceId,
       amount_kopecks: amountKopecks,
       payment_mode: 'full',
+      payment_type: resolvedPaymentType,
       status: 'created',
     })
 

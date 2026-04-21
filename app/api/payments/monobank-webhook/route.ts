@@ -71,10 +71,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true })
     }
 
+    // Idempotency: if we already recorded this exact status, skip duplicate delivery
+    if (payment.status === payload.status) {
+      return NextResponse.json({ ok: true })
+    }
+
     // Update payment record
     const updatePayload: Record<string, unknown> = {
       status: payload.status,
       monobank_data: payload,
+    }
+    if (payload.status === 'hold') {
+      updatePayload.hold_at = new Date().toISOString()
+      updatePayload.payment_type = 'hold'
     }
     if (payload.status === 'success') {
       updatePayload.paid_at = new Date().toISOString()

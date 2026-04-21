@@ -6,9 +6,14 @@ const MONOBANK_PUBKEY_URL = `${MONOBANK_BASE_URL}/api/merchant/pubkey`
 const MONOBANK_INVOICE_URL = `${MONOBANK_BASE_URL}/api/merchant/invoice/create`
 const MONOBANK_STATUS_URL = `${MONOBANK_BASE_URL}/api/merchant/invoice/status`
 const MONOBANK_REMOVE_URL = `${MONOBANK_BASE_URL}/api/merchant/invoice/remove`
+const MONOBANK_FINALIZE_URL = `${MONOBANK_BASE_URL}/api/merchant/invoice/finalize`
+const MONOBANK_CANCEL_URL = `${MONOBANK_BASE_URL}/api/merchant/invoice/cancel`
 const MONOBANK_WALLET_URL = `${MONOBANK_BASE_URL}/api/merchant/wallet`
 const MONOBANK_WALLET_CARD_URL = `${MONOBANK_BASE_URL}/api/merchant/wallet/card`
 const MONOBANK_WALLET_PAY_URL = `${MONOBANK_BASE_URL}/api/merchant/wallet/payment`
+
+export const HOLD_EXPIRY_DAYS = 9
+export const HOLD_WARNING_DAYS = 8
 
 export interface MonobankInvoiceParams {
   appointmentId: string
@@ -18,6 +23,7 @@ export interface MonobankInvoiceParams {
   webHookUrl: string
   validitySeconds?: number
   saveCardData?: { saveCard: boolean; walletId: string }
+  paymentType?: 'debit' | 'hold'
 }
 
 export interface MonobankInvoiceResult {
@@ -99,6 +105,7 @@ export async function createMonobankInvoice(
     webHookUrl,
     validitySeconds = 3600,
     saveCardData,
+    paymentType,
   } = params
 
   const response = await fetch(MONOBANK_INVOICE_URL, {
@@ -117,6 +124,7 @@ export async function createMonobankInvoice(
       redirectUrl,
       webHookUrl,
       validity: validitySeconds,
+      ...(paymentType ? { paymentType } : {}),
       ...(saveCardData ? { saveCardData } : {}),
     }),
   })
@@ -294,4 +302,62 @@ export async function payWithCardToken(params: {
   } catch {
     return null
   }
+}
+
+// Finalize a held invoice (capture funds). Returns true on success.
+// Pass amount for partial capture; omit to capture the full held amount.
+export async function finalizeMonobankInvoice(
+  invoiceId: string,
+  amount?: number
+): Promise<boolean> {
+  if (!MONOBANK_TOKEN) return false
+
+  try {
+    const response = await fetch(MONOBANK_FINALIZE_URL, {
+      method: 'POST',
+      headers: {
+        'X-Token': MONOBANK_TOKEN,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        invoiceId,
+        ...(amount !== undefined ? { amount } : {}),
+      }),
+    })
+    return response.ok
+  } catch {
+    return false
+  }
+}
+
+// Cancel / refund a FINALIZED (success) payment. Not for holds — holds auto-expire.
+// Pass amount for partial refund; omit to refund the full amount.
+export async function cancelMonobankPayment(
+  invoiceId: string,
+  amount?: number
+): Promise<boolean> {
+  if (!MONOBANK_TOKEN) return false
+
+  try {
+    const response = await fetch(MONOBANK_CANCEL_URL, {
+      method: 'POST',
+      headers: {
+        'X-Token': MONOBANK_TOKEN,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        invoiceId,
+        ...(amount !== undefined ? { amount } : {}),
+      }),
+    })
+    return response.ok
+  } catch {
+    return false
+  }
+}
+
+// Returns true when a hold is 8+ days old and close to Monobank's 9-day auto-expiry.
+export function isHoldExpiringSoon(holdAt: string): boolean {
+  const holdMs = Date.now() - new Date(holdAt).getTime()
+  return holdMs >= HOLD_WARNING_DAYS * 24 * 60 * 60 * 1000
 }
