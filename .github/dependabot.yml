@@ -9,7 +9,7 @@ updates:
       day: 'monday'
       time: '09:00'
       timezone: 'Europe/Kyiv'
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 10
     reviewers:
       - 'YuriiPidvirnyi'
     commit-message:
@@ -20,25 +20,22 @@ updates:
       - 'automated'
     versioning-strategy: increase
     ignore:
-      # Major versions require manual review
-      - dependency-name: '*'
-        update-types: ['version-update:semver-major']
+      # Pinned for security — serialize-javascript ≤7.0.2 is vulnerable (GHSA-5c6j-r48x-rmvq)
+      - dependency-name: 'serialize-javascript'
     groups:
-      react:
+      # Minor and patch updates — eligible for auto-merge with green CI
+      minor-and-patch:
         patterns:
-          - 'react*'
-          - '@types/react*'
-      testing:
+          - '*'
+        update-types:
+          - 'minor'
+          - 'patch'
+      # Major updates — manual review required, kept in separate PRs
+      major-updates:
         patterns:
-          - '@testing-library/*'
-          - 'vitest*'
-          - '@vitest/*'
-          - 'playwright*'
-          - '@playwright/*'
-      eslint:
-        patterns:
-          - 'eslint*'
-          - '@typescript-eslint/*'
+          - '*'
+        update-types:
+          - 'major'
 
   # Enable version updates for GitHub Actions — PRs target develop
   - package-ecosystem: 'github-actions'

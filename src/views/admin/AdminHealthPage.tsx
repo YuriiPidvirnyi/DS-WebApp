@@ -10,45 +10,48 @@ import {
   Clock,
 } from 'lucide-react'
 import { Button } from '@/components/ui'
+import { captureException } from '@/utils/sentry'
 import type { ReactElement } from 'react'
 
-type ServiceStatus = 'ok' | 'error' | 'unconfigured'
+type ServiceStatus = 'ok' | 'degraded' | 'error' | 'unknown'
 
-interface ServiceHealth {
+interface ServiceResult {
   name: string
   status: ServiceStatus
-  latencyMs: number | null
+  latency?: number
   message?: string
 }
 
-interface HealthResponse {
-  success: boolean
-  ok: boolean
-  services: ServiceHealth[]
-  checkedAt: string
+interface RawHealthPayload {
+  ok?: boolean
+  error?: string
+  latency?: number
 }
 
 const STATUS_ICON: Record<ServiceStatus, ReactElement> = {
   ok: <CheckCircle className="h-5 w-5 text-green-500" />,
+  degraded: <MinusCircle className="h-5 w-5 text-yellow-500" />,
   error: <XCircle className="h-5 w-5 text-red-500" />,
-  unconfigured: <MinusCircle className="h-5 w-5 text-gray-400" />,
+  unknown: <MinusCircle className="h-5 w-5 text-gray-400" />,
 }
 
 const STATUS_BADGE_CLASS: Record<ServiceStatus, string> = {
   ok: 'bg-green-50 text-green-700 border-green-200',
+  degraded: 'bg-yellow-50 text-yellow-700 border-yellow-200',
   error: 'bg-red-50 text-red-700 border-red-200',
-  unconfigured: 'bg-gray-50 text-gray-500 border-gray-200',
+  unknown: 'bg-gray-50 text-gray-500 border-gray-200',
 }
 
 const STATUS_LABEL: Record<ServiceStatus, string> = {
   ok: 'OK',
+  degraded: 'Degraded',
   error: 'Error',
-  unconfigured: 'Not configured',
+  unknown: 'Unknown',
 }
 
-function ServiceCard({ service }: { service: ServiceHealth }) {
+function ServiceCard({ service }: { service: ServiceResult }) {
   return (
-    <div className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+    <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-dental-secondary-200 shadow-sm">
       <div className="flex items-center gap-3">
         {STATUS_ICON[service.status]}
         <div>
@@ -59,10 +62,10 @@ function ServiceCard({ service }: { service: ServiceHealth }) {
         </div>
       </div>
       <div className="flex items-center gap-3">
-        {service.latencyMs !== null && (
+        {service.latency !== undefined && (
           <span className="flex items-center gap-1 text-xs text-dental-text">
             <Clock className="h-3 w-3" />
-            {service.latencyMs}ms
+            {service.latency}ms
           </span>
         )}
         <span
@@ -75,21 +78,82 @@ function ServiceCard({ service }: { service: ServiceHealth }) {
   )
 }
 
+async function fetchEndpoint(
+  name: string,
+  url: string
+): Promise<ServiceResult> {
+  try {
+    const res = await fetch(url, { cache: 'no-store' })
+    const json = (await res.json()) as RawHealthPayload
+    if (!res.ok || json.ok === false) {
+      return {
+        name,
+        status: 'error',
+        latency: json.latency,
+        message: json.error ?? `HTTP ${res.status}`,
+      }
+    }
+    return { name, status: 'ok', latency: json.latency }
+  } catch (err) {
+    captureException(err instanceof Error ? err : new Error(String(err)))
+    return { name, status: 'unknown', message: 'Network error' }
+  }
+}
+
 export default function AdminHealthPage() {
   const { t } = useTranslation()
-  const [data, setData] = useState<HealthResponse | null>(null)
+  const [services, setServices] = useState<ServiceResult[]>([])
   const [loading, setLoading] = useState(true)
+  const [checkedAt, setCheckedAt] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const fetchHealth = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch('/api/admin/health')
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
-      const json = (await res.json()) as HealthResponse
-      setData(json)
+      // Check Sentry client-side (no network call needed)
+      const sentryConfigured = Boolean(
+        typeof process !== 'undefined' && process.env.NEXT_PUBLIC_SENTRY_DSN
+      )
+      const sentryResult: ServiceResult = {
+        name: 'Sentry',
+        status: sentryConfigured ? 'ok' : 'unknown',
+        message: sentryConfigured
+          ? 'DSN configured'
+          : 'NEXT_PUBLIC_SENTRY_DSN not set',
+      }
+
+      const [supabase, resend, redis, clinicards] = await Promise.allSettled([
+        fetchEndpoint('Supabase', '/api/admin/health/supabase'),
+        fetchEndpoint('Resend', '/api/admin/health/resend'),
+        fetchEndpoint('Upstash Redis', '/api/admin/health/redis'),
+        fetchEndpoint('CliniCards', '/api/admin/health/clinicards'),
+      ])
+
+      const results: ServiceResult[] = [
+        supabase.status === 'fulfilled'
+          ? supabase.value
+          : { name: 'Supabase', status: 'unknown', message: 'Check failed' },
+        resend.status === 'fulfilled'
+          ? resend.value
+          : { name: 'Resend', status: 'unknown', message: 'Check failed' },
+        redis.status === 'fulfilled'
+          ? redis.value
+          : {
+              name: 'Upstash Redis',
+              status: 'unknown',
+              message: 'Check failed',
+            },
+        clinicards.status === 'fulfilled'
+          ? clinicards.value
+          : { name: 'CliniCards', status: 'unknown', message: 'Check failed' },
+        sentryResult,
+      ]
+
+      setServices(results)
+      setCheckedAt(new Date().toLocaleTimeString('uk-UA'))
     } catch (err) {
+      captureException(err instanceof Error ? err : new Error(String(err)))
       setError(
         err instanceof Error ? err.message : 'Failed to load health status'
       )
@@ -99,22 +163,20 @@ export default function AdminHealthPage() {
   }, [])
 
   useEffect(() => {
-    fetchHealth()
+    void fetchHealth()
   }, [fetchHealth])
 
-  const checkedAt = data?.checkedAt
-    ? new Date(data.checkedAt).toLocaleTimeString('uk-UA')
-    : null
+  const allOk = services.length > 0 && services.every(s => s.status === 'ok')
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-dental-dark">
             {t('admin.health.title', 'Service Health')}
           </h1>
           {checkedAt && (
-            <p className="text-xs text-dental-text mt-1">
+            <p className="text-sm text-dental-text-light mt-0.5">
               {t('admin.health.lastChecked', 'Last checked')}: {checkedAt}
             </p>
           )}
@@ -122,24 +184,27 @@ export default function AdminHealthPage() {
         <Button
           variant="outline"
           size="sm"
-          onClick={fetchHealth}
-          disabled={loading}
-          className="flex items-center gap-2"
+          onClick={() => void fetchHealth()}
+          isLoading={loading}
         >
-          <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw className="mr-2 h-4 w-4" />
           {t('admin.health.refresh', 'Refresh')}
         </Button>
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
         </div>
       )}
 
-      {data && !loading && (
-        <div className="mb-4 p-3 rounded-lg border text-sm font-medium flex items-center gap-2">
-          {data.ok ? (
+      {!loading && services.length > 0 && (
+        <div
+          className={`rounded-xl border px-4 py-3 text-sm font-medium flex items-center gap-2 ${
+            allOk ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+          }`}
+        >
+          {allOk ? (
             <>
               <CheckCircle className="h-4 w-4 text-green-500" />
               <span className="text-green-700">
@@ -150,7 +215,7 @@ export default function AdminHealthPage() {
             <>
               <XCircle className="h-4 w-4 text-red-500" />
               <span className="text-red-700">
-                {t('admin.health.degraded', 'One or more services have errors')}
+                {t('admin.health.degraded', 'One or more services have issues')}
               </span>
             </>
           )}
@@ -158,14 +223,14 @@ export default function AdminHealthPage() {
       )}
 
       <div className="space-y-3">
-        {loading && !data
+        {loading && services.length === 0
           ? Array.from({ length: 5 }).map((_, i) => (
               <div
                 key={i}
-                className="h-16 bg-gray-100 rounded-lg animate-pulse"
+                className="h-16 bg-gray-100 rounded-xl animate-pulse"
               />
             ))
-          : data?.services.map(s => <ServiceCard key={s.name} service={s} />)}
+          : services.map(s => <ServiceCard key={s.name} service={s} />)}
       </div>
     </div>
   )
