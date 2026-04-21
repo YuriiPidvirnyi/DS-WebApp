@@ -102,3 +102,52 @@ export function csrfErrorResponse(): NextResponse {
     { status: 403 }
   )
 }
+
+const TURNSTILE_VERIFY_URL =
+  'https://challenges.cloudflare.com/turnstile/v0/siteverify'
+
+/**
+ * Server-side Turnstile verification — calls Cloudflare directly.
+ * Returns { valid: true } when TURNSTILE_SECRET_KEY is not set (dev/CI).
+ */
+export async function verifyTurnstileServer(
+  token: string | undefined,
+  request: NextRequest
+): Promise<{ valid: boolean }> {
+  const secretKey = process.env.TURNSTILE_SECRET_KEY
+  if (!secretKey) return { valid: true }
+  if (!token) return { valid: false }
+
+  try {
+    const ip =
+      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+      request.headers.get('x-real-ip') ??
+      undefined
+
+    const form = new URLSearchParams()
+    form.append('secret', secretKey)
+    form.append('response', token)
+    if (ip) form.append('remoteip', ip)
+
+    const res = await fetch(TURNSTILE_VERIFY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: form.toString(),
+    })
+    if (!res.ok) return { valid: false }
+    const data = (await res.json()) as { success?: boolean }
+    return { valid: data.success === true }
+  } catch {
+    return { valid: false }
+  }
+}
+
+export function turnstileInvalidResponse(): NextResponse {
+  return NextResponse.json(
+    {
+      success: false,
+      error: 'Перевірка CAPTCHA не пройдена. Спробуйте ще раз.',
+    },
+    { status: 400 }
+  )
+}

@@ -7,6 +7,8 @@ const COST_PER_INPUT_TOKEN = 0.15 / 1_000_000
 const COST_PER_OUTPUT_TOKEN = 0.6 / 1_000_000
 
 const DAILY_TOKEN_LIMIT = 50_000
+// Global monthly cap across all IPs — prevents runaway spend
+const MONTHLY_GLOBAL_TOKEN_LIMIT = 5_000_000
 
 function getServiceClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -49,6 +51,29 @@ export async function checkDailyBudget(
   )
 
   return { allowed: total < DAILY_TOKEN_LIMIT }
+}
+
+export async function checkMonthlyBudget(): Promise<{ allowed: boolean }> {
+  const supabase = getServiceClient()
+  if (!supabase) return { allowed: true }
+
+  const since = new Date()
+  since.setDate(1)
+  since.setHours(0, 0, 0, 0)
+
+  const { data } = await supabase
+    .from('ai_usage')
+    .select('input_tokens, output_tokens')
+    .gte('created_at', since.toISOString())
+
+  if (!data) return { allowed: true }
+
+  const total = data.reduce(
+    (sum, row) => sum + (row.input_tokens ?? 0) + (row.output_tokens ?? 0),
+    0
+  )
+
+  return { allowed: total < MONTHLY_GLOBAL_TOKEN_LIMIT }
 }
 
 export function logAiUsage(

@@ -8,6 +8,8 @@ import {
   rateLimitResponse,
   validateCSRF,
   csrfErrorResponse,
+  verifyTurnstileServer,
+  turnstileInvalidResponse,
 } from '@/lib/api-security'
 import { parsePagination, paginationMeta } from '@/lib/pagination'
 import { captureException } from '@/utils/sentry'
@@ -334,6 +336,12 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     )
   }
+
+  const cfToken = (rawBody as Record<string, unknown>).cf_turnstile_response as
+    | string
+    | undefined
+  const { valid: botOk } = await verifyTurnstileServer(cfToken, request)
+  if (!botOk) return turnstileInvalidResponse()
 
   const parsed = bookingSchema.safeParse(rawBody)
   if (!parsed.success) {
