@@ -24,7 +24,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
-import { Button, Input, Select } from '@/components/ui'
+import { Button, ErrorState, Input, Select } from '@/components/ui'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { useCSRF } from '@/hooks/useCSRF'
@@ -443,11 +443,7 @@ export default function AdminMaterialsPage() {
           </Button>
         </div>
       </div>
-      {error ? (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-          {error}
-        </div>
-      ) : null}
+      {error ? <ErrorState title={error} onRetry={() => void load()} /> : null}
       <div className="flex flex-col gap-3 rounded-xl border border-dental-secondary-200 bg-white p-4 shadow-sm lg:flex-row lg:flex-wrap lg:items-end">
         <div className="min-w-[200px] flex-1">
           <label className="mb-1 block text-xs font-medium text-dental-text">

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
-import { Shield, Pencil, Trash2, X, Check, AlertCircle } from 'lucide-react'
+import { Shield, Pencil, Trash2, X, Check } from 'lucide-react'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { useCSRF } from '@/hooks/useCSRF'
 import {
@@ -13,7 +13,7 @@ import {
   type AdminRole,
 } from '@/lib/permissions'
 import { captureException } from '@/utils/sentry'
-import { AsyncState } from '@/components/ui'
+import { AsyncState, ErrorState } from '@/components/ui'
 
 interface AdminUserRow {
   id: string
@@ -180,19 +180,7 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Error banner */}
-      {error && (
-        <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-          <AlertCircle className="w-5 h-5 shrink-0" aria-hidden="true" />
-          <span className="text-sm">{error}</span>
-          <button
-            onClick={() => setError(null)}
-            className="ml-auto p-1 rounded hover:bg-red-100"
-            aria-label={t('common.close')}
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      )}
+      {error && <ErrorState title={error} onRetry={() => void fetchUsers()} />}
 
       {/* Role legend */}
       <div className="flex flex-wrap gap-2">
