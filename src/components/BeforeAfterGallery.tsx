@@ -196,7 +196,7 @@ export default function BeforeAfterGallery() {
               />
 
               {/* Navigation arrows */}
-              <div className="absolute -left-4 top-1/2 transform -translate-y-1/2 z-20">
+              <div className="absolute left-1 sm:-left-4 top-1/2 transform -translate-y-1/2 z-20">
                 <button
                   onClick={prevCase}
                   className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-dental-secondary-50 transition-colors"
@@ -205,7 +205,7 @@ export default function BeforeAfterGallery() {
                   <ChevronLeft className="h-6 w-6 text-dental-dark" />
                 </button>
               </div>
-              <div className="absolute -right-4 top-1/2 transform -translate-y-1/2 z-20">
+              <div className="absolute right-1 sm:-right-4 top-1/2 transform -translate-y-1/2 z-20">
                 <button
                   onClick={nextCase}
                   className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-dental-secondary-50 transition-colors"
