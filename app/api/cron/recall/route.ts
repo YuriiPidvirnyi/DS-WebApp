@@ -19,6 +19,44 @@ function getServiceClient(): ServiceClient | null {
   return createClient(url, key)
 }
 
+async function startCronRun(
+  supabase: ServiceClient,
+  name: string
+): Promise<string | null> {
+  try {
+    const { data } = await supabase
+      .from('cron_runs')
+      .insert({ name, status: 'running' })
+      .select('id')
+      .single()
+    return (data as { id: string } | null)?.id ?? null
+  } catch {
+    return null
+  }
+}
+
+async function finishCronRun(
+  supabase: ServiceClient,
+  runId: string | null,
+  processed: number,
+  error?: string
+): Promise<void> {
+  if (!runId) return
+  try {
+    await supabase
+      .from('cron_runs')
+      .update({
+        status: error ? 'error' : 'ok',
+        finished_at: new Date().toISOString(),
+        processed,
+        ...(error ? { error } : {}),
+      })
+      .eq('id', runId)
+  } catch {
+    // non-blocking
+  }
+}
+
 // A patient qualifies for recall if their last appointment ended ≥ 165 days ago
 const RECALL_THRESHOLD_DAYS = 165
 // Three-touch sequence: touch 2 sent 14 days after touch 1, touch 3 at 28 days
@@ -60,6 +98,8 @@ export async function GET(request: NextRequest) {
     })
   }
 
+  const runId = await startCronRun(supabase, 'recall')
+
   const thresholdDate = daysAgo(RECALL_THRESHOLD_DAYS)
   const today = new Date().toISOString().slice(0, 10)
 
@@ -79,6 +119,7 @@ export async function GET(request: NextRequest) {
     captureException(new Error('[cron/recall] get_recall_candidates error'), {
       supabaseError: candidatesErr,
     })
+    await finishCronRun(supabase, runId, 0, candidatesErr.message)
     return NextResponse.json(
       { success: false, error: 'Failed to query recall candidates' },
       { status: 500 }
@@ -97,6 +138,7 @@ export async function GET(request: NextRequest) {
   )
 
   if (!recallCandidates.length) {
+    await finishCronRun(supabase, runId, 0)
     return NextResponse.json({
       success: true,
       message: 'No recall candidates today',
@@ -265,6 +307,7 @@ export async function GET(request: NextRequest) {
       captureException(new Error('[cron/recall] insert error'), {
         supabaseError: insertErr,
       })
+      await finishCronRun(supabase, runId, 0, insertErr.message)
     } else {
       scheduled = allEvents.length
       logger.info('[cron/recall] scheduled recall events', {
@@ -273,7 +316,10 @@ export async function GET(request: NextRequest) {
         touch2: touch2Events.length,
         touch3: touch3Events.length,
       })
+      await finishCronRun(supabase, runId, scheduled)
     }
+  } else {
+    await finishCronRun(supabase, runId, 0)
   }
 
   return NextResponse.json({
