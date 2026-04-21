@@ -44,6 +44,13 @@ vi.mock('@/lib/api-security', () => ({
   csrfErrorResponse: vi.fn(
     () => new Response(JSON.stringify({ error: 'CSRF' }), { status: 403 })
   ),
+  verifyTurnstileServer: vi.fn(async () => ({ valid: true })),
+  turnstileInvalidResponse: vi.fn(
+    () =>
+      new Response(JSON.stringify({ success: false, error: 'CAPTCHA' }), {
+        status: 400,
+      })
+  ),
 }))
 
 vi.mock('@/utils/sentry', () => ({
