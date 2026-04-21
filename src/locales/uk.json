@@ -2560,7 +2560,13 @@
       "personalInfo": "Особисті дані",
       "contactInfo": "Контактна інформація",
       "additionalInfo": "Додаткова інформація",
-      "unsavedChanges": "Є незбережені зміни"
+      "unsavedChanges": "Є незбережені зміни",
+      "dataExport": "Завантажити мої дані",
+      "deleteAccount": "Видалити акаунт",
+      "deleteConfirmTitle": "Видалити акаунт?",
+      "deleteConfirmMessage": "Це назавжди видалить ваш акаунт та скасує всі майбутні записи. Цю дію неможливо скасувати.",
+      "downloading": "Завантаження...",
+      "deleting": "Видалення..."
     },
     "title": "Кабінет пацієнта",
     "profileTitle": "Мій профіль",

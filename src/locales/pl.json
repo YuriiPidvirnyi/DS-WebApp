@@ -2459,7 +2459,13 @@
       "personalInfo": "Dane osobowe",
       "contactInfo": "Informacje kontaktowe",
       "additionalInfo": "Dodatkowe informacje",
-      "unsavedChanges": "Masz niezapisane zmiany"
+      "unsavedChanges": "Masz niezapisane zmiany",
+      "dataExport": "Pobierz moje dane",
+      "deleteAccount": "Usuń konto",
+      "deleteConfirmTitle": "Usuń konto?",
+      "deleteConfirmMessage": "Spowoduje to trwałe usunięcie konta i anulowanie wszystkich nadchodzących wizyt. Tej akcji nie można cofnąć.",
+      "downloading": "Pobieranie...",
+      "deleting": "Usuwanie..."
     },
     "title": "Gabinet pacjenta",
     "profileTitle": "Mój profil",

@@ -2457,7 +2457,13 @@
       "personalInfo": "Personal information",
       "contactInfo": "Contact information",
       "additionalInfo": "Additional information",
-      "unsavedChanges": "You have unsaved changes"
+      "unsavedChanges": "You have unsaved changes",
+      "dataExport": "Download my data",
+      "deleteAccount": "Delete account",
+      "deleteConfirmTitle": "Delete account?",
+      "deleteConfirmMessage": "This will permanently delete your account and cancel all upcoming appointments. This cannot be undone.",
+      "downloading": "Downloading...",
+      "deleting": "Deleting..."
     },
     "title": "Patient Cabinet",
     "profileTitle": "My Profile",

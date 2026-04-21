@@ -1,17 +1,28 @@
 'use client'
 
 import { useEffect, useState, useRef, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
-import { Save, User, Mail, Check, AlertTriangle } from 'lucide-react'
+import {
+  Save,
+  User,
+  Mail,
+  Check,
+  AlertTriangle,
+  Download,
+  Trash2,
+} from 'lucide-react'
 import DatePicker from '@/components/ui/DatePicker'
 import { ErrorState } from '@/components/ui/ErrorState'
+import { useCSRF } from '@/hooks/useCSRF'
 import {
   trackEvent,
   CabinetEvent,
   AnalyticsEventCategory,
 } from '@/utils/analytics'
 import * as Sentry from '@sentry/nextjs'
+import { captureException } from '@/utils/sentry'
 
 interface PatientProfile {
   first_name: string | null
@@ -49,6 +60,56 @@ function ProfileSkeleton() {
 
 export default function ProfilePage() {
   const { t } = useTranslation()
+  const router = useRouter()
+  const { getHeaders } = useCSRF()
+
+  // Data-rights state
+  const [downloading, setDownloading] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [dataRightsError, setDataRightsError] = useState<string | null>(null)
+
+  const handleExport = async () => {
+    setDownloading(true)
+    try {
+      const res = await fetch('/api/cabinet/export')
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'my-data.json'
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      captureException(err instanceof Error ? err : new Error(String(err)))
+    } finally {
+      setDownloading(false)
+    }
+  }
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true)
+    setDataRightsError(null)
+    try {
+      const res = await fetch('/api/cabinet/delete-account', {
+        method: 'DELETE',
+        headers: getHeaders({ 'Content-Type': 'application/json' }),
+      })
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        throw new Error(body?.error ?? `HTTP ${res.status}`)
+      }
+      const supabase = createClient()
+      if (supabase) await supabase.auth.signOut()
+      router.push('/')
+    } catch (err) {
+      captureException(err instanceof Error ? err : new Error(String(err)))
+      setDataRightsError(t('cabinet.error.description'))
+      setDeleting(false)
+    }
+  }
+
   const [profile, setProfile] = useState<PatientProfile>({
     first_name: '',
     last_name: '',
@@ -264,8 +325,8 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold text-dental-dark mb-6">
+    <div className="max-w-2xl space-y-6">
+      <h1 className="text-2xl font-bold text-dental-dark">
         {t('cabinet.profile.title')}
       </h1>
 
@@ -500,6 +561,113 @@ export default function ProfilePage() {
             )}
           </div>
         </form>
+      </div>
+
+      {/* ── Data rights ─────────────────────────────────────────────── */}
+
+      {/* Download my data */}
+      <div className="bg-white rounded-2xl shadow-sm border border-dental-secondary-100 p-6">
+        <div className="flex items-start gap-4">
+          <div className="w-10 h-10 rounded-xl bg-dental-primary-50 flex items-center justify-center shrink-0">
+            <Download className="w-5 h-5 text-dental-primary-600" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2 className="text-base font-semibold text-dental-dark">
+              {t('cabinet.settings.exportSection.title')}
+            </h2>
+            <p className="mt-1 text-sm text-dental-muted">
+              {t('cabinet.settings.exportSection.description')}
+            </p>
+            <button
+              type="button"
+              onClick={handleExport}
+              disabled={downloading}
+              className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2"
+            >
+              {downloading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  {t('cabinet.profile.downloading')}
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4" />
+                  {t('cabinet.profile.dataExport')}
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Delete account */}
+      <div className="bg-white rounded-2xl shadow-sm border border-red-200 p-6">
+        <div className="flex items-start gap-4">
+          <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
+            <Trash2 className="w-5 h-5 text-red-500" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2 className="text-base font-semibold text-dental-dark">
+              {t('cabinet.settings.deleteSection.title')}
+            </h2>
+            <p className="mt-1 text-sm text-dental-muted">
+              {t('cabinet.settings.deleteSection.description')}
+            </p>
+
+            {dataRightsError && (
+              <div className="mt-4 flex items-center gap-3 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+                <AlertTriangle className="w-4 h-4 shrink-0" />
+                {dataRightsError}
+              </div>
+            )}
+
+            {!showDeleteConfirm ? (
+              <button
+                type="button"
+                onClick={() => setShowDeleteConfirm(true)}
+                className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-red-50 text-red-600 border border-red-300 text-sm font-medium rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
+              >
+                <Trash2 className="w-4 h-4" />
+                {t('cabinet.profile.deleteAccount')}
+              </button>
+            ) : (
+              <div className="mt-4 space-y-3">
+                <p className="text-sm font-medium text-red-700 flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 shrink-0" />
+                  {t('cabinet.profile.deleteConfirmMessage')}
+                </p>
+                <div className="flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleDeleteAccount}
+                    disabled={deleting}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                  >
+                    {deleting ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        {t('cabinet.profile.deleting')}
+                      </>
+                    ) : (
+                      t('cabinet.settings.deleteSection.confirmButton')
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowDeleteConfirm(false)
+                      setDataRightsError(null)
+                    }}
+                    disabled={deleting}
+                    className="px-4 py-2.5 text-dental-muted hover:text-dental-dark text-sm font-medium rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-dental-secondary-300 focus:ring-offset-2"
+                  >
+                    {t('cabinet.settings.deleteSection.cancel')}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )
