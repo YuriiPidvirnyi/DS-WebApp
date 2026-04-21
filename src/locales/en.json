@@ -2809,6 +2809,8 @@
   "hero": {
     "badge": "Modern Dentistry",
     "bookConsultation": "Book Consultation",
+    "bookConsultationB": "Find a Time That Works",
+    "bookConsultationC": "Free Consultation",
     "ourServices": "Our Services"
   },
   "language": {

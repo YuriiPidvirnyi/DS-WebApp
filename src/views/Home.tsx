@@ -32,7 +32,11 @@ interface ImagesData {
 
 const typedImages = images as ImagesData
 
-const Home = () => {
+interface HomeProps {
+  heroCTAVariant?: string | null
+}
+
+const Home = ({ heroCTAVariant }: HomeProps) => {
   const { t } = useTranslation()
 
   // Scroll animation hooks for page sections
@@ -101,7 +105,7 @@ const Home = () => {
   return (
     <div>
       {/* Modern Animated Hero Section */}
-      <HeroSection />
+      <HeroSection heroCTAVariant={heroCTAVariant} />
 
       {/* Features Section */}
       <section

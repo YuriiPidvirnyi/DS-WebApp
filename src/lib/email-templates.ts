@@ -515,3 +515,132 @@ ${SITE_URL}/admin?tab=appointments`
     text,
   }
 }
+
+// ─── Recall templates ────────────────────────────────────────────────────────
+
+const RECALL_STRINGS: Record<
+  Locale,
+  {
+    touch1Subject: string
+    touch1Heading: string
+    touch1Body: (name: string) => string
+    touch2Subject: string
+    touch2Heading: string
+    touch2Body: (name: string) => string
+    touch3Subject: string
+    touch3Heading: string
+    touch3Body: (name: string) => string
+    bookNow: string
+    optOut: string
+  }
+> = {
+  uk: {
+    touch1Subject: 'Час для планового огляду 🦷',
+    touch1Heading: 'Час для вашого планового огляду',
+    touch1Body: name =>
+      `${name}, минуло понад 6 місяців з вашого останнього візиту. Регулярні огляди допомагають зберегти здоров'я зубів і виявляти проблеми на ранній стадії. Запишіться на зручний для вас час — це займе лише хвилину.`,
+    touch2Subject: 'Ми відклали для вас зручні слоти 📅',
+    touch2Heading: 'Зручні слоти для вашого огляду',
+    touch2Body: name =>
+      `${name}, у нас є чудові слоти цього тижня. Не відкладайте турботу про здоров'я зубів — запишіться прямо зараз.`,
+    touch3Subject: 'Ми сумуємо за вами 💙',
+    touch3Heading: 'Повертайтесь — ми завжди раді вас бачити',
+    touch3Body: name =>
+      `${name}, ваш стоматолог готовий до зустрічі. Запишіться на огляд — і ваші зуби скажуть вам «дякую».`,
+    bookNow: 'Записатися на огляд',
+    optOut: 'Відписатися від нагадувань',
+  },
+  en: {
+    touch1Subject: 'Time for your check-up 🦷',
+    touch1Heading: 'Time for your regular check-up',
+    touch1Body: name =>
+      `${name}, it's been over 6 months since your last visit. Regular check-ups help keep your teeth healthy and catch issues early. Book a time that works for you — it only takes a minute.`,
+    touch2Subject: 'We have convenient slots for you 📅',
+    touch2Heading: 'Great slots available this week',
+    touch2Body: name =>
+      `${name}, we have great availability this week. Don't put off your dental health — book now.`,
+    touch3Subject: 'We miss you 💙',
+    touch3Heading: "Come back — we're always happy to see you",
+    touch3Body: name =>
+      `${name}, your dentist is ready to see you. Schedule a check-up — your teeth will thank you.`,
+    bookNow: 'Book a check-up',
+    optOut: 'Unsubscribe from reminders',
+  },
+  pl: {
+    touch1Subject: 'Czas na planowy przegląd 🦷',
+    touch1Heading: 'Czas na Twój planowy przegląd',
+    touch1Body: name =>
+      `${name}, minęło ponad 6 miesięcy od ostatniej wizyty. Regularne przeglądy pomagają utrzymać zdrowie zębów i wykrywać problemy na wczesnym etapie. Umów wizytę w dogodnym terminie — zajmie to tylko chwilę.`,
+    touch2Subject: 'Mamy dla Ciebie wygodne terminy 📅',
+    touch2Heading: 'Dostępne terminy w tym tygodniu',
+    touch2Body: name =>
+      `${name}, mamy świetną dostępność w tym tygodniu. Nie odkładaj dbania o zdrowie zębów — umów wizytę już teraz.`,
+    touch3Subject: 'Tęsknimy za Tobą 💙',
+    touch3Heading: 'Wróć — zawsze cieszymy się z Twojej wizyty',
+    touch3Body: name =>
+      `${name}, Twój dentysta jest gotowy. Umów przegląd — Twoje zęby będą Ci wdzięczne.`,
+    bookNow: 'Umów przegląd',
+    optOut: 'Zrezygnuj z przypomnień',
+  },
+}
+
+interface RecallEmailData {
+  patientName: string
+  touch: 1 | 2 | 3
+}
+
+export function recallEmail(
+  data: RecallEmailData,
+  locale: Locale = 'uk'
+): { subject: string; html: string; text: string } {
+  const s = RECALL_STRINGS[locale]
+  const bookingUrl = `${SITE_URL}/booking`
+
+  const subjectMap = {
+    1: s.touch1Subject,
+    2: s.touch2Subject,
+    3: s.touch3Subject,
+  }
+  const headingMap = {
+    1: s.touch1Heading,
+    2: s.touch2Heading,
+    3: s.touch3Heading,
+  }
+  const bodyMap = {
+    1: s.touch1Body(data.patientName),
+    2: s.touch2Body(data.patientName),
+    3: s.touch3Body(data.patientName),
+  }
+
+  const subject = subjectMap[data.touch]
+  const heading = headingMap[data.touch]
+  const body = bodyMap[data.touch]
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f5;margin:0;padding:0}
+.wrap{max-width:600px;margin:40px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.header{background:#5A8A94;padding:32px 40px;color:#fff}
+.header h1{margin:0;font-size:22px;line-height:1.3}
+.body{padding:32px 40px}
+.body p{color:#4A5E63;line-height:1.6;margin:0 0 24px}
+.btn{display:inline-block;background:#5A8A94;color:#fff!important;padding:14px 32px;border-radius:8px;font-weight:600;text-decoration:none;font-size:15px}
+.footer{padding:24px 40px;border-top:1px solid #f0f0f0;text-align:center;color:#9ca3af;font-size:12px}
+.opt-out{display:inline-block;margin-top:8px;color:#9ca3af;font-size:11px;text-decoration:underline}
+</style></head><body>
+<div class="wrap">
+  <div class="header"><h1>${heading}</h1></div>
+  <div class="body">
+    <p>${body}</p>
+    <a href="${bookingUrl}" class="btn">${s.bookNow}</a>
+  </div>
+  <div class="footer">
+    <div>DentalStory · ${CLINIC_ADDRESS}</div>
+    <a href="${SITE_URL}/cabinet/profile#notifications" class="opt-out">${s.optOut}</a>
+  </div>
+</div>
+</body></html>`
+
+  const text = `${heading}\n\n${body}\n\n${s.bookNow}: ${bookingUrl}\n\n${s.optOut}: ${SITE_URL}/cabinet/profile#notifications`
+
+  return { subject, html, text }
+}

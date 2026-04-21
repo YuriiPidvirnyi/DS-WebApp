@@ -7,6 +7,7 @@ import {
   appointmentReminderEmail,
   appointmentCancellationEmail,
   newBookingAdminEmail,
+  recallEmail,
 } from '@/lib/email-templates'
 import { captureException } from '@/utils/sentry'
 import { logger } from '@/utils/logger'
@@ -141,6 +142,45 @@ async function processEvent(
 ) {
   if (event.type === 'low_stock_alert') {
     await processLowStockAlert(supabase, event)
+    return
+  }
+
+  if (
+    event.type === 'recall_touch_1' ||
+    event.type === 'recall_touch_2' ||
+    event.type === 'recall_touch_3'
+  ) {
+    const touch = parseInt(event.type.slice(-1), 10) as 1 | 2 | 3
+    const patientName =
+      typeof event.details?.patient_name === 'string'
+        ? event.details.patient_name
+        : 'Шановний пацієнт'
+    const locale =
+      (event.details?.locale as 'uk' | 'en' | 'pl' | undefined) ?? 'uk'
+    const email = recallEmail({ patientName, touch }, locale)
+    const result = await sendEmail({
+      to: event.recipient_email,
+      subject: email.subject,
+      html: email.html,
+      text: email.text,
+      tags: [{ name: 'type', value: event.type }],
+    })
+    await supabase
+      .from('notification_events')
+      .update({
+        status: result.success
+          ? 'sent'
+          : event.attempts + 1 >= MAX_ATTEMPTS
+            ? 'failed'
+            : 'queued',
+        ...(result.success
+          ? { resend_id: result.id }
+          : { error: result.error }),
+        processed_at: new Date().toISOString(),
+        attempts: event.attempts + 1,
+        claimed_at: null,
+      })
+      .eq('id', event.id)
     return
   }
 
