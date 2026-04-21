@@ -2,7 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAdminAccess } from '@/lib/supabase/admin'
 import { hasPermission } from '@/lib/permissions'
 import { createClient } from '@/lib/supabase/server'
-import { checkRateLimit, rateLimitResponse } from '@/lib/api-security'
+import {
+  checkRateLimit,
+  rateLimitResponse,
+  validateCSRF,
+  csrfErrorResponse,
+} from '@/lib/api-security'
 import { captureException } from '@/utils/sentry'
 
 export const runtime = 'nodejs'
@@ -15,6 +20,8 @@ const MAX_SIZE = 2 * 1024 * 1024 // 2 MB
 
 /** POST /api/materials/:id/upload-image */
 export async function POST(request: NextRequest, { params }: Params) {
+  if (!validateCSRF(request)) return csrfErrorResponse()
+
   const { allowed, remaining } = await checkRateLimit(request, 10, 60_000)
   if (!allowed) return rateLimitResponse(remaining)
 
