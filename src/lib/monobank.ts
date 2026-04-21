@@ -445,3 +445,161 @@ export function isHoldExpiringSoon(holdAt: string): boolean {
   const holdMs = Date.now() - new Date(holdAt).getTime()
   return holdMs >= HOLD_WARNING_DAYS * 24 * 60 * 60 * 1000
 }
+
+// ── Analytics / Statement ────────────────────────────────────────────────────
+
+export interface StatementCancelItem {
+  amount: number
+  ccy: number
+  date: string
+  maskedPan: string
+  approvalCode?: string
+  rrn?: string
+}
+
+export interface StatementItem {
+  invoiceId: string
+  status: 'hold' | 'processing' | 'success' | 'failure'
+  maskedPan: string
+  date: string
+  amount: number
+  ccy: number
+  profitAmount?: number
+  reference?: string
+  destination?: string
+  approvalCode?: string
+  rrn?: string
+  paymentScheme: 'full' | 'bnpl_later_30' | 'bnpl_parts_4'
+  shortQrId?: string | null
+  cancelList: StatementCancelItem[]
+}
+
+export interface StatementSummary {
+  period: { from: string; to: string }
+  totalTransactions: number
+  successful: {
+    count: number
+    grossAmount: number // sum of amount (what customer paid)
+    netRevenue: number // sum of profitAmount (after bank commission)
+    commission: number // grossAmount - netRevenue
+  }
+  refunded: {
+    count: number // number of invoices with at least one cancel
+    totalAmount: number // sum of all cancelList amounts
+  }
+  netAfterRefunds: number // successful.netRevenue - refunded.totalAmount
+  holds: { count: number; amount: number }
+  failed: { count: number; amount: number }
+  byScheme: Record<string, { count: number; amount: number }>
+}
+
+export interface MerchantDetails {
+  merchantId: string
+  merchantName: string
+  edrpou: string
+}
+
+const MONOBANK_STATEMENT_URL = `${MONOBANK_BASE_URL}/api/merchant/statement`
+const MONOBANK_DETAILS_URL = `${MONOBANK_BASE_URL}/api/merchant/details`
+
+/**
+ * Fetch merchant transaction statement for a time period.
+ * from/to are UTC unix timestamps (seconds). Monobank rate-limit: 1 req/sec.
+ * For large date ranges that need splitting, call multiple times with 1 s delay.
+ */
+export async function getMonobankStatement(
+  from: number,
+  to?: number,
+  code?: string
+): Promise<StatementItem[]> {
+  if (!MONOBANK_TOKEN) return []
+
+  try {
+    const url = new URL(MONOBANK_STATEMENT_URL)
+    url.searchParams.set('from', String(from))
+    if (to !== undefined) url.searchParams.set('to', String(to))
+    if (code) url.searchParams.set('code', code)
+
+    const response = await fetch(url.toString(), {
+      headers: { 'X-Token': MONOBANK_TOKEN },
+    })
+    if (!response.ok) return []
+    const data = (await response.json()) as { list: StatementItem[] }
+    return data.list ?? []
+  } catch {
+    return []
+  }
+}
+
+/** Get merchant profile (name, EDRPOU, merchantId). */
+export async function getMonobankMerchantDetails(): Promise<MerchantDetails | null> {
+  if (!MONOBANK_TOKEN) return null
+
+  try {
+    const response = await fetch(MONOBANK_DETAILS_URL, {
+      headers: { 'X-Token': MONOBANK_TOKEN },
+    })
+    if (!response.ok) return null
+    return (await response.json()) as MerchantDetails
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Aggregate statement items into a revenue summary.
+ * Pure function — safe to call with any slice of items.
+ */
+export function analyzeStatement(
+  items: StatementItem[],
+  from: Date,
+  to: Date
+): StatementSummary {
+  const summary: StatementSummary = {
+    period: { from: from.toISOString(), to: to.toISOString() },
+    totalTransactions: items.length,
+    successful: { count: 0, grossAmount: 0, netRevenue: 0, commission: 0 },
+    refunded: { count: 0, totalAmount: 0 },
+    netAfterRefunds: 0,
+    holds: { count: 0, amount: 0 },
+    failed: { count: 0, amount: 0 },
+    byScheme: {},
+  }
+
+  for (const item of items) {
+    // Tally by payment scheme
+    const scheme = item.paymentScheme ?? 'full'
+    if (!summary.byScheme[scheme]) {
+      summary.byScheme[scheme] = { count: 0, amount: 0 }
+    }
+
+    if (item.status === 'success') {
+      summary.successful.count++
+      summary.successful.grossAmount += item.amount
+      summary.successful.netRevenue += item.profitAmount ?? item.amount
+      summary.byScheme[scheme].count++
+      summary.byScheme[scheme].amount += item.amount
+
+      // Count refunds nested inside this successful transaction
+      if (item.cancelList.length > 0) {
+        summary.refunded.count++
+        for (const cancel of item.cancelList) {
+          summary.refunded.totalAmount += cancel.amount
+        }
+      }
+    } else if (item.status === 'hold' || item.status === 'processing') {
+      summary.holds.count++
+      summary.holds.amount += item.amount
+    } else if (item.status === 'failure') {
+      summary.failed.count++
+      summary.failed.amount += item.amount
+    }
+  }
+
+  summary.successful.commission =
+    summary.successful.grossAmount - summary.successful.netRevenue
+  summary.netAfterRefunds =
+    summary.successful.netRevenue - summary.refunded.totalAmount
+
+  return summary
+}
