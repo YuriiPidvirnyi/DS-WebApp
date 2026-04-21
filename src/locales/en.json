@@ -2199,17 +2199,25 @@
       },
       "step2": {
         "title": "Add services",
-        "body": "Go to Services and add your dental services."
+        "body": "Go to Services and add your dental services.",
+        "action": "Go to services"
       },
       "step3": {
         "title": "Add doctors",
-        "body": "Go to Doctors and add your team members."
+        "body": "Go to Doctors and add your team members.",
+        "action": "Go to doctors"
       },
       "step4": {
-        "title": "Test a booking",
-        "body": "Try a test booking at dentalstory.ua/booking to verify the booking form works."
+        "title": "Seed your materials catalog",
+        "body": "Add materials and set minimum stock levels so you get low-stock alerts automatically.",
+        "action": "Go to materials"
       },
       "step5": {
+        "title": "Test a booking",
+        "body": "Try a test booking at dentalstory.ua/booking to verify the booking form works.",
+        "action": "Open booking form"
+      },
+      "step6": {
         "title": "Check email",
         "body": "You will receive a booking confirmation email — confirm that email notifications are working correctly."
       },

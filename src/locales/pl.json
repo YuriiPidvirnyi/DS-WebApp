@@ -2201,17 +2201,25 @@
       },
       "step2": {
         "title": "Dodaj usługi",
-        "body": "Przejdź do sekcji Usługi i dodaj usługi stomatologiczne swojej kliniki."
+        "body": "Przejdź do sekcji Usługi i dodaj usługi stomatologiczne swojej kliniki.",
+        "action": "Przejdź do usług"
       },
       "step3": {
         "title": "Dodaj lekarzy",
-        "body": "Przejdź do sekcji Lekarze i dodaj członków swojego zespołu."
+        "body": "Przejdź do sekcji Lekarze i dodaj członków swojego zespołu.",
+        "action": "Przejdź do lekarzy"
       },
       "step4": {
-        "title": "Test rezerwacji",
-        "body": "Spróbuj wykonać rezerwację testową na dentalstory.ua/booking, aby zweryfikować formularz."
+        "title": "Uzupełnij katalog materiałów",
+        "body": "Dodaj materiały i ustaw minimalne poziomy zapasów, aby automatycznie otrzymywać alerty o niskich stanach.",
+        "action": "Przejdź do materiałów"
       },
       "step5": {
+        "title": "Testowa rezerwacja",
+        "body": "Spróbuj wykonać rezerwację testową na dentalstory.ua/booking, aby zweryfikować formularz.",
+        "action": "Otwórz formularz rezerwacji"
+      },
+      "step6": {
         "title": "Sprawdź email",
         "body": "Otrzymasz email z potwierdzeniem rezerwacji — upewnij się, że powiadomienia email działają poprawnie."
       },
