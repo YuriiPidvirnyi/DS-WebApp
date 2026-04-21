@@ -14,7 +14,11 @@ import {
 } from 'lucide-react'
 import { UKRAINE_CONFIG } from '@/utils/constants'
 import { CLINIC_OPENING_HOURS } from '@/config/clinicSchedule'
-
+import {
+  trackEvent,
+  BookingEvent,
+  AnalyticsEventCategory,
+} from '@/utils/analytics'
 import { memo } from 'react'
 
 function useCounter(end: number, duration: number = 2000) {
@@ -102,7 +106,11 @@ const StatCard = memo(function StatCard({
   )
 })
 
-function HeroSection() {
+interface HeroSectionProps {
+  heroCTAVariant?: string | null
+}
+
+function HeroSection({ heroCTAVariant }: HeroSectionProps) {
   const { t } = useTranslation()
   const [mounted, setMounted] = useState(false)
   const { count: patientsCount, ref: patientsRef } = useCounter(5000, 2500)
@@ -231,10 +239,25 @@ function HeroSection() {
             <div className="flex flex-col sm:flex-row flex-wrap gap-4 min-w-0">
               <Link
                 href="/booking"
+                onClick={() =>
+                  trackEvent(
+                    BookingEvent.BookingStart,
+                    AnalyticsEventCategory.Booking,
+                    {
+                      source: 'hero',
+                      ab_test_id: 'hero-cta',
+                      ab_variant: heroCTAVariant ?? 'control',
+                    }
+                  )
+                }
                 className="group inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-8 py-3.5 rounded-full font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-dental-primary-600/30 hover:-translate-y-0.5"
               >
                 <Phone className="h-5 w-5" />
-                {t('hero.bookConsultation')}
+                {heroCTAVariant === 'variant-b'
+                  ? t('hero.bookConsultationB')
+                  : heroCTAVariant === 'variant-c'
+                    ? t('hero.bookConsultationC')
+                    : t('hero.bookConsultation')}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
@@ -330,4 +353,4 @@ function HeroSection() {
   )
 }
 
-export default memo(HeroSection)
+export default memo<HeroSectionProps>(HeroSection)

@@ -2811,6 +2811,8 @@
   "hero": {
     "badge": "Nowoczesna stomatologia",
     "bookConsultation": "Umów konsultację",
+    "bookConsultationB": "Znajdź wygodny termin",
+    "bookConsultationC": "Bezpłatna konsultacja",
     "ourServices": "Nasze usługi"
   },
   "language": {
