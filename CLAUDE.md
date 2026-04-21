@@ -216,3 +216,10 @@ Colors defined in `tailwind.config.js` and `src/styles/globals.css`:
 | `CRON_SECRET`                     | For cron     | Bearer token for `/api/cron/*` routes                                   |
 | `SUPABASE_SERVICE_ROLE_KEY`       | For cron     | Service role key for server-side Supabase calls                         |
 | `MONOBANK_TOKEN`                  | For payments | Monobank acquiring token (test: api.monobank.ua, prod: web.monobank.ua) |
+
+## Open limitations
+
+- **Payments**: not wired — clinic accepts payment in-person only for v3. Monobank integration exists in env vars but the flow is not exposed to patients.
+- **PITR**: Supabase Pro plan is active (daily backups included), but the Point-in-Time Recovery add-on has not yet been enabled. Enable via Supabase Dashboard → Settings → Add-ons.
+- **Legal**: `/privacy-policy` and `/terms-of-service` pages exist but content has not been reviewed by a Ukrainian lawyer. Required before public launch.
+- **`src/lib/ab-test.ts`**: pre-existing TypeScript error — `@vercel/edge-config` module not found. Known issue, non-blocking (feature is not used in production paths), tracked for resolution when the Edge Config integration is provisioned.

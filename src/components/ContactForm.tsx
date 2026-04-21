@@ -60,10 +60,10 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         )
       }
 
-      // Verify Turnstile token
+      // Verify Turnstile token (client-side pre-check)
+      const cfToken = turnstileRef.current?.getToken() || ''
       try {
-        const token = turnstileRef.current?.getToken() || ''
-        await assertValidTurnstile(token)
+        await assertValidTurnstile(cfToken)
       } catch (error) {
         if (error instanceof Error) {
           return withToast.error(error.message)
@@ -78,6 +78,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         phone: sanitizeUserInput(data.phone),
         message: sanitizeUserInput(data.message),
         consent: data.consent,
+        cf_turnstile_response: cfToken,
       }
 
       // Real API call

@@ -460,5 +460,12 @@ MIT License - see LICENSE file for details
 
 ---
 
-**Version**: 2.0.0  
+**Version**: 3.0.1  
 **Maintained by**: Dental Story Development Team
+
+## Documentation
+
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — System architecture, data flow, infrastructure
+- [docs/ROADMAP.md](docs/ROADMAP.md) — Phased delivery plan and upcoming work
+- [docs/RUNBOOKS.md](docs/RUNBOOKS.md) — Deployment, DNS swing, rollback, incident response
+- [docs/STATUS.md](docs/STATUS.md) — Current phase progress and open blockers

@@ -865,7 +865,8 @@
     "prevCase": "Poprzedni przypadek",
     "nextCase": "Następny przypadek",
     "goToCase": "Przejdź do przypadku",
-    "title": "Dostępność"
+    "title": "Dostępność",
+    "closePanel": "Zamknij panel dostępności"
   },
   "accessibilityPanel": {
     "regionLabel": "Ustawienia dostępności",
@@ -2749,6 +2750,14 @@
     "dialogAriaLabel": "Czat online Dental Story",
     "welcomeMessage": "Witamy w Dental Story! W czym możemy pomóc?",
     "quickRepliesLabel": "Szybkie odpowiedzi",
+    "messagesLabel": "Wiadomości czatu",
+    "messageInputLabel": "Wpisz wiadomość",
+    "chooser": {
+      "title": "Czat wsparcia",
+      "subtitle": "Wybierz sposób kontaktu:",
+      "human": "Napisz do administratora",
+      "ai": "Asystent AI"
+    },
     "inputPlaceholder": "Napisz wiadomość...",
     "sendMessage": "Wyślij",
     "quickReplies": {

@@ -256,7 +256,24 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_<table>_<col> ON <table>(<col>);
 
 4. Apply: `supabase db push` (preprod first, then prod).
 
-### 5.3 Restoring from Snapshot (Supabase)
+### 5.3 Backup tier and PITR status
+
+**Current setup:** Project `exgpwtyrkkhwqqdgqbkz` is provisioned via **Vercel Marketplace → Supabase Pro plan**.
+
+| Feature                       | Status           | Details                                                        |
+| ----------------------------- | ---------------- | -------------------------------------------------------------- |
+| Daily backups                 | ✅ Active        | 7-day retention, automated, no action needed                   |
+| PITR (Point-In-Time Recovery) | ⚠️ Not confirmed | Pro add-on — enable in Supabase Dashboard → Settings → Add-ons |
+
+**To enable PITR (recommended before launch):**
+
+1. Supabase Dashboard → project `supabase-dentalstory-webapp` → **Settings → Add-ons**
+2. Enable **Point in Time Recovery** — billed per GB/day
+3. Confirm retention window (default 7 days; increase to 30 for production)
+
+**Quarterly restore drill:** restore to a sandbox project, run `npm run seed:preprod`, and smoke-test the critical flows.
+
+### 5.4 Restoring from Daily Backup
 
 1. Supabase Dashboard → Database → Backups.
 2. Select the snapshot closest to before the incident.
@@ -264,7 +281,15 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_<table>_<col> ON <table>(<col>);
 4. Update `NEXT_PUBLIC_SUPABASE_URL` and keys in Vercel to point to the restored project.
 5. Validate: run smoke tests, check `admin_users` seed.
 
-### 5.4 Applying a Down-Migration
+### 5.5 Restoring to a Point in Time (PITR — if enabled)
+
+1. Supabase Dashboard → Database → Backups → **Point in Time**.
+2. Enter the target timestamp (UTC).
+3. Click **Restore** — spins up a new project at that exact state.
+4. Update Vercel env vars (`NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, anon key) to point to the restored project.
+5. Validate with smoke tests.
+
+### 5.6 Applying a Down-Migration
 
 If a migration must be reverted:
 
