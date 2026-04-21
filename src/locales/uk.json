@@ -863,7 +863,8 @@
     "prevCase": "Попередній випадок",
     "nextCase": "Наступний випадок",
     "goToCase": "Перейти до випадку",
-    "title": "Доступність"
+    "title": "Доступність",
+    "closePanel": "Закрити панель доступності"
   },
   "accessibilityPanel": {
     "regionLabel": "Налаштування доступності",
@@ -2850,6 +2851,14 @@
     "dialogAriaLabel": "Онлайн-чат Dental Story",
     "welcomeMessage": "Вітаємо в Dental Story! Чим можемо допомогти?",
     "quickRepliesLabel": "Швидкі відповіді",
+    "messagesLabel": "Повідомлення чату",
+    "messageInputLabel": "Введіть повідомлення",
+    "chooser": {
+      "title": "Чат підтримки",
+      "subtitle": "Оберіть спосіб зв'язку:",
+      "human": "Написати адміністратору",
+      "ai": "AI-асистент"
+    },
     "inputPlaceholder": "Напишіть повідомлення...",
     "sendMessage": "Надіслати",
     "quickReplies": {

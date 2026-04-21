@@ -863,7 +863,8 @@
     "prevCase": "Previous case",
     "nextCase": "Next case",
     "goToCase": "Go to case",
-    "title": "Accessibility"
+    "title": "Accessibility",
+    "closePanel": "Close accessibility panel"
   },
   "accessibilityPanel": {
     "regionLabel": "Accessibility settings",
@@ -2747,6 +2748,14 @@
     "dialogAriaLabel": "Dental Story Online Chat",
     "welcomeMessage": "Welcome to Dental Story! How can we help you?",
     "quickRepliesLabel": "Quick Replies",
+    "messagesLabel": "Chat messages",
+    "messageInputLabel": "Type your message",
+    "chooser": {
+      "title": "Support Chat",
+      "subtitle": "Choose a contact method:",
+      "human": "Write to Administrator",
+      "ai": "AI Assistant"
+    },
     "inputPlaceholder": "Type a message...",
     "sendMessage": "Send",
     "quickReplies": {

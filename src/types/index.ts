@@ -126,4 +126,5 @@ export interface ContactRequest {
   email?: string
   message?: string
   consent: boolean
+  cf_turnstile_response?: string
 }
