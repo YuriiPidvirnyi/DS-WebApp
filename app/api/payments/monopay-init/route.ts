@@ -88,18 +88,14 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  // Accept basket from request body — GET doesn't have body, so use POST for basket orders
-  const basket: BasketOrder | undefined = undefined
-
   try {
-    const result = generateMonoPayPayload({
+    const result = await generateMonoPayPayload({
       appointmentId,
       amountKopecks,
       description,
       redirectUrl: `${SITE_URL}/booking/payment-result`,
       webHookUrl: `${SITE_URL}/api/payments/monobank-webhook`,
       paymentType,
-      basket,
     })
 
     return NextResponse.json({ success: true, data: result })
@@ -194,7 +190,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const result = generateMonoPayPayload({
+    const result = await generateMonoPayPayload({
       appointmentId,
       amountKopecks,
       description,

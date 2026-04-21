@@ -27,7 +27,6 @@ interface MonoPayInitOptions {
   signature: string
   requestId: string
   payloadBase64: string
-  timestamp: number
   ui?: MonoPayUIOptions
   callbacks?: MonoPayCallbacks
 }
@@ -148,7 +147,6 @@ export function MonoPayButton({
             signature: string
             requestId: string
             payloadBase64: string
-            timestamp: number
           }
         }
 
@@ -160,7 +158,6 @@ export function MonoPayButton({
           signature: data.signature,
           requestId: data.requestId,
           payloadBase64: data.payloadBase64,
-          timestamp: data.timestamp,
           ui: {
             buttonType: 'pay',
             theme: 'light',

@@ -1,7 +1,6 @@
 import { createVerify, createSign, randomUUID } from 'crypto'
 
 const MONOBANK_TOKEN = process.env.MONOBANK_TOKEN
-const MONOBANK_KEY_ID = process.env.MONOBANK_KEY_ID
 const MONOBANK_PRIVATE_KEY = process.env.MONOBANK_PRIVATE_KEY
 const MONOBANK_BASE_URL = 'https://api.monobank.ua'
 const MONOBANK_PUBKEY_URL = `${MONOBANK_BASE_URL}/api/merchant/pubkey`
@@ -503,6 +502,7 @@ export interface MerchantDetails {
 
 const MONOBANK_STATEMENT_URL = `${MONOBANK_BASE_URL}/api/merchant/statement`
 const MONOBANK_DETAILS_URL = `${MONOBANK_BASE_URL}/api/merchant/details`
+const MONOBANK_MONOPAY_PUBKEY_LIST_URL = `${MONOBANK_BASE_URL}/api/merchant/monopay/pubkey-list`
 
 /**
  * Fetch merchant transaction statement for a time period.
@@ -608,6 +608,37 @@ export function analyzeStatement(
 
 // ── MonoPay JS button widget ──────────────────────────────────────────────────
 
+// Cache the merchant's registered MonoPay keyId (from Monobank API, not env var)
+let cachedMonoPayKeyId: string | null = null
+let cachedMonoPayKeyIdAt: number = 0
+const MONOPAY_KEY_TTL_MS = 60 * 60 * 1000 // 1 hour
+
+async function getMonoPayKeyId(): Promise<string> {
+  if (!MONOBANK_TOKEN) throw new Error('MONOBANK_TOKEN not configured')
+
+  const now = Date.now()
+  if (cachedMonoPayKeyId && now - cachedMonoPayKeyIdAt < MONOPAY_KEY_TTL_MS) {
+    return cachedMonoPayKeyId
+  }
+
+  const response = await fetch(MONOBANK_MONOPAY_PUBKEY_LIST_URL, {
+    headers: { 'X-Token': MONOBANK_TOKEN },
+  })
+  if (!response.ok) {
+    throw new Error(`Failed to fetch MonoPay key list (${response.status})`)
+  }
+
+  const keys = (await response.json()) as Array<{
+    id: string
+    dateTime: string
+  }>
+  if (!keys.length) throw new Error('No MonoPay keys registered with Monobank')
+
+  cachedMonoPayKeyId = keys[0].id
+  cachedMonoPayKeyIdAt = now
+  return cachedMonoPayKeyId
+}
+
 export interface MonoPayInitParams {
   appointmentId: string
   amountKopecks: number
@@ -620,33 +651,33 @@ export interface MonoPayInitParams {
 
 export interface MonoPayInitResult {
   keyId: string
-  /** ECDSA-P256/SHA256 signature over `requestId\ntimestamp\npayloadBase64` */
+  /** ECDSA-P256/SHA256 over JSON.stringify(payload) + requestId (per Monobank docs) */
   signature: string
   requestId: string
-  /** Base64-encoded JSON invoice payload (TTL ~10 min) */
+  /** Base64-encoded JSON invoice payload (validity 10 min) */
   payloadBase64: string
-  /** Unix timestamp used during signing — widget forwards it to Monobank */
-  timestamp: number
 }
 
 export function isMonoPayConfigured(): boolean {
-  return Boolean(MONOBANK_KEY_ID && MONOBANK_PRIVATE_KEY)
+  return Boolean(MONOBANK_PRIVATE_KEY)
 }
 
 /**
  * Generate a signed MonoPay button payload.
- * Requires MONOBANK_KEY_ID + MONOBANK_PRIVATE_KEY (PEM, EC P-256) env vars.
- * The result is passed directly to window.MonoPay.init() on the frontend.
+ *
+ * Signing formula (Monobank docs): ECDSA-SHA256(JSON.stringify(payload) + requestId)
+ * keyId is fetched from GET /api/merchant/monopay/pubkey-list (cached 1 h).
+ * Requires MONOBANK_PRIVATE_KEY (PEM, EC P-256 / prime256v1) env var.
  */
-export function generateMonoPayPayload(
+export async function generateMonoPayPayload(
   params: MonoPayInitParams
-): MonoPayInitResult {
-  if (!MONOBANK_KEY_ID || !MONOBANK_PRIVATE_KEY) {
-    throw new Error('MONOBANK_KEY_ID or MONOBANK_PRIVATE_KEY not configured')
+): Promise<MonoPayInitResult> {
+  if (!MONOBANK_PRIVATE_KEY) {
+    throw new Error('MONOBANK_PRIVATE_KEY not configured')
   }
 
+  const keyId = await getMonoPayKeyId()
   const requestId = randomUUID()
-  const timestamp = Math.floor(Date.now() / 1000)
 
   const invoicePayload = {
     amount: params.amountKopecks,
@@ -666,25 +697,20 @@ export function generateMonoPayPayload(
         : {}),
     },
     redirectUrl: params.redirectUrl,
+    successUrl: params.redirectUrl,
+    failUrl: params.redirectUrl,
     webHookUrl: params.webHookUrl,
-    validity: 600, // 10 minutes
+    validity: 600,
     ...(params.paymentType ? { paymentType: params.paymentType } : {}),
   }
 
-  const payloadBase64 = Buffer.from(JSON.stringify(invoicePayload)).toString(
-    'base64'
-  )
-  const message = `${requestId}\n${timestamp}\n${payloadBase64}`
+  // payloadBase64 and the signed string MUST use identical JSON serialisation
+  const payloadJson = JSON.stringify(invoicePayload)
+  const payloadBase64 = Buffer.from(payloadJson).toString('base64')
 
   const signer = createSign('SHA256')
-  signer.update(message)
+  signer.update(payloadJson + requestId)
   const signature = signer.sign(MONOBANK_PRIVATE_KEY, 'base64')
 
-  return {
-    keyId: MONOBANK_KEY_ID,
-    signature,
-    requestId,
-    payloadBase64,
-    timestamp,
-  }
+  return { keyId, signature, requestId, payloadBase64 }
 }
