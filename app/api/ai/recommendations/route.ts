@@ -8,7 +8,12 @@ import {
   validateCSRF,
   csrfErrorResponse,
 } from '@/lib/api-security'
-import { hashIp, checkDailyBudget, logAiUsage } from '@/lib/ai-usage'
+import {
+  hashIp,
+  checkDailyBudget,
+  checkMonthlyBudget,
+  logAiUsage,
+} from '@/lib/ai-usage'
 import { captureException } from '@/utils/sentry'
 import { SITE_INFO } from '@/utils/constants'
 
@@ -43,12 +48,22 @@ export async function POST(req: NextRequest) {
 
   // Daily token budget guard (50k tokens/IP/day)
   const ipHash = hashIp(req)
-  const { allowed: budgetAllowed } = await checkDailyBudget(ipHash)
+  const [{ allowed: budgetAllowed }, { allowed: monthlyAllowed }] =
+    await Promise.all([checkDailyBudget(ipHash), checkMonthlyBudget()])
   if (!budgetAllowed) {
     return Response.json(
       {
         success: false,
         error: 'Daily AI usage limit reached. Try again tomorrow.',
+      },
+      { status: 429 }
+    )
+  }
+  if (!monthlyAllowed) {
+    return Response.json(
+      {
+        success: false,
+        error: 'Monthly AI usage limit reached. Try again next month.',
       },
       { status: 429 }
     )

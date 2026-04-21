@@ -5,6 +5,8 @@ import {
   csrfErrorResponse,
   rateLimitResponse,
   validateCSRF,
+  verifyTurnstileServer,
+  turnstileInvalidResponse,
 } from '@/lib/api-security'
 
 export const runtime = 'nodejs'
@@ -38,6 +40,12 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     )
   }
+
+  const cfToken = (parsed as Record<string, unknown>).cf_turnstile_response as
+    | string
+    | undefined
+  const { valid: botOk } = await verifyTurnstileServer(cfToken, request)
+  if (!botOk) return turnstileInvalidResponse()
 
   const form = parsed.form?.trim()
   const rating = parsed.rating
