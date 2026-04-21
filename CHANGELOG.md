@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+> Changes on `develop` since `v3.0.0`. Target release: v3.1.0.
+
+### Added
+
+- **Payments**: Monobank acquiring integration — `POST /api/payments/create`, `GET /api/payments/status/[invoiceId]`, signed webhook at `/api/payments/monobank-webhook`
+- **A/B testing framework** + six-month recall notification system (`/api/cron/recall`, Phase D)
+- **Cookie consent** gate for GA4, Vercel Analytics, and Sentry Replay (GDPR alignment)
+- **Onboarding tour**: materials step with action links across admin pages
+- **Seed pipeline**: EN + PL i18n test patients + auto-reseed preprod on develop merge (`.github/workflows/reseed-preprod.yml`)
+- **Shared primitives**: `EmptyState` and `ErrorState` components with cabinet analytics events wired through
+- **CI hardening**: SQL schema validation + gitleaks secret scanning workflows
+- **Docs**: ROADMAP v1.4 (post-launch plan, phase gates), A/B testing playbook, post-launch backlog, backup/DR runbook, preprod seeding runbook, launch checklist
+
+### Changed
+
+- **Removed CliniCards integration** — slot fetching is now fully internal; `clinicards-client.ts` deleted, admin monitoring page dropped
+- **RBAC consolidation**: roles reduced from 10 → 8 canonical roles (`senior_assistant` and `staff` removed via migration `20260409_remove_senior_assistant_and_staff_roles.sql`). Canonical set: `superadmin`, `admin`, `receptionist`, `doctor`, `assistant`, `billing_manager`, `inventory_manager`, `analyst`
+- Booking confirmation emails honor the user's UI locale
+- `next start` CI heap raised to 4096 MB
+
+### Fixed / Security
+
+- **RLS doctor-scope rewrite** (migration `20260417_fix_doctor_scope_rls_v2.sql`) — `current_doctor_id()` + `is_non_doctor_admin()` helpers; doctors can no longer see all patients / appointments
+- **Optimistic-lock guard** on `PATCH /api/appointments/[id]`
+- App-layer ownership filter on `/api/cabinet/export` (defense in depth for RLS)
+- Ownership check on `DELETE /api/treatment-records/[id]`
+- CSRF token required on `/api/materials/[id]/upload-image`
+- Monobank webhook: replay-window enforcement and signature verification hardened
+- Reminder cron: idempotency keys added; `low_stock_alert` events routed through the shared notifications pipeline
+- RBAC: doctors can now access the appointments and treatments admin pages
+- Mobile responsive layout + touch-target fixes on public pages
+- Missing `routeMeta` i18n key added to `en` and `pl`
+- Deprecated husky header removed; permissions tests, Lucide social-icon rendering, and E2E OOM pressure resolved
+
+### Dependencies
+
+- React group bump, Resend 6.12.0, PostCSS 8.5.10, lucide-react 1.8.0, DOMPurify, Prettier, globals, ESLint group, testing group, `@axe-core/playwright`
+- `serialize-javascript` override remains pinned to `7.0.4` (GHSA-5c6j-r48x-rmvq)
+- CI: `actions/github-script` 7→9, `actions/cache` 4→5
+
 ## [3.0.0] - 2026-04-07
 
 ### Added
