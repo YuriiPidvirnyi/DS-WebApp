@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
 import { CreditCard } from 'lucide-react'
+import { EmptyState } from '@/components/ui/EmptyState'
 
 type PaymentStatus =
   | 'created'
@@ -94,23 +94,16 @@ export default async function PaymentsPage() {
       <h1 className="text-2xl font-bold text-dental-dark mb-6">Платежі</h1>
 
       {list.length === 0 ? (
-        <div className="bg-white rounded-2xl p-10 text-center shadow-sm border border-dental-secondary-100">
-          <div className="w-20 h-20 bg-dental-primary-50 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CreditCard className="w-10 h-10 text-dental-primary-600" />
-          </div>
-          <h2 className="text-lg font-semibold text-dental-dark mb-2">
-            Немає платежів
-          </h2>
-          <p className="text-dental-muted text-sm mb-6">
-            Тут відображатимуться ваші онлайн-платежі за послуги клініки.
-          </p>
-          <Link
-            href="/booking"
-            className="inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white font-medium rounded-xl px-6 py-3 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
-          >
-            Записатися на прийом
-          </Link>
-        </div>
+        <EmptyState
+          icon={
+            <div className="w-20 h-20 bg-dental-primary-50 rounded-full flex items-center justify-center">
+              <CreditCard className="w-10 h-10 text-dental-primary-600" />
+            </div>
+          }
+          title="Немає платежів"
+          description="Тут відображатимуться ваші онлайн-платежі за послуги клініки."
+          action={{ href: '/booking', label: 'Записатися на прийом' }}
+        />
       ) : (
         <div className="bg-white rounded-2xl shadow-sm border border-dental-secondary-100 overflow-hidden">
           {/* Desktop table */}

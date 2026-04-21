@@ -11,6 +11,7 @@ import {
   AlertTriangle,
   RefreshCw,
 } from 'lucide-react'
+import { EmptyState } from '@/components/ui/EmptyState'
 
 type TreatmentRecord = {
   id: string
@@ -165,14 +166,14 @@ export default function TreatmentsHistoryPage() {
       </h1>
 
       {records.length === 0 ? (
-        <div className="bg-white rounded-2xl p-10 text-center shadow-sm border border-dental-secondary-100">
-          <div className="w-16 h-16 bg-dental-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
-            <FileText className="w-8 h-8 text-dental-primary-600" />
-          </div>
-          <p className="text-dental-dark font-medium">
-            {t('cabinet.treatments.empty')}
-          </p>
-        </div>
+        <EmptyState
+          icon={
+            <div className="w-16 h-16 bg-dental-primary-50 rounded-full flex items-center justify-center">
+              <FileText className="w-8 h-8 text-dental-primary-600" />
+            </div>
+          }
+          title={t('cabinet.treatments.empty')}
+        />
       ) : (
         <ul className="space-y-3" role="list">
           {records.map(rec => {

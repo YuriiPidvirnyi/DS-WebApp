@@ -18,6 +18,7 @@ import {
   Check,
   AlertTriangle,
 } from 'lucide-react'
+import { EmptyState } from '@/components/ui/EmptyState'
 import { useCSRF } from '@/hooks/useCSRF'
 import { createICSEvent, downloadICS } from '@/utils/calendar'
 
@@ -835,22 +836,17 @@ export default function AppointmentsPage() {
 
       {/* Appointments List */}
       {filteredAppointments.length === 0 ? (
-        <div className="bg-white rounded-2xl p-12 text-center shadow-sm border border-dental-secondary-100">
-          <Calendar className="w-16 h-16 text-dental-secondary-200 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-dental-dark mb-1">
-            {t(`cabinet.appointments.empty.${filter}`)}
-          </h3>
-          <p className="text-dental-muted text-sm mb-6">
-            {t('cabinet.appointments.empty.cta')}
-          </p>
-          <Link
-            href="/booking"
-            className="inline-flex items-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-6 py-3 rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-700"
-          >
-            <Plus className="w-5 h-5" />
-            {t('cabinet.appointments.book')}
-          </Link>
-        </div>
+        <EmptyState
+          icon={<Calendar className="w-16 h-16 text-dental-secondary-200" />}
+          title={t(`cabinet.appointments.empty.${filter}`)}
+          description={t('cabinet.appointments.empty.cta')}
+          action={{
+            href: '/booking',
+            label: t('cabinet.appointments.book'),
+            startIcon: <Plus className="w-5 h-5" />,
+          }}
+          padding="lg"
+        />
       ) : (
         <div className="space-y-3">
           {filteredAppointments.map(apt => {
