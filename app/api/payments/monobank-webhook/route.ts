@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // On success, mark appointment as paid
+    // On success, mark appointment as paid + save wallet card if tokenized
     if (payload.status === 'success') {
       const { error: apptError } = await supabase
         .from('appointments')
@@ -108,6 +108,28 @@ export async function POST(request: NextRequest) {
           new Error('[monobank-webhook] Failed to mark appointment as paid'),
           { apptError, appointmentId: payment.appointment_id }
         )
+      }
+
+      // Persist tokenized card when Monobank reports it was successfully saved
+      if (payload.walletData?.status === 'created') {
+        const { walletData } = payload
+        // walletId is the Supabase user UUID we passed at invoice creation
+        const { error: walletErr } = await supabase
+          .from('patient_wallet_cards')
+          .upsert(
+            {
+              user_id: walletData.walletId,
+              card_token: walletData.cardToken,
+              masked_pan: 'unknown', // will be refreshed on first card list fetch
+            },
+            { onConflict: 'user_id,card_token' }
+          )
+        if (walletErr) {
+          captureException(
+            new Error('[monobank-webhook] Failed to upsert wallet card'),
+            { walletErr, walletId: walletData.walletId }
+          )
+        }
       }
     }
   } catch (error) {

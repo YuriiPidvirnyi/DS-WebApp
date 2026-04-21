@@ -6,6 +6,9 @@ const MONOBANK_PUBKEY_URL = `${MONOBANK_BASE_URL}/api/merchant/pubkey`
 const MONOBANK_INVOICE_URL = `${MONOBANK_BASE_URL}/api/merchant/invoice/create`
 const MONOBANK_STATUS_URL = `${MONOBANK_BASE_URL}/api/merchant/invoice/status`
 const MONOBANK_REMOVE_URL = `${MONOBANK_BASE_URL}/api/merchant/invoice/remove`
+const MONOBANK_WALLET_URL = `${MONOBANK_BASE_URL}/api/merchant/wallet`
+const MONOBANK_WALLET_CARD_URL = `${MONOBANK_BASE_URL}/api/merchant/wallet/card`
+const MONOBANK_WALLET_PAY_URL = `${MONOBANK_BASE_URL}/api/merchant/wallet/payment`
 
 export interface MonobankInvoiceParams {
   appointmentId: string
@@ -14,6 +17,7 @@ export interface MonobankInvoiceParams {
   redirectUrl: string
   webHookUrl: string
   validitySeconds?: number
+  saveCardData?: { saveCard: boolean; walletId: string }
 }
 
 export interface MonobankInvoiceResult {
@@ -39,6 +43,26 @@ export interface MonobankWebhookPayload {
   finalAmount?: number
   createdDate: string
   modifiedDate: string
+  walletData?: {
+    cardToken: string
+    walletId: string
+    status: 'new' | 'created' | 'failed'
+  }
+}
+
+export interface MonobankWalletCard {
+  cardToken: string
+  maskedPan: string
+  country?: string
+}
+
+export interface MonobankWalletPaymentResult {
+  invoiceId: string
+  status: 'processing' | 'success' | 'failure'
+  amount: number
+  ccy: number
+  failureReason?: string | null
+  tdsUrl?: string | null
 }
 
 export interface MonobankInvoiceStatusResult {
@@ -74,6 +98,7 @@ export async function createMonobankInvoice(
     redirectUrl,
     webHookUrl,
     validitySeconds = 3600,
+    saveCardData,
   } = params
 
   const response = await fetch(MONOBANK_INVOICE_URL, {
@@ -92,6 +117,7 @@ export async function createMonobankInvoice(
       redirectUrl,
       webHookUrl,
       validity: validitySeconds,
+      ...(saveCardData ? { saveCardData } : {}),
     }),
   })
 
@@ -195,5 +221,77 @@ export async function invalidateMonobankInvoice(
     return response.ok
   } catch {
     return false
+  }
+}
+
+export async function listMonobankWalletCards(
+  walletId: string
+): Promise<MonobankWalletCard[]> {
+  if (!MONOBANK_TOKEN) return []
+
+  try {
+    const url = new URL(MONOBANK_WALLET_URL)
+    url.searchParams.set('walletId', walletId)
+    const response = await fetch(url.toString(), {
+      headers: { 'X-Token': MONOBANK_TOKEN },
+    })
+    if (!response.ok) return []
+    const data = (await response.json()) as { wallet: MonobankWalletCard[] }
+    return data.wallet ?? []
+  } catch {
+    return []
+  }
+}
+
+export async function deleteMonobankCard(cardToken: string): Promise<boolean> {
+  if (!MONOBANK_TOKEN) return false
+
+  try {
+    const url = new URL(MONOBANK_WALLET_CARD_URL)
+    url.searchParams.set('cardToken', cardToken)
+    const response = await fetch(url.toString(), {
+      method: 'DELETE',
+      headers: { 'X-Token': MONOBANK_TOKEN },
+    })
+    return response.ok
+  } catch {
+    return false
+  }
+}
+
+export async function payWithCardToken(params: {
+  cardToken: string
+  appointmentId: string
+  amountKopecks: number
+  description: string
+  redirectUrl: string
+  webHookUrl: string
+}): Promise<MonobankWalletPaymentResult | null> {
+  if (!MONOBANK_TOKEN) return null
+
+  try {
+    const response = await fetch(MONOBANK_WALLET_PAY_URL, {
+      method: 'POST',
+      headers: {
+        'X-Token': MONOBANK_TOKEN,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        cardToken: params.cardToken,
+        amount: params.amountKopecks,
+        ccy: 980,
+        initiationKind: 'client',
+        merchantPaymInfo: {
+          reference: params.appointmentId,
+          destination: params.description,
+        },
+        redirectUrl: params.redirectUrl,
+        webHookUrl: params.webHookUrl,
+      }),
+    })
+    if (!response.ok) return null
+    return (await response.json()) as MonobankWalletPaymentResult
+  } catch {
+    return null
   }
 }

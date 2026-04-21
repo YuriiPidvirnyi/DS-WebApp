@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { createClient as createUserClient } from '@/lib/supabase/server'
 import { createMonobankInvoice, isMonobankConfigured } from '@/lib/monobank'
 import {
   checkRateLimit,
@@ -58,6 +59,20 @@ export async function POST(request: NextRequest) {
 
   const { appointmentId, amountKopecks, description } = body
 
+  // Try to get the authenticated user for card tokenization
+  let authenticatedUserId: string | null = null
+  try {
+    const userClient = await createUserClient()
+    if (userClient) {
+      const {
+        data: { user },
+      } = await userClient.auth.getUser()
+      authenticatedUserId = user?.id ?? null
+    }
+  } catch {
+    // Non-fatal — booking can proceed without card saving
+  }
+
   const supabase = getServiceClient()
   if (!supabase) {
     return NextResponse.json(
@@ -96,13 +111,16 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create Monobank invoice
+    // Create Monobank invoice — save card when user is authenticated
     const result = await createMonobankInvoice({
       appointmentId,
       amountKopecks,
       description: description || 'Оплата стоматологічних послуг - DentalStory',
       redirectUrl: `${SITE_URL}/booking/payment-result`,
       webHookUrl: `${SITE_URL}/api/payments/monobank-webhook`,
+      ...(authenticatedUserId
+        ? { saveCardData: { saveCard: true, walletId: authenticatedUserId } }
+        : {}),
     })
 
     // Persist payment record
