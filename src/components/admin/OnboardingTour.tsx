@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import Link from 'next/link'
 import {
   X,
   CheckCircle,
@@ -9,38 +10,59 @@ import {
   Users,
   Calendar,
   Mail,
+  Package,
   ChevronRight,
+  ArrowRight,
 } from 'lucide-react'
 
 const TOUR_KEY = 'ds_admin_tour_done'
 
-const STEP_ICONS = [Stethoscope, Stethoscope, Users, Calendar, Mail]
-
 interface Step {
   titleKey: string
   bodyKey: string
+  icon: React.ElementType
+  actionKey?: string
+  actionHref?: string
 }
 
 const STEPS: Step[] = [
   {
     titleKey: 'admin.onboarding.step1.title',
     bodyKey: 'admin.onboarding.step1.body',
+    icon: Stethoscope,
   },
   {
     titleKey: 'admin.onboarding.step2.title',
     bodyKey: 'admin.onboarding.step2.body',
+    icon: Stethoscope,
+    actionKey: 'admin.onboarding.step2.action',
+    actionHref: '/admin/services',
   },
   {
     titleKey: 'admin.onboarding.step3.title',
     bodyKey: 'admin.onboarding.step3.body',
+    icon: Users,
+    actionKey: 'admin.onboarding.step3.action',
+    actionHref: '/admin/doctors',
   },
   {
     titleKey: 'admin.onboarding.step4.title',
     bodyKey: 'admin.onboarding.step4.body',
+    icon: Package,
+    actionKey: 'admin.onboarding.step4.action',
+    actionHref: '/admin/materials',
   },
   {
     titleKey: 'admin.onboarding.step5.title',
     bodyKey: 'admin.onboarding.step5.body',
+    icon: Calendar,
+    actionKey: 'admin.onboarding.step5.action',
+    actionHref: '/booking',
+  },
+  {
+    titleKey: 'admin.onboarding.step6.title',
+    bodyKey: 'admin.onboarding.step6.body',
+    icon: Mail,
   },
 ]
 
@@ -83,8 +105,8 @@ export default function OnboardingTour({ role }: OnboardingTourProps) {
 
   if (!visible) return null
 
-  const Icon = STEP_ICONS[step]
   const current = STEPS[step]
+  const Icon = current.icon
 
   return (
     <div
@@ -121,6 +143,17 @@ export default function OnboardingTour({ role }: OnboardingTourProps) {
           <p className="text-dental-text leading-relaxed">
             {t(current.bodyKey)}
           </p>
+
+          {current.actionHref && current.actionKey && (
+            <Link
+              href={current.actionHref}
+              onClick={dismiss}
+              className="inline-flex items-center gap-1.5 mt-4 text-sm font-medium text-dental-primary-600 hover:text-dental-primary-700 transition-colors focus:outline-none focus:underline"
+            >
+              {t(current.actionKey)}
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          )}
 
           {/* Step dots */}
           <div className="flex items-center gap-1.5 mt-5">
