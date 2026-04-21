@@ -39,10 +39,6 @@ updates:
         patterns:
           - 'eslint*'
           - '@typescript-eslint/*'
-      storybook:
-        patterns:
-          - 'storybook*'
-          - '@storybook/*'
 
   # Enable version updates for GitHub Actions — PRs target develop
   - package-ecosystem: 'github-actions'
