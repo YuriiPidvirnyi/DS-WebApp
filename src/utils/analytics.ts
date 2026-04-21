@@ -39,10 +39,13 @@ export enum FormEvent {
 // Booking events
 export enum BookingEvent {
   BookingStart = 'booking_start',
+  BookingStep1Completed = 'booking_step_1_completed',
+  BookingStep2Completed = 'booking_step_2_completed',
+  BookingComplete = 'booking_complete',
+  BookingCancelled = 'booking_cancelled',
   ServiceSelect = 'service_select',
   DateSelect = 'date_select',
   TimeSelect = 'time_select',
-  BookingComplete = 'booking_complete',
 }
 
 // Live chat events
@@ -54,13 +57,20 @@ export enum ChatEvent {
 // Symptom checker / AI events
 export enum AIEvent {
   SymptomCheckerStarted = 'symptom_checker_started',
+  SymptomCheckerCompleted = 'symptom_checker_completed',
   AIMessageSent = 'ai_message_sent',
 }
 
 // Cabinet events
 export enum CabinetEvent {
+  CabinetLogin = 'cabinet_login',
   TreatmentViewed = 'treatment_viewed',
   ProfileUpdated = 'cabinet_profile_updated',
+}
+
+// Admin events
+export enum AdminEvent {
+  AdminLogin = 'admin_login',
 }
 
 // Initialize Google Analytics

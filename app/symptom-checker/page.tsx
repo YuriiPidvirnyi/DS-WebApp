@@ -166,6 +166,13 @@ export default function SymptomCheckerPage() {
   const analyzeSymptoms = () => {
     if (selectedSymptoms.length === 0) return
     setShowResults(true)
+    try {
+      trackEvent(AIEvent.SymptomCheckerCompleted, AnalyticsEventCategory.AI, {
+        symptom_count: selectedSymptoms.length,
+      })
+    } catch {
+      // analytics may fail silently
+    }
   }
 
   const getOverallUrgency = (): Urgency => {
