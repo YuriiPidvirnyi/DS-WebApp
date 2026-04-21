@@ -16,6 +16,7 @@
 6. [Email Delivery Issues](#6-email-delivery-issues)
 7. [Redis / Cache Issues](#7-redis--cache-issues)
 8. [On-Call Handoff](#8-on-call-handoff)
+9. [Vercel Dashboard Settings](#9-vercel-dashboard-settings)
 
 ---
 
@@ -363,3 +364,49 @@ Before handing off to the next on-call engineer:
 | Vercel support         | [vercel.com/help](https://vercel.com/help)           | Deployment infrastructure down           |
 | Resend support         | [resend.com/help](https://resend.com)                | Email delivery systemic failure          |
 | Cloudflare (Turnstile) | [dash.cloudflare.com](https://dash.cloudflare.com)   | Captcha blocking all form submissions    |
+
+---
+
+## 9. Vercel Dashboard Settings
+
+Settings that cannot be expressed in `vercel.json` or code — must be configured manually in the Vercel dashboard per environment.
+
+### 9.1 Skew Protection
+
+**What it does:** Ensures that client JavaScript bundles and server responses always come from the same deployment version. Prevents version mismatch errors during rolling deploys (e.g., a client loaded before a deploy fetching data from the new deploy's API shape).
+
+**Why it is dashboard-only:** Vercel's Skew Protection has no `vercel.json` key. It is a project-level toggle in dashboard settings only.
+Docs: https://vercel.com/docs/deployments/skew-protection
+
+**How to enable (one-time, per project):**
+
+1. Open the Vercel dashboard → project `ds-web-app`
+2. **Settings** → **Advanced**
+3. Scroll to **Skew Protection** and enable the switch
+4. Ensure **System Environment Variables** are enabled (Settings → Environment Variables → "Expose System Environment Variables")
+5. Redeploy the latest production deployment to activate
+
+> Next.js 14.1.4+ (this project uses Next.js 16) handles Skew Protection automatically with zero additional code — no `next.config.js` changes needed.
+
+**Maximum Age:** Default (1 day) is fine for this app. Increase only if patients are likely to keep the tab open for >24 h during a session (e.g., a live exam or long checkout — not typical for a dental booking flow).
+
+### 9.2 AI Gateway
+
+**What it does:** Routes all `streamText` / `generateText` calls (chat assistant, symptom recommendations) through `https://ai-gateway.vercel.sh`, providing unified spend monitoring, provider fallbacks, and a single API key instead of per-provider keys.
+
+**How to activate:**
+
+1. Open the Vercel dashboard → team scope → **AI Gateway** → **API Keys** → **Create key**
+2. Add the key as an environment variable in project settings:
+   - Name: `AI_GATEWAY_API_KEY`
+   - Value: `<key from step 1>`
+   - Environments: Production, Preview, Development
+3. Redeploy — the `ai` SDK v6 automatically detects `AI_GATEWAY_API_KEY` and routes through the gateway
+
+The model identifier (`openai/gpt-4o-mini`) is centralized in `src/lib/ai.ts` (`DEFAULT_CHAT_MODEL`). Change it there to switch models across all AI routes at once.
+
+**CSP note:** `https://ai-gateway.vercel.sh` is already in `connect-src` in `proxy.ts`. Note: gateway calls are server-side (Route Handlers), so they are not subject to the browser CSP — the entry is included for completeness and in case any future client-side fetch is added.
+
+### 9.3 vercel.ts migration (not done — rationale)
+
+The `@vercel/config` package (v0.2.1, import path `@vercel/config/v1`) is real and stable. However, the current `vercel.json` is purely static (4 crons + 1 region) with no dynamic config needs. Migrating to `vercel.ts` would add a build-time package dependency for zero practical benefit at this time. Revisit if dynamic config generation (e.g., environment-conditional cron schedules or per-environment regions) is needed in future.

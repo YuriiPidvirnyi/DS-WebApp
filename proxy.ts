@@ -28,7 +28,8 @@ function buildCSP(nonce: string): string {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: blob: https://www.google-analytics.com https://*.supabase.co https://api.cliniccards.com",
     "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://*.sentry.io https://*.vercel-insights.com https://api.cliniccards.com https://challenges.cloudflare.com",
+    // ai-gateway.vercel.sh: Vercel AI Gateway — routes streamText/generateText calls server-side
+    "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://*.sentry.io https://*.vercel-insights.com https://api.cliniccards.com https://challenges.cloudflare.com https://ai-gateway.vercel.sh",
     "worker-src blob: 'self'",
     "frame-src 'self' https://www.google.com https://maps.google.com https://challenges.cloudflare.com",
     "object-src 'none'",
