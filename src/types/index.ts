@@ -8,6 +8,7 @@ export interface AppointmentFormData extends Record<string, unknown> {
   preferredDate?: string
   preferredTime?: string
   doctorId?: string
+  locale?: 'uk' | 'en' | 'pl'
 }
 
 export interface Appointment extends AppointmentFormData {

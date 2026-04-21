@@ -162,40 +162,52 @@ async function processEvent(
   const service = resolveServiceName(appointment.services)
   const doctorName = resolveDoctorName(appointment.doctors)
 
+  const locale =
+    (event.details?.locale as 'uk' | 'en' | 'pl' | undefined) ?? 'uk'
+
   let email: { subject: string; html: string; text: string } | null = null
   let to = event.recipient_email
 
   switch (event.type) {
     case 'booking_confirmation':
-      email = bookingConfirmationEmail({
-        patientName,
-        service,
-        date: appointment.appointment_date,
-        time: appointment.appointment_time,
-        appointmentId: event.appointment_id ?? '',
-        doctorName,
-      })
+      email = bookingConfirmationEmail(
+        {
+          patientName,
+          service,
+          date: appointment.appointment_date,
+          time: appointment.appointment_time,
+          appointmentId: event.appointment_id ?? '',
+          doctorName,
+        },
+        locale
+      )
       break
 
     case 'appointment_reminder':
-      email = appointmentReminderEmail({
-        patientName,
-        service,
-        date: appointment.appointment_date,
-        time: appointment.appointment_time,
-        appointmentId: event.appointment_id ?? '',
-        doctorName,
-      })
+      email = appointmentReminderEmail(
+        {
+          patientName,
+          service,
+          date: appointment.appointment_date,
+          time: appointment.appointment_time,
+          appointmentId: event.appointment_id ?? '',
+          doctorName,
+        },
+        locale
+      )
       break
 
     case 'appointment_cancellation':
-      email = appointmentCancellationEmail({
-        patientName,
-        service,
-        date: appointment.appointment_date,
-        time: appointment.appointment_time,
-        reason: (event.details?.reason as string) ?? undefined,
-      })
+      email = appointmentCancellationEmail(
+        {
+          patientName,
+          service,
+          date: appointment.appointment_date,
+          time: appointment.appointment_time,
+          reason: (event.details?.reason as string) ?? undefined,
+        },
+        locale
+      )
       break
 
     case 'new_booking_admin':

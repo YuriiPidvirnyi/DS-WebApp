@@ -49,7 +49,7 @@ export { SERVICES, DOCTORS, TIME_SLOTS }
  * - Inline editing state for summary step
  */
 export function useBookingForm() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   // --- Available time slots ---
   const [slots, setSlots] = useState<string[]>(
     TIME_SLOTS as unknown as string[]
@@ -263,6 +263,7 @@ export function useBookingForm() {
             preferredDate: data.date,
             preferredTime: data.time,
             doctorId: data.doctor === 'any' ? undefined : data.doctor,
+            locale: i18n.language as 'uk' | 'en' | 'pl',
           })
           if (!res.success || !res.data)
             throw new Error(t('booking.errors.createFailed'))
