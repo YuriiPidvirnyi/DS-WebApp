@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { RefreshCw, Star } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button, Input, Select } from '@/components/ui'
+import { Button, EmptyState, ErrorState, Input, Select } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
@@ -423,11 +423,7 @@ export default function AdminReviewsPage() {
         </Button>
       </div>
 
-      {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
-        </div>
-      )}
+      {error && <ErrorState title={error} onRetry={() => void loadReviews()} />}
 
       <div className="space-y-3">
         {isLoading ? (
@@ -437,11 +433,10 @@ export default function AdminReviewsPage() {
             {t('admin.reviewsPage.loading')}
           </div>
         ) : rows.length === 0 ? (
-          <div
-            className={`rounded-xl border border-dental-secondary-200 bg-white ${emptyStateClass}`}
-          >
-            {t('admin.reviewsPage.empty')}
-          </div>
+          <EmptyState
+            icon={<Star className="h-8 w-8" />}
+            title={t('admin.reviewsPage.empty')}
+          />
         ) : (
           rows.map(row => (
             <div

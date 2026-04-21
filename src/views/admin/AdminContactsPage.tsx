@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { RefreshCw, StickyNote } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button, Input, Select } from '@/components/ui'
+import { Button, EmptyState, ErrorState, Input, Select } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
@@ -396,9 +396,7 @@ export default function AdminContactsPage() {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
-        </div>
+        <ErrorState title={error} onRetry={() => void loadContacts()} />
       )}
 
       <div className="space-y-3">
@@ -409,11 +407,10 @@ export default function AdminContactsPage() {
             {t('admin.contactsPage.loading')}
           </div>
         ) : rows.length === 0 ? (
-          <div
-            className={`rounded-xl border border-dental-secondary-200 bg-white ${emptyStateClass}`}
-          >
-            {t('admin.contactsPage.empty')}
-          </div>
+          <EmptyState
+            icon={<StickyNote className="h-8 w-8" />}
+            title={t('admin.contactsPage.empty')}
+          />
         ) : (
           rows.map(row => (
             <div

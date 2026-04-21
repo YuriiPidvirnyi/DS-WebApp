@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
 import { Edit, Package, Plus, RefreshCw, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button, Input, Select, Textarea } from '@/components/ui'
+import { Button, ErrorState, Input, Select, Textarea } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { useCSRF } from '@/hooks/useCSRF'
 import { createClient } from '@/lib/supabase/client'
@@ -529,9 +529,7 @@ export default function AdminTreatmentsPage() {
         </Select>
       </div>
       {error ? (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-800">
-          {error}
-        </div>
+        <ErrorState title={error} onRetry={() => void loadList()} />
       ) : null}
       <div className="overflow-x-auto rounded-xl border border-dental-secondary-200 bg-white">
         <table className="min-w-full text-sm">

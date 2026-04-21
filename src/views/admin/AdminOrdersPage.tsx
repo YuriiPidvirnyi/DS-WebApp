@@ -15,7 +15,14 @@ import {
   X,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button, Input, Select, Textarea } from '@/components/ui'
+import {
+  Button,
+  EmptyState,
+  ErrorState,
+  Input,
+  Select,
+  Textarea,
+} from '@/components/ui'
 import { useCSRF } from '@/hooks/useCSRF'
 import { captureException } from '@/utils/sentry'
 import { formatCurrency, formatDateTime } from './utils'
@@ -432,21 +439,17 @@ export default function AdminOrdersPage() {
           </Button>
         </div>
       </div>
-      {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-          {error}
-        </div>
-      )}
+      {error && <ErrorState title={error} onRetry={() => void loadOrders()} />}
       {loading ? (
         <div className="flex justify-center py-16 text-dental-text">
           <Loader2 className="w-8 h-8 animate-spin text-dental-teal" />
           <span className="ml-3">{t('common.loading')}</span>
         </div>
       ) : !orders.length ? (
-        <div className="rounded-xl border border-dashed border-dental-secondary bg-white p-10 text-center text-dental-text">
-          <Package className="w-10 h-10 mx-auto mb-3 text-dental-teal opacity-70" />
-          {t('admin.ordersPage.empty')}
-        </div>
+        <EmptyState
+          icon={<Package className="h-8 w-8" />}
+          title={t('admin.ordersPage.empty')}
+        />
       ) : (
         <div className="space-y-3">
           {orders.map(order => {
