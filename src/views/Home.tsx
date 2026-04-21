@@ -306,7 +306,7 @@ const Home = () => {
             </div>
 
             {/* Professional Package */}
-            <div className="bg-white rounded-2xl shadow-lg border-2 border-dental-primary-600 p-8 relative transform scale-105 hover:shadow-xl transition-all">
+            <div className="bg-white rounded-2xl shadow-lg border-2 border-dental-primary-600 p-8 relative sm:transform sm:scale-105 hover:shadow-xl transition-all">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                 <span className="bg-dental-primary-700 text-white px-4 py-2 rounded-full text-sm font-semibold">
                   {t('pricing.professionalHygiene.popular')}

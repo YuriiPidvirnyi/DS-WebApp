@@ -256,7 +256,7 @@ function HeroSection() {
           }}
         >
           {/* Stats grid - responsive layout */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
             <StatCard
               counterRef={patientsRef}
               count={patientsCount}
@@ -304,7 +304,7 @@ function HeroSection() {
           </div>
 
           {/* Trust indicators - Compact */}
-          <div className="flex flex-wrap justify-center items-center gap-8 pt-4 border-t border-dental-secondary-100 transition-all duration-700 delay-300">
+          <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 lg:gap-8 pt-4 border-t border-dental-secondary-100 transition-all duration-700 delay-300">
             <div className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-dental-primary-500" />
               <span className="text-sm font-medium text-dental-text">

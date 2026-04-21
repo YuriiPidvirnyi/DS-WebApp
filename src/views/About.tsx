@@ -100,7 +100,7 @@ const About = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 mb-20">
           {stats.map((stat, index) => (
             <div key={index} className="text-center">
               <div className="text-4xl lg:text-5xl font-bold text-slate-800 mb-2">
@@ -281,7 +281,7 @@ const About = () => {
               </div>
             </div>
             <div className="rounded-2xl">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {data.equipment?.slice(0, 4).map((eq, idx) => (
                   <div
                     key={idx}

@@ -273,7 +273,7 @@ export default function PriceCalculator() {
                             Math.max(0, (selectedServices[service.id] || 0) - 1)
                           )
                         }
-                        className="w-8 h-8 rounded-lg border border-gray-300 hover:bg-gray-100 flex items-center justify-center"
+                        className="w-10 h-10 sm:w-8 sm:h-8 rounded-lg border border-gray-300 hover:bg-gray-100 flex items-center justify-center"
                         disabled={!selectedServices[service.id]}
                         aria-label={`${t('priceCalculator.decreaseQuantity')}: ${t(service.nameKey)}`}
                       >
@@ -292,7 +292,7 @@ export default function PriceCalculator() {
                             (selectedServices[service.id] || 0) + 1
                           )
                         }
-                        className="w-8 h-8 rounded-lg border border-gray-300 hover:bg-gray-100 flex items-center justify-center"
+                        className="w-10 h-10 sm:w-8 sm:h-8 rounded-lg border border-gray-300 hover:bg-gray-100 flex items-center justify-center"
                         aria-label={`${t('priceCalculator.increaseQuantity')}: ${t(service.nameKey)}`}
                       >
                         +
