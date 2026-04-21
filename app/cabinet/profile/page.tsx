@@ -3,8 +3,15 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
-import { Save, User, Mail, Check, AlertTriangle, RefreshCw } from 'lucide-react'
+import { Save, User, Mail, Check, AlertTriangle } from 'lucide-react'
 import DatePicker from '@/components/ui/DatePicker'
+import { ErrorState } from '@/components/ui/ErrorState'
+import {
+  trackEvent,
+  CabinetEvent,
+  AnalyticsEventCategory,
+} from '@/utils/analytics'
+import * as Sentry from '@sentry/nextjs'
 
 interface PatientProfile {
   first_name: string | null
@@ -216,6 +223,15 @@ export default function ProfilePage() {
       setMessage({ type: 'success', text: t('cabinet.profile.saveSuccess') })
       initialProfileRef.current = { ...profile }
       setIsDirty(false)
+      trackEvent(CabinetEvent.ProfileUpdated, AnalyticsEventCategory.Cabinet, {
+        has_phone: !!profile.phone,
+        has_dob: !!profile.date_of_birth,
+      })
+      Sentry.addBreadcrumb({
+        category: 'cabinet',
+        message: 'profile_updated',
+        level: 'info',
+      })
     }
     setSaving(false)
   }
@@ -238,25 +254,12 @@ export default function ProfilePage() {
 
   if (fetchError) {
     return (
-      <div className="bg-white rounded-2xl p-10 text-center shadow-sm border border-dental-secondary-100">
-        <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-          <AlertTriangle className="w-8 h-8 text-red-500" />
-        </div>
-        <h2 className="text-lg font-semibold text-dental-dark mb-2">
-          {t('cabinet.error.title')}
-        </h2>
-        <p className="text-dental-muted text-sm mb-6">
-          {t('cabinet.error.description')}
-        </p>
-        <button
-          type="button"
-          onClick={() => window.location.reload()}
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-dental-primary-600 text-white rounded-xl text-sm font-medium hover:bg-dental-primary-700 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2"
-        >
-          <RefreshCw className="w-4 h-4" />
-          {t('cabinet.error.retry')}
-        </button>
-      </div>
+      <ErrorState
+        title={t('cabinet.error.title')}
+        description={t('cabinet.error.description')}
+        onRetry={() => window.location.reload()}
+        retryLabel={t('cabinet.error.retry')}
+      />
     )
   }
 

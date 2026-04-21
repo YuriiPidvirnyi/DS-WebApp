@@ -172,6 +172,11 @@ type GtagArgs =
   | [command: 'config', targetId: string, config?: Record<string, unknown>]
   | [command: 'event', eventName: string, parameters?: Record<string, unknown>]
   | [command: 'set', parameters: Record<string, unknown>]
+  | [
+      command: 'consent',
+      action: 'default' | 'update',
+      parameters: Record<string, string>,
+    ]
 
 declare global {
   interface Window {

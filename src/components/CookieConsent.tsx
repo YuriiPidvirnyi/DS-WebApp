@@ -23,11 +23,21 @@ export default function CookieConsent() {
   const handleAccept = () => {
     setStoredConsentState('accepted')
     setState('accepted')
+    window.gtag?.('consent', 'update', {
+      analytics_storage: 'granted',
+      ad_storage: 'granted',
+    })
+    window.dispatchEvent(new Event('consentChanged'))
   }
 
   const handleDecline = () => {
     setStoredConsentState('declined')
     setState('declined')
+    window.gtag?.('consent', 'update', {
+      analytics_storage: 'denied',
+      ad_storage: 'denied',
+    })
+    window.dispatchEvent(new Event('consentChanged'))
   }
 
   // Don't render until mounted (SSR safety) or if already decided

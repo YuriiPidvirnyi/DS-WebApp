@@ -110,6 +110,12 @@ async function waitForServer(url, timeoutMs = 20000) {
       '/admin/appointments',
       '/admin/patients',
       '/admin/services',
+      '/admin/doctors',
+      '/admin/materials',
+      '/admin/orders',
+      '/admin/treatments',
+      '/admin/reviews',
+      '/admin/analytics',
       '/admin/users',
       '/admin/chat',
     ]
@@ -147,6 +153,66 @@ async function waitForServer(url, timeoutMs = 20000) {
   } else {
     console.log(
       '\n⚠️  Admin a11y audit skipped (set A11Y_ADMIN_EMAIL + A11Y_ADMIN_PASSWORD to enable)'
+    )
+  }
+
+  // Patient cabinet accessibility audit (requires A11Y_PATIENT_EMAIL + A11Y_PATIENT_PASSWORD)
+  const patientEmail = process.env.A11Y_PATIENT_EMAIL
+  const patientPassword = process.env.A11Y_PATIENT_PASSWORD
+
+  if (patientEmail && patientPassword) {
+    console.log('\n🏥 Cabinet a11y audit (patient authenticated)...')
+
+    const cabinetContext = await browser.newContext()
+    const cabinetPage = await cabinetContext.newPage()
+
+    await cabinetPage.goto(BASE + '/auth/login')
+    await cabinetPage.fill('input[type="email"]', patientEmail)
+    await cabinetPage.fill('input[type="password"]', patientPassword)
+    await cabinetPage.click('button[type="submit"]')
+    await cabinetPage.waitForURL('**/cabinet**', { timeout: 15000 })
+
+    const CABINET_PAGES = [
+      '/cabinet',
+      '/cabinet/appointments',
+      '/cabinet/treatments',
+      '/cabinet/payments',
+      '/cabinet/profile',
+    ]
+
+    for (const path of CABINET_PAGES) {
+      const url = BASE + path
+      console.log(`\nChecking ${url}`)
+      await cabinetPage.goto(url)
+      const results = await new AxeBuilder({ page: cabinetPage })
+        .withTags(['wcag2a', 'wcag2aa'])
+        .analyze()
+      const violations = results.violations || []
+      total += violations.length
+
+      if (violations.length) {
+        failed += violations.length
+        for (const v of violations) {
+          console.log(`- [${v.impact}] ${v.id}: ${v.description}`)
+          console.log(`  Help: ${v.helpUrl}`)
+          if (v.nodes?.length) {
+            console.log(`  Nodes:`)
+            for (const n of v.nodes.slice(0, 3)) {
+              console.log(`    - ${n.target?.join(' ')}`)
+            }
+            if (v.nodes.length > 3)
+              console.log(`    ...and ${v.nodes.length - 3} more`)
+          }
+        }
+      } else {
+        console.log('  No violations found ✅')
+      }
+    }
+
+    await cabinetContext.close()
+  } else {
+    console.log(
+      '\n⚠️  Cabinet a11y audit skipped (set A11Y_PATIENT_EMAIL + A11Y_PATIENT_PASSWORD to enable)'
     )
   }
 
