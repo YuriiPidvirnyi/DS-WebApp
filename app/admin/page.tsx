@@ -10,6 +10,7 @@ import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { useAdminPageAccess } from '@/hooks/useAdminPageAccess'
 import { hasPermission } from '@/lib/permissions'
 import OnboardingTour from '@/components/admin/OnboardingTour'
+import OnboardingChecklist from '@/components/admin/OnboardingChecklist'
 import {
   Calendar,
   Users,
@@ -317,6 +318,7 @@ export default function AdminDashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        <OnboardingChecklist />
         {error && (
           <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}

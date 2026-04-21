@@ -34,9 +34,7 @@ export async function DELETE(request: NextRequest) {
   if (!serviceRoleKey) {
     captureException(
       new Error('[cabinet/delete-account] SUPABASE_SERVICE_ROLE_KEY not set'),
-      {
-        userId: user.id,
-      }
+      { userId: user.id }
     )
     return Response.json(
       { success: false, error: 'Server misconfiguration' },
@@ -50,18 +48,23 @@ export async function DELETE(request: NextRequest) {
   )
 
   try {
+    // 1. Anonymize PII — soft-delete keeps the row for audit trail /
+    //    treatment record integrity but strips all identifying information.
+    const now = new Date().toISOString()
     const { error: softDeleteError } = await adminClient
       .from('patients')
-      .update({ status: 'deleted' })
+      .update({
+        deleted_at: now,
+        full_name: 'Deleted User',
+        email: null,
+        phone: null,
+      })
       .eq('id', user.id)
 
     if (softDeleteError) {
       captureException(
-        new Error('[cabinet/delete-account] Soft-delete failed'),
-        {
-          supabaseError: softDeleteError,
-          userId: user.id,
-        }
+        new Error('[cabinet/delete-account] Patient anonymization failed'),
+        { supabaseError: softDeleteError, userId: user.id }
       )
       return Response.json(
         { success: false, error: 'Failed to delete account data' },
@@ -69,6 +72,25 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
+    // 2. Cancel all future appointments for this patient.
+    const { error: cancelError } = await adminClient
+      .from('appointments')
+      .update({ status: 'cancelled' })
+      .eq('patient_id', user.id)
+      .gte('scheduled_at', now)
+      .in('status', ['pending', 'confirmed', 'scheduled'])
+
+    if (cancelError) {
+      // Non-fatal — log but continue with auth deletion so PII is removed
+      captureException(
+        new Error(
+          '[cabinet/delete-account] Future appointment cancellation failed'
+        ),
+        { supabaseError: cancelError, userId: user.id }
+      )
+    }
+
+    // 3. Delete the auth user — this revokes all sessions immediately.
     const { error: authDeleteError } = await adminClient.auth.admin.deleteUser(
       user.id
     )
@@ -76,10 +98,7 @@ export async function DELETE(request: NextRequest) {
     if (authDeleteError) {
       captureException(
         new Error('[cabinet/delete-account] Auth user deletion failed'),
-        {
-          supabaseError: authDeleteError,
-          userId: user.id,
-        }
+        { supabaseError: authDeleteError, userId: user.id }
       )
       return Response.json(
         { success: false, error: 'Failed to delete auth account' },

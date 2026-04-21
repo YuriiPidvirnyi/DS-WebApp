@@ -35,29 +35,84 @@ export async function GET(request: NextRequest) {
     // RLS already enforces this at the DB layer; the app-layer filters ensure
     // a misconfigured policy can never leak another patient's data.
     const [
-      { data: patients, error: patientsError },
+      { data: patient, error: patientError },
       { data: appointments, error: appointmentsError },
       { data: reviews, error: reviewsError },
       { data: chatSessions, error: chatSessionsError },
+      { data: notificationEvents, error: notificationEventsError },
     ] = await Promise.all([
-      supabase.from('patients').select('*').eq('id', user.id),
+      supabase
+        .from('patients')
+        .select(
+          'id, full_name, email, phone, date_of_birth, address, language, created_at, updated_at'
+        )
+        .eq('id', user.id)
+        .single(),
       supabase.from('appointments').select('*').eq('patient_id', user.id),
       supabase.from('reviews').select('*').eq('patient_id', user.id),
       supabase.from('chat_sessions').select('*').eq('patient_id', user.id),
+      supabase
+        .from('notification_events')
+        .select('type, status, scheduled_at')
+        .eq('recipient_email', user.email ?? ''),
     ])
 
-    if (
-      patientsError ??
+    const firstError =
+      patientError ??
       appointmentsError ??
       reviewsError ??
-      chatSessionsError
-    ) {
-      const err =
-        patientsError ?? appointmentsError ?? reviewsError ?? chatSessionsError
+      chatSessionsError ??
+      notificationEventsError
+
+    if (firstError) {
       captureException(new Error('[cabinet/export] Supabase query error'), {
-        supabaseError: err,
+        supabaseError: firstError,
         userId: user.id,
       })
+      return Response.json(
+        { success: false, error: 'Failed to export data' },
+        { status: 500 }
+      )
+    }
+
+    // Fetch treatment records linked to this patient's appointments
+    const appointmentIds = (appointments ?? []).map(a => a.id as string)
+    const [{ data: treatmentRecords, error: treatmentRecordsError }] =
+      await Promise.all([
+        appointmentIds.length > 0
+          ? supabase
+              .from('treatment_records')
+              .select('*')
+              .in('appointment_id', appointmentIds)
+          : Promise.resolve({ data: [], error: null }),
+      ])
+
+    if (treatmentRecordsError) {
+      captureException(
+        new Error('[cabinet/export] treatment_records query error'),
+        { supabaseError: treatmentRecordsError, userId: user.id }
+      )
+      return Response.json(
+        { success: false, error: 'Failed to export data' },
+        { status: 500 }
+      )
+    }
+
+    // Fetch treatment record items linked to the treatment records
+    const treatmentRecordIds = (treatmentRecords ?? []).map(r => r.id as string)
+    const { data: treatmentRecordItems, error: treatmentRecordItemsError } =
+      treatmentRecordIds.length > 0
+        ? await supabase
+            .from('treatment_record_items')
+            .select('*')
+            .in('treatment_record_id', treatmentRecordIds)
+        : { data: [], error: null }
+
+    if (treatmentRecordItemsError) {
+      captureException(
+        new Error('[cabinet/export] treatment_record_items query error'),
+        { supabaseError: treatmentRecordItemsError, userId: user.id }
+      )
       return Response.json(
         { success: false, error: 'Failed to export data' },
         { status: 500 }
@@ -88,11 +143,14 @@ export async function GET(request: NextRequest) {
     const payload = JSON.stringify(
       {
         exported_at: new Date().toISOString(),
-        patients: patients ?? [],
+        patient: patient ?? null,
         appointments: appointments ?? [],
+        treatment_records: treatmentRecords ?? [],
+        treatment_record_items: treatmentRecordItems ?? [],
         reviews: reviews ?? [],
         chat_sessions: chatSessions ?? [],
         chat_messages: chatMessages ?? [],
+        notification_events: notificationEvents ?? [],
       },
       null,
       2
