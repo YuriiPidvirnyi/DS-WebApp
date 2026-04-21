@@ -16,6 +16,7 @@ import {
 import { withToast } from '../utils/toast'
 import { sanitizeUserInput } from '../utils/security'
 import { createContact } from '@/services/contacts'
+import { trackFormSubmission } from '@/utils/analytics'
 import MicroFeedback from '@/components/MicroFeedback'
 import Turnstile, { TurnstileRef } from '@/components/Turnstile'
 import { assertValidTurnstile } from '@/utils/turnstileVerify'
@@ -91,6 +92,11 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
       )
 
       // Start cooldown and reset form on success
+      try {
+        trackFormSubmission('contact', true)
+      } catch {
+        // analytics may fail silently
+      }
       startCooldown()
       reset()
 

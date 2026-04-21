@@ -7,6 +7,11 @@ import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
 import { Eye, EyeOff, ArrowRight, Mail, Lock } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
+import {
+  trackEvent,
+  CabinetEvent,
+  AnalyticsEventCategory,
+} from '@/utils/analytics'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -47,6 +52,11 @@ export default function LoginPage() {
       return
     }
 
+    try {
+      trackEvent(CabinetEvent.CabinetLogin, AnalyticsEventCategory.Cabinet)
+    } catch {
+      // analytics may fail silently
+    }
     router.push('/cabinet')
     router.refresh()
   }

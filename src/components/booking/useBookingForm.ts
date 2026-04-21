@@ -184,10 +184,11 @@ export function useBookingForm() {
       setStep(s => {
         const nextStep = Math.min(2, s + 1)
         try {
-          trackEvent(FormEvent.FormStep, AnalyticsEventCategory.Forms, {
-            form: 'booking',
-            step: nextStep,
-          })
+          const stepEvent =
+            nextStep === 1
+              ? BookingEvent.BookingStep1Completed
+              : BookingEvent.BookingStep2Completed
+          trackBooking(stepEvent, {})
         } catch {
           // Analytics may fail silently
         }

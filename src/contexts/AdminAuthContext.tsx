@@ -6,6 +6,11 @@ import { buildAdminIdentity, getAdminAccess } from '@/lib/supabase/admin'
 import { AdminAuthContext, type AdminUser } from './admin-auth-context'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import i18n from '@/i18n/config'
+import {
+  trackEvent,
+  AdminEvent,
+  AnalyticsEventCategory,
+} from '@/utils/analytics'
 
 async function resolveAdminUser(
   supabase: NonNullable<ReturnType<typeof createClient>>,
@@ -124,7 +129,13 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         }
 
         setUser(adminUser)
-
+        try {
+          trackEvent(AdminEvent.AdminLogin, AnalyticsEventCategory.Engagement, {
+            role: adminUser.role,
+          })
+        } catch {
+          // analytics may fail silently
+        }
         return { success: true }
       } catch {
         return { success: false, error: i18n.t('admin.login.errors.generic') }

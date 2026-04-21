@@ -21,6 +21,7 @@ import {
 import { EmptyState } from '@/components/ui/EmptyState'
 import { useCSRF } from '@/hooks/useCSRF'
 import { createICSEvent, downloadICS } from '@/utils/calendar'
+import { trackBooking, BookingEvent } from '@/utils/analytics'
 
 interface Appointment {
   id: string
@@ -618,6 +619,11 @@ export default function AppointmentsPage() {
           type: 'error',
         })
       } else {
+        try {
+          trackBooking(BookingEvent.BookingCancelled, { appointment_id: id })
+        } catch {
+          // analytics may fail silently
+        }
         setAppointments(prev =>
           prev.map(apt =>
             apt.id === id ? { ...apt, status: 'cancelled' } : apt
