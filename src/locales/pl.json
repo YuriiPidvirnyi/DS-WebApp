@@ -3020,5 +3020,108 @@
         }
       }
     }
+  },
+  "routeMeta": {
+    "home": {
+      "title": "Dental Story — Сучасна стоматологічна клініка в Львові",
+      "description": "Професійна стоматологія у Львові. Безболісне лікування зубів, імплантація, відбілювання. Досвідчені лікарі, сучасне обладнання.",
+      "keywords": "стоматологія львів, лікування зубів, імплантація, відбілювання зубів, dental story",
+      "openGraphTitle": "Dental Story — Сучасна стоматологічна клініка у Львові",
+      "openGraphDescription": "Професійна стоматологія у Львові. Безболісне лікування зубів, імплантація, відбілювання."
+    },
+    "about": {
+      "title": "Про нас — Dental Story Львів",
+      "description": "Dental Story — команда професіоналів з 10-річним досвідом. Сучасне обладнання, європейські стандарти лікування.",
+      "keywords": "стоматологія львів про клініку, команда dental story",
+      "openGraphTitle": "Про нас — Dental Story Львів",
+      "openGraphDescription": "Dental Story — команда професіоналів з 10-річним досвідом.",
+      "breadcrumb": "Про нас"
+    },
+    "contact": {
+      "title": "Контакти — Dental Story Львів",
+      "description": "Адреса, телефон, години роботи стоматології Dental Story у Львові. Як нас знайти, карта проїзду.",
+      "keywords": "dental story адреса, телефон стоматології, контакти львів",
+      "openGraphTitle": "Контакти — Dental Story Львів",
+      "openGraphDescription": "Адреса, телефон, години роботи стоматології Dental Story.",
+      "breadcrumb": "Контакти"
+    },
+    "booking": {
+      "title": "Онлайн запис до стоматолога — Dental Story",
+      "description": "Запишіться на прийом до стоматолога онлайн. Вибирайте зручний час та лікаря. Швидко та безпечно.",
+      "keywords": "запис до стоматолога, онлайн запис, dental story львів",
+      "openGraphTitle": "Онлайн запис до стоматолога Dental Story",
+      "openGraphDescription": "Запишіться на прийом онлайн. Вибирайте зручний час та лікаря.",
+      "breadcrumb": "Запис на прийом"
+    },
+    "bookingSuccess": {
+      "title": "Запис створено — Dental Story",
+      "description": "Дякуємо! Ми зв'яжемося для підтвердження запису. Додайте подію в календар та увімкніть нагадування."
+    },
+    "services": {
+      "title": "Послуги стоматології Dental Story — Повний спектр",
+      "description": "Всі види стоматологічних послуг: терапія, ортопедія, імплантація, ортодонтія, дитяча стоматологія. Прозорі ціни.",
+      "keywords": "стоматологічні послуги, ціни на лікування зубів, імплантація зубів",
+      "openGraphTitle": "Послуги стоматології Dental Story",
+      "openGraphDescription": "Всі види стоматологічних послуг: терапія, ортопедія, імплантація, ортодонтія. Прозорі ціни.",
+      "breadcrumb": "Послуги"
+    },
+    "reviews": {
+      "title": "Відгуки пацієнтів — Dental Story",
+      "description": "Оцініть наш сервіс та прочитайте відгуки пацієнтів про лікування у Dental Story.",
+      "keywords": "відгуки стоматології, dental story відгуки, лікування зубів львів",
+      "openGraphTitle": "Відгуки пацієнтів Dental Story",
+      "openGraphDescription": "Оцініть наш сервіс та прочитайте відгуки пацієнтів.",
+      "breadcrumb": "Відгуки"
+    },
+    "gallery": {
+      "title": "Галерея робіт — Результати лікування Dental Story",
+      "description": "Портфоліо наших робіт: фото до і після лікування. Імплантація, реставрація, відбілювання зубів.",
+      "keywords": "результати лікування зубів, фото до і після, dental story портфоліо",
+      "openGraphTitle": "Галерея робіт Dental Story",
+      "openGraphDescription": "Портфоліо наших робіт: фото до і після лікування.",
+      "breadcrumb": "Галерея"
+    },
+    "privacyPolicy": {
+      "title": "Політика конфіденційності — Dental Story",
+      "description": "Як ми збираємо, зберігаємо та обробляємо ваші персональні дані. Конфіденційність пацієнтів — наш пріоритет."
+    },
+    "termsOfService": {
+      "title": "Умови використання — Dental Story",
+      "description": "Правила користування веб-сайтом та надання стоматологічних послуг Dental Story."
+    },
+    "symptomChecker": {
+      "title": "Перевірка симптомів — Dental Story",
+      "description": "Безкоштовна онлайн-перевірка стоматологічних симптомів. Дізнайтеся, що може означати ваш біль."
+    },
+    "admin": {
+      "title": "Адмін панель — Dental Story",
+      "loginTitle": "Вхід в адмін панель — Dental Story",
+      "patientsTitle": "Пацієнти — Dental Story"
+    },
+    "patientCard": {
+      "title": "Картка пацієнта — Dental Story"
+    },
+    "cabinet": {
+      "title": "Особистий кабінет — Dental Story",
+      "appointmentsTitle": "Мої записи — Dental Story",
+      "profileTitle": "Мій профіль — Dental Story",
+      "paymentsTitle": "Мої платежі — Dental Story",
+      "treatmentsTitle": "Моє лікування — Dental Story"
+    },
+    "auth": {
+      "loginTitle": "Вхід — Dental Story",
+      "loginDescription": "Увійдіть у свій особистий кабінет пацієнта Dental Story",
+      "signUpTitle": "Реєстрація — Dental Story",
+      "signUpDescription": "Створіть обліковий запис пацієнта Dental Story",
+      "signUpSuccessTitle": "Реєстрація успішна — Dental Story",
+      "forgotPasswordTitle": "Відновлення пароля — Dental Story",
+      "forgotPasswordDescription": "Отримайте лист для скидання пароля та відновіть доступ до кабінету.",
+      "resetPasswordTitle": "Новий пароль — Dental Story",
+      "resetPasswordDescription": "Встановіть новий пароль для свого облікового запису пацієнта Dental Story."
+    },
+    "openGraphImage": {
+      "alt": "Dental Story — Сучасна стоматологія у Львові",
+      "tagline": "Сучасна стоматологія у Львові"
+    }
   }
 }
