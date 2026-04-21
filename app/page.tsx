@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Home from '@/views/Home'
 import uk from '@/locales/uk'
+import { getVariant } from '@/lib/ab-test'
 
 const homeMeta = uk.routeMeta.home
 
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function HomePage() {
-  return <Home />
+export default async function HomePage() {
+  const heroCTAVariant = await getVariant('hero-cta')
+  return <Home heroCTAVariant={heroCTAVariant} />
 }
