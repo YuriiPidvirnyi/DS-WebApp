@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/nextjs'
+import { hasConsent } from '@/utils/cookieConsent'
 
 const dsn =
   process.env.SENTRY_DSN ||
@@ -50,10 +51,11 @@ if (dsn) {
     maxBreadcrumbs: 50,
   })
 
-  // Lazy-load Session Replay in production only (dev skips Sentry sends via beforeSend;
-  // loading replay still hit CSP / threw before script-src allowed the CDN).
+  // Lazy-load Session Replay in production only, and only when the user has
+  // accepted analytics cookies — replay captures screen content and is consent-sensitive.
   if (typeof window !== 'undefined' && process.env.NODE_ENV !== 'development') {
     const loadReplay = () => {
+      if (!hasConsent()) return
       void Sentry.lazyLoadIntegration('replayIntegration')
         .then(replayIntegration => {
           Sentry.addIntegration(
