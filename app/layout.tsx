@@ -2,8 +2,8 @@ import type { Metadata, Viewport } from 'next'
 import { Nunito, Rubik } from 'next/font/google'
 import Script from 'next/script'
 import { headers } from 'next/headers'
-import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import ConsentGateAnalytics from '@/components/ConsentGateAnalytics'
 import '../src/styles/globals.css'
 import ClientProviders from './providers'
 import Header from '@/components/SiteHeader'
@@ -128,6 +128,26 @@ export default async function RootLayout({
           reviewCount={reviewStats.reviewCount}
         />
 
+        {/* GA4 Consent Mode — must run before gtag loads so analytics_storage
+            defaults to denied until the user explicitly accepts cookies. */}
+        {GA4_ID && (
+          <Script
+            id="ga4-consent-default"
+            strategy="beforeInteractive"
+            nonce={nonce}
+          >
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('consent', 'default', {
+                analytics_storage: 'denied',
+                ad_storage: 'denied',
+                wait_for_update: 500
+              });
+            `}
+          </Script>
+        )}
+
         {/* Google Analytics 4 — lazyOnload to avoid blocking hydration */}
         {GA4_ID && (
           <>
@@ -175,7 +195,7 @@ export default async function RootLayout({
             <CookieConsent />
           </ClientProviders>
         </div>
-        <Analytics />
+        <ConsentGateAnalytics />
         <SpeedInsights />
       </body>
     </html>
