@@ -23,20 +23,14 @@ export async function POST(request: NextRequest) {
   const xSign = request.headers.get('x-sign')
   if (!xSign) {
     logger.warn('[monobank-webhook] Missing x-sign header')
-    return NextResponse.json(
-      { ok: false, error: 'Missing signature' },
-      { status: 401 }
-    )
+    return NextResponse.json({ ok: true })
   }
 
   const body = Buffer.from(await request.arrayBuffer())
 
   if (!(await verifyMonobankWebhook(body, xSign))) {
-    logger.warn('[monobank-webhook] Invalid signature')
-    return NextResponse.json(
-      { ok: false, error: 'Invalid signature' },
-      { status: 403 }
-    )
+    logger.warn('[monobank-webhook] Invalid signature — dropping payload')
+    return NextResponse.json({ ok: true })
   }
 
   let payload: MonobankWebhookPayload

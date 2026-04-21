@@ -1,9 +1,11 @@
 import { createVerify } from 'crypto'
 
 const MONOBANK_TOKEN = process.env.MONOBANK_TOKEN
-const MONOBANK_PUBKEY_URL = 'https://api.monobank.ua/api/merchant/pubkey'
-const MONOBANK_INVOICE_URL =
-  'https://api.monobank.ua/api/merchant/invoice/create'
+const MONOBANK_BASE_URL = 'https://api.monobank.ua'
+const MONOBANK_PUBKEY_URL = `${MONOBANK_BASE_URL}/api/merchant/pubkey`
+const MONOBANK_INVOICE_URL = `${MONOBANK_BASE_URL}/api/merchant/invoice/create`
+const MONOBANK_STATUS_URL = `${MONOBANK_BASE_URL}/api/merchant/invoice/status`
+const MONOBANK_REMOVE_URL = `${MONOBANK_BASE_URL}/api/merchant/invoice/remove`
 
 export interface MonobankInvoiceParams {
   appointmentId: string
@@ -19,22 +21,34 @@ export interface MonobankInvoiceResult {
   pageUrl: string
 }
 
+export type MonobankInvoiceStatus =
+  | 'created'
+  | 'processing'
+  | 'hold'
+  | 'success'
+  | 'failure'
+  | 'expired'
+  | 'reversed'
+
 export interface MonobankWebhookPayload {
   invoiceId: string
-  status:
-    | 'created'
-    | 'processing'
-    | 'hold'
-    | 'success'
-    | 'failure'
-    | 'expired'
-    | 'reversed'
+  status: MonobankInvoiceStatus
   amount: number
   ccy: number
   reference: string
   finalAmount?: number
   createdDate: string
   modifiedDate: string
+}
+
+export interface MonobankInvoiceStatusResult {
+  invoiceId: string
+  status: MonobankInvoiceStatus
+  amount: number
+  ccy: number
+  finalAmount?: number
+  reference?: string
+  errCode?: string
 }
 
 // Module-level pubkey cache
@@ -141,6 +155,44 @@ export async function verifyMonobankWebhook(
     cachedPubkey = null
     cachedPubkeyAt = 0
     return attemptVerify()
+  } catch {
+    return false
+  }
+}
+
+export async function checkMonobankInvoiceStatus(
+  invoiceId: string
+): Promise<MonobankInvoiceStatusResult | null> {
+  if (!MONOBANK_TOKEN) return null
+
+  try {
+    const url = new URL(MONOBANK_STATUS_URL)
+    url.searchParams.set('invoiceId', invoiceId)
+    const response = await fetch(url.toString(), {
+      headers: { 'X-Token': MONOBANK_TOKEN },
+    })
+    if (!response.ok) return null
+    return (await response.json()) as MonobankInvoiceStatusResult
+  } catch {
+    return null
+  }
+}
+
+export async function invalidateMonobankInvoice(
+  invoiceId: string
+): Promise<boolean> {
+  if (!MONOBANK_TOKEN) return false
+
+  try {
+    const response = await fetch(MONOBANK_REMOVE_URL, {
+      method: 'POST',
+      headers: {
+        'X-Token': MONOBANK_TOKEN,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ invoiceId }),
+    })
+    return response.ok
   } catch {
     return false
   }
