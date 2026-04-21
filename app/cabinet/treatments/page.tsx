@@ -3,15 +3,15 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
-import {
-  FileText,
-  Calendar,
-  Activity,
-  ChevronDown,
-  AlertTriangle,
-  RefreshCw,
-} from 'lucide-react'
+import { FileText, Calendar, Activity, ChevronDown } from 'lucide-react'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { ErrorState } from '@/components/ui/ErrorState'
+import {
+  trackEvent,
+  CabinetEvent,
+  AnalyticsEventCategory,
+} from '@/utils/analytics'
+import * as Sentry from '@sentry/nextjs'
 
 type TreatmentRecord = {
   id: string
@@ -137,25 +137,12 @@ export default function TreatmentsHistoryPage() {
 
   if (fetchError) {
     return (
-      <div className="bg-white rounded-2xl p-10 text-center shadow-sm border border-dental-secondary-100">
-        <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-          <AlertTriangle className="w-8 h-8 text-red-500" />
-        </div>
-        <h2 className="text-lg font-semibold text-dental-dark mb-2">
-          {t('cabinet.error.title')}
-        </h2>
-        <p className="text-dental-muted text-sm mb-6">
-          {t('cabinet.error.description')}
-        </p>
-        <button
-          type="button"
-          onClick={() => window.location.reload()}
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-dental-primary-600 text-white rounded-xl text-sm font-medium hover:bg-dental-primary-700 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2"
-        >
-          <RefreshCw className="w-4 h-4" />
-          {t('cabinet.error.retry')}
-        </button>
-      </div>
+      <ErrorState
+        title={t('cabinet.error.title')}
+        description={t('cabinet.error.description')}
+        onRetry={() => window.location.reload()}
+        retryLabel={t('cabinet.error.retry')}
+      />
     )
   }
 
@@ -188,7 +175,23 @@ export default function TreatmentsHistoryPage() {
                 {/* Clickable header */}
                 <button
                   type="button"
-                  onClick={() => setExpandedId(isExpanded ? null : rec.id)}
+                  onClick={() => {
+                    const opening = !isExpanded
+                    setExpandedId(opening ? rec.id : null)
+                    if (opening) {
+                      trackEvent(
+                        CabinetEvent.TreatmentViewed,
+                        AnalyticsEventCategory.Cabinet,
+                        { treatment_id: rec.id, status: rec.status }
+                      )
+                      Sentry.addBreadcrumb({
+                        category: 'cabinet',
+                        message: 'treatment_viewed',
+                        level: 'info',
+                        data: { treatment_id: rec.id, status: rec.status },
+                      })
+                    }
+                  }}
                   aria-expanded={isExpanded}
                   aria-controls={detailsId}
                   className="w-full text-left p-4 sm:p-5 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-dental-primary-500"
