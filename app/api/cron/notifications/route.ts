@@ -35,7 +35,7 @@ function getServiceClient(): ServiceClient | null {
 type NotificationRow = {
   id: string
   type: string
-  appointment_id: string
+  appointment_id: string | null
   recipient_email: string
   status: string
   details: Record<string, unknown>
@@ -71,11 +71,79 @@ function resolveDoctorName(
   return `${doc.first_name} ${doc.last_name}`.trim() || undefined
 }
 
+async function processLowStockAlert(
+  supabase: ServiceClient,
+  event: NotificationRow
+): Promise<void> {
+  const details = event.details ?? {}
+  const subject =
+    typeof details.subject === 'string'
+      ? details.subject
+      : 'Dental Story — низький залишок матеріалів'
+  const text =
+    typeof details.text === 'string'
+      ? details.text
+      : 'Зверніть увагу на залишки матеріалів.'
+
+  const materials = Array.isArray(details.materials)
+    ? (details.materials as { name: string; current: number; min: number }[])
+    : []
+
+  const rows = materials
+    .map(
+      m =>
+        `<tr><td style="padding:4px 12px 4px 0">${m.name}</td><td style="padding:4px 12px 4px 0">${m.current}</td><td style="padding:4px 0">${m.min}</td></tr>`
+    )
+    .join('')
+
+  const html = `<div style="font-family:sans-serif;color:#2C3E42;max-width:600px">
+<h2 style="color:#5A8A94">${subject}</h2>
+<p>${text.replace(/\n/g, '<br>')}</p>
+${
+  rows
+    ? `<table style="border-collapse:collapse;margin-top:8px"><thead><tr>
+<th style="text-align:left;padding:4px 12px 4px 0;border-bottom:1px solid #ccc">Матеріал</th>
+<th style="text-align:left;padding:4px 12px 4px 0;border-bottom:1px solid #ccc">Поточний залишок</th>
+<th style="text-align:left;padding:4px 0;border-bottom:1px solid #ccc">Мін. залишок</th>
+</tr></thead><tbody>${rows}</tbody></table>`
+    : ''
+}
+</div>`
+
+  const result = await sendEmail({
+    to: event.recipient_email,
+    subject,
+    html,
+    text,
+    tags: [{ name: 'type', value: 'low_stock_alert' }],
+  })
+
+  await supabase
+    .from('notification_events')
+    .update({
+      status: result.success
+        ? 'sent'
+        : event.attempts + 1 >= MAX_ATTEMPTS
+          ? 'failed'
+          : 'queued',
+      ...(result.success ? { resend_id: result.id } : { error: result.error }),
+      processed_at: new Date().toISOString(),
+      attempts: event.attempts + 1,
+      claimed_at: null,
+    })
+    .eq('id', event.id)
+}
+
 async function processEvent(
   supabase: ServiceClient,
   event: NotificationRow,
   appointment: AppointmentData | null = null
 ) {
+  if (event.type === 'low_stock_alert') {
+    await processLowStockAlert(supabase, event)
+    return
+  }
+
   if (!appointment) {
     await supabase
       .from('notification_events')
@@ -104,7 +172,7 @@ async function processEvent(
         service,
         date: appointment.appointment_date,
         time: appointment.appointment_time,
-        appointmentId: event.appointment_id,
+        appointmentId: event.appointment_id ?? '',
         doctorName,
       })
       break
@@ -115,7 +183,7 @@ async function processEvent(
         service,
         date: appointment.appointment_date,
         time: appointment.appointment_time,
-        appointmentId: event.appointment_id,
+        appointmentId: event.appointment_id ?? '',
         doctorName,
       })
       break
@@ -151,7 +219,7 @@ async function processEvent(
         service,
         date: appointment.appointment_date,
         time: appointment.appointment_time,
-        appointmentId: event.appointment_id,
+        appointmentId: event.appointment_id ?? '',
       })
       break
   }
@@ -176,7 +244,9 @@ async function processEvent(
     text: email.text,
     tags: [
       { name: 'type', value: event.type },
-      { name: 'appointment', value: event.appointment_id },
+      ...(event.appointment_id
+        ? [{ name: 'appointment', value: event.appointment_id }]
+        : []),
     ],
   })
 
@@ -399,7 +469,9 @@ export async function GET(request: NextRequest) {
       await processEvent(
         supabase,
         event,
-        appointmentsMap.get(event.appointment_id) ?? null
+        (event.appointment_id
+          ? appointmentsMap.get(event.appointment_id)
+          : undefined) ?? null
       )
       processed++
     } catch (err) {

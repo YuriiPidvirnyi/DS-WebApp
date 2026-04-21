@@ -168,7 +168,7 @@ export async function GET(request: NextRequest) {
         recipient_email: adminEmail,
         status: 'queued',
         scheduled_at: new Date().toISOString(),
-        payload: {
+        details: {
           subject: `Низький залишок: ${lowStock.length} матеріал(ів)`,
           materials: lowStock,
           text: `Увага! Наступні матеріали мають залишок нижче мінімального:\n\n${materialList}`,
