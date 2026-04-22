@@ -20,7 +20,6 @@ CREATE POLICY "stock_metrics_daily_admin_read" ON public.stock_metrics_daily
     EXISTS (
       SELECT 1 FROM public.admin_users au
       WHERE au.id = auth.uid()
-        AND au.is_active = true
         AND au.role IN ('superadmin','admin','inventory_manager','analyst')
     )
   );

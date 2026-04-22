@@ -8,21 +8,21 @@ CREATE INDEX IF NOT EXISTS idx_stock_documents_posted_at
   ON public.stock_documents (posted_at DESC NULLS LAST)
   WHERE status = 'posted';
 
-CREATE INDEX IF NOT EXISTS idx_stock_document_lines_material
-  ON public.stock_document_lines (material_id);
+CREATE INDEX IF NOT EXISTS idx_sdi_material_2
+  ON public.stock_document_items (material_id);
 
-CREATE INDEX IF NOT EXISTS idx_stock_document_lines_document
-  ON public.stock_document_lines (document_id);
+CREATE INDEX IF NOT EXISTS idx_sdi_document_2
+  ON public.stock_document_items (stock_document_id);
 
 CREATE INDEX IF NOT EXISTS idx_material_inventory_qty
-  ON public.material_inventory (quantity)
-  WHERE quantity <= 0;
+  ON public.material_inventory (current_quantity)
+  WHERE current_quantity <= 0;
 
 CREATE INDEX IF NOT EXISTS idx_inventory_audit_items_audit
   ON public.inventory_audit_items (audit_id);
 
-CREATE INDEX IF NOT EXISTS idx_stock_calc_card_services_service
-  ON public.stock_calc_card_services (service_id);
+CREATE INDEX IF NOT EXISTS idx_calc_card_items_material
+  ON public.service_calculation_card_items (material_id);
 
 -- ── Tighten NOT NULL where safe ───────────────────────────────────────────────
 
