@@ -37,7 +37,7 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
     m.id,
     m.name_uk,
     COALESCE(mc.name_uk, m.category),
-    mb.name,
+    mb.name_uk,
     m.pack_size_unit,
     sw.id,
     sw.name_uk,
@@ -142,7 +142,7 @@ RETURNS TABLE (
 )
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   SELECT
-    m.default_supplier_id,
+    m.supplier_id,
     ms.name,
     m.id,
     m.name_uk,
@@ -157,7 +157,7 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
     )
   FROM material_inventory mi
   JOIN materials m             ON m.id = mi.material_id
-  LEFT JOIN material_suppliers ms ON ms.id = m.default_supplier_id
+  LEFT JOIN material_suppliers ms ON ms.id = m.supplier_id
   LEFT JOIN material_categories mc ON mc.id = m.category_v2_id
   JOIN stock_warehouses sw     ON sw.id = mi.warehouse_id
   WHERE m.is_active AND NOT sw.is_archived
