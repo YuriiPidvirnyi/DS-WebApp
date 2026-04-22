@@ -1399,6 +1399,8 @@ const pl = {
       goHome: 'Na stronę główną',
       createAnother: 'Utwórz kolejną rezerwację',
       addToCalendar: 'Dodaj do kalendarza',
+      payDeposit: 'Zapłać zaliczkę',
+      payingDeposit: 'Przekierowanie...',
       calendarTitle: 'Wizyta: {{service}}',
       calendarDescription: 'Rezerwacja nr {{ref}}. Pacjent: {{name}}',
       calendarLocation: 'Dental Studio',

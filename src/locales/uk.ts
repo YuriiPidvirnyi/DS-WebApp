@@ -1390,6 +1390,8 @@ const uk = {
       goHome: 'На головну',
       createAnother: 'Створити ще один запис',
       addToCalendar: 'Додати в календар',
+      payDeposit: 'Сплатити завдаток',
+      payingDeposit: 'Перенаправлення...',
       calendarTitle: 'Візит: {{service}}',
       calendarDescription: 'Запис №{{ref}}. Пацієнт: {{name}}',
       calendarLocation: 'Dental Studio',

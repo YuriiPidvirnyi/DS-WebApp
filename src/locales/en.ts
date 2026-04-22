@@ -1391,6 +1391,8 @@ const en = {
       goHome: 'Home',
       createAnother: 'Create another booking',
       addToCalendar: 'Add to calendar',
+      payDeposit: 'Pay deposit',
+      payingDeposit: 'Redirecting...',
       calendarTitle: 'Visit: {{service}}',
       calendarDescription: 'Booking #{{ref}}. Patient: {{name}}',
       calendarLocation: 'Dental Studio',

@@ -5,9 +5,14 @@ import Link from 'next/link'
 import MicroFeedback from '@/components/MicroFeedback'
 import { useEffect, useMemo, useState } from 'react'
 import { createICSEvent, downloadICS } from '@/utils/calendar'
-import { CalendarPlus } from 'lucide-react'
+import { CalendarPlus, CreditCard } from 'lucide-react'
 import ReminderSettings from '@/components/ReminderSettings'
 import { useTranslation } from 'react-i18next'
+
+type PaymentConfig = {
+  mode: 'none' | 'deposit' | 'full'
+  amountKopecks: number
+}
 
 type BookingDetails = {
   id: string
@@ -16,6 +21,7 @@ type BookingDetails = {
   time: string
   name: string
   created: string
+  paymentConfig?: PaymentConfig
 }
 
 function readLastBooking(): BookingDetails | null {
@@ -36,6 +42,7 @@ export default function BookingSuccess() {
   const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(
     null
   )
+  const [isPaying, setIsPaying] = useState(false)
 
   // Require ?ref=… or a recent last_booking; otherwise redirect to /booking
   useEffect(() => {
@@ -67,6 +74,40 @@ export default function BookingSuccess() {
     () => Boolean(bookingDetails?.date && bookingDetails?.time && ref),
     [bookingDetails, ref]
   )
+
+  const handlePay = async () => {
+    if (!ref || !bookingDetails?.paymentConfig) return
+    setIsPaying(true)
+    try {
+      const csrfToken = document.cookie.match(/csrf-token=([^;]+)/)?.[1] ?? ''
+      const res = await fetch('/api/payments/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-csrf-token': csrfToken,
+        },
+        body: JSON.stringify({
+          appointmentId: ref,
+          amountKopecks: bookingDetails.paymentConfig.amountKopecks,
+          description: bookingDetails.service,
+          paymentType: bookingDetails.paymentConfig.mode,
+        }),
+      })
+      const json = (await res.json()) as {
+        success: boolean
+        data?: { invoiceId: string; pageUrl: string }
+      }
+      if (json.success && json.data) {
+        sessionStorage.setItem(
+          'pending_payment_invoice_id',
+          json.data.invoiceId
+        )
+        router.push(json.data.pageUrl)
+      }
+    } finally {
+      setIsPaying(false)
+    }
+  }
 
   const handleAddToCalendar = () => {
     if (!bookingDetails || !ref) return
@@ -165,10 +206,23 @@ export default function BookingSuccess() {
             <ReminderSettings />
           </div>
         </div>
-        <div className="flex justify-center gap-3">
+        <div className="flex flex-wrap justify-center gap-3">
+          {bookingDetails?.paymentConfig &&
+            bookingDetails.paymentConfig.mode !== 'none' && (
+              <button
+                onClick={handlePay}
+                disabled={isPaying}
+                className="px-5 py-2 rounded-lg bg-dental-teal text-white inline-flex items-center gap-2 disabled:opacity-60"
+              >
+                <CreditCard className="h-5 w-5" />
+                {isPaying
+                  ? t('booking.successPage.payingDeposit')
+                  : t('booking.successPage.payDeposit')}
+              </button>
+            )}
           <Link
             href="/"
-            className="px-5 py-2 rounded-lg bg-dental-teal text-white"
+            className="px-5 py-2 rounded-lg bg-gray-100 text-gray-800"
           >
             {t('booking.successPage.goHome')}
           </Link>
