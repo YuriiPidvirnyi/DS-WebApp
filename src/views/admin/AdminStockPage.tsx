@@ -75,7 +75,7 @@ const SECTIONS = [
     icon: BarChart3,
     titleUk: 'Звіти',
     descUk: 'Залишки, собівартість, оборот, критичний залишок',
-    available: false,
+    available: true,
   },
 ]
 
@@ -130,8 +130,8 @@ export default function AdminStockPage() {
         </div>
 
         <div className="mt-8 rounded-xl border border-dental-primary/30 bg-dental-primary/10 p-4 text-sm text-dental-dark">
-          <strong>Phase 6</strong> — Інвентаризація, картки розрахунку,
-          автосписання при завершенні прийому, налаштування активні.{' '}
+          <strong>Phase 7</strong> — Звіти: залишки, історія, критичний залишок,
+          списання, собівартість послуг.{' '}
           <Link
             href="/admin/materials"
             className="underline hover:text-dental-primary-600"
