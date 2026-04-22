@@ -172,3 +172,39 @@ export interface MaterialBalance {
   }
   warehouse: { id: string; name_uk: string; kind: WarehouseKind }
 }
+
+export type AuditStatus = 'draft' | 'posted' | 'void'
+
+export interface InventoryAudit {
+  id: string
+  audit_number: string
+  status: AuditStatus
+  responsible_user_id: string
+  warehouse_ids: string[]
+  category_ids: string[]
+  brand_ids: string[]
+  material_ids: string[]
+  audit_date: string
+  comment: string | null
+  adjustment_document_id: string | null
+  created_at: string
+  posted_at: string | null
+  posted_by: string | null
+}
+
+export interface InventoryAuditItem {
+  id: string
+  audit_id: string
+  material_id: string
+  warehouse_id: string
+  qty_before: number
+  qty_actual: number | null
+  /** computed by API: qty_actual - qty_before */
+  delta?: number | null
+  material?: { id: string; name_uk: string; unit: string }
+  warehouse?: { id: string; name_uk: string }
+}
+
+export interface InventoryAuditWithItems extends InventoryAudit {
+  items: InventoryAuditItem[]
+}

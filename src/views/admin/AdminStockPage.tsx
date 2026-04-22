@@ -9,6 +9,7 @@ import {
   FlaskConical,
   LayoutGrid,
   ClipboardList,
+  ClipboardCheck,
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -53,6 +54,13 @@ const SECTIONS = [
     icon: ClipboardList,
     titleUk: 'Картки розрахунку',
     descUk: 'Норми витрат матеріалів на послугу, заміна товару',
+    available: true,
+  },
+  {
+    href: '/admin/stock/audits',
+    icon: ClipboardCheck,
+    titleUk: 'Інвентаризація',
+    descUk: 'Акти перерахунку залишків, коригуючі документи',
     available: true,
   },
   {
@@ -122,8 +130,8 @@ export default function AdminStockPage() {
         </div>
 
         <div className="mt-8 rounded-xl border border-dental-primary/30 bg-dental-primary/10 p-4 text-sm text-dental-dark">
-          <strong>Phase 5</strong> — Картки розрахунку, автосписання при
-          завершенні прийому, налаштування активні.{' '}
+          <strong>Phase 6</strong> — Інвентаризація, картки розрахунку,
+          автосписання при завершенні прийому, налаштування активні.{' '}
           <Link
             href="/admin/materials"
             className="underline hover:text-dental-primary-600"
