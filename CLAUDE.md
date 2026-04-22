@@ -201,21 +201,30 @@ Colors defined in `tailwind.config.js` and `src/styles/globals.css`:
 
 ### Environment Variables
 
-| Variable                          | Required     | Description                                                             |
-| --------------------------------- | ------------ | ----------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SITE_URL`            | No           | Site URL (default: `https://dentalstory.com.ua`)                        |
-| `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` | No           | GA4 measurement ID                                                      |
-| `NEXT_PUBLIC_SUPABASE_URL`        | For auth     | Supabase project URL                                                    |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY`   | For auth     | Supabase anon key                                                       |
-| `UPSTASH_REDIS_REST_URL`          | For cache    | Upstash Redis URL                                                       |
-| `UPSTASH_REDIS_REST_TOKEN`        | For cache    | Upstash Redis token                                                     |
-| `SENTRY_AUTH_TOKEN`               | No           | For source map upload (skipped if missing)                              |
-| `RESEND_API_KEY`                  | For email    | Resend API key                                                          |
-| `RESEND_FROM_EMAIL`               | No           | Sender address (default: `DentalStory <noreply@dentalstory.com.ua>`)    |
-| `ADMIN_NOTIFICATION_EMAIL`        | No           | Email for admin booking alerts                                          |
-| `CRON_SECRET`                     | For cron     | Bearer token for `/api/cron/*` routes                                   |
-| `SUPABASE_SERVICE_ROLE_KEY`       | For cron     | Service role key for server-side Supabase calls                         |
-| `MONOBANK_TOKEN`                  | For payments | Monobank acquiring token (test: api.monobank.ua, prod: web.monobank.ua) |
+| Variable                           | Required     | Description                                                                          |
+| ---------------------------------- | ------------ | ------------------------------------------------------------------------------------ |
+| `NEXT_PUBLIC_SITE_URL`             | No           | Site URL (default: `https://dentalstory.com.ua`)                                     |
+| `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`  | No           | GA4 measurement ID                                                                   |
+| `NEXT_PUBLIC_SUPABASE_URL`         | For auth     | Supabase project URL                                                                 |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`    | For auth     | Supabase anon key                                                                    |
+| `UPSTASH_REDIS_REST_URL`           | For cache    | Upstash Redis URL                                                                    |
+| `UPSTASH_REDIS_REST_TOKEN`         | For cache    | Upstash Redis token                                                                  |
+| `SENTRY_AUTH_TOKEN`                | No           | For source map upload (skipped if missing)                                           |
+| `RESEND_API_KEY`                   | For email    | Resend API key                                                                       |
+| `RESEND_FROM_EMAIL`                | No           | Sender address (default: `DentalStory <noreply@dentalstory.com.ua>`)                 |
+| `ADMIN_NOTIFICATION_EMAIL`         | No           | Email for admin booking alerts                                                       |
+| `CRON_SECRET`                      | For cron     | Bearer token for `/api/cron/*` routes                                                |
+| `SUPABASE_SERVICE_ROLE_KEY`        | For cron     | Service role key for server-side Supabase calls                                      |
+| `MONOBANK_TOKEN`                   | For payments | Monobank acquiring token (test: api.monobank.ua, prod: web.monobank.ua)              |
+| `NEXT_PUBLIC_INVENTORY_V2_ENABLED` | No           | Set `true` to expose `/admin/stock` shell (off by default; enable per-env in Vercel) |
+
+### Inventory v2 — posting primitive contract
+
+**All stock mutations flow through `post_stock_document()` / `unpost_writeoff_document()`. Direct `UPDATE` of `material_inventory` or `stock_lots` is forbidden and enforced via RLS.** The legacy `deduct_inventory()` / `add_inventory()` SQL functions remain alive until Phase 8 cleanup but must not be called from new code.
+
+Feature flag: `NEXT_PUBLIC_INVENTORY_V2_ENABLED=true` enables `/admin/stock` shell. Off by default; set to `true` in Vercel env for preprod/prod when Phase 1 ships.
+
+---
 
 ## Open limitations
 

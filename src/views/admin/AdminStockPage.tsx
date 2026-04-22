@@ -1,0 +1,84 @@
+'use client'
+
+import { Package, Warehouse, Settings, BarChart3 } from 'lucide-react'
+import Link from 'next/link'
+
+const SECTIONS = [
+  {
+    href: '/admin/stock/documents',
+    icon: Package,
+    titleUk: 'Накладні',
+    descUk: 'Прихідні, списання, переміщення, повернення, коректування',
+    available: false,
+  },
+  {
+    href: '/admin/stock/warehouses',
+    icon: Warehouse,
+    titleUk: 'Склади',
+    descUk: 'Головний склад, кабінети, склади лікарів',
+    available: false,
+  },
+  {
+    href: '/admin/stock/reports',
+    icon: BarChart3,
+    titleUk: 'Звіти',
+    descUk: 'Залишки, собівартість, оборот, критичний залишок',
+    available: false,
+  },
+  {
+    href: '/admin/stock/settings',
+    icon: Settings,
+    titleUk: 'Налаштування',
+    descUk: 'Режим списання, дозволи, додаткові параметри',
+    available: false,
+  },
+]
+
+export default function AdminStockPage() {
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="mb-8">
+          <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
+            Склад v2
+          </h1>
+          <p className="mt-1 text-sm text-dental-text">
+            Модуль у розробці. Нижче — розділи, що з'являться після фази 1.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {SECTIONS.map(({ href, icon: Icon, titleUk, descUk }) => (
+            <div
+              key={href}
+              className="relative flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-5 opacity-50 cursor-not-allowed"
+              aria-disabled="true"
+            >
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-dental-primary/20">
+                <Icon className="h-5 w-5 text-dental-primary-600" />
+              </div>
+              <div>
+                <p className="font-medium text-dental-dark">{titleUk}</p>
+                <p className="mt-0.5 text-sm text-dental-text">{descUk}</p>
+              </div>
+              <span className="absolute right-3 top-3 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+                скоро
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-8 rounded-xl border border-dental-primary/30 bg-dental-primary/10 p-4 text-sm text-dental-dark">
+          <strong>Phase 0</strong> — scaffold активний.{' '}
+          <Link
+            href="/admin/materials"
+            className="underline hover:text-dental-primary-600"
+          >
+            Поточний склад (v1)
+          </Link>{' '}
+          продовжує працювати.
+        </div>
+      </div>
+    </div>
+  )
+}
