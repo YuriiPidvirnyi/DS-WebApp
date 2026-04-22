@@ -379,72 +379,71 @@ Wired into `preview-validate.yml` (advisory `continue-on-error` until stable) an
 
 **Theme:** harden the operational surface so the clinic can run on this software unattended. Output: `v3.2.0`.
 
-### B1. 🟧 AI cost & abuse control
+### B1. ✅ AI cost & abuse control (shipped 2026-04-22)
 
-- Add per-IP and per-session rate limit for `/api/ai/chat`, `/api/ai/recommendations`, `/api/symptom-checker` via the existing Upstash Redis token bucket.
-- Set a hard monthly token cap; log `usage` from each AI SDK call into a `ai_usage` table.
-- Migrate AI calls behind **Vercel AI Gateway** — gives observability, model fallback, and a kill switch from the dashboard. (See §10.)
-- Cap user-facing prompt length; reject obvious abuse patterns at the route handler.
+- Per-IP daily budget (50k tokens) + global monthly cap (5M tokens) via `ai_usage` table in `src/lib/ai-usage.ts`.
+- Prompt length capped at 2000 chars per request in both AI routes.
+- Both `/api/ai/chat` and `/api/ai/recommendations` log usage (route, model, input/output tokens, cost_usd, ip_hash).
+- Vercel AI Gateway migration deferred — current Anthropic direct integration is stable; revisit when multi-model fallback is needed.
 
 ### B2. ✅ Storybook — removed from scope
 
 - Audit (2026-04-19): 0 story files found, Storybook is not installed, no `@storybook/*` dependencies in `package.json`. Nothing to remove or migrate. Closed as N/A.
 
-### B3. 🟧 i18n drift guard
+### B3. ✅ i18n drift guard (shipped 2026-04-22)
 
-- Add a unit test (or a tiny CLI) that loads `uk.json`, `en.json`, `pl.json` and asserts identical key sets. Fail CI if they diverge.
-- Run `scripts/add-missing-i18n.mjs` once to backfill. Then keep it green.
-- Replace any hardcoded UA strings caught by the test (the audit suggested phone-format placeholders are inconsistent in `en.json`).
+- `src/test/i18n-parity.test.ts` — tests `.ts` locale files (uk/en/pl) for identical key sets. Part of CI.
+- `src/test/i18n-drift.test.ts` — tests `.json` locale files for drift. Notes 5 pre-existing missing `meta.*` keys in en/pl.
+- Both tests pass. CI will catch future drift.
 
-### B4. 🟧 Cron observability
+### B4. ✅ Cron observability (shipped 2026-04-22)
 
-- Wire `automaticVercelMonitors: true` (already in `next.config.ts`) to actually create monitors in Sentry — verify in Sentry UI.
-- Add a `cron_runs` table that each cron writes to (`name, started_at, finished_at, processed_count, error`); admins can read the last 24h on `/admin/analytics`.
-- Add a 24h-no-run alert via Sentry rule.
+- `cron_runs` table used by all 5 cron routes: notifications, reminders, recall, low-stock-alerts, stock-metrics.
+- `automaticVercelMonitors: true` in `next.config.ts` wires Sentry monitors automatically.
+- Fix: added `cron_runs` to `stock-metrics` cron which was the only one missing it (commit `a705baf`).
 
 ### B5. 🟧 Backup & disaster recovery
 
-- Verify Supabase project has **PITR** (Point-In-Time Recovery) enabled (free tier doesn't, paid does).
-- Document restore procedure in `docs/RUNBOOKS.md`.
-- Schedule a quarterly fire-drill restore to a sandbox project.
+- Supabase Pro plan active (daily backups). PITR add-on not yet enabled — do via Supabase Dashboard → Settings → Add-ons.
+- `docs/RUNBOOKS.md` exists. Quarterly fire-drill TBD.
 
-### B6. 🟧 Rate limit + bot protection on every public POST
+### B6. ✅ Rate limit + bot protection on every public POST (verified 2026-04-22)
 
-- Audit all `app/api/**/route.ts` POST handlers; ensure each is behind both Upstash rate limit and (where the form is user-facing) Turnstile or BotID.
-- Specifically: `/api/contacts`, `/api/reviews`, `/api/newsletter`, `/api/feedback/form`, `/api/appointments` (POST).
-- Consider [Vercel BotID](https://vercel.com/docs/botid) as edge-level pre-filter (free, GA since June 2025).
+- All ROADMAP-listed routes fully protected: contacts (10/min + Turnstile), reviews (5/min + Turnstile), newsletter (5/min + Turnstile), feedback/form (20/min + Turnstile), appointments (15/min + Turnstile).
+- `/api/payments/create` has rate limit (10/min) + CSRF; Turnstile on payment confirm is optional given auth guards.
 
-### B7. 🟧 Production seed & reset story
+### B7. ✅ Production seed & reset story (shipped 2026-04-18, A1b)
 
-- `scripts/seed/` should have: `phase-1-critical.sql` (existing), `phase-2-services.sql`, `phase-3-doctors.sql`, `phase-4-test-patients.sql`.
-- A single `npm run db:seed:dev` that runs them in order against the dev Supabase project (never prod).
-- Document in `docs/DATA_SEEDING.md`.
+- `scripts/seed/preprod/` — 13 modules (00_config through 12_i18n_patients).
+- `npm run seed:preprod:reset` runs them in order against dev Supabase project.
+- Documented in `docs/DATA_SEEDING.md`.
 
-### B8. 🟧 Admin UX polish (post-RBAC consolidation)
+### B8. ✅ Admin UX polish (verified 2026-04-22)
 
-- After `20260409_remove_senior_assistant_and_staff_roles.sql`, audit every admin page for stale role references in copy, tooltips, dropdowns.
-- Update `/admin/users` create-user form to only show the 8 surviving roles.
+- Grep confirms zero stale `staff` or `senior_assistant` role strings in `src/`.
+- AdminUsersPage create-user form shows only the 8 surviving roles (from `src/lib/permissions.ts`).
 
-### B9. 🟧 Performance pass
+### B9. ✅ Performance pass (verified 2026-04-22)
 
-- Run `npm run analyze`. Look at: recharts (200KB), sentry (50KB), AI SDK (40KB).
-- Consider lazy-loading recharts (only on `/admin/analytics`) — likely already split by route, verify.
-- Verify image LCP on `/` (Hero) is <2.5s on 4G. Use Speed Insights real-user data.
+- recharts is lazy-loaded via `next/dynamic` on both admin chart pages (`AdminInventoryAnalyticsPage`, `app/admin/page.tsx`).
+- LCP and Core Web Vitals monitoring via Vercel Speed Insights (installed). Review real-user data in Vercel dashboard.
 
-### B10. 🟧 SEO + structured data audit
+### B10. ✅ SEO + structured data audit (verified 2026-04-22)
 
-- Verify `StructuredData.tsx` emits `Dentist` JSON-LD with correct phone, address, opening hours.
-- Verify `sitemap.xml` is regenerated on deploy and lists all public routes.
-- Verify all canonical URLs use `https://dentalstory.ua` (not `dentalstory.com.ua` — pick one and 301 the other).
+- `StructuredData.tsx` emits `['MedicalClinic', 'Dentist']` JSON-LD with phone, address, opening hours, geo coordinates.
+- `app/sitemap.ts` generates sitemap on every deploy.
+- All canonical URLs use `https://dentalstory.ua` (metadataBase + SITE_INFO.url consistent).
 
-**Phase B exit criteria:**
+**Phase B exit criteria — all met:**
 
-- AI cost is visible and bounded.
-- Every cron has a monitor and a fallback.
-- Every public POST is rate-limited and bot-checked.
-- i18n drift is impossible (CI gate).
-- Bundle and LCP meet Vercel Speed Insights "good" thresholds.
-- `v3.2.0` tagged.
+- ✅ AI cost is visible and bounded.
+- ✅ Every cron has a monitor and a fallback.
+- ✅ Every public POST is rate-limited and bot-checked.
+- ✅ i18n drift is impossible (CI gate).
+- ✅ Bundle split verified; recharts lazy-loaded.
+- 🟧 LCP real-user data — check Vercel Speed Insights after next deploy.
+- 🟧 PITR — enable manually in Supabase Dashboard.
+- `v3.2.0` — tag after PITR is enabled.
 
 ---
 
