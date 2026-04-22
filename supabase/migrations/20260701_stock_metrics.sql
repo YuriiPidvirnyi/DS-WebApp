@@ -59,29 +59,29 @@ BEGIN
     AND audit_date = p_day;
 
   -- distinct admin_users who authored a stock doc on p_day
-  SELECT COUNT(DISTINCT created_by) INTO v_active_users
+  SELECT COUNT(DISTINCT responsible_user_id) INTO v_active_users
   FROM public.stock_documents
   WHERE created_at::DATE = p_day;
 
   -- materials with qty = 0 at end of p_day (proxy for stockout events)
   SELECT COUNT(*) INTO v_stockouts
   FROM public.material_inventory mi
-  WHERE mi.quantity = 0;
+  WHERE mi.current_quantity = 0;
 
   -- materials currently below critical_level
   SELECT COUNT(*) INTO v_critical_low
   FROM public.material_inventory mi
-  WHERE mi.critical_level IS NOT NULL
-    AND mi.quantity < mi.critical_level
-    AND mi.quantity > 0;
+  WHERE mi.critical_level_unit_qty IS NOT NULL
+    AND mi.current_quantity < mi.critical_level_unit_qty
+    AND mi.current_quantity > 0;
 
   -- avg material cost per treatment for treatments completed on p_day
   SELECT AVG(line_total_per_treatment) INTO v_avg_cost
   FROM (
-    SELECT tr.id, SUM(wl.unit_cost * wl.qty_actual) AS line_total_per_treatment
+    SELECT tr.id, SUM(sdi.unit_cost * sdi.unit_qty) AS line_total_per_treatment
     FROM public.treatment_records tr
-    JOIN public.stock_documents sd ON sd.reference_id = tr.id::TEXT
-    JOIN public.stock_document_lines wl ON wl.document_id = sd.id
+    JOIN public.stock_documents sd ON sd.treatment_record_id = tr.id
+    JOIN public.stock_document_items sdi ON sdi.stock_document_id = sd.id
     WHERE sd.doc_type = 'writeoff'
       AND sd.status = 'posted'
       AND sd.posted_at::DATE = p_day
