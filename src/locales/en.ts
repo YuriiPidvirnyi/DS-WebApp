@@ -1494,6 +1494,7 @@ const en = {
       treatments: 'Treatment Acts',
       materials: 'Materials',
       orders: 'Orders',
+      stock: 'Stock v2',
       analytics: 'Analytics',
       dataQuality: 'Data Quality',
       health: 'Service Health',

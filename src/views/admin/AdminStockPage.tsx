@@ -88,7 +88,7 @@ export default function AdminStockPage() {
             Склад v2
           </h1>
           <p className="mt-1 text-sm text-dental-text">
-            Модуль у розробці. Нижче — розділи, що з'являться після фази 1.
+            Управління складом, матеріалами та витратами. Всі 8 фаз реалізовані.
           </p>
         </div>
 
@@ -130,15 +130,15 @@ export default function AdminStockPage() {
         </div>
 
         <div className="mt-8 rounded-xl border border-dental-primary/30 bg-dental-primary/10 p-4 text-sm text-dental-dark">
-          <strong>Phase 7</strong> — Звіти: залишки, історія, критичний залишок,
-          списання, собівартість послуг.{' '}
+          <strong>Всі 8 фаз завершено</strong> — Звіти, метрики, залишки,
+          собівартість, картки розрахунку, інвентаризація.{' '}
           <Link
             href="/admin/materials"
             className="underline hover:text-dental-primary-600"
           >
-            Поточний склад (v1)
+            Склад v1
           </Link>{' '}
-          продовжує працювати.
+          продовжує працювати паралельно.
         </div>
       </div>
     </div>

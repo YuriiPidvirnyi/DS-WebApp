@@ -1503,6 +1503,7 @@ const pl = {
       treatments: 'Akty prac',
       materials: 'Materiały',
       orders: 'Zamówienia',
+      stock: 'Magazyn v2',
       analytics: 'Analityka',
       dataQuality: 'Jakość danych',
       health: 'Stan serwisów',

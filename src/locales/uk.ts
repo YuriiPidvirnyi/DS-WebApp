@@ -1494,6 +1494,7 @@ const uk = {
       treatments: 'Акти робіт',
       materials: 'Матеріали',
       orders: 'Замовлення',
+      stock: 'Склад v2',
       analytics: 'Аналітика',
       dataQuality: 'Якість даних',
       health: 'Стан сервісів',
