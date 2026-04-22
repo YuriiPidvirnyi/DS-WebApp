@@ -40,7 +40,7 @@ SELECT ok(
     SELECT 1
     FROM public.report_balances(
       p_warehouse_id    := NULL,
-      p_category        := NULL,
+      p_category_id     := NULL,
       p_balance_state   := 'positive',
       p_critical_only   := false
     )
@@ -58,7 +58,7 @@ SELECT ok(
     SELECT 1
     FROM public.report_balances(
       p_warehouse_id    := NULL,
-      p_category        := NULL,
+      p_category_id     := NULL,
       p_balance_state   := 'zero',
       p_critical_only   := false
     )
@@ -74,7 +74,7 @@ SELECT ok(
     SELECT 1
     FROM public.report_balances(
       p_warehouse_id    := NULL,
-      p_category        := NULL,
+      p_category_id     := NULL,
       p_balance_state   := 'all',
       p_critical_only   := false
     )

@@ -226,16 +226,17 @@ Feature flag: `NEXT_PUBLIC_INVENTORY_V2_ENABLED=true` enables `/admin/stock`. Se
 
 #### Phase status (all 8 phases shipped on `develop`)
 
-| Phase | What ships                                                   | Key files                                                     |
-| ----- | ------------------------------------------------------------ | ------------------------------------------------------------- |
-| 1     | Posting primitive, warehouses, documents hub                 | `20260401_stock_v2_*.sql`, `app/admin/stock/`                 |
-| 2     | Directories (suppliers, brands, categories)                  | `20260501_stock_directories.sql`                              |
-| 3     | Units of measure + pack conversion                           | `20260510_stock_units.sql`                                    |
-| 4     | My-warehouses daily ops (request, transfer, writeoff)        | `20260520_stock_my_warehouses.sql`                            |
-| 5     | Calc cards + treatment auto-writeoff hook                    | `20260605_stock_calc_cards.sql`                               |
-| 6     | Inventory audits (INV-YY-NNNNNNN)                            | `20260615_stock_inventory_audits.sql`                         |
-| 7     | Reports (balances, history, reorder, writeoff, service-cost) | `20260701_stock_reports.sql`                                  |
-| 8     | Daily metrics cron, cleanup indexes                          | `20260701_stock_metrics.sql`, `20260710_stock_v2_cleanup.sql` |
+| Phase | What ships                                                   | Key files                                                                                                |
+| ----- | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| 0     | `clinic_settings`, feature flag, `/admin/stock` shell        | `20260430_clinic_settings.sql`                                                                           |
+| 1     | Posting primitive, warehouses, documents hub                 | `20260501_stock_backfill.sql`, `20260501_stock_posting_primitive.sql`, `20260501_stock_posting_rpcs.sql` |
+| 2     | Directories (suppliers, brands, categories)                  | `20260515_stock_directories.sql`                                                                         |
+| 3     | Materials v2 (barcodes, pack/unit, warehouse matrix)         | `20260522_materials_v2.sql`                                                                              |
+| 4     | My-warehouses daily ops (request, transfer, writeoff)        | `20260601_internal_requisitions.sql`                                                                     |
+| 5     | Calc cards + treatment auto-writeoff hook                    | `20260605_stock_calc_cards.sql`                                                                          |
+| 6     | Inventory audits (INV-YY-NNNNNNN)                            | `20260615_stock_inventory_audits.sql`                                                                    |
+| 7     | Reports (balances, history, reorder, writeoff, service-cost) | `20260701_stock_reports.sql`                                                                             |
+| 8     | Daily metrics cron, cleanup indexes                          | `20260701_stock_metrics.sql`, `20260710_stock_v2_cleanup.sql`                                            |
 
 #### Stock cron
 
