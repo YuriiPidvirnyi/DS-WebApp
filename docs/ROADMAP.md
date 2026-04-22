@@ -2,7 +2,7 @@
 
 **Document version:** 1.4
 **Created:** 2026-04-17
-**Current product version:** v3.0.1 (per CHANGELOG, FINAL_VERIFICATION_REPORT_v3.0.1.md)
+**Current product version:** v3.0.0 tag on `main`; `develop` tracks an unreleased v3.1.0 candidate (see [CHANGELOG.md](../CHANGELOG.md) `[Unreleased]` section). Historical `FINAL_VERIFICATION_REPORT_v3.0.1.md` was a pre-release snapshot and has been pruned — rely on git log + CHANGELOG.
 **Owner:** Yurii Pidvirnyi
 **Stack of record:** Next.js 16 App Router · React 18 · Supabase (Postgres + Auth + RLS + Realtime) · Tailwind 3 · i18next (uk/en/pl) · Resend · Upstash Redis · Sentry · Vercel (fra1)
 
@@ -20,23 +20,23 @@ Anything marked **🟥 BLOCKER** must ship before the public launch. **🟧 HIGH
 
 ### 1.1 What is actually shipped and solid
 
-| Area                                                                                                           | Status                                           | Evidence                                                                           |
-| -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------- |
-| Public site (Home, About, Services, Gallery, Reviews, Contact, Privacy, Terms)                                 | ✅ Complete                                      | `src/views/`, all routed in `app/`                                                 |
-| Multi-step booking flow + Turnstile + CSRF                                                                     | ✅ Complete                                      | `src/components/booking/`, `useBookingForm.ts`, `app/api/appointments/`            |
-| Patient cabinet shell (appointments, profile, treatments, history, reviews)                                    | ✅ Structurally complete                         | `app/cabinet/**`                                                                   |
-| 14-page admin panel + 10-role RBAC (reduced to 8 after `20260409_remove_senior_assistant_and_staff_roles.sql`) | ✅ Complete                                      | `app/admin/**`, `src/lib/permissions.ts`, 23 migrations                            |
-| Treatment records / materials / material orders workflows                                                      | ✅ Complete                                      | `app/api/treatment-records/`, `app/api/materials/`, `app/api/material-orders/`     |
-| Live chat (patient ↔ admin) over Supabase Realtime                                                             | ✅ Complete                                      | `useAdminChat`, `useLiveChat`, RLS migration `20260408_chat_role_based_access.sql` |
-| AI symptom checker + AI chat (Vercel AI SDK v6)                                                                | ✅ Wired, but ungoverned (no cost cap)           | `app/api/ai/`, `app/symptom-checker/`                                              |
-| i18n in uk / en / pl, ~3000 keys per locale, lazy-loaded                                                       | ✅ Complete, no key drift                        | `src/locales/{uk,en,pl}.json`, `app/i18n-provider.tsx`                             |
-| Auth: Supabase SSR (patients) + admin auth via Supabase + RLS                                                  | ✅ Hardened (no longer "demo client-side only")  | `src/lib/supabase/`, `AdminAuthContext`                                            |
-| Security: CSP with nonce, HSTS, X-Frame-Options, Permissions-Policy, rate limit, Turnstile, DOMPurify, CSRF    | ✅ Complete                                      | `proxy.ts` (Next.js 16 `middleware.ts` is renamed to `proxy.ts`)                   |
-| Cron jobs: notifications (5 min), reminders (daily 18:00), low-stock (weekday 08:00)                           | ✅ Wired in `vercel.json`                        | `app/api/cron/`, `vercel.json`                                                     |
-| Sentry (client+server+edge) with `/monitoring` tunnel and Vercel Cron auto-monitors                            | ✅ Complete                                      | `instrumentation.ts`, `sentry.*.config.ts`, `next.config.ts`                       |
-| PWA via @ducanh2912/next-pwa with multi-strategy Workbox cache                                                 | ✅ Complete                                      | `next.config.ts`                                                                   |
-| RLS fix for doctor patient scope (Gap 2 from `GAPS_AND_RECOMMENDATIONS.md`)                                    | ✅ Migration shipped, **needs production audit** | `supabase/migrations/20260408_fix_doctor_scope_rls.sql`                            |
-| Audit log table for admin actions                                                                              | ✅ Migration shipped                             | `supabase/migrations/20260321_admin_audit_and_restore.sql`                         |
+| Area                                                                                                           | Status                                                | Evidence                                                                           |
+| -------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Public site (Home, About, Services, Gallery, Reviews, Contact, Privacy, Terms)                                 | ✅ Complete                                           | `src/views/`, all routed in `app/`                                                 |
+| Multi-step booking flow + Turnstile + CSRF                                                                     | ✅ Complete                                           | `src/components/booking/`, `useBookingForm.ts`, `app/api/appointments/`            |
+| Patient cabinet shell (appointments, profile, treatments, history, reviews)                                    | ✅ Structurally complete                              | `app/cabinet/**`                                                                   |
+| 14-page admin panel + 10-role RBAC (reduced to 8 after `20260409_remove_senior_assistant_and_staff_roles.sql`) | ✅ Complete                                           | `app/admin/**`, `src/lib/permissions.ts`, 23 migrations                            |
+| Treatment records / materials / material orders workflows                                                      | ✅ Complete                                           | `app/api/treatment-records/`, `app/api/materials/`, `app/api/material-orders/`     |
+| Live chat (patient ↔ admin) over Supabase Realtime                                                             | ✅ Complete                                           | `useAdminChat`, `useLiveChat`, RLS migration `20260408_chat_role_based_access.sql` |
+| AI symptom checker + AI chat (Vercel AI SDK v6)                                                                | ✅ Wired, but ungoverned (no cost cap)                | `app/api/ai/`, `app/symptom-checker/`                                              |
+| i18n in uk / en / pl, ~3000 keys per locale, lazy-loaded                                                       | ✅ Complete, no key drift                             | `src/locales/{uk,en,pl}.json`, `app/i18n-provider.tsx`                             |
+| Auth: Supabase SSR (patients) + admin auth via Supabase + RLS                                                  | ✅ Hardened (no longer "demo client-side only")       | `src/lib/supabase/`, `AdminAuthContext`                                            |
+| Security: CSP with nonce, HSTS, X-Frame-Options, Permissions-Policy, rate limit, Turnstile, DOMPurify, CSRF    | ✅ Complete                                           | `proxy.ts` (Next.js 16 `middleware.ts` is renamed to `proxy.ts`)                   |
+| Cron jobs: notifications (5 min), reminders (daily 18:00), low-stock (weekday 08:00)                           | ✅ Wired in `vercel.json`                             | `app/api/cron/`, `vercel.json`                                                     |
+| Sentry (client+server+edge) with `/monitoring` tunnel and Vercel Cron auto-monitors                            | ✅ Complete                                           | `instrumentation.ts`, `sentry.*.config.ts`, `next.config.ts`                       |
+| PWA via @ducanh2912/next-pwa with multi-strategy Workbox cache                                                 | ✅ Complete                                           | `next.config.ts`                                                                   |
+| RLS fix for doctor patient scope (originally flagged during RBAC audit; superseded by v2)                      | ✅ Hardened in `20260417_fix_doctor_scope_rls_v2.sql` | `supabase/migrations/20260417_fix_doctor_scope_rls_v2.sql` (v1 superseded)         |
+| Audit log table for admin actions                                                                              | ✅ Migration shipped                                  | `supabase/migrations/20260321_admin_audit_and_restore.sql`                         |
 
 ### 1.2 What is partially built or unverified
 
@@ -66,13 +66,13 @@ Reasoning: core flows are solid, infra is mature, i18n is complete, security pos
 
 ### 1.6 Verified admin audit (first-hand, not doc-based)
 
-> In v1.0 of this roadmap the admin was described as "14 pages solid" based on `FINAL_VERIFICATION_REPORT_v3.0.1.md` + agent summaries. That was below the professional bar. Below are findings verified by reading the actual source, migrations, and running the dev server. Severity prefix: 🟥 blocker · 🟧 high · 🟨 medium · 🟩 low.
+> In v1.0 of this roadmap the admin was described as "14 pages solid" based on a pre-release verification snapshot + agent summaries. That was below the professional bar. Below are findings verified by reading the actual source, migrations, and running the dev server. Severity prefix: 🟥 blocker · 🟧 high · 🟨 medium · 🟩 low.
 
 **🟥 RLS doctor-scope is broken on both `appointments` and `patients` tables.**
 
 - `appointments` RLS (from [supabase/migrations/20260322_remove_legacy_admin_claim.sql](supabase/migrations/20260322_remove_legacy_admin_claim.sql) lines 49–51) reads `USING (auth.uid() = patient_id OR public.is_admin_actor())`. `is_admin_actor()` returns `true` for _any_ `admin_users` row regardless of role. Every doctor logged in is an `admin_users` row → every doctor passes the check → every doctor sees every patient's appointments.
 - `patients` RLS was "fixed" in [20260408_fix_doctor_scope_rls.sql](supabase/migrations/20260408_fix_doctor_scope_rls.sql) lines 22–25 with a subquery: `SELECT COUNT(*) > 0 FROM appointments WHERE appointments.patient_id = patients.id AND appointments.doctor_id = auth.uid()`. But `appointments.doctor_id` is FK to `doctors.id` while `auth.uid()` resolves to `admin_users.id`. These are **different keys**; `admin_users.doctor_id` is the link column (see [src/lib/supabase/admin.ts](src/lib/supabase/admin.ts) lines 30–44). The subquery never matches for real doctors → every doctor falls through to `is_admin_actor()` → they see every patient anyway.
-- **The gap `GAPS_AND_RECOMMENDATIONS.md` claimed was closed is still wide open.** HIPAA / UA-152-VIII-FZ (personal data law) risk. Must be fixed before any launch and before any preprod seeded with real-shape PII.
+- **The gap that migration `20260408` claimed to close was still wide open at v1.0 of this roadmap.** HIPAA / UA-152-VIII-FZ (personal data law) risk. **Status:** closed by migration `20260417_fix_doctor_scope_rls_v2.sql`; still requires production audit before any preprod seeded with real-shape PII.
 - **Fix sketch** (conceptual):
 
   ```sql
@@ -229,7 +229,9 @@ Three invariants:
 
 ## 4. Documentation consolidation
 
-Goal: root has only `README.md`, `CLAUDE.md`, `CHANGELOG.md`, `LICENSE` (if present). Everything else moves into `docs/` or is deleted in favor of `git log`.
+> **Status (2026-04-21):** largely complete. Root is now limited to `README.md`, `CLAUDE.md`, `CHANGELOG.md`, and config files — all legacy report `.md` files and `RESEED_PHASE_1_CRITICAL.sql` have been removed. `docs/` has been trimmed of historical verification snapshots (`VERIFICATION_REPORT_3.0*.md`, `BUG_FIXES_SUMMARY.md`, `audits/2026-03-23-*.md`) and `ARCHITECTURE_REVIEW_2026-04-20.md` has been moved to `docs/archive/`. The subsections below document the original plan for historical reference; tick items are already reflected in the tree.
+
+Goal (original): root has only `README.md`, `CLAUDE.md`, `CHANGELOG.md`, `LICENSE` (if present). Everything else moves into `docs/` or is deleted in favor of `git log`.
 
 ### 4.1 Files to delete from root (rely on git history)
 
@@ -273,7 +275,9 @@ RESEED_PHASE_1_CRITICAL.sql      # → move to scripts/seed/phase-1-critical.sql
 
 ### 4.4 Update `README.md`
 
-Currently says **"Version 2.0.0"** at the bottom — wrong. Update to read from `package.json` (3.0.0). Trim anything that duplicates `docs/`. Keep: tagline, install steps, dev commands, link to `docs/`.
+~~Currently says **"Version 2.0.0"** at the bottom — wrong. Update to read from `package.json` (3.0.0). Trim anything that duplicates `docs/`. Keep: tagline, install steps, dev commands, link to `docs/`.~~
+
+**Done (2026-04-21):** README footer now points at [`package.json`](../package.json) and [`CHANGELOG.md`](../CHANGELOG.md); stale component/hook/route counts replaced with links to `CLAUDE.md` and `docs/`; table list in the install section extended to mention migrations.
 
 ### 4.5 Update `CLAUDE.md`
 

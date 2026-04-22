@@ -103,15 +103,13 @@ SENTRY_AUTH_TOKEN=your-sentry-token
 4. Copy entire content of `scripts/init_database.sql`
 5. Paste and click "Run" to execute migration
 
-Expected tables created:
+The repo also ships incremental schema changes in `supabase/migrations/` (30+ SQL files — RLS policies, audit logs, materials, treatments, payments, chat, etc.). Apply them in order after the initial script, or run the preprod seeding pipeline documented in [docs/DATA_SEEDING.md](docs/DATA_SEEDING.md).
 
-- doctors
-- services
-- appointments
-- reviews
-- working_hours
-- patients
-- contact_submissions
+Expected core tables created by `init_database.sql`:
+
+- `doctors`, `services`, `appointments`, `reviews`, `working_hours`, `patients`, `contact_submissions`
+
+Additional tables introduced by migrations include `admin_users` (RBAC), `materials` + `material_inventory` + `material_orders`, `treatment_records` + `treatment_record_items`, `notification_events`, `chat_sessions` + `chat_messages`, `admin_audit_logs`, and the payments tables. See [docs/DATABASE.md](docs/DATABASE.md) for the authoritative schema reference.
 
 ### 5. Run Development Server
 
@@ -124,52 +122,37 @@ Open [http://localhost:3000](http://localhost:3000) in browser.
 ## Project Structure
 
 ```
-app/                             # Next.js App Router pages
-├── layout.tsx                   # Root layout (fonts, metadata, providers)
-├── page.tsx                     # Homepage -> src/views/Home
-├── providers.tsx                # Client-side provider stack
-├── api/                         # 25 API route handlers
-│   ├── appointments/            # Booking CRUD + slots
-│   ├── contacts/                # Contact form
-│   ├── reviews/                 # Reviews submission
-│   ├── doctors/                 # Doctor data
-│   ├── services/                # Service catalog
-│   ├── materials/               # Inventory management
-│   ├── treatment-records/       # Clinical records
-│   ├── material-orders/         # Purchase orders
-│   ├── cron/                    # Vercel Cron (notifications, reminders)
-│   ├── ai/                      # AI chat + recommendations
-│   ├── admin/analytics/         # Admin analytics
-│   └── health/                  # Health check
-├── auth/                        # Login, signup, password reset, callback
-├── booking/                     # Multi-step booking flow
-├── cabinet/                     # Patient portal (appointments, profile, treatments)
-├── admin/                       # Admin dashboard (15 sub-pages)
-├── symptom-checker/             # AI symptom checker
-└── ...                          # about, contact, gallery, reviews, services, etc.
+app/                   # Next.js App Router pages
+├── layout.tsx         # Root layout (fonts, metadata, providers)
+├── page.tsx           # Homepage → src/views/Home
+├── api/               # API route handlers (public, authenticated, admin, cron, payments)
+├── auth/              # Login, signup, password reset, email callback
+├── booking/           # Multi-step booking flow
+├── cabinet/           # Patient portal (appointments, profile, treatments, payments)
+├── admin/             # Admin dashboard (14 sub-pages — analytics, patients, doctors,
+│                      #  services, appointments, materials, orders, treatments, users,
+│                      #  reviews, contacts, chat, email-templates, settings)
+├── symptom-checker/   # AI symptom checker
+└── ...                # about, contact, gallery, reviews, services, privacy, terms
 
 src/
-├── components/                  # 52 reusable components
-│   ├── ui/                      # Primitives (Button, Input, Card, Logo, etc.)
-│   ├── booking/                 # Booking form steps
-│   └── providers/               # Toast provider
-├── views/                       # 27 page-level view components
-│   ├── admin/                   # Admin page views
-│   ├── auth/                    # Auth page tests
-│   └── patient/                 # Patient dashboard
-├── hooks/                       # 11 custom hooks
-├── lib/                         # Supabase, Redis, email, API security
-├── services/                    # Client-side API services
-├── locales/                     # i18n translations (uk, en, pl)
-├── styles/                      # globals.css (Tailwind + design tokens)
-├── types/                       # TypeScript types
-└── utils/                       # Utility functions
+├── components/        # UI primitives, booking steps, admin widgets, providers
+├── views/             # Page-level view components (imported by app/ pages)
+├── hooks/             # Custom React hooks (useBookingForm, useLiveChat, ...)
+├── lib/               # Supabase (client/server/middleware), Redis, email, security
+├── services/          # Client-side API services
+├── locales/           # i18n translations (uk, en, pl — ~3000 keys each)
+├── styles/            # globals.css (Tailwind + design tokens)
+├── types/             # TypeScript types
+└── utils/             # Utility functions
 
-e2e/                             # Playwright E2E tests
-supabase/migrations/             # Database migrations (15 SQL files)
-scripts/                         # Build scripts, a11y audit, SQL helpers
-proxy.ts                         # Edge middleware (CSP, auth, security headers)
+e2e/                   # Playwright specs (auth, booking, admin, smoke, a11y)
+supabase/migrations/   # Database migrations (30+ SQL files)
+scripts/               # a11y audit, seeding pipeline, helpers
+proxy.ts               # Edge middleware (CSP + nonce, rate limit, auth, security headers)
 ```
+
+> Authoritative architecture, routes, and runtime behavior live in [CLAUDE.md](CLAUDE.md) and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). This tree is a snapshot.
 
 ## API Endpoints
 
@@ -460,7 +443,8 @@ MIT License - see LICENSE file for details
 
 ---
 
-**Version**: 3.0.1  
+**Version**: see [package.json](package.json) and [CHANGELOG.md](CHANGELOG.md)  
+**Roadmap**: [docs/ROADMAP.md](docs/ROADMAP.md)  
 **Maintained by**: Dental Story Development Team
 
 ## Documentation
