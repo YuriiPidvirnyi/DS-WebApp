@@ -9,9 +9,62 @@ import {
   csrfErrorResponse,
 } from '@/lib/api-security'
 import { captureException } from '@/utils/sentry'
+import {
+  isV2On,
+  getClinicSetting,
+  resolveDoctorCabinetWarehouse,
+} from '@/lib/stock-helpers'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+
+/** Fire writeoff hook when a treatment transitions to `completed`. Never throws. */
+async function tryWriteoffHook(
+  supabase: SupabaseClient,
+  treatmentId: string,
+  doctorId: string | null,
+  responsibleUserId: string
+) {
+  if (!isV2On()) return
+  try {
+    const mode = await getClinicSetting<string>(supabase, 'writeoff_mode')
+    if (!mode || mode === 'none') return
+
+    const warehouseId = doctorId
+      ? await resolveDoctorCabinetWarehouse(supabase, doctorId)
+      : null
+    if (!warehouseId) return
+
+    const { data: docId, error: draftErr } = await supabase.rpc(
+      'create_writeoff_draft_for_treatment',
+      {
+        p_treatment_record_id: treatmentId,
+        p_warehouse_id: warehouseId,
+        p_responsible_user_id: responsibleUserId,
+      }
+    )
+    if (draftErr) throw draftErr
+
+    if (mode === 'auto' && docId) {
+      const { error: postErr } = await supabase.rpc('post_stock_document', {
+        p_doc_id: docId,
+      })
+      if (postErr) {
+        captureException(postErr, {
+          extra: { treatment: treatmentId, doc: docId, phase: 'auto-post' },
+        })
+      }
+    }
+  } catch (e) {
+    captureException(
+      e instanceof Error
+        ? e
+        : new Error('[treatment-records] writeoff-hook failed'),
+      { extra: { treatmentId } }
+    )
+  }
+}
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -206,6 +259,17 @@ export async function PATCH(request: NextRequest, { params }: Params) {
         { success: false, error: 'Невірний формат запиту' },
         { status: 400 }
       )
+    }
+
+    // Capture prev status for writeoff hook comparison (needs body first)
+    let prevStatus: string | null = null
+    if (isV2On() && body.status === 'completed') {
+      const { data: prev } = await auth
+        .supabase!.from('treatment_records')
+        .select('status')
+        .eq('id', id)
+        .maybeSingle()
+      prevStatus = prev?.status ?? null
     }
 
     const updates: Record<string, unknown> = {}
@@ -405,6 +469,16 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       return NextResponse.json(
         { success: false, error: 'Картку не знайдено' },
         { status: 404 }
+      )
+    }
+
+    // Writeoff hook: fires when treatment becomes completed (non-blocking)
+    if (updates.status === 'completed' && prevStatus !== 'completed') {
+      await tryWriteoffHook(
+        auth.supabase!,
+        id,
+        (full as { doctor_id?: string | null }).doctor_id ?? null,
+        auth.user!.id
       )
     }
 

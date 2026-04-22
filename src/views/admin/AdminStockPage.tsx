@@ -8,6 +8,7 @@ import {
   BookOpen,
   FlaskConical,
   LayoutGrid,
+  ClipboardList,
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -48,17 +49,24 @@ const SECTIONS = [
     available: true,
   },
   {
-    href: '/admin/stock/reports',
-    icon: BarChart3,
-    titleUk: 'Звіти',
-    descUk: 'Залишки, собівартість, оборот, критичний залишок',
-    available: false,
+    href: '/admin/stock/calc-cards',
+    icon: ClipboardList,
+    titleUk: 'Картки розрахунку',
+    descUk: 'Норми витрат матеріалів на послугу, заміна товару',
+    available: true,
   },
   {
     href: '/admin/stock/settings',
     icon: Settings,
     titleUk: 'Налаштування',
     descUk: 'Режим списання, дозволи, додаткові параметри',
+    available: true,
+  },
+  {
+    href: '/admin/stock/reports',
+    icon: BarChart3,
+    titleUk: 'Звіти',
+    descUk: 'Залишки, собівартість, оборот, критичний залишок',
     available: false,
   },
 ]
@@ -114,8 +122,8 @@ export default function AdminStockPage() {
         </div>
 
         <div className="mt-8 rounded-xl border border-dental-primary/30 bg-dental-primary/10 p-4 text-sm text-dental-dark">
-          <strong>Phase 4</strong> — Мої склади, кошик дій, редактор накладних
-          активні.{' '}
+          <strong>Phase 5</strong> — Картки розрахунку, автосписання при
+          завершенні прийому, налаштування активні.{' '}
           <Link
             href="/admin/materials"
             className="underline hover:text-dental-primary-600"
