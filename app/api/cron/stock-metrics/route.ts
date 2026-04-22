@@ -18,6 +18,44 @@ function getServiceClient(): ServiceClient | null {
   return createClient(url, key)
 }
 
+async function startCronRun(
+  supabase: ServiceClient,
+  name: string
+): Promise<string | null> {
+  try {
+    const { data } = await supabase
+      .from('cron_runs')
+      .insert({ name, status: 'running' })
+      .select('id')
+      .single()
+    return (data as { id: string } | null)?.id ?? null
+  } catch {
+    return null
+  }
+}
+
+async function finishCronRun(
+  supabase: ServiceClient,
+  runId: string | null,
+  processed: number,
+  error?: string
+): Promise<void> {
+  if (!runId) return
+  try {
+    await supabase
+      .from('cron_runs')
+      .update({
+        status: error ? 'error' : 'ok',
+        finished_at: new Date().toISOString(),
+        processed,
+        ...(error ? { error } : {}),
+      })
+      .eq('id', runId)
+  } catch {
+    // non-blocking
+  }
+}
+
 /**
  * GET /api/cron/stock-metrics
  * Runs daily at 21:55 UTC (23:55 Kyiv time).
@@ -41,6 +79,8 @@ export async function GET(request: NextRequest) {
     )
   }
 
+  const runId = await startCronRun(supabase, 'stock-metrics')
+
   const today = new Date()
   const yesterday = new Date(today)
   yesterday.setDate(yesterday.getDate() - 1)
@@ -63,6 +103,15 @@ export async function GET(request: NextRequest) {
   }
 
   const anyError = Object.values(results).some(v => v.startsWith('error'))
+  await finishCronRun(
+    supabase,
+    runId,
+    days.length,
+    anyError
+      ? Object.values(results).find(v => v.startsWith('error'))
+      : undefined
+  )
+
   return NextResponse.json(
     { success: !anyError, days: results },
     { status: anyError ? 500 : 200 }
