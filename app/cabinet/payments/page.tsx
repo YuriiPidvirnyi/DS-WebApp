@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { CreditCard } from 'lucide-react'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { WalletCards, type WalletCard } from '@/components/cabinet/WalletCards'
 
 type PaymentStatus =
   | 'created'
@@ -80,18 +81,28 @@ export default async function PaymentsPage() {
     redirect('/auth/login')
   }
 
-  const { data: payments } = await supabase
-    .from('payments')
-    .select(
-      'id, invoice_id, amount_kopecks, payment_mode, status, created_at, paid_at, appointments(appointment_date, appointment_time, services(name_uk))'
-    )
-    .order('created_at', { ascending: false })
+  const [{ data: payments }, { data: walletCards }] = await Promise.all([
+    supabase
+      .from('payments')
+      .select(
+        'id, invoice_id, amount_kopecks, payment_mode, status, created_at, paid_at, appointments(appointment_date, appointment_time, services(name_uk))'
+      )
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('patient_wallet_cards')
+      .select('id, card_token, masked_pan, country, created_at, last_used_at')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false }),
+  ])
 
   const list = (payments ?? []) as unknown as Payment[]
+  const cards = (walletCards ?? []) as WalletCard[]
 
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold text-dental-dark mb-6">Платежі</h1>
+
+      <WalletCards initialCards={cards} />
 
       {list.length === 0 ? (
         <EmptyState
