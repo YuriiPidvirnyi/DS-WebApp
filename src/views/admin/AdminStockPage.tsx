@@ -7,6 +7,7 @@ import {
   BarChart3,
   BookOpen,
   FlaskConical,
+  LayoutGrid,
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -37,6 +38,13 @@ const SECTIONS = [
     icon: FlaskConical,
     titleUk: 'Матеріали',
     descUk: 'Картка товару, штрихкоди, упаковки, матриця складів',
+    available: true,
+  },
+  {
+    href: '/admin/stock/my-warehouses',
+    icon: LayoutGrid,
+    titleUk: 'Мої склади',
+    descUk: 'Щоденна робота: залишки, списання, переміщення, заявки',
     available: true,
   },
   {
@@ -106,8 +114,8 @@ export default function AdminStockPage() {
         </div>
 
         <div className="mt-8 rounded-xl border border-dental-primary/30 bg-dental-primary/10 p-4 text-sm text-dental-dark">
-          <strong>Phase 3</strong> — картки матеріалів, штрихкоди, матриця
-          складів активні.{' '}
+          <strong>Phase 4</strong> — Мої склади, кошик дій, редактор накладних
+          активні.{' '}
           <Link
             href="/admin/materials"
             className="underline hover:text-dental-primary-600"
