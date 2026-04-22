@@ -120,6 +120,42 @@ export interface ClinicSettings {
   show_my_inventory: boolean
 }
 
+export interface StockMaterial {
+  id: string
+  name_uk: string
+  name_en: string | null
+  unit: string
+  category: string | null
+  image_url: string | null
+  is_active: boolean
+  // Phase 2 directory FKs
+  brand_id: string | null
+  category_v2_id: string | null
+  supplier_id: string | null
+  barcode: string | null
+  sku: string | null
+  pack_size: number | null
+  pack_unit: string | null
+  description_uk: string | null
+  description_en: string | null
+  // Phase 3 pack/unit + barcode
+  pack_format_label: string | null
+  pack_size_numerator: number
+  pack_size_unit: string
+  barcodes: string[]
+  article_code: string | null
+}
+
+export interface MaterialWarehouseMatrix {
+  material_id: string
+  warehouse_id: string
+  critical_level_unit_qty: number | null
+  default_reorder_unit_qty: number | null
+  is_visible: boolean
+  current_quantity: number
+  warehouse: { id: string; name_uk: string; kind: WarehouseKind }
+}
+
 export interface MaterialBalance {
   material_id: string
   warehouse_id: string

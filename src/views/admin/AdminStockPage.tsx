@@ -1,6 +1,13 @@
 'use client'
 
-import { Package, Warehouse, Settings, BarChart3, BookOpen } from 'lucide-react'
+import {
+  Package,
+  Warehouse,
+  Settings,
+  BarChart3,
+  BookOpen,
+  FlaskConical,
+} from 'lucide-react'
 import Link from 'next/link'
 
 const SECTIONS = [
@@ -23,6 +30,13 @@ const SECTIONS = [
     icon: BookOpen,
     titleUk: 'Довідники',
     descUk: 'Постачальники, бренди, категорії матеріалів',
+    available: true,
+  },
+  {
+    href: '/admin/stock/materials',
+    icon: FlaskConical,
+    titleUk: 'Матеріали',
+    descUk: 'Картка товару, штрихкоди, упаковки, матриця складів',
     available: true,
   },
   {
@@ -92,8 +106,8 @@ export default function AdminStockPage() {
         </div>
 
         <div className="mt-8 rounded-xl border border-dental-primary/30 bg-dental-primary/10 p-4 text-sm text-dental-dark">
-          <strong>Phase 2</strong> — довідники (постачальники, бренди,
-          категорії) активні.{' '}
+          <strong>Phase 3</strong> — картки матеріалів, штрихкоди, матриця
+          складів активні.{' '}
           <Link
             href="/admin/materials"
             className="underline hover:text-dental-primary-600"
