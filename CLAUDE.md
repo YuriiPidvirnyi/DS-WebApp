@@ -220,9 +220,26 @@ Colors defined in `tailwind.config.js` and `src/styles/globals.css`:
 
 ### Inventory v2 — posting primitive contract
 
-**All stock mutations flow through `post_stock_document()` / `unpost_writeoff_document()`. Direct `UPDATE` of `material_inventory` or `stock_lots` is forbidden and enforced via RLS.** The legacy `deduct_inventory()` / `add_inventory()` SQL functions remain alive until Phase 8 cleanup but must not be called from new code.
+**All stock mutations flow through `post_stock_document()` / `unpost_writeoff_document()`. Direct `UPDATE` of `material_inventory` or `stock_lots` is forbidden and enforced via RLS.**
 
-Feature flag: `NEXT_PUBLIC_INVENTORY_V2_ENABLED=true` enables `/admin/stock` shell. Off by default; set to `true` in Vercel env for preprod/prod when Phase 1 ships.
+Feature flag: `NEXT_PUBLIC_INVENTORY_V2_ENABLED=true` enables `/admin/stock`. Set to `true` in Vercel env per-environment.
+
+#### Phase status (all 8 phases shipped on `develop`)
+
+| Phase | What ships                                                   | Key files                                                     |
+| ----- | ------------------------------------------------------------ | ------------------------------------------------------------- |
+| 1     | Posting primitive, warehouses, documents hub                 | `20260401_stock_v2_*.sql`, `app/admin/stock/`                 |
+| 2     | Directories (suppliers, brands, categories)                  | `20260501_stock_directories.sql`                              |
+| 3     | Units of measure + pack conversion                           | `20260510_stock_units.sql`                                    |
+| 4     | My-warehouses daily ops (request, transfer, writeoff)        | `20260520_stock_my_warehouses.sql`                            |
+| 5     | Calc cards + treatment auto-writeoff hook                    | `20260605_stock_calc_cards.sql`                               |
+| 6     | Inventory audits (INV-YY-NNNNNNN)                            | `20260615_stock_inventory_audits.sql`                         |
+| 7     | Reports (balances, history, reorder, writeoff, service-cost) | `20260701_stock_reports.sql`                                  |
+| 8     | Daily metrics cron, cleanup indexes                          | `20260701_stock_metrics.sql`, `20260710_stock_v2_cleanup.sql` |
+
+#### Stock cron
+
+- `/api/cron/stock-metrics` — daily at 21:55 UTC (23:55 Kyiv). Calls `snapshot_stock_metrics_daily()` for yesterday + today. Registered in `vercel.json`.
 
 ---
 
