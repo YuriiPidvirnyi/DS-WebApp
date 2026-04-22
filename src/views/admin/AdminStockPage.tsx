@@ -1,6 +1,6 @@
 'use client'
 
-import { Package, Warehouse, Settings, BarChart3 } from 'lucide-react'
+import { Package, Warehouse, Settings, BarChart3, BookOpen } from 'lucide-react'
 import Link from 'next/link'
 
 const SECTIONS = [
@@ -16,6 +16,13 @@ const SECTIONS = [
     icon: Warehouse,
     titleUk: 'Склади',
     descUk: 'Головний склад, кабінети, склади лікарів',
+    available: true,
+  },
+  {
+    href: '/admin/stock/directories',
+    icon: BookOpen,
+    titleUk: 'Довідники',
+    descUk: 'Постачальники, бренди, категорії матеріалів',
     available: true,
   },
   {
@@ -85,7 +92,8 @@ export default function AdminStockPage() {
         </div>
 
         <div className="mt-8 rounded-xl border border-dental-primary/30 bg-dental-primary/10 p-4 text-sm text-dental-dark">
-          <strong>Phase 1</strong> — склади та документи активні.{' '}
+          <strong>Phase 2</strong> — довідники (постачальники, бренди,
+          категорії) активні.{' '}
           <Link
             href="/admin/materials"
             className="underline hover:text-dental-primary-600"
