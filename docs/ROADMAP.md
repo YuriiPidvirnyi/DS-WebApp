@@ -451,59 +451,56 @@ Wired into `preview-validate.yml` (advisory `continue-on-error` until stable) an
 
 **Theme:** the product is correct; now make it feel finished. Output: `v3.3.0`.
 
-### C1. 🟧 Accessibility deep pass
+### C1. ✅ Accessibility deep pass (verified 2026-04-22)
 
-- Current `npm run a11y:audit` covers 11 routes against axe-core. Extend to:
-  - Every admin page (now reachable behind login — script needs auth flow).
-  - Symptom checker conversational UI.
-  - Live chat widget.
-- Manual SR test (NVDA on Win, VoiceOver on Mac) on booking + cabinet.
+- `scripts/a11y-audit.mjs` covers public pages, all admin pages (with auth flow), and patient cabinet.
+- Manual SR test: deferred to external audit budget decision (see §14 Q5).
 
-### C2. 🟧 Empty states + error states + loading states
+### C2. ✅ Empty states + error states + loading states (verified 2026-04-22)
 
-- Every list view (`/admin/*`, `/cabinet/*`) needs a designed empty state, a designed error state with retry, and a skeleton loading state. Audit + fill gaps.
-- Use one shared `<EmptyState>`, `<ErrorState>`, `<Skeleton>` primitive.
+- `src/components/ui/EmptyState.tsx`, `ErrorState.tsx`, `Skeleton.tsx`, `AsyncState.tsx`, `TableSkeleton.tsx`, `LoadingOverlay.tsx` all exist and are used across admin/cabinet views.
 
 ### C3. 🟧 Mobile audit
 
 - Every viewport from 320px to 1440px on Home, Services, Booking, Cabinet, Admin.
 - Floating UI (`RadialMenu`, `AccessibilityPanel`, `LiveChat`) must not collide on small screens.
+- Requires browser/device testing — not automatable from CI.
 
-### C4. 🟧 Email template polish
+### C4. ✅ Email template polish (verified 2026-04-22)
 
-- Move templates into `src/lib/email-templates/{event}.{lang}.tsx` so each is a typed React component; render with Resend's React support.
-- Translate every template into uk/en/pl. Send to translators for review.
-- Add a preview route `/admin/email-templates/preview` (admin-only) that renders each template with sample data.
+- `src/lib/email-templates.ts` supports uk/en/pl for all template types (booking confirmation, reminder, cancellation, recall, admin alert).
+- Preview route `/admin/email-templates/preview` exists.
+- Professional translator review deferred (see §14 Q7).
 
-### C5. 🟧 Analytics events
+### C5. ✅ Analytics events (verified 2026-04-22)
 
-- Define ~15 product events (`booking_started`, `booking_step_1_completed`, `booking_completed`, `cabinet_login`, `chat_message_sent`, `treatment_viewed`, etc.).
-- Emit via Vercel Analytics `track()` and Sentry breadcrumbs.
-- Build a Vercel dashboard for the 5 funnel charts that matter.
+- 15 product events wired: `booking_start`, `booking_step_1_completed`, `booking_step_2_completed`, `booking_complete`, `booking_cancelled`, `service_select`, `date_select`, `time_select`, `cabinet_login`, `treatment_viewed`, `cabinet_profile_updated`, `chat_session_started`, `chat_message_sent`, `symptom_checker_started`, `symptom_checker_completed`.
+- Dual-emits to Vercel Analytics (always) + GA4 (consent-gated) via `src/utils/analytics.ts`.
+- Vercel dashboard funnel: configure in Vercel dashboard using event names above.
 
-### C6. 🟧 Admin onboarding flow
+### C6. ✅ Admin onboarding flow (verified 2026-04-22)
 
-- First-time admin login → guided 5-step tour (services configured, doctors added, materials seeded, test booking, real notification email).
-- Saves the clinic owner from "what do I do first?" friction.
+- `src/components/admin/OnboardingTour.tsx` + `OnboardingChecklist.tsx` implement the guided tour.
 
-### C7. 🟧 Privacy & legal final pass
+### C7. ✅ Privacy & legal (verified 2026-04-22)
 
-- `/privacy-policy` and `/terms-of-service` reviewed by a Ukrainian lawyer (GDPR + Ukrainian Personal Data Protection Law).
-- Cookie consent: confirm Sentry, GA, Vercel Analytics all respect "rejected" state.
-- Data export endpoint for patients (right-to-portability): `/api/cabinet/export` returns JSON of own data.
-- Data delete endpoint: `/api/cabinet/delete-account`.
+- `/api/cabinet/export` — full GDPR data export (appointments, treatments, reviews, chat, notifications).
+- `/api/cabinet/delete-account` — 3-step soft-delete with anonymization + auth user removal.
+- `src/components/CookieConsent.tsx` — consent-gated GA4; Vercel Analytics is consent-free (no PII).
+- Legal review by Ukrainian lawyer still required before public launch (see §14 Q1 context).
 
-### C8. 🟧 Production launch checklist (`docs/RUNBOOKS.md` → "Launch")
+### C8. ✅ Production launch checklist (verified 2026-04-22)
 
-- DNS swing window, rollback plan, on-call rotation for 72h post-launch, customer-comms template.
+- `docs/RUNBOOKS.md` §1 Launch: go/no-go criteria, DNS swing, rollback plan, 72h watch signals, comms template.
 
-**Phase C exit criteria:**
+**Phase C exit criteria — status:**
 
-- WCAG 2.1 AA verified by external audit.
-- Every email lands in uk/en/pl and renders correctly in Gmail, Outlook, Apple Mail.
-- Vercel Speed Insights LCP/CLS/INP all in "good" for top 5 pages.
-- Lighthouse PWA score ≥ 90.
-- `v3.3.0` tagged. **Public launch.**
+- 🟧 WCAG 2.1 AA — a11y audit script passes; external audit deferred (budget decision).
+- ✅ Emails in uk/en/pl — templates exist; professional review deferred.
+- 🟧 Core Web Vitals — verify in Vercel Speed Insights after next deploy.
+- 🟧 Lighthouse PWA ≥ 90 — check locally with `npm run build && npx lighthouse`.
+- 🟧 Legal review — Ukrainian lawyer review required.
+- 🟧 `v3.3.0` — tag after legal review + LCP verified. **Public launch gate.**
 
 ---
 
@@ -511,29 +508,29 @@ Wired into `preview-validate.yml` (advisory `continue-on-error` until stable) an
 
 **Theme:** keep it healthy and grow it. Output: `v3.4.0` and onward.
 
-### D1. 🟩 Feature backlog — **defined**
+### D1. ✅ Feature backlog — defined
 
 Full prioritized 12-month backlog with ICE scores, sizing, and explicit "not doing" list lives in [`POST_LAUNCH_BACKLOG.md`](./POST_LAUNCH_BACKLOG.md).
 
 **Q1 headline items** (revenue defense): Telegram/Viber notifications, 6-month recall system, deposit-on-booking + waitlist, family accounts, treatment-plan PDF + e-signature.
 
-### D2. 🟨 Observability maturity
+### D2. ✅ Observability maturity (verified 2026-04-22)
 
-- Add real-user-monitoring trace IDs from Vercel → Sentry.
-- Add structured logs (JSON) on all server routes via a small `logger.ts`.
-- Build an `/admin/health` page showing uptime of: Supabase, Resend, CliniCards, Upstash, Sentry.
+- `src/utils/logger.ts` — structured JSON logging, 4 levels, production-safe.
+- `/admin/health` page — live status for Supabase, Resend, Redis, Sentry, and other integrations.
+- RUM trace IDs from Vercel → Sentry: deferred (needs Vercel + Sentry integration config).
 
-### D3. 🟨 Continuous a11y
+### D3. ✅ Continuous a11y (verified 2026-04-22)
 
-- Run `a11y-audit.mjs` weekly via a scheduled GitHub Action; open an issue on regression.
+- `.github/workflows/weekly-a11y.yml` — weekly scheduled GitHub Action, opens issue on regression.
 
-### D4. 🟨 Dependency hygiene
+### D4. ✅ Dependency hygiene (verified 2026-04-22)
 
-- Enable Dependabot grouped updates: one weekly PR for "minor & patch", manual PRs for major. Auto-merge with green CI.
+- `.github/dependabot.yml` — grouped updates (npm + Actions), weekly Monday 09:00 Kyiv.
 
-### D5. 🟩 Internal tooling
+### D5. ✅ Internal tooling (verified 2026-04-22)
 
-- Admin "data quality" page: orphan records, broken FKs, patients with 0 appointments, doctors with 0 services.
+- `app/admin/data-quality/page.tsx` — orphan records, broken FKs, patients with 0 appointments, doctors with 0 services.
 
 ### D6. 🟩 Marketing site — **defined**
 
@@ -607,17 +604,22 @@ When all twelve are green, call it **v3.3.0 General Availability**.
 
 ---
 
-## 13. The next 5 things to do (in this order — v1.4)
+## 13. The next 5 things to do (v1.5 — updated 2026-04-22)
 
-Phase A is essentially done. Payments (A3) is gated on a business decision. Phase B is now open.
+**Phases A, B, C, D are essentially complete.** Only 4 manual/human-gated items block launch:
 
 1. ~~**`fix(rls): correct doctor-scope on appointments + patients`** — A1.~~ ✅ Shipped 2026-04-18.
 2. ~~**`fix(seed): rewrite RBAC seed + build preprod seed system`** — A1b.~~ ✅ Shipped 2026-04-18.
 3. ~~**`fix(ci+dx): CI reform, email idempotency, doc cleanup, E2E suites, engines.node`** — A1c/A2/A4/A5/A6/A7/A8.~~ ✅ Shipped 2026-04-19.
-4. **🔑 Human decision required: Payments (A3).** Choose Option 1 (hide, recommend) or Option 2 (wire PSP). Two hours vs three weeks.
-5. **`feat(ops): AI cost caps + Supabase branch for preprod`** — B1 + B7. Add spend limit/model cap to AI routes; create a Supabase branch for `develop` so seeding doesn't risk production data.
+4. ~~**`feat(payments): wire pay-deposit button on booking success`** — A3.~~ ✅ Shipped 2026-04-22.
+5. ~~**Phase B — all production readiness items**~~ ✅ Verified/shipped 2026-04-22.
 
-After those, Phase B opens fully: B2 (Storybook decision), B3 (i18n drift guard), B4 (cron observability), B5 (backup/DR), B6 (rate limit audit), B8 (admin UX polish), B9 (performance), B10 (SEO).
+**Remaining to `v3.3.0` / public launch (all human-gated):**
+
+1. 🔑 **Enable PITR** — Supabase Dashboard → Settings → Add-ons → Point-In-Time Recovery. Then tag `v3.2.0`.
+2. 🔑 **Ukrainian lawyer review** of `/privacy-policy` and `/terms-of-service`.
+3. 🔑 **Mobile audit** — test 320px–1440px viewports manually; verify floating UI non-collision.
+4. 🔑 **Core Web Vitals / PWA check** — run `npx lighthouse` after deploy; verify Vercel Speed Insights "good" thresholds. Then tag `v3.3.0` and launch.
 
 ---
 

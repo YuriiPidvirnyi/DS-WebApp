@@ -7,10 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-> Changes on `develop` since `v3.0.0`. Target release: v3.1.0.
+> Changes on `develop` since `v3.0.0`. Target release: v3.2.0 (after PITR enabled) → v3.3.0 (after legal review + LCP verified = public launch).
 
 ### Added
 
+- **Pay-deposit button** on booking success page — reads `paymentConfig` from booking response, POSTs to `/api/payments/create` with CSRF token, redirects to Monobank; visible only when `payment_mode !== 'none'` (C5/A3)
+- **Inventory v2 phase 9 — all phases complete**: Склад v2 production-ready with all 9 phases (0–8): posting primitive, warehouses, directories, materials v2, daily ops, calc cards, audits, reports, daily metrics cron
+- **cron_runs observability** on `stock-metrics` cron — all 5 cron routes now record start/finish in `cron_runs` table (B4)
 - **Payments**: Monobank acquiring integration — `POST /api/payments/create`, `GET /api/payments/status/[invoiceId]`, signed webhook at `/api/payments/monobank-webhook`
 - **A/B testing framework** + six-month recall notification system (`/api/cron/recall`, Phase D)
 - **Cookie consent** gate for GA4, Vercel Analytics, and Sentry Replay (GDPR alignment)
