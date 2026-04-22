@@ -9,14 +9,14 @@ const SECTIONS = [
     icon: Package,
     titleUk: 'Накладні',
     descUk: 'Прихідні, списання, переміщення, повернення, коректування',
-    available: false,
+    available: true,
   },
   {
     href: '/admin/stock/warehouses',
     icon: Warehouse,
     titleUk: 'Склади',
     descUk: 'Головний склад, кабінети, склади лікарів',
-    available: false,
+    available: true,
   },
   {
     href: '/admin/stock/reports',
@@ -48,28 +48,44 @@ export default function AdminStockPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {SECTIONS.map(({ href, icon: Icon, titleUk, descUk }) => (
-            <div
-              key={href}
-              className="relative flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-5 opacity-50 cursor-not-allowed"
-              aria-disabled="true"
-            >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-dental-primary/20">
-                <Icon className="h-5 w-5 text-dental-primary-600" />
+          {SECTIONS.map(({ href, icon: Icon, titleUk, descUk, available }) =>
+            available ? (
+              <Link
+                key={href}
+                href={href}
+                className="relative flex items-start gap-4 rounded-xl border border-dental-primary/40 bg-white p-5 hover:bg-dental-primary/5 transition-colors"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-dental-primary/20">
+                  <Icon className="h-5 w-5 text-dental-primary-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-dental-dark">{titleUk}</p>
+                  <p className="mt-0.5 text-sm text-dental-text">{descUk}</p>
+                </div>
+              </Link>
+            ) : (
+              <div
+                key={href}
+                className="relative flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-5 opacity-50 cursor-not-allowed"
+                aria-disabled="true"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-dental-primary/20">
+                  <Icon className="h-5 w-5 text-dental-primary-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-dental-dark">{titleUk}</p>
+                  <p className="mt-0.5 text-sm text-dental-text">{descUk}</p>
+                </div>
+                <span className="absolute right-3 top-3 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+                  скоро
+                </span>
               </div>
-              <div>
-                <p className="font-medium text-dental-dark">{titleUk}</p>
-                <p className="mt-0.5 text-sm text-dental-text">{descUk}</p>
-              </div>
-              <span className="absolute right-3 top-3 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
-                скоро
-              </span>
-            </div>
-          ))}
+            )
+          )}
         </div>
 
         <div className="mt-8 rounded-xl border border-dental-primary/30 bg-dental-primary/10 p-4 text-sm text-dental-dark">
-          <strong>Phase 0</strong> — scaffold активний.{' '}
+          <strong>Phase 1</strong> — склади та документи активні.{' '}
           <Link
             href="/admin/materials"
             className="underline hover:text-dental-primary-600"
