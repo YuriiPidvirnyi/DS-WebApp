@@ -17,6 +17,10 @@
     {
       "path": "/api/cron/recall",
       "schedule": "10 18 * * *"
+    },
+    {
+      "path": "/api/cron/stock-metrics",
+      "schedule": "55 21 * * *"
     }
   ]
 }
