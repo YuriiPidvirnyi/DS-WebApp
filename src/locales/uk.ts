@@ -1559,6 +1559,20 @@ const uk = {
       next: 'Далі',
       finish: 'Готово',
     },
+    onboardingChecklist: {
+      title: 'Налаштування клініки',
+      subtitle: 'Виконано {{done}} з {{total}} кроків',
+      go: 'Перейти',
+      gotIt: 'Зрозуміло',
+      dismiss: 'Закрити чеклист',
+      step: {
+        services: 'Додайте хоча б одну послугу',
+        doctors: 'Додайте хоча б одного лікаря',
+        materials: 'Додайте матеріали до складу',
+        appointment: 'Зробіть тестовий запис',
+        workingHours: 'Налаштуйте графік роботи',
+      },
+    },
     modal: {
       closeAria: 'Закрити модальне вікно',
     },

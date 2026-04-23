@@ -1559,6 +1559,20 @@ const en = {
       next: 'Next',
       finish: 'Done',
     },
+    onboardingChecklist: {
+      title: 'Clinic setup',
+      subtitle: '{{done}} of {{total}} steps complete',
+      go: 'Go',
+      gotIt: 'Got it',
+      dismiss: 'Dismiss checklist',
+      step: {
+        services: 'Add at least one service',
+        doctors: 'Add at least one doctor',
+        materials: 'Add materials to inventory',
+        appointment: 'Make a test booking',
+        workingHours: 'Configure working hours',
+      },
+    },
     modal: {
       closeAria: 'Close modal window',
     },

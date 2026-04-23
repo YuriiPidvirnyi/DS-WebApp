@@ -1568,6 +1568,20 @@ const pl = {
       next: 'Dalej',
       finish: 'Gotowe',
     },
+    onboardingChecklist: {
+      title: 'Konfiguracja kliniki',
+      subtitle: '{{done}} z {{total}} kroków ukończono',
+      go: 'Przejdź',
+      gotIt: 'Rozumiem',
+      dismiss: 'Zamknij listę',
+      step: {
+        services: 'Dodaj co najmniej jedną usługę',
+        doctors: 'Dodaj co najmniej jednego lekarza',
+        materials: 'Dodaj materiały do magazynu',
+        appointment: 'Wykonaj testową rezerwację',
+        workingHours: 'Skonfiguruj godziny pracy',
+      },
+    },
     modal: {
       closeAria: 'Zamknij okno modalne',
     },
