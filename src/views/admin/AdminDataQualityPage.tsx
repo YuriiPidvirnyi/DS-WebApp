@@ -48,7 +48,7 @@ const SEVERITY_LABEL: Record<DataQualityIssue['severity'], string> = {
 
 function IssueCard({ issue }: { issue: DataQualityIssue }) {
   return (
-    <div className="flex items-start gap-4 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+    <div className="flex items-start gap-4 p-4 bg-white rounded-xl border border-dental-secondary-200 shadow-sm">
       <div className="mt-0.5 shrink-0">{SEVERITY_ICON[issue.severity]}</div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
@@ -165,7 +165,7 @@ export default function AdminDataQualityPage() {
           ? Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
-                className="h-20 bg-gray-100 rounded-lg animate-pulse"
+                className="h-20 bg-dental-secondary-100 rounded-xl animate-pulse"
               />
             ))
           : data?.issues?.map(issue => (

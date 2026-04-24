@@ -152,172 +152,170 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
   const hasPending = pendingUpdates.size > 0
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-5xl mx-auto">
-        {/* Header */}
-        <div className="mb-6 flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/admin/stock/audits"
-              className="text-dental-text hover:text-dental-primary-600"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </Link>
-            <div>
-              <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-                {audit?.audit_number ?? 'Інвентаризація'}
-              </h1>
-              {audit && (
-                <p className="text-xs text-dental-text mt-0.5">
-                  {audit.audit_date}
-                  {audit.status !== 'draft' && (
-                    <span
-                      className={`ml-2 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
-                        audit.status === 'posted'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-gray-100 text-gray-500'
-                      }`}
-                    >
-                      {audit.status === 'posted' ? 'Проведено' : 'Анульовано'}
-                    </span>
-                  )}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {isDraft && (
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={handleAutofill}
-                disabled={autofilling}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-sm text-dental-text hover:bg-gray-100 transition-colors disabled:opacity-50"
-              >
-                {autofilling ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <RefreshCw className="w-4 h-4" />
+    <div className="max-w-5xl mx-auto">
+      {/* Header */}
+      <div className="mb-6 flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin/stock/audits"
+            className="text-dental-text hover:text-dental-primary-600"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </Link>
+          <div>
+            <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
+              {audit?.audit_number ?? 'Інвентаризація'}
+            </h1>
+            {audit && (
+              <p className="text-xs text-dental-text mt-0.5">
+                {audit.audit_date}
+                {audit.status !== 'draft' && (
+                  <span
+                    className={`ml-2 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
+                      audit.status === 'posted'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-gray-100 text-gray-500'
+                    }`}
+                  >
+                    {audit.status === 'posted' ? 'Проведено' : 'Анульовано'}
+                  </span>
                 )}
-                Заповнити автоматично
-              </button>
-
-              {hasPending && (
-                <button
-                  type="button"
-                  onClick={handleSaveItems}
-                  disabled={savingItems || saved}
-                  className="inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-dental-dark disabled:opacity-60 transition-colors"
-                >
-                  {savingItems && <Loader2 className="w-4 h-4 animate-spin" />}
-                  {saved && <CheckCircle2 className="w-4 h-4" />}
-                  {saved ? 'Збережено' : 'Зберегти'}
-                </button>
-              )}
-
-              <button
-                type="button"
-                onClick={handlePost}
-                disabled={posting || hasPending}
-                className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-60 transition-colors"
-                title={hasPending ? 'Спочатку збережіть зміни' : undefined}
-              >
-                {posting && <Loader2 className="w-4 h-4 animate-spin" />}
-                Провести
-              </button>
-            </div>
-          )}
+              </p>
+            )}
+          </div>
         </div>
 
-        {loading && (
-          <div className="flex justify-center py-16">
-            <Loader2 className="w-7 h-7 animate-spin text-dental-primary-600" />
-          </div>
-        )}
+        {isDraft && (
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleAutofill}
+              disabled={autofilling}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-sm text-dental-text hover:bg-gray-100 transition-colors disabled:opacity-50"
+            >
+              {autofilling ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <RefreshCw className="w-4 h-4" />
+              )}
+              Заповнити автоматично
+            </button>
 
-        {error && (
-          <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
-            {error}
-          </div>
-        )}
-
-        {!loading && audit && (
-          <div className="rounded-xl border bg-white overflow-hidden">
-            {audit.items.length === 0 ? (
-              <p className="text-center text-dental-text py-12">
-                Позицій немає — поверніться і ініціалізуйте знову
-              </p>
-            ) : (
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="text-left px-4 py-3 font-medium text-dental-text">
-                      Матеріал
-                    </th>
-                    <th className="text-left px-4 py-3 font-medium text-dental-text hidden sm:table-cell">
-                      Склад
-                    </th>
-                    <th className="text-right px-4 py-3 font-medium text-dental-text w-28">
-                      Залишок
-                    </th>
-                    <th className="text-right px-4 py-3 font-medium text-dental-text w-32">
-                      Фактично
-                    </th>
-                    <th className="text-right px-4 py-3 font-medium text-dental-text w-24">
-                      Різниця
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {audit.items.map(item => (
-                    <tr
-                      key={item.id}
-                      className={`border-b border-gray-100 last:border-0 transition-colors ${deltaClass(item)}`}
-                    >
-                      <td className="px-4 py-2.5 text-dental-dark">
-                        <p className="truncate max-w-[200px]">
-                          {item.material?.name_uk ?? item.material_id}
-                        </p>
-                        <p className="text-xs text-dental-text">
-                          {item.material?.unit ?? ''}
-                        </p>
-                      </td>
-                      <td className="px-4 py-2.5 text-dental-text hidden sm:table-cell">
-                        {item.warehouse?.name_uk ?? '—'}
-                      </td>
-                      <td className="px-4 py-2.5 text-right font-mono text-dental-text">
-                        {item.qty_before}
-                      </td>
-                      <td className="px-4 py-2.5 text-right">
-                        {isDraft ? (
-                          <input
-                            type="number"
-                            min="0"
-                            step="any"
-                            value={getDisplayQty(item) ?? ''}
-                            onChange={e =>
-                              handleQtyChange(item.id, e.target.value)
-                            }
-                            placeholder="—"
-                            className="w-24 rounded border border-gray-300 px-2 py-1 text-right text-sm focus:outline-none focus:ring-1 focus:ring-dental-primary-600"
-                          />
-                        ) : (
-                          <span className="font-mono">
-                            {item.qty_actual ?? '—'}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-4 py-2.5 text-right font-mono">
-                        {deltaLabel(item)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            {hasPending && (
+              <button
+                type="button"
+                onClick={handleSaveItems}
+                disabled={savingItems || saved}
+                className="inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-dental-dark disabled:opacity-60 transition-colors"
+              >
+                {savingItems && <Loader2 className="w-4 h-4 animate-spin" />}
+                {saved && <CheckCircle2 className="w-4 h-4" />}
+                {saved ? 'Збережено' : 'Зберегти'}
+              </button>
             )}
+
+            <button
+              type="button"
+              onClick={handlePost}
+              disabled={posting || hasPending}
+              className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-60 transition-colors"
+              title={hasPending ? 'Спочатку збережіть зміни' : undefined}
+            >
+              {posting && <Loader2 className="w-4 h-4 animate-spin" />}
+              Провести
+            </button>
           </div>
         )}
       </div>
+
+      {loading && (
+        <div className="flex justify-center py-16">
+          <Loader2 className="w-7 h-7 animate-spin text-dental-primary-600" />
+        </div>
+      )}
+
+      {error && (
+        <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
+      {!loading && audit && (
+        <div className="rounded-xl border bg-white overflow-hidden">
+          {audit.items.length === 0 ? (
+            <p className="text-center text-dental-text py-12">
+              Позицій немає — поверніться і ініціалізуйте знову
+            </p>
+          ) : (
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-200 bg-gray-50">
+                  <th className="text-left px-4 py-3 font-medium text-dental-text">
+                    Матеріал
+                  </th>
+                  <th className="text-left px-4 py-3 font-medium text-dental-text hidden sm:table-cell">
+                    Склад
+                  </th>
+                  <th className="text-right px-4 py-3 font-medium text-dental-text w-28">
+                    Залишок
+                  </th>
+                  <th className="text-right px-4 py-3 font-medium text-dental-text w-32">
+                    Фактично
+                  </th>
+                  <th className="text-right px-4 py-3 font-medium text-dental-text w-24">
+                    Різниця
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {audit.items.map(item => (
+                  <tr
+                    key={item.id}
+                    className={`border-b border-gray-100 last:border-0 transition-colors ${deltaClass(item)}`}
+                  >
+                    <td className="px-4 py-2.5 text-dental-dark">
+                      <p className="truncate max-w-[200px]">
+                        {item.material?.name_uk ?? item.material_id}
+                      </p>
+                      <p className="text-xs text-dental-text">
+                        {item.material?.unit ?? ''}
+                      </p>
+                    </td>
+                    <td className="px-4 py-2.5 text-dental-text hidden sm:table-cell">
+                      {item.warehouse?.name_uk ?? '—'}
+                    </td>
+                    <td className="px-4 py-2.5 text-right font-mono text-dental-text">
+                      {item.qty_before}
+                    </td>
+                    <td className="px-4 py-2.5 text-right">
+                      {isDraft ? (
+                        <input
+                          type="number"
+                          min="0"
+                          step="any"
+                          value={getDisplayQty(item) ?? ''}
+                          onChange={e =>
+                            handleQtyChange(item.id, e.target.value)
+                          }
+                          placeholder="—"
+                          className="w-24 rounded border border-gray-300 px-2 py-1 text-right text-sm focus:outline-none focus:ring-1 focus:ring-dental-primary-600"
+                        />
+                      ) : (
+                        <span className="font-mono">
+                          {item.qty_actual ?? '—'}
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-2.5 text-right font-mono">
+                      {deltaLabel(item)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
     </div>
   )
 }

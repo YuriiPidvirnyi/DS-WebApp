@@ -82,7 +82,7 @@ const STATUS_I18N: Record<OrderStatus, string> = {
   cancelled: 'admin.ordersPage.statuses.cancelled',
 }
 const ST_BADGE: Record<OrderStatus, string> = {
-  draft: 'bg-gray-100 text-gray-700',
+  draft: 'bg-dental-secondary-100 text-dental-text',
   pending_approval: 'bg-amber-100 text-amber-800',
   approved: 'bg-sky-100 text-sky-800',
   ordered: 'bg-violet-100 text-violet-800',
@@ -96,7 +96,7 @@ const URGENCY_I18N: Record<Urgency, string> = {
   critical: 'admin.ordersPage.urgency.critical',
 }
 const URG_CLR: Record<Urgency, string> = {
-  low: 'text-gray-600',
+  low: 'text-dental-text',
   normal: 'text-sky-700',
   high: 'text-orange-600',
   critical: 'text-red-600 font-semibold',
@@ -460,14 +460,14 @@ export default function AdminOrdersPage() {
             return (
               <div
                 key={order.id}
-                className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden"
+                className="rounded-xl border border-dental-secondary-200 bg-white shadow-sm overflow-hidden"
               >
                 <button
                   type="button"
                   onClick={() => setExpandedId(ex ? null : order.id)}
                   className="w-full text-left px-4 py-3 flex flex-wrap items-center gap-3 hover:bg-dental-primary/30"
                 >
-                  <span className="font-mono text-xs text-gray-500">
+                  <span className="font-mono text-xs text-dental-text-light">
                     {order.id.slice(0, 8)}…
                   </span>
                   <span className="text-sm text-dental-text">
@@ -487,17 +487,17 @@ export default function AdminOrdersPage() {
                   <span className="text-sm font-semibold text-dental-navy ml-auto">
                     {formatCurrency(order.total_estimated_cost)}
                   </span>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-dental-text-light">
                     {items.length} {t('admin.ordersPage.items')}
                   </span>
                   {ex ? (
-                    <ChevronUp className="w-5 h-5 text-gray-400" />
+                    <ChevronUp className="w-5 h-5 text-dental-muted" />
                   ) : (
-                    <ChevronDown className="w-5 h-5 text-gray-400" />
+                    <ChevronDown className="w-5 h-5 text-dental-muted" />
                   )}
                 </button>
                 {ex && (
-                  <div className="border-t border-gray-100 px-4 py-4 bg-dental-primary/20 space-y-3">
+                  <div className="border-t border-dental-secondary-100 px-4 py-4 bg-dental-primary/20 space-y-3">
                     <div className="text-sm space-y-1">
                       {items.map(row => {
                         const deliv = Number(row.quantity_delivered || 0)
@@ -510,7 +510,7 @@ export default function AdminOrdersPage() {
                         return (
                           <div
                             key={row.id}
-                            className="border-b border-gray-100 py-2 space-y-1"
+                            className="border-b border-dental-secondary-100 py-2 space-y-1"
                           >
                             <div className="flex flex-wrap gap-2 justify-between items-center">
                               <span className="inline-flex items-center gap-2 text-dental-navy font-medium">
@@ -533,7 +533,7 @@ export default function AdminOrdersPage() {
                             {showDelivery && (
                               <div className="flex items-center gap-3">
                                 <div className="flex-1">
-                                  <div className="h-1.5 rounded-full bg-gray-200 overflow-hidden">
+                                  <div className="h-1.5 rounded-full bg-dental-secondary-200 overflow-hidden">
                                     <div
                                       className="h-full rounded-full bg-emerald-500 transition-all"
                                       style={{ width: `${pct}%` }}
@@ -650,7 +650,7 @@ export default function AdminOrdersPage() {
                     </div>
                     {/* Audit history timeline */}
                     {auditOpen === order.id && (
-                      <div className="rounded-lg border border-gray-200 bg-white p-3 text-xs space-y-2">
+                      <div className="rounded-lg border border-dental-secondary-200 bg-white p-3 text-xs space-y-2">
                         <p className="font-medium text-dental-navy text-sm">
                           {t('admin.ordersPage.historyTitle')}
                         </p>
@@ -679,7 +679,7 @@ export default function AdminOrdersPage() {
                                       <>
                                         {': '}
                                         <span
-                                          className={`inline-flex px-1.5 py-0.5 rounded text-[10px] font-medium ${ST_BADGE[log.before_data.status as OrderStatus] || 'bg-gray-100'}`}
+                                          className={`inline-flex px-1.5 py-0.5 rounded text-[10px] font-medium ${ST_BADGE[log.before_data.status as OrderStatus] || 'bg-dental-secondary-100'}`}
                                         >
                                           {t(
                                             STATUS_I18N[
@@ -690,7 +690,7 @@ export default function AdminOrdersPage() {
                                         </span>
                                         {' → '}
                                         <span
-                                          className={`inline-flex px-1.5 py-0.5 rounded text-[10px] font-medium ${ST_BADGE[log.after_data.status as OrderStatus] || 'bg-gray-100'}`}
+                                          className={`inline-flex px-1.5 py-0.5 rounded text-[10px] font-medium ${ST_BADGE[log.after_data.status as OrderStatus] || 'bg-dental-secondary-100'}`}
                                         >
                                           {t(
                                             STATUS_I18N[
@@ -717,15 +717,15 @@ export default function AdminOrdersPage() {
       )}
       {createOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-dental-navy/40">
-          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-200">
-            <div className="flex items-center justify-between px-4 py-3 border-b">
+          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-dental-secondary-200">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-dental-secondary-100">
               <h2 className="text-lg font-semibold text-dental-navy">
                 {t('admin.ordersPage.create.title')}
               </h2>
               <button
                 type="button"
                 onClick={() => !saving && setCreateOpen(false)}
-                className="p-2 rounded-lg hover:bg-gray-100"
+                className="p-2 rounded-lg hover:bg-dental-secondary-100"
                 aria-label={t('common.close')}
               >
                 <X className="w-5 h-5" />

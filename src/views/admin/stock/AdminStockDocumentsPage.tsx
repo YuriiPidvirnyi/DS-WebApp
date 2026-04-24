@@ -72,7 +72,7 @@ export default function AdminStockDocumentsPage() {
   const totalPages = Math.ceil(total / pageSize)
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <>
       <div className="max-w-6xl mx-auto">
         <div className="mb-6 flex items-center gap-3">
           <Link
@@ -230,7 +230,7 @@ export default function AdminStockDocumentsPage() {
           csrfToken={csrfToken}
         />
       )}
-    </div>
+    </>
   )
 }
 

@@ -113,10 +113,10 @@ export default function AdminEmailTemplatesPage() {
       </div>
 
       <div className="space-y-3">
-        <p className="text-sm font-medium text-gray-700">Тема: {subject}</p>
+        <p className="text-sm font-medium text-dental-text">Тема: {subject}</p>
         <iframe
           srcDoc={html}
-          className="w-full border border-gray-200 rounded-lg"
+          className="w-full border border-dental-secondary-200 rounded-xl"
           style={{ height: '600px' }}
           title="Email preview"
         />

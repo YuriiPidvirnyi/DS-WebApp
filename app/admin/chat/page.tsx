@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { useAdminChat, type ChatSession } from '@/hooks/useAdminChat'
 import { useAdminPageAccess } from '@/hooks/useAdminPageAccess'
+import AdminPageLoading from '@/components/admin/AdminPageLoading'
 
 function formatTime(iso: string) {
   const d = new Date(iso)
@@ -167,11 +168,7 @@ export default function AdminChatPage() {
   }
 
   if (pageAccessLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
-      </div>
-    )
+    return <AdminPageLoading />
   }
 
   return (

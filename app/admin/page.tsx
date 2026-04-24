@@ -276,8 +276,8 @@ export default function AdminDashboard() {
 
   if (isLoading || pageAccessLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-100">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
+      <div className="flex items-center justify-center py-24">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-dental-primary-600 border-t-transparent" />
       </div>
     )
   }
@@ -287,279 +287,270 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-dental-primary-50">
+    <div className="space-y-6">
       <OnboardingTour role={user?.role} />
-      {/* Header */}
-      <header className="bg-white border-b border-dental-secondary-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-dental-dark">
-                {t('common.brandName')} {t('admin.layout.panel')}
-              </h1>
-              <p className="text-sm text-dental-text-light">
-                {t('admin.dashboard.clinicPanel')}
+
+      {/* Page meta bar: subtitle + last-updated + settings shortcut */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-dental-muted">
+          {t('admin.dashboard.clinicPanel')}
+        </p>
+        <div className="flex items-center gap-4">
+          {lastUpdated && (
+            <div className="flex items-center gap-2 text-sm text-dental-muted">
+              <Clock className="w-4 h-4" />
+              {t('admin.dashboard.updated')}: {lastUpdated}
+            </div>
+          )}
+          <Link
+            href="/admin/settings"
+            aria-label={t('admin.sidebar.settings')}
+            className="p-2 rounded-lg text-dental-muted hover:text-dental-primary-600 hover:bg-dental-secondary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+          >
+            <Settings className="w-5 h-5" />
+          </Link>
+        </div>
+      </div>
+
+      <OnboardingChecklist />
+      {error && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+        <StatCard
+          title={t('admin.dashboard.totalAppointments')}
+          value={stats?.totalAppointments || 0}
+          icon={Calendar}
+          iconBg="bg-dental-primary-500"
+          href="/admin/appointments"
+          badge={
+            stats?.pendingAppointments
+              ? `${stats.pendingAppointments} ${t('admin.dashboard.newBadge')}`
+              : undefined
+          }
+        />
+        <StatCard
+          title={t('admin.dashboard.today')}
+          value={stats?.todayAppointments || 0}
+          icon={Clock}
+          iconBg="bg-dental-info"
+          href="/admin/appointments?filter=today"
+        />
+        <StatCard
+          title={t('admin.dashboard.contacts')}
+          value={stats?.unreadContacts || 0}
+          icon={MessageSquare}
+          iconBg="bg-dental-warning"
+          href="/admin/contacts"
+          badge={
+            stats?.unreadContacts
+              ? t('admin.dashboard.newBadgePlural')
+              : undefined
+          }
+        />
+        <StatCard
+          title={t('admin.dashboard.reviewsModeration')}
+          value={stats?.pendingReviews || 0}
+          icon={Star}
+          iconBg="bg-dental-success"
+          href="/admin/reviews"
+        />
+      </div>
+
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Today's Appointments */}
+        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-6 border border-dental-secondary-200">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-dental-dark">
+              {t('admin.dashboard.todayAppointments')}
+            </h2>
+            <Link
+              href="/admin/appointments?filter=today"
+              className="text-sm text-dental-primary-600 hover:text-dental-primary-700"
+            >
+              {t('admin.dashboard.allAppointments')}
+            </Link>
+          </div>
+          {todayAppointments.length === 0 ? (
+            <div className="py-12 text-center">
+              <Calendar className="w-12 h-12 text-dental-secondary-300 mx-auto mb-3" />
+              <p className="text-dental-text-light">
+                {t('admin.dashboard.noAppointmentsToday')}
               </p>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-sm text-dental-text-light">
-                <Clock className="w-4 h-4" />
-                {t('admin.dashboard.updated')}: {lastUpdated}
-              </div>
-              <Link
-                href="/admin/settings"
-                className="p-2 text-dental-text-light hover:text-dental-primary-600 transition-colors"
-              >
-                <Settings className="w-5 h-5" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        <OnboardingChecklist />
-        {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {error}
-          </div>
-        )}
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-          <StatCard
-            title={t('admin.dashboard.totalAppointments')}
-            value={stats?.totalAppointments || 0}
-            icon={Calendar}
-            iconBg="bg-dental-primary-500"
-            href="/admin/appointments"
-            badge={
-              stats?.pendingAppointments
-                ? `${stats.pendingAppointments} ${t('admin.dashboard.newBadge')}`
-                : undefined
-            }
-          />
-          <StatCard
-            title={t('admin.dashboard.today')}
-            value={stats?.todayAppointments || 0}
-            icon={Clock}
-            iconBg="bg-dental-info"
-            href="/admin/appointments?filter=today"
-          />
-          <StatCard
-            title={t('admin.dashboard.contacts')}
-            value={stats?.unreadContacts || 0}
-            icon={MessageSquare}
-            iconBg="bg-dental-warning"
-            href="/admin/contacts"
-            badge={
-              stats?.unreadContacts
-                ? t('admin.dashboard.newBadgePlural')
-                : undefined
-            }
-          />
-          <StatCard
-            title={t('admin.dashboard.reviewsModeration')}
-            value={stats?.pendingReviews || 0}
-            icon={Star}
-            iconBg="bg-dental-success"
-            href="/admin/reviews"
-          />
-        </div>
-
-        {/* Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Today's Appointments */}
-          <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-6 border border-dental-secondary-200">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-dental-dark">
-                {t('admin.dashboard.todayAppointments')}
-              </h2>
-              <Link
-                href="/admin/appointments?filter=today"
-                className="text-sm text-dental-primary-600 hover:text-dental-primary-700"
-              >
-                {t('admin.dashboard.allAppointments')}
-              </Link>
-            </div>
-            {todayAppointments.length === 0 ? (
-              <div className="py-12 text-center">
-                <Calendar className="w-12 h-12 text-dental-secondary-300 mx-auto mb-3" />
-                <p className="text-dental-text-light">
-                  {t('admin.dashboard.noAppointmentsToday')}
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {todayAppointments.map(apt => (
-                  <div
-                    key={apt.id}
-                    className="flex items-center justify-between p-3 bg-dental-primary-50 rounded-lg"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-dental-primary-100 flex items-center justify-center">
-                        <Users className="w-5 h-5 text-dental-primary-600" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-dental-dark">
-                          {apt.patient_name}
-                        </p>
-                        <p className="text-sm text-dental-text-light">
-                          {apt.services?.[0]?.name_uk ||
-                            t('admin.dashboard.consultation')}
-                        </p>
-                      </div>
+          ) : (
+            <div className="space-y-3">
+              {todayAppointments.map(apt => (
+                <div
+                  key={apt.id}
+                  className="flex items-center justify-between p-3 bg-dental-primary-50 rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-dental-primary-100 flex items-center justify-center">
+                      <Users className="w-5 h-5 text-dental-primary-600" />
                     </div>
-                    <div className="text-right">
+                    <div>
                       <p className="font-medium text-dental-dark">
-                        {apt.appointment_time.slice(0, 5)}
+                        {apt.patient_name}
                       </p>
-                      <span
-                        className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${
-                          apt.status === 'confirmed'
-                            ? 'bg-dental-success-light text-dental-success'
-                            : apt.status === 'completed'
-                              ? 'bg-dental-secondary-100 text-dental-text-light'
-                              : 'bg-dental-warning-light text-dental-warning'
-                        }`}
-                      >
-                        {apt.status === 'confirmed' ? (
-                          <CheckCircle className="w-3 h-3" />
-                        ) : (
-                          <AlertCircle className="w-3 h-3" />
-                        )}
-                        {apt.status === 'confirmed'
-                          ? t('admin.dashboard.statusConfirmed')
+                      <p className="text-sm text-dental-text-light">
+                        {apt.services?.[0]?.name_uk ||
+                          t('admin.dashboard.consultation')}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium text-dental-dark">
+                      {apt.appointment_time.slice(0, 5)}
+                    </p>
+                    <span
+                      className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${
+                        apt.status === 'confirmed'
+                          ? 'bg-dental-success-light text-dental-success'
                           : apt.status === 'completed'
-                            ? t('admin.dashboard.statusCompleted')
-                            : t('admin.dashboard.statusPending')}
+                            ? 'bg-dental-secondary-100 text-dental-text-light'
+                            : 'bg-dental-warning-light text-dental-warning'
+                      }`}
+                    >
+                      {apt.status === 'confirmed' ? (
+                        <CheckCircle className="w-3 h-3" />
+                      ) : (
+                        <AlertCircle className="w-3 h-3" />
+                      )}
+                      {apt.status === 'confirmed'
+                        ? t('admin.dashboard.statusConfirmed')
+                        : apt.status === 'completed'
+                          ? t('admin.dashboard.statusCompleted')
+                          : t('admin.dashboard.statusPending')}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Services Distribution */}
+        <div className="bg-white rounded-xl shadow-sm p-6 border border-dental-secondary-200">
+          <h2 className="text-lg font-semibold text-dental-dark mb-4">
+            {t('admin.dashboard.serviceCategories')}
+          </h2>
+          {serviceStats.length === 0 ? (
+            <div className="py-12 text-center">
+              <TrendingUp className="w-12 h-12 text-dental-secondary-300 mx-auto mb-3" />
+              <p className="text-dental-text-light">
+                {t('admin.dashboard.noData')}
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="h-48">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={serviceStats}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={40}
+                      outerRadius={70}
+                      paddingAngle={2}
+                      dataKey="value"
+                    >
+                      {serviceStats.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#fff',
+                        border: `1px solid ${`var(--color-dental-secondary-200)`}`,
+                        borderRadius: '8px',
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="mt-4 space-y-2">
+                {serviceStats.map(service => (
+                  <div
+                    key={service.name}
+                    className="flex items-center justify-between text-sm"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: service.color }}
+                      />
+                      <span className="text-dental-text-light">
+                        {service.name}
                       </span>
                     </div>
+                    <span className="font-medium text-dental-dark">
+                      {service.value}%
+                    </span>
                   </div>
                 ))}
               </div>
-            )}
-          </div>
-
-          {/* Services Distribution */}
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-dental-secondary-200">
-            <h2 className="text-lg font-semibold text-dental-dark mb-4">
-              {t('admin.dashboard.serviceCategories')}
-            </h2>
-            {serviceStats.length === 0 ? (
-              <div className="py-12 text-center">
-                <TrendingUp className="w-12 h-12 text-dental-secondary-300 mx-auto mb-3" />
-                <p className="text-dental-text-light">
-                  {t('admin.dashboard.noData')}
-                </p>
-              </div>
-            ) : (
-              <>
-                <div className="h-48">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={serviceStats}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={40}
-                        outerRadius={70}
-                        paddingAngle={2}
-                        dataKey="value"
-                      >
-                        {serviceStats.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: '#fff',
-                          border: `1px solid ${`var(--color-dental-secondary-200)`}`,
-                          borderRadius: '8px',
-                        }}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="mt-4 space-y-2">
-                  {serviceStats.map(service => (
-                    <div
-                      key={service.name}
-                      className="flex items-center justify-between text-sm"
-                    >
-                      <div className="flex items-center gap-2">
-                        <div
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: service.color }}
-                        />
-                        <span className="text-dental-text-light">
-                          {service.name}
-                        </span>
-                      </div>
-                      <span className="font-medium text-dental-dark">
-                        {service.value}%
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
+            </>
+          )}
         </div>
+      </div>
 
-        {/* Quick Links */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <Link
-            href="/admin/appointments"
-            className="bg-dental-primary-600 rounded-xl p-4 text-white hover:bg-dental-primary-700 transition-all"
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <Calendar className="w-5 h-5" />
-              <span className="text-sm font-medium opacity-90">
-                {t('admin.sidebar.appointments')}
-              </span>
-            </div>
-            <p className="text-2xl font-bold">{stats?.totalAppointments}</p>
-          </Link>
-          <Link
-            href="/admin/doctors"
-            className="bg-dental-info rounded-xl p-4 text-white hover:bg-dental-info-dark transition-all"
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <Users className="w-5 h-5" />
-              <span className="text-sm font-medium opacity-90">
-                {t('admin.dashboard.doctors')}
-              </span>
-            </div>
-            <p className="text-2xl font-bold">{stats?.totalDoctors}</p>
-          </Link>
-          <Link
-            href="/admin/services"
-            className="bg-dental-warning rounded-xl p-4 text-white hover:bg-dental-warning-dark transition-all"
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="w-5 h-5" />
-              <span className="text-sm font-medium opacity-90">
-                {t('admin.sidebar.services')}
-              </span>
-            </div>
-            <p className="text-lg font-bold">
-              {t('admin.dashboard.priceList')}
-            </p>
-          </Link>
-          <Link
-            href="/admin/contacts"
-            className="bg-dental-success rounded-xl p-4 text-white hover:bg-dental-success-dark transition-all"
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <MessageSquare className="w-5 h-5" />
-              <span className="text-sm font-medium opacity-90">
-                {t('admin.dashboard.contacts')}
-              </span>
-            </div>
-            <p className="text-2xl font-bold">{stats?.unreadContacts}</p>
-          </Link>
-        </div>
-      </main>
+      {/* Quick Links */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <Link
+          href="/admin/appointments"
+          className="bg-dental-primary-600 rounded-xl p-4 text-white hover:bg-dental-primary-700 transition-all"
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <Calendar className="w-5 h-5" />
+            <span className="text-sm font-medium opacity-90">
+              {t('admin.sidebar.appointments')}
+            </span>
+          </div>
+          <p className="text-2xl font-bold">{stats?.totalAppointments}</p>
+        </Link>
+        <Link
+          href="/admin/doctors"
+          className="bg-dental-info rounded-xl p-4 text-white hover:bg-dental-info-dark transition-all"
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <Users className="w-5 h-5" />
+            <span className="text-sm font-medium opacity-90">
+              {t('admin.dashboard.doctors')}
+            </span>
+          </div>
+          <p className="text-2xl font-bold">{stats?.totalDoctors}</p>
+        </Link>
+        <Link
+          href="/admin/services"
+          className="bg-dental-warning rounded-xl p-4 text-white hover:bg-dental-warning-dark transition-all"
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <TrendingUp className="w-5 h-5" />
+            <span className="text-sm font-medium opacity-90">
+              {t('admin.sidebar.services')}
+            </span>
+          </div>
+          <p className="text-lg font-bold">{t('admin.dashboard.priceList')}</p>
+        </Link>
+        <Link
+          href="/admin/contacts"
+          className="bg-dental-success rounded-xl p-4 text-white hover:bg-dental-success-dark transition-all"
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <MessageSquare className="w-5 h-5" />
+            <span className="text-sm font-medium opacity-90">
+              {t('admin.dashboard.contacts')}
+            </span>
+          </div>
+          <p className="text-2xl font-bold">{stats?.unreadContacts}</p>
+        </Link>
+      </div>
     </div>
   )
 }

@@ -729,47 +729,47 @@ export default function AdminSettingsPage() {
               </div>
             ) : (
               <div className="mt-4 overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200 text-sm">
-                  <thead className="bg-gray-50">
+                <table className="min-w-full divide-y divide-dental-secondary-200 text-sm">
+                  <thead className="bg-dental-secondary-50">
                     <tr>
                       <th
-                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-gray-500`}
+                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-text-light`}
                       >
                         {t('admin.settingsPage.audit.tableHeaders.when')}
                       </th>
                       <th
-                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-gray-500`}
+                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-text-light`}
                       >
                         {t('admin.settingsPage.audit.tableHeaders.table')}
                       </th>
                       <th
-                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-gray-500`}
+                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-text-light`}
                       >
                         {t('admin.settingsPage.audit.tableHeaders.action')}
                       </th>
                       <th
-                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-gray-500`}
+                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-text-light`}
                       >
                         {t('admin.settingsPage.audit.tableHeaders.changedBy')}
                       </th>
                       <th
-                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-gray-500`}
+                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-text-light`}
                       >
                         {t('admin.settingsPage.audit.tableHeaders.record')}
                       </th>
                       <th
-                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-gray-500`}
+                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-text-light`}
                       >
                         {t('admin.settingsPage.audit.tableHeaders.summary')}
                       </th>
                       <th
-                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-gray-500`}
+                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-text-light`}
                       >
                         {t('admin.settingsPage.audit.tableHeaders.actions')}
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-dental-secondary-100">
                     {auditLogs.map(log => (
                       <tr key={log.id}>
                         <td

@@ -169,10 +169,10 @@ export default function AdminUsersPage() {
         <div className="flex items-center gap-3">
           <Shield className="w-6 h-6 text-dental-teal" aria-hidden="true" />
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-dental-dark">
               {t('admin.users.title')}
             </h1>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <p className="text-sm text-dental-text-light mt-0.5">
               {t('admin.users.subtitle')}
             </p>
           </div>
@@ -195,31 +195,31 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-dental-secondary-200 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-dental-secondary-200">
+            <thead className="bg-dental-secondary-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-dental-text-light uppercase tracking-wider">
                   {t('admin.users.columns.name')}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-dental-text-light uppercase tracking-wider">
                   {t('admin.users.columns.role')}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                <th className="px-6 py-3 text-left text-xs font-medium text-dental-text-light uppercase tracking-wider hidden md:table-cell">
                   {t('admin.users.columns.specialization')}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                <th className="px-6 py-3 text-left text-xs font-medium text-dental-text-light uppercase tracking-wider hidden lg:table-cell">
                   {t('admin.users.columns.lastLogin')}
                 </th>
                 {canManage && (
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-dental-text-light uppercase tracking-wider">
                     {t('common.actions')}
                   </th>
                 )}
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-dental-secondary-100">
               {users.map(u => {
                 const isEditing = editDraft?.id === u.id
                 const isCurrentUser = u.id === user?.id
@@ -230,7 +230,7 @@ export default function AdminUsersPage() {
                     className={
                       isCurrentUser
                         ? 'bg-dental-primary/10'
-                        : 'hover:bg-gray-50'
+                        : 'hover:bg-dental-secondary-50'
                     }
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -243,14 +243,14 @@ export default function AdminUsersPage() {
                               d ? { ...d, display_name: e.target.value } : d
                             )
                           }
-                          className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-dental-teal focus:border-dental-teal"
+                          className="w-full border border-dental-secondary-200 rounded-xl px-2 py-1 text-sm text-dental-dark focus:ring-dental-primary-500 focus:border-dental-primary-500"
                           aria-label={t('admin.users.columns.name')}
                         />
                       ) : (
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-dental-dark">
                           {u.display_name || '—'}
                           {isCurrentUser && (
-                            <span className="ml-2 text-xs text-gray-400">
+                            <span className="ml-2 text-xs text-dental-muted">
                               ({t('admin.users.you')})
                             </span>
                           )}
@@ -268,7 +268,7 @@ export default function AdminUsersPage() {
                                 : d
                             )
                           }
-                          className="border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-dental-teal focus:border-dental-teal"
+                          className="border border-dental-secondary-200 rounded-xl px-2 py-1 text-sm text-dental-dark focus:ring-dental-primary-500 focus:border-dental-primary-500"
                           aria-label={t('admin.users.columns.role')}
                         >
                           {ADMIN_ROLES.filter(
@@ -298,15 +298,15 @@ export default function AdminUsersPage() {
                             )
                           }
                           placeholder={t('admin.users.columns.specialization')}
-                          className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-dental-teal focus:border-dental-teal"
+                          className="w-full border border-dental-secondary-200 rounded-xl px-2 py-1 text-sm text-dental-dark focus:ring-dental-primary-500 focus:border-dental-primary-500"
                         />
                       ) : (
-                        <span className="text-sm text-gray-600">
+                        <span className="text-sm text-dental-text">
                           {u.specialization || '—'}
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-dental-text-light hidden lg:table-cell">
                       {formatDate(u.last_login_at)}
                     </td>
                     {canManage && (
@@ -324,7 +324,7 @@ export default function AdminUsersPage() {
                             <button
                               onClick={() => setEditDraft(null)}
                               disabled={saving}
-                              className="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                              className="p-2 rounded-lg bg-dental-secondary-100 text-dental-text hover:bg-dental-secondary-200 transition-colors"
                               aria-label={t('common.cancel')}
                             >
                               <X className="w-4 h-4" />
@@ -345,7 +345,7 @@ export default function AdminUsersPage() {
                             </button>
                             <button
                               onClick={() => setDeleteConfirmId(null)}
-                              className="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                              className="p-2 rounded-lg bg-dental-secondary-100 text-dental-text hover:bg-dental-secondary-200 transition-colors"
                               aria-label={t('common.cancel')}
                             >
                               <X className="w-4 h-4" />
@@ -355,7 +355,7 @@ export default function AdminUsersPage() {
                           <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => startEdit(u)}
-                              className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors"
+                              className="p-2 rounded-lg text-dental-text hover:bg-dental-secondary-100 transition-colors"
                               aria-label={t('common.edit')}
                             >
                               <Pencil className="w-4 h-4" />
@@ -380,7 +380,7 @@ export default function AdminUsersPage() {
                 <tr>
                   <td
                     colSpan={canManage ? 5 : 4}
-                    className="px-6 py-12 text-center text-gray-400 text-sm"
+                    className="px-6 py-12 text-center text-dental-muted text-sm"
                   >
                     {t('admin.users.empty')}
                   </td>
@@ -391,7 +391,7 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      <p className="text-xs text-gray-400">{t('admin.users.note')}</p>
+      <p className="text-xs text-dental-muted">{t('admin.users.note')}</p>
     </div>
   )
 }

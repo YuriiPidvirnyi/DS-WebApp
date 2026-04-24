@@ -95,153 +95,151 @@ export default function AdminStockSettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="mb-6 flex items-center gap-3">
-          <Link
-            href="/admin/stock"
-            className="text-dental-text hover:text-dental-primary-600"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </Link>
-          <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-            Налаштування складу
-          </h1>
-        </div>
-
-        {loading && (
-          <div className="flex justify-center py-16">
-            <Loader2 className="w-7 h-7 animate-spin text-dental-primary-600" />
-          </div>
-        )}
-
-        {!loading && settings && (
-          <div className="space-y-4">
-            {/* Writeoff mode */}
-            <div className="rounded-xl border bg-white p-5">
-              <h2 className="font-semibold text-dental-dark mb-3">
-                Тип автосписання матеріалів
-              </h2>
-              <div className="space-y-3">
-                {(['none', 'draft_hybrid', 'auto'] as WriteoffMode[]).map(
-                  mode => (
-                    <label
-                      key={mode}
-                      className={`flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-colors ${
-                        settings.writeoff_mode === mode
-                          ? 'border-dental-primary-600 bg-dental-primary/5'
-                          : 'border-gray-200 hover:bg-gray-50'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="writeoff_mode"
-                        value={mode}
-                        checked={settings.writeoff_mode === mode}
-                        onChange={() => update('writeoff_mode', mode)}
-                        className="mt-0.5 shrink-0"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-dental-dark">
-                          {WRITEOFF_MODE_LABELS[mode]}
-                        </p>
-                        <p className="text-xs text-dental-text mt-0.5">
-                          {WRITEOFF_MODE_HINTS[mode]}
-                        </p>
-                      </div>
-                    </label>
-                  )
-                )}
-              </div>
-            </div>
-
-            {/* Toggles */}
-            <div className="rounded-xl border bg-white p-5 space-y-4">
-              <h2 className="font-semibold text-dental-dark">
-                Додаткові параметри
-              </h2>
-
-              <label className="flex items-center justify-between cursor-pointer">
-                <div>
-                  <p className="text-sm font-medium text-dental-dark">
-                    Дозволити негативний залишок
-                  </p>
-                  <p className="text-xs text-dental-text mt-0.5">
-                    Рекомендується ввімкнути на перші 30–60 днів після запуску
-                    для поступового введення залишків.
-                  </p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={settings.allow_negative_balance}
-                  onChange={e =>
-                    update('allow_negative_balance', e.target.checked)
-                  }
-                  className="rounded ml-4 shrink-0"
-                />
-              </label>
-
-              <label className="flex items-center justify-between cursor-pointer">
-                <div>
-                  <p className="text-sm font-medium text-dental-dark">
-                    Використовувати права доступу
-                  </p>
-                  <p className="text-xs text-dental-text mt-0.5">
-                    Якщо вимкнено — всі співробітники мають повний доступ до
-                    всіх складів.
-                  </p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={settings.enforce_stock_permissions}
-                  onChange={e =>
-                    update('enforce_stock_permissions', e.target.checked)
-                  }
-                  className="rounded ml-4 shrink-0"
-                />
-              </label>
-
-              <label className="flex items-center justify-between cursor-pointer">
-                <div>
-                  <p className="text-sm font-medium text-dental-dark">
-                    Показувати «Моя інвентаризація»
-                  </p>
-                  <p className="text-xs text-dental-text mt-0.5">
-                    Персональна перевірка залишків per-warehouse для кожного
-                    співробітника.
-                  </p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={settings.show_my_inventory}
-                  onChange={e => update('show_my_inventory', e.target.checked)}
-                  className="rounded ml-4 shrink-0"
-                />
-              </label>
-            </div>
-
-            {error && (
-              <div className="rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
-                {error}
-              </div>
-            )}
-
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={saving || saved}
-                className="inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-6 py-2 text-sm font-medium text-white hover:bg-dental-dark disabled:opacity-60 transition-colors"
-              >
-                {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-                {saved && <CheckCircle2 className="w-4 h-4" />}
-                {saved ? 'Збережено' : 'Зберегти'}
-              </button>
-            </div>
-          </div>
-        )}
+    <div className="max-w-2xl mx-auto">
+      {/* Header */}
+      <div className="mb-6 flex items-center gap-3">
+        <Link
+          href="/admin/stock"
+          className="text-dental-text hover:text-dental-primary-600"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </Link>
+        <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
+          Налаштування складу
+        </h1>
       </div>
+
+      {loading && (
+        <div className="flex justify-center py-16">
+          <Loader2 className="w-7 h-7 animate-spin text-dental-primary-600" />
+        </div>
+      )}
+
+      {!loading && settings && (
+        <div className="space-y-4">
+          {/* Writeoff mode */}
+          <div className="rounded-xl border bg-white p-5">
+            <h2 className="font-semibold text-dental-dark mb-3">
+              Тип автосписання матеріалів
+            </h2>
+            <div className="space-y-3">
+              {(['none', 'draft_hybrid', 'auto'] as WriteoffMode[]).map(
+                mode => (
+                  <label
+                    key={mode}
+                    className={`flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-colors ${
+                      settings.writeoff_mode === mode
+                        ? 'border-dental-primary-600 bg-dental-primary/5'
+                        : 'border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="writeoff_mode"
+                      value={mode}
+                      checked={settings.writeoff_mode === mode}
+                      onChange={() => update('writeoff_mode', mode)}
+                      className="mt-0.5 shrink-0"
+                    />
+                    <div>
+                      <p className="text-sm font-medium text-dental-dark">
+                        {WRITEOFF_MODE_LABELS[mode]}
+                      </p>
+                      <p className="text-xs text-dental-text mt-0.5">
+                        {WRITEOFF_MODE_HINTS[mode]}
+                      </p>
+                    </div>
+                  </label>
+                )
+              )}
+            </div>
+          </div>
+
+          {/* Toggles */}
+          <div className="rounded-xl border bg-white p-5 space-y-4">
+            <h2 className="font-semibold text-dental-dark">
+              Додаткові параметри
+            </h2>
+
+            <label className="flex items-center justify-between cursor-pointer">
+              <div>
+                <p className="text-sm font-medium text-dental-dark">
+                  Дозволити негативний залишок
+                </p>
+                <p className="text-xs text-dental-text mt-0.5">
+                  Рекомендується ввімкнути на перші 30–60 днів після запуску для
+                  поступового введення залишків.
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                checked={settings.allow_negative_balance}
+                onChange={e =>
+                  update('allow_negative_balance', e.target.checked)
+                }
+                className="rounded ml-4 shrink-0"
+              />
+            </label>
+
+            <label className="flex items-center justify-between cursor-pointer">
+              <div>
+                <p className="text-sm font-medium text-dental-dark">
+                  Використовувати права доступу
+                </p>
+                <p className="text-xs text-dental-text mt-0.5">
+                  Якщо вимкнено — всі співробітники мають повний доступ до всіх
+                  складів.
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                checked={settings.enforce_stock_permissions}
+                onChange={e =>
+                  update('enforce_stock_permissions', e.target.checked)
+                }
+                className="rounded ml-4 shrink-0"
+              />
+            </label>
+
+            <label className="flex items-center justify-between cursor-pointer">
+              <div>
+                <p className="text-sm font-medium text-dental-dark">
+                  Показувати «Моя інвентаризація»
+                </p>
+                <p className="text-xs text-dental-text mt-0.5">
+                  Персональна перевірка залишків per-warehouse для кожного
+                  співробітника.
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                checked={settings.show_my_inventory}
+                onChange={e => update('show_my_inventory', e.target.checked)}
+                className="rounded ml-4 shrink-0"
+              />
+            </label>
+          </div>
+
+          {error && (
+            <div className="rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+              {error}
+            </div>
+          )}
+
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving || saved}
+              className="inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-6 py-2 text-sm font-medium text-white hover:bg-dental-dark disabled:opacity-60 transition-colors"
+            >
+              {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+              {saved && <CheckCircle2 className="w-4 h-4" />}
+              {saved ? 'Збережено' : 'Зберегти'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
