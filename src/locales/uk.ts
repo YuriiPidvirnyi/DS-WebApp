@@ -1533,6 +1533,7 @@ const uk = {
       defaultUser: 'Адмін',
       openSidebar: 'Відкрити меню',
       sidebarNav: 'Навігація адмін-панелі',
+      patientCabinet: 'Мій кабінет пацієнта',
     },
     onboarding: {
       step1: {

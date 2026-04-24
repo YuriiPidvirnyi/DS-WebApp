@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
@@ -18,7 +18,6 @@ import {
   Menu,
   X,
   LogOut,
-  ChevronRight,
   ClipboardList,
   Package,
   ShoppingCart,
@@ -27,10 +26,14 @@ import {
   DatabaseZap,
   Activity,
   Boxes,
+  UserCircle,
 } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
+import SidebarNavItem from '@/components/ui/SidebarNavItem'
+import UserSidebarCard from '@/components/ui/UserSidebarCard'
 import { AdminAuthProvider } from '@/contexts/AdminAuthContext'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
+import { useDrawerA11y } from '@/hooks/useDrawerA11y'
 import {
   canAccessNavItem,
   ROLE_BADGE_CLASSES,
@@ -147,35 +150,53 @@ function RoleBadge({ role }: { role: AdminRole }) {
   )
 }
 
+const footerLinkBase =
+  'flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors focus:outline-none focus:ring-2'
+
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
   const { user, isLoading, isAuthenticated, logout } = useAdminAuth()
+  const {
+    triggerRef,
+    drawerRef,
+    close: closeSidebar,
+  } = useDrawerA11y({
+    open: sidebarOpen,
+    onClose: () => setSidebarOpen(false),
+    autoFocusSelector: '[data-drawer-autofocus]',
+  })
 
   const navigation = user
     ? ALL_NAV_ITEMS.filter(item => canAccessNavItem(user.role, item.href))
     : []
 
-  const isActive = (href: string) => {
-    if (href === '/admin') {
-      return pathname === '/admin'
-    }
-    return pathname.startsWith(href)
-  }
+  const isActive = useCallback(
+    (href: string) => {
+      if (href === '/admin') return pathname === '/admin'
+      return pathname.startsWith(href)
+    },
+    [pathname]
+  )
 
   const isLoginPage = pathname === '/admin/login'
 
+  const pageTitle = (() => {
+    const active = navigation.find(item => isActive(item.href))
+    return active ? t(active.nameKey) : t('admin.layout.panel')
+  })()
+
+  // Auth guard + permission redirect
   useEffect(() => {
     if (isLoginPage || isLoading) return
 
     if (!isAuthenticated) {
-      router.replace('/admin/login')
+      router.replace('/auth/login')
       return
     }
 
-    // Route-level permission guard: redirect to dashboard if user lacks access
     if (user && pathname !== '/admin') {
       if (!canAccessNavItem(user.role, pathname)) {
         router.replace('/admin')
@@ -183,12 +204,21 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     }
   }, [isAuthenticated, isLoading, isLoginPage, pathname, router, user])
 
+  // Close drawer on route change
+  useEffect(() => {
+    setSidebarOpen(false)
+  }, [pathname])
+
   if (isLoading && !isLoginPage) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-dental-secondary-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-dental-teal border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-500">{t('common.loading')}...</p>
+          <div
+            className="w-12 h-12 border-4 border-dental-primary-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"
+            role="status"
+            aria-label={t('common.loading')}
+          />
+          <p className="text-dental-muted">{t('common.loading')}...</p>
         </div>
       </div>
     )
@@ -207,161 +237,192 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     router.push('/')
   }
 
+  const displayName = user?.name || t('admin.layout.defaultUser')
+  const initials =
+    displayName
+      .split(' ')
+      .map(n => n.charAt(0))
+      .join('')
+      .slice(0, 2)
+      .toUpperCase() || 'A'
+
+  const userCard = user ? (
+    <UserSidebarCard
+      name={displayName}
+      email={user.email}
+      extra={<RoleBadge role={user.role} />}
+    />
+  ) : null
+
+  const renderNav = (onItemClick?: () => void, mobile = false) => (
+    <nav
+      aria-label={t('admin.layout.sidebarNav')}
+      className={
+        mobile
+          ? 'px-3 py-4 space-y-1'
+          : 'flex-1 px-3 py-4 space-y-1 overflow-y-auto'
+      }
+    >
+      {navigation.map(item => (
+        <SidebarNavItem
+          key={item.nameKey}
+          href={item.href}
+          icon={item.icon}
+          label={t(item.nameKey)}
+          active={isActive(item.href)}
+          onClick={onItemClick}
+          tabIndex={mobile ? (sidebarOpen ? 0 : -1) : undefined}
+        />
+      ))}
+    </nav>
+  )
+
+  const renderFooter = (onItemClick?: () => void, mobile = false) => (
+    <div
+      className={`p-4 border-t border-dental-secondary-100 space-y-1.5 ${
+        mobile ? 'pb-[calc(1rem+env(safe-area-inset-bottom,0px))] bg-white' : ''
+      }`}
+    >
+      <Link
+        href="/cabinet"
+        onClick={onItemClick}
+        tabIndex={mobile ? (sidebarOpen ? 0 : -1) : undefined}
+        className={`${footerLinkBase} text-dental-primary-700 hover:bg-dental-primary-50 focus:ring-dental-primary-500`}
+      >
+        <UserCircle className="w-4 h-4" />
+        {t('admin.layout.patientCabinet')}
+      </Link>
+      <Link
+        href="/"
+        onClick={onItemClick}
+        tabIndex={mobile ? (sidebarOpen ? 0 : -1) : undefined}
+        className={`${footerLinkBase} text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 focus:ring-dental-primary-500`}
+      >
+        <ArrowLeft className="w-4 h-4" />
+        {t('admin.layout.backToSite')}
+      </Link>
+      <button
+        onClick={handleLogout}
+        tabIndex={mobile ? (sidebarOpen ? 0 : -1) : undefined}
+        className={`w-full ${footerLinkBase} text-dental-muted hover:text-red-600 hover:bg-red-50 focus:ring-red-300`}
+      >
+        <LogOut className="w-4 h-4" />
+        {t('admin.layout.logout')}
+      </button>
+    </div>
+  )
+
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-dental-secondary-50">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-gray-600/75 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 z-40 bg-dental-dark/50 backdrop-blur-sm lg:hidden"
+          onClick={closeSidebar}
+          role="presentation"
+          aria-hidden="true"
         />
       )}
 
       {/* Mobile sidebar */}
       <aside
         id="mobile-sidebar"
-        className={`fixed inset-y-0 left-0 z-50 w-72 bg-white shadow-xl transform transition-transform duration-300 ease-in-out lg:hidden ${
+        ref={drawerRef}
+        role="dialog"
+        aria-modal={sidebarOpen}
+        aria-label={t('admin.layout.sidebarNav')}
+        className={`fixed inset-y-0 left-0 z-50 w-72 max-w-[calc(100vw-3rem)] bg-white shadow-xl transform transition-transform duration-300 ease-in-out lg:hidden flex flex-col ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex items-center justify-between h-16 px-6 border-b">
-          <Link href="/admin">
+        <div className="flex items-center justify-between h-16 px-6 border-b border-dental-secondary-100">
+          <Link
+            href="/admin"
+            onClick={closeSidebar}
+            tabIndex={sidebarOpen ? 0 : -1}
+            className="focus:outline-none focus:ring-2 focus:ring-dental-primary-500 rounded-lg"
+          >
             <Logo size="sm" />
           </Link>
           <button
-            onClick={() => setSidebarOpen(false)}
-            className="p-2 rounded-md text-gray-400 hover:text-gray-600"
+            data-drawer-autofocus
+            onClick={closeSidebar}
+            tabIndex={sidebarOpen ? 0 : -1}
             aria-label={t('common.close')}
+            className="p-2 rounded-lg text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5" />
           </button>
         </div>
-        <nav
-          aria-label={t('admin.layout.sidebarNav')}
-          className="px-4 py-6 space-y-1"
-        >
-          {navigation.map(item => (
-            <Link
-              key={item.nameKey}
-              href={item.href}
-              onClick={() => setSidebarOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
-                isActive(item.href)
-                  ? 'bg-dental-teal text-white'
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`}
-              aria-current={isActive(item.href) ? 'page' : undefined}
-            >
-              {item.icon}
-              {t(item.nameKey)}
-              {isActive(item.href) && (
-                <ChevronRight className="w-4 h-4 ml-auto" />
-              )}
-            </Link>
-          ))}
-        </nav>
+        {userCard}
+        <div className="flex-1 overflow-y-auto">
+          {renderNav(closeSidebar, true)}
+        </div>
+        {renderFooter(closeSidebar, true)}
       </aside>
 
       {/* Desktop sidebar */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-72 lg:flex-col">
-        <div className="flex flex-col flex-1 bg-white border-r border-gray-200">
-          <div className="flex items-center h-16 px-6 border-b">
-            <Link href="/admin">
+      <aside
+        className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-72 lg:flex-col"
+        aria-label={t('admin.layout.sidebarNav')}
+      >
+        <div className="flex flex-col flex-1 bg-white border-r border-dental-secondary-100">
+          <div className="flex items-center h-16 px-6 border-b border-dental-secondary-100">
+            <Link
+              href="/admin"
+              className="focus:outline-none focus:ring-2 focus:ring-dental-primary-500 rounded-lg"
+            >
               <Logo size="sm" />
             </Link>
           </div>
-          <nav
-            aria-label={t('admin.layout.sidebarNav')}
-            className="flex-1 px-4 py-6 space-y-1 overflow-y-auto"
-          >
-            {navigation.map(item => (
-              <Link
-                key={item.nameKey}
-                href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
-                  isActive(item.href)
-                    ? 'bg-dental-teal text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-                aria-current={isActive(item.href) ? 'page' : undefined}
-              >
-                {item.icon}
-                {t(item.nameKey)}
-                {isActive(item.href) && (
-                  <ChevronRight className="w-4 h-4 ml-auto" />
-                )}
-              </Link>
-            ))}
-          </nav>
-          <div className="p-4 border-t space-y-2">
-            {user && (
-              <div className="px-4 py-2 space-y-1">
-                <p className="text-sm text-gray-600 truncate">{user.email}</p>
-                <RoleBadge role={user.role} />
-              </div>
-            )}
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
-            >
-              <LogOut className="w-5 h-5" />
-              {t('admin.layout.logout')}
-            </button>
-            <Link
-              href="/"
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              {t('admin.layout.backToSite')}
-            </Link>
-          </div>
+          {userCard}
+          {renderNav()}
+          {renderFooter()}
         </div>
-      </div>
+      </aside>
 
       {/* Main content */}
       <div className="lg:pl-72">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 flex items-center h-16 px-4 bg-white border-b border-gray-200 lg:px-8">
+        <header className="sticky top-0 z-30 flex items-center h-16 px-4 bg-white/95 backdrop-blur-sm border-b border-dental-secondary-100 lg:px-8">
           <button
+            ref={triggerRef}
             onClick={() => setSidebarOpen(true)}
-            className="p-2 -ml-2 rounded-md text-gray-400 hover:text-gray-600 lg:hidden"
             aria-label={t('admin.layout.openSidebar')}
-            aria-controls="mobile-sidebar"
             aria-expanded={sidebarOpen}
+            aria-controls="mobile-sidebar"
+            className="p-2 -ml-2 rounded-lg text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 lg:hidden transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
           >
             <Menu className="w-6 h-6" />
           </button>
 
-          <div className="flex-1 flex items-center justify-between">
-            <h1 className="text-lg font-semibold text-gray-900 lg:hidden">
-              {t('admin.layout.panel')}
+          <div className="flex-1 flex items-center justify-between ml-1 lg:ml-0">
+            <h1 className="text-lg font-semibold text-dental-dark">
+              <span className="lg:hidden">{t('admin.layout.panel')}</span>
+              <span className="hidden lg:inline">{pageTitle}</span>
             </h1>
 
             <div className="flex items-center gap-4 ml-auto">
-              <div className="hidden sm:flex items-center gap-2 text-sm text-gray-600">
+              <div
+                className="hidden sm:flex items-center gap-2 text-sm text-dental-muted"
+                aria-live="polite"
+              >
                 <div
-                  className="w-2 h-2 bg-green-500 rounded-full"
+                  className="w-2 h-2 bg-dental-success rounded-full"
                   aria-hidden="true"
                 />
                 {t('admin.layout.systemOnline')}
               </div>
               <div className="flex items-center gap-3">
-                {user && (
-                  <div className="hidden sm:block">
-                    <RoleBadge role={user.role} />
-                  </div>
-                )}
-                <div className="flex items-center gap-2">
-                  <div
-                    className="w-8 h-8 rounded-full bg-dental-teal flex items-center justify-center text-white font-semibold text-sm"
-                    aria-hidden="true"
-                  >
-                    {user?.name?.charAt(0)?.toUpperCase() || 'A'}
-                  </div>
-                  <span className="hidden sm:block text-sm font-medium text-gray-700">
-                    {user?.name || t('admin.layout.defaultUser')}
-                  </span>
+                <div
+                  className="w-8 h-8 rounded-full bg-dental-primary-600 flex items-center justify-center text-white font-semibold text-xs"
+                  aria-hidden="true"
+                >
+                  {initials}
                 </div>
+                <span className="hidden sm:block text-sm font-medium text-dental-dark">
+                  {displayName}
+                </span>
               </div>
             </div>
           </div>

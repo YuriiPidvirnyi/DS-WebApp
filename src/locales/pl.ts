@@ -1542,6 +1542,7 @@ const pl = {
       defaultUser: 'Admin',
       openSidebar: 'Otwórz menu',
       sidebarNav: 'Nawigacja panelu admina',
+      patientCabinet: 'Mój gabinet pacjenta',
     },
     onboarding: {
       step1: {
