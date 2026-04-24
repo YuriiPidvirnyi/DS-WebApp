@@ -147,7 +147,7 @@ export default function PatientManagement() {
   }, [rows])
 
   const tableCellClass = preferences.compactTables ? 'px-3 py-2' : 'px-4 py-3'
-  const tableHeadClass = `${tableCellClass} text-left text-xs font-semibold uppercase text-gray-500`
+  const tableHeadClass = `${tableCellClass} text-left text-xs font-semibold uppercase text-dental-text-light`
   const tableEmptyStateClass = `${
     preferences.compactTables ? 'px-3 py-6' : 'px-4 py-8'
   } text-center text-dental-text-light`
@@ -374,8 +374,8 @@ export default function PatientManagement() {
 
       <div className="overflow-hidden rounded-xl border border-dental-secondary-200 bg-white">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-dental-secondary-200">
+            <thead className="bg-dental-secondary-50">
               <tr>
                 <th className={tableHeadClass}>
                   {t('admin.patientManagement.table.headers.fullName')}
@@ -397,7 +397,7 @@ export default function PatientManagement() {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 bg-white text-sm">
+            <tbody className="divide-y divide-dental-secondary-100 bg-white text-sm">
               {isLoading ? (
                 <TableSkeleton cols={6} />
               ) : rows.length === 0 ? (

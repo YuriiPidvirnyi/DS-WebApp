@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
+import { getAdminAccess } from '@/lib/supabase/admin'
 import { Eye, EyeOff, ArrowRight, Mail, Lock } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
 import {
@@ -35,7 +36,7 @@ export default function LoginPage() {
       setLoading(false)
       return
     }
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
@@ -57,7 +58,9 @@ export default function LoginPage() {
     } catch {
       // analytics may fail silently
     }
-    router.push('/cabinet')
+
+    const adminAccess = await getAdminAccess(supabase, data.user.id)
+    router.push(adminAccess ? '/admin' : '/cabinet')
     router.refresh()
   }
 

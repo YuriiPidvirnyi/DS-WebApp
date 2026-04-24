@@ -309,16 +309,16 @@ export default function AdminInventoryAnalyticsPage() {
           <table className="w-full text-sm">
             <thead className="bg-dental-secondary-50">
               <tr>
-                <th className="px-4 py-2 text-left text-xs font-semibold uppercase text-gray-500">
+                <th className="px-4 py-2 text-left text-xs font-semibold uppercase text-dental-text-light">
                   {t('admin.inventory.stockColumns.material')}
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-semibold uppercase text-gray-500">
+                <th className="px-4 py-2 text-left text-xs font-semibold uppercase text-dental-text-light">
                   {t('admin.inventory.stockColumns.category')}
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-semibold uppercase text-gray-500">
+                <th className="px-4 py-2 text-left text-xs font-semibold uppercase text-dental-text-light">
                   {t('admin.inventory.stockColumns.stock')}
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-semibold uppercase text-gray-500">
+                <th className="px-4 py-2 text-left text-xs font-semibold uppercase text-dental-text-light">
                   {t('admin.inventory.stockColumns.level')}
                 </th>
               </tr>
@@ -350,7 +350,7 @@ export default function AdminInventoryAnalyticsPage() {
                       {s.current} / {s.min}
                     </td>
                     <td className="px-4 py-2">
-                      <div className="h-2 w-24 rounded-full bg-gray-200 overflow-hidden">
+                      <div className="h-2 w-24 rounded-full bg-dental-secondary-200 overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all ${
                             pct < 50

@@ -110,7 +110,7 @@ export default function AdminStockDocumentDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center py-24">
         <Loader2 className="w-8 h-8 animate-spin text-dental-primary-600" />
       </div>
     )
@@ -136,7 +136,7 @@ export default function AdminStockDocumentDetailPage() {
   const isPosted = doc.status === 'posted'
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <>
       <div className="max-w-4xl mx-auto">
         <div className="mb-6 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -305,6 +305,6 @@ export default function AdminStockDocumentDetailPage() {
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }

@@ -80,7 +80,7 @@ export default function AdminStockCalcCardsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <>
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-6 flex items-center justify-between gap-4">
@@ -226,6 +226,6 @@ export default function AdminStockCalcCardsPage() {
           }}
         />
       )}
-    </div>
+    </>
   )
 }
