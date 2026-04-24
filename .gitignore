@@ -33,6 +33,7 @@ Thumbs.db
 .eslintcache
 .cache
 test-results/
+playwright-report/
 
 # Coverage reports
 coverage/
