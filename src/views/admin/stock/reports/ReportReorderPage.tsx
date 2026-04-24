@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { ChevronLeft, Loader2, Download } from 'lucide-react'
-import { exportCsv } from '@/components/admin/stock/ReportFilterBar'
+import { exportCsv } from '@/utils/stock-export'
 
 interface ReorderRow {
   supplier_id: string | null

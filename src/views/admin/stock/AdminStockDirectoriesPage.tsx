@@ -52,7 +52,7 @@ export default function AdminStockDirectoriesPage() {
     } finally {
       setLoading(false)
     }
-  }, [tab, showArchived, apiPath])
+  }, [showArchived, apiPath])
 
   useEffect(() => {
     load()

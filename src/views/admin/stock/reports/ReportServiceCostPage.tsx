@@ -3,10 +3,8 @@
 import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import { ChevronLeft, Loader2, Download } from 'lucide-react'
-import {
-  PeriodFilter,
-  exportCsv,
-} from '@/components/admin/stock/ReportFilterBar'
+import { PeriodFilter } from '@/components/admin/stock/ReportFilterBar'
+import { exportCsv } from '@/utils/stock-export'
 
 interface ServiceCostRow {
   service: string

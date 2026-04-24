@@ -3,10 +3,8 @@
 import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import { ChevronLeft, Loader2, Download } from 'lucide-react'
-import {
-  SelectFilter,
-  exportCsv,
-} from '@/components/admin/stock/ReportFilterBar'
+import { SelectFilter } from '@/components/admin/stock/ReportFilterBar'
+import { exportCsv } from '@/utils/stock-export'
 
 interface BalanceRow {
   material_id: string
