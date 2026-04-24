@@ -21,8 +21,8 @@ export const Card = ({
   const variantStyles = {
     default: 'bg-white shadow-sm',
     elevated: 'bg-white shadow-lg',
-    outlined: 'bg-white border-2 border-gray-200',
-    filled: 'bg-gray-50',
+    outlined: 'bg-white border-2 border-dental-secondary-200',
+    filled: 'bg-dental-secondary-50',
   }
 
   const paddingStyles = {
@@ -83,7 +83,7 @@ export const CardTitle = ({
 }: CardTitleProps) => {
   return (
     <Component
-      className={clsx('text-xl font-semibold text-gray-900', className)}
+      className={clsx('text-xl font-semibold text-dental-dark', className)}
       {...props}
     >
       {children}
@@ -102,7 +102,7 @@ export const CardDescription = ({
   ...props
 }: CardDescriptionProps) => {
   return (
-    <p className={clsx('text-gray-600', className)} {...props}>
+    <p className={clsx('text-dental-text', className)} {...props}>
       {children}
     </p>
   )
@@ -120,7 +120,10 @@ export const CardFooter = ({
 }: CardFooterProps) => {
   return (
     <div
-      className={clsx('mt-6 pt-6 border-t border-gray-100', className)}
+      className={clsx(
+        'mt-6 pt-6 border-t border-dental-secondary-100',
+        className
+      )}
       {...props}
     >
       {children}

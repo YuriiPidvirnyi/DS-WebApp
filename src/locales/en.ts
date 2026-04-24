@@ -1533,6 +1533,7 @@ const en = {
       defaultUser: 'Admin',
       openSidebar: 'Open menu',
       sidebarNav: 'Admin panel navigation',
+      patientCabinet: 'My patient cabinet',
     },
     onboarding: {
       step1: {
