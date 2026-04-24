@@ -44,7 +44,6 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
   const { ref: servicesRef, isVisible: servicesVisible } =
     useStaggeredAnimation({ staggerDelay: 150 })
   const { ref: pricingRef, isVisible: pricingVisible } = useScrollAnimation()
-  const { ref: ctaRef, isVisible: ctaVisible } = useScrollAnimation()
 
   const features = [
     {
@@ -383,49 +382,6 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
               <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section
-        ref={ctaRef}
-        role="region"
-        aria-labelledby="cta-heading"
-        className="py-24 bg-dental-primary-900 text-white relative overflow-hidden"
-      >
-        {/* Background decoration */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-96 h-96 bg-dental-primary-500/10 rounded-full blur-3xl" />
-          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-dental-primary-500/10 rounded-full blur-3xl" />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <AnimatedSection isVisible={ctaVisible} animation="fadeUp">
-            <h2
-              id="cta-heading"
-              className="text-4xl lg:text-5xl font-bold mb-6 leading-tight"
-            >
-              {t('home.cta.title')}
-            </h2>
-            <p className="text-xl text-dental-secondary mb-10 max-w-2xl mx-auto leading-relaxed">
-              {t('home.cta.description')}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/booking"
-                className="inline-flex items-center justify-center gap-3 bg-white hover:bg-slate-100 text-dental-dark px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-white/20 hover:-translate-y-0.5"
-              >
-                {t('buttons.bookAppointment')}
-                <ArrowRight className="h-5 w-5" />
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center gap-3 bg-transparent hover:bg-white/10 text-white px-8 py-4 rounded-2xl font-semibold text-lg border-2 border-white/30 transition-all duration-300"
-              >
-                {t('buttons.sendRequest')}
-              </Link>
-            </div>
-          </AnimatedSection>
         </div>
       </section>
     </div>
