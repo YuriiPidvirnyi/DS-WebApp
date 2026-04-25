@@ -1,11 +1,13 @@
 import { HTMLAttributes, ReactNode } from 'react'
 import clsx from 'clsx'
+import { CARD_VARIANT_CLASSES, type CardVariant } from './card-variants'
 
-export interface CardProps extends HTMLAttributes<HTMLDivElement> {
+export interface CardProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode
-  variant?: 'default' | 'elevated' | 'outlined' | 'filled'
-  padding?: 'none' | 'sm' | 'md' | 'lg'
+  variant?: CardVariant
+  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl'
   hoverable?: boolean
+  as?: 'div' | 'article' | 'section'
 }
 
 export const Card = ({
@@ -13,23 +15,16 @@ export const Card = ({
   variant = 'default',
   padding = 'md',
   hoverable = false,
+  as: Component = 'div',
   className,
   ...props
 }: CardProps) => {
-  const baseStyles = 'rounded-xl'
-
-  const variantStyles = {
-    default: 'bg-white shadow-sm',
-    elevated: 'bg-white shadow-lg',
-    outlined: 'bg-white border-2 border-dental-secondary-200',
-    filled: 'bg-dental-secondary-50',
-  }
-
   const paddingStyles = {
     none: '',
     sm: 'p-4',
     md: 'p-6',
     lg: 'p-8',
+    xl: 'p-10 sm:p-12',
   }
 
   const hoverStyles = hoverable
@@ -37,18 +32,18 @@ export const Card = ({
     : ''
 
   return (
-    <div
+    <Component
       className={clsx(
-        baseStyles,
-        variantStyles[variant],
+        'rounded-xl',
+        CARD_VARIANT_CLASSES[variant],
         paddingStyles[padding],
         hoverStyles,
         className
       )}
-      {...props}
+      {...(props as HTMLAttributes<HTMLDivElement>)}
     >
       {children}
-    </div>
+    </Component>
   )
 }
 
@@ -94,15 +89,26 @@ export const CardTitle = ({
 // Card Description component
 export interface CardDescriptionProps extends HTMLAttributes<HTMLParagraphElement> {
   children: ReactNode
+  size?: 'sm' | 'md' | 'lg'
 }
 
 export const CardDescription = ({
   children,
+  size = 'md',
   className,
   ...props
 }: CardDescriptionProps) => {
+  const sizeStyles = {
+    sm: 'text-sm',
+    md: 'text-base',
+    lg: 'text-lg',
+  }
+
   return (
-    <p className={clsx('text-dental-text', className)} {...props}>
+    <p
+      className={clsx('text-dental-text', sizeStyles[size], className)}
+      {...props}
+    >
       {children}
     </p>
   )
@@ -122,6 +128,41 @@ export const CardFooter = ({
     <div
       className={clsx(
         'mt-6 pt-6 border-t border-dental-secondary-100',
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </div>
+  )
+}
+
+// Card Media component — enforces consistent aspect ratio for image areas
+type AspectRatio = 'video' | 'square' | 'wide' | 'portrait'
+
+export interface CardMediaProps extends HTMLAttributes<HTMLDivElement> {
+  children: ReactNode
+  aspectRatio?: AspectRatio
+}
+
+export const CardMedia = ({
+  children,
+  aspectRatio = 'video',
+  className,
+  ...props
+}: CardMediaProps) => {
+  const aspectStyles: Record<AspectRatio, string> = {
+    video: 'aspect-video',
+    square: 'aspect-square',
+    wide: 'aspect-[3/2]',
+    portrait: 'aspect-[3/4]',
+  }
+
+  return (
+    <div
+      className={clsx(
+        'overflow-hidden rounded-t-xl',
+        aspectStyles[aspectRatio],
         className
       )}
       {...props}

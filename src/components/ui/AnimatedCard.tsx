@@ -1,6 +1,8 @@
 'use client'
 
 import { ReactNode, CSSProperties } from 'react'
+import clsx from 'clsx'
+import { CARD_VARIANT_CLASSES, type CardVariant } from './card-variants'
 
 const hoverClasses: Record<string, string> = {
   lift: 'hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] transition-[transform,box-shadow] duration-300 ease-out shadow-[0_4px_6px_rgba(0,0,0,0.05)]',
@@ -14,6 +16,7 @@ interface AnimatedCardProps {
   children: ReactNode
   className?: string
   hoverEffect?: 'tilt' | 'lift' | 'glow' | 'scale' | 'none'
+  variant?: CardVariant
   delay?: number
   isVisible?: boolean
 }
@@ -22,6 +25,7 @@ export default function AnimatedCard({
   children,
   className = '',
   hoverEffect = 'lift',
+  variant = 'default',
   delay = 0,
   isVisible = true,
 }: AnimatedCardProps) {
@@ -34,7 +38,12 @@ export default function AnimatedCard({
 
   return (
     <div
-      className={`bg-white rounded-2xl ${hoverClasses[hoverEffect] || ''} ${className}`}
+      className={clsx(
+        'rounded-2xl',
+        CARD_VARIANT_CLASSES[variant],
+        hoverClasses[hoverEffect] || '',
+        className
+      )}
       style={animationStyles}
     >
       {children}
