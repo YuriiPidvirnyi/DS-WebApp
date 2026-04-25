@@ -7,12 +7,13 @@ import GoogleMap from '@/components/GoogleMap'
 import CallbackRequest from '@/components/CallbackRequest'
 import FAQ from '@/components/FAQ'
 import { CONTACT_INFO } from '@/utils/constants'
+import { Card } from '@/components/ui'
 
 const Contact = () => {
   const { t } = useTranslation()
 
   return (
-    <div className="py-16">
+    <div className="py-16 lg:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
@@ -31,21 +32,21 @@ const Contact = () => {
           {/* Contact Information */}
           <div className="space-y-8">
             {/* Contact Details */}
-            <div className="bg-dental-primary-800 text-white rounded-2xl p-8">
+            <Card variant="dark" padding="lg">
               <h2 className="text-2xl font-bold text-white mb-6">
                 {t('contact.contactInfo')}
               </h2>
 
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <Phone className="h-6 w-6 mt-1 text-white" />
+                  <Phone className="h-6 w-6 mt-1 text-white shrink-0" />
                   <div>
                     <h3 className="font-semibold text-white mb-1">
                       {t('common.phone')}
                     </h3>
                     <a
                       href={`tel:${CONTACT_INFO.phoneRaw}`}
-                      className="hover:underline"
+                      className="text-white hover:underline"
                       aria-label={`${t('common.phone')}: ${CONTACT_INFO.phone}`}
                       data-track-id="call_click"
                       data-track-category="outbound"
@@ -54,7 +55,7 @@ const Contact = () => {
                     >
                       {CONTACT_INFO.phone}
                     </a>
-                    <p className="text-sm text-white/90">
+                    <p className="text-sm text-white/80">
                       {t('common.workingHours')}:{' '}
                       {CONTACT_INFO.workingHours.weekdays}
                     </p>
@@ -62,14 +63,14 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <Mail className="h-6 w-6 mt-1 text-white" />
+                  <Mail className="h-6 w-6 mt-1 text-white shrink-0" />
                   <div>
                     <h3 className="font-semibold text-white mb-1">
                       {t('common.email')}
                     </h3>
                     <a
                       href={`mailto:${CONTACT_INFO.email}`}
-                      className="hover:underline"
+                      className="text-white hover:underline"
                       aria-label={`${t('common.email')}: ${CONTACT_INFO.email}`}
                       data-track-id="email_click"
                       data-track-category="outbound"
@@ -78,25 +79,27 @@ const Contact = () => {
                     >
                       {CONTACT_INFO.email}
                     </a>
-                    <p className="text-sm text-white/90">
+                    <p className="text-sm text-white/80">
                       {t('contact.responseTime')}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <MapPin className="h-6 w-6 mt-1 text-white" />
+                  <MapPin className="h-6 w-6 mt-1 text-white shrink-0" />
                   <div>
                     <h3 className="font-semibold text-white mb-1">
                       {t('common.address')}
                     </h3>
-                    <p>{CONTACT_INFO.address.full}</p>
-                    <p>{CONTACT_INFO.address.district}</p>
+                    <p className="text-white">{CONTACT_INFO.address.full}</p>
+                    <p className="text-white">
+                      {CONTACT_INFO.address.district}
+                    </p>
                     <a
                       href="https://maps.app.goo.gl/gprGw94tfAJH7xFSA"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-white/90 hover:text-white hover:underline"
+                      className="text-sm text-white/80 hover:text-white hover:underline"
                       aria-label={t('contact.viewOnMap')}
                     >
                       {t('contact.viewOnMap')}
@@ -105,24 +108,34 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <Clock className="h-6 w-6 mt-1 text-white" />
+                  <Clock className="h-6 w-6 mt-1 text-white shrink-0" />
                   <div>
                     <h3 className="font-semibold text-white mb-1">
                       {t('common.workingHours')}
                     </h3>
-                    <p>{CONTACT_INFO.workingHours.weekdays}</p>
-                    <p>{CONTACT_INFO.workingHours.saturday}</p>
-                    <p>{CONTACT_INFO.workingHours.sunday}</p>
-                    <p className="text-sm text-white/90">
+                    <p className="text-white">
+                      {CONTACT_INFO.workingHours.weekdays}
+                    </p>
+                    <p className="text-white">
+                      {CONTACT_INFO.workingHours.saturday}
+                    </p>
+                    <p className="text-white">
+                      {CONTACT_INFO.workingHours.sunday}
+                    </p>
+                    <p className="text-sm text-white/80">
                       {CONTACT_INFO.workingHours.timezone}
                     </p>
                   </div>
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* Emergency */}
-            <div className="bg-dental-error-light border border-dental-error rounded-2xl p-6">
+            <Card
+              variant="ghost"
+              padding="md"
+              className="bg-dental-error-light border-dental-error"
+            >
               <h3 className="text-lg font-bold text-dental-error-dark mb-3">
                 {t('contact.emergency.title')}
               </h3>
@@ -142,16 +155,16 @@ const Contact = () => {
                   {t('contact.emergency.availability')}
                 </p>
               </div>
-            </div>
+            </Card>
 
             {/* Quick callback */}
             <CallbackRequest />
 
             {/* Embedded Google Map */}
-            <div className="bg-dental-secondary-50 rounded-2xl overflow-hidden">
+            <Card variant="filled" padding="none" className="overflow-hidden">
               <div className="p-4 bg-white">
                 <div className="flex items-center mb-2">
-                  <MapPin className="h-5 w-5 text-dental-primary mr-2" />
+                  <MapPin className="h-5 w-5 text-dental-primary mr-2 shrink-0" />
                   <h3
                     id="location-heading"
                     className="font-semibold text-dental-dark"
@@ -184,7 +197,7 @@ const Contact = () => {
                   {t('contact.openInGoogleMaps')}
                 </a>
               </div>
-            </div>
+            </Card>
           </div>
         </div>
 

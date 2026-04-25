@@ -135,29 +135,31 @@ export default function BookingSuccess() {
   return (
     <div className="py-16">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <h1 className="text-4xl font-bold text-dental-dark mb-4">
           {t('booking.successPage.title')}
         </h1>
-        <p className="text-gray-600 mb-6">
+        <p className="text-dental-text mb-6">
           {t('booking.successPage.subtitle')}
         </p>
 
         {/* Appointment details */}
-        <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6 mx-auto max-w-md">
-          <h2 className="text-lg font-medium text-gray-900 mb-3">
+        <div className="bg-white border border-dental-secondary-200 rounded-lg p-4 mb-6 mx-auto max-w-md">
+          <h2 className="text-lg font-medium text-dental-dark mb-3">
             {t('booking.successPage.detailsTitle')}
           </h2>
           <div className="space-y-2 text-sm">
-            <p className="text-gray-500 flex items-center gap-2">
+            <p className="text-dental-muted flex items-center gap-2">
               {t('booking.successPage.bookingNumber')}:{' '}
-              <span className="font-mono font-medium text-gray-900">{ref}</span>
+              <span className="font-mono font-medium text-dental-dark">
+                {ref}
+              </span>
               <button
                 onClick={async () => {
                   try {
                     await navigator.clipboard.writeText(ref || '')
                   } catch {}
                 }}
-                className="text-xs px-2 py-0.5 border border-gray-300 rounded hover:bg-gray-50"
+                className="text-xs px-2 py-0.5 border border-dental-secondary-300 rounded hover:bg-dental-secondary-50"
                 aria-label={t('booking.successPage.copy')}
               >
                 {t('booking.successPage.copy')}
@@ -165,32 +167,32 @@ export default function BookingSuccess() {
             </p>
             {bookingDetails && (
               <>
-                <p className="text-gray-500">
+                <p className="text-dental-muted">
                   {t('booking.successPage.service')}:{' '}
-                  <span className="font-medium text-gray-900">
+                  <span className="font-medium text-dental-dark">
                     {bookingDetails.service}
                   </span>
                 </p>
                 {bookingDetails.date && (
-                  <p className="text-gray-500">
+                  <p className="text-dental-muted">
                     {t('booking.successPage.date')}:{' '}
-                    <span className="font-medium text-gray-900">
+                    <span className="font-medium text-dental-dark">
                       {bookingDetails.date}
                     </span>
                   </p>
                 )}
                 {bookingDetails.time && (
-                  <p className="text-gray-500">
+                  <p className="text-dental-muted">
                     {t('booking.successPage.time')}:{' '}
-                    <span className="font-medium text-gray-900">
+                    <span className="font-medium text-dental-dark">
                       {bookingDetails.time}
                     </span>
                   </p>
                 )}
                 {bookingDetails.name && (
-                  <p className="text-gray-500">
+                  <p className="text-dental-muted">
                     {t('booking.successPage.name')}:{' '}
-                    <span className="font-medium text-gray-900">
+                    <span className="font-medium text-dental-dark">
                       {bookingDetails.name}
                     </span>
                   </p>
@@ -222,13 +224,13 @@ export default function BookingSuccess() {
             )}
           <Link
             href="/"
-            className="px-5 py-2 rounded-lg bg-gray-100 text-gray-800"
+            className="px-5 py-2 rounded-lg bg-dental-secondary-100 text-dental-dark"
           >
             {t('booking.successPage.goHome')}
           </Link>
           <Link
             href="/booking"
-            className="px-5 py-2 rounded-lg bg-gray-100 text-gray-800"
+            className="px-5 py-2 rounded-lg bg-dental-secondary-100 text-dental-dark"
           >
             {t('booking.successPage.createAnother')}
           </Link>

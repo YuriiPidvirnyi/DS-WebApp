@@ -9,11 +9,19 @@ import {
 } from 'react'
 import { Edit, Eye, Plus, RefreshCw, Search, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button, Input, Select, TableSkeleton, Textarea } from '@/components/ui'
+import {
+  Button,
+  Input,
+  Select,
+  Skeleton,
+  TableSkeleton,
+  Textarea,
+} from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
 import AdminModal from './components/AdminModal'
+import AdminDataCard from '@/components/admin/AdminDataCard'
 import { formatDateTime } from './utils'
 
 interface PatientRow {
@@ -372,7 +380,8 @@ export default function PatientManagement() {
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-dental-secondary-200 bg-white">
+      {/* Desktop table — lg and above */}
+      <div className="hidden lg:block overflow-hidden rounded-xl border border-dental-secondary-200 bg-white">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-dental-secondary-200">
             <thead className="bg-dental-secondary-50">
@@ -493,6 +502,76 @@ export default function PatientManagement() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile / tablet card list — below lg */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:hidden">
+        {isLoading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-28 rounded-xl" />
+          ))
+        ) : rows.length === 0 ? (
+          <p className="col-span-full text-center py-8 text-dental-muted">
+            {t('admin.patientManagement.table.empty')}
+          </p>
+        ) : (
+          rows.map(row => (
+            <AdminDataCard
+              key={row.id}
+              title={
+                <span className="flex items-center gap-2">
+                  <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-dental-teal/10 text-xs font-semibold text-dental-teal">
+                    {(row.first_name || '?')[0]}
+                    {(row.last_name || '?')[0]}
+                  </span>
+                  <span className="truncate">
+                    {row.last_name} {row.first_name}
+                  </span>
+                </span>
+              }
+              subtitle={
+                <span className="flex flex-col gap-0.5">
+                  <span className="truncate">{row.phone || '—'}</span>
+                  <span className="truncate text-dental-muted">
+                    {row.email || '—'}
+                  </span>
+                </span>
+              }
+              meta={formatDateTime(row.updated_at)}
+              actions={
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => openViewModal(row)}
+                    className="rounded-md border border-dental-secondary p-2.5 text-blue-600 hover:bg-blue-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    aria-label={t('admin.patientManagement.table.actions.view')}
+                  >
+                    <Eye className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openEditModal(row)}
+                    className="rounded-md border border-dental-secondary p-2.5 text-dental-text hover:bg-dental-secondary-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    aria-label={t('admin.patientManagement.table.actions.edit')}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void deletePatient(row.id)}
+                    disabled={isUpdatingId === row.id}
+                    className="rounded-md border border-red-200 p-2.5 text-red-600 hover:bg-red-50 disabled:opacity-60 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    aria-label={t(
+                      'admin.patientManagement.table.actions.delete'
+                    )}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              }
+            />
+          ))
+        )}
       </div>
 
       <AdminModal
