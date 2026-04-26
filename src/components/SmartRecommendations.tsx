@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Link from 'next/link'
+import { useCSRF } from '@/hooks/useCSRF'
 import {
   Sparkles,
   ChevronDown,
@@ -50,6 +51,7 @@ const urgencyColors = {
 export default function SmartRecommendations() {
   const { t, i18n } = useTranslation()
   const lang = (i18n.language || 'uk') as 'uk' | 'en' | 'pl'
+  const { token: csrfToken } = useCSRF()
 
   const translatedConcerns = t('ai.recommendations.quickConcerns', {
     returnObjects: true,
@@ -90,10 +92,6 @@ export default function SmartRecommendations() {
         const concern = quickConcerns.find(c => c.id === id)
         return concern ? concern.label : id
       })
-      const csrfToken =
-        typeof window !== 'undefined'
-          ? sessionStorage.getItem('csrf_token') || ''
-          : ''
       const response = await fetch('/api/ai/recommendations', {
         method: 'POST',
         headers: {
