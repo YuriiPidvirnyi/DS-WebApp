@@ -5,12 +5,10 @@ import { useTranslation } from 'react-i18next'
 import Link from 'next/link'
 import {
   Sparkles,
-  ChevronRight,
+  ChevronDown,
   Loader2,
   CheckCircle,
   Clock,
-  Heart,
-  Lightbulb,
   ArrowRight,
   X,
 } from 'lucide-react'
@@ -43,15 +41,23 @@ interface LastVisitOption {
   label: string
 }
 
+const urgencyColors = {
+  routine: 'bg-dental-primary-100 text-dental-primary-800',
+  soon: 'bg-amber-100 text-amber-800',
+  urgent: 'bg-red-100 text-red-800',
+}
+
 export default function SmartRecommendations() {
   const { t, i18n } = useTranslation()
   const lang = (i18n.language || 'uk') as 'uk' | 'en' | 'pl'
+
   const translatedConcerns = t('ai.recommendations.quickConcerns', {
     returnObjects: true,
   }) as unknown
   const quickConcerns = Array.isArray(translatedConcerns)
     ? (translatedConcerns as QuickConcern[])
     : []
+
   const translatedLastVisitOptions = t('ai.recommendations.lastVisitOptions', {
     returnObjects: true,
   }) as unknown
@@ -79,18 +85,15 @@ export default function SmartRecommendations() {
   const getRecommendations = async () => {
     setIsLoading(true)
     setError(null)
-
     try {
       const concernLabels = selectedConcerns.map(id => {
         const concern = quickConcerns.find(c => c.id === id)
         return concern ? concern.label : id
       })
-
       const csrfToken =
         typeof window !== 'undefined'
           ? sessionStorage.getItem('csrf_token') || ''
           : ''
-
       const response = await fetch('/api/ai/recommendations', {
         method: 'POST',
         headers: {
@@ -99,16 +102,12 @@ export default function SmartRecommendations() {
         },
         body: JSON.stringify({
           symptoms: concernLabels,
-          lastVisit: lastVisit,
+          lastVisit,
           concerns: additionalInfo,
           language: lang,
         }),
       })
-
-      if (!response.ok) {
-        throw new Error('Failed to get recommendations')
-      }
-
+      if (!response.ok) throw new Error('Failed to get recommendations')
       const result = await response.json()
       setRecommendations(result.data)
       setStep(4)
@@ -128,312 +127,247 @@ export default function SmartRecommendations() {
     setError(null)
   }
 
-  const urgencyColors = {
-    routine: 'bg-green-100 text-green-800',
-    soon: 'bg-yellow-100 text-yellow-800',
-    urgent: 'bg-red-100 text-red-800',
-  }
-
-  const priorityColors = {
-    high: 'border-red-200 bg-red-50',
-    medium: 'border-yellow-200 bg-yellow-50',
-    low: 'border-green-200 bg-green-50',
+  const close = () => {
+    setIsOpen(false)
+    reset()
   }
 
   return (
-    <>
-      {/* Trigger Button */}
+    <div className="inline-block text-left w-full max-w-lg mx-auto">
+      {/* Trigger */}
       <button
-        onClick={() => setIsOpen(true)}
-        className="group relative overflow-hidden bg-dental-primary-700 hover:bg-dental-primary-800 text-white px-6 py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3"
+        onClick={() => setIsOpen(o => !o)}
+        className="inline-flex items-center gap-2 text-sm font-medium text-dental-primary-600 hover:text-dental-primary-700 border border-dental-primary-200 hover:border-dental-primary-400 bg-dental-primary-50 hover:bg-dental-primary-100 px-4 py-2.5 rounded-lg transition-colors"
       >
-        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-        <Sparkles className="w-6 h-6 relative z-10" />
-        <span className="relative z-10">
-          {t('ai.recommendations.triggerButton')}
-        </span>
-        <ChevronRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
+        <Sparkles className="w-4 h-4" />
+        <span>{t('ai.recommendations.triggerButton')}</span>
+        <ChevronDown
+          className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+        />
       </button>
 
-      {/* Modal */}
+      {/* Inline panel */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto">
-            {/* Header */}
-            <div className="sticky top-0 bg-dental-primary-700 text-white px-6 py-4 flex items-center justify-between rounded-t-3xl">
-              <div className="flex items-center gap-3">
-                <Sparkles className="w-6 h-6" />
-                <h2 className="text-xl font-bold">
-                  {t('ai.recommendations.modalTitle')}
-                </h2>
-              </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Progress */}
-            {step < 4 && (
-              <div className="px-6 pt-4">
-                <div className="flex gap-2">
+        <div className="mt-3 bg-white border border-dental-secondary-200 rounded-xl shadow-soft overflow-hidden">
+          {/* Panel header */}
+          <div className="flex items-center justify-between px-5 py-3 border-b border-dental-secondary-100 bg-dental-secondary-50">
+            <div className="flex items-center gap-2">
+              {/* Step dots */}
+              {step < 4 && (
+                <div className="flex gap-1.5">
                   {[1, 2, 3].map(s => (
                     <div
                       key={s}
-                      className={`h-2 flex-1 rounded-full transition-colors ${
-                        s <= step ? 'bg-purple-500' : 'bg-slate-200'
+                      className={`w-2 h-2 rounded-full transition-colors ${
+                        s <= step
+                          ? 'bg-dental-primary-600'
+                          : 'bg-dental-secondary-300'
                       }`}
                     />
                   ))}
                 </div>
+              )}
+              <span className="text-sm font-medium text-dental-dark">
+                {t('ai.recommendations.modalTitle')}
+              </span>
+            </div>
+            <button
+              onClick={close}
+              className="p-1 text-dental-muted hover:text-dental-dark rounded transition-colors"
+              aria-label="Close"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="p-5">
+            {/* Step 1 */}
+            {step === 1 && (
+              <div className="space-y-3">
+                <p className="text-sm font-semibold text-dental-dark">
+                  {t('ai.recommendations.step1.title')}
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {quickConcerns.map(concern => (
+                    <button
+                      key={concern.id}
+                      onClick={() => toggleConcern(concern.id)}
+                      className={`px-3 py-2 rounded-lg border text-sm font-medium text-left transition-all ${
+                        selectedConcerns.includes(concern.id)
+                          ? 'border-dental-primary-600 bg-dental-primary-600 text-white'
+                          : 'border-dental-secondary-200 text-dental-text hover:border-dental-primary-400 hover:bg-dental-primary-50'
+                      }`}
+                    >
+                      {concern.label}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() => setStep(2)}
+                  disabled={selectedConcerns.length === 0}
+                  className="w-full py-2 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
+                >
+                  {t('common.next')}
+                </button>
               </div>
             )}
 
-            <div className="p-6">
-              {/* Step 1: Concerns */}
-              {step === 1 && (
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-slate-900">
-                    {t('ai.recommendations.step1.title')}
-                  </h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    {quickConcerns.map(concern => (
-                      <button
-                        key={concern.id}
-                        onClick={() => toggleConcern(concern.id)}
-                        className={`p-4 rounded-xl border-2 text-left transition-all ${
-                          selectedConcerns.includes(concern.id)
-                            ? 'border-purple-500 bg-purple-50 text-purple-900'
-                            : 'border-slate-200 hover:border-slate-300'
-                        }`}
-                      >
-                        <span className="font-medium">{concern.label}</span>
-                      </button>
-                    ))}
-                  </div>
+            {/* Step 2 */}
+            {step === 2 && (
+              <div className="space-y-3">
+                <p className="text-sm font-semibold text-dental-dark">
+                  {t('ai.recommendations.step2.title')}
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {lastVisitOptions.map(option => (
+                    <button
+                      key={option.value}
+                      onClick={() => setLastVisit(option.value)}
+                      className={`px-3 py-2 rounded-lg border text-sm font-medium text-left transition-all ${
+                        lastVisit === option.value
+                          ? 'border-dental-primary-600 bg-dental-primary-600 text-white'
+                          : 'border-dental-secondary-200 text-dental-text hover:border-dental-primary-400 hover:bg-dental-primary-50'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex gap-2">
                   <button
-                    onClick={() => setStep(2)}
-                    disabled={selectedConcerns.length === 0}
-                    className="w-full py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white font-semibold rounded-xl transition-colors disabled:cursor-not-allowed mt-4"
+                    onClick={() => setStep(1)}
+                    className="flex-1 py-2 border border-dental-secondary-200 text-dental-text text-sm font-semibold rounded-lg hover:bg-dental-secondary-50 transition-colors"
+                  >
+                    {t('common.back')}
+                  </button>
+                  <button
+                    onClick={() => setStep(3)}
+                    disabled={!lastVisit}
+                    className="flex-1 py-2 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
                   >
                     {t('common.next')}
                   </button>
                 </div>
-              )}
+              </div>
+            )}
 
-              {/* Step 2: Last Visit */}
-              {step === 2 && (
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-slate-900">
-                    {t('ai.recommendations.step2.title')}
-                  </h3>
-                  <div className="space-y-2">
-                    {lastVisitOptions.map(option => (
-                      <button
-                        key={option.value}
-                        onClick={() => setLastVisit(option.value)}
-                        className={`w-full p-4 rounded-xl border-2 text-left transition-all ${
-                          lastVisit === option.value
-                            ? 'border-purple-500 bg-purple-50 text-purple-900'
-                            : 'border-slate-200 hover:border-slate-300'
-                        }`}
+            {/* Step 3 */}
+            {step === 3 && (
+              <div className="space-y-3">
+                <p className="text-sm font-semibold text-dental-dark">
+                  {t('ai.recommendations.step3.title')}
+                </p>
+                <textarea
+                  value={additionalInfo}
+                  onChange={e => setAdditionalInfo(e.target.value)}
+                  placeholder={t('ai.recommendations.step3.placeholder')}
+                  className="w-full h-24 px-3 py-2 border border-dental-secondary-200 rounded-lg text-sm text-dental-text placeholder:text-dental-text-light focus:outline-none focus:ring-2 focus:ring-dental-primary-400 focus:border-transparent resize-none"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setStep(2)}
+                    className="flex-1 py-2 border border-dental-secondary-200 text-dental-text text-sm font-semibold rounded-lg hover:bg-dental-secondary-50 transition-colors"
+                  >
+                    {t('common.back')}
+                  </button>
+                  <button
+                    onClick={getRecommendations}
+                    disabled={isLoading}
+                    className="flex-1 py-2 bg-dental-primary-700 hover:bg-dental-primary-800 text-white text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        {t('ai.recommendations.actions.analyzing')}
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4" />
+                        {t('ai.recommendations.actions.getRecommendations')}
+                      </>
+                    )}
+                  </button>
+                </div>
+                {error && <AsyncState variant="error" message={error} />}
+              </div>
+            )}
+
+            {/* Step 4: Results */}
+            {step === 4 && recommendations && (
+              <div className="space-y-4">
+                <div className="flex items-start gap-3 p-4 bg-dental-primary-50 border border-dental-primary-200 rounded-xl">
+                  <div className="w-9 h-9 bg-dental-primary-600 rounded-lg flex items-center justify-center shrink-0">
+                    <CheckCircle className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <span className="font-bold text-dental-dark text-sm">
+                        {recommendations.primaryRecommendation.serviceName}
+                      </span>
+                      <span
+                        className={`text-xs font-semibold px-2 py-0.5 rounded-full ${urgencyColors[recommendations.primaryRecommendation.urgency]}`}
                       >
-                        {option.label}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      onClick={() => setStep(1)}
-                      className="flex-1 py-3 border-2 border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-colors"
-                    >
-                      {t('common.back')}
-                    </button>
-                    <button
-                      onClick={() => setStep(3)}
-                      disabled={!lastVisit}
-                      className="flex-1 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white font-semibold rounded-xl transition-colors disabled:cursor-not-allowed"
-                    >
-                      {t('common.next')}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 3: Additional Info */}
-              {step === 3 && (
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-slate-900">
-                    {t('ai.recommendations.step3.title')}
-                  </h3>
-                  <textarea
-                    value={additionalInfo}
-                    onChange={e => setAdditionalInfo(e.target.value)}
-                    placeholder={t('ai.recommendations.step3.placeholder')}
-                    className="w-full h-32 px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
-                  />
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => setStep(2)}
-                      className="flex-1 py-3 border-2 border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-colors"
-                    >
-                      {t('common.back')}
-                    </button>
-                    <button
-                      onClick={getRecommendations}
-                      disabled={isLoading}
-                      className="flex-1 py-3 bg-dental-primary-700 hover:bg-dental-primary-800 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
-                    >
-                      {isLoading ? (
-                        <>
-                          <Loader2 className="w-5 h-5 animate-spin" />
-                          <span>
-                            {t('ai.recommendations.actions.analyzing')}
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="w-5 h-5" />
-                          <span>
-                            {t('ai.recommendations.actions.getRecommendations')}
-                          </span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                  {error && <AsyncState variant="error" message={error} />}
-                </div>
-              )}
-
-              {/* Step 4: Results */}
-              {step === 4 && recommendations && (
-                <div className="space-y-6">
-                  {/* Primary Recommendation */}
-                  <div className="bg-dental-primary-50 rounded-2xl p-5 border border-dental-primary-200">
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <CheckCircle className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <h3 className="font-bold text-slate-900 text-lg">
-                            {recommendations.primaryRecommendation.serviceName}
-                          </h3>
-                          <span
-                            className={`text-xs font-semibold px-2 py-1 rounded-full ${urgencyColors[recommendations.primaryRecommendation.urgency]}`}
-                          >
-                            {t(
-                              `ai.recommendations.urgency.${recommendations.primaryRecommendation.urgency}`
-                            )}
-                          </span>
-                        </div>
-                        <p className="text-slate-600 text-sm mb-3">
-                          {recommendations.primaryRecommendation.reason}
-                        </p>
-                        <div className="flex items-center gap-2 text-sm text-slate-500">
-                          <Clock className="w-4 h-4" />
-                          <span>
-                            {
-                              recommendations.primaryRecommendation
-                                .estimatedDuration
-                            }
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Additional Recommendations */}
-                  {recommendations.additionalRecommendations.length > 0 && (
-                    <div>
-                      <h4 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                        <Heart className="w-5 h-5 text-purple-600" />
-                        {t('ai.recommendations.results.alsoRecommended')}
-                      </h4>
-                      <div className="space-y-2">
-                        {recommendations.additionalRecommendations.map(
-                          (rec, idx) => (
-                            <div
-                              key={idx}
-                              className={`p-4 rounded-xl border-2 ${priorityColors[rec.priority]}`}
-                            >
-                              <h5 className="font-semibold text-slate-900">
-                                {rec.serviceName}
-                              </h5>
-                              <p className="text-sm text-slate-600">
-                                {rec.reason}
-                              </p>
-                            </div>
-                          )
+                        {t(
+                          `ai.recommendations.urgency.${recommendations.primaryRecommendation.urgency}`
                         )}
-                      </div>
+                      </span>
                     </div>
-                  )}
-
-                  {/* Tips */}
-                  <div className="grid grid-cols-2 gap-4">
-                    {recommendations.preventiveCare.length > 0 && (
-                      <div>
-                        <h4 className="font-semibold text-slate-900 mb-2 flex items-center gap-2">
-                          <CheckCircle className="w-4 h-4 text-green-600" />
-                          {t('ai.recommendations.results.prevention')}
-                        </h4>
-                        <ul className="text-sm text-slate-600 space-y-1">
-                          {recommendations.preventiveCare
-                            .slice(0, 3)
-                            .map((tip, idx) => (
-                              <li key={idx}>• {tip}</li>
-                            ))}
-                        </ul>
-                      </div>
-                    )}
-                    {recommendations.lifestyleTips.length > 0 && (
-                      <div>
-                        <h4 className="font-semibold text-slate-900 mb-2 flex items-center gap-2">
-                          <Lightbulb className="w-4 h-4 text-yellow-600" />
-                          {t('ai.recommendations.results.tips')}
-                        </h4>
-                        <ul className="text-sm text-slate-600 space-y-1">
-                          {recommendations.lifestyleTips
-                            .slice(0, 3)
-                            .map((tip, idx) => (
-                              <li key={idx}>• {tip}</li>
-                            ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Disclaimer */}
-                  <p className="text-xs text-slate-500 italic">
-                    {recommendations.disclaimer}
-                  </p>
-
-                  {/* Actions */}
-                  <div className="flex gap-3 pt-2">
-                    <button
-                      onClick={reset}
-                      className="flex-1 py-3 border-2 border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-colors"
-                    >
-                      {t('ai.recommendations.actions.startOver')}
-                    </button>
-                    <Link
-                      href="/booking"
-                      onClick={() => setIsOpen(false)}
-                      className="flex-1 py-3 bg-dental-primary-700 hover:bg-dental-primary-800 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
-                    >
-                      {t('buttons.bookAppointment')}
-                      <ArrowRight className="w-5 h-5" />
-                    </Link>
+                    <p className="text-xs text-dental-text mb-1.5">
+                      {recommendations.primaryRecommendation.reason}
+                    </p>
+                    <div className="flex items-center gap-1 text-xs text-dental-muted">
+                      <Clock className="w-3 h-3" />
+                      {recommendations.primaryRecommendation.estimatedDuration}
+                    </div>
                   </div>
                 </div>
-              )}
-            </div>
+
+                {recommendations.additionalRecommendations.length > 0 && (
+                  <div className="space-y-1.5">
+                    {recommendations.additionalRecommendations
+                      .slice(0, 2)
+                      .map((rec, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-start gap-2 text-xs text-dental-text"
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-dental-primary-400 shrink-0 mt-1" />
+                          <span>
+                            <strong className="text-dental-dark">
+                              {rec.serviceName}
+                            </strong>{' '}
+                            — {rec.reason}
+                          </span>
+                        </div>
+                      ))}
+                  </div>
+                )}
+
+                <p className="text-xs text-dental-muted italic">
+                  {recommendations.disclaimer}
+                </p>
+
+                <div className="flex gap-2 pt-1">
+                  <button
+                    onClick={reset}
+                    className="flex-1 py-2 border border-dental-secondary-200 text-dental-text text-sm font-semibold rounded-lg hover:bg-dental-secondary-50 transition-colors"
+                  >
+                    {t('ai.recommendations.actions.startOver')}
+                  </button>
+                  <Link
+                    href="/booking"
+                    onClick={close}
+                    className="flex-1 py-2 bg-dental-primary-700 hover:bg-dental-primary-800 text-white text-sm font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-colors"
+                  >
+                    {t('buttons.bookAppointment')}
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
-    </>
+    </div>
   )
 }
