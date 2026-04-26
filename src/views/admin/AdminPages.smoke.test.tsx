@@ -131,12 +131,13 @@ describe('Admin pages UI smoke', () => {
 
     render(<AdminDoctorsPage />)
 
-    await screen.findByText('Петров Іван')
+    // dual-render: name appears in both desktop table and mobile card
+    await screen.findAllByText('Петров Іван')
 
     fireEvent.click(
-      screen.getByRole('button', {
+      screen.getAllByRole('button', {
         name: t('admin.doctorsPage.actions.deactivate'),
-      })
+      })[0]
     )
     await waitFor(() => expect(updateEq).toHaveBeenCalledWith('id', 'doctor-1'))
 
@@ -188,9 +189,10 @@ describe('Admin pages UI smoke', () => {
 
     render(<AdminServicesPage />)
 
-    await screen.findByText('Професійна чистка')
+    // dual-render: name appears in both desktop table and mobile card
+    await screen.findAllByText('Професійна чистка')
     fireEvent.click(
-      screen.getByLabelText(t('admin.servicesPage.actions.deleteAria'))
+      screen.getAllByLabelText(t('admin.servicesPage.actions.deleteAria'))[0]
     )
 
     await waitFor(() =>
@@ -232,7 +234,8 @@ describe('Admin pages UI smoke', () => {
 
     render(<AdminAppointmentsPage />)
 
-    await screen.findByText('Петро Тестовий')
+    // dual-render: name appears in both desktop table and mobile card
+    await screen.findAllByText('Петро Тестовий')
     fireEvent.click(
       screen.getByLabelText(
         t('admin.appointmentsPage.table.selectRowAria', {

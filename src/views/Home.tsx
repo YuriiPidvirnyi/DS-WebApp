@@ -12,6 +12,13 @@ import {
 } from '@/hooks/useScrollAnimation'
 import BeforeAfterGallery from '@/components/BeforeAfterGallery'
 import images from '@/content/images.json'
+import {
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+  CardMedia,
+} from '@/components/ui'
 
 // Type for service images from images.json
 interface ServiceImage {
@@ -111,7 +118,7 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
         ref={featuresRef}
         role="region"
         aria-labelledby="features-heading"
-        className="py-24 bg-dental-secondary-50"
+        className="py-16 lg:py-24 bg-dental-secondary-50"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection
@@ -132,26 +139,29 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
             </p>
           </AnimatedSection>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
               <AnimatedCard
                 key={index}
+                variant="outlined"
                 hoverEffect="lift"
                 delay={index * 100}
                 isVisible={featuresVisible}
-                className="text-center p-8 border border-dental-secondary-200"
+                className="text-center p-8"
               >
-                <div className="flex justify-center mb-6">
-                  <div className="w-16 h-16 bg-dental-primary-50 rounded-2xl flex items-center justify-center">
-                    {feature.icon}
+                <CardHeader className="mb-6">
+                  <div className="flex justify-center">
+                    <div className="w-16 h-16 bg-dental-primary-50 rounded-2xl flex items-center justify-center">
+                      {feature.icon}
+                    </div>
                   </div>
-                </div>
-                <h3 className="text-xl font-bold text-dental-dark mb-3">
+                </CardHeader>
+                <CardTitle as="h3" className="text-xl font-bold mb-3">
                   {feature.title}
-                </h3>
-                <p className="text-dental-muted leading-relaxed">
+                </CardTitle>
+                <CardDescription className="leading-relaxed">
                   {feature.description}
-                </p>
+                </CardDescription>
               </AnimatedCard>
             ))}
           </div>
@@ -163,7 +173,7 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
         ref={servicesRef}
         role="region"
         aria-labelledby="services-heading"
-        className="py-24 bg-white"
+        className="py-16 lg:py-24 bg-white"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection
@@ -192,12 +202,13 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
               return (
                 <AnimatedCard
                   key={index}
+                  variant="outlined"
                   hoverEffect="glow"
                   delay={index * 150}
                   isVisible={servicesVisible}
-                  className="overflow-hidden border border-dental-secondary-200 group"
+                  className="overflow-hidden group"
                 >
-                  <div className="h-56 relative overflow-hidden">
+                  <CardMedia aspectRatio="video" className="relative">
                     <LazyImage
                       src={svc?.src || bg}
                       fallback={svc?.fallback}
@@ -205,7 +216,7 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
                         svc?.alt ||
                         t('home.services.imageAlt', { title: service.title })
                       }
-                      className="absolute inset-0 transition-transform duration-500 group-hover:scale-105"
+                      className="absolute inset-0 w-full h-full transition-transform duration-500 group-hover:scale-105"
                       width={1200}
                       height={800}
                     />
@@ -215,18 +226,20 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
                         {service.title}
                       </h3>
                     </div>
-                  </div>
+                  </CardMedia>
                   <div className="p-6">
                     <p className="text-dental-muted mb-4 leading-relaxed">
                       {service.description}
                     </p>
-                    <Link
-                      href="/services"
-                      className="inline-flex items-center text-dental-primary-600 hover:text-dental-primary-700 font-semibold group/link"
-                    >
-                      {t('buttons.learnMore')}
-                      <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/link:translate-x-1" />
-                    </Link>
+                    <CardFooter className="mt-4 pt-4">
+                      <Link
+                        href="/services"
+                        className="inline-flex items-center text-dental-primary-600 hover:text-dental-primary-700 font-semibold group/link"
+                      >
+                        {t('buttons.learnMore')}
+                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/link:translate-x-1" />
+                      </Link>
+                    </CardFooter>
                   </div>
                 </AnimatedCard>
               )
@@ -257,7 +270,7 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
         ref={pricingRef}
         role="region"
         aria-labelledby="pricing-heading"
-        className="py-24 bg-dental-secondary-50"
+        className="py-16 lg:py-24 bg-dental-secondary-50"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection
@@ -280,7 +293,13 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {/* Basic Package */}
-            <div className="bg-white rounded-2xl shadow-sm border border-dental-secondary-200 p-8 relative hover:shadow-lg transition-shadow">
+            <AnimatedCard
+              variant="outlined"
+              hoverEffect="lift"
+              delay={0}
+              isVisible={pricingVisible}
+              className="p-8 relative"
+            >
               <div className="text-center">
                 <h3 className="text-2xl font-bold text-dental-dark mb-2">
                   {t('pricing.basicExam.title')}
@@ -294,22 +313,28 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
                     : []
                   ).map((feature: string, idx: number) => (
                     <li key={idx} className="flex items-center">
-                      <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
+                      <span className="w-2 h-2 bg-dental-teal rounded-full mr-3 shrink-0"></span>
                       {feature}
                     </li>
                   ))}
                 </ul>
                 <Link
                   href="/booking"
-                  className="block w-full bg-dental-secondary-100 hover:bg-dental-secondary-200 text-dental-dark px-6 py-3 rounded-lg font-semibold transition-colors"
+                  className="block w-full bg-dental-secondary-100 hover:bg-dental-secondary-200 text-dental-dark px-6 py-3 rounded-lg font-semibold transition-colors min-h-[44px] flex items-center justify-center"
                 >
                   {t('buttons.bookAppointment')}
                 </Link>
               </div>
-            </div>
+            </AnimatedCard>
 
-            {/* Professional Package */}
-            <div className="bg-white rounded-2xl shadow-lg border-2 border-dental-primary-600 p-8 relative sm:transform sm:scale-105 hover:shadow-xl transition-all">
+            {/* Professional Package — popular, scale up at sm+ */}
+            <AnimatedCard
+              variant="selected"
+              hoverEffect="lift"
+              delay={100}
+              isVisible={pricingVisible}
+              className="p-8 relative sm:scale-105"
+            >
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                 <span className="bg-dental-primary-700 text-white px-4 py-2 rounded-full text-sm font-semibold">
                   {t('pricing.professionalHygiene.popular')}
@@ -328,22 +353,28 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
                     : []
                   ).map((feature: string, idx: number) => (
                     <li key={idx} className="flex items-center">
-                      <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
+                      <span className="w-2 h-2 bg-dental-teal rounded-full mr-3 shrink-0"></span>
                       {feature}
                     </li>
                   ))}
                 </ul>
                 <Link
                   href="/booking"
-                  className="block w-full bg-dental-primary-700 hover:bg-dental-primary-800 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                  className="block w-full bg-dental-primary-700 hover:bg-dental-primary-800 text-white px-6 py-3 rounded-lg font-semibold transition-colors min-h-[44px] flex items-center justify-center"
                 >
                   {t('buttons.bookAppointment')}
                 </Link>
               </div>
-            </div>
+            </AnimatedCard>
 
             {/* Premium Package */}
-            <div className="bg-white rounded-2xl shadow-sm border border-dental-secondary-200 p-8 relative hover:shadow-lg transition-shadow">
+            <AnimatedCard
+              variant="outlined"
+              hoverEffect="lift"
+              delay={200}
+              isVisible={pricingVisible}
+              className="p-8 relative"
+            >
               <div className="text-center">
                 <h3 className="text-2xl font-bold text-dental-dark mb-2">
                   {t('pricing.comprehensiveDiagnostics.title')}
@@ -357,19 +388,19 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
                     : []
                   ).map((feature: string, idx: number) => (
                     <li key={idx} className="flex items-center">
-                      <span className="w-2 h-2 bg-dental-teal rounded-full mr-3"></span>
+                      <span className="w-2 h-2 bg-dental-teal rounded-full mr-3 shrink-0"></span>
                       {feature}
                     </li>
                   ))}
                 </ul>
                 <Link
                   href="/booking"
-                  className="block w-full bg-dental-secondary-100 hover:bg-dental-secondary-200 text-dental-dark px-6 py-3 rounded-lg font-semibold transition-colors"
+                  className="block w-full bg-dental-secondary-100 hover:bg-dental-secondary-200 text-dental-dark px-6 py-3 rounded-lg font-semibold transition-colors min-h-[44px] flex items-center justify-center"
                 >
                   {t('buttons.bookAppointment')}
                 </Link>
               </div>
-            </div>
+            </AnimatedCard>
           </div>
 
           <div className="text-center mt-12">

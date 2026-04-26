@@ -19,6 +19,8 @@ import {
   Activity,
   AlertCircle,
 } from 'lucide-react'
+import { Card } from '@/components/ui'
+import { StatCard } from '@/components/cards'
 
 interface Appointment {
   id: string
@@ -312,60 +314,27 @@ export default function CabinetPage() {
 
       {/* Quick Stats — clickable, navigate to filtered appointments */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Link
+        <StatCard
+          label={t('cabinet.dashboard.upcoming')}
+          value={upcomingAppointments.length}
+          icon={<CalendarCheck className="w-5 h-5 text-dental-primary-600" />}
+          iconBg="bg-dental-primary-50"
           href="/cabinet/appointments?filter=upcoming"
-          className="bg-white rounded-2xl p-4 shadow-sm border border-dental-secondary-100 hover:border-dental-primary-200 hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-dental-primary-50 rounded-xl flex items-center justify-center shrink-0">
-              <CalendarCheck className="w-5 h-5 text-dental-primary-600" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-dental-dark">
-                {upcomingAppointments.length}
-              </p>
-              <p className="text-xs text-dental-muted">
-                {t('cabinet.dashboard.upcoming')}
-              </p>
-            </div>
-          </div>
-        </Link>
-        <Link
+        />
+        <StatCard
+          label={t('cabinet.dashboard.completed')}
+          value={completedCount}
+          icon={<CheckCircle2 className="w-5 h-5 text-green-600" />}
+          iconBg="bg-green-50"
           href="/cabinet/appointments?filter=past"
-          className="bg-white rounded-2xl p-4 shadow-sm border border-dental-secondary-100 hover:border-dental-primary-200 hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center shrink-0">
-              <CheckCircle2 className="w-5 h-5 text-green-600" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-dental-dark">
-                {completedCount}
-              </p>
-              <p className="text-xs text-dental-muted">
-                {t('cabinet.dashboard.completed')}
-              </p>
-            </div>
-          </div>
-        </Link>
-        <Link
+        />
+        <StatCard
+          label={t('cabinet.dashboard.total')}
+          value={appointments.length}
+          icon={<Activity className="w-5 h-5 text-violet-600" />}
+          iconBg="bg-violet-50"
           href="/cabinet/appointments"
-          className="bg-white rounded-2xl p-4 shadow-sm border border-dental-secondary-100 hover:border-dental-primary-200 hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center shrink-0">
-              <Activity className="w-5 h-5 text-violet-600" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-dental-dark">
-                {appointments.length}
-              </p>
-              <p className="text-xs text-dental-muted">
-                {t('cabinet.dashboard.total')}
-              </p>
-            </div>
-          </div>
-        </Link>
+        />
         <Link
           href="/booking"
           className="bg-dental-primary-600 hover:bg-dental-primary-700 rounded-2xl p-4 shadow-sm transition-colors group focus:outline-none focus:ring-2 focus:ring-dental-primary-700"
@@ -580,58 +549,65 @@ export default function CabinetPage() {
                 </Link>
               </div>
             ) : (
-              <div className="divide-y divide-dental-secondary-100">
+              <div className="p-3 space-y-2">
                 {recentAppointments.map(apt => (
-                  <Link
+                  <Card
                     key={apt.id}
-                    href="/cabinet/appointments"
-                    className="block p-4 hover:bg-dental-secondary-50/50 transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-dental-primary-500"
+                    variant="ghost"
+                    padding="sm"
+                    className="hover:bg-dental-secondary-50/50 transition-colors"
                   >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex gap-3 sm:gap-4 min-w-0">
-                        {/* Date block with day-of-week */}
-                        <div className="w-12 h-14 sm:w-14 sm:h-16 bg-dental-primary-50 rounded-xl flex flex-col items-center justify-center shrink-0">
-                          <span className="text-[9px] sm:text-[10px] text-dental-primary-500 font-medium uppercase leading-none">
-                            {getDayOfWeek(apt.appointment_date)}
-                          </span>
-                          <span className="text-base sm:text-lg font-bold text-dental-primary-600 leading-tight">
-                            {new Date(apt.appointment_date).getDate()}
-                          </span>
-                          <span className="text-[10px] sm:text-xs text-dental-primary-500 leading-none">
-                            {new Date(apt.appointment_date).toLocaleDateString(
-                              dateLocale,
-                              { month: 'short' }
-                            )}
-                          </span>
-                        </div>
-                        <div className="min-w-0">
-                          <h4 className="font-medium text-dental-dark text-sm truncate">
-                            {apt.services?.[0]?.name_uk ||
-                              t('cabinet.consultation')}
-                          </h4>
-                          <p className="text-xs text-dental-muted truncate">
-                            {apt.doctors?.[0]?.last_name}{' '}
-                            {apt.doctors?.[0]?.first_name}
-                          </p>
-                          <div className="flex items-center gap-1.5 mt-1 text-xs text-dental-muted">
-                            <Clock className="w-3.5 h-3.5" />
-                            {apt.appointment_time.slice(0, 5)}
+                    <Link
+                      href="/cabinet/appointments"
+                      className="block min-h-[44px] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-dental-primary-500 rounded-lg"
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex gap-3 sm:gap-4 min-w-0">
+                          {/* Date block with day-of-week */}
+                          <div className="w-12 h-14 sm:w-14 sm:h-16 bg-dental-primary-50 rounded-xl flex flex-col items-center justify-center shrink-0">
+                            <span className="text-[9px] sm:text-[10px] text-dental-primary-500 font-medium uppercase leading-none">
+                              {getDayOfWeek(apt.appointment_date)}
+                            </span>
+                            <span className="text-base sm:text-lg font-bold text-dental-primary-600 leading-tight">
+                              {new Date(apt.appointment_date).getDate()}
+                            </span>
+                            <span className="text-[10px] sm:text-xs text-dental-primary-500 leading-none">
+                              {new Date(
+                                apt.appointment_date
+                              ).toLocaleDateString(dateLocale, {
+                                month: 'short',
+                              })}
+                            </span>
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="font-medium text-dental-dark text-sm truncate">
+                              {apt.services?.[0]?.name_uk ||
+                                t('cabinet.consultation')}
+                            </h4>
+                            <p className="text-xs text-dental-muted truncate">
+                              {apt.doctors?.[0]?.last_name}{' '}
+                              {apt.doctors?.[0]?.first_name}
+                            </p>
+                            <div className="flex items-center gap-1.5 mt-1 text-xs text-dental-muted">
+                              <Clock className="w-3.5 h-3.5" />
+                              {apt.appointment_time.slice(0, 5)}
+                            </div>
                           </div>
                         </div>
+                        <div className="text-right shrink-0">
+                          {getStatusBadge(apt.status)}
+                          {apt.services?.[0]?.price_uah && (
+                            <p className="text-xs text-dental-muted mt-2">
+                              {apt.services[0].price_uah.toLocaleString(
+                                dateLocale
+                              )}{' '}
+                              {t('cabinet.currency')}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                      <div className="text-right shrink-0">
-                        {getStatusBadge(apt.status)}
-                        {apt.services?.[0]?.price_uah && (
-                          <p className="text-xs text-dental-muted mt-2">
-                            {apt.services[0].price_uah.toLocaleString(
-                              dateLocale
-                            )}{' '}
-                            {t('cabinet.currency')}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </Link>
+                    </Link>
+                  </Card>
                 ))}
               </div>
             )}

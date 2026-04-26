@@ -382,7 +382,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Main content */}
-      <div className="lg:pl-72">
+      <div className="lg:pl-72 min-w-0 overflow-x-hidden">
         {/* Top bar */}
         <header className="sticky top-0 z-30 flex items-center h-16 px-4 bg-white/95 backdrop-blur-sm border-b border-dental-secondary-100 lg:px-8">
           <button
