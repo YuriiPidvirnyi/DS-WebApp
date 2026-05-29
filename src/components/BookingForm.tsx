@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import { Button, LoadingOverlay } from '@/components/ui'
 import Turnstile from '@/components/Turnstile'
 import { useTranslation } from 'react-i18next'
@@ -46,6 +47,25 @@ export default function BookingForm() {
     formState: { errors, isSubmitting, isSubmitSuccessful },
   } = form
 
+  // Step titles (reuse existing i18n keys) shown as the wizard heading
+  const stepTitleKeys = [
+    'booking.steps.service',
+    'booking.steps.personal',
+    'booking.steps.summary',
+  ] as const
+
+  // Move focus to the step heading on step change so screen-reader and
+  // keyboard users are told which step they're on (skip the initial mount).
+  const stepHeadingRef = useRef<HTMLHeadingElement>(null)
+  const isInitialStep = useRef(true)
+  useEffect(() => {
+    if (isInitialStep.current) {
+      isInitialStep.current = false
+      return
+    }
+    stepHeadingRef.current?.focus()
+  }, [step])
+
   return (
     <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-8 relative">
       <h2 className="text-2xl font-bold text-dental-dark mb-6">
@@ -79,14 +99,35 @@ export default function BookingForm() {
         <input type="hidden" name="_csrf" value={csrfToken} />
 
         {/* Progress stepper */}
-        <div className="flex items-center gap-2 mb-2">
+        <div
+          className="flex items-center gap-2 mb-2"
+          role="progressbar"
+          aria-valuenow={step + 1}
+          aria-valuemin={1}
+          aria-valuemax={3}
+          aria-valuetext={t('booking.steps.progress', {
+            current: step + 1,
+            total: 3,
+          })}
+          aria-label={t('booking.steps.progressAria')}
+        >
           {[0, 1, 2].map(i => (
             <div
               key={i}
+              aria-hidden="true"
               className={`h-2 flex-1 rounded-full ${i <= step ? 'bg-dental-primary' : 'bg-dental-secondary/50'}`}
             />
           ))}
         </div>
+
+        {/* Current step title — focused on step change for SR/keyboard users */}
+        <h3
+          ref={stepHeadingRef}
+          tabIndex={-1}
+          className="text-lg font-semibold text-dental-dark focus:outline-none"
+        >
+          {t(stepTitleKeys[step])}
+        </h3>
 
         {/* Step 1: Appointment details */}
         {step === 0 && (

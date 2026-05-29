@@ -111,7 +111,7 @@ Colors defined in `tailwind.config.js` and `src/styles/globals.css`:
 | Token                                | HEX       | Usage                           |
 | ------------------------------------ | --------- | ------------------------------- |
 | `dental.primary`                     | `#AECED3` | Surface fills, card backgrounds |
-| `dental.primary-600` / `dental-teal` | `#5A8A94` | CTAs, links, focus rings        |
+| `dental.primary-600` / `dental-teal` | `#3f6f79` | CTAs, links, focus rings        |
 | `dental.dark` / `dental-navy`        | `#2C3E42` | Headings, dark text             |
 | `dental.text`                        | `#4A5E63` | Body copy                       |
 | `dental.secondary`                   | `#D1CAC0` | Warm neutral surfaces           |

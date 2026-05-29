@@ -1222,7 +1222,9 @@
     "steps": {
       "service": "Послуга",
       "personal": "Персональні дані",
-      "summary": "Підтвердження"
+      "summary": "Підтвердження",
+      "progress": "Крок {{current}} з {{total}}",
+      "progressAria": "Прогрес бронювання"
     },
     "selectService": "Оберіть послугу",
     "selectDate": "Оберіть дату",
