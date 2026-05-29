@@ -1321,6 +1321,8 @@ const pl = {
       service: 'Usługa',
       personal: 'Dane osobowe',
       summary: 'Potwierdzenie',
+      progress: 'Krok {{current}} z {{total}}',
+      progressAria: 'Postęp rezerwacji',
     },
     selectService: 'Wybierz usługę',
     selectDate: 'Wybierz datę',
