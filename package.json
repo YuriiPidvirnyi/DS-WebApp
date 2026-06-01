@@ -111,6 +111,7 @@
   },
   "overrides": {
     "serialize-javascript": ">=7.0.5",
-    "lodash": ">=4.17.24"
+    "lodash": ">=4.17.24",
+    "postcss": "$postcss"
   }
 }
