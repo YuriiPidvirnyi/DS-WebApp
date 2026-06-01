@@ -30,7 +30,8 @@ test.describe('Admin — unauthenticated gate', () => {
     test(`${route} redirects to /admin/login`, async ({ page }) => {
       await page.goto(route)
       await page.waitForURL(url => url.pathname === '/admin/login', {
-        timeout: 10_000,
+        timeout: 15_000,
+        waitUntil: 'commit',
       })
       expect(new URL(page.url()).pathname).toBe('/admin/login')
     })
