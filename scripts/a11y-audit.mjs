@@ -6,6 +6,19 @@ import { chromium } from 'playwright'
 import AxeBuilder from '@axe-core/playwright'
 
 const BASE = process.env.BASE_URL || 'http://localhost:3000'
+
+// Vercel Deployment Protection: preview/preprod deployments require auth, so an
+// unauthenticated request gets a 401 SSO page. When a Protection Bypass for
+// Automation secret is configured, send it on every request so CI can reach the
+// deployment. Harmless (empty) for local runs where the var is unset.
+// See: https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation
+const BYPASS_SECRET = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
+const bypassHeaders = BYPASS_SECRET
+  ? {
+      'x-vercel-protection-bypass': BYPASS_SECRET,
+      'x-vercel-set-bypass-cookie': 'true',
+    }
+  : {}
 const PAGES = [
   '/',
   '/services',
@@ -23,7 +36,7 @@ async function waitForServer(url, timeoutMs = 20000) {
   const start = Date.now()
   while (Date.now() - start < timeoutMs) {
     try {
-      const res = await fetch(url, { method: 'GET' })
+      const res = await fetch(url, { method: 'GET', headers: bypassHeaders })
       if (res.ok) return true
     } catch {}
     await new Promise(r => setTimeout(r, 500))
@@ -53,7 +66,7 @@ async function waitForServer(url, timeoutMs = 20000) {
   }
 
   const browser = await chromium.launch()
-  const context = await browser.newContext()
+  const context = await browser.newContext({ extraHTTPHeaders: bypassHeaders })
   const page = await context.newPage()
 
   let total = 0
@@ -95,7 +108,9 @@ async function waitForServer(url, timeoutMs = 20000) {
   if (adminEmail && adminPassword) {
     console.log('\n🔐 Admin a11y audit (authenticated)...')
 
-    const adminContext = await browser.newContext()
+    const adminContext = await browser.newContext({
+      extraHTTPHeaders: bypassHeaders,
+    })
     const adminPage = await adminContext.newPage()
 
     // Log in via the admin login form (selectors match app/admin/login/page.tsx)
