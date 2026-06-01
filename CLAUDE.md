@@ -41,8 +41,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### CI (GitHub Actions)
 
-- **Build job** (`.github/workflows/ci.yml`): after `npm run build`, runs `npx playwright install chromium --with-deps`, starts `npm run start`, waits on `http://127.0.0.1:3000` with `npx wait-on`, then runs `BASE_URL=http://127.0.0.1:3000 npm run a11y:audit` (see `scripts/a11y-audit.mjs` for route list).
-- **Security audit job**: `npm ci --legacy-peer-deps` then `npm audit --audit-level=moderate` must pass (no `continue-on-error`).
+- **`ci.yml`** (push/PR to `main`/`develop`): `lint-and-typecheck` (ESLint + `tsc` + Prettier), `test` (Vitest with coverage), `e2e-ui-smoke`, and `e2e-feature-suites` (booking, cabinet, admin RBAC, cron — mocked Supabase). The production build job was removed — Vercel's GitHub integration is the authoritative build gate.
+- **a11y audit**: runs against the Vercel deployment URL in `preview-validate.yml` (on `deployment_status`) and on a weekly schedule in `weekly-a11y.yml` (opens a GitHub issue on violations) — not per-PR.
+- **Security audit**: `npm audit --audit-level=moderate` runs weekly in `security-audit.yml` (not per-PR). Other workflows: `schema-validate.yml` (migration naming + dangerous DDL), `secret-scan.yml` (gitleaks), `auto-merge-dependabot.yml`.
 
 ## Architecture Overview
 
@@ -183,7 +184,7 @@ Colors defined in `tailwind.config.js` and `src/styles/globals.css`:
   - On delivery: inventory auto-updated
   - Admin/assistant UI at `/admin/orders` via `/api/material-orders`
 - **Treatment materials used**: `treatment_materials_used` — tracks which materials were consumed per treatment, registered by assistant
-- **Admin roles**: `admin_users.role` supports `superadmin`, `admin`, `staff`, `doctor`, `assistant`
+- **Admin roles**: `admin_users.role` supports `superadmin`, `admin`, `doctor`, `receptionist`, `assistant`, `billing_manager`, `inventory_manager`, `analyst` (legacy `staff` rows are grandfathered in)
 
 #### Live Chat
 
@@ -193,11 +194,11 @@ Colors defined in `tailwind.config.js` and `src/styles/globals.css`:
 
 #### Testing Strategy
 
-- Unit tests: Vitest + @testing-library/react (6 test files, 39 tests)
+- Unit tests: Vitest + @testing-library/react (24 test files, 201 tests)
 - Custom render wrapper in `src/test/test-utils.tsx`
 - Import `screen`, `waitFor` etc. directly from `@testing-library/react`, not from test-utils
 - E2E: Playwright (`e2e/` directory) — auth flows with mocked and live Supabase
-- CI runs lint, typecheck, unit tests, and build (`.github/workflows/ci.yml`)
+- CI runs lint, typecheck, Prettier, unit tests (with coverage), and E2E suites (`.github/workflows/ci.yml`); the production build is gated by Vercel, not CI
 
 ### Environment Variables
 
@@ -222,4 +223,4 @@ Colors defined in `tailwind.config.js` and `src/styles/globals.css`:
 - **Payments**: not wired — clinic accepts payment in-person only for v3. Monobank integration exists in env vars but the flow is not exposed to patients.
 - **PITR**: Supabase Pro plan is active (daily backups included), but the Point-in-Time Recovery add-on has not yet been enabled. Enable via Supabase Dashboard → Settings → Add-ons.
 - **Legal**: `/privacy-policy` and `/terms-of-service` pages exist but content has not been reviewed by a Ukrainian lawyer. Required before public launch.
-- **`src/lib/ab-test.ts`**: pre-existing TypeScript error — `@vercel/edge-config` module not found. Known issue, non-blocking (feature is not used in production paths), tracked for resolution when the Edge Config integration is provisioned.
+- **`src/lib/ab-test.ts`**: previously had a `@vercel/edge-config` "module not found" TypeScript error. **Resolved** — `@vercel/edge-config` is now a declared dependency and `npm run typecheck` passes cleanly. The A/B framework still requires an Edge Config store to be provisioned in Vercel before the feature is active in production.
