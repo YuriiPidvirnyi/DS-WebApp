@@ -45,10 +45,15 @@ async function waitForServer(url, timeoutMs = 20000) {
 }
 
 ;(async () => {
+  const isLocal = /^https?:\/\/(localhost|127\.0\.0\.1)(:|\/|$)/.test(BASE)
+
   // Ensure server is running
   let previewProc = null
-  const ok = await waitForServer(BASE)
-  if (!ok) {
+  let ok = await waitForServer(BASE)
+
+  // Only auto-start a local dev server for a localhost target. Spawning
+  // `next dev` does nothing for a remote deployment URL (CI).
+  if (!ok && isLocal) {
     const { spawn } = await import('child_process')
     // Next.js App Router — dev server on 3000 (not Vite)
     previewProc = spawn('npx', ['next', 'dev', '-p', '3000'], {
@@ -56,13 +61,25 @@ async function waitForServer(url, timeoutMs = 20000) {
       shell: process.platform === 'win32',
       cwd: process.cwd(),
     })
-    const ready = await waitForServer(BASE, 90000)
-    if (!ready) {
-      previewProc?.kill('SIGTERM')
-      throw new Error(
-        `Next.js not reachable at ${BASE}. Start manually: npm run dev`
-      )
+    ok = await waitForServer(BASE, 90000)
+  }
+
+  if (!ok) {
+    // Surface the real status so a protected/unreachable deployment is obvious
+    // instead of a generic "not reachable" timeout.
+    let diag = '. Start manually: npm run dev'
+    try {
+      const res = await fetch(BASE, { method: 'GET', headers: bypassHeaders })
+      diag = ` (HTTP ${res.status})`
+      if (res.status === 401) {
+        diag +=
+          ' — deployment is behind Vercel Protection. Enable "Protection Bypass for Automation" in Vercel and set VERCEL_AUTOMATION_BYPASS_SECRET to that exact value.'
+      }
+    } catch (e) {
+      diag = ` (${e?.message ?? 'fetch failed'})`
     }
+    previewProc?.kill('SIGTERM')
+    throw new Error(`Next.js not reachable at ${BASE}${diag}`)
   }
 
   const browser = await chromium.launch()

@@ -38,7 +38,12 @@ jobs:
 
       - name: Summary
         if: always()
+        # Pass the commit message via env (not inline ${{ }}) so backticks,
+        # parens or newlines in it can't break — or inject into — the shell.
+        # github.sha is hex, safe to inline.
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
-          echo "## Preprod Reseed" >> $GITHUB_STEP_SUMMARY
-          echo "Triggered by: \`${{ github.event.head_commit.message }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "Commit: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "## Preprod Reseed" >> "$GITHUB_STEP_SUMMARY"
+          echo "Triggered by: ${COMMIT_MSG%%$'\n'*}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Commit: ${{ github.sha }}" >> "$GITHUB_STEP_SUMMARY"
