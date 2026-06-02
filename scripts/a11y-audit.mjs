@@ -12,7 +12,10 @@ const BASE = process.env.BASE_URL || 'http://localhost:3000'
 // Automation secret is configured, send it on every request so CI can reach the
 // deployment. Harmless (empty) for local runs where the var is unset.
 // See: https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation
-const BYPASS_SECRET = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
+// `.trim()` guards against a trailing newline/space sneaking in when the secret
+// is pasted into the GitHub/Vercel UI — that would make the header value invalid
+// and Vercel would keep returning 401.
+const BYPASS_SECRET = process.env.VERCEL_AUTOMATION_BYPASS_SECRET?.trim()
 const bypassHeaders = BYPASS_SECRET
   ? {
       'x-vercel-protection-bypass': BYPASS_SECRET,
