@@ -20,21 +20,42 @@ jobs:
     # Skip if the commit message opts out (useful for hotfix / schema-only merges)
     if: "!contains(github.event.head_commit.message, '[skip reseed]')"
 
+    env:
+      PREPROD_SUPABASE_URL: ${{ secrets.PREPROD_SUPABASE_URL }}
+      PREPROD_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.PREPROD_SUPABASE_SERVICE_ROLE_KEY }}
+
     steps:
+      # No separate preprod Supabase project configured? Skip cleanly instead of
+      # failing — and never risk a destructive SEED_WIPE against an unconfigured
+      # (or accidentally production) target.
+      - name: Check preprod target is configured
+        id: gate
+        run: |
+          if [ -n "$PREPROD_SUPABASE_URL" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::PREPROD_SUPABASE_URL is not set — skipping reseed (no preprod target)."
+          fi
+
       - uses: actions/checkout@v6
+        if: steps.gate.outputs.configured == 'true'
 
       - uses: actions/setup-node@v6
+        if: steps.gate.outputs.configured == 'true'
         with:
           node-version: '22'
           cache: 'npm'
 
       - run: npm ci --legacy-peer-deps
+        if: steps.gate.outputs.configured == 'true'
 
       - name: Wipe and reseed
+        if: steps.gate.outputs.configured == 'true'
         run: SEED_WIPE=1 npx tsx scripts/seed/preprod/index.ts
         env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.PREPROD_SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.PREPROD_SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ env.PREPROD_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ env.PREPROD_SUPABASE_SERVICE_ROLE_KEY }}
 
       - name: Summary
         if: always()
@@ -45,5 +66,9 @@ jobs:
           COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
           echo "## Preprod Reseed" >> "$GITHUB_STEP_SUMMARY"
-          echo "Triggered by: ${COMMIT_MSG%%$'\n'*}" >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ steps.gate.outputs.configured }}" = "true" ]; then
+            echo "Triggered by: ${COMMIT_MSG%%$'\n'*}" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Skipped — PREPROD_SUPABASE_URL not configured (no preprod target)." >> "$GITHUB_STEP_SUMMARY"
+          fi
           echo "Commit: ${{ github.sha }}" >> "$GITHUB_STEP_SUMMARY"
