@@ -23,7 +23,12 @@ if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? ''
 
-const PROD_URL_PATTERN = /dentalstory\.com\.ua|dentals\d+\.supabase\.co/i
+// Refuse to run the destructive SEED_WIPE path against anything that looks like
+// production: the live domains and the live Supabase project ref. Override only
+// with SEED_FORCE_PROD=yes_i_know (dangerous). There is currently no separate
+// preprod Supabase project, so in CI this guard is the last line of defence.
+const PROD_URL_PATTERN =
+  /dentalstory\.(com\.)?ua|dentals\d+\.supabase\.co|exgpwtyrkkhwqqdgqbkz/i
 
 if (!SUPABASE_URL || !SERVICE_KEY) {
   console.error(
