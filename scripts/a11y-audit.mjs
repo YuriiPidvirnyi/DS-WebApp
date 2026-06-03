@@ -12,13 +12,26 @@ const BASE = process.env.BASE_URL || 'http://localhost:3000'
 // Automation secret is configured, send it on every request so CI can reach the
 // deployment. Harmless (empty) for local runs where the var is unset.
 // See: https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation
-const BYPASS_SECRET = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
+const BYPASS_SECRET = process.env.VERCEL_AUTOMATION_BYPASS_SECRET?.trim()
 const bypassHeaders = BYPASS_SECRET
   ? {
       'x-vercel-protection-bypass': BYPASS_SECRET,
       'x-vercel-set-bypass-cookie': 'true',
     }
   : {}
+
+// Append the bypass as query params too. The query-param form is the most
+// widely honoured method (and the one verified working in-browser for this
+// project), and the first request also sets a cookie so later in-context
+// navigations stay bypassed. Combined with the header above this is
+// belt-and-suspenders. NB: never log a bypassed URL — it carries the secret.
+function withBypass(url) {
+  if (!BYPASS_SECRET) return url
+  const u = new URL(url)
+  u.searchParams.set('x-vercel-protection-bypass', BYPASS_SECRET)
+  u.searchParams.set('x-vercel-set-bypass-cookie', 'true')
+  return u.toString()
+}
 const PAGES = [
   '/',
   '/services',
@@ -36,7 +49,10 @@ async function waitForServer(url, timeoutMs = 20000) {
   const start = Date.now()
   while (Date.now() - start < timeoutMs) {
     try {
-      const res = await fetch(url, { method: 'GET', headers: bypassHeaders })
+      const res = await fetch(withBypass(url), {
+        method: 'GET',
+        headers: bypassHeaders,
+      })
       if (res.ok) return true
     } catch {}
     await new Promise(r => setTimeout(r, 500))
@@ -69,7 +85,10 @@ async function waitForServer(url, timeoutMs = 20000) {
     // instead of a generic "not reachable" timeout.
     let diag = '. Start manually: npm run dev'
     try {
-      const res = await fetch(BASE, { method: 'GET', headers: bypassHeaders })
+      const res = await fetch(withBypass(BASE), {
+        method: 'GET',
+        headers: bypassHeaders,
+      })
       diag = ` (HTTP ${res.status})`
       if (res.status === 401) {
         diag +=
@@ -92,7 +111,7 @@ async function waitForServer(url, timeoutMs = 20000) {
   for (const path of PAGES) {
     const url = BASE + path
     console.log(`\nChecking ${url}`)
-    await page.goto(url)
+    await page.goto(withBypass(url))
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa'])
       .analyze()
@@ -131,7 +150,7 @@ async function waitForServer(url, timeoutMs = 20000) {
     const adminPage = await adminContext.newPage()
 
     // Log in via the admin login form (selectors match app/admin/login/page.tsx)
-    await adminPage.goto(BASE + '/admin/login')
+    await adminPage.goto(withBypass(BASE + '/admin/login'))
     await adminPage.fill('#email', adminEmail)
     await adminPage.fill('#password', adminPassword)
     await adminPage.click('button[type="submit"]')
@@ -155,7 +174,7 @@ async function waitForServer(url, timeoutMs = 20000) {
     for (const path of ADMIN_PAGES) {
       const url = BASE + path
       console.log(`\nChecking ${url}`)
-      await adminPage.goto(url)
+      await adminPage.goto(withBypass(url))
       const results = await new AxeBuilder({ page: adminPage })
         .withTags(['wcag2a', 'wcag2aa'])
         .analyze()
@@ -195,10 +214,12 @@ async function waitForServer(url, timeoutMs = 20000) {
   if (patientEmail && patientPassword) {
     console.log('\n🏥 Cabinet a11y audit (patient authenticated)...')
 
-    const cabinetContext = await browser.newContext()
+    const cabinetContext = await browser.newContext({
+      extraHTTPHeaders: bypassHeaders,
+    })
     const cabinetPage = await cabinetContext.newPage()
 
-    await cabinetPage.goto(BASE + '/auth/login')
+    await cabinetPage.goto(withBypass(BASE + '/auth/login'))
     await cabinetPage.fill('input[type="email"]', patientEmail)
     await cabinetPage.fill('input[type="password"]', patientPassword)
     await cabinetPage.click('button[type="submit"]')
@@ -215,7 +236,7 @@ async function waitForServer(url, timeoutMs = 20000) {
     for (const path of CABINET_PAGES) {
       const url = BASE + path
       console.log(`\nChecking ${url}`)
-      await cabinetPage.goto(url)
+      await cabinetPage.goto(withBypass(url))
       const results = await new AxeBuilder({ page: cabinetPage })
         .withTags(['wcag2a', 'wcag2aa'])
         .analyze()
