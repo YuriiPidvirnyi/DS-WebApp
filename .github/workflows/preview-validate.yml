@@ -1,19 +1,35 @@
 name: Preview Validate
 
-# Runs against every successful Vercel deployment (preview + preprod + production).
-# Replaces the old localhost-based a11y + smoke runs in ci.yml.
+# Accessibility audit against the stable preprod (`staging`) Vercel deployment.
+#
+# Scope rationale (learned the hard way):
+#   - Production is excluded — this project shares ONE Supabase between preview and
+#     prod, so no CI run may point at a live deployment, and a11y must not gate prod
+#     deploys. (a11y is read-only — axe only inspects the DOM — but we still skip prod.)
+#   - Ephemeral per-PR "Preview" deployments are excluded — their fresh aliases are
+#     not reliably reachable from GitHub runners (DNS/edge warmup → intermittent
+#     "fetch failed"), which made this job permanently flaky.
+#   - The `staging` deployment (produced on every merge to develop) is stable and
+#     reachable, so it is the one trustworthy target for a deployment-level audit.
+#
+# Complementary coverage: code-level a11y runs in weekly-a11y.yml (local server, no
+# deployment protection); the full e2e suite runs in ci.yml against a mocked build.
+# The previous "E2E smoke against deployment" step was removed: it used the localhost
+# webServer config (so it never actually hit the deployment) and, had it worked, the
+# booking/cabinet/cron specs would have written to the shared prod DB.
 on:
   deployment_status:
 
 jobs:
-  validate:
-    name: A11y + E2E (${{ github.event.deployment.environment }})
+  a11y:
+    name: A11y (${{ github.event.deployment_status.environment }})
     runs-on: ubuntu-latest
 
-    # Only fire when Vercel finishes successfully and gives us a URL
+    # Only the stable preprod deployment: successful, has a URL, environment == staging.
     if: >-
       github.event.deployment_status.state == 'success' &&
-      github.event.deployment_status.environment_url != ''
+      github.event.deployment_status.environment_url != '' &&
+      github.event.deployment_status.environment == 'staging'
 
     steps:
       - uses: actions/checkout@v6
@@ -28,27 +44,16 @@ jobs:
       - name: Install Chromium
         run: npx playwright install chromium --with-deps
 
-      - name: Accessibility audit
+      - name: Accessibility audit (axe, WCAG 2 A/AA)
         run: npm run a11y:audit
         env:
           BASE_URL: ${{ github.event.deployment_status.environment_url }}
-          # Bypass Vercel Deployment Protection so CI can reach the protected preview.
+          # Bypass Vercel Deployment Protection so CI can reach the protected deployment.
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-
-      - name: E2E smoke against deployment
-        run: npx playwright test e2e/public-pages.smoke.spec.ts e2e/health-api.spec.ts e2e/cron-notifications.spec.ts e2e/booking-flow.spec.ts e2e/cabinet-flows.spec.ts e2e/admin-rbac.spec.ts --config=playwright.auth.config.ts
-        env:
-          BASE_URL: ${{ github.event.deployment_status.environment_url }}
-          PLAYWRIGHT_BASE_URL: ${{ github.event.deployment_status.environment_url }}
-          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-          CRON_SECRET: ${{ secrets.CRON_SECRET }}
-          E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
-          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
-        continue-on-error: true # advisory only until suites are stable
 
       - name: Summary
         if: always()
         run: |
-          echo "## Preview Validation" >> $GITHUB_STEP_SUMMARY
-          echo "**Environment:** ${{ github.event.deployment.environment }}" >> $GITHUB_STEP_SUMMARY
-          echo "**URL:** ${{ github.event.deployment_status.environment_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "## Deployment A11y" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Environment:** ${{ github.event.deployment_status.environment }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "**URL:** ${{ github.event.deployment_status.environment_url }}" >> "$GITHUB_STEP_SUMMARY"
