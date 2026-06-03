@@ -63,9 +63,10 @@ async function waitForServer(url, timeoutMs = 20000) {
 ;(async () => {
   const isLocal = /^https?:\/\/(localhost|127\.0\.0\.1)(:|\/|$)/.test(BASE)
 
-  // Ensure server is running
+  // Ensure server is running. Remote deployments may need extra time for a
+  // freshly-promoted alias / cold edge to become reachable, so wait longer.
   let previewProc = null
-  let ok = await waitForServer(BASE)
+  let ok = await waitForServer(BASE, isLocal ? 20000 : 60000)
 
   // Only auto-start a local dev server for a localhost target. Spawning
   // `next dev` does nothing for a remote deployment URL (CI).
