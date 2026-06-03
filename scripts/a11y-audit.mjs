@@ -4,6 +4,11 @@
 
 import { chromium } from 'playwright'
 import AxeBuilder from '@axe-core/playwright'
+import { setDefaultResultOrder } from 'node:dns'
+
+// Prefer IPv4 — some CI runners have broken IPv6 egress to the edge, which makes
+// Node's fetch throw "fetch failed" while IPv4 clients (curl/browser) succeed.
+setDefaultResultOrder('ipv4first')
 
 const BASE = process.env.BASE_URL || 'http://localhost:3000'
 
