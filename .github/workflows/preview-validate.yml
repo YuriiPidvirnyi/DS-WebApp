@@ -1,35 +1,26 @@
-name: Preview Validate
+name: Production A11y
 
-# Accessibility audit against the stable preprod (`staging`) Vercel deployment.
+# Accessibility audit (axe, WCAG 2 A/AA) of the live PUBLIC production site.
 #
-# Scope rationale (learned the hard way):
-#   - Production is excluded — this project shares ONE Supabase between preview and
-#     prod, so no CI run may point at a live deployment, and a11y must not gate prod
-#     deploys. (a11y is read-only — axe only inspects the DOM — but we still skip prod.)
-#   - Ephemeral per-PR "Preview" deployments are excluded — their fresh aliases are
-#     not reliably reachable from GitHub runners (DNS/edge warmup → intermittent
-#     "fetch failed"), which made this job permanently flaky.
-#   - The `staging` deployment (produced on every merge to develop) is stable and
-#     reachable, so it is the one trustworthy target for a deployment-level audit.
+# Key insight: Vercel Deployment Protection guards Preview/per-deployment
+# *.vercel.app URLs (they return 401), but the Production public domain
+# (www.dentalstory.ua) is open — so the audit needs NO bypass secret at all.
+# a11y is read-only (axe only inspects the rendered DOM), so auditing prod is safe.
 #
-# Complementary coverage: code-level a11y runs in weekly-a11y.yml (local server, no
-# deployment protection); the full e2e suite runs in ci.yml against a mocked build.
-# The previous "E2E smoke against deployment" step was removed: it used the localhost
-# webServer config (so it never actually hit the deployment) and, had it worked, the
-# booking/cabinet/cron specs would have written to the shared prod DB.
+# Runs after each successful Production deployment. Code-level a11y also runs in
+# weekly-a11y.yml (local server); full e2e runs in ci.yml against a mocked build.
 on:
   deployment_status:
 
 jobs:
   a11y:
-    name: A11y (${{ github.event.deployment_status.environment }})
+    name: A11y (production)
     runs-on: ubuntu-latest
 
-    # Only the stable preprod deployment: successful, has a URL, environment == staging.
+    # Only after a successful Production deploy — the public domain is reachable.
     if: >-
       github.event.deployment_status.state == 'success' &&
-      github.event.deployment_status.environment_url != '' &&
-      github.event.deployment_status.environment == 'staging'
+      github.event.deployment_status.environment == 'Production'
 
     steps:
       - uses: actions/checkout@v6
@@ -47,13 +38,11 @@ jobs:
       - name: Accessibility audit (axe, WCAG 2 A/AA)
         run: npm run a11y:audit
         env:
-          BASE_URL: ${{ github.event.deployment_status.environment_url }}
-          # Bypass Vercel Deployment Protection so CI can reach the protected deployment.
-          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+          # The public production domain — no Vercel protection, no bypass needed.
+          BASE_URL: https://www.dentalstory.ua
 
       - name: Summary
         if: always()
         run: |
-          echo "## Deployment A11y" >> "$GITHUB_STEP_SUMMARY"
-          echo "**Environment:** ${{ github.event.deployment_status.environment }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "**URL:** ${{ github.event.deployment_status.environment_url }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "## Production A11y" >> "$GITHUB_STEP_SUMMARY"
+          echo "**URL:** https://www.dentalstory.ua" >> "$GITHUB_STEP_SUMMARY"
