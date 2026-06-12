@@ -55,9 +55,14 @@ export async function DELETE(request: NextRequest) {
       .from('patients')
       .update({
         deleted_at: now,
-        full_name: 'Deleted User',
+        first_name: 'Deleted',
+        last_name: 'User',
+        patronymic: null,
         email: null,
         phone: null,
+        date_of_birth: null,
+        address: null,
+        medical_notes: null,
       })
       .eq('id', user.id)
 
@@ -77,8 +82,8 @@ export async function DELETE(request: NextRequest) {
       .from('appointments')
       .update({ status: 'cancelled' })
       .eq('patient_id', user.id)
-      .gte('scheduled_at', now)
-      .in('status', ['pending', 'confirmed', 'scheduled'])
+      .gte('appointment_date', now.slice(0, 10))
+      .in('status', ['pending', 'confirmed'])
 
     if (cancelError) {
       // Non-fatal — log but continue with auth deletion so PII is removed
