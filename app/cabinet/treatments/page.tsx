@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
 import { FileText, Calendar, Activity, ChevronDown } from 'lucide-react'
@@ -36,6 +36,8 @@ type TreatmentRecord = {
       }[]
     | null
 }
+
+const TREATMENTS_PAGE_SIZE = 20
 
 const STATUS_STYLES: Record<string, string> = {
   draft: 'bg-dental-secondary-200 text-dental-dark',
@@ -94,44 +96,69 @@ export default function TreatmentsHistoryPage() {
     locale === 'uk' ? 'uk-UA' : locale === 'pl' ? 'pl-PL' : 'en-US'
 
   const [fetchError, setFetchError] = useState(false)
+  const [hasMore, setHasMore] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
+
+  const fetchRecordsPage = useCallback(async (offset: number) => {
+    const supabase = createClient()
+    if (!supabase) return null
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) return null
+
+    const { data, error } = await supabase
+      .from('treatment_records')
+      .select(
+        `id, diagnosis, notes, tooth_numbers, status, total_cost, payment_status, created_at,
+        doctors(first_name, last_name),
+        treatment_record_items(service_id, tooth_number, quantity, price_at_time, services(name_uk))`
+      )
+      .eq('patient_id', user.id)
+      .order('created_at', { ascending: false })
+      .range(offset, offset + TREATMENTS_PAGE_SIZE - 1)
+
+    if (error) throw error
+    return (data as TreatmentRecord[]) || []
+  }, [])
 
   useEffect(() => {
-    const fetchRecords = async () => {
+    let cancelled = false
+    const load = async () => {
       try {
-        const supabase = createClient()
-        if (!supabase) return
-
-        const {
-          data: { user },
-        } = await supabase.auth.getUser()
-        if (!user) return
-
-        const { data, error } = await supabase
-          .from('treatment_records')
-          .select(
-            `id, diagnosis, notes, tooth_numbers, status, total_cost, payment_status, created_at,
-            doctors(first_name, last_name),
-            treatment_record_items(service_id, tooth_number, quantity, price_at_time, services(name_uk))`
-          )
-          .eq('patient_id', user.id)
-          .order('created_at', { ascending: false })
-
-        if (error) {
-          console.error('Treatment records fetch error:', error)
-          setFetchError(true)
-        }
-
-        setRecords((data as TreatmentRecord[]) || [])
+        const data = await fetchRecordsPage(0)
+        if (cancelled || data === null) return
+        setRecords(data)
+        setHasMore(data.length === TREATMENTS_PAGE_SIZE)
         setLoading(false)
       } catch (err) {
+        if (cancelled) return
         console.error('Treatment records fetch error:', err)
         setFetchError(true)
         setLoading(false)
       }
     }
 
-    fetchRecords()
-  }, [])
+    load()
+    return () => {
+      cancelled = true
+    }
+  }, [fetchRecordsPage])
+
+  const handleLoadMore = async () => {
+    setLoadingMore(true)
+    try {
+      const data = await fetchRecordsPage(records.length)
+      if (data) {
+        setRecords(prev => [...prev, ...data])
+        setHasMore(data.length === TREATMENTS_PAGE_SIZE)
+      }
+    } catch (err) {
+      console.error('Treatment records fetch error:', err)
+    }
+    setLoadingMore(false)
+  }
 
   if (loading) return <TreatmentsSkeleton />
 
@@ -329,6 +356,25 @@ export default function TreatmentsHistoryPage() {
             )
           })}
         </ul>
+      )}
+
+      {/* Load more */}
+      {hasMore && (
+        <div className="flex justify-center">
+          <button
+            onClick={handleLoadMore}
+            disabled={loadingMore}
+            className="px-6 py-3 rounded-xl border border-dental-secondary-200 text-dental-dark font-medium hover:bg-dental-secondary-50 disabled:opacity-50 transition-colors flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+          >
+            {loadingMore && (
+              <div
+                className="w-4 h-4 border-2 border-dental-primary-600 border-t-transparent rounded-full animate-spin"
+                aria-hidden="true"
+              />
+            )}
+            {t('cabinet.treatments.loadMore')}
+          </button>
+        </div>
       )}
     </div>
   )

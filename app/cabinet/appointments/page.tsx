@@ -23,6 +23,8 @@ import { useCSRF } from '@/hooks/useCSRF'
 import { createICSEvent, downloadICS } from '@/utils/calendar'
 import { trackBooking, BookingEvent } from '@/utils/analytics'
 
+const APPOINTMENTS_PAGE_SIZE = 20
+
 interface Appointment {
   id: string
   appointment_date: string
@@ -226,6 +228,7 @@ function RescheduleModal({
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
   const [slots, setSlots] = useState<string[]>([])
   const [loadingSlots, setLoadingSlots] = useState(false)
+  const [slotsError, setSlotsError] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -240,6 +243,7 @@ function RescheduleModal({
       setLoadingSlots(true)
       setSlots([])
       setSelectedTime(null)
+      setSlotsError(false)
       const controller = new AbortController()
       const timeout = setTimeout(() => controller.abort(), 10_000)
       try {
@@ -248,10 +252,12 @@ function RescheduleModal({
         const res = await fetch(`/api/appointments/slots?${params}`, {
           signal: controller.signal,
         })
+        if (!res.ok) throw new Error(`slots request failed: ${res.status}`)
         const data = await res.json()
         setSlots(data.data || [])
       } catch {
         setSlots([])
+        setSlotsError(true)
       } finally {
         clearTimeout(timeout)
         setLoadingSlots(false)
@@ -479,6 +485,21 @@ function RescheduleModal({
               <div className="flex items-center justify-center py-6">
                 <div className="w-5 h-5 border-2 border-dental-primary-600 border-t-transparent rounded-full animate-spin" />
               </div>
+            ) : slotsError ? (
+              <div
+                role="alert"
+                className="text-center py-4 bg-red-50 border border-red-100 rounded-xl px-4"
+              >
+                <p className="text-sm text-red-700 mb-2">
+                  {t('cabinet.appointments.reschedule.slotsError')}
+                </p>
+                <button
+                  onClick={() => selectedDate && fetchSlots(selectedDate)}
+                  className="text-sm font-medium text-dental-primary-600 hover:text-dental-primary-700 underline focus:outline-none focus:ring-2 focus:ring-dental-primary-500 rounded"
+                >
+                  {t('asyncState.actions.retry')}
+                </button>
+              </div>
             ) : slots.length === 0 ? (
               <p className="text-sm text-dental-muted text-center py-4">
                 {t('cabinet.appointments.reschedule.noSlots')}
@@ -551,6 +572,8 @@ export default function AppointmentsPage() {
     : 'all'
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(true)
+  const [hasMore, setHasMore] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
   const [fetchError, setFetchError] = useState(false)
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>(
     initialFilter
@@ -563,43 +586,71 @@ export default function AppointmentsPage() {
     type: 'success' | 'error'
   } | null>(null)
 
+  const fetchAppointmentsPage = useCallback(async (offset: number) => {
+    const supabase = createClient()
+    if (!supabase) return null
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) return null
+
+    const { data, error } = await supabase
+      .from('appointments')
+      .select(
+        `id, appointment_date, appointment_time, status, notes, doctor_id,
+        doctors (first_name, last_name, specialization),
+        services (name_uk, price_uah, duration_minutes)`
+      )
+      .eq('patient_id', user.id)
+      .order('appointment_date', { ascending: false })
+      .order('appointment_time', { ascending: false })
+      .range(offset, offset + APPOINTMENTS_PAGE_SIZE - 1)
+
+    if (error) throw error
+    return data || []
+  }, [])
+
   useEffect(() => {
-    const fetchAppointments = async () => {
+    let cancelled = false
+    const load = async () => {
       try {
-        const supabase = createClient()
-        if (!supabase) return
-
-        const {
-          data: { user },
-        } = await supabase.auth.getUser()
-        if (!user) return
-
-        const { data, error } = await supabase
-          .from('appointments')
-          .select(
-            `id, appointment_date, appointment_time, status, notes, doctor_id,
-            doctors (first_name, last_name, specialization),
-            services (name_uk, price_uah, duration_minutes)`
-          )
-          .eq('patient_id', user.id)
-          .order('appointment_date', { ascending: false })
-
-        if (error) {
-          console.error('Appointments fetch error:', error)
-          setFetchError(true)
-        }
-
-        setAppointments(data || [])
+        const data = await fetchAppointmentsPage(0)
+        if (cancelled || data === null) return
+        setAppointments(data)
+        setHasMore(data.length === APPOINTMENTS_PAGE_SIZE)
         setLoading(false)
       } catch (err) {
+        if (cancelled) return
         console.error('Appointments fetch error:', err)
         setFetchError(true)
         setLoading(false)
       }
     }
 
-    fetchAppointments()
-  }, [])
+    load()
+    return () => {
+      cancelled = true
+    }
+  }, [fetchAppointmentsPage])
+
+  const handleLoadMore = async () => {
+    setLoadingMore(true)
+    try {
+      const data = await fetchAppointmentsPage(appointments.length)
+      if (data) {
+        setAppointments(prev => [...prev, ...data])
+        setHasMore(data.length === APPOINTMENTS_PAGE_SIZE)
+      }
+    } catch (err) {
+      console.error('Appointments fetch error:', err)
+      setToast({
+        message: t('cabinet.appointments.loadMoreError'),
+        type: 'error',
+      })
+    }
+    setLoadingMore(false)
+  }
 
   const handleCancelConfirm = async () => {
     if (!cancelApt) return
@@ -986,6 +1037,25 @@ export default function AppointmentsPage() {
               </div>
             )
           })}
+        </div>
+      )}
+
+      {/* Load more */}
+      {hasMore && (
+        <div className="flex justify-center mt-6">
+          <button
+            onClick={handleLoadMore}
+            disabled={loadingMore}
+            className="px-6 py-3 rounded-xl border border-dental-secondary-200 text-dental-dark font-medium hover:bg-dental-secondary-50 disabled:opacity-50 transition-colors flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+          >
+            {loadingMore && (
+              <div
+                className="w-4 h-4 border-2 border-dental-primary-600 border-t-transparent rounded-full animate-spin"
+                aria-hidden="true"
+              />
+            )}
+            {t('cabinet.appointments.loadMore')}
+          </button>
         </div>
       )}
 

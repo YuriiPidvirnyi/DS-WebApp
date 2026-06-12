@@ -23,11 +23,28 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [emailNotConfirmed, setEmailNotConfirmed] = useState(false)
+  const [resendState, setResendState] = useState<
+    'idle' | 'sending' | 'sent' | 'error'
+  >('idle')
   const passwordResetSuccess = searchParams.get('passwordReset') === 'success'
+
+  const handleResendConfirmation = async () => {
+    const supabase = createClient()
+    if (!supabase || !email) return
+    setResendState('sending')
+    const { error: resendError } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+    })
+    setResendState(resendError ? 'error' : 'sent')
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setEmailNotConfirmed(false)
+    setResendState('idle')
     setLoading(true)
 
     const supabase = createClient()
@@ -42,10 +59,12 @@ export default function LoginPage() {
     })
 
     if (error) {
+      const notConfirmed = error.message.includes('Email not confirmed')
+      setEmailNotConfirmed(notConfirmed)
       setError(
         error.message.includes('Invalid login credentials')
           ? t('auth.login.errors.invalidCredentials')
-          : error.message.includes('Email not confirmed')
+          : notConfirmed
             ? t('auth.login.errors.emailNotConfirmed')
             : t('auth.login.errors.generic')
       )
@@ -89,6 +108,31 @@ export default function LoginPage() {
             {error && (
               <div className="mb-6 p-3 bg-dental-error-light border border-red-200 rounded-xl text-dental-error-dark text-sm">
                 {error}
+                {emailNotConfirmed && (
+                  <div className="mt-2">
+                    {resendState === 'sent' ? (
+                      <span className="text-green-700">
+                        {t('auth.login.resendConfirmation.sent')}
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleResendConfirmation}
+                        disabled={resendState === 'sending'}
+                        className="font-semibold text-dental-primary-600 hover:text-dental-primary-700 underline disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-dental-primary-400 rounded"
+                      >
+                        {resendState === 'sending'
+                          ? t('auth.login.resendConfirmation.sending')
+                          : t('auth.login.resendConfirmation.action')}
+                      </button>
+                    )}
+                    {resendState === 'error' && (
+                      <span className="block mt-1">
+                        {t('auth.login.resendConfirmation.error')}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
