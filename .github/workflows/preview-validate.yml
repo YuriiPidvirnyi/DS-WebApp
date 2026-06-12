@@ -2,25 +2,35 @@ name: Production A11y
 
 # Accessibility audit (axe, WCAG 2 A/AA) of the live PUBLIC production site.
 #
-# Key insight: Vercel Deployment Protection guards Preview/per-deployment
-# *.vercel.app URLs (they return 401), but the Production public domain
-# (www.dentalstory.ua) is open — so the audit needs NO bypass secret at all.
-# a11y is read-only (axe only inspects the rendered DOM), so auditing prod is safe.
+# Why a schedule (not only deployment_status):
+#   - Vercel Deployment Protection guards Preview/per-deployment *.vercel.app URLs
+#     (401), so they can't be audited from CI; only the Production public domain
+#     (www.dentalstory.ua) is open.
+#   - But Production deploys are RARE here (work happens on develop → preview;
+#     main/prod ships infrequently). Gating solely on a Production deployment_status
+#     meant this job would almost never run. So we also run it daily + on demand
+#     against the always-up public site.
 #
-# Runs after each successful Production deployment. Code-level a11y also runs in
-# weekly-a11y.yml (local server); full e2e runs in ci.yml against a mocked build.
+# a11y is read-only (axe only inspects the rendered DOM), so auditing prod is safe.
+# Code-level a11y also runs in weekly-a11y.yml (local build); full e2e runs in
+# ci.yml against a mocked build.
 on:
+  schedule:
+    - cron: '30 7 * * *' # daily 07:30 UTC
+  workflow_dispatch:
   deployment_status:
 
 jobs:
   a11y:
-    name: A11y (production)
+    name: A11y (production site)
     runs-on: ubuntu-latest
 
-    # Only after a successful Production deploy — the public domain is reachable.
+    # Run on schedule/manual always; for a deployment_status event only when it is
+    # a successful Production deploy (preview/staging deploys are protected → 401).
     if: >-
-      github.event.deployment_status.state == 'success' &&
-      github.event.deployment_status.environment == 'Production'
+      github.event_name != 'deployment_status' ||
+      (github.event.deployment_status.state == 'success' &&
+      github.event.deployment_status.environment == 'Production')
 
     steps:
       - uses: actions/checkout@v6
