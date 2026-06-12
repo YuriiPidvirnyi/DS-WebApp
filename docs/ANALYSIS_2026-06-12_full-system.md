@@ -46,7 +46,7 @@
 - **Дашборд** (`app/cabinet/page.tsx`): привітання за часом доби, статистика, найближчий візит, віджет повноти профілю, skeleton зі `role="status"`.
 - **Записи** (`app/cabinet/appointments/page.tsx`): фільтри (всі/майбутні/минулі), скасування з підтвердженням, перенесення з міні-календарем і слотами, експорт .ics, toast-нотифікації з `aria-live`. Ownership-перевірки (`patient_id === user.id`) на cancel/reschedule + CSRF.
 - **Лікування** (`app/cabinet/treatments/page.tsx`): розгортувані картки актів, статуси (draft/signed/completed), статуси оплати, позиції з зубами та цінами, EmptyState.
-- **Платежі** (`app/cabinet/payments/page.tsx`): історія платежів + збережені картки (`WalletCards`), Monobank-флоу з деපозитом на booking-success.
+- **Платежі** (`app/cabinet/payments/page.tsx`): історія платежів + збережені картки (`WalletCards`), Monobank-флоу з депозитом на booking-success.
 - **Профіль/Налаштування**: редагування ПІБ/телефону/дати народження, GDPR-експорт даних (rate limit 5/min, defense-in-depth `.eq('id', user.id)` на кожному запиті), видалення акаунта з 2-кроковим підтвердженням.
 
 ### Виправлено в цьому PR
