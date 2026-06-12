@@ -43,11 +43,16 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Protect /admin routes - require admin role
-  if (
+  // Protect /admin routes - require admin role.
+  // Protect /patient/[id] routes the same way: they render staff-facing
+  // patient dashboards for an arbitrary patient UUID, so plain authenticated
+  // users must never reach them (IDOR).
+  const isAdminPath =
     request.nextUrl.pathname.startsWith('/admin') &&
     request.nextUrl.pathname !== '/admin/login'
-  ) {
+  const isPatientPath = request.nextUrl.pathname.startsWith('/patient')
+
+  if (isAdminPath || isPatientPath) {
     if (!user) {
       const url = request.nextUrl.clone()
       url.pathname = '/admin/login'
