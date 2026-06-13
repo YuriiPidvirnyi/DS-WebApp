@@ -114,30 +114,47 @@ export default function AdminDashboard() {
         const canSeeContacts = hasPermission(user.role, 'appointments:view_all')
         const canSeeReviews = hasPermission(user.role, 'settings:view')
 
+        // Doctors see only their own schedule (RLS enforces this too, but
+        // explicit scoping keeps the intent visible and the counts honest).
+        const doctorId = user.role === 'doctor' ? user.doctorId : null
+        const scopeToDoctor = <T extends { eq: (c: string, v: string) => T }>(
+          q: T
+        ): T => (doctorId ? q.eq('doctor_id', doctorId) : q)
+
         const appointmentsResults = await Promise.all([
-          supabase
-            .from('appointments')
-            .select('*', { count: 'exact', head: true }),
-          supabase
-            .from('appointments')
-            .select('*', { count: 'exact', head: true })
-            .eq('appointment_date', today),
-          supabase
-            .from('appointments')
-            .select('*', { count: 'exact', head: true })
-            .eq('status', 'pending'),
-          supabase
-            .from('appointments')
-            .select('*', { count: 'exact', head: true })
-            .eq('status', 'completed'),
-          supabase
-            .from('appointments')
-            .select(
-              'id, patient_name, appointment_time, status, services(name_uk)'
-            )
-            .eq('appointment_date', today)
+          scopeToDoctor(
+            supabase
+              .from('appointments')
+              .select('*', { count: 'exact', head: true })
+          ),
+          scopeToDoctor(
+            supabase
+              .from('appointments')
+              .select('*', { count: 'exact', head: true })
+              .eq('appointment_date', today)
+          ),
+          scopeToDoctor(
+            supabase
+              .from('appointments')
+              .select('*', { count: 'exact', head: true })
+              .eq('status', 'pending')
+          ),
+          scopeToDoctor(
+            supabase
+              .from('appointments')
+              .select('*', { count: 'exact', head: true })
+              .eq('status', 'completed')
+          ),
+          scopeToDoctor(
+            supabase
+              .from('appointments')
+              .select(
+                'id, patient_name, appointment_time, status, services(name_uk)'
+              )
+              .eq('appointment_date', today)
+          )
             .order('appointment_time', { ascending: true })
-            .limit(5),
+            .limit(doctorId ? 10 : 5),
         ])
 
         const [
@@ -286,6 +303,10 @@ export default function AdminDashboard() {
     return null
   }
 
+  const isDoctor = user.role === 'doctor'
+  const canSeeContacts = hasPermission(user.role, 'appointments:view_all')
+  const canSeeReviews = hasPermission(user.role, 'settings:view')
+
   return (
     <div className="space-y-6">
       <OnboardingTour role={user?.role} />
@@ -339,34 +360,51 @@ export default function AdminDashboard() {
           iconBg="bg-dental-info"
           href="/admin/appointments?filter=today"
         />
-        <StatCard
-          title={t('admin.dashboard.contacts')}
-          value={stats?.unreadContacts || 0}
-          icon={MessageSquare}
-          iconBg="bg-dental-warning"
-          href="/admin/contacts"
-          badge={
-            stats?.unreadContacts
-              ? t('admin.dashboard.newBadgePlural')
-              : undefined
-          }
-        />
-        <StatCard
-          title={t('admin.dashboard.reviewsModeration')}
-          value={stats?.pendingReviews || 0}
-          icon={Star}
-          iconBg="bg-dental-success"
-          href="/admin/reviews"
-        />
+        {canSeeContacts && (
+          <StatCard
+            title={t('admin.dashboard.contacts')}
+            value={stats?.unreadContacts || 0}
+            icon={MessageSquare}
+            iconBg="bg-dental-warning"
+            href="/admin/contacts"
+            badge={
+              stats?.unreadContacts
+                ? t('admin.dashboard.newBadgePlural')
+                : undefined
+            }
+          />
+        )}
+        {canSeeReviews && (
+          <StatCard
+            title={t('admin.dashboard.reviewsModeration')}
+            value={stats?.pendingReviews || 0}
+            icon={Star}
+            iconBg="bg-dental-success"
+            href="/admin/reviews"
+          />
+        )}
+        {isDoctor && (
+          <StatCard
+            title={t('admin.dashboard.completed')}
+            value={stats?.completedAppointments || 0}
+            icon={CheckCircle}
+            iconBg="bg-dental-success"
+            href="/admin/treatments"
+          />
+        )}
       </div>
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Today's Appointments */}
-        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-6 border border-dental-secondary-200">
+        <div
+          className={`${canSeeContacts ? 'lg:col-span-2' : 'lg:col-span-3'} bg-white rounded-xl shadow-sm p-6 border border-dental-secondary-200`}
+        >
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-dental-dark">
-              {t('admin.dashboard.todayAppointments')}
+              {isDoctor
+                ? t('admin.dashboard.myTodayAppointments')
+                : t('admin.dashboard.todayAppointments')}
             </h2>
             <Link
               href="/admin/appointments?filter=today"
@@ -434,70 +472,72 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        {/* Services Distribution */}
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-dental-secondary-200">
-          <h2 className="text-lg font-semibold text-dental-dark mb-4">
-            {t('admin.dashboard.serviceCategories')}
-          </h2>
-          {serviceStats.length === 0 ? (
-            <div className="py-12 text-center">
-              <TrendingUp className="w-12 h-12 text-dental-secondary-300 mx-auto mb-3" />
-              <p className="text-dental-text-light">
-                {t('admin.dashboard.noData')}
-              </p>
-            </div>
-          ) : (
-            <>
-              <div className="h-48">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={serviceStats}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={40}
-                      outerRadius={70}
-                      paddingAngle={2}
-                      dataKey="value"
-                    >
-                      {serviceStats.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: '#fff',
-                        border: `1px solid ${`var(--color-dental-secondary-200)`}`,
-                        borderRadius: '8px',
-                      }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
+        {/* Services Distribution (hidden for doctor-scoped dashboards) */}
+        {canSeeContacts && (
+          <div className="bg-white rounded-xl shadow-sm p-6 border border-dental-secondary-200">
+            <h2 className="text-lg font-semibold text-dental-dark mb-4">
+              {t('admin.dashboard.serviceCategories')}
+            </h2>
+            {serviceStats.length === 0 ? (
+              <div className="py-12 text-center">
+                <TrendingUp className="w-12 h-12 text-dental-secondary-300 mx-auto mb-3" />
+                <p className="text-dental-text-light">
+                  {t('admin.dashboard.noData')}
+                </p>
               </div>
-              <div className="mt-4 space-y-2">
-                {serviceStats.map(service => (
-                  <div
-                    key={service.name}
-                    className="flex items-center justify-between text-sm"
-                  >
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: service.color }}
+            ) : (
+              <>
+                <div className="h-48">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={serviceStats}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={40}
+                        outerRadius={70}
+                        paddingAngle={2}
+                        dataKey="value"
+                      >
+                        {serviceStats.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#fff',
+                          border: `1px solid ${`var(--color-dental-secondary-200)`}`,
+                          borderRadius: '8px',
+                        }}
                       />
-                      <span className="text-dental-text-light">
-                        {service.name}
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="mt-4 space-y-2">
+                  {serviceStats.map(service => (
+                    <div
+                      key={service.name}
+                      className="flex items-center justify-between text-sm"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: service.color }}
+                        />
+                        <span className="text-dental-text-light">
+                          {service.name}
+                        </span>
+                      </div>
+                      <span className="font-medium text-dental-dark">
+                        {service.value}%
                       </span>
                     </div>
-                    <span className="font-medium text-dental-dark">
-                      {service.value}%
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Quick Links */}
@@ -514,18 +554,36 @@ export default function AdminDashboard() {
           </div>
           <p className="text-2xl font-bold">{stats?.totalAppointments}</p>
         </Link>
-        <Link
-          href="/admin/doctors"
-          className="bg-dental-info rounded-xl p-4 text-white hover:bg-dental-info-dark transition-all"
-        >
-          <div className="flex items-center gap-2 mb-2">
-            <Users className="w-5 h-5" />
-            <span className="text-sm font-medium opacity-90">
-              {t('admin.dashboard.doctors')}
-            </span>
-          </div>
-          <p className="text-2xl font-bold">{stats?.totalDoctors}</p>
-        </Link>
+        {canSeeContacts && (
+          <Link
+            href="/admin/doctors"
+            className="bg-dental-info rounded-xl p-4 text-white hover:bg-dental-info-dark transition-all"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <Users className="w-5 h-5" />
+              <span className="text-sm font-medium opacity-90">
+                {t('admin.dashboard.doctors')}
+              </span>
+            </div>
+            <p className="text-2xl font-bold">{stats?.totalDoctors}</p>
+          </Link>
+        )}
+        {isDoctor && (
+          <Link
+            href="/admin/treatments"
+            className="bg-dental-info rounded-xl p-4 text-white hover:bg-dental-info-dark transition-all"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <Users className="w-5 h-5" />
+              <span className="text-sm font-medium opacity-90">
+                {t('admin.sidebar.treatments')}
+              </span>
+            </div>
+            <p className="text-lg font-bold">
+              {t('admin.dashboard.myTreatments')}
+            </p>
+          </Link>
+        )}
         <Link
           href="/admin/services"
           className="bg-dental-warning rounded-xl p-4 text-white hover:bg-dental-warning-dark transition-all"
@@ -538,18 +596,20 @@ export default function AdminDashboard() {
           </div>
           <p className="text-lg font-bold">{t('admin.dashboard.priceList')}</p>
         </Link>
-        <Link
-          href="/admin/contacts"
-          className="bg-dental-success rounded-xl p-4 text-white hover:bg-dental-success-dark transition-all"
-        >
-          <div className="flex items-center gap-2 mb-2">
-            <MessageSquare className="w-5 h-5" />
-            <span className="text-sm font-medium opacity-90">
-              {t('admin.dashboard.contacts')}
-            </span>
-          </div>
-          <p className="text-2xl font-bold">{stats?.unreadContacts}</p>
-        </Link>
+        {canSeeContacts && (
+          <Link
+            href="/admin/contacts"
+            className="bg-dental-success rounded-xl p-4 text-white hover:bg-dental-success-dark transition-all"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <MessageSquare className="w-5 h-5" />
+              <span className="text-sm font-medium opacity-90">
+                {t('admin.dashboard.contacts')}
+              </span>
+            </div>
+            <p className="text-2xl font-bold">{stats?.unreadContacts}</p>
+          </Link>
+        )}
       </div>
     </div>
   )

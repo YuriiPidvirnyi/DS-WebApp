@@ -1282,7 +1282,10 @@
       "doctors": "Doctors",
       "priceList": "Price List",
       "doctorNotLinked": "Your account is not linked to a doctor profile. Please contact an administrator.",
-      "loadError": "Failed to load dashboard data."
+      "loadError": "Failed to load dashboard data.",
+      "completed": "Completed visits",
+      "myTodayAppointments": "My appointments today",
+      "myTreatments": "My records"
     },
     "sidebar": {
       "dashboard": "Dashboard",
@@ -1372,7 +1375,8 @@
       "status": {
         "active": "Active",
         "closed": "Closed"
-      }
+      },
+      "typing": "Patient is typing…"
     },
     "appointmentStatuses": {
       "pending": "Pending",
@@ -2275,6 +2279,12 @@
         "invalidCredentials": "Invalid email or password",
         "emailNotConfirmed": "Please confirm your email before signing in.",
         "generic": "Sign-in error. Please try again later."
+      },
+      "resendConfirmation": {
+        "action": "Resend confirmation email",
+        "sending": "Sending…",
+        "sent": "Confirmation email sent. Check your inbox.",
+        "error": "Could not send the email. Try again later."
       }
     },
     "signUp": {
@@ -2438,8 +2448,11 @@
         "confirm": "Confirm reschedule",
         "success": "Appointment successfully rescheduled",
         "error": "Failed to reschedule appointment",
-        "at": "at"
-      }
+        "at": "at",
+        "slotsError": "Could not load available times. Check your connection and try again."
+      },
+      "loadMore": "Show more",
+      "loadMoreError": "Could not load more appointments"
     },
     "profile": {
       "title": "Edit Profile",
@@ -2549,7 +2562,9 @@
         "paid": "Paid",
         "waived": "Waived",
         "refunded": "Refunded"
-      }
+      },
+      "loadMore": "Show more",
+      "loadMoreError": "Could not load more records"
     },
     "payments": {
       "title": "Payments",
@@ -2773,7 +2788,8 @@
       "hours": "Our hours:\n• Mon-Fri: 9:00 - 20:00\n• Sat: 10:00 - 18:00\n• Sun: Closed",
       "contact": "Our contacts:\n• Phone: +380 44 123 45 67\n• Email: info@dentalstory.ua\n• Address: 1 Khreshchatyk St., Kyiv",
       "default": "Thank you for your message! Our manager will contact you shortly. For quick contact, call: +380 44 123 45 67"
-    }
+    },
+    "typing": "Consultant is typing…"
   },
   "pricing": {
     "title": "Transparent Pricing",

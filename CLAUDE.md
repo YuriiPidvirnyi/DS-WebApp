@@ -8,7 +8,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - Feature branches: `git checkout -b feature/name develop`
 - All PRs target `develop`, never `main`
-- Flow: `feature/* → develop → main`
+- **Nothing merges into `main` directly.** Releases go: `feature/* → develop`, then a
+  `release/*` branch is cut from `develop`, stabilized and tested, and only then merged
+  into `main`. Flow: `feature/* → develop → release/* → main`
+- **Only exception:** `hotfix/*` may merge straight into `main`, then must be back-merged
+  into `develop`
 - `develop` is the preprod environment — do NOT propose removing or skipping it
 
 ## Common Development Commands

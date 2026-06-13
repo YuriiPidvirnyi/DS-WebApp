@@ -1284,7 +1284,10 @@
       "doctors": "Lekarze",
       "priceList": "Cennik",
       "doctorNotLinked": "Twoje konto nie jest powiązane z profilem lekarza. Skontaktuj się z administratorem.",
-      "loadError": "Nie udało się załadować danych pulpitu."
+      "loadError": "Nie udało się załadować danych pulpitu.",
+      "completed": "Zakończone wizyty",
+      "myTodayAppointments": "Moje wizyty na dziś",
+      "myTreatments": "Moje karty"
     },
     "sidebar": {
       "dashboard": "Dashboard",
@@ -1374,7 +1377,8 @@
       "status": {
         "active": "Aktywny",
         "closed": "Zamknięty"
-      }
+      },
+      "typing": "Pacjent pisze…"
     },
     "appointmentStatuses": {
       "pending": "Oczekuje",
@@ -2277,6 +2281,12 @@
         "invalidCredentials": "Nieprawidłowy email lub hasło",
         "emailNotConfirmed": "Potwierdź email, aby się zalogować.",
         "generic": "Błąd logowania. Spróbuj ponownie później."
+      },
+      "resendConfirmation": {
+        "action": "Wyślij ponownie e-mail potwierdzający",
+        "sending": "Wysyłanie…",
+        "sent": "E-mail potwierdzający wysłany. Sprawdź skrzynkę.",
+        "error": "Nie udało się wysłać e-maila. Spróbuj później."
       }
     },
     "signUp": {
@@ -2440,8 +2450,11 @@
         "confirm": "Potwierdź przesunięcie",
         "success": "Wizyta została przeniesiona",
         "error": "Nie udało się przenieść wizyty",
-        "at": "o"
-      }
+        "at": "o",
+        "slotsError": "Nie udało się załadować dostępnych godzin. Sprawdź połączenie i spróbuj ponownie."
+      },
+      "loadMore": "Pokaż więcej",
+      "loadMoreError": "Nie udało się załadować kolejnych wizyt"
     },
     "profile": {
       "title": "Edycja profilu",
@@ -2551,7 +2564,9 @@
         "paid": "Opłacono",
         "waived": "Zwolniono",
         "refunded": "Zwrócono"
-      }
+      },
+      "loadMore": "Pokaż więcej",
+      "loadMoreError": "Nie udało się załadować kolejnych rekordów"
     },
     "payments": {
       "title": "Płatności",
@@ -2775,7 +2790,8 @@
       "hours": "Nasze godziny otwarcia:\n• Pn-Pt: 9:00 - 20:00\n• Sob: 10:00 - 18:00\n• Niedz: Zamknięte",
       "contact": "Nasze dane kontaktowe:\n• Telefon: +380 44 123 45 67\n• Email: info@dentalstory.ua\n• Adres: ul. Chreszczatyk 1, Kijów",
       "default": "Dziękujemy za wiadomość! Nasz menedżer skontaktuje się z Tobą wkrótce. Aby uzyskać szybki kontakt, zadzwoń: +380 44 123 45 67"
-    }
+    },
+    "typing": "Konsultant pisze…"
   },
   "pricing": {
     "title": "Przejrzyste ceny",

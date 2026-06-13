@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { trackEvent, AIEvent, AnalyticsEventCategory } from '@/utils/analytics'
+import { CONTACT_INFO } from '@/utils/constants'
 import Link from 'next/link'
 import {
   Stethoscope,
@@ -348,7 +349,7 @@ export default function SymptomCheckerPage() {
                 overallUrgency === 'high') && (
                 <div className="mt-4 flex flex-col sm:flex-row gap-3">
                   <a
-                    href="tel:+380671234567"
+                    href={`tel:${CONTACT_INFO.emergencyPhoneRaw}`}
                     className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-colors"
                   >
                     <Phone className="w-5 h-5" />

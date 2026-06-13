@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { ChatMessage } from './useLiveChat'
+import { mergeMessagesById, type ChatMessage } from './useLiveChat'
 
 export interface ChatSession {
   id: string
@@ -28,9 +28,17 @@ export function useAdminChat() {
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [isConnected, setIsConnected] = useState(false)
+  const [isPeerTyping, setIsPeerTyping] = useState(false)
+  const [retryNonce, setRetryNonce] = useState(0)
   const messageChannelRef = useRef<ReturnType<
     NonNullable<ReturnType<typeof createClient>>['channel']
   > | null>(null)
+  const typingChannelRef = useRef<ReturnType<
+    NonNullable<ReturnType<typeof createClient>>['channel']
+  > | null>(null)
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const lastTypingSentRef = useRef(0)
+  const wasDisconnectedRef = useRef(false)
 
   // Stable reference — createClient() is a singleton
   const supabase = useMemo(
@@ -79,31 +87,34 @@ export function useAdminChat() {
     }
   }, [supabase, loadSessions])
 
-  // Load messages for active session
+  // Load messages for active session (and after reconnects, to catch up
+  // on anything missed while the channel was down)
+  const loadMessages = useCallback(async () => {
+    if (!activeSessionId || !supabase) return
+
+    const { data } = await supabase
+      .from('chat_messages')
+      .select('*')
+      .eq('session_id', activeSessionId)
+      .order('created_at', { ascending: true })
+
+    if (data)
+      setMessages(prev => mergeMessagesById(prev, data as ChatMessage[]))
+
+    // Reset unread count when admin opens session
+    await supabase
+      .from('chat_sessions')
+      .update({ unread_count: 0 })
+      .eq('id', activeSessionId)
+  }, [activeSessionId, supabase])
+
   useEffect(() => {
-    if (!activeSessionId || !supabase) {
+    if (!activeSessionId) {
       setMessages([])
       return
     }
-
-    const loadMessages = async () => {
-      const { data } = await supabase
-        .from('chat_messages')
-        .select('*')
-        .eq('session_id', activeSessionId)
-        .order('created_at', { ascending: true })
-
-      if (data) setMessages(data as ChatMessage[])
-
-      // Reset unread count when admin opens session
-      await supabase
-        .from('chat_sessions')
-        .update({ unread_count: 0 })
-        .eq('id', activeSessionId)
-    }
-
     loadMessages()
-  }, [activeSessionId, supabase])
+  }, [activeSessionId, loadMessages])
 
   // Subscribe to messages for active session
   useEffect(() => {
@@ -113,6 +124,8 @@ export function useAdminChat() {
     if (messageChannelRef.current) {
       supabase.removeChannel(messageChannelRef.current)
     }
+
+    let retryTimer: ReturnType<typeof setTimeout> | null = null
 
     const channel = supabase
       .channel(`admin:messages:${activeSessionId}`)
@@ -134,15 +147,77 @@ export function useAdminChat() {
       )
       .subscribe((status: string) => {
         setIsConnected(status === 'SUBSCRIBED')
+        if (status === 'SUBSCRIBED') {
+          if (wasDisconnectedRef.current) {
+            wasDisconnectedRef.current = false
+            loadMessages()
+          }
+          return
+        }
+        wasDisconnectedRef.current = true
+        // Channel errors are not always auto-rejoined — rebuild the channel.
+        if (
+          (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') &&
+          !retryTimer
+        ) {
+          retryTimer = setTimeout(() => setRetryNonce(n => n + 1), 5000)
+        }
       })
 
     messageChannelRef.current = channel
 
     return () => {
+      if (retryTimer) clearTimeout(retryTimer)
       supabase.removeChannel(channel)
       messageChannelRef.current = null
+      setIsConnected(false)
+    }
+  }, [activeSessionId, supabase, retryNonce, loadMessages])
+
+  // Shared broadcast channel for typing indicators (admin <-> patient)
+  useEffect(() => {
+    if (!activeSessionId || !supabase) return
+
+    const channel = supabase
+      .channel(`chat-typing:${activeSessionId}`)
+      .on(
+        'broadcast',
+        { event: 'typing' },
+        (message: { payload?: { sender?: string } }) => {
+          if (message.payload?.sender !== 'patient') return
+          setIsPeerTyping(true)
+          if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current)
+          typingTimeoutRef.current = setTimeout(
+            () => setIsPeerTyping(false),
+            3000
+          )
+        }
+      )
+      .subscribe()
+
+    typingChannelRef.current = channel
+
+    return () => {
+      supabase.removeChannel(channel)
+      typingChannelRef.current = null
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current)
+      setIsPeerTyping(false)
     }
   }, [activeSessionId, supabase])
+
+  /** Broadcast that the admin is typing (throttled). */
+  const notifyTyping = useCallback(() => {
+    const channel = typingChannelRef.current
+    if (!channel) return
+    const now = Date.now()
+    if (now - lastTypingSentRef.current < 1500) return
+    lastTypingSentRef.current = now
+    channel.send({
+      type: 'broadcast',
+      event: 'typing',
+      payload: { sender: 'admin' },
+    })
+  }, [])
 
   /** Send a message as admin */
   const sendMessage = useCallback(
@@ -212,6 +287,8 @@ export function useAdminChat() {
     setActiveSessionId,
     messages,
     isConnected,
+    isPeerTyping,
+    notifyTyping,
     sendMessage,
     closeSession,
   }

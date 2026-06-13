@@ -88,7 +88,7 @@ const StatCard = memo(function StatCard({
   return (
     <div
       ref={counterRef}
-      className="group p-6 lg:p-8 rounded-3xl border border-dental-secondary-200 bg-white hover:bg-dental-primary-50 hover:border-dental-primary-300 transition-all duration-300 cursor-default"
+      className="group p-5 sm:p-6 lg:p-8 rounded-3xl border border-dental-secondary-200 bg-white hover:bg-dental-primary-50 hover:border-dental-primary-300 transition-all duration-300 cursor-default"
     >
       <div className="mb-6">
         <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-dental-primary-100 group-hover:bg-dental-primary-200 transition-colors">
@@ -307,7 +307,7 @@ function HeroSection({ heroCTAVariant }: HeroSectionProps) {
             {/* CTA Card - Highlighted */}
             <Link
               href="/booking"
-              className="group p-6 lg:p-8 rounded-3xl bg-dental-primary-600 hover:bg-dental-primary-700 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+              className="group p-5 sm:p-6 lg:p-8 rounded-3xl bg-dental-primary-600 hover:bg-dental-primary-700 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
             >
               <div>
                 <div className="mb-6">
@@ -315,12 +315,12 @@ function HeroSection({ heroCTAVariant }: HeroSectionProps) {
                     <Phone className="h-7 w-7 text-white" />
                   </div>
                 </div>
-                <p className="text-2xl lg:text-3xl font-bold text-white mb-1">
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-1 leading-tight hyphens-auto [overflow-wrap:anywhere]">
                   {t('stats.freeConsultationShort')}
                 </p>
-                <p className="text-white/90 text-base font-medium flex items-center gap-2">
+                <p className="text-white/90 text-sm sm:text-base font-medium flex items-center gap-2 [overflow-wrap:anywhere]">
                   {t('stats.forNewPatients')}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
                 </p>
               </div>
             </Link>

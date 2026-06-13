@@ -55,9 +55,14 @@ export async function DELETE(request: NextRequest) {
       .from('patients')
       .update({
         deleted_at: now,
-        full_name: 'Deleted User',
+        first_name: 'Deleted',
+        last_name: 'User',
+        patronymic: null,
         email: null,
         phone: null,
+        date_of_birth: null,
+        address: null,
+        medical_notes: null,
       })
       .eq('id', user.id)
 
@@ -72,13 +77,15 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    // 2. Cancel all future appointments for this patient.
+    // 2. Cancel every still-active appointment for this patient. The account
+    //    is being deleted, so any pending/confirmed booking must be released —
+    //    cancelling all of them sidesteps timezone-sensitive date math and is
+    //    the correct outcome (a departing patient holds no live slot).
     const { error: cancelError } = await adminClient
       .from('appointments')
       .update({ status: 'cancelled' })
       .eq('patient_id', user.id)
-      .gte('scheduled_at', now)
-      .in('status', ['pending', 'confirmed', 'scheduled'])
+      .in('status', ['pending', 'confirmed'])
 
     if (cancelError) {
       // Non-fatal — log but continue with auth deletion so PII is removed

@@ -31,15 +31,22 @@ export default function LiveChat({ onClose }: LiveChatProps) {
 
   const containerRef = useFocusTrap<HTMLDivElement>(isOpen, handleClose)
 
-  const { messages, isConnected, sendMessage, requiresAuth, isReady } =
-    useLiveChat({
-      enabled: isOpen && nameSubmitted,
-    })
+  const {
+    messages,
+    isConnected,
+    isPeerTyping,
+    notifyTyping,
+    sendMessage,
+    requiresAuth,
+    isReady,
+  } = useLiveChat({
+    enabled: isOpen && nameSubmitted,
+  })
 
-  // Auto-scroll on new messages
+  // Auto-scroll on new messages or when the typing indicator appears
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+  }, [messages, isPeerTyping])
 
   // Focus input when opened
   useEffect(() => {
@@ -235,6 +242,23 @@ export default function LiveChat({ onClose }: LiveChatProps) {
                   </div>
                 </div>
               ))}
+
+              {/* Typing indicator */}
+              {isPeerTyping && (
+                <div className="flex justify-start">
+                  <div
+                    className="bg-white text-gray-500 shadow-sm border border-gray-100 rounded-2xl rounded-bl-md px-4 py-2.5 flex items-center gap-2"
+                    aria-label={t('chat.typing')}
+                  >
+                    <span className="flex gap-1" aria-hidden="true">
+                      <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0ms]" />
+                      <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:150ms]" />
+                      <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:300ms]" />
+                    </span>
+                    <span className="text-xs">{t('chat.typing')}</span>
+                  </div>
+                </div>
+              )}
               <div ref={messagesEndRef} />
             </div>
 
@@ -244,7 +268,10 @@ export default function LiveChat({ onClose }: LiveChatProps) {
                 ref={inputRef}
                 type="text"
                 value={input}
-                onChange={e => setInput(e.target.value)}
+                onChange={e => {
+                  setInput(e.target.value)
+                  notifyTyping()
+                }}
                 onKeyDown={handleKeyDown}
                 placeholder={t('chat.inputPlaceholder')}
                 aria-label={t('chat.messageInputLabel')}
