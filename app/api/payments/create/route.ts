@@ -157,6 +157,18 @@ export async function POST(request: NextRequest) {
     })
 
     if (insertError) {
+      // Lost a race: another concurrent request already created the active
+      // payment for this appointment. The partial unique index
+      // (uniq_active_payment_per_appointment) rejected this duplicate.
+      // NB: a Monobank invoice was already created above and is now orphaned —
+      // it expires on its own; reserving the row before invoicing would avoid
+      // that but is a larger change.
+      if (insertError.code === '23505') {
+        return NextResponse.json(
+          { success: false, error: 'Платіж вже існує для цього запису' },
+          { status: 409 }
+        )
+      }
       captureException(
         new Error('[payments/create] Failed to insert payment'),
         {
