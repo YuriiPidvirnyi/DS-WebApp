@@ -149,10 +149,17 @@ export async function GET(request: NextRequest) {
 
     const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL
     if (!adminEmail) {
+      // Low stock was detected but there is no recipient configured — surface it
+      // in Sentry instead of silently reporting success, so the misconfiguration
+      // is actually noticed. Still return 200 so Vercel doesn't retry the cron.
+      captureException(
+        new Error('[cron/low-stock] ADMIN_NOTIFICATION_EMAIL not configured'),
+        { lowStockCount: lowStock.length }
+      )
       return NextResponse.json({
         success: true,
         checked: materials.length,
-        alerts: lowStock.length,
+        alerts: 0,
         skipped: 'No ADMIN_NOTIFICATION_EMAIL configured',
       })
     }
