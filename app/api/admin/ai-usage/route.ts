@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminAccess } from '@/lib/supabase/admin'
 import { hasPermission } from '@/lib/permissions'
+import { checkRateLimit, rateLimitResponse } from '@/lib/api-security'
 import { captureException } from '@/utils/sentry'
 
 export const runtime = 'nodejs'
@@ -18,6 +19,9 @@ interface AiUsageRow {
 
 export async function GET(request: NextRequest) {
   try {
+    const { allowed, remaining } = await checkRateLimit(request, 40, 60_000)
+    if (!allowed) return rateLimitResponse(remaining)
+
     const supabase = await createClient()
     if (!supabase) {
       return NextResponse.json(
