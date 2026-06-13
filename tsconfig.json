@@ -23,8 +23,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    /* Path mapping */
-    "baseUrl": ".",
+    /* Path mapping — paths are resolved relative to this tsconfig, so no
+       baseUrl is needed (baseUrl is deprecated in TS 6, removed in TS 7). */
     "paths": {
       "@/*": ["./src/*"]
     },
