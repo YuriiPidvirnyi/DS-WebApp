@@ -40,15 +40,21 @@ jobs:
 
       - name: Check for duplicate timestamp prefixes
         run: |
+          # The convention allows multiple migrations per day with an 8-digit
+          # (YYYYMMDD) prefix — they are ordered by full filename, so a shared
+          # date is NOT a conflict. Only a full 14-digit (YYYYMMDDHHmmss)
+          # timestamp must be unique. (Previously this flagged every same-day
+          # pair, so it failed on every migration PR.)
           dupes=$(
             ls supabase/migrations/*.sql \
               | xargs -I{} basename {} \
               | grep -oE '^[0-9]+' \
+              | awk 'length($0) == 14' \
               | sort \
               | uniq -d
           )
           if [ -n "$dupes" ]; then
-            echo "::error::Duplicate migration timestamp(s): $dupes"
+            echo "::error::Duplicate full migration timestamp(s): $dupes"
             exit 1
           fi
           echo "No duplicate timestamps"
