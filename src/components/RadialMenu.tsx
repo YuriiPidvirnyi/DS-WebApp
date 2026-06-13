@@ -246,7 +246,7 @@ export default function RadialMenu({
         className={[
           'w-14 h-14 rounded-full shadow-lg flex items-center justify-center',
           'transition-all duration-200',
-          'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-400',
+          'focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-400',
           isOpen
             ? 'bg-dental-dark text-white rotate-0'
             : 'bg-dental-primary-600 text-white hover:bg-dental-primary-700',

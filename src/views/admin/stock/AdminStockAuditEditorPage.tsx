@@ -298,7 +298,7 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
                             handleQtyChange(item.id, e.target.value)
                           }
                           placeholder="—"
-                          className="w-24 rounded border border-gray-300 px-2 py-1 text-right text-sm focus:outline-none focus:ring-1 focus:ring-dental-primary-600"
+                          className="w-24 rounded border border-gray-300 px-2 py-1 text-right text-sm focus:outline-hidden focus:ring-1 focus:ring-dental-primary-600"
                         />
                       ) : (
                         <span className="font-mono">

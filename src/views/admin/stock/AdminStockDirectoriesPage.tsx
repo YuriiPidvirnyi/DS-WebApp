@@ -299,7 +299,7 @@ function DirectoryItemModal({
               value={nameUk}
               onChange={e => setNameUk(e.target.value)}
               required
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
             />
           </div>
 
@@ -315,7 +315,7 @@ function DirectoryItemModal({
                   onChange={e =>
                     setExtra(p => ({ ...p, email: e.target.value }))
                   }
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
                 />
               </div>
               <div>
@@ -327,7 +327,7 @@ function DirectoryItemModal({
                   onChange={e =>
                     setExtra(p => ({ ...p, phone: e.target.value }))
                   }
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
                 />
               </div>
               <div>
@@ -340,7 +340,7 @@ function DirectoryItemModal({
                     setExtra(p => ({ ...p, edrpou: e.target.value }))
                   }
                   maxLength={10}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
                 />
               </div>
             </>
@@ -356,7 +356,7 @@ function DirectoryItemModal({
                 onChange={e =>
                   setExtra(p => ({ ...p, country: e.target.value }))
                 }
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
               />
             </div>
           )}

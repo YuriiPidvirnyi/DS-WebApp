@@ -163,7 +163,7 @@ export default function LiveChat({ onClose }: LiveChatProps) {
               value={visitorName}
               onChange={e => setVisitorName(e.target.value)}
               placeholder={t('chat.namePlaceholder')}
-              className="w-full bg-dental-secondary-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-dental-secondary-100 rounded-xl px-4 py-3 text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               required
             />
             <button
@@ -221,7 +221,7 @@ export default function LiveChat({ onClose }: LiveChatProps) {
                         ? 'bg-blue-600 text-white rounded-br-md'
                         : msg.sender === 'system'
                           ? 'bg-gray-200 text-gray-600 text-center text-xs mx-auto'
-                          : 'bg-white text-gray-900 shadow-sm border border-gray-100 rounded-bl-md'
+                          : 'bg-white text-gray-900 shadow-xs border border-gray-100 rounded-bl-md'
                     }`}
                   >
                     {msg.sender === 'admin' && (
@@ -247,7 +247,7 @@ export default function LiveChat({ onClose }: LiveChatProps) {
               {isPeerTyping && (
                 <div className="flex justify-start">
                   <div
-                    className="bg-white text-gray-500 shadow-sm border border-gray-100 rounded-2xl rounded-bl-md px-4 py-2.5 flex items-center gap-2"
+                    className="bg-white text-gray-500 shadow-xs border border-gray-100 rounded-2xl rounded-bl-md px-4 py-2.5 flex items-center gap-2"
                     aria-label={t('chat.typing')}
                   >
                     <span className="flex gap-1" aria-hidden="true">
@@ -275,7 +275,7 @@ export default function LiveChat({ onClose }: LiveChatProps) {
                 onKeyDown={handleKeyDown}
                 placeholder={t('chat.inputPlaceholder')}
                 aria-label={t('chat.messageInputLabel')}
-                className="flex-1 bg-dental-secondary-100 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 bg-dental-secondary-100 rounded-full px-4 py-2.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
               <button
                 onClick={handleSend}

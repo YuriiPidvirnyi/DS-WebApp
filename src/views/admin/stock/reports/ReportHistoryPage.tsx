@@ -101,7 +101,7 @@ export default function ReportHistoryPage() {
         <select
           value={materialId}
           onChange={e => setMaterialId(e.target.value)}
-          className="rounded-lg border border-dental-secondary-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 bg-white rounded-xl"
+          className="rounded-lg border border-dental-secondary-200 px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 bg-white rounded-xl"
         >
           <option value="">— Матеріал —</option>
           {materials.map(m => (
@@ -113,7 +113,7 @@ export default function ReportHistoryPage() {
         <select
           value={warehouseId}
           onChange={e => setWarehouseId(e.target.value)}
-          className="rounded-lg border border-dental-secondary-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 bg-white rounded-xl"
+          className="rounded-lg border border-dental-secondary-200 px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 bg-white rounded-xl"
         >
           <option value="">— Склад —</option>
           {warehouses.map(w => (

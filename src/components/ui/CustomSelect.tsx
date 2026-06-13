@@ -101,8 +101,8 @@ export function CustomSelect({
         onClick={() => setIsOpen(prev => !prev)}
         onKeyDown={handleKeyDown}
         className={clsx(
-          'w-full min-h-[44px] flex items-center justify-between gap-2 px-4 py-2.5 text-base sm:text-sm text-dental-dark bg-white border transition-all duration-200 shadow-sm',
-          'focus:outline-none focus-visible:ring-2 focus-visible:ring-dental-primary-500 focus-visible:ring-offset-1',
+          'w-full min-h-[44px] flex items-center justify-between gap-2 px-4 py-2.5 text-base sm:text-sm text-dental-dark bg-white border transition-all duration-200 shadow-xs',
+          'focus:outline-hidden focus-visible:ring-2 focus-visible:ring-dental-primary-500 focus-visible:ring-offset-1',
           error
             ? 'border-red-300 focus-visible:ring-red-500'
             : 'border-dental-secondary-200 hover:border-dental-primary-400',

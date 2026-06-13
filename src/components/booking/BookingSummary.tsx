@@ -264,7 +264,7 @@ export default function BookingSummary({
           <EditableField
             label={t('booking.fields.symptomsLabel')}
             value={
-              <span className="whitespace-pre-wrap break-words">
+              <span className="whitespace-pre-wrap wrap-break-word">
                 {watch('symptoms') || '—'}
               </span>
             }

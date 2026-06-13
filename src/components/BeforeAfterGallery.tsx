@@ -151,7 +151,7 @@ function ComparisonSlider({
 
       {/* Instruction overlay */}
       {!isDragging && (
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/60 text-white px-4 py-2 rounded-full text-sm backdrop-blur-sm pointer-events-none animate-pulse">
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/60 text-white px-4 py-2 rounded-full text-sm backdrop-blur-xs pointer-events-none animate-pulse">
           {t('caseStudies.dragToCompare')}
         </div>
       )}

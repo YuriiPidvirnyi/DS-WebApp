@@ -255,7 +255,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
               onChange={e => setNameUk(e.target.value)}
               required
               disabled={!canEdit}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -267,7 +267,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                 value={nameEn}
                 onChange={e => setNameEn(e.target.value)}
                 disabled={!canEdit}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
               />
             </div>
             <div>
@@ -278,7 +278,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                 value={unit}
                 onChange={e => setUnit(e.target.value)}
                 disabled={!canEdit}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
               />
             </div>
           </div>
@@ -291,7 +291,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
               onChange={e => setDescriptionUk(e.target.value)}
               rows={2}
               disabled={!canEdit}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50 resize-none"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50 resize-none"
             />
           </div>
         </section>
@@ -308,7 +308,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                 value={brandId}
                 onChange={e => setBrandId(e.target.value)}
                 disabled={!canEdit}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
               >
                 <option value="">— не вказано —</option>
                 {brands.map(b => (
@@ -326,7 +326,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                 value={categoryId}
                 onChange={e => setCategoryId(e.target.value)}
                 disabled={!canEdit}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
               >
                 <option value="">— не вказано —</option>
                 {categories.map(c => (
@@ -344,7 +344,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                 value={supplierId}
                 onChange={e => setSupplierId(e.target.value)}
                 disabled={!canEdit}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
               >
                 <option value="">— не вказано —</option>
                 {suppliers.map(s => (
@@ -370,7 +370,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                 onChange={e => setPackFormatLabel(e.target.value)}
                 disabled={!canEdit}
                 placeholder="Банка, Флакон, Упаковка..."
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
               />
             </div>
             <div>
@@ -384,7 +384,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                 value={packSizeNumerator}
                 onChange={e => setPackSizeNumerator(e.target.value)}
                 disabled={!canEdit}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
               />
             </div>
             <div>
@@ -397,7 +397,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                   setPackSizeUnit(e.target.value as (typeof PACK_UNITS)[number])
                 }
                 disabled={!canEdit}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
               >
                 {PACK_UNITS.map(u => (
                   <option key={u} value={u}>
@@ -420,7 +420,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
               value={articleCode}
               onChange={e => setArticleCode(e.target.value)}
               disabled={!canEdit}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
             />
           </div>
           {canEdit && (
@@ -520,7 +520,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                                 criticalLevelUnitQty: e.target.value || null,
                               })
                             }
-                            className="w-20 rounded border border-gray-300 px-2 py-1 text-right text-sm focus:outline-none focus:ring-1 focus:ring-dental-primary-600"
+                            className="w-20 rounded border border-gray-300 px-2 py-1 text-right text-sm focus:outline-hidden focus:ring-1 focus:ring-dental-primary-600"
                           />
                         ) : (
                           <span className="text-dental-text">
@@ -540,7 +540,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                                 defaultReorderUnitQty: e.target.value || null,
                               })
                             }
-                            className="w-20 rounded border border-gray-300 px-2 py-1 text-right text-sm focus:outline-none focus:ring-1 focus:ring-dental-primary-600"
+                            className="w-20 rounded border border-gray-300 px-2 py-1 text-right text-sm focus:outline-hidden focus:ring-1 focus:ring-dental-primary-600"
                           />
                         ) : (
                           <span className="text-dental-text">

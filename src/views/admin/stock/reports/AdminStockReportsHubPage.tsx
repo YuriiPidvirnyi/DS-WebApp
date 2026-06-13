@@ -63,9 +63,9 @@ export default function AdminStockReportsHubPage() {
           <Link
             key={r.href}
             href={r.href}
-            className="group flex gap-4 rounded-xl border bg-white p-5 hover:border-dental-primary-600 hover:shadow-sm transition-all"
+            className="group flex gap-4 rounded-xl border bg-white p-5 hover:border-dental-primary-600 hover:shadow-xs transition-all"
           >
-            <div className="flex-shrink-0 mt-0.5 text-dental-primary-600 group-hover:text-dental-dark transition-colors">
+            <div className="shrink-0 mt-0.5 text-dental-primary-600 group-hover:text-dental-dark transition-colors">
               <r.icon className="w-6 h-6" />
             </div>
             <div>

@@ -233,7 +233,7 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
                     className={`flex gap-3 ${message.role === 'user' ? 'flex-row-reverse' : ''}`}
                   >
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                      className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
                         message.role === 'user'
                           ? 'bg-dental-secondary-200'
                           : 'bg-dental-primary-100'
@@ -287,7 +287,7 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
                 onChange={e => setInput(e.target.value)}
                 placeholder={t('ai.inputPlaceholder')}
                 disabled={isLoading}
-                className="flex-1 px-4 py-2 border border-dental-secondary-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-dental-primary-500 focus:border-transparent text-sm disabled:opacity-50"
+                className="flex-1 px-4 py-2 border border-dental-secondary-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500 focus:border-transparent text-sm disabled:opacity-50"
               />
               <button
                 type="submit"

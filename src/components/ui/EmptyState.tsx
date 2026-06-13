@@ -26,7 +26,7 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <div
-      className={`bg-white rounded-2xl ${padding === 'lg' ? 'p-12' : 'p-10'} text-center shadow-sm border border-dental-secondary-100 ${className ?? ''}`}
+      className={`bg-white rounded-2xl ${padding === 'lg' ? 'p-12' : 'p-10'} text-center shadow-xs border border-dental-secondary-100 ${className ?? ''}`}
     >
       <div className="flex justify-center mb-4">{icon}</div>
       <p className="text-lg font-medium text-dental-dark mb-1">{title}</p>
@@ -36,7 +36,7 @@ export function EmptyState({
       {action && (
         <Link
           href={action.href}
-          className="inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white font-medium rounded-xl px-6 py-3 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+          className="inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white font-medium rounded-xl px-6 py-3 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
         >
           {action.startIcon}
           {action.label}

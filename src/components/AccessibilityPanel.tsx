@@ -180,7 +180,7 @@ export function AccessibilityPanel({
                 role="switch"
                 aria-checked={highContrast}
                 onClick={toggleHighContrast}
-                className={`relative w-11 h-6 rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-dental-primary-500 focus-visible:ring-offset-2 ${
+                className={`relative w-11 h-6 rounded-full transition-colors duration-200 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-dental-primary-500 focus-visible:ring-offset-2 ${
                   highContrast
                     ? 'bg-dental-primary-600'
                     : 'bg-dental-secondary-300'
@@ -212,7 +212,7 @@ export function AccessibilityPanel({
                 role="switch"
                 aria-checked={reducedMotion}
                 onClick={toggleReducedMotion}
-                className={`relative w-11 h-6 rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-dental-primary-500 focus-visible:ring-offset-2 ${
+                className={`relative w-11 h-6 rounded-full transition-colors duration-200 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-dental-primary-500 focus-visible:ring-offset-2 ${
                   reducedMotion
                     ? 'bg-dental-primary-600'
                     : 'bg-dental-secondary-300'
@@ -314,7 +314,7 @@ export function AccessibilityPanel({
               ? t('accessibilityPanel.close')
               : t('accessibilityPanel.open')
           }
-          className="group flex items-center gap-2 bg-dental-primary-600 text-white pl-3 pr-4 h-11 rounded-full shadow-lg hover:bg-dental-primary-700 hover:shadow-xl hover:shadow-dental-primary-500/30 hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-dental-primary-500 focus-visible:ring-offset-2 transition-all duration-300"
+          className="group flex items-center gap-2 bg-dental-primary-600 text-white pl-3 pr-4 h-11 rounded-full shadow-lg hover:bg-dental-primary-700 hover:shadow-xl hover:shadow-dental-primary-500/30 hover:scale-105 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-dental-primary-500 focus-visible:ring-offset-2 transition-all duration-300"
         >
           <Accessibility className="h-5 w-5 shrink-0 group-hover:animate-pulse" />
           <span className="text-sm font-medium">

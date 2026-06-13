@@ -127,7 +127,7 @@ const Header = memo(() => {
 
   return (
     <header
-      className="bg-white shadow-sm z-50 min-w-0 overflow-x-clip shrink-0"
+      className="bg-white shadow-xs z-50 min-w-0 overflow-x-clip shrink-0"
       role="banner"
     >
       {/* Top contact bar — visible on sm+ */}
@@ -204,7 +204,7 @@ const Header = memo(() => {
                   </span>
                 </Link>
               )}
-              <div className="hidden lg:block [&_button]:!min-h-0 [&_button]:!py-0.5 [&_button]:!text-white/90 [&_button]:hover:!text-white [&_button]:!border-white/20">
+              <div className="hidden lg:block [&_button]:min-h-0! [&_button]:py-0.5! [&_button]:text-white/90! hover:[&_button]:text-white! [&_button]:border-white/20!">
                 <LanguageSwitcher variant="dropdown" />
               </div>
             </div>
@@ -239,7 +239,7 @@ const Header = memo(() => {
               </Link>
               <button
                 onClick={toggleMenu}
-                className="p-2 text-dental-text hover:text-dental-primary-600 focus:outline-none focus:ring-2 focus:ring-dental-primary-400 focus:ring-offset-2 rounded-lg transition-colors"
+                className="p-2 text-dental-text hover:text-dental-primary-600 focus:outline-hidden focus:ring-2 focus:ring-dental-primary-400 focus:ring-offset-2 rounded-lg transition-colors"
                 aria-label={
                   isMenuOpen
                     ? t('accessibility.closeMenu')

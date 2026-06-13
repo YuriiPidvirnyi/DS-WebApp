@@ -174,7 +174,7 @@ export default function AdminChatPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-8rem)] flex bg-white rounded-xl shadow-sm border border-dental-secondary-200 overflow-hidden">
+    <div className="h-[calc(100vh-8rem)] flex bg-white rounded-xl shadow-xs border border-dental-secondary-200 overflow-hidden">
       {/* Sidebar — session list */}
       <div
         className={`w-full md:w-80 lg:w-96 border-r border-gray-200 flex flex-col ${
@@ -324,7 +324,7 @@ export default function AdminChatPage() {
                         ? 'bg-blue-600 text-white rounded-br-md'
                         : msg.sender === 'system'
                           ? 'bg-gray-200 text-gray-600 text-center text-xs mx-auto'
-                          : 'bg-white text-gray-900 shadow-sm border border-gray-100 rounded-bl-md'
+                          : 'bg-white text-gray-900 shadow-xs border border-gray-100 rounded-bl-md'
                     }`}
                   >
                     <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
@@ -345,7 +345,7 @@ export default function AdminChatPage() {
               {isPeerTyping && (
                 <div className="flex justify-start">
                   <div
-                    className="bg-white text-gray-500 shadow-sm border border-gray-100 rounded-2xl rounded-bl-md px-4 py-2.5 flex items-center gap-2"
+                    className="bg-white text-gray-500 shadow-xs border border-gray-100 rounded-2xl rounded-bl-md px-4 py-2.5 flex items-center gap-2"
                     aria-label={t('admin.chat.typing')}
                   >
                     <span className="flex gap-1" aria-hidden="true">
@@ -373,7 +373,7 @@ export default function AdminChatPage() {
                   }}
                   onKeyDown={handleKeyDown}
                   placeholder={t('admin.chat.input.placeholder')}
-                  className="flex-1 bg-gray-100 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 bg-gray-100 rounded-full px-4 py-2.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
                 <button
                   onClick={handleSend}

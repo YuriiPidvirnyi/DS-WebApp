@@ -186,7 +186,7 @@ export default function ReminderSettings() {
     return (
       <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
         <div className="flex items-start gap-3">
-          <BellOff className="h-5 w-5 text-gray-500 flex-shrink-0 mt-0.5" />
+          <BellOff className="h-5 w-5 text-gray-500 shrink-0 mt-0.5" />
           <div>
             <h4 className="font-semibold text-gray-900">
               {t('reminderSettings.empty.title')}

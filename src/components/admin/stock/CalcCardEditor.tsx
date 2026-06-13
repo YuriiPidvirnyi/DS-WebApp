@@ -238,14 +238,14 @@ export default function CalcCardEditor({
                     value={matSearch}
                     onChange={e => setMatSearch(e.target.value)}
                     placeholder="Пошук матеріалу..."
-                    className="w-full rounded-lg border border-gray-300 pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600"
+                    className="w-full rounded-lg border border-gray-300 pl-9 pr-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
                   />
                   {searching && (
                     <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-dental-text" />
                   )}
                 </div>
                 {matResults.length > 0 && (
-                  <div className="rounded-lg border border-gray-200 bg-white shadow-sm max-h-44 overflow-y-auto">
+                  <div className="rounded-lg border border-gray-200 bg-white shadow-xs max-h-44 overflow-y-auto">
                     {matResults.map(mat => (
                       <button
                         key={mat.id}
@@ -320,7 +320,7 @@ export default function CalcCardEditor({
                                   Number(e.target.value)
                                 )
                               }
-                              className="w-20 rounded border border-gray-300 px-2 py-1 text-right text-sm focus:outline-none focus:ring-1 focus:ring-dental-primary-600"
+                              className="w-20 rounded border border-gray-300 px-2 py-1 text-right text-sm focus:outline-hidden focus:ring-1 focus:ring-dental-primary-600"
                             />
                           </td>
                           <td className="py-2 text-center">

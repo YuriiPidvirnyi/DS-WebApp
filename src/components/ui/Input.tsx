@@ -55,7 +55,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const inputId = id || label?.toLowerCase().replace(/\s+/g, '-')
 
     const baseStyles =
-      'min-h-[44px] px-4 py-3 border rounded-2xl transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 text-base text-dental-dark placeholder:text-dental-muted sm:text-sm'
+      'min-h-[44px] px-4 py-3 border rounded-2xl transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-0 text-base text-dental-dark placeholder:text-dental-muted sm:text-sm'
 
     const stateStyles = error
       ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
@@ -138,7 +138,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     const textareaId = id || label?.toLowerCase().replace(/\s+/g, '-')
 
     const baseStyles =
-      'min-h-[44px] px-4 py-3 border rounded-2xl transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 resize-vertical text-base text-dental-dark placeholder:text-dental-muted sm:text-sm'
+      'min-h-[44px] px-4 py-3 border rounded-2xl transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-0 resize-vertical text-base text-dental-dark placeholder:text-dental-muted sm:text-sm'
 
     const stateStyles = error
       ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
@@ -250,7 +250,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     const sizeStyles = SELECT_SIZE_STYLES[selectSize]
 
     const baseStyles = clsx(
-      'border transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 bg-white text-dental-dark appearance-none cursor-pointer',
+      'border transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-0 bg-white text-dental-dark appearance-none cursor-pointer',
       sizeStyles.field
     )
 

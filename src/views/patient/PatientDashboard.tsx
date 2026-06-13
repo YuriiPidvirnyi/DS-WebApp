@@ -161,7 +161,7 @@ export default function PatientDashboard({ patientId }: { patientId: string }) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow">
+      <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-dental-teal/10 rounded-full flex items-center justify-center">
@@ -220,7 +220,7 @@ export default function PatientDashboard({ patientId }: { patientId: string }) {
 
       {/* Tabs */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="bg-white rounded-lg shadow">
+        <div className="bg-white rounded-lg shadow-sm">
           <div className="border-b">
             <div className="flex gap-2 p-2">
               {tabs.map(tab => (

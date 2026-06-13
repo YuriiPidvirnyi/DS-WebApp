@@ -94,7 +94,7 @@ export default function AdminStockDocumentsPage() {
                 setFilterType(e.target.value as DocType | '')
                 setPage(1)
               }}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600"
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
             >
               <option value="">Всі типи</option>
               {(Object.entries(DOC_TYPE_LABELS) as [DocType, string][]).map(
@@ -111,7 +111,7 @@ export default function AdminStockDocumentsPage() {
                 setFilterStatus(e.target.value as DocStatus | '')
                 setPage(1)
               }}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600"
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
             >
               <option value="">Всі статуси</option>
               {(Object.entries(STATUS_LABELS) as [DocStatus, string][]).map(
@@ -294,7 +294,7 @@ function CreateDocumentModal({
             <select
               value={docType}
               onChange={e => setDocType(e.target.value as DocType)}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
             >
               {DOC_TYPE_OPTIONS.map(t => (
                 <option key={t} value={t}>

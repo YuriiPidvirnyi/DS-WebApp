@@ -116,7 +116,7 @@ export default async function PaymentsPage() {
           action={{ href: '/booking', label: 'Записатися на прийом' }}
         />
       ) : (
-        <div className="bg-white rounded-2xl shadow-sm border border-dental-secondary-100 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-xs border border-dental-secondary-100 overflow-hidden">
           {/* Desktop table */}
           <div className="hidden sm:block overflow-x-auto">
             <table className="w-full text-sm">
