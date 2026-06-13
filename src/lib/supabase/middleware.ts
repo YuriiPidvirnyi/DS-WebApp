@@ -47,10 +47,14 @@ export async function updateSession(request: NextRequest) {
   // Protect /patient/[id] routes the same way: they render staff-facing
   // patient dashboards for an arbitrary patient UUID, so plain authenticated
   // users must never reach them (IDOR).
+  const pathname = request.nextUrl.pathname
   const isAdminPath =
-    request.nextUrl.pathname.startsWith('/admin') &&
-    request.nextUrl.pathname !== '/admin/login'
-  const isPatientPath = request.nextUrl.pathname.startsWith('/patient')
+    (pathname === '/admin' || pathname.startsWith('/admin/')) &&
+    pathname !== '/admin/login'
+  // Match the /patient segment exactly, not as a raw prefix, so unrelated
+  // routes like /patient-portal would never get admin-only gating.
+  const isPatientPath =
+    pathname === '/patient' || pathname.startsWith('/patient/')
 
   if (isAdminPath || isPatientPath) {
     if (!user) {

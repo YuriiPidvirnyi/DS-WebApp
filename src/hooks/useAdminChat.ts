@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { ChatMessage } from './useLiveChat'
+import { mergeMessagesById, type ChatMessage } from './useLiveChat'
 
 export interface ChatSession {
   id: string
@@ -98,7 +98,8 @@ export function useAdminChat() {
       .eq('session_id', activeSessionId)
       .order('created_at', { ascending: true })
 
-    if (data) setMessages(data as ChatMessage[])
+    if (data)
+      setMessages(prev => mergeMessagesById(prev, data as ChatMessage[]))
 
     // Reset unread count when admin opens session
     await supabase

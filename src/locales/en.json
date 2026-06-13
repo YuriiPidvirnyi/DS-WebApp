@@ -2563,7 +2563,8 @@
         "waived": "Waived",
         "refunded": "Refunded"
       },
-      "loadMore": "Show more"
+      "loadMore": "Show more",
+      "loadMoreError": "Could not load more records"
     },
     "payments": {
       "title": "Payments",

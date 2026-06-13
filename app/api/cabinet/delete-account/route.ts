@@ -77,12 +77,14 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    // 2. Cancel all future appointments for this patient.
+    // 2. Cancel every still-active appointment for this patient. The account
+    //    is being deleted, so any pending/confirmed booking must be released —
+    //    cancelling all of them sidesteps timezone-sensitive date math and is
+    //    the correct outcome (a departing patient holds no live slot).
     const { error: cancelError } = await adminClient
       .from('appointments')
       .update({ status: 'cancelled' })
       .eq('patient_id', user.id)
-      .gte('appointment_date', now.slice(0, 10))
       .in('status', ['pending', 'confirmed'])
 
     if (cancelError) {

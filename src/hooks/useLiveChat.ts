@@ -16,6 +16,24 @@ export interface ChatMessage {
   created_at: string
 }
 
+/**
+ * Merge a freshly fetched message list into existing state by id, keeping any
+ * items the fetch didn't return (optimistic sends, realtime rows that arrived
+ * mid-fetch) so a late snapshot can never drop newer messages. Ordered by
+ * created_at.
+ */
+export function mergeMessagesById(
+  prev: ChatMessage[],
+  fetched: ChatMessage[]
+): ChatMessage[] {
+  const byId = new Map<string, ChatMessage>()
+  for (const m of fetched) byId.set(m.id, m)
+  for (const m of prev) if (!byId.has(m.id)) byId.set(m.id, m)
+  return Array.from(byId.values()).sort((a, b) =>
+    a.created_at.localeCompare(b.created_at)
+  )
+}
+
 interface UseLiveChatOptions {
   /** If true, the hook is active and will connect */
   enabled: boolean
@@ -81,7 +99,8 @@ export function useLiveChat({ enabled }: UseLiveChatOptions) {
       .eq('session_id', sessionId)
       .order('created_at', { ascending: true })
 
-    if (data) setMessages(data as ChatMessage[])
+    if (data)
+      setMessages(prev => mergeMessagesById(prev, data as ChatMessage[]))
   }, [sessionId, supabase])
 
   useEffect(() => {

@@ -59,10 +59,18 @@ export default function LoginPage() {
     })
 
     if (error) {
-      const notConfirmed = error.message.includes('Email not confirmed')
+      // Prefer Supabase's stable error.code; fall back to message text for
+      // older clients that don't populate it.
+      const code = (error as { code?: string }).code
+      const notConfirmed =
+        code === 'email_not_confirmed' ||
+        error.message.includes('Email not confirmed')
+      const invalidCredentials =
+        code === 'invalid_credentials' ||
+        error.message.includes('Invalid login credentials')
       setEmailNotConfirmed(notConfirmed)
       setError(
-        error.message.includes('Invalid login credentials')
+        invalidCredentials
           ? t('auth.login.errors.invalidCredentials')
           : notConfirmed
             ? t('auth.login.errors.emailNotConfirmed')

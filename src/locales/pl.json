@@ -2565,7 +2565,8 @@
         "waived": "Zwolniono",
         "refunded": "Zwrócono"
       },
-      "loadMore": "Pokaż więcej"
+      "loadMore": "Pokaż więcej",
+      "loadMoreError": "Nie udało się załadować kolejnych rekordów"
     },
     "payments": {
       "title": "Płatności",

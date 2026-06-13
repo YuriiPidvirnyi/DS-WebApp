@@ -98,6 +98,7 @@ export default function TreatmentsHistoryPage() {
   const [fetchError, setFetchError] = useState(false)
   const [hasMore, setHasMore] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
+  const [loadMoreError, setLoadMoreError] = useState(false)
 
   const fetchRecordsPage = useCallback(async (offset: number) => {
     const supabase = createClient()
@@ -148,6 +149,7 @@ export default function TreatmentsHistoryPage() {
 
   const handleLoadMore = async () => {
     setLoadingMore(true)
+    setLoadMoreError(false)
     try {
       const data = await fetchRecordsPage(records.length)
       if (data) {
@@ -156,6 +158,7 @@ export default function TreatmentsHistoryPage() {
       }
     } catch (err) {
       console.error('Treatment records fetch error:', err)
+      setLoadMoreError(true)
     }
     setLoadingMore(false)
   }
@@ -360,7 +363,12 @@ export default function TreatmentsHistoryPage() {
 
       {/* Load more */}
       {hasMore && (
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center gap-2">
+          {loadMoreError && (
+            <p role="alert" className="text-sm text-red-700">
+              {t('cabinet.treatments.loadMoreError')}
+            </p>
+          )}
           <button
             onClick={handleLoadMore}
             disabled={loadingMore}
@@ -372,7 +380,9 @@ export default function TreatmentsHistoryPage() {
                 aria-hidden="true"
               />
             )}
-            {t('cabinet.treatments.loadMore')}
+            {loadMoreError
+              ? t('asyncState.actions.retry')
+              : t('cabinet.treatments.loadMore')}
           </button>
         </div>
       )}
