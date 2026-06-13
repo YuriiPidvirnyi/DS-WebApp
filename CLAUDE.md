@@ -54,7 +54,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Tech Stack
 
 - **Framework**: Next.js 16 App Router (TypeScript)
-- **Styling**: Tailwind CSS 3 + CSS custom properties
+- **Styling**: Tailwind CSS 4 (CSS-first `@theme` in `src/styles/globals.css`) + CSS custom properties
 - **Fonts**: Nunito (headings) + Rubik (body) via `next/font/google`
 - **Routing**: Next.js App Router (file-based, `app/` directory)
 - **Auth**: Supabase (`@supabase/ssr`) — requires `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY`
@@ -111,7 +111,8 @@ src/
 
 ### Brand System (v2)
 
-Colors defined in `tailwind.config.js` and `src/styles/globals.css`:
+Colors defined in the `@theme` block in `src/styles/globals.css` (Tailwind v4 is
+CSS-first; there is no `tailwind.config.js`):
 
 | Token                                | HEX       | Usage                           |
 | ------------------------------------ | --------- | ------------------------------- |
