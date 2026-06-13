@@ -1,6 +1,6 @@
 # Dental Story - Professional Dental Clinic WebApp
 
-A modern, fully-featured website for a dental clinic (Dental Story) built with Next.js 16, React 18, Supabase, and Tailwind CSS.
+A modern, fully-featured website for a dental clinic (Dental Story) built with Next.js 16, React 19, Supabase, and Tailwind CSS.
 
 ## Features
 
@@ -290,7 +290,7 @@ docker run -p 3000:3000 dental-story
 | Tech           | Purpose                      |
 | -------------- | ---------------------------- |
 | Next.js 16     | Framework with App Router    |
-| React 18       | UI library                   |
+| React 19       | UI library                   |
 | TypeScript     | Type safety                  |
 | Tailwind CSS 3 | Styling with design tokens   |
 | Supabase       | Backend, database, auth, RLS |

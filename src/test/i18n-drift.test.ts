@@ -4,16 +4,10 @@
  * Loads uk.json, en.json, and pl.json, recursively collects all dot-path keys,
  * and asserts that EN and PL have the same key set as UK (the reference locale).
  *
- * Pre-existing drift (as of 2026-04-21):
- *   EN and PL are both missing these 5 keys that exist in UK:
- *     - meta.ogImageAlt
- *     - meta.openGraphDescription
- *     - meta.openGraphTitle
- *     - meta.twitterDescription
- *     - meta.twitterTitle
- *
- * Once those keys are added to en.json and pl.json the `test.todo` blocks below
- * should be converted back to strict `expect(missingIn*).toEqual([])` assertions.
+ * The earlier drift (5 missing meta.* keys in EN/PL, as of 2026-04-21) has been
+ * resolved — all three locales are at full parity. The assertions below are strict
+ * (`expect(missingIn*).toEqual([])`); they keep a readable diff so any future drift
+ * fails CI with the exact missing keys.
  */
 
 import { describe, it, expect } from 'vitest'
@@ -57,12 +51,7 @@ describe('i18n locale key parity', () => {
     expect(extraInEn).toEqual([])
   })
 
-  /**
-   * Pre-existing drift: EN is missing 5 meta.* keys.
-   * This test documents them and will fail until they are added to en.json.
-   * To fix: add the listed keys to src/locales/en.json, then change this to
-   *   expect(missingInEn).toEqual([])
-   */
+  /** Strict parity: en.json must have no keys missing vs uk.json. */
   it('en.json has no keys missing vs uk.json', () => {
     const missingInEn = ukKeys.filter(k => !enKeys.includes(k))
 
@@ -86,12 +75,7 @@ describe('i18n locale key parity', () => {
     expect(extraInPl).toEqual([])
   })
 
-  /**
-   * Pre-existing drift: PL is missing the same 5 meta.* keys.
-   * This test documents them and will fail until they are added to pl.json.
-   * To fix: add the listed keys to src/locales/pl.json, then change this to
-   *   expect(missingInPl).toEqual([])
-   */
+  /** Strict parity: pl.json must have no keys missing vs uk.json. */
   it('pl.json has no keys missing vs uk.json', () => {
     const missingInPl = ukKeys.filter(k => !plKeys.includes(k))
 
