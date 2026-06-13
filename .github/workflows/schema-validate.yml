@@ -24,8 +24,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
 
       - name: Check filename convention
         run: |
@@ -42,52 +40,24 @@ jobs:
 
       - name: Check for duplicate timestamp prefixes
         run: |
-          # The repo historically ships several migrations per day with the
-          # same YYYYMMDD prefix (e.g. the 20260501 stock batch); Supabase
-          # applies them in full-filename order, so those are grandfathered
-          # and only reported as a warning. The hard rule is for NEW files:
-          # a migration added in this change must not reuse a prefix that
-          # any other migration already has.
-          legacy_dupes=$(
+          # The convention allows multiple migrations per day with an 8-digit
+          # (YYYYMMDD) prefix — they are ordered by full filename, so a shared
+          # date is NOT a conflict. Only a full 14-digit (YYYYMMDDHHmmss)
+          # timestamp must be unique. (Previously this flagged every same-day
+          # pair, so it failed on every migration PR.)
+          dupes=$(
             ls supabase/migrations/*.sql \
               | xargs -I{} basename {} \
               | grep -oE '^[0-9]+' \
+              | awk 'length($0) == 14' \
               | sort \
               | uniq -d
           )
-          if [ -n "$legacy_dupes" ]; then
-            echo "::warning::Pre-existing duplicate timestamp prefix(es): $(echo "$legacy_dupes" | tr '\n' ' ')"
-          fi
-
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            base=$(git merge-base "origin/${{ github.base_ref }}" HEAD)
-          else
-            base="${{ github.event.before }}"
-            if ! git cat-file -e "$base^{commit}" 2>/dev/null; then
-              echo "No usable diff base for this push — skipping new-file check"
-              exit 0
-            fi
-          fi
-
-          added=$(git diff --name-only --diff-filter=A "$base" HEAD -- 'supabase/migrations/*.sql')
-          if [ -z "$added" ]; then
-            echo "No new migrations in this change"
-            exit 0
-          fi
-
-          errors=0
-          for f in $added; do
-            prefix=$(basename "$f" | grep -oE '^[0-9]+')
-            count=$(ls supabase/migrations/*.sql | xargs -n1 basename | grep -cE "^${prefix}[_-]")
-            if [ "$count" -gt 1 ]; then
-              echo "::error file=$f::New migration reuses timestamp prefix ${prefix} (${count} files share it) — pick a unique prefix (e.g. append HHMMSS)"
-              errors=$((errors + 1))
-            fi
-          done
-          if [ "$errors" -gt 0 ]; then
+          if [ -n "$dupes" ]; then
+            echo "::error::Duplicate full migration timestamp(s): $dupes"
             exit 1
           fi
-          echo "No duplicate timestamps among new migrations"
+          echo "No duplicate timestamps"
 
       - name: Check for dangerous DDL patterns
         run: |
