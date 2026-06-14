@@ -1,0 +1,4 @@
+# Vendored Claude Code skills (anthropics/skills + superpowers).
+# Third-party content — do not reformat; it must stay faithful to upstream
+# (reformatting would diverge from source and disturb license/attribution).
+.claude/skills/

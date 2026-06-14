@@ -12,6 +12,7 @@ export default tseslint.config(
       '.next/**',
       'node_modules/**',
       'scripts/**',
+      '.claude/skills/**',
       'commitlint.config.cjs',
     ],
   },
