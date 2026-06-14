@@ -32,6 +32,8 @@ jobs:
         run: npm run a11y:audit
         env:
           BASE_URL: ${{ github.event.deployment_status.environment_url }}
+          # Lets the audit reach Vercel previews protected by Deployment Protection.
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
 
       - name: E2E smoke against deployment
         run: npx playwright test e2e/public-pages.smoke.spec.ts e2e/health-api.spec.ts e2e/cron-notifications.spec.ts e2e/booking-flow.spec.ts e2e/cabinet-flows.spec.ts e2e/admin-rbac.spec.ts --config=playwright.auth.config.ts

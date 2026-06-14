@@ -1,11 +1,26 @@
 // Basic accessibility audit using Playwright + axe (Next.js)
 // Usage: npm run dev (or rely on auto-start) then: npm run a11y:install && npm run a11y:audit
 // Optional: BASE_URL=http://127.0.0.1:3000 npm run a11y:audit
+//
+// When BASE_URL points at a Vercel preview that has Deployment Protection
+// enabled, set VERCEL_AUTOMATION_BYPASS_SECRET so the audit can reach it. The
+// secret is sent as the `x-vercel-protection-bypass` header on the health-check
+// fetch and on every Playwright browser context. See:
+// https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation
 
 import { chromium } from 'playwright'
 import AxeBuilder from '@axe-core/playwright'
 
 const BASE = process.env.BASE_URL || 'http://localhost:3000'
+
+// Vercel Deployment Protection bypass for automation (no-op when unset / local).
+const BYPASS_SECRET = process.env.VERCEL_AUTOMATION_BYPASS_SECRET || ''
+const BYPASS_HEADERS = BYPASS_SECRET
+  ? {
+      'x-vercel-protection-bypass': BYPASS_SECRET,
+      'x-vercel-set-bypass-cookie': 'true',
+    }
+  : {}
 const PAGES = [
   '/',
   '/services',
@@ -23,7 +38,7 @@ async function waitForServer(url, timeoutMs = 20000) {
   const start = Date.now()
   while (Date.now() - start < timeoutMs) {
     try {
-      const res = await fetch(url, { method: 'GET' })
+      const res = await fetch(url, { method: 'GET', headers: BYPASS_HEADERS })
       if (res.ok) return true
     } catch {}
     await new Promise(r => setTimeout(r, 500))
@@ -53,7 +68,7 @@ async function waitForServer(url, timeoutMs = 20000) {
   }
 
   const browser = await chromium.launch()
-  const context = await browser.newContext()
+  const context = await browser.newContext({ extraHTTPHeaders: BYPASS_HEADERS })
   const page = await context.newPage()
 
   let total = 0
@@ -95,7 +110,9 @@ async function waitForServer(url, timeoutMs = 20000) {
   if (adminEmail && adminPassword) {
     console.log('\n🔐 Admin a11y audit (authenticated)...')
 
-    const adminContext = await browser.newContext()
+    const adminContext = await browser.newContext({
+      extraHTTPHeaders: BYPASS_HEADERS,
+    })
     const adminPage = await adminContext.newPage()
 
     // Log in via the admin login form (selectors match app/admin/login/page.tsx)
@@ -163,7 +180,9 @@ async function waitForServer(url, timeoutMs = 20000) {
   if (patientEmail && patientPassword) {
     console.log('\n🏥 Cabinet a11y audit (patient authenticated)...')
 
-    const cabinetContext = await browser.newContext()
+    const cabinetContext = await browser.newContext({
+      extraHTTPHeaders: BYPASS_HEADERS,
+    })
     const cabinetPage = await cabinetContext.newPage()
 
     await cabinetPage.goto(BASE + '/auth/login')
