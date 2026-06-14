@@ -36,7 +36,7 @@ function ProfileSkeleton() {
   return (
     <div className="max-w-2xl animate-pulse" role="status" aria-busy="true">
       <div className="h-7 w-48 bg-dental-secondary-200 rounded-lg mb-6" />
-      <div className="bg-white rounded-2xl p-8 shadow-sm border border-dental-secondary-100">
+      <div className="bg-white rounded-2xl p-8 shadow-xs border border-dental-secondary-100">
         <div className="flex items-center gap-4 mb-8 pb-8 border-b border-dental-secondary-100">
           <div className="w-20 h-20 bg-dental-secondary-100 rounded-full" />
           <div className="space-y-2">
@@ -330,7 +330,7 @@ export default function ProfilePage() {
         {t('cabinet.profile.title')}
       </h1>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-dental-secondary-100 p-6 sm:p-8">
+      <div className="bg-white rounded-2xl shadow-xs border border-dental-secondary-100 p-6 sm:p-8">
         {/* Avatar + completeness */}
         <div className="flex items-center gap-4 mb-6 pb-6 border-b border-dental-secondary-100">
           <div className="w-16 h-16 sm:w-20 sm:h-20 bg-dental-primary-50 rounded-full flex items-center justify-center shrink-0">
@@ -492,7 +492,7 @@ export default function ProfilePage() {
                 placeholder={t('cabinet.profile.phonePlaceholder')}
                 className={`${inputClasses} ${
                   phoneError
-                    ? '!border-red-300 !ring-red-200 focus:!ring-red-300'
+                    ? 'border-red-300! ring-red-200! focus:ring-red-300!'
                     : ''
                 }`}
               />
@@ -541,7 +541,7 @@ export default function ProfilePage() {
               disabled={saving || !!phoneError}
               className={`w-full py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 disabled:cursor-not-allowed ${
                 isDirty
-                  ? 'bg-dental-primary-600 hover:bg-dental-primary-700 text-white disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2'
+                  ? 'bg-dental-primary-600 hover:bg-dental-primary-700 text-white disabled:opacity-50 focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2'
                   : 'bg-dental-secondary-100 text-dental-muted cursor-default'
               }`}
             >
@@ -566,7 +566,7 @@ export default function ProfilePage() {
       {/* ── Data rights ─────────────────────────────────────────────── */}
 
       {/* Download my data */}
-      <div className="bg-white rounded-2xl shadow-sm border border-dental-secondary-100 p-6">
+      <div className="bg-white rounded-2xl shadow-xs border border-dental-secondary-100 p-6">
         <div className="flex items-start gap-4">
           <div className="w-10 h-10 rounded-xl bg-dental-primary-50 flex items-center justify-center shrink-0">
             <Download className="w-5 h-5 text-dental-primary-600" />
@@ -582,7 +582,7 @@ export default function ProfilePage() {
               type="button"
               onClick={handleExport}
               disabled={downloading}
-              className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2"
+              className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2"
             >
               {downloading ? (
                 <>
@@ -601,7 +601,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Delete account */}
-      <div className="bg-white rounded-2xl shadow-sm border border-red-200 p-6">
+      <div className="bg-white rounded-2xl shadow-xs border border-red-200 p-6">
         <div className="flex items-start gap-4">
           <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
             <Trash2 className="w-5 h-5 text-red-500" />
@@ -625,7 +625,7 @@ export default function ProfilePage() {
               <button
                 type="button"
                 onClick={() => setShowDeleteConfirm(true)}
-                className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-red-50 text-red-600 border border-red-300 text-sm font-medium rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
+                className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-red-50 text-red-600 border border-red-300 text-sm font-medium rounded-xl transition-colors focus:outline-hidden focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
               >
                 <Trash2 className="w-4 h-4" />
                 {t('cabinet.profile.deleteAccount')}
@@ -641,7 +641,7 @@ export default function ProfilePage() {
                     type="button"
                     onClick={handleDeleteAccount}
                     disabled={deleting}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors focus:outline-hidden focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                   >
                     {deleting ? (
                       <>
@@ -659,7 +659,7 @@ export default function ProfilePage() {
                       setDataRightsError(null)
                     }}
                     disabled={deleting}
-                    className="px-4 py-2.5 text-dental-muted hover:text-dental-dark text-sm font-medium rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-dental-secondary-300 focus:ring-offset-2"
+                    className="px-4 py-2.5 text-dental-muted hover:text-dental-dark text-sm font-medium rounded-xl transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-secondary-300 focus:ring-offset-2"
                   >
                     {t('cabinet.settings.deleteSection.cancel')}
                   </button>

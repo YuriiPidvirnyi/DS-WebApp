@@ -178,7 +178,7 @@ function VideoCard({
 
           {/* Quote */}
           <div className="flex gap-2 mb-4">
-            <Quote className="h-5 w-5 text-teal-400 flex-shrink-0 mt-0.5" />
+            <Quote className="h-5 w-5 text-teal-400 shrink-0 mt-0.5" />
             <p className="text-white text-sm md:text-base leading-relaxed line-clamp-3">
               {t(testimonial.quoteKey)}
             </p>
@@ -240,14 +240,14 @@ export default function VideoTestimonials() {
             {/* Navigation buttons */}
             <button
               onClick={prevTestimonial}
-              className="absolute -left-4 md:left-0 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors backdrop-blur-sm"
+              className="absolute -left-4 md:left-0 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors backdrop-blur-xs"
               aria-label={t('videoTestimonials.previousReview')}
             >
               <ChevronLeft className="h-6 w-6 text-white" />
             </button>
             <button
               onClick={nextTestimonial}
-              className="absolute -right-4 md:right-0 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors backdrop-blur-sm"
+              className="absolute -right-4 md:right-0 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors backdrop-blur-xs"
               aria-label={t('videoTestimonials.nextReview')}
             >
               <ChevronRight className="h-6 w-6 text-white" />

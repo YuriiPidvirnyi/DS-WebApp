@@ -48,7 +48,7 @@ export function WalletCards({ initialCards }: Props) {
       <h2 className="text-lg font-semibold text-dental-dark mb-3">
         Збережені картки
       </h2>
-      <div className="bg-white rounded-2xl shadow-sm border border-dental-secondary-100 divide-y divide-dental-secondary-100">
+      <div className="bg-white rounded-2xl shadow-xs border border-dental-secondary-100 divide-y divide-dental-secondary-100">
         {cards.map(card => (
           <div
             key={card.id}

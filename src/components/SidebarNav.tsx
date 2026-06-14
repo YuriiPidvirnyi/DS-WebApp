@@ -180,7 +180,7 @@ export default function SidebarNav() {
       expanded ? 'px-3' : 'justify-center',
       'transition-all duration-150',
       active
-        ? 'bg-dental-primary-50 text-dental-primary-600 shadow-sm'
+        ? 'bg-dental-primary-50 text-dental-primary-600 shadow-xs'
         : 'text-dental-dark hover:bg-gray-50 hover:text-dental-primary-600 hover:translate-x-0.5',
     ].join(' ')
 

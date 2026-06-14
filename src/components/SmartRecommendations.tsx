@@ -259,7 +259,7 @@ export default function SmartRecommendations() {
                   value={additionalInfo}
                   onChange={e => setAdditionalInfo(e.target.value)}
                   placeholder={t('ai.recommendations.step3.placeholder')}
-                  className="w-full h-24 px-3 py-2 border border-dental-secondary-200 rounded-lg text-sm text-dental-text placeholder:text-dental-text-light focus:outline-none focus:ring-2 focus:ring-dental-primary-400 focus:border-transparent resize-none"
+                  className="w-full h-24 px-3 py-2 border border-dental-secondary-200 rounded-lg text-sm text-dental-text placeholder:text-dental-text-light focus:outline-hidden focus:ring-2 focus:ring-dental-primary-400 focus:border-transparent resize-none"
                 />
                 <div className="flex gap-2">
                   <button

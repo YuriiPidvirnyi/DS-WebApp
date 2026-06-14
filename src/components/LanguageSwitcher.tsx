@@ -170,7 +170,7 @@ export default function LanguageSwitcher({
         onClick={() => setIsOpen(!isOpen)}
         className={`flex min-h-[44px] items-center gap-2 px-3 py-2 text-sm font-medium text-dental-muted hover:text-dental-primary-600 transition-colors border border-transparent ${
           isOpen
-            ? 'rounded-t-2xl border-dental-primary-400 border-b-transparent bg-white shadow-sm'
+            ? 'rounded-t-2xl border-dental-primary-400 border-b-transparent bg-white shadow-xs'
             : 'rounded-2xl hover:bg-dental-secondary-50'
         }`}
         aria-expanded={isOpen}

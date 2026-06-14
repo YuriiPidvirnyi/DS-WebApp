@@ -1,5 +1,5 @@
 export const CARD_VARIANT_CLASSES = {
-  default: 'bg-white shadow-sm',
+  default: 'bg-white shadow-xs',
   elevated: 'bg-white shadow-lg',
   outlined: 'bg-white border-2 border-dental-secondary-200',
   filled: 'bg-dental-secondary-50',

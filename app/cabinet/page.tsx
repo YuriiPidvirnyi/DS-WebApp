@@ -173,7 +173,7 @@ export default function CabinetPage() {
 
   if (fetchError) {
     return (
-      <div className="bg-white rounded-2xl p-8 sm:p-10 text-center shadow-sm border border-red-100">
+      <div className="bg-white rounded-2xl p-8 sm:p-10 text-center shadow-xs border border-red-100">
         <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
           <AlertCircle className="w-8 h-8 text-red-500" />
         </div>
@@ -185,7 +185,7 @@ export default function CabinetPage() {
         </p>
         <button
           onClick={() => window.location.reload()}
-          className="inline-flex items-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-700"
+          className="inline-flex items-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-700"
         >
           {t('cabinet.error.retry')}
         </button>
@@ -240,7 +240,7 @@ export default function CabinetPage() {
 
       {/* Next Appointment Highlight OR Empty CTA */}
       {nextAppointment ? (
-        <div className="bg-gradient-to-r from-dental-primary-600 to-dental-primary-700 rounded-2xl p-5 sm:p-6 text-white shadow-lg">
+        <div className="bg-linear-to-r from-dental-primary-600 to-dental-primary-700 rounded-2xl p-5 sm:p-6 text-white shadow-lg">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-start gap-4">
               <div className="w-14 h-16 bg-white/20 rounded-xl flex flex-col items-center justify-center shrink-0">
@@ -278,7 +278,7 @@ export default function CabinetPage() {
             </div>
             <Link
               href="/cabinet/appointments"
-              className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors shrink-0 focus:outline-none focus:ring-2 focus:ring-white/50"
+              className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors shrink-0 focus:outline-hidden focus:ring-2 focus:ring-white/50"
             >
               {t('cabinet.dashboard.viewDetails')}
               <ChevronRight className="w-4 h-4" />
@@ -286,7 +286,7 @@ export default function CabinetPage() {
           </div>
         </div>
       ) : (
-        <div className="bg-gradient-to-r from-dental-secondary-100 to-dental-secondary-50 rounded-2xl p-5 sm:p-6 border border-dental-secondary-200">
+        <div className="bg-linear-to-r from-dental-secondary-100 to-dental-secondary-50 rounded-2xl p-5 sm:p-6 border border-dental-secondary-200">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-start gap-4">
               <div className="w-14 h-14 bg-dental-primary-50 rounded-xl flex items-center justify-center shrink-0">
@@ -303,7 +303,7 @@ export default function CabinetPage() {
             </div>
             <Link
               href="/booking"
-              className="inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors shrink-0 focus:outline-none focus:ring-2 focus:ring-dental-primary-700"
+              className="inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors shrink-0 focus:outline-hidden focus:ring-2 focus:ring-dental-primary-700"
             >
               <Plus className="w-4 h-4" />
               {t('cabinet.bookAppointment')}
@@ -337,7 +337,7 @@ export default function CabinetPage() {
         />
         <Link
           href="/booking"
-          className="bg-dental-primary-600 hover:bg-dental-primary-700 rounded-2xl p-4 shadow-sm transition-colors group focus:outline-none focus:ring-2 focus:ring-dental-primary-700"
+          className="bg-dental-primary-600 hover:bg-dental-primary-700 rounded-2xl p-4 shadow-xs transition-colors group focus:outline-hidden focus:ring-2 focus:ring-dental-primary-700"
         >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-white/30 transition-colors">
@@ -358,7 +358,7 @@ export default function CabinetPage() {
         <div className="space-y-5">
           {/* Profile Completeness */}
           {!profileComplete && (
-            <div className="bg-white rounded-2xl p-5 shadow-sm border border-amber-100">
+            <div className="bg-white rounded-2xl p-5 shadow-xs border border-amber-100">
               <div className="flex items-center gap-3 mb-3">
                 <AlertCircle className="w-5 h-5 text-amber-500 shrink-0" />
                 <h3 className="font-semibold text-dental-dark text-sm">
@@ -381,7 +381,7 @@ export default function CabinetPage() {
               </p>
               <Link
                 href="/cabinet/profile"
-                className="text-xs font-medium text-dental-primary-600 hover:text-dental-primary-700 transition-colors rounded focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+                className="text-xs font-medium text-dental-primary-600 hover:text-dental-primary-700 transition-colors rounded focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
               >
                 {t('cabinet.dashboard.completeProfile')}
                 <ChevronRight className="w-3 h-3 inline ml-0.5" />
@@ -392,7 +392,7 @@ export default function CabinetPage() {
           {/* Treatment History link */}
           <Link
             href="/cabinet/treatments"
-            className="block bg-white rounded-2xl p-5 shadow-sm border border-dental-secondary-100 hover:border-dental-primary-200 hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+            className="block bg-white rounded-2xl p-5 shadow-xs border border-dental-secondary-100 hover:border-dental-primary-200 hover:shadow-md transition-all focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
           >
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-dental-dark">
@@ -405,14 +405,14 @@ export default function CabinetPage() {
           </Link>
 
           {/* Profile Card */}
-          <div className="bg-white rounded-2xl p-5 shadow-sm border border-dental-secondary-100">
+          <div className="bg-white rounded-2xl p-5 shadow-xs border border-dental-secondary-100">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-dental-dark">
                 {t('cabinet.myProfile')}
               </h3>
               <Link
                 href="/cabinet/profile"
-                className="text-dental-primary-600 hover:text-dental-primary-700 text-sm font-medium rounded focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+                className="text-dental-primary-600 hover:text-dental-primary-700 text-sm font-medium rounded focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
               >
                 {t('cabinet.edit')}
               </Link>
@@ -463,10 +463,10 @@ export default function CabinetPage() {
           </div>
 
           {/* Quick Links */}
-          <div className="bg-white rounded-2xl shadow-sm border border-dental-secondary-100 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-xs border border-dental-secondary-100 overflow-hidden">
             <Link
               href="/cabinet/appointments"
-              className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors border-b border-dental-secondary-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-dental-primary-500"
+              className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors border-b border-dental-secondary-100 focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-dental-primary-500"
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 bg-dental-primary-50 rounded-lg flex items-center justify-center">
@@ -480,7 +480,7 @@ export default function CabinetPage() {
             </Link>
             <Link
               href="/cabinet/payments"
-              className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors border-b border-dental-secondary-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-dental-primary-500"
+              className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors border-b border-dental-secondary-100 focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-dental-primary-500"
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 bg-dental-primary-50 rounded-lg flex items-center justify-center">
@@ -499,7 +499,7 @@ export default function CabinetPage() {
             </Link>
             <Link
               href="/reviews"
-              className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-dental-primary-500"
+              className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-dental-primary-500"
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 bg-amber-50 rounded-lg flex items-center justify-center">
@@ -516,14 +516,14 @@ export default function CabinetPage() {
 
         {/* Right Column — Recent Appointments */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-2xl shadow-sm border border-dental-secondary-100">
+          <div className="bg-white rounded-2xl shadow-xs border border-dental-secondary-100">
             <div className="flex items-center justify-between p-5 border-b border-dental-secondary-100">
               <h3 className="font-semibold text-dental-dark">
                 {t('cabinet.recentAppointments')}
               </h3>
               <Link
                 href="/cabinet/appointments"
-                className="text-dental-primary-600 hover:text-dental-primary-700 text-sm font-medium rounded focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+                className="text-dental-primary-600 hover:text-dental-primary-700 text-sm font-medium rounded focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
               >
                 {t('cabinet.allAppointments')}
               </Link>
@@ -542,7 +542,7 @@ export default function CabinetPage() {
                 </p>
                 <Link
                   href="/booking"
-                  className="inline-flex items-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-700"
+                  className="inline-flex items-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-700"
                 >
                   <Plus className="w-4 h-4" />
                   {t('cabinet.book')}
@@ -559,7 +559,7 @@ export default function CabinetPage() {
                   >
                     <Link
                       href="/cabinet/appointments"
-                      className="block min-h-[44px] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-dental-primary-500 rounded-lg"
+                      className="block min-h-[44px] focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-dental-primary-500 rounded-lg"
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex gap-3 sm:gap-4 min-w-0">

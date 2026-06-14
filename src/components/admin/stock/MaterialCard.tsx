@@ -40,7 +40,7 @@ export default function MaterialCard({
   } = balance
 
   return (
-    <div className="rounded-xl border bg-white p-4 flex flex-col gap-3 hover:shadow-sm transition-shadow">
+    <div className="rounded-xl border bg-white p-4 flex flex-col gap-3 hover:shadow-xs transition-shadow">
       {/* Image + name */}
       <div className="flex items-start gap-3">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-dental-primary/10">

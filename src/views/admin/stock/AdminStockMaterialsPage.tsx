@@ -138,7 +138,7 @@ export default function AdminStockMaterialsPage() {
                   setPage(1)
                 }}
                 placeholder="Пошук за назвою..."
-                className="w-full rounded-lg border border-gray-300 pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600"
+                className="w-full rounded-lg border border-gray-300 pl-9 pr-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
               />
             </div>
             <label className="flex items-center gap-2 text-sm text-dental-text cursor-pointer whitespace-nowrap">

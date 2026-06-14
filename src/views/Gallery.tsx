@@ -113,7 +113,7 @@ const Gallery = () => {
               onClick={() => openLightbox(image)}
             >
               <button
-                className="block w-full text-left focus:outline-none"
+                className="block w-full text-left focus:outline-hidden"
                 onClick={() => openLightbox(image)}
                 onKeyDown={e => handleCardKeyDown(e, image)}
                 aria-label={image.title}

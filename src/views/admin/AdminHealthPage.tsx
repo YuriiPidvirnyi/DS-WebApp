@@ -52,7 +52,7 @@ const STATUS_LABEL: Record<ServiceStatus, string> = {
 
 function ServiceCard({ service }: { service: ServiceResult }) {
   return (
-    <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-dental-secondary-200 shadow-sm">
+    <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-dental-secondary-200 shadow-xs">
       <div className="flex items-center gap-3">
         {STATUS_ICON[service.status]}
         <div>

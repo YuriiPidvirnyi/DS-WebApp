@@ -566,7 +566,7 @@ function InlineNotes({
           placeholder={placeholder}
           disabled={isSaving}
           rows={2}
-          className="w-full rounded-lg border border-dental-secondary bg-white px-3 py-2 text-sm text-dental-text focus:border-dental-primary-600 focus:outline-none focus:ring-1 focus:ring-dental-primary-600 disabled:opacity-60"
+          className="w-full rounded-lg border border-dental-secondary bg-white px-3 py-2 text-sm text-dental-text focus:border-dental-primary-600 focus:outline-hidden focus:ring-1 focus:ring-dental-primary-600 disabled:opacity-60"
         />
       </div>
     )
@@ -578,7 +578,7 @@ function InlineNotes({
       onClick={() => setIsEditing(true)}
       className="mt-3 flex w-full items-start gap-2 rounded-lg px-3 py-2 text-left text-xs text-dental-text-light transition-colors hover:bg-dental-secondary-50"
     >
-      <StickyNote className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
+      <StickyNote className="mt-0.5 h-3.5 w-3.5 shrink-0" />
       {value ? (
         <span>
           <span className="font-medium">{label}:</span> {value}

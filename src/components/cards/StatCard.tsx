@@ -69,7 +69,7 @@ export default function StatCard({
     return (
       <Link
         href={href}
-        className="block focus:outline-none focus:ring-2 focus:ring-dental-primary-600 rounded-xl"
+        className="block focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 rounded-xl"
       >
         <Card
           variant="outlined"

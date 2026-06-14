@@ -124,7 +124,7 @@ export default function BookingForm() {
         <h3
           ref={stepHeadingRef}
           tabIndex={-1}
-          className="text-lg font-semibold text-dental-dark focus:outline-none"
+          className="text-lg font-semibold text-dental-dark focus:outline-hidden"
         >
           {t(stepTitleKeys[step])}
         </h3>

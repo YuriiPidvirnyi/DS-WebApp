@@ -32,7 +32,7 @@ const FAQAccordionItem = ({
           {item.question}
         </span>
         <ChevronDown
-          className={`h-5 w-5 text-dental-teal flex-shrink-0 transition-transform duration-200 ${
+          className={`h-5 w-5 text-dental-teal shrink-0 transition-transform duration-200 ${
             isOpen ? 'transform rotate-180' : ''
           }`}
         />

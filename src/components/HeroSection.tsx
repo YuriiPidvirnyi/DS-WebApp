@@ -315,10 +315,10 @@ function HeroSection({ heroCTAVariant }: HeroSectionProps) {
                     <Phone className="h-7 w-7 text-white" />
                   </div>
                 </div>
-                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-1 leading-tight hyphens-auto [overflow-wrap:anywhere]">
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-1 leading-tight hyphens-auto wrap-anywhere">
                   {t('stats.freeConsultationShort')}
                 </p>
-                <p className="text-white/90 text-sm sm:text-base font-medium flex items-center gap-2 [overflow-wrap:anywhere]">
+                <p className="text-white/90 text-sm sm:text-base font-medium flex items-center gap-2 wrap-anywhere">
                   {t('stats.forNewPatients')}
                   <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
                 </p>

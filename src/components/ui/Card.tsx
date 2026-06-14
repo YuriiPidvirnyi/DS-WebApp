@@ -154,8 +154,8 @@ export const CardMedia = ({
   const aspectStyles: Record<AspectRatio, string> = {
     video: 'aspect-video',
     square: 'aspect-square',
-    wide: 'aspect-[3/2]',
-    portrait: 'aspect-[3/4]',
+    wide: 'aspect-3/2',
+    portrait: 'aspect-3/4',
   }
 
   return (

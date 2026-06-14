@@ -136,7 +136,7 @@ function SuccessView() {
       </p>
       <Link
         href="/cabinet/payments"
-        className="inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white font-medium rounded-xl px-6 py-3 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+        className="inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white font-medium rounded-xl px-6 py-3 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
       >
         Переглянути платежі
       </Link>
@@ -157,13 +157,13 @@ function FailedView() {
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <Link
           href="/booking"
-          className="inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white font-medium rounded-xl px-6 py-3 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+          className="inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white font-medium rounded-xl px-6 py-3 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
         >
           Спробувати ще раз
         </Link>
         <a
           href={`tel:${CONTACT_INFO.phoneRaw}`}
-          className="inline-flex items-center justify-center gap-2 border border-dental-primary-600 text-dental-primary-600 hover:bg-dental-primary-50 font-medium rounded-xl px-6 py-3 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+          className="inline-flex items-center justify-center gap-2 border border-dental-primary-600 text-dental-primary-600 hover:bg-dental-primary-50 font-medium rounded-xl px-6 py-3 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
         >
           Зв&apos;язатися з нами
         </a>
@@ -185,7 +185,7 @@ function TimeoutView() {
       </p>
       <Link
         href="/cabinet/payments"
-        className="inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white font-medium rounded-xl px-6 py-3 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+        className="inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white font-medium rounded-xl px-6 py-3 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
       >
         Перейти до кабінету
       </Link>

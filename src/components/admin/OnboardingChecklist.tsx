@@ -177,7 +177,7 @@ export default function OnboardingChecklist() {
       <button
         onClick={dismiss}
         aria-label={t('admin.onboardingChecklist.dismiss')}
-        className="absolute top-4 right-4 p-1.5 rounded-lg text-dental-text hover:bg-dental-primary/40 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-600"
+        className="absolute top-4 right-4 p-1.5 rounded-lg text-dental-text hover:bg-dental-primary/40 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
       >
         <X className="w-4 h-4" />
       </button>
@@ -231,7 +231,7 @@ export default function OnboardingChecklist() {
               {!done && (
                 <Link
                   href={step.href}
-                  className="inline-flex items-center gap-0.5 text-xs font-medium text-dental-primary-600 hover:text-dental-primary-700 whitespace-nowrap shrink-0 transition-colors focus:outline-none focus:underline"
+                  className="inline-flex items-center gap-0.5 text-xs font-medium text-dental-primary-600 hover:text-dental-primary-700 whitespace-nowrap shrink-0 transition-colors focus:outline-hidden focus:underline"
                 >
                   {t('admin.onboardingChecklist.go')}
                   <ChevronRight className="w-3.5 h-3.5" />
@@ -246,7 +246,7 @@ export default function OnboardingChecklist() {
       <div className="mt-4 pt-3 border-t border-dental-primary flex justify-end">
         <button
           onClick={dismiss}
-          className="inline-flex items-center gap-1.5 px-4 py-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white text-sm font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2"
+          className="inline-flex items-center gap-1.5 px-4 py-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white text-sm font-semibold rounded-xl transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2"
         >
           {t('admin.onboardingChecklist.gotIt')}
         </button>

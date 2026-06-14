@@ -127,7 +127,7 @@ export default function LoginPage() {
                         type="button"
                         onClick={handleResendConfirmation}
                         disabled={resendState === 'sending'}
-                        className="font-semibold text-dental-primary-600 hover:text-dental-primary-700 underline disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-dental-primary-400 rounded"
+                        className="font-semibold text-dental-primary-600 hover:text-dental-primary-700 underline disabled:opacity-50 focus:outline-hidden focus:ring-2 focus:ring-dental-primary-400 rounded"
                       >
                         {resendState === 'sending'
                           ? t('auth.login.resendConfirmation.sending')
@@ -162,7 +162,7 @@ export default function LoginPage() {
                   placeholder={t('auth.login.emailPlaceholder')}
                   required
                   autoComplete="email"
-                  className="w-full text-sm text-dental-dark placeholder:text-dental-text-light outline-none bg-transparent"
+                  className="w-full text-sm text-dental-dark placeholder:text-dental-text-light outline-hidden bg-transparent"
                 />
               </div>
             </div>
@@ -185,7 +185,7 @@ export default function LoginPage() {
                   placeholder={t('auth.login.passwordPlaceholder')}
                   required
                   autoComplete="current-password"
-                  className="w-full text-sm text-dental-dark placeholder:text-dental-text-light outline-none bg-transparent"
+                  className="w-full text-sm text-dental-dark placeholder:text-dental-text-light outline-hidden bg-transparent"
                 />
                 <button
                   type="button"
@@ -216,7 +216,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:bg-gray-400 text-white font-semibold text-sm rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-400"
+              className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:bg-gray-400 text-white font-semibold text-sm rounded-xl transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-400"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
