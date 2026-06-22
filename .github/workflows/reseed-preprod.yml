@@ -38,7 +38,7 @@ jobs:
             echo "::notice::PREPROD_SUPABASE_URL is not set — skipping reseed (no preprod target)."
           fi
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         if: steps.gate.outputs.configured == 'true'
 
       - uses: actions/setup-node@v6
