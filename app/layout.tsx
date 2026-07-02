@@ -127,6 +127,9 @@ export default async function RootLayout({
           rating={reviewStats.rating}
           reviewCount={reviewStats.reviewCount}
         />
+        {/* MedicalClinic/Dentist schema — medical specialties + services for
+            health-related rich results (Google prefers the most specific type) */}
+        <StructuredData type="medicalClinic" />
 
         {/* GA4 Consent Mode — must run before gtag loads so analytics_storage
             defaults to denied until the user explicitly accepts cookies. */}
