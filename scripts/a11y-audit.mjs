@@ -50,6 +50,16 @@ const PAGES = [
   '/terms-of-service',
 ]
 
+// Entrance animations (fade-ins) race axe's color sampling: mid-transition text
+// is semi-transparent, so color-contrast intermittently fails on content that is
+// fine at rest (observed 1-in-3 against identical prod /services). Contexts run
+// with reduced motion; the short post-load wait covers transitions that do not
+// honor the media query.
+async function settle(page) {
+  await page.waitForLoadState('load')
+  await page.waitForTimeout(500)
+}
+
 async function waitForServer(url, timeoutMs = 20000) {
   const start = Date.now()
   while (Date.now() - start < timeoutMs) {
@@ -108,7 +118,10 @@ async function waitForServer(url, timeoutMs = 20000) {
   }
 
   const browser = await chromium.launch()
-  const context = await browser.newContext({ extraHTTPHeaders: bypassHeaders })
+  const context = await browser.newContext({
+    extraHTTPHeaders: bypassHeaders,
+    reducedMotion: 'reduce',
+  })
   const page = await context.newPage()
 
   let total = 0
@@ -118,6 +131,7 @@ async function waitForServer(url, timeoutMs = 20000) {
     const url = BASE + path
     console.log(`\nChecking ${url}`)
     await page.goto(withBypass(url))
+    await settle(page)
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa'])
       .analyze()
@@ -152,6 +166,7 @@ async function waitForServer(url, timeoutMs = 20000) {
 
     const adminContext = await browser.newContext({
       extraHTTPHeaders: bypassHeaders,
+      reducedMotion: 'reduce',
     })
     const adminPage = await adminContext.newPage()
 
@@ -181,6 +196,7 @@ async function waitForServer(url, timeoutMs = 20000) {
       const url = BASE + path
       console.log(`\nChecking ${url}`)
       await adminPage.goto(withBypass(url))
+      await settle(adminPage)
       const results = await new AxeBuilder({ page: adminPage })
         .withTags(['wcag2a', 'wcag2aa'])
         .analyze()
@@ -222,6 +238,7 @@ async function waitForServer(url, timeoutMs = 20000) {
 
     const cabinetContext = await browser.newContext({
       extraHTTPHeaders: bypassHeaders,
+      reducedMotion: 'reduce',
     })
     const cabinetPage = await cabinetContext.newPage()
 
@@ -243,6 +260,7 @@ async function waitForServer(url, timeoutMs = 20000) {
       const url = BASE + path
       console.log(`\nChecking ${url}`)
       await cabinetPage.goto(withBypass(url))
+      await settle(cabinetPage)
       const results = await new AxeBuilder({ page: cabinetPage })
         .withTags(['wcag2a', 'wcag2aa'])
         .analyze()
