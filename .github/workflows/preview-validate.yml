@@ -1,19 +1,26 @@
-name: Preview Validate
+name: Production A11y
 
-# Runs against every successful Vercel deployment (preview + preprod + production).
-# Replaces the old localhost-based a11y + smoke runs in ci.yml.
+# Accessibility audit (axe, WCAG 2 A/AA) of the live PUBLIC production site.
+#
+# Key insight: Vercel Deployment Protection guards Preview/per-deployment
+# *.vercel.app URLs (they return 401), but the Production public domain
+# (www.dentalstory.ua) is open — so the audit needs NO bypass secret at all.
+# a11y is read-only (axe only inspects the rendered DOM), so auditing prod is safe.
+#
+# Runs after each successful Production deployment. Code-level a11y also runs in
+# weekly-a11y.yml (local server); full e2e runs in ci.yml against a mocked build.
 on:
   deployment_status:
 
 jobs:
-  validate:
-    name: A11y + E2E (${{ github.event.deployment.environment }})
+  a11y:
+    name: A11y (production)
     runs-on: ubuntu-latest
 
-    # Only fire when Vercel finishes successfully and gives us a URL
+    # Only after a successful Production deploy — the public domain is reachable.
     if: >-
       github.event.deployment_status.state == 'success' &&
-      github.event.deployment_status.environment_url != ''
+      github.event.deployment_status.environment == 'Production'
 
     steps:
       - uses: actions/checkout@v6
@@ -28,24 +35,14 @@ jobs:
       - name: Install Chromium
         run: npx playwright install chromium --with-deps
 
-      - name: Accessibility audit
+      - name: Accessibility audit (axe, WCAG 2 A/AA)
         run: npm run a11y:audit
         env:
-          BASE_URL: ${{ github.event.deployment_status.environment_url }}
-
-      - name: E2E smoke against deployment
-        run: npx playwright test e2e/public-pages.smoke.spec.ts e2e/health-api.spec.ts e2e/cron-notifications.spec.ts e2e/booking-flow.spec.ts e2e/cabinet-flows.spec.ts e2e/admin-rbac.spec.ts --config=playwright.auth.config.ts
-        env:
-          BASE_URL: ${{ github.event.deployment_status.environment_url }}
-          PLAYWRIGHT_BASE_URL: ${{ github.event.deployment_status.environment_url }}
-          CRON_SECRET: ${{ secrets.CRON_SECRET }}
-          E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
-          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
-        continue-on-error: true # advisory only until suites are stable
+          # The public production domain — no Vercel protection, no bypass needed.
+          BASE_URL: https://www.dentalstory.ua
 
       - name: Summary
         if: always()
         run: |
-          echo "## Preview Validation" >> $GITHUB_STEP_SUMMARY
-          echo "**Environment:** ${{ github.event.deployment.environment }}" >> $GITHUB_STEP_SUMMARY
-          echo "**URL:** ${{ github.event.deployment_status.environment_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "## Production A11y" >> "$GITHUB_STEP_SUMMARY"
+          echo "**URL:** https://www.dentalstory.ua" >> "$GITHUB_STEP_SUMMARY"

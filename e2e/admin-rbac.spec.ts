@@ -2,7 +2,9 @@
  * E2E: Admin RBAC — route access gates
  *
  * Two layers of coverage:
- * 1. Unauthenticated access to any /admin/* route → redirect to /admin/login
+ * 1. Unauthenticated access to any /admin/* route → redirect to the login page.
+ *    The middleware sends /admin/* to /admin/login, which is now a thin redirect
+ *    stub to the consolidated /auth/login — so the browser lands on /auth/login.
  *    (runs in all environments, no secrets needed)
  * 2. Per-role access assertions against the permissions matrix
  *    (skipped unless E2E_ADMIN_* credentials are provided, i.e. preview env)
@@ -27,12 +29,12 @@ const ADMIN_ROUTES = [
 
 test.describe('Admin — unauthenticated gate', () => {
   for (const route of ADMIN_ROUTES) {
-    test(`${route} redirects to /admin/login`, async ({ page }) => {
+    test(`${route} redirects to /auth/login`, async ({ page }) => {
       await page.goto(route)
-      await page.waitForURL(url => url.pathname === '/admin/login', {
+      await page.waitForURL(url => url.pathname === '/auth/login', {
         timeout: 10_000,
       })
-      expect(new URL(page.url()).pathname).toBe('/admin/login')
+      expect(new URL(page.url()).pathname).toBe('/auth/login')
     })
   }
 })

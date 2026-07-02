@@ -4,8 +4,39 @@
 
 import { chromium } from 'playwright'
 import AxeBuilder from '@axe-core/playwright'
+import { setDefaultResultOrder } from 'node:dns'
+
+// Prefer IPv4 — some CI runners have broken IPv6 egress to the edge, which makes
+// Node's fetch throw "fetch failed" while IPv4 clients (curl/browser) succeed.
+setDefaultResultOrder('ipv4first')
 
 const BASE = process.env.BASE_URL || 'http://localhost:3000'
+
+// Vercel Deployment Protection: preview/preprod deployments require auth, so an
+// unauthenticated request gets a 401 SSO page. When a Protection Bypass for
+// Automation secret is configured, send it on every request so CI can reach the
+// deployment. Harmless (empty) for local runs where the var is unset.
+// See: https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation
+const BYPASS_SECRET = process.env.VERCEL_AUTOMATION_BYPASS_SECRET?.trim()
+const bypassHeaders = BYPASS_SECRET
+  ? {
+      'x-vercel-protection-bypass': BYPASS_SECRET,
+      'x-vercel-set-bypass-cookie': 'true',
+    }
+  : {}
+
+// Append the bypass as query params too. The query-param form is the most
+// widely honoured method (and the one verified working in-browser for this
+// project), and the first request also sets a cookie so later in-context
+// navigations stay bypassed. Combined with the header above this is
+// belt-and-suspenders. NB: never log a bypassed URL — it carries the secret.
+function withBypass(url) {
+  if (!BYPASS_SECRET) return url
+  const u = new URL(url)
+  u.searchParams.set('x-vercel-protection-bypass', BYPASS_SECRET)
+  u.searchParams.set('x-vercel-set-bypass-cookie', 'true')
+  return u.toString()
+}
 const PAGES = [
   '/',
   '/services',
@@ -23,7 +54,10 @@ async function waitForServer(url, timeoutMs = 20000) {
   const start = Date.now()
   while (Date.now() - start < timeoutMs) {
     try {
-      const res = await fetch(url, { method: 'GET' })
+      const res = await fetch(withBypass(url), {
+        method: 'GET',
+        headers: bypassHeaders,
+      })
       if (res.ok) return true
     } catch {}
     await new Promise(r => setTimeout(r, 500))
@@ -32,10 +66,16 @@ async function waitForServer(url, timeoutMs = 20000) {
 }
 
 ;(async () => {
-  // Ensure server is running
+  const isLocal = /^https?:\/\/(localhost|127\.0\.0\.1)(:|\/|$)/.test(BASE)
+
+  // Ensure server is running. Remote deployments may need extra time for a
+  // freshly-promoted alias / cold edge to become reachable, so wait longer.
   let previewProc = null
-  const ok = await waitForServer(BASE)
-  if (!ok) {
+  let ok = await waitForServer(BASE, isLocal ? 20000 : 60000)
+
+  // Only auto-start a local dev server for a localhost target. Spawning
+  // `next dev` does nothing for a remote deployment URL (CI).
+  if (!ok && isLocal) {
     const { spawn } = await import('child_process')
     // Next.js App Router — dev server on 3000 (not Vite)
     previewProc = spawn('npx', ['next', 'dev', '-p', '3000'], {
@@ -43,17 +83,32 @@ async function waitForServer(url, timeoutMs = 20000) {
       shell: process.platform === 'win32',
       cwd: process.cwd(),
     })
-    const ready = await waitForServer(BASE, 90000)
-    if (!ready) {
-      previewProc?.kill('SIGTERM')
-      throw new Error(
-        `Next.js not reachable at ${BASE}. Start manually: npm run dev`
-      )
+    ok = await waitForServer(BASE, 90000)
+  }
+
+  if (!ok) {
+    // Surface the real status so a protected/unreachable deployment is obvious
+    // instead of a generic "not reachable" timeout.
+    let diag = '. Start manually: npm run dev'
+    try {
+      const res = await fetch(withBypass(BASE), {
+        method: 'GET',
+        headers: bypassHeaders,
+      })
+      diag = ` (HTTP ${res.status})`
+      if (res.status === 401) {
+        diag +=
+          ' — deployment is behind Vercel Protection. Enable "Protection Bypass for Automation" in Vercel and set VERCEL_AUTOMATION_BYPASS_SECRET to that exact value.'
+      }
+    } catch (e) {
+      diag = ` (${e?.message ?? 'fetch failed'})`
     }
+    previewProc?.kill('SIGTERM')
+    throw new Error(`Next.js not reachable at ${BASE}${diag}`)
   }
 
   const browser = await chromium.launch()
-  const context = await browser.newContext()
+  const context = await browser.newContext({ extraHTTPHeaders: bypassHeaders })
   const page = await context.newPage()
 
   let total = 0
@@ -62,7 +117,7 @@ async function waitForServer(url, timeoutMs = 20000) {
   for (const path of PAGES) {
     const url = BASE + path
     console.log(`\nChecking ${url}`)
-    await page.goto(url)
+    await page.goto(withBypass(url))
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa'])
       .analyze()
@@ -95,11 +150,13 @@ async function waitForServer(url, timeoutMs = 20000) {
   if (adminEmail && adminPassword) {
     console.log('\n🔐 Admin a11y audit (authenticated)...')
 
-    const adminContext = await browser.newContext()
+    const adminContext = await browser.newContext({
+      extraHTTPHeaders: bypassHeaders,
+    })
     const adminPage = await adminContext.newPage()
 
     // Log in via the admin login form (selectors match app/admin/login/page.tsx)
-    await adminPage.goto(BASE + '/admin/login')
+    await adminPage.goto(withBypass(BASE + '/admin/login'))
     await adminPage.fill('#email', adminEmail)
     await adminPage.fill('#password', adminPassword)
     await adminPage.click('button[type="submit"]')
@@ -123,7 +180,7 @@ async function waitForServer(url, timeoutMs = 20000) {
     for (const path of ADMIN_PAGES) {
       const url = BASE + path
       console.log(`\nChecking ${url}`)
-      await adminPage.goto(url)
+      await adminPage.goto(withBypass(url))
       const results = await new AxeBuilder({ page: adminPage })
         .withTags(['wcag2a', 'wcag2aa'])
         .analyze()
@@ -163,10 +220,12 @@ async function waitForServer(url, timeoutMs = 20000) {
   if (patientEmail && patientPassword) {
     console.log('\n🏥 Cabinet a11y audit (patient authenticated)...')
 
-    const cabinetContext = await browser.newContext()
+    const cabinetContext = await browser.newContext({
+      extraHTTPHeaders: bypassHeaders,
+    })
     const cabinetPage = await cabinetContext.newPage()
 
-    await cabinetPage.goto(BASE + '/auth/login')
+    await cabinetPage.goto(withBypass(BASE + '/auth/login'))
     await cabinetPage.fill('input[type="email"]', patientEmail)
     await cabinetPage.fill('input[type="password"]', patientPassword)
     await cabinetPage.click('button[type="submit"]')
@@ -183,7 +242,7 @@ async function waitForServer(url, timeoutMs = 20000) {
     for (const path of CABINET_PAGES) {
       const url = BASE + path
       console.log(`\nChecking ${url}`)
-      await cabinetPage.goto(url)
+      await cabinetPage.goto(withBypass(url))
       const results = await new AxeBuilder({ page: cabinetPage })
         .withTags(['wcag2a', 'wcag2aa'])
         .analyze()
