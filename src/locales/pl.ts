@@ -2989,6 +2989,7 @@ const pl = {
     closedNow: 'Teraz zamknięte',
     opensAt: 'Otwieramy o {{time}}',
     qualityGuarantee: 'Gwarancja jakości',
+    onlineBooking247: 'Rezerwacja online 24/7',
   },
   hero: {
     badge: 'Nowoczesna stomatologia',

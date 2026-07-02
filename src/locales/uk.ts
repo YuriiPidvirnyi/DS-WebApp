@@ -3153,6 +3153,7 @@ const uk = {
     closedNow: 'Зараз зачинено',
     opensAt: 'Відкриємося о {{time}}',
     qualityGuarantee: 'Гарантія якості',
+    onlineBooking247: 'Онлайн-запис 24/7',
   },
   hero: {
     badge: 'Сучасна стоматологія',

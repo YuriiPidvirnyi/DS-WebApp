@@ -2980,6 +2980,7 @@ const en = {
     closedNow: 'Closed Now',
     opensAt: 'Opens at {{time}}',
     qualityGuarantee: 'Quality Guarantee',
+    onlineBooking247: 'Online booking 24/7',
   },
   hero: {
     badge: 'Modern Dentistry',
