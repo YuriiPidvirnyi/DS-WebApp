@@ -11,6 +11,7 @@ import {
   Users,
   Star,
   Phone,
+  CalendarClock,
 } from 'lucide-react'
 import { UKRAINE_CONFIG } from '@/utils/constants'
 import { CLINIC_OPENING_HOURS } from '@/config/clinicSchedule'
@@ -344,6 +345,12 @@ function HeroSection({ heroCTAVariant }: HeroSectionProps) {
               <Star className="h-5 w-5 text-dental-primary-500" />
               <span className="text-sm font-medium text-dental-text">
                 {t('features.modernEquipment.title')}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CalendarClock className="h-5 w-5 text-dental-primary-500" />
+              <span className="text-sm font-medium text-dental-text">
+                {t('stats.onlineBooking247')}
               </span>
             </div>
           </div>

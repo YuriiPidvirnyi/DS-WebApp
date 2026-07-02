@@ -1106,136 +1106,11 @@ const en = {
       'dentist Lviv, dentist Sumska, dental clinic Lviv, dental treatment, dental implants, braces, teeth whitening, Dental Story',
     openGraphTitle: 'Dental Story — Modern Dental Clinic in Lviv',
     openGraphDescription:
-      'Modern dentistry in Lviv. Painless dental treatment, implants, whitening. Experienced doctors, state-of-the-art equipment.',
+      'Modern dentistry in Lviv. Painless dental treatment, implants, whitening. Experienced doctors, modern equipment.',
+    ogImageAlt: 'Dental Story — Modern Dental Clinic in Lviv',
     twitterTitle: 'Dental Story — Modern Dental Clinic in Lviv',
     twitterDescription:
       'Modern dentistry in Lviv. Painless treatment, experienced doctors, quality guarantee.',
-    ogImageAlt: 'Dental Story — Modern Dental Clinic in Lviv',
-  },
-  routeMeta: {
-    home: {
-      title: 'Dental Story — Modern Dental Clinic in Lviv',
-      description:
-        'Professional dentistry in Lviv. Painless dental treatment, implants, whitening. Experienced doctors, state-of-the-art equipment.',
-      keywords:
-        'dentist lviv, dental treatment, implants, teeth whitening, dental story',
-      openGraphTitle: 'Dental Story — Modern Dental Clinic in Lviv',
-      openGraphDescription:
-        'Professional dentistry in Lviv. Painless dental treatment, implants, whitening.',
-    },
-    about: {
-      title: 'About Us — Dental Story Lviv',
-      description:
-        'Dental Story — a team of professionals with 10 years of experience. Modern equipment, European treatment standards.',
-      keywords: 'dental clinic about us lviv, dental story team',
-      openGraphTitle: 'About Us — Dental Story Lviv',
-      openGraphDescription:
-        'Dental Story — a team of professionals with 10 years of experience.',
-      breadcrumb: 'About Us',
-    },
-    contact: {
-      title: 'Contact — Dental Story Lviv',
-      description:
-        'Address, phone, and opening hours of Dental Story dental clinic in Lviv. Directions and map.',
-      keywords: 'dental story address, dental clinic phone, contact lviv',
-      openGraphTitle: 'Contact — Dental Story Lviv',
-      openGraphDescription:
-        'Address, phone, and opening hours of Dental Story.',
-      breadcrumb: 'Contact',
-    },
-    booking: {
-      title: 'Book Online — Dental Story',
-      description:
-        'Book a dental appointment online. Choose a convenient time and doctor. Fast and secure.',
-      keywords: 'book dentist, online booking, dental story lviv',
-      openGraphTitle: 'Book a Dental Appointment at Dental Story',
-      openGraphDescription:
-        'Book your appointment online. Choose a convenient time and doctor.',
-      breadcrumb: 'Book Appointment',
-    },
-    bookingSuccess: {
-      title: 'Booking Created — Dental Story',
-      description:
-        'Thank you! We will contact you to confirm your booking. Add the event to your calendar and enable reminders.',
-    },
-    services: {
-      title: 'Dental Story Services — Full Range',
-      description:
-        'All types of dental services: therapy, prosthetics, implants, orthodontics, pediatric dentistry. Transparent pricing.',
-      keywords: 'dental services, dental treatment prices, dental implants',
-      openGraphTitle: 'Dental Story Services',
-      openGraphDescription:
-        'All types of dental services: therapy, prosthetics, implants, orthodontics. Transparent pricing.',
-      breadcrumb: 'Services',
-    },
-    reviews: {
-      title: 'Patient Reviews — Dental Story',
-      description:
-        'Rate our service and read patient reviews about treatment at Dental Story.',
-      keywords:
-        'dental clinic reviews, dental story reviews, dental treatment lviv',
-      openGraphTitle: 'Patient Reviews — Dental Story',
-      openGraphDescription: 'Rate our service and read patient reviews.',
-      breadcrumb: 'Reviews',
-    },
-    gallery: {
-      title: 'Gallery — Treatment Results at Dental Story',
-      description:
-        'Portfolio of our work: before and after treatment photos. Implants, restorations, teeth whitening.',
-      keywords:
-        'dental treatment results, before and after photos, dental story portfolio',
-      openGraphTitle: 'Dental Story Gallery',
-      openGraphDescription:
-        'Portfolio of our work: before and after treatment photos.',
-      breadcrumb: 'Gallery',
-    },
-    privacyPolicy: {
-      title: 'Privacy Policy — Dental Story',
-      description:
-        'How we collect, store, and process your personal data. Patient privacy is our priority.',
-    },
-    termsOfService: {
-      title: 'Terms of Service — Dental Story',
-      description:
-        'Terms of use of the website and dental services provided by Dental Story.',
-    },
-    symptomChecker: {
-      title: 'Symptom Checker — Dental Story',
-      description:
-        'Free online dental symptom checker. Find out what your pain might mean.',
-    },
-    admin: {
-      title: 'Admin Panel — Dental Story',
-      loginTitle: 'Admin Login — Dental Story',
-      patientsTitle: 'Patients — Dental Story',
-    },
-    patientCard: {
-      title: 'Patient Card — Dental Story',
-    },
-    cabinet: {
-      title: 'Patient Portal — Dental Story',
-      appointmentsTitle: 'My Appointments — Dental Story',
-      profileTitle: 'My Profile — Dental Story',
-      paymentsTitle: 'My Payments — Dental Story',
-      treatmentsTitle: 'My Treatment — Dental Story',
-    },
-    auth: {
-      loginTitle: 'Sign In — Dental Story',
-      loginDescription: 'Sign in to your Dental Story patient portal',
-      signUpTitle: 'Sign Up — Dental Story',
-      signUpDescription: 'Create your Dental Story patient account',
-      signUpSuccessTitle: 'Registration Successful — Dental Story',
-      forgotPasswordTitle: 'Forgot Password — Dental Story',
-      forgotPasswordDescription:
-        'Receive a password reset email and restore access to your portal.',
-      resetPasswordTitle: 'New Password — Dental Story',
-      resetPasswordDescription:
-        'Set a new password for your Dental Story patient account.',
-    },
-    openGraphImage: {
-      alt: 'Dental Story — Modern Dentistry in Lviv',
-      tagline: 'Modern dentistry in Lviv',
-    },
   },
   structuredData: {
     organizationAlternateName: 'Dental clinic',
@@ -1393,8 +1268,6 @@ const en = {
       goHome: 'Home',
       createAnother: 'Create another booking',
       addToCalendar: 'Add to calendar',
-      payDeposit: 'Pay deposit',
-      payingDeposit: 'Redirecting...',
       calendarTitle: 'Visit: {{service}}',
       calendarDescription: 'Booking #{{ref}}. Patient: {{name}}',
       calendarLocation: 'Dental Studio',
@@ -1485,6 +1358,9 @@ const en = {
       doctorNotLinked:
         'Your account is not linked to a doctor profile. Please contact an administrator.',
       loadError: 'Failed to load dashboard data.',
+      completed: 'Completed visits',
+      myTodayAppointments: 'My appointments today',
+      myTreatments: 'My records',
     },
     sidebar: {
       dashboard: 'Dashboard',
@@ -1498,12 +1374,10 @@ const en = {
       treatments: 'Treatment Acts',
       materials: 'Materials',
       orders: 'Orders',
-      stock: 'Stock v2',
       analytics: 'Analytics',
-      dataQuality: 'Data Quality',
-      health: 'Service Health',
       settings: 'Settings',
       users: 'Users',
+      stock: 'Inventory v2',
     },
     login: {
       title: 'Admin Login',
@@ -1535,46 +1409,6 @@ const en = {
       defaultUser: 'Admin',
       openSidebar: 'Open menu',
       sidebarNav: 'Admin panel navigation',
-      patientCabinet: 'My patient cabinet',
-    },
-    onboarding: {
-      step1: {
-        title: 'Welcome to DentalStory!',
-        body: "Let's quickly set up your clinic. This short guide will walk you through the essential first steps.",
-      },
-      step2: {
-        title: 'Add your services',
-        body: 'Go to the Services section and add your dental services — name, price, and duration.',
-      },
-      step3: {
-        title: 'Add your doctors',
-        body: 'Go to the Doctors section and add your team. Patients will be able to choose a doctor when booking.',
-      },
-      step4: {
-        title: 'Test online booking',
-        body: 'Open the website and try making a test booking through the form. Make sure everything works correctly.',
-      },
-      step5: {
-        title: 'Check email notifications',
-        body: "After the test booking, you'll receive a confirmation email. Make sure the emails arrive and look correct.",
-      },
-      skip: 'Skip tour',
-      next: 'Next',
-      finish: 'Done',
-    },
-    onboardingChecklist: {
-      title: 'Clinic setup',
-      subtitle: '{{done}} of {{total}} steps complete',
-      go: 'Go',
-      gotIt: 'Got it',
-      dismiss: 'Dismiss checklist',
-      step: {
-        services: 'Add at least one service',
-        doctors: 'Add at least one doctor',
-        materials: 'Add materials to inventory',
-        appointment: 'Make a test booking',
-        workingHours: 'Configure working hours',
-      },
     },
     modal: {
       closeAria: 'Close modal window',
@@ -1617,6 +1451,7 @@ const en = {
         active: 'Active',
         closed: 'Closed',
       },
+      typing: 'Patient is typing…',
     },
     appointmentStatuses: {
       pending: 'Pending',
@@ -2464,16 +2299,56 @@ const en = {
       },
       you: 'you',
       deleteConfirm: 'Delete this user?',
+      loading: 'Loading users…',
       empty: 'No users found',
       note: 'Role changes take effect on next login.',
     },
-    dataQuality: {
-      title: 'Data Quality',
-      lastChecked: 'Last checked',
-      refresh: 'Refresh',
-      allClean: 'No data quality issues found',
-      issuesFound: '{{count}} issue(s) require attention',
-      cleanDescription: 'Your clinic data is clean and consistent.',
+    onboarding: {
+      step1: {
+        title: 'Welcome to DentalStory Admin',
+        body: "Welcome! Let's get you set up — this will only take a few minutes.",
+      },
+      step2: {
+        title: 'Add services',
+        body: 'Go to Services and add your dental services.',
+        action: 'Go to services',
+      },
+      step3: {
+        title: 'Add doctors',
+        body: 'Go to Doctors and add your team members.',
+        action: 'Go to doctors',
+      },
+      step4: {
+        title: 'Seed your materials catalog',
+        body: 'Add materials and set minimum stock levels so you get low-stock alerts automatically.',
+        action: 'Go to materials',
+      },
+      step5: {
+        title: 'Test a booking',
+        body: 'Try a test booking at dentalstory.ua/booking to verify the booking form works.',
+        action: 'Open booking form',
+      },
+      step6: {
+        title: 'Check email',
+        body: 'You will receive a booking confirmation email — confirm that email notifications are working correctly.',
+      },
+      skip: 'Skip tour',
+      next: 'Next',
+      finish: 'Done!',
+    },
+    onboardingChecklist: {
+      title: 'Clinic setup',
+      subtitle: '{{done}} of {{total}} steps complete',
+      go: 'Go',
+      gotIt: 'Got it',
+      dismiss: 'Dismiss checklist',
+      step: {
+        services: 'Add at least one service',
+        doctors: 'Add at least one doctor',
+        materials: 'Add materials to inventory',
+        appointment: 'Make a test booking',
+        workingHours: 'Configure working hours',
+      },
     },
   },
   auth: {
@@ -2503,6 +2378,12 @@ const en = {
         invalidCredentials: 'Invalid email or password',
         emailNotConfirmed: 'Please confirm your email before signing in.',
         generic: 'Sign-in error. Please try again later.',
+      },
+      resendConfirmation: {
+        action: 'Resend confirmation email',
+        sending: 'Sending…',
+        sent: 'Confirmation email sent. Check your inbox.',
+        error: 'Could not send the email. Try again later.',
       },
     },
     signUp: {
@@ -2670,7 +2551,11 @@ const en = {
         success: 'Appointment successfully rescheduled',
         error: 'Failed to reschedule appointment',
         at: 'at',
+        slotsError:
+          'Could not load available times. Check your connection and try again.',
       },
+      loadMore: 'Show more',
+      loadMoreError: 'Could not load more appointments',
     },
     profile: {
       title: 'Edit Profile',
@@ -2693,6 +2578,13 @@ const en = {
       contactInfo: 'Contact information',
       additionalInfo: 'Additional information',
       unsavedChanges: 'You have unsaved changes',
+      dataExport: 'Download my data',
+      deleteAccount: 'Delete account',
+      deleteConfirmTitle: 'Delete account?',
+      deleteConfirmMessage:
+        'This will permanently delete your account and cancel all upcoming appointments. This cannot be undone.',
+      downloading: 'Downloading...',
+      deleting: 'Deleting...',
     },
     title: 'Patient Cabinet',
     profileTitle: 'My Profile',
@@ -2724,6 +2616,27 @@ const en = {
       goHome: 'Go home',
       devDetails: 'Error details',
     },
+    settings: {
+      title: 'Privacy & data',
+      subtitle: 'Manage your personal data',
+      exportSection: {
+        title: 'Download my data',
+        description:
+          'Get a copy of all your data in JSON format (appointments, reviews, messages).',
+        button: 'Download my data',
+      },
+      deleteSection: {
+        title: 'Delete account',
+        description:
+          'This is an irreversible action. All your data will be deleted.',
+        button: 'Delete account',
+        confirm: 'Are you sure? This action cannot be undone.',
+        confirmButton: 'Yes, delete my account',
+        cancel: 'Cancel',
+        deleting: 'Deleting...',
+      },
+      navLink: 'Settings',
+    },
     sidebar: {
       title: 'Patient Cabinet',
       dashboard: 'Dashboard',
@@ -2731,11 +2644,11 @@ const en = {
       treatments: 'Treatments',
       payments: 'Payments',
       profile: 'Profile',
+      settings: 'Settings',
       soon: 'Soon',
       navigation: 'Cabinet navigation',
       openMenu: 'Open menu',
       backToSite: 'Back to site',
-      settings: 'Settings',
     },
     treatments: {
       title: 'Treatments',
@@ -2757,6 +2670,8 @@ const en = {
         waived: 'Waived',
         refunded: 'Refunded',
       },
+      loadMore: 'Show more',
+      loadMoreError: 'Could not load more records',
     },
     payments: {
       title: 'Payments',
@@ -2769,27 +2684,6 @@ const en = {
       feature3Title: 'Reminders',
       feature3Desc: 'Payment notifications',
       meanwhile: 'Currently, payment is made at the clinic.',
-    },
-    settings: {
-      title: 'Settings & Privacy',
-      subtitle: 'Manage your data and account',
-      navLink: 'Settings',
-      exportSection: {
-        title: 'Download my data',
-        description:
-          'You will receive a JSON file with all your data: appointments, treatments and messages.',
-        button: 'Download data',
-      },
-      deleteSection: {
-        title: 'Delete account',
-        description:
-          'Permanently delete your account and all associated data. This action cannot be undone.',
-        button: 'Delete account',
-        confirm: 'Type DELETE to confirm',
-        confirmButton: 'Delete permanently',
-        cancel: 'Cancel',
-        deleting: 'Deleting...',
-      },
     },
   },
   patientDashboard: {
@@ -2908,7 +2802,6 @@ const en = {
     consentText: 'I agree to receive news and promotions via email',
     subscribeError: 'Failed to subscribe',
     successMessage: 'Thank you! You are subscribed.',
-    turnstileError: 'Security check failed. Please try again.',
   },
   feedback: {
     question: 'Was this form helpful?',
@@ -2969,12 +2862,6 @@ const en = {
     },
   },
   chat: {
-    chooser: {
-      title: 'Support Chat',
-      subtitle: 'Choose a contact method:',
-      human: 'Write to administrator',
-      ai: 'AI Assistant',
-    },
     openChat: 'Open Chat',
     closeChat: 'Close Chat',
     onlineChat: 'Online Chat',
@@ -2990,6 +2877,14 @@ const en = {
     dialogAriaLabel: 'Dental Story Online Chat',
     welcomeMessage: 'Welcome to Dental Story! How can we help you?',
     quickRepliesLabel: 'Quick Replies',
+    messagesLabel: 'Chat messages',
+    messageInputLabel: 'Type your message',
+    chooser: {
+      title: 'Support Chat',
+      subtitle: 'Choose a contact method:',
+      human: 'Write to Administrator',
+      ai: 'AI Assistant',
+    },
     inputPlaceholder: 'Type a message...',
     sendMessage: 'Send',
     quickReplies: {
@@ -3010,6 +2905,7 @@ const en = {
       default:
         'Thank you for your message! Our manager will contact you shortly. For quick contact, call: +380 44 123 45 67',
     },
+    typing: 'Consultant is typing…',
   },
   pricing: {
     title: 'Transparent Pricing',
@@ -3080,10 +2976,13 @@ const en = {
     closedNow: 'Closed Now',
     opensAt: 'Opens at {{time}}',
     qualityGuarantee: 'Quality Guarantee',
+    onlineBooking247: 'Online booking 24/7',
   },
   hero: {
     badge: 'Modern Dentistry',
     bookConsultation: 'Book Consultation',
+    bookConsultationB: 'Find a Time That Works',
+    bookConsultationC: 'Free Consultation',
     ourServices: 'Our Services',
   },
   language: {
@@ -3289,6 +3188,228 @@ const en = {
           recommendation: 'URGENT! Call immediately for emergency appointment',
         },
       },
+    },
+  },
+  routeMeta: {
+    home: {
+      title: 'Dental Story — Сучасна стоматологічна клініка в Львові',
+      description:
+        'Професійна стоматологія у Львові. Безболісне лікування зубів, імплантація, відбілювання. Досвідчені лікарі, сучасне обладнання.',
+      keywords:
+        'стоматологія львів, лікування зубів, імплантація, відбілювання зубів, dental story',
+      openGraphTitle: 'Dental Story — Сучасна стоматологічна клініка у Львові',
+      openGraphDescription:
+        'Професійна стоматологія у Львові. Безболісне лікування зубів, імплантація, відбілювання.',
+    },
+    about: {
+      title: 'Про нас — Dental Story Львів',
+      description:
+        'Dental Story — команда професіоналів з 10-річним досвідом. Сучасне обладнання, європейські стандарти лікування.',
+      keywords: 'стоматологія львів про клініку, команда dental story',
+      openGraphTitle: 'Про нас — Dental Story Львів',
+      openGraphDescription:
+        'Dental Story — команда професіоналів з 10-річним досвідом.',
+      breadcrumb: 'Про нас',
+    },
+    contact: {
+      title: 'Контакти — Dental Story Львів',
+      description:
+        'Адреса, телефон, години роботи стоматології Dental Story у Львові. Як нас знайти, карта проїзду.',
+      keywords: 'dental story адреса, телефон стоматології, контакти львів',
+      openGraphTitle: 'Контакти — Dental Story Львів',
+      openGraphDescription:
+        'Адреса, телефон, години роботи стоматології Dental Story.',
+      breadcrumb: 'Контакти',
+    },
+    booking: {
+      title: 'Онлайн запис до стоматолога — Dental Story',
+      description:
+        'Запишіться на прийом до стоматолога онлайн. Вибирайте зручний час та лікаря. Швидко та безпечно.',
+      keywords: 'запис до стоматолога, онлайн запис, dental story львів',
+      openGraphTitle: 'Онлайн запис до стоматолога Dental Story',
+      openGraphDescription:
+        'Запишіться на прийом онлайн. Вибирайте зручний час та лікаря.',
+      breadcrumb: 'Запис на прийом',
+    },
+    bookingSuccess: {
+      title: 'Запис створено — Dental Story',
+      description:
+        "Дякуємо! Ми зв'яжемося для підтвердження запису. Додайте подію в календар та увімкніть нагадування.",
+    },
+    services: {
+      title: 'Послуги стоматології Dental Story — Повний спектр',
+      description:
+        'Всі види стоматологічних послуг: терапія, ортопедія, імплантація, ортодонтія, дитяча стоматологія. Прозорі ціни.',
+      keywords:
+        'стоматологічні послуги, ціни на лікування зубів, імплантація зубів',
+      openGraphTitle: 'Послуги стоматології Dental Story',
+      openGraphDescription:
+        'Всі види стоматологічних послуг: терапія, ортопедія, імплантація, ортодонтія. Прозорі ціни.',
+      breadcrumb: 'Послуги',
+    },
+    reviews: {
+      title: 'Відгуки пацієнтів — Dental Story',
+      description:
+        'Оцініть наш сервіс та прочитайте відгуки пацієнтів про лікування у Dental Story.',
+      keywords:
+        'відгуки стоматології, dental story відгуки, лікування зубів львів',
+      openGraphTitle: 'Відгуки пацієнтів Dental Story',
+      openGraphDescription:
+        'Оцініть наш сервіс та прочитайте відгуки пацієнтів.',
+      breadcrumb: 'Відгуки',
+    },
+    gallery: {
+      title: 'Галерея робіт — Результати лікування Dental Story',
+      description:
+        'Портфоліо наших робіт: фото до і після лікування. Імплантація, реставрація, відбілювання зубів.',
+      keywords:
+        'результати лікування зубів, фото до і після, dental story портфоліо',
+      openGraphTitle: 'Галерея робіт Dental Story',
+      openGraphDescription: 'Портфоліо наших робіт: фото до і після лікування.',
+      breadcrumb: 'Галерея',
+    },
+    privacyPolicy: {
+      title: 'Політика конфіденційності — Dental Story',
+      description:
+        'Як ми збираємо, зберігаємо та обробляємо ваші персональні дані. Конфіденційність пацієнтів — наш пріоритет.',
+    },
+    termsOfService: {
+      title: 'Умови використання — Dental Story',
+      description:
+        'Правила користування веб-сайтом та надання стоматологічних послуг Dental Story.',
+    },
+    symptomChecker: {
+      title: 'Перевірка симптомів — Dental Story',
+      description:
+        'Безкоштовна онлайн-перевірка стоматологічних симптомів. Дізнайтеся, що може означати ваш біль.',
+    },
+    admin: {
+      title: 'Адмін панель — Dental Story',
+      loginTitle: 'Вхід в адмін панель — Dental Story',
+      patientsTitle: 'Пацієнти — Dental Story',
+    },
+    patientCard: {
+      title: 'Картка пацієнта — Dental Story',
+    },
+    cabinet: {
+      title: 'Особистий кабінет — Dental Story',
+      appointmentsTitle: 'Мої записи — Dental Story',
+      profileTitle: 'Мій профіль — Dental Story',
+      paymentsTitle: 'Мої платежі — Dental Story',
+      treatmentsTitle: 'Моє лікування — Dental Story',
+    },
+    auth: {
+      loginTitle: 'Вхід — Dental Story',
+      loginDescription:
+        'Увійдіть у свій особистий кабінет пацієнта Dental Story',
+      signUpTitle: 'Реєстрація — Dental Story',
+      signUpDescription: 'Створіть обліковий запис пацієнта Dental Story',
+      signUpSuccessTitle: 'Реєстрація успішна — Dental Story',
+      forgotPasswordTitle: 'Відновлення пароля — Dental Story',
+      forgotPasswordDescription:
+        'Отримайте лист для скидання пароля та відновіть доступ до кабінету.',
+      resetPasswordTitle: 'Новий пароль — Dental Story',
+      resetPasswordDescription:
+        'Встановіть новий пароль для свого облікового запису пацієнта Dental Story.',
+    },
+    openGraphImage: {
+      alt: 'Dental Story — Сучасна стоматологія у Львові',
+      tagline: 'Сучасна стоматологія у Львові',
+    },
+  },
+  stock: {
+    title: 'Inventory',
+    nav: {
+      documents: 'Documents',
+      warehouses: 'Warehouses',
+      balances: 'Balances',
+      reports: 'Reports',
+      settings: 'Settings',
+      permissions: 'Permissions',
+      suppliers: 'Suppliers',
+      brands: 'Brands',
+      categories: 'Categories',
+      calcCards: 'Calc Cards',
+      audits: 'Inventory Audits',
+    },
+    docType: {
+      incoming: 'Receipt',
+      writeoff: 'Write-off',
+      return: 'Return',
+      transfer: 'Transfer',
+      adjustment: 'Adjustment',
+    },
+    docStatus: {
+      draft: 'Draft',
+      posted: 'Posted',
+      void: 'Void',
+    },
+    warehouseKind: {
+      main: 'Main',
+      cabinet: 'Cabinet',
+      doctor: 'Doctor',
+      other: 'Other',
+    },
+    document: {
+      number: 'Number',
+      date: 'Date',
+      warehouse: 'Warehouse',
+      warehouseFrom: 'From warehouse',
+      warehouseTo: 'To warehouse',
+      supplier: 'Supplier',
+      responsible: 'Responsible',
+      comment: 'Comment',
+      total: 'Total',
+      items: 'Items',
+      createDraft: 'Create draft',
+      post: 'Post',
+      unpost: 'Unpost',
+      copy: 'Copy',
+      unpostReason: 'Unpost reason',
+      noItems: 'No items',
+      addItem: 'Add item',
+      emptyDocuments: 'No documents',
+    },
+    warehouse: {
+      name: 'Name',
+      kind: 'Type',
+      responsible: 'Responsible',
+      doctor: 'Doctor',
+      sortOrder: 'Sort order',
+      comment: 'Comment',
+      archived: 'Archived',
+      createWarehouse: 'Add warehouse',
+      editWarehouse: 'Edit warehouse',
+      archiveWarehouse: 'Archive warehouse',
+      emptyWarehouses: 'No warehouses',
+    },
+    settings: {
+      allowNegativeBalance: 'Allow negative balance',
+      writeoffMode: 'Write-off mode',
+      writeoffModeNone: 'Disabled',
+      writeoffModeDraftHybrid: 'Auto-draft',
+      writeoffModeAuto: 'Automatic',
+      autoApBillOnIncoming: 'Auto-bill on receipt',
+      defaultExpenseCategory: 'Default expense category',
+      enforceStockPermissions: 'Enforce stock permissions',
+      showMyInventory: 'Show my inventory',
+    },
+    balance: {
+      material: 'Material',
+      warehouse: 'Warehouse',
+      quantity: 'Quantity',
+      unit: 'Unit',
+      criticalLevel: 'Critical level',
+      reorderQty: 'Reorder qty',
+      lowStock: 'Low stock',
+    },
+    errors: {
+      loadFailed: 'Load failed',
+      saveFailed: 'Save failed',
+      postFailed: 'Post failed',
+      negativeBalance: 'Insufficient balance',
+      docLocked: 'Document already posted',
+      flagOff: 'Inventory v2 not enabled',
     },
   },
 } as const
