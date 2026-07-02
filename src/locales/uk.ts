@@ -1314,6 +1314,8 @@ const uk = {
       service: 'Послуга',
       personal: 'Персональні дані',
       summary: 'Підтвердження',
+      progress: 'Крок {{current}} з {{total}}',
+      progressAria: 'Прогрес бронювання',
     },
     selectService: 'Оберіть послугу',
     selectDate: 'Оберіть дату',

@@ -1313,6 +1313,8 @@ const en = {
       service: 'Service',
       personal: 'Personal Info',
       summary: 'Confirmation',
+      progress: 'Step {{current}} of {{total}}',
+      progressAria: 'Booking progress',
     },
     selectService: 'Select Service',
     selectDate: 'Select Date',
