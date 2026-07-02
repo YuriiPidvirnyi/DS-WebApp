@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-> Changes on `develop` since `v3.0.0`. Target release: v3.2.0 (after PITR enabled) → v3.3.0 (after legal review + LCP verified = public launch).
+> Next targets: v3.2.0 (after PITR enabled) → v3.3.0 (after legal review + LCP verified = public launch).
+
+## [3.1.0] - 2026-07-02
+
+> Promoted `develop` → `main` in 7 reviewed release slices (#337–#346), each verified in production after deploy. The four June DB migrations (`patients_deleted_at`, `db_security_perf_hardening`, `fk_covering_indexes`, `uniq_active_payment`) were found missing from the live database and applied during the release. Prod `payment_configs` global default set to `payment_mode='none'` — patient-facing payments stay dark until Monobank launch.
+
+### Release fixes
+
+- **CI**: playwright-managed webServer skipped under CI — its URL probe hung 4–8 min in every main-context run despite a Ready server (#348, #349)
+- **CI**: a11y audit contexts emulate reduced motion + settle before axe scan — entrance fade-ins caused flaky color-contrast failures on content that passes at rest (#350)
 
 ### Added
 
