@@ -212,7 +212,7 @@ export default function SymptomCheckerPage() {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Symptom Selection */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+        <div className="bg-white rounded-2xl shadow-xs border border-slate-200 p-6 mb-8">
           <h2 className="text-xl font-semibold text-slate-900 mb-6 flex items-center gap-2">
             <Activity className="w-5 h-5 text-teal-600" />
             {t('ai.symptomChecker.selectSymptoms')}
@@ -243,7 +243,7 @@ export default function SymptomCheckerPage() {
         </div>
 
         {/* Pain Level */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+        <div className="bg-white rounded-2xl shadow-xs border border-slate-200 p-6 mb-8">
           <h2 className="text-xl font-semibold text-slate-900 mb-6">
             {t('ai.symptomChecker.painLevel')}:{' '}
             <span className="text-teal-600">{painLevel}/10</span>
@@ -269,7 +269,7 @@ export default function SymptomCheckerPage() {
         </div>
 
         {/* Duration */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+        <div className="bg-white rounded-2xl shadow-xs border border-slate-200 p-6 mb-8">
           <h2 className="text-xl font-semibold text-slate-900 mb-6">
             {t('ai.symptomChecker.duration')}
           </h2>
@@ -367,7 +367,7 @@ export default function SymptomCheckerPage() {
             </div>
 
             {/* Detailed Analysis */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <div className="bg-white rounded-2xl shadow-xs border border-slate-200 p-6">
               <h3 className="text-xl font-semibold text-slate-900 mb-6">
                 {t('ai.symptomChecker.possibleCauses')}
               </h3>

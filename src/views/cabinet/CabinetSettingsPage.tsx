@@ -61,7 +61,7 @@ export default function CabinetSettingsPage() {
       </div>
 
       {/* Export section */}
-      <div className="bg-white rounded-2xl shadow-sm border border-dental-secondary-100 p-6">
+      <div className="bg-white rounded-2xl shadow-xs border border-dental-secondary-100 p-6">
         <div className="flex items-start gap-4">
           <div className="w-10 h-10 rounded-xl bg-dental-primary-50 flex items-center justify-center shrink-0">
             <Shield className="w-5 h-5 text-dental-primary-600" />
@@ -76,7 +76,7 @@ export default function CabinetSettingsPage() {
             <button
               type="button"
               onClick={handleExport}
-              className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-dental-primary-600 hover:bg-dental-primary-700 text-white text-sm font-medium rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2"
+              className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-dental-primary-600 hover:bg-dental-primary-700 text-white text-sm font-medium rounded-xl transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2"
             >
               <Download className="w-4 h-4" />
               {t('cabinet.settings.exportSection.button')}
@@ -86,7 +86,7 @@ export default function CabinetSettingsPage() {
       </div>
 
       {/* Delete account section */}
-      <div className="bg-white rounded-2xl shadow-sm border border-red-200 p-6">
+      <div className="bg-white rounded-2xl shadow-xs border border-red-200 p-6">
         <div className="flex items-start gap-4">
           <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
             <Trash2 className="w-5 h-5 text-red-500" />
@@ -110,7 +110,7 @@ export default function CabinetSettingsPage() {
               <button
                 type="button"
                 onClick={() => setShowDeleteConfirm(true)}
-                className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-red-50 text-red-600 border border-red-300 text-sm font-medium rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
+                className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-red-50 text-red-600 border border-red-300 text-sm font-medium rounded-xl transition-colors focus:outline-hidden focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
               >
                 <Trash2 className="w-4 h-4" />
                 {t('cabinet.settings.deleteSection.button')}
@@ -126,7 +126,7 @@ export default function CabinetSettingsPage() {
                     type="button"
                     onClick={handleDeleteAccount}
                     disabled={deleting}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors focus:outline-hidden focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                   >
                     {deleting ? (
                       <>
@@ -144,7 +144,7 @@ export default function CabinetSettingsPage() {
                       setDeleteError(null)
                     }}
                     disabled={deleting}
-                    className="px-4 py-2.5 text-dental-muted hover:text-dental-dark text-sm font-medium rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-dental-secondary-300 focus:ring-offset-2"
+                    className="px-4 py-2.5 text-dental-muted hover:text-dental-dark text-sm font-medium rounded-xl transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-secondary-300 focus:ring-offset-2"
                   >
                     {t('cabinet.settings.deleteSection.cancel')}
                   </button>

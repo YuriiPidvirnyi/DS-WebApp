@@ -224,7 +224,7 @@ export default function AdminInventoryAnalyticsPage() {
       {/* Charts row */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Spending by category */}
-        <div className="rounded-xl border border-dental-secondary-200 bg-white p-4 shadow-sm">
+        <div className="rounded-xl border border-dental-secondary-200 bg-white p-4 shadow-xs">
           <h2 className="mb-4 font-semibold text-dental-dark">
             {t('admin.inventory.charts.spendingByCategory')}
           </h2>
@@ -265,7 +265,7 @@ export default function AdminInventoryAnalyticsPage() {
         </div>
 
         {/* Top consumed */}
-        <div className="rounded-xl border border-dental-secondary-200 bg-white p-4 shadow-sm">
+        <div className="rounded-xl border border-dental-secondary-200 bg-white p-4 shadow-xs">
           <h2 className="mb-4 font-semibold text-dental-dark">
             <BarChart3 className="mr-2 inline h-5 w-5 text-dental-teal" />
             {t('admin.inventory.charts.topConsumed')}
@@ -299,7 +299,7 @@ export default function AdminInventoryAnalyticsPage() {
       </div>
 
       {/* Stock levels table */}
-      <div className="rounded-xl border border-dental-secondary-200 bg-white shadow-sm">
+      <div className="rounded-xl border border-dental-secondary-200 bg-white shadow-xs">
         <div className="border-b border-dental-secondary-100 px-4 py-3">
           <h2 className="font-semibold text-dental-dark">
             {t('admin.inventory.stockLevels')}
@@ -386,7 +386,7 @@ function KPICard({
   color: string
 }) {
   return (
-    <div className="flex items-center gap-4 rounded-xl border border-dental-secondary-200 bg-white p-4 shadow-sm">
+    <div className="flex items-center gap-4 rounded-xl border border-dental-secondary-200 bg-white p-4 shadow-xs">
       <div className={`rounded-xl p-3 ${color}`}>{icon}</div>
       <div>
         <p className="text-2xl font-bold text-dental-dark">{value}</p>

@@ -85,7 +85,7 @@ export default function ApiDocsPage() {
 
       {/* Swagger UI Container */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+        <div className="bg-white rounded-lg shadow-xs border overflow-hidden">
           <div id="swagger-ui" ref={containerRef} className="min-h-[600px]">
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
@@ -98,7 +98,7 @@ export default function ApiDocsPage() {
 
         {/* Additional Info */}
         <div className="mt-8 grid md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="bg-white rounded-lg shadow-xs border p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-3">
               {t('apiDocsPage.auth.title')}
             </h2>
@@ -110,7 +110,7 @@ export default function ApiDocsPage() {
             </code>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="bg-white rounded-lg shadow-xs border p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-3">
               {t('apiDocsPage.rateLimit.title')}
             </h2>

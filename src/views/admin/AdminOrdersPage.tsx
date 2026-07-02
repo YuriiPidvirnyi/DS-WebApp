@@ -460,7 +460,7 @@ export default function AdminOrdersPage() {
             return (
               <div
                 key={order.id}
-                className="rounded-xl border border-dental-secondary-200 bg-white shadow-sm overflow-hidden"
+                className="rounded-xl border border-dental-secondary-200 bg-white shadow-xs overflow-hidden"
               >
                 <button
                   type="button"

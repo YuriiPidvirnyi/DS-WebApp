@@ -14,7 +14,7 @@ const BookingForm = dynamic(() => import('@/components/BookingForm'), {
       variant="loading"
       title={i18n.t('booking.loading.formTitle')}
       message={i18n.t('booking.loading.preparingMessage')}
-      className="bg-white shadow-sm"
+      className="bg-white shadow-xs"
     />
   ),
   ssr: false, // Prevent hydration mismatch with form hooks
@@ -39,7 +39,7 @@ export default function BookingPage() {
                 variant="loading"
                 title={t('booking.loading.formTitle')}
                 message={t('booking.loading.stepsMessage')}
-                className="bg-white shadow-sm"
+                className="bg-white shadow-xs"
               />
             }
           >

@@ -142,7 +142,7 @@ export default function AdminStockAuditNewPage() {
               type="date"
               value={auditDate}
               onChange={e => setAuditDate(e.target.value)}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600"
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
             />
           </div>
 
@@ -260,7 +260,7 @@ export default function AdminStockAuditNewPage() {
               onChange={e => setComment(e.target.value)}
               rows={3}
               placeholder="Необов'язково..."
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 resize-none"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 resize-none"
             />
           </div>
 

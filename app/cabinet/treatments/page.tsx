@@ -200,7 +200,7 @@ export default function TreatmentsHistoryPage() {
             return (
               <li
                 key={rec.id}
-                className="bg-white rounded-2xl shadow-sm border border-dental-secondary-100 overflow-hidden transition-colors hover:border-dental-primary-200"
+                className="bg-white rounded-2xl shadow-xs border border-dental-secondary-100 overflow-hidden transition-colors hover:border-dental-primary-200"
               >
                 {/* Clickable header */}
                 <button
@@ -224,7 +224,7 @@ export default function TreatmentsHistoryPage() {
                   }}
                   aria-expanded={isExpanded}
                   aria-controls={detailsId}
-                  className="w-full text-left p-4 sm:p-5 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-dental-primary-500"
+                  className="w-full text-left p-4 sm:p-5 focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-dental-primary-500"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
                     <div className="flex items-center gap-2 text-dental-dark">
@@ -372,7 +372,7 @@ export default function TreatmentsHistoryPage() {
           <button
             onClick={handleLoadMore}
             disabled={loadingMore}
-            className="px-6 py-3 rounded-xl border border-dental-secondary-200 text-dental-dark font-medium hover:bg-dental-secondary-50 disabled:opacity-50 transition-colors flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+            className="px-6 py-3 rounded-xl border border-dental-secondary-200 text-dental-dark font-medium hover:bg-dental-secondary-50 disabled:opacity-50 transition-colors flex items-center gap-2 focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
           >
             {loadingMore && (
               <div

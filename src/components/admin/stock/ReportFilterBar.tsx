@@ -20,14 +20,14 @@ export function PeriodFilter({
         type="date"
         value={from}
         onChange={e => onFromChange(e.target.value)}
-        className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600"
+        className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
       />
       <label className="text-sm text-dental-text">До</label>
       <input
         type="date"
         value={to}
         onChange={e => onToChange(e.target.value)}
-        className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600"
+        className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
       />
     </div>
   )
@@ -52,7 +52,7 @@ export function SelectFilter({
       <select
         value={value}
         onChange={e => onChange(e.target.value)}
-        className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 bg-white"
+        className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 bg-white"
       >
         {options.map(o => (
           <option key={o.value} value={o.value}>

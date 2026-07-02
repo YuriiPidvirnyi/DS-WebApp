@@ -17,7 +17,7 @@ export function ErrorState({
 }: ErrorStateProps) {
   return (
     <div
-      className={`bg-white rounded-2xl p-10 text-center shadow-sm border border-dental-secondary-100 ${className ?? ''}`}
+      className={`bg-white rounded-2xl p-10 text-center shadow-xs border border-dental-secondary-100 ${className ?? ''}`}
     >
       <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
         <AlertTriangle className="w-8 h-8 text-red-500" />
@@ -30,7 +30,7 @@ export function ErrorState({
         <button
           type="button"
           onClick={onRetry}
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-dental-primary-600 text-white rounded-xl text-sm font-medium hover:bg-dental-primary-700 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-dental-primary-600 text-white rounded-xl text-sm font-medium hover:bg-dental-primary-700 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2"
         >
           <RefreshCw className="w-4 h-4" />
           {retryLabel}

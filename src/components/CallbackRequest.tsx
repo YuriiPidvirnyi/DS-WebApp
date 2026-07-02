@@ -78,7 +78,7 @@ export default function CallbackRequest() {
   }
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm">
+    <div className="bg-white rounded-2xl p-6 shadow-xs">
       <h3 className="text-lg font-bold text-gray-900 mb-4">
         {t('callback.title')}
       </h3>

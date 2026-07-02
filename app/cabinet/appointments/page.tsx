@@ -92,7 +92,7 @@ function Toast({
     <div
       role="alert"
       aria-live="assertive"
-      className="fixed top-4 right-4 z-[60] animate-in slide-in-from-top-2 fade-in duration-300"
+      className="fixed top-4 right-4 z-60 animate-in slide-in-from-top-2 fade-in duration-300"
     >
       <div
         className={`flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-lg border ${
@@ -110,7 +110,7 @@ function Toast({
         <button
           onClick={onClose}
           aria-label={t('common.close')}
-          className="ml-2 p-0.5 rounded hover:bg-black/5 transition-colors focus:outline-none focus:ring-2 focus:ring-current"
+          className="ml-2 p-0.5 rounded hover:bg-black/5 transition-colors focus:outline-hidden focus:ring-2 focus:ring-current"
         >
           <X className="w-4 h-4" />
         </button>
@@ -142,13 +142,13 @@ function CancelConfirmModal({
 
   return (
     <div
-      className="fixed inset-0 z-[55] flex items-center justify-center p-4"
+      className="fixed inset-0 z-55 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="cancel-modal-title"
     >
       <div
-        className="absolute inset-0 bg-dental-dark/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-dental-dark/50 backdrop-blur-xs"
         onClick={onClose}
         role="presentation"
         aria-hidden="true"
@@ -185,14 +185,14 @@ function CancelConfirmModal({
             <button
               onClick={onClose}
               disabled={cancelling}
-              className="flex-1 py-3 rounded-xl border border-dental-secondary-200 text-dental-dark font-medium hover:bg-dental-secondary-50 transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+              className="flex-1 py-3 rounded-xl border border-dental-secondary-200 text-dental-dark font-medium hover:bg-dental-secondary-50 transition-colors disabled:opacity-50 focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
             >
               {t('cabinet.appointments.cancelModal.back')}
             </button>
             <button
               onClick={onConfirm}
               disabled={cancelling}
-              className="flex-1 py-3 rounded-xl bg-red-500 text-white font-medium hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-red-300"
+              className="flex-1 py-3 rounded-xl bg-red-500 text-white font-medium hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 focus:outline-hidden focus:ring-2 focus:ring-red-300"
             >
               {cancelling ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -341,13 +341,13 @@ function RescheduleModal({
 
   return (
     <div
-      className="fixed inset-0 z-[55] flex items-center justify-center p-4"
+      className="fixed inset-0 z-55 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="reschedule-modal-title"
     >
       <div
-        className="absolute inset-0 bg-dental-dark/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-dental-dark/50 backdrop-blur-xs"
         onClick={onClose}
         role="presentation"
         aria-hidden="true"
@@ -364,7 +364,7 @@ function RescheduleModal({
           <button
             onClick={onClose}
             aria-label={t('common.close')}
-            className="p-1.5 rounded-lg text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+            className="p-1.5 rounded-lg text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
           >
             <X className="w-5 h-5" />
           </button>
@@ -398,7 +398,7 @@ function RescheduleModal({
                 }
                 disabled={!canGoPrev}
                 aria-label={t('common.previous')}
-                className="p-1.5 rounded-lg hover:bg-dental-secondary-50 disabled:opacity-30 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+                className="p-1.5 rounded-lg hover:bg-dental-secondary-50 disabled:opacity-30 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
               >
                 <ChevronLeft className="w-4 h-4 text-dental-muted" />
               </button>
@@ -419,7 +419,7 @@ function RescheduleModal({
                   })
                 }
                 aria-label={t('common.next')}
-                className="p-1.5 rounded-lg hover:bg-dental-secondary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+                className="p-1.5 rounded-lg hover:bg-dental-secondary-50 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
               >
                 <ChevronRight className="w-4 h-4 text-dental-muted" />
               </button>
@@ -495,7 +495,7 @@ function RescheduleModal({
                 </p>
                 <button
                   onClick={() => selectedDate && fetchSlots(selectedDate)}
-                  className="text-sm font-medium text-dental-primary-600 hover:text-dental-primary-700 underline focus:outline-none focus:ring-2 focus:ring-dental-primary-500 rounded"
+                  className="text-sm font-medium text-dental-primary-600 hover:text-dental-primary-700 underline focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500 rounded"
                 >
                   {t('asyncState.actions.retry')}
                 </button>
@@ -534,14 +534,14 @@ function RescheduleModal({
           <div className="flex gap-3 pt-2">
             <button
               onClick={onClose}
-              className="flex-1 py-3 rounded-xl border border-dental-secondary-200 text-dental-dark font-medium hover:bg-dental-secondary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+              className="flex-1 py-3 rounded-xl border border-dental-secondary-200 text-dental-dark font-medium hover:bg-dental-secondary-50 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
             >
               {t('common.cancel')}
             </button>
             <button
               onClick={handleSubmit}
               disabled={!selectedDate || !selectedTime || submitting}
-              className="flex-1 py-3 rounded-xl bg-dental-primary-600 text-white font-medium hover:bg-dental-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-dental-primary-700"
+              className="flex-1 py-3 rounded-xl bg-dental-primary-600 text-white font-medium hover:bg-dental-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 focus:outline-hidden focus:ring-2 focus:ring-dental-primary-700"
             >
               {submitting ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -808,7 +808,7 @@ export default function AppointmentsPage() {
 
   if (fetchError && appointments.length === 0) {
     return (
-      <div className="bg-white rounded-2xl p-8 sm:p-10 text-center shadow-sm border border-red-100">
+      <div className="bg-white rounded-2xl p-8 sm:p-10 text-center shadow-xs border border-red-100">
         <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
           <AlertTriangle className="w-8 h-8 text-red-500" />
         </div>
@@ -820,7 +820,7 @@ export default function AppointmentsPage() {
         </p>
         <button
           onClick={() => window.location.reload()}
-          className="inline-flex items-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-700"
+          className="inline-flex items-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-700"
         >
           {t('cabinet.error.retry')}
         </button>
@@ -846,7 +846,7 @@ export default function AppointmentsPage() {
         </h1>
         <Link
           href="/booking"
-          className="inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-700"
+          className="inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-700"
         >
           <Plus className="w-4 h-4" />
           {t('cabinet.appointments.newAppointment')}
@@ -870,7 +870,7 @@ export default function AppointmentsPage() {
               role="tab"
               aria-selected={filter === f}
               onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-dental-primary-500 ${
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors whitespace-nowrap focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500 ${
                 filter === f
                   ? 'bg-dental-primary-100 text-dental-primary-600'
                   : 'bg-white text-dental-muted hover:bg-dental-secondary-50 border border-dental-secondary-100'
@@ -916,14 +916,14 @@ export default function AppointmentsPage() {
             return (
               <div
                 key={apt.id}
-                className={`bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-dental-secondary-100 transition-colors hover:border-dental-primary-200 ${
+                className={`bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-dental-secondary-100 transition-colors hover:border-dental-primary-200 ${
                   apt.status === 'cancelled' ? 'opacity-60' : ''
                 }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
                   <div className="flex gap-3 sm:gap-4">
                     {/* Date block with day-of-week */}
-                    <div className="w-14 h-16 sm:w-16 sm:h-[4.5rem] bg-dental-primary-50 rounded-xl flex flex-col items-center justify-center shrink-0">
+                    <div className="w-14 h-16 sm:w-16 sm:h-18 bg-dental-primary-50 rounded-xl flex flex-col items-center justify-center shrink-0">
                       <span className="text-[10px] text-dental-primary-500 font-medium uppercase leading-none">
                         {getDayOfWeek(apt.appointment_date)}
                       </span>
@@ -973,14 +973,14 @@ export default function AppointmentsPage() {
                   </div>
 
                   {/* Status + actions */}
-                  <div className="flex items-center gap-2 sm:flex-col sm:items-end sm:gap-2 ml-[calc(3.5rem+0.75rem)] sm:ml-0">
+                  <div className="flex items-center gap-2 sm:flex-col sm:items-end sm:gap-2 ml-17 sm:ml-0">
                     {getStatusBadge(apt.status)}
                     {canModify && (
                       <div className="flex items-center gap-1.5 sm:gap-2">
                         <button
                           onClick={() => handleAddToCalendar(apt)}
                           aria-label={t('booking.successPage.addToCalendar')}
-                          className="flex items-center gap-1 text-xs px-2 py-1 sm:px-0 sm:py-0 rounded-lg sm:rounded-none bg-dental-secondary-50 sm:bg-transparent text-dental-muted hover:text-dental-dark transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+                          className="flex items-center gap-1 text-xs px-2 py-1 sm:px-0 sm:py-0 rounded-lg sm:rounded-none bg-dental-secondary-50 sm:bg-transparent text-dental-muted hover:text-dental-dark transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
                         >
                           <CalendarPlus className="w-3.5 h-3.5" />
                         </button>
@@ -995,7 +995,7 @@ export default function AppointmentsPage() {
                           aria-label={t(
                             'cabinet.appointments.reschedule.button'
                           )}
-                          className="flex items-center gap-1 text-xs px-2 py-1 sm:px-0 sm:py-0 rounded-lg sm:rounded-none bg-dental-primary-50 sm:bg-transparent text-dental-primary-600 hover:text-dental-primary-700 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+                          className="flex items-center gap-1 text-xs px-2 py-1 sm:px-0 sm:py-0 rounded-lg sm:rounded-none bg-dental-primary-50 sm:bg-transparent text-dental-primary-600 hover:text-dental-primary-700 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
                         >
                           <CalendarClock className="w-3.5 h-3.5" />
                           <span className="hidden sm:inline">
@@ -1012,7 +1012,7 @@ export default function AppointmentsPage() {
                           onClick={() => setCancelApt(apt)}
                           disabled={cancellingId === apt.id}
                           aria-label={t('cabinet.appointments.cancel')}
-                          className="flex items-center gap-1 text-xs px-2 py-1 sm:px-0 sm:py-0 rounded-lg sm:rounded-none bg-red-50 sm:bg-transparent text-red-500 hover:text-red-600 disabled:opacity-50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-300"
+                          className="flex items-center gap-1 text-xs px-2 py-1 sm:px-0 sm:py-0 rounded-lg sm:rounded-none bg-red-50 sm:bg-transparent text-red-500 hover:text-red-600 disabled:opacity-50 transition-colors focus:outline-hidden focus:ring-2 focus:ring-red-300"
                         >
                           <X className="w-3.5 h-3.5" />
                           <span className="hidden sm:inline">
@@ -1025,7 +1025,7 @@ export default function AppointmentsPage() {
                 </div>
 
                 {apt.notes && (
-                  <div className="mt-3 pt-3 border-t border-dental-secondary-100 ml-[calc(3.5rem+0.75rem)] sm:ml-0">
+                  <div className="mt-3 pt-3 border-t border-dental-secondary-100 ml-17 sm:ml-0">
                     <p className="text-xs text-dental-muted">
                       <span className="font-medium text-dental-dark">
                         {t('cabinet.appointments.notes')}:
@@ -1046,7 +1046,7 @@ export default function AppointmentsPage() {
           <button
             onClick={handleLoadMore}
             disabled={loadingMore}
-            className="px-6 py-3 rounded-xl border border-dental-secondary-200 text-dental-dark font-medium hover:bg-dental-secondary-50 disabled:opacity-50 transition-colors flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+            className="px-6 py-3 rounded-xl border border-dental-secondary-200 text-dental-dark font-medium hover:bg-dental-secondary-50 disabled:opacity-50 transition-colors flex items-center gap-2 focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
           >
             {loadingMore && (
               <div

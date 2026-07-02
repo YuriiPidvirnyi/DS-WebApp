@@ -201,7 +201,7 @@ const ActionCart = forwardRef<ActionCartHandle, Props>(function ActionCart(
                     <select
                       value={toWarehouse}
                       onChange={e => setToWarehouse(e.target.value)}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
                     >
                       <option value="">— склад призначення —</option>
                       {warehouses.map(w => (
@@ -232,7 +232,7 @@ const ActionCart = forwardRef<ActionCartHandle, Props>(function ActionCart(
                             Number(e.target.value)
                           )
                         }
-                        className="w-16 rounded border border-gray-300 px-2 py-1 text-sm text-right focus:outline-none focus:ring-1 focus:ring-dental-primary-600"
+                        className="w-16 rounded border border-gray-300 px-2 py-1 text-sm text-right focus:outline-hidden focus:ring-1 focus:ring-dental-primary-600"
                       />
                       <span className="text-xs text-dental-text w-8">
                         {balance.material.unit}

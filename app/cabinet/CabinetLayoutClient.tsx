@@ -202,7 +202,7 @@ export default function CabinetLayoutClient({
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-dental-dark/50 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-dental-dark/50 backdrop-blur-xs lg:hidden"
           onClick={closeSidebar}
           role="presentation"
           aria-hidden="true"
@@ -233,7 +233,7 @@ export default function CabinetLayoutClient({
             onClick={closeSidebar}
             tabIndex={sidebarOpen ? 0 : -1}
             aria-label={t('common.close')}
-            className="p-2 rounded-lg text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+            className="p-2 rounded-lg text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
           >
             <X className="w-5 h-5" />
           </button>
@@ -265,7 +265,7 @@ export default function CabinetLayoutClient({
             href="/booking"
             onClick={closeSidebar}
             tabIndex={sidebarOpen ? 0 : -1}
-            className="flex items-center justify-center gap-2 w-full bg-dental-primary-600 hover:bg-dental-primary-700 text-white py-3 rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
+            className="flex items-center justify-center gap-2 w-full bg-dental-primary-600 hover:bg-dental-primary-700 text-white py-3 rounded-xl font-medium transition-colors focus:outline-hidden focus:ring-2 focus:ring-white/50"
           >
             <Plus className="w-4 h-4" />
             {t('cabinet.bookAppointment')}
@@ -274,7 +274,7 @@ export default function CabinetLayoutClient({
             href="/"
             onClick={closeSidebar}
             tabIndex={sidebarOpen ? 0 : -1}
-            className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+            className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 transition-colors text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
           >
             <ArrowLeft className="w-4 h-4" />
             {t('cabinet.sidebar.backToSite')}
@@ -282,7 +282,7 @@ export default function CabinetLayoutClient({
           <button
             onClick={handleLogout}
             tabIndex={sidebarOpen ? 0 : -1}
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-red-600 hover:bg-red-50 transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-red-300"
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-red-600 hover:bg-red-50 transition-colors text-sm focus:outline-hidden focus:ring-2 focus:ring-red-300"
           >
             <LogOut className="w-4 h-4" />
             {t('cabinet.logout')}
@@ -300,7 +300,7 @@ export default function CabinetLayoutClient({
           <div className="flex items-center h-16 px-6 border-b border-dental-secondary-100">
             <Link
               href="/"
-              className="focus:outline-none focus:ring-2 focus:ring-dental-primary-500 rounded-lg"
+              className="focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500 rounded-lg"
             >
               <Logo size="sm" />
             </Link>
@@ -330,21 +330,21 @@ export default function CabinetLayoutClient({
           <div className="p-4 border-t border-dental-secondary-100 space-y-1.5">
             <Link
               href="/booking"
-              className="flex items-center justify-center gap-2 w-full bg-dental-primary-600 hover:bg-dental-primary-700 text-white py-3 rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-700"
+              className="flex items-center justify-center gap-2 w-full bg-dental-primary-600 hover:bg-dental-primary-700 text-white py-3 rounded-xl font-medium transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-700"
             >
               <Plus className="w-4 h-4" />
               {t('cabinet.bookAppointment')}
             </Link>
             <Link
               href="/"
-              className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+              className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 transition-colors text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
             >
               <ArrowLeft className="w-4 h-4" />
               {t('cabinet.sidebar.backToSite')}
             </Link>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-red-600 hover:bg-red-50 transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-red-300"
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-red-600 hover:bg-red-50 transition-colors text-sm focus:outline-hidden focus:ring-2 focus:ring-red-300"
             >
               <LogOut className="w-4 h-4" />
               {t('cabinet.logout')}
@@ -356,14 +356,14 @@ export default function CabinetLayoutClient({
       {/* Main content */}
       <div className="lg:pl-72">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 flex items-center h-16 px-4 bg-white/95 backdrop-blur-sm border-b border-dental-secondary-100 lg:px-8">
+        <header className="sticky top-0 z-30 flex items-center h-16 px-4 bg-white/95 backdrop-blur-xs border-b border-dental-secondary-100 lg:px-8">
           <button
             ref={triggerRef}
             onClick={() => setSidebarOpen(true)}
             aria-label={t('cabinet.sidebar.openMenu')}
             aria-expanded={sidebarOpen}
             aria-controls="mobile-sidebar"
-            className="p-2 -ml-2 rounded-lg text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 lg:hidden transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+            className="p-2 -ml-2 rounded-lg text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 lg:hidden transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
           >
             <Menu className="w-6 h-6" />
           </button>
@@ -377,14 +377,14 @@ export default function CabinetLayoutClient({
             <div className="flex items-center gap-3">
               <Link
                 href="/booking"
-                className="hidden sm:flex items-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-700"
+                className="hidden sm:flex items-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-700"
               >
                 <Plus className="w-4 h-4" />
                 {t('cabinet.bookAppointment')}
               </Link>
               <Link
                 href="/cabinet/profile"
-                className="lg:hidden rounded-full focus:outline-none focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2"
+                className="lg:hidden rounded-full focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2"
                 aria-label={t('cabinet.sidebar.profile')}
               >
                 <div className="w-8 h-8 rounded-full bg-dental-primary-600 flex items-center justify-center text-white font-semibold text-xs">

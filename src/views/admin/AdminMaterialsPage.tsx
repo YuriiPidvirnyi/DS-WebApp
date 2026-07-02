@@ -444,7 +444,7 @@ export default function AdminMaterialsPage() {
         </div>
       </div>
       {error ? <ErrorState title={error} onRetry={() => void load()} /> : null}
-      <div className="flex flex-col gap-3 rounded-xl border border-dental-secondary-200 bg-white p-4 shadow-sm lg:flex-row lg:flex-wrap lg:items-end">
+      <div className="flex flex-col gap-3 rounded-xl border border-dental-secondary-200 bg-white p-4 shadow-xs lg:flex-row lg:flex-wrap lg:items-end">
         <div className="min-w-[200px] flex-1">
           <label className="mb-1 block text-xs font-medium text-dental-text">
             {t('admin.materialsPage.searchByName')}
@@ -499,7 +499,7 @@ export default function AdminMaterialsPage() {
           </Select>
         </div>
       </div>
-      <div className="overflow-x-auto rounded-xl border border-dental-secondary-200 bg-white shadow-sm">
+      <div className="overflow-x-auto rounded-xl border border-dental-secondary-200 bg-white shadow-xs">
         {loading ? (
           <p className="p-8 text-center text-dental-text">
             {t('admin.materialsPage.loading')}
@@ -654,7 +654,7 @@ export default function AdminMaterialsPage() {
                   <button
                     type="button"
                     onClick={() => void removeImage()}
-                    className="absolute -right-2 -top-2 rounded-full bg-red-500 p-0.5 text-white shadow hover:bg-red-600"
+                    className="absolute -right-2 -top-2 rounded-full bg-red-500 p-0.5 text-white shadow-sm hover:bg-red-600"
                     aria-label={t('common.delete')}
                   >
                     <X className="h-3.5 w-3.5" />

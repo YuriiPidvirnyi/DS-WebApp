@@ -151,7 +151,7 @@ function RoleBadge({ role }: { role: AdminRole }) {
 }
 
 const footerLinkBase =
-  'flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors focus:outline-none focus:ring-2'
+  'flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors focus:outline-hidden focus:ring-2'
 
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation()
@@ -317,7 +317,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-dental-dark/50 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-dental-dark/50 backdrop-blur-xs lg:hidden"
           onClick={closeSidebar}
           role="presentation"
           aria-hidden="true"
@@ -340,7 +340,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
             href="/admin"
             onClick={closeSidebar}
             tabIndex={sidebarOpen ? 0 : -1}
-            className="focus:outline-none focus:ring-2 focus:ring-dental-primary-500 rounded-lg"
+            className="focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500 rounded-lg"
           >
             <Logo size="sm" />
           </Link>
@@ -349,7 +349,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
             onClick={closeSidebar}
             tabIndex={sidebarOpen ? 0 : -1}
             aria-label={t('common.close')}
-            className="p-2 rounded-lg text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+            className="p-2 rounded-lg text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
           >
             <X className="w-5 h-5" />
           </button>
@@ -370,7 +370,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
           <div className="flex items-center h-16 px-6 border-b border-dental-secondary-100">
             <Link
               href="/admin"
-              className="focus:outline-none focus:ring-2 focus:ring-dental-primary-500 rounded-lg"
+              className="focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500 rounded-lg"
             >
               <Logo size="sm" />
             </Link>
@@ -384,14 +384,14 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       {/* Main content */}
       <div className="lg:pl-72 min-w-0 overflow-x-hidden">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 flex items-center h-16 px-4 bg-white/95 backdrop-blur-sm border-b border-dental-secondary-100 lg:px-8">
+        <header className="sticky top-0 z-30 flex items-center h-16 px-4 bg-white/95 backdrop-blur-xs border-b border-dental-secondary-100 lg:px-8">
           <button
             ref={triggerRef}
             onClick={() => setSidebarOpen(true)}
             aria-label={t('admin.layout.openSidebar')}
             aria-expanded={sidebarOpen}
             aria-controls="mobile-sidebar"
-            className="p-2 -ml-2 rounded-lg text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 lg:hidden transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+            className="p-2 -ml-2 rounded-lg text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-50 lg:hidden transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
           >
             <Menu className="w-6 h-6" />
           </button>

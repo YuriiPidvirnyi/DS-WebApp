@@ -29,7 +29,7 @@ const isBrowser = typeof window !== 'undefined'
 // Use the global i18next instance instead of createInstance().
 // createInstance() + async init() causes a race condition where React hydration
 // runs before init() resolves, resulting in raw translation keys on the client.
-// The global instance with initImmediate:false initializes synchronously.
+// The global instance with initAsync:false initializes synchronously.
 i18next.use(initReactI18next).init({
   resources,
   lng: 'uk',
@@ -41,8 +41,9 @@ i18next.use(initReactI18next).init({
   },
 
   // Critical: make init synchronous so translations are available
-  // before React hydrates the component tree
-  initImmediate: false,
+  // before React hydrates the component tree (i18next 26 renamed the
+  // former `initImmediate: false` to `initAsync: false`).
+  initAsync: false,
 
   defaultNS: 'translation',
 

@@ -292,7 +292,7 @@ docker run -p 3000:3000 dental-story
 | Next.js 16     | Framework with App Router    |
 | React 19       | UI library                   |
 | TypeScript     | Type safety                  |
-| Tailwind CSS 3 | Styling with design tokens   |
+| Tailwind CSS 4 | Styling with design tokens   |
 | Supabase       | Backend, database, auth, RLS |
 | Upstash Redis  | Rate limiting, caching       |
 | Recharts       | Data visualization           |

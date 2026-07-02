@@ -132,7 +132,7 @@ export default function AdminStockPermissionsPage() {
           <select
             value={selectedWarehouse}
             onChange={e => setSelectedWarehouse(e.target.value)}
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600"
+            className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
           >
             <option value="">Всі склади</option>
             {warehouses.map(wh => (

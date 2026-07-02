@@ -236,7 +236,7 @@ function WarehouseFormModal({
               value={nameUk}
               onChange={e => setNameUk(e.target.value)}
               required
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
             />
           </div>
           <div>
@@ -246,7 +246,7 @@ function WarehouseFormModal({
             <select
               value={kind}
               onChange={e => setKind(e.target.value as WarehouseKind)}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
             >
               {VALID_KINDS.map(k => (
                 <option key={k} value={k}>
@@ -263,7 +263,7 @@ function WarehouseFormModal({
               type="number"
               value={sortOrder}
               onChange={e => setSortOrder(Number(e.target.value))}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
             />
           </div>
           <div>
@@ -274,7 +274,7 @@ function WarehouseFormModal({
               value={comment}
               onChange={e => setComment(e.target.value)}
               rows={2}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 resize-none"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 resize-none"
             />
           </div>
           {err && <p className="text-sm text-red-600">{err}</p>}

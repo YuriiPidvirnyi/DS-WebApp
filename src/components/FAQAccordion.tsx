@@ -28,7 +28,7 @@ export default function FAQAccordion({
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {categories.map((cat, i) => (
-            <div key={i} className="bg-white rounded-xl shadow-sm">
+            <div key={i} className="bg-white rounded-xl shadow-xs">
               <h3 className="text-lg font-semibold text-gray-900 px-5 pt-5">
                 {cat.title}
               </h3>
@@ -44,7 +44,7 @@ export default function FAQAccordion({
                       <button
                         id={buttonId}
                         type="button"
-                        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-dental-primary-500 focus-visible:ring-inset"
+                        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-dental-primary-500 focus-visible:ring-inset"
                         aria-expanded={isOpen}
                         aria-controls={panelId}
                         onClick={() => toggle(itemIndex)}

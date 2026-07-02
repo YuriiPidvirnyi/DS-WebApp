@@ -110,7 +110,7 @@ export default function OnboardingTour({ role }: OnboardingTourProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-dental-dark/60 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-dental-dark/60 backdrop-blur-xs p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="onboarding-title"
@@ -132,7 +132,7 @@ export default function OnboardingTour({ role }: OnboardingTourProps) {
           <button
             onClick={dismiss}
             aria-label={t('admin.onboarding.skip')}
-            className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
+            className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-white/20 transition-colors focus:outline-hidden focus:ring-2 focus:ring-white/50"
           >
             <X className="w-4 h-4" />
           </button>
@@ -148,7 +148,7 @@ export default function OnboardingTour({ role }: OnboardingTourProps) {
             <Link
               href={current.actionHref}
               onClick={dismiss}
-              className="inline-flex items-center gap-1.5 mt-4 text-sm font-medium text-dental-primary-600 hover:text-dental-primary-700 transition-colors focus:outline-none focus:underline"
+              className="inline-flex items-center gap-1.5 mt-4 text-sm font-medium text-dental-primary-600 hover:text-dental-primary-700 transition-colors focus:outline-hidden focus:underline"
             >
               {t(current.actionKey)}
               <ArrowRight className="w-3.5 h-3.5" />
@@ -176,13 +176,13 @@ export default function OnboardingTour({ role }: OnboardingTourProps) {
         <div className="px-6 pb-6 flex items-center justify-between">
           <button
             onClick={dismiss}
-            className="text-sm text-dental-muted hover:text-dental-dark transition-colors focus:outline-none focus:underline"
+            className="text-sm text-dental-muted hover:text-dental-dark transition-colors focus:outline-hidden focus:underline"
           >
             {t('admin.onboarding.skip')}
           </button>
           <button
             onClick={next}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-dental-primary-600 hover:bg-dental-primary-700 text-white text-sm font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-dental-primary-600 hover:bg-dental-primary-700 text-white text-sm font-semibold rounded-xl transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2"
           >
             {step < STEPS.length - 1 ? (
               <>

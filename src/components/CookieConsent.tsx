@@ -52,7 +52,7 @@ export default function CookieConsent() {
       <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl border border-dental-secondary-200 p-6 flex flex-col md:flex-row items-start md:items-center gap-4">
         <div className="flex items-start gap-3 flex-1">
           <Cookie
-            className="w-6 h-6 text-dental-primary-600 flex-shrink-0 mt-0.5"
+            className="w-6 h-6 text-dental-primary-600 shrink-0 mt-0.5"
             aria-hidden="true"
           />
           <div>
@@ -68,7 +68,7 @@ export default function CookieConsent() {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3 flex-shrink-0">
+        <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={handleDecline}
             className="px-4 py-2 text-sm text-dental-muted hover:text-dental-dark border border-dental-secondary-300 rounded-lg hover:bg-dental-secondary-50 transition-colors"

@@ -262,7 +262,7 @@ export default function AdminDashboard() {
     badge?: string
   }) => {
     const content = (
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-dental-secondary-200 hover:shadow-md transition-shadow">
+      <div className="bg-white rounded-xl shadow-xs p-6 border border-dental-secondary-200 hover:shadow-md transition-shadow">
         <div className="flex items-center justify-between">
           <div className={`p-3 rounded-lg ${iconBg}`}>
             <Icon className="w-6 h-6 text-white" />
@@ -326,7 +326,7 @@ export default function AdminDashboard() {
           <Link
             href="/admin/settings"
             aria-label={t('admin.sidebar.settings')}
-            className="p-2 rounded-lg text-dental-muted hover:text-dental-primary-600 hover:bg-dental-secondary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500"
+            className="p-2 rounded-lg text-dental-muted hover:text-dental-primary-600 hover:bg-dental-secondary-50 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
           >
             <Settings className="w-5 h-5" />
           </Link>
@@ -398,7 +398,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Today's Appointments */}
         <div
-          className={`${canSeeContacts ? 'lg:col-span-2' : 'lg:col-span-3'} bg-white rounded-xl shadow-sm p-6 border border-dental-secondary-200`}
+          className={`${canSeeContacts ? 'lg:col-span-2' : 'lg:col-span-3'} bg-white rounded-xl shadow-xs p-6 border border-dental-secondary-200`}
         >
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-dental-dark">
@@ -474,7 +474,7 @@ export default function AdminDashboard() {
 
         {/* Services Distribution (hidden for doctor-scoped dashboards) */}
         {canSeeContacts && (
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-dental-secondary-200">
+          <div className="bg-white rounded-xl shadow-xs p-6 border border-dental-secondary-200">
             <h2 className="text-lg font-semibold text-dental-dark mb-4">
               {t('admin.dashboard.serviceCategories')}
             </h2>
