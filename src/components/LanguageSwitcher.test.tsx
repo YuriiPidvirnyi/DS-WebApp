@@ -25,8 +25,13 @@ vi.mock('@/locales/uk', () => ({
   },
 }))
 
-vi.mock('@/i18n/config', () => ({
-  setLanguage: vi.fn(),
+vi.mock('@/i18n/runtime', () => ({
+  switchLanguage: vi.fn(),
+}))
+
+vi.mock('next/navigation', () => ({
+  usePathname: () => '/',
+  useRouter: () => ({ push: vi.fn() }),
 }))
 
 vi.mock('lucide-react', () => ({

@@ -46,6 +46,18 @@ function buildCSP(nonce: string): string {
  * Applies security headers to all responses and runs Supabase auth session checks.
  */
 export async function proxy(request: NextRequest) {
+  // Expose the URL locale (/en, /pl prefix) to server components via request
+  // header. updateSession() builds its response with NextResponse.next({ request }),
+  // which propagates this mutation to headers() in layouts.
+  const { pathname } = request.nextUrl
+  const pathLocale =
+    pathname === '/en' || pathname.startsWith('/en/')
+      ? 'en'
+      : pathname === '/pl' || pathname.startsWith('/pl/')
+        ? 'pl'
+        : 'uk'
+  request.headers.set('x-locale', pathLocale)
+
   const response = await updateSession(request)
 
   const nonce = generateNonce()

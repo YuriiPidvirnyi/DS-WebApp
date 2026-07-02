@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import About from '@/views/About'
 import { generateBreadcrumbSchema } from '@/utils/seo'
 import uk from '@/locales/uk'
+import { hreflangAlternates } from '@/utils/locale-alternates'
 
 const aboutMeta = uk.routeMeta.about
 
@@ -9,7 +10,10 @@ export const metadata: Metadata = {
   title: aboutMeta.title,
   description: aboutMeta.description,
   keywords: aboutMeta.keywords,
-  alternates: { canonical: '/about' },
+  alternates: {
+    canonical: '/about',
+    languages: hreflangAlternates('/about'),
+  },
   openGraph: {
     title: aboutMeta.openGraphTitle,
     description: aboutMeta.openGraphDescription,

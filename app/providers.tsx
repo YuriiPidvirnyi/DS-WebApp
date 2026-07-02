@@ -7,7 +7,7 @@ import ErrorBoundary from '@/components/ErrorBoundary'
 import { AccessibilityProvider } from '@/components/AccessibilityProvider'
 import ToastProvider from '@/components/providers/ToastProvider'
 import LiveRegion from '@/components/ui/LiveRegion'
-import I18nProvider from './i18n-provider'
+import I18nProvider, { type SupportedLocale } from './i18n-provider'
 import useAnalytics from '@/hooks/useAnalytics'
 import { useReminders } from '@/hooks/useReminders'
 
@@ -36,12 +36,18 @@ function AppInitializer() {
 }
 
 interface ClientProvidersProps {
+  locale?: SupportedLocale
+  localeBundle?: Record<string, unknown> | null
   children: ReactNode
 }
 
-export default function ClientProviders({ children }: ClientProvidersProps) {
+export default function ClientProviders({
+  locale = 'uk',
+  localeBundle = null,
+  children,
+}: ClientProvidersProps) {
   return (
-    <I18nProvider>
+    <I18nProvider locale={locale} localeBundle={localeBundle}>
       <ErrorBoundary>
         <AccessibilityProvider>
           <ToastProvider />
