@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { createMonobankInvoice, isMonobankConfigured } from '@/lib/monobank'
+import { createClient as createUserClient } from '@/lib/supabase/server'
+import {
+  createMonobankInvoice,
+  isMonobankConfigured,
+  calculateBasketAmount,
+  type BasketOrder,
+} from '@/lib/monobank'
 import {
   checkRateLimit,
   rateLimitResponse,
@@ -38,6 +44,8 @@ export async function POST(request: NextRequest) {
     appointmentId?: string
     amountKopecks?: number
     description?: string
+    paymentType?: 'debit' | 'hold'
+    basket?: BasketOrder
   }
 
   try {
@@ -49,14 +57,42 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  if (!body.appointmentId || !body.amountKopecks || body.amountKopecks <= 0) {
+  const { appointmentId, amountKopecks, description, paymentType, basket } =
+    body
+  const resolvedPaymentType = paymentType === 'hold' ? 'hold' : 'debit'
+
+  // When basket is provided, derive the amount from it (respects order-level discounts)
+  const resolvedAmount = basket ? calculateBasketAmount(basket) : amountKopecks
+
+  if (!appointmentId || (!amountKopecks && !basket)) {
     return NextResponse.json(
-      { success: false, error: 'Необхідно вказати ID запису та суму' },
+      {
+        success: false,
+        error: 'Необхідно вказати ID запису та суму або basket',
+      },
+      { status: 400 }
+    )
+  }
+  if (!resolvedAmount || resolvedAmount <= 0) {
+    return NextResponse.json(
+      { success: false, error: 'Сума платежу має бути більше 0' },
       { status: 400 }
     )
   }
 
-  const { appointmentId, amountKopecks, description } = body
+  // Try to get the authenticated user for card tokenization
+  let authenticatedUserId: string | null = null
+  try {
+    const userClient = await createUserClient()
+    if (userClient) {
+      const {
+        data: { user },
+      } = await userClient.auth.getUser()
+      authenticatedUserId = user?.id ?? null
+    }
+  } catch {
+    // Non-fatal — booking can proceed without card saving
+  }
 
   const supabase = getServiceClient()
   if (!supabase) {
@@ -96,21 +132,27 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create Monobank invoice
+    // Create Monobank invoice — save card when user is authenticated
     const result = await createMonobankInvoice({
       appointmentId,
-      amountKopecks,
+      amountKopecks: resolvedAmount!,
       description: description || 'Оплата стоматологічних послуг - DentalStory',
       redirectUrl: `${SITE_URL}/booking/payment-result`,
       webHookUrl: `${SITE_URL}/api/payments/monobank-webhook`,
+      paymentType: resolvedPaymentType,
+      ...(basket ? { basket } : {}),
+      ...(authenticatedUserId
+        ? { saveCardData: { saveCard: true, walletId: authenticatedUserId } }
+        : {}),
     })
 
     // Persist payment record
     const { error: insertError } = await supabase.from('payments').insert({
       appointment_id: appointmentId,
       invoice_id: result.invoiceId,
-      amount_kopecks: amountKopecks,
+      amount_kopecks: resolvedAmount,
       payment_mode: 'full',
+      payment_type: resolvedPaymentType,
       status: 'created',
     })
 

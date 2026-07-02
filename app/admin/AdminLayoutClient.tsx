@@ -26,6 +26,7 @@ import {
   ShieldCheck,
   DatabaseZap,
   Activity,
+  Boxes,
 } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
 import { AdminAuthProvider } from '@/contexts/AdminAuthContext'
@@ -35,6 +36,7 @@ import {
   ROLE_BADGE_CLASSES,
   type AdminRole,
 } from '@/lib/permissions'
+import { isInventoryV2EnabledClient } from '@/lib/feature-flags'
 
 interface NavItem {
   nameKey: string
@@ -98,6 +100,15 @@ const ALL_NAV_ITEMS: NavItem[] = [
     href: '/admin/orders',
     icon: <ShoppingCart className="w-5 h-5" />,
   },
+  ...(isInventoryV2EnabledClient()
+    ? [
+        {
+          nameKey: 'admin.sidebar.stock',
+          href: '/admin/stock',
+          icon: <Boxes className="w-5 h-5" />,
+        },
+      ]
+    : []),
   {
     nameKey: 'admin.sidebar.analytics',
     href: '/admin/analytics',

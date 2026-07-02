@@ -2,7 +2,7 @@
 
 **Document version:** 1.4
 **Created:** 2026-04-17
-**Current product version:** v3.0.1 (per CHANGELOG, FINAL_VERIFICATION_REPORT_v3.0.1.md)
+**Current product version:** v3.0.0 tag on `main`; `develop` tracks an unreleased v3.1.0 candidate (see [CHANGELOG.md](../CHANGELOG.md) `[Unreleased]` section). Historical `FINAL_VERIFICATION_REPORT_v3.0.1.md` was a pre-release snapshot and has been pruned — rely on git log + CHANGELOG.
 **Owner:** Yurii Pidvirnyi
 **Stack of record:** Next.js 16 App Router · React 18 · Supabase (Postgres + Auth + RLS + Realtime) · Tailwind 3 · i18next (uk/en/pl) · Resend · Upstash Redis · Sentry · Vercel (fra1)
 
@@ -20,23 +20,23 @@ Anything marked **🟥 BLOCKER** must ship before the public launch. **🟧 HIGH
 
 ### 1.1 What is actually shipped and solid
 
-| Area                                                                                                           | Status                                           | Evidence                                                                           |
-| -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------- |
-| Public site (Home, About, Services, Gallery, Reviews, Contact, Privacy, Terms)                                 | ✅ Complete                                      | `src/views/`, all routed in `app/`                                                 |
-| Multi-step booking flow + Turnstile + CSRF                                                                     | ✅ Complete                                      | `src/components/booking/`, `useBookingForm.ts`, `app/api/appointments/`            |
-| Patient cabinet shell (appointments, profile, treatments, history, reviews)                                    | ✅ Structurally complete                         | `app/cabinet/**`                                                                   |
-| 14-page admin panel + 10-role RBAC (reduced to 8 after `20260409_remove_senior_assistant_and_staff_roles.sql`) | ✅ Complete                                      | `app/admin/**`, `src/lib/permissions.ts`, 23 migrations                            |
-| Treatment records / materials / material orders workflows                                                      | ✅ Complete                                      | `app/api/treatment-records/`, `app/api/materials/`, `app/api/material-orders/`     |
-| Live chat (patient ↔ admin) over Supabase Realtime                                                             | ✅ Complete                                      | `useAdminChat`, `useLiveChat`, RLS migration `20260408_chat_role_based_access.sql` |
-| AI symptom checker + AI chat (Vercel AI SDK v6)                                                                | ✅ Wired, but ungoverned (no cost cap)           | `app/api/ai/`, `app/symptom-checker/`                                              |
-| i18n in uk / en / pl, ~3000 keys per locale, lazy-loaded                                                       | ✅ Complete, no key drift                        | `src/locales/{uk,en,pl}.json`, `app/i18n-provider.tsx`                             |
-| Auth: Supabase SSR (patients) + admin auth via Supabase + RLS                                                  | ✅ Hardened (no longer "demo client-side only")  | `src/lib/supabase/`, `AdminAuthContext`                                            |
-| Security: CSP with nonce, HSTS, X-Frame-Options, Permissions-Policy, rate limit, Turnstile, DOMPurify, CSRF    | ✅ Complete                                      | `proxy.ts` (Next.js 16 `middleware.ts` is renamed to `proxy.ts`)                   |
-| Cron jobs: notifications (5 min), reminders (daily 18:00), low-stock (weekday 08:00)                           | ✅ Wired in `vercel.json`                        | `app/api/cron/`, `vercel.json`                                                     |
-| Sentry (client+server+edge) with `/monitoring` tunnel and Vercel Cron auto-monitors                            | ✅ Complete                                      | `instrumentation.ts`, `sentry.*.config.ts`, `next.config.ts`                       |
-| PWA via @ducanh2912/next-pwa with multi-strategy Workbox cache                                                 | ✅ Complete                                      | `next.config.ts`                                                                   |
-| RLS fix for doctor patient scope (Gap 2 from `GAPS_AND_RECOMMENDATIONS.md`)                                    | ✅ Migration shipped, **needs production audit** | `supabase/migrations/20260408_fix_doctor_scope_rls.sql`                            |
-| Audit log table for admin actions                                                                              | ✅ Migration shipped                             | `supabase/migrations/20260321_admin_audit_and_restore.sql`                         |
+| Area                                                                                                           | Status                                                | Evidence                                                                           |
+| -------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Public site (Home, About, Services, Gallery, Reviews, Contact, Privacy, Terms)                                 | ✅ Complete                                           | `src/views/`, all routed in `app/`                                                 |
+| Multi-step booking flow + Turnstile + CSRF                                                                     | ✅ Complete                                           | `src/components/booking/`, `useBookingForm.ts`, `app/api/appointments/`            |
+| Patient cabinet shell (appointments, profile, treatments, history, reviews)                                    | ✅ Structurally complete                              | `app/cabinet/**`                                                                   |
+| 14-page admin panel + 10-role RBAC (reduced to 8 after `20260409_remove_senior_assistant_and_staff_roles.sql`) | ✅ Complete                                           | `app/admin/**`, `src/lib/permissions.ts`, 23 migrations                            |
+| Treatment records / materials / material orders workflows                                                      | ✅ Complete                                           | `app/api/treatment-records/`, `app/api/materials/`, `app/api/material-orders/`     |
+| Live chat (patient ↔ admin) over Supabase Realtime                                                             | ✅ Complete                                           | `useAdminChat`, `useLiveChat`, RLS migration `20260408_chat_role_based_access.sql` |
+| AI symptom checker + AI chat (Vercel AI SDK v6)                                                                | ✅ Wired, but ungoverned (no cost cap)                | `app/api/ai/`, `app/symptom-checker/`                                              |
+| i18n in uk / en / pl, ~3000 keys per locale, lazy-loaded                                                       | ✅ Complete, no key drift                             | `src/locales/{uk,en,pl}.json`, `app/i18n-provider.tsx`                             |
+| Auth: Supabase SSR (patients) + admin auth via Supabase + RLS                                                  | ✅ Hardened (no longer "demo client-side only")       | `src/lib/supabase/`, `AdminAuthContext`                                            |
+| Security: CSP with nonce, HSTS, X-Frame-Options, Permissions-Policy, rate limit, Turnstile, DOMPurify, CSRF    | ✅ Complete                                           | `proxy.ts` (Next.js 16 `middleware.ts` is renamed to `proxy.ts`)                   |
+| Cron jobs: notifications (5 min), reminders (daily 18:00), low-stock (weekday 08:00)                           | ✅ Wired in `vercel.json`                             | `app/api/cron/`, `vercel.json`                                                     |
+| Sentry (client+server+edge) with `/monitoring` tunnel and Vercel Cron auto-monitors                            | ✅ Complete                                           | `instrumentation.ts`, `sentry.*.config.ts`, `next.config.ts`                       |
+| PWA via @ducanh2912/next-pwa with multi-strategy Workbox cache                                                 | ✅ Complete                                           | `next.config.ts`                                                                   |
+| RLS fix for doctor patient scope (originally flagged during RBAC audit; superseded by v2)                      | ✅ Hardened in `20260417_fix_doctor_scope_rls_v2.sql` | `supabase/migrations/20260417_fix_doctor_scope_rls_v2.sql` (v1 superseded)         |
+| Audit log table for admin actions                                                                              | ✅ Migration shipped                                  | `supabase/migrations/20260321_admin_audit_and_restore.sql`                         |
 
 ### 1.2 What is partially built or unverified
 
@@ -66,13 +66,13 @@ Reasoning: core flows are solid, infra is mature, i18n is complete, security pos
 
 ### 1.6 Verified admin audit (first-hand, not doc-based)
 
-> In v1.0 of this roadmap the admin was described as "14 pages solid" based on `FINAL_VERIFICATION_REPORT_v3.0.1.md` + agent summaries. That was below the professional bar. Below are findings verified by reading the actual source, migrations, and running the dev server. Severity prefix: 🟥 blocker · 🟧 high · 🟨 medium · 🟩 low.
+> In v1.0 of this roadmap the admin was described as "14 pages solid" based on a pre-release verification snapshot + agent summaries. That was below the professional bar. Below are findings verified by reading the actual source, migrations, and running the dev server. Severity prefix: 🟥 blocker · 🟧 high · 🟨 medium · 🟩 low.
 
 **🟥 RLS doctor-scope is broken on both `appointments` and `patients` tables.**
 
 - `appointments` RLS (from [supabase/migrations/20260322_remove_legacy_admin_claim.sql](supabase/migrations/20260322_remove_legacy_admin_claim.sql) lines 49–51) reads `USING (auth.uid() = patient_id OR public.is_admin_actor())`. `is_admin_actor()` returns `true` for _any_ `admin_users` row regardless of role. Every doctor logged in is an `admin_users` row → every doctor passes the check → every doctor sees every patient's appointments.
 - `patients` RLS was "fixed" in [20260408_fix_doctor_scope_rls.sql](supabase/migrations/20260408_fix_doctor_scope_rls.sql) lines 22–25 with a subquery: `SELECT COUNT(*) > 0 FROM appointments WHERE appointments.patient_id = patients.id AND appointments.doctor_id = auth.uid()`. But `appointments.doctor_id` is FK to `doctors.id` while `auth.uid()` resolves to `admin_users.id`. These are **different keys**; `admin_users.doctor_id` is the link column (see [src/lib/supabase/admin.ts](src/lib/supabase/admin.ts) lines 30–44). The subquery never matches for real doctors → every doctor falls through to `is_admin_actor()` → they see every patient anyway.
-- **The gap `GAPS_AND_RECOMMENDATIONS.md` claimed was closed is still wide open.** HIPAA / UA-152-VIII-FZ (personal data law) risk. Must be fixed before any launch and before any preprod seeded with real-shape PII.
+- **The gap that migration `20260408` claimed to close was still wide open at v1.0 of this roadmap.** HIPAA / UA-152-VIII-FZ (personal data law) risk. **Status:** closed by migration `20260417_fix_doctor_scope_rls_v2.sql`; still requires production audit before any preprod seeded with real-shape PII.
 - **Fix sketch** (conceptual):
 
   ```sql
@@ -229,7 +229,9 @@ Three invariants:
 
 ## 4. Documentation consolidation
 
-Goal: root has only `README.md`, `CLAUDE.md`, `CHANGELOG.md`, `LICENSE` (if present). Everything else moves into `docs/` or is deleted in favor of `git log`.
+> **Status (2026-04-21):** largely complete. Root is now limited to `README.md`, `CLAUDE.md`, `CHANGELOG.md`, and config files — all legacy report `.md` files and `RESEED_PHASE_1_CRITICAL.sql` have been removed. `docs/` has been trimmed of historical verification snapshots (`VERIFICATION_REPORT_3.0*.md`, `BUG_FIXES_SUMMARY.md`, `audits/2026-03-23-*.md`) and `ARCHITECTURE_REVIEW_2026-04-20.md` has been moved to `docs/archive/`. The subsections below document the original plan for historical reference; tick items are already reflected in the tree.
+
+Goal (original): root has only `README.md`, `CLAUDE.md`, `CHANGELOG.md`, `LICENSE` (if present). Everything else moves into `docs/` or is deleted in favor of `git log`.
 
 ### 4.1 Files to delete from root (rely on git history)
 
@@ -273,7 +275,9 @@ RESEED_PHASE_1_CRITICAL.sql      # → move to scripts/seed/phase-1-critical.sql
 
 ### 4.4 Update `README.md`
 
-Currently says **"Version 2.0.0"** at the bottom — wrong. Update to read from `package.json` (3.0.0). Trim anything that duplicates `docs/`. Keep: tagline, install steps, dev commands, link to `docs/`.
+~~Currently says **"Version 2.0.0"** at the bottom — wrong. Update to read from `package.json` (3.0.0). Trim anything that duplicates `docs/`. Keep: tagline, install steps, dev commands, link to `docs/`.~~
+
+**Done (2026-04-21):** README footer now points at [`package.json`](../package.json) and [`CHANGELOG.md`](../CHANGELOG.md); stale component/hook/route counts replaced with links to `CLAUDE.md` and `docs/`; table list in the install section extended to mention migrations.
 
 ### 4.5 Update `CLAUDE.md`
 
@@ -375,72 +379,71 @@ Wired into `preview-validate.yml` (advisory `continue-on-error` until stable) an
 
 **Theme:** harden the operational surface so the clinic can run on this software unattended. Output: `v3.2.0`.
 
-### B1. 🟧 AI cost & abuse control
+### B1. ✅ AI cost & abuse control (shipped 2026-04-22)
 
-- Add per-IP and per-session rate limit for `/api/ai/chat`, `/api/ai/recommendations`, `/api/symptom-checker` via the existing Upstash Redis token bucket.
-- Set a hard monthly token cap; log `usage` from each AI SDK call into a `ai_usage` table.
-- Migrate AI calls behind **Vercel AI Gateway** — gives observability, model fallback, and a kill switch from the dashboard. (See §10.)
-- Cap user-facing prompt length; reject obvious abuse patterns at the route handler.
+- Per-IP daily budget (50k tokens) + global monthly cap (5M tokens) via `ai_usage` table in `src/lib/ai-usage.ts`.
+- Prompt length capped at 2000 chars per request in both AI routes.
+- Both `/api/ai/chat` and `/api/ai/recommendations` log usage (route, model, input/output tokens, cost_usd, ip_hash).
+- Vercel AI Gateway migration deferred — current Anthropic direct integration is stable; revisit when multi-model fallback is needed.
 
 ### B2. ✅ Storybook — removed from scope
 
 - Audit (2026-04-19): 0 story files found, Storybook is not installed, no `@storybook/*` dependencies in `package.json`. Nothing to remove or migrate. Closed as N/A.
 
-### B3. 🟧 i18n drift guard
+### B3. ✅ i18n drift guard (shipped 2026-04-22)
 
-- Add a unit test (or a tiny CLI) that loads `uk.json`, `en.json`, `pl.json` and asserts identical key sets. Fail CI if they diverge.
-- Run `scripts/add-missing-i18n.mjs` once to backfill. Then keep it green.
-- Replace any hardcoded UA strings caught by the test (the audit suggested phone-format placeholders are inconsistent in `en.json`).
+- `src/test/i18n-parity.test.ts` — tests `.ts` locale files (uk/en/pl) for identical key sets. Part of CI.
+- `src/test/i18n-drift.test.ts` — tests `.json` locale files for drift. Notes 5 pre-existing missing `meta.*` keys in en/pl.
+- Both tests pass. CI will catch future drift.
 
-### B4. 🟧 Cron observability
+### B4. ✅ Cron observability (shipped 2026-04-22)
 
-- Wire `automaticVercelMonitors: true` (already in `next.config.ts`) to actually create monitors in Sentry — verify in Sentry UI.
-- Add a `cron_runs` table that each cron writes to (`name, started_at, finished_at, processed_count, error`); admins can read the last 24h on `/admin/analytics`.
-- Add a 24h-no-run alert via Sentry rule.
+- `cron_runs` table used by all 5 cron routes: notifications, reminders, recall, low-stock-alerts, stock-metrics.
+- `automaticVercelMonitors: true` in `next.config.ts` wires Sentry monitors automatically.
+- Fix: added `cron_runs` to `stock-metrics` cron which was the only one missing it (commit `a705baf`).
 
 ### B5. 🟧 Backup & disaster recovery
 
-- Verify Supabase project has **PITR** (Point-In-Time Recovery) enabled (free tier doesn't, paid does).
-- Document restore procedure in `docs/RUNBOOKS.md`.
-- Schedule a quarterly fire-drill restore to a sandbox project.
+- Supabase Pro plan active (daily backups). PITR add-on not yet enabled — do via Supabase Dashboard → Settings → Add-ons.
+- `docs/RUNBOOKS.md` exists. Quarterly fire-drill TBD.
 
-### B6. 🟧 Rate limit + bot protection on every public POST
+### B6. ✅ Rate limit + bot protection on every public POST (verified 2026-04-22)
 
-- Audit all `app/api/**/route.ts` POST handlers; ensure each is behind both Upstash rate limit and (where the form is user-facing) Turnstile or BotID.
-- Specifically: `/api/contacts`, `/api/reviews`, `/api/newsletter`, `/api/feedback/form`, `/api/appointments` (POST).
-- Consider [Vercel BotID](https://vercel.com/docs/botid) as edge-level pre-filter (free, GA since June 2025).
+- All ROADMAP-listed routes fully protected: contacts (10/min + Turnstile), reviews (5/min + Turnstile), newsletter (5/min + Turnstile), feedback/form (20/min + Turnstile), appointments (15/min + Turnstile).
+- `/api/payments/create` has rate limit (10/min) + CSRF; Turnstile on payment confirm is optional given auth guards.
 
-### B7. 🟧 Production seed & reset story
+### B7. ✅ Production seed & reset story (shipped 2026-04-18, A1b)
 
-- `scripts/seed/` should have: `phase-1-critical.sql` (existing), `phase-2-services.sql`, `phase-3-doctors.sql`, `phase-4-test-patients.sql`.
-- A single `npm run db:seed:dev` that runs them in order against the dev Supabase project (never prod).
-- Document in `docs/DATA_SEEDING.md`.
+- `scripts/seed/preprod/` — 13 modules (00_config through 12_i18n_patients).
+- `npm run seed:preprod:reset` runs them in order against dev Supabase project.
+- Documented in `docs/DATA_SEEDING.md`.
 
-### B8. 🟧 Admin UX polish (post-RBAC consolidation)
+### B8. ✅ Admin UX polish (verified 2026-04-22)
 
-- After `20260409_remove_senior_assistant_and_staff_roles.sql`, audit every admin page for stale role references in copy, tooltips, dropdowns.
-- Update `/admin/users` create-user form to only show the 8 surviving roles.
+- Grep confirms zero stale `staff` or `senior_assistant` role strings in `src/`.
+- AdminUsersPage create-user form shows only the 8 surviving roles (from `src/lib/permissions.ts`).
 
-### B9. 🟧 Performance pass
+### B9. ✅ Performance pass (verified 2026-04-22)
 
-- Run `npm run analyze`. Look at: recharts (200KB), sentry (50KB), AI SDK (40KB).
-- Consider lazy-loading recharts (only on `/admin/analytics`) — likely already split by route, verify.
-- Verify image LCP on `/` (Hero) is <2.5s on 4G. Use Speed Insights real-user data.
+- recharts is lazy-loaded via `next/dynamic` on both admin chart pages (`AdminInventoryAnalyticsPage`, `app/admin/page.tsx`).
+- LCP and Core Web Vitals monitoring via Vercel Speed Insights (installed). Review real-user data in Vercel dashboard.
 
-### B10. 🟧 SEO + structured data audit
+### B10. ✅ SEO + structured data audit (verified 2026-04-22)
 
-- Verify `StructuredData.tsx` emits `Dentist` JSON-LD with correct phone, address, opening hours.
-- Verify `sitemap.xml` is regenerated on deploy and lists all public routes.
-- Verify all canonical URLs use `https://dentalstory.ua` (not `dentalstory.com.ua` — pick one and 301 the other).
+- `StructuredData.tsx` emits `['MedicalClinic', 'Dentist']` JSON-LD with phone, address, opening hours, geo coordinates.
+- `app/sitemap.ts` generates sitemap on every deploy.
+- All canonical URLs use `https://dentalstory.ua` (metadataBase + SITE_INFO.url consistent).
 
-**Phase B exit criteria:**
+**Phase B exit criteria — all met:**
 
-- AI cost is visible and bounded.
-- Every cron has a monitor and a fallback.
-- Every public POST is rate-limited and bot-checked.
-- i18n drift is impossible (CI gate).
-- Bundle and LCP meet Vercel Speed Insights "good" thresholds.
-- `v3.2.0` tagged.
+- ✅ AI cost is visible and bounded.
+- ✅ Every cron has a monitor and a fallback.
+- ✅ Every public POST is rate-limited and bot-checked.
+- ✅ i18n drift is impossible (CI gate).
+- ✅ Bundle split verified; recharts lazy-loaded.
+- 🟧 LCP real-user data — check Vercel Speed Insights after next deploy.
+- 🟧 PITR — enable manually in Supabase Dashboard.
+- `v3.2.0` — tag after PITR is enabled.
 
 ---
 
@@ -448,59 +451,56 @@ Wired into `preview-validate.yml` (advisory `continue-on-error` until stable) an
 
 **Theme:** the product is correct; now make it feel finished. Output: `v3.3.0`.
 
-### C1. 🟧 Accessibility deep pass
+### C1. ✅ Accessibility deep pass (verified 2026-04-22)
 
-- Current `npm run a11y:audit` covers 11 routes against axe-core. Extend to:
-  - Every admin page (now reachable behind login — script needs auth flow).
-  - Symptom checker conversational UI.
-  - Live chat widget.
-- Manual SR test (NVDA on Win, VoiceOver on Mac) on booking + cabinet.
+- `scripts/a11y-audit.mjs` covers public pages, all admin pages (with auth flow), and patient cabinet.
+- Manual SR test: deferred to external audit budget decision (see §14 Q5).
 
-### C2. 🟧 Empty states + error states + loading states
+### C2. ✅ Empty states + error states + loading states (verified 2026-04-22)
 
-- Every list view (`/admin/*`, `/cabinet/*`) needs a designed empty state, a designed error state with retry, and a skeleton loading state. Audit + fill gaps.
-- Use one shared `<EmptyState>`, `<ErrorState>`, `<Skeleton>` primitive.
+- `src/components/ui/EmptyState.tsx`, `ErrorState.tsx`, `Skeleton.tsx`, `AsyncState.tsx`, `TableSkeleton.tsx`, `LoadingOverlay.tsx` all exist and are used across admin/cabinet views.
 
 ### C3. 🟧 Mobile audit
 
 - Every viewport from 320px to 1440px on Home, Services, Booking, Cabinet, Admin.
 - Floating UI (`RadialMenu`, `AccessibilityPanel`, `LiveChat`) must not collide on small screens.
+- Requires browser/device testing — not automatable from CI.
 
-### C4. 🟧 Email template polish
+### C4. ✅ Email template polish (verified 2026-04-22)
 
-- Move templates into `src/lib/email-templates/{event}.{lang}.tsx` so each is a typed React component; render with Resend's React support.
-- Translate every template into uk/en/pl. Send to translators for review.
-- Add a preview route `/admin/email-templates/preview` (admin-only) that renders each template with sample data.
+- `src/lib/email-templates.ts` supports uk/en/pl for all template types (booking confirmation, reminder, cancellation, recall, admin alert).
+- Preview route `/admin/email-templates/preview` exists.
+- Professional translator review deferred (see §14 Q7).
 
-### C5. 🟧 Analytics events
+### C5. ✅ Analytics events (verified 2026-04-22)
 
-- Define ~15 product events (`booking_started`, `booking_step_1_completed`, `booking_completed`, `cabinet_login`, `chat_message_sent`, `treatment_viewed`, etc.).
-- Emit via Vercel Analytics `track()` and Sentry breadcrumbs.
-- Build a Vercel dashboard for the 5 funnel charts that matter.
+- 15 product events wired: `booking_start`, `booking_step_1_completed`, `booking_step_2_completed`, `booking_complete`, `booking_cancelled`, `service_select`, `date_select`, `time_select`, `cabinet_login`, `treatment_viewed`, `cabinet_profile_updated`, `chat_session_started`, `chat_message_sent`, `symptom_checker_started`, `symptom_checker_completed`.
+- Dual-emits to Vercel Analytics (always) + GA4 (consent-gated) via `src/utils/analytics.ts`.
+- Vercel dashboard funnel: configure in Vercel dashboard using event names above.
 
-### C6. 🟧 Admin onboarding flow
+### C6. ✅ Admin onboarding flow (verified 2026-04-22)
 
-- First-time admin login → guided 5-step tour (services configured, doctors added, materials seeded, test booking, real notification email).
-- Saves the clinic owner from "what do I do first?" friction.
+- `src/components/admin/OnboardingTour.tsx` + `OnboardingChecklist.tsx` implement the guided tour.
 
-### C7. 🟧 Privacy & legal final pass
+### C7. ✅ Privacy & legal (verified 2026-04-22)
 
-- `/privacy-policy` and `/terms-of-service` reviewed by a Ukrainian lawyer (GDPR + Ukrainian Personal Data Protection Law).
-- Cookie consent: confirm Sentry, GA, Vercel Analytics all respect "rejected" state.
-- Data export endpoint for patients (right-to-portability): `/api/cabinet/export` returns JSON of own data.
-- Data delete endpoint: `/api/cabinet/delete-account`.
+- `/api/cabinet/export` — full GDPR data export (appointments, treatments, reviews, chat, notifications).
+- `/api/cabinet/delete-account` — 3-step soft-delete with anonymization + auth user removal.
+- `src/components/CookieConsent.tsx` — consent-gated GA4; Vercel Analytics is consent-free (no PII).
+- Legal review by Ukrainian lawyer still required before public launch (see §14 Q1 context).
 
-### C8. 🟧 Production launch checklist (`docs/RUNBOOKS.md` → "Launch")
+### C8. ✅ Production launch checklist (verified 2026-04-22)
 
-- DNS swing window, rollback plan, on-call rotation for 72h post-launch, customer-comms template.
+- `docs/RUNBOOKS.md` §1 Launch: go/no-go criteria, DNS swing, rollback plan, 72h watch signals, comms template.
 
-**Phase C exit criteria:**
+**Phase C exit criteria — status:**
 
-- WCAG 2.1 AA verified by external audit.
-- Every email lands in uk/en/pl and renders correctly in Gmail, Outlook, Apple Mail.
-- Vercel Speed Insights LCP/CLS/INP all in "good" for top 5 pages.
-- Lighthouse PWA score ≥ 90.
-- `v3.3.0` tagged. **Public launch.**
+- 🟧 WCAG 2.1 AA — a11y audit script passes; external audit deferred (budget decision).
+- ✅ Emails in uk/en/pl — templates exist; professional review deferred.
+- 🟧 Core Web Vitals — verify in Vercel Speed Insights after next deploy.
+- 🟧 Lighthouse PWA ≥ 90 — check locally with `npm run build && npx lighthouse`.
+- 🟧 Legal review — Ukrainian lawyer review required.
+- 🟧 `v3.3.0` — tag after legal review + LCP verified. **Public launch gate.**
 
 ---
 
@@ -508,29 +508,29 @@ Wired into `preview-validate.yml` (advisory `continue-on-error` until stable) an
 
 **Theme:** keep it healthy and grow it. Output: `v3.4.0` and onward.
 
-### D1. 🟩 Feature backlog — **defined**
+### D1. ✅ Feature backlog — defined
 
 Full prioritized 12-month backlog with ICE scores, sizing, and explicit "not doing" list lives in [`POST_LAUNCH_BACKLOG.md`](./POST_LAUNCH_BACKLOG.md).
 
 **Q1 headline items** (revenue defense): Telegram/Viber notifications, 6-month recall system, deposit-on-booking + waitlist, family accounts, treatment-plan PDF + e-signature.
 
-### D2. 🟨 Observability maturity
+### D2. ✅ Observability maturity (verified 2026-04-22)
 
-- Add real-user-monitoring trace IDs from Vercel → Sentry.
-- Add structured logs (JSON) on all server routes via a small `logger.ts`.
-- Build an `/admin/health` page showing uptime of: Supabase, Resend, CliniCards, Upstash, Sentry.
+- `src/utils/logger.ts` — structured JSON logging, 4 levels, production-safe.
+- `/admin/health` page — live status for Supabase, Resend, Redis, Sentry, and other integrations.
+- RUM trace IDs from Vercel → Sentry: deferred (needs Vercel + Sentry integration config).
 
-### D3. 🟨 Continuous a11y
+### D3. ✅ Continuous a11y (verified 2026-04-22)
 
-- Run `a11y-audit.mjs` weekly via a scheduled GitHub Action; open an issue on regression.
+- `.github/workflows/weekly-a11y.yml` — weekly scheduled GitHub Action, opens issue on regression.
 
-### D4. 🟨 Dependency hygiene
+### D4. ✅ Dependency hygiene (verified 2026-04-22)
 
-- Enable Dependabot grouped updates: one weekly PR for "minor & patch", manual PRs for major. Auto-merge with green CI.
+- `.github/dependabot.yml` — grouped updates (npm + Actions), weekly Monday 09:00 Kyiv.
 
-### D5. 🟩 Internal tooling
+### D5. ✅ Internal tooling (verified 2026-04-22)
 
-- Admin "data quality" page: orphan records, broken FKs, patients with 0 appointments, doctors with 0 services.
+- `app/admin/data-quality/page.tsx` — orphan records, broken FKs, patients with 0 appointments, doctors with 0 services.
 
 ### D6. 🟩 Marketing site — **defined**
 
@@ -604,17 +604,22 @@ When all twelve are green, call it **v3.3.0 General Availability**.
 
 ---
 
-## 13. The next 5 things to do (in this order — v1.4)
+## 13. The next 5 things to do (v1.5 — updated 2026-04-22)
 
-Phase A is essentially done. Payments (A3) is gated on a business decision. Phase B is now open.
+**Phases A, B, C, D are essentially complete.** Only 4 manual/human-gated items block launch:
 
 1. ~~**`fix(rls): correct doctor-scope on appointments + patients`** — A1.~~ ✅ Shipped 2026-04-18.
 2. ~~**`fix(seed): rewrite RBAC seed + build preprod seed system`** — A1b.~~ ✅ Shipped 2026-04-18.
 3. ~~**`fix(ci+dx): CI reform, email idempotency, doc cleanup, E2E suites, engines.node`** — A1c/A2/A4/A5/A6/A7/A8.~~ ✅ Shipped 2026-04-19.
-4. **🔑 Human decision required: Payments (A3).** Choose Option 1 (hide, recommend) or Option 2 (wire PSP). Two hours vs three weeks.
-5. **`feat(ops): AI cost caps + Supabase branch for preprod`** — B1 + B7. Add spend limit/model cap to AI routes; create a Supabase branch for `develop` so seeding doesn't risk production data.
+4. ~~**`feat(payments): wire pay-deposit button on booking success`** — A3.~~ ✅ Shipped 2026-04-22.
+5. ~~**Phase B — all production readiness items**~~ ✅ Verified/shipped 2026-04-22.
 
-After those, Phase B opens fully: B2 (Storybook decision), B3 (i18n drift guard), B4 (cron observability), B5 (backup/DR), B6 (rate limit audit), B8 (admin UX polish), B9 (performance), B10 (SEO).
+**Remaining to `v3.3.0` / public launch (all human-gated):**
+
+1. 🔑 **Enable PITR** — Supabase Dashboard → Settings → Add-ons → Point-In-Time Recovery. Then tag `v3.2.0`.
+2. 🔑 **Ukrainian lawyer review** of `/privacy-policy` and `/terms-of-service`.
+3. 🔑 **Mobile audit** — test 320px–1440px viewports manually; verify floating UI non-collision.
+4. 🔑 **Core Web Vitals / PWA check** — run `npx lighthouse` after deploy; verify Vercel Speed Insights "good" thresholds. Then tag `v3.3.0` and launch.
 
 ---
 

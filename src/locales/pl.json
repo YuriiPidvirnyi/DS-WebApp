@@ -1298,7 +1298,8 @@
       "orders": "Zamówienia",
       "analytics": "Analityka",
       "settings": "Ustawienia",
-      "users": "Użytkownicy"
+      "users": "Użytkownicy",
+      "stock": "Magazyn v2"
     },
     "login": {
       "title": "Logowanie do panelu",
@@ -3166,6 +3167,101 @@
     "openGraphImage": {
       "alt": "Dental Story — Сучасна стоматологія у Львові",
       "tagline": "Сучасна стоматологія у Львові"
+    }
+  },
+  "stock": {
+    "title": "Склад",
+    "nav": {
+      "documents": "Документи",
+      "warehouses": "Склади",
+      "balances": "Залишки",
+      "reports": "Звіти",
+      "settings": "Налаштування",
+      "permissions": "Права доступу",
+      "suppliers": "Постачальники",
+      "brands": "Бренди",
+      "categories": "Категорії",
+      "calcCards": "Карти розрахунку",
+      "audits": "Інвентаризація"
+    },
+    "docType": {
+      "incoming": "Прихідна",
+      "writeoff": "Списання",
+      "return": "Повернення",
+      "transfer": "Переміщення",
+      "adjustment": "Коригування"
+    },
+    "docStatus": {
+      "draft": "Чернетка",
+      "posted": "Проведено",
+      "void": "Анульовано"
+    },
+    "warehouseKind": {
+      "main": "Головний",
+      "cabinet": "Кабінет",
+      "doctor": "Лікар",
+      "other": "Інший"
+    },
+    "document": {
+      "number": "Номер",
+      "date": "Дата",
+      "warehouse": "Склад",
+      "warehouseFrom": "Склад (звідки)",
+      "warehouseTo": "Склад (куди)",
+      "supplier": "Постачальник",
+      "responsible": "Відповідальний",
+      "comment": "Коментар",
+      "total": "Сума",
+      "items": "Позиції",
+      "createDraft": "Створити чернетку",
+      "post": "Провести",
+      "unpost": "Скасувати проведення",
+      "copy": "Копіювати",
+      "unpostReason": "Причина скасування",
+      "noItems": "Немає позицій",
+      "addItem": "Додати позицію",
+      "emptyDocuments": "Документи відсутні"
+    },
+    "warehouse": {
+      "name": "Назва",
+      "kind": "Тип",
+      "responsible": "Відповідальний",
+      "doctor": "Лікар",
+      "sortOrder": "Порядок",
+      "comment": "Коментар",
+      "archived": "Архівний",
+      "createWarehouse": "Додати склад",
+      "editWarehouse": "Редагувати склад",
+      "archiveWarehouse": "Архівувати склад",
+      "emptyWarehouses": "Склади відсутні"
+    },
+    "settings": {
+      "allowNegativeBalance": "Дозволити від'ємний залишок",
+      "writeoffMode": "Режим списання",
+      "writeoffModeNone": "Вимкнено",
+      "writeoffModeDraftHybrid": "Авто-чернетка",
+      "writeoffModeAuto": "Автоматично",
+      "autoApBillOnIncoming": "Авто-рахунок на приход",
+      "defaultExpenseCategory": "Категорія витрат за замовчуванням",
+      "enforceStockPermissions": "Застосовувати права складу",
+      "showMyInventory": "Показувати мій склад"
+    },
+    "balance": {
+      "material": "Матеріал",
+      "warehouse": "Склад",
+      "quantity": "Кількість",
+      "unit": "Од.вим.",
+      "criticalLevel": "Критичний рівень",
+      "reorderQty": "Кількість для замовлення",
+      "lowStock": "Малий залишок"
+    },
+    "errors": {
+      "loadFailed": "Помилка завантаження",
+      "saveFailed": "Помилка збереження",
+      "postFailed": "Помилка проведення",
+      "negativeBalance": "Недостатньо залишків",
+      "docLocked": "Документ вже проведено",
+      "flagOff": "Inventory v2 не активовано"
     }
   }
 }

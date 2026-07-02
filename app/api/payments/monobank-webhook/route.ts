@@ -23,20 +23,14 @@ export async function POST(request: NextRequest) {
   const xSign = request.headers.get('x-sign')
   if (!xSign) {
     logger.warn('[monobank-webhook] Missing x-sign header')
-    return NextResponse.json(
-      { ok: false, error: 'Missing signature' },
-      { status: 401 }
-    )
+    return NextResponse.json({ ok: true })
   }
 
   const body = Buffer.from(await request.arrayBuffer())
 
   if (!(await verifyMonobankWebhook(body, xSign))) {
-    logger.warn('[monobank-webhook] Invalid signature')
-    return NextResponse.json(
-      { ok: false, error: 'Invalid signature' },
-      { status: 403 }
-    )
+    logger.warn('[monobank-webhook] Invalid signature — dropping payload')
+    return NextResponse.json({ ok: true })
   }
 
   let payload: MonobankWebhookPayload
@@ -77,10 +71,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true })
     }
 
+    // Idempotency: if we already recorded this exact status, skip duplicate delivery
+    if (payment.status === payload.status) {
+      return NextResponse.json({ ok: true })
+    }
+
     // Update payment record
     const updatePayload: Record<string, unknown> = {
       status: payload.status,
       monobank_data: payload,
+    }
+    if (payload.status === 'hold') {
+      updatePayload.hold_at = new Date().toISOString()
+      updatePayload.payment_type = 'hold'
     }
     if (payload.status === 'success') {
       updatePayload.paid_at = new Date().toISOString()
@@ -102,7 +105,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // On success, mark appointment as paid
+    // On success, mark appointment as paid + save wallet card if tokenized
     if (payload.status === 'success') {
       const { error: apptError } = await supabase
         .from('appointments')
@@ -114,6 +117,28 @@ export async function POST(request: NextRequest) {
           new Error('[monobank-webhook] Failed to mark appointment as paid'),
           { apptError, appointmentId: payment.appointment_id }
         )
+      }
+
+      // Persist tokenized card when Monobank reports it was successfully saved
+      if (payload.walletData?.status === 'created') {
+        const { walletData } = payload
+        // walletId is the Supabase user UUID we passed at invoice creation
+        const { error: walletErr } = await supabase
+          .from('patient_wallet_cards')
+          .upsert(
+            {
+              user_id: walletData.walletId,
+              card_token: walletData.cardToken,
+              masked_pan: 'unknown', // will be refreshed on first card list fetch
+            },
+            { onConflict: 'user_id,card_token' }
+          )
+        if (walletErr) {
+          captureException(
+            new Error('[monobank-webhook] Failed to upsert wallet card'),
+            { walletErr, walletId: walletData.walletId }
+          )
+        }
       }
     }
   } catch (error) {

@@ -201,21 +201,48 @@ Colors defined in `tailwind.config.js` and `src/styles/globals.css`:
 
 ### Environment Variables
 
-| Variable                          | Required     | Description                                                             |
-| --------------------------------- | ------------ | ----------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SITE_URL`            | No           | Site URL (default: `https://dentalstory.com.ua`)                        |
-| `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` | No           | GA4 measurement ID                                                      |
-| `NEXT_PUBLIC_SUPABASE_URL`        | For auth     | Supabase project URL                                                    |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY`   | For auth     | Supabase anon key                                                       |
-| `UPSTASH_REDIS_REST_URL`          | For cache    | Upstash Redis URL                                                       |
-| `UPSTASH_REDIS_REST_TOKEN`        | For cache    | Upstash Redis token                                                     |
-| `SENTRY_AUTH_TOKEN`               | No           | For source map upload (skipped if missing)                              |
-| `RESEND_API_KEY`                  | For email    | Resend API key                                                          |
-| `RESEND_FROM_EMAIL`               | No           | Sender address (default: `DentalStory <noreply@dentalstory.com.ua>`)    |
-| `ADMIN_NOTIFICATION_EMAIL`        | No           | Email for admin booking alerts                                          |
-| `CRON_SECRET`                     | For cron     | Bearer token for `/api/cron/*` routes                                   |
-| `SUPABASE_SERVICE_ROLE_KEY`       | For cron     | Service role key for server-side Supabase calls                         |
-| `MONOBANK_TOKEN`                  | For payments | Monobank acquiring token (test: api.monobank.ua, prod: web.monobank.ua) |
+| Variable                           | Required     | Description                                                                          |
+| ---------------------------------- | ------------ | ------------------------------------------------------------------------------------ |
+| `NEXT_PUBLIC_SITE_URL`             | No           | Site URL (default: `https://dentalstory.com.ua`)                                     |
+| `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`  | No           | GA4 measurement ID                                                                   |
+| `NEXT_PUBLIC_SUPABASE_URL`         | For auth     | Supabase project URL                                                                 |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`    | For auth     | Supabase anon key                                                                    |
+| `UPSTASH_REDIS_REST_URL`           | For cache    | Upstash Redis URL                                                                    |
+| `UPSTASH_REDIS_REST_TOKEN`         | For cache    | Upstash Redis token                                                                  |
+| `SENTRY_AUTH_TOKEN`                | No           | For source map upload (skipped if missing)                                           |
+| `RESEND_API_KEY`                   | For email    | Resend API key                                                                       |
+| `RESEND_FROM_EMAIL`                | No           | Sender address (default: `DentalStory <noreply@dentalstory.com.ua>`)                 |
+| `ADMIN_NOTIFICATION_EMAIL`         | No           | Email for admin booking alerts                                                       |
+| `CRON_SECRET`                      | For cron     | Bearer token for `/api/cron/*` routes                                                |
+| `SUPABASE_SERVICE_ROLE_KEY`        | For cron     | Service role key for server-side Supabase calls                                      |
+| `MONOBANK_TOKEN`                   | For payments | Monobank acquiring token (test: api.monobank.ua, prod: web.monobank.ua)              |
+| `NEXT_PUBLIC_INVENTORY_V2_ENABLED` | No           | Set `true` to expose `/admin/stock` shell (off by default; enable per-env in Vercel) |
+
+### Inventory v2 — posting primitive contract
+
+**All stock mutations flow through `post_stock_document()` / `unpost_writeoff_document()`. Direct `UPDATE` of `material_inventory` or `stock_lots` is forbidden and enforced via RLS.**
+
+Feature flag: `NEXT_PUBLIC_INVENTORY_V2_ENABLED=true` enables `/admin/stock`. Set to `true` in Vercel env per-environment.
+
+#### Phase status (all 8 phases shipped on `develop`)
+
+| Phase | What ships                                                   | Key files                                                                                                |
+| ----- | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| 0     | `clinic_settings`, feature flag, `/admin/stock` shell        | `20260430_clinic_settings.sql`                                                                           |
+| 1     | Posting primitive, warehouses, documents hub                 | `20260501_stock_backfill.sql`, `20260501_stock_posting_primitive.sql`, `20260501_stock_posting_rpcs.sql` |
+| 2     | Directories (suppliers, brands, categories)                  | `20260515_stock_directories.sql`                                                                         |
+| 3     | Materials v2 (barcodes, pack/unit, warehouse matrix)         | `20260522_materials_v2.sql`                                                                              |
+| 4     | My-warehouses daily ops (request, transfer, writeoff)        | `20260601_internal_requisitions.sql`                                                                     |
+| 5     | Calc cards + treatment auto-writeoff hook                    | `20260605_stock_calc_cards.sql`                                                                          |
+| 6     | Inventory audits (INV-YY-NNNNNNN)                            | `20260615_stock_inventory_audits.sql`                                                                    |
+| 7     | Reports (balances, history, reorder, writeoff, service-cost) | `20260701_stock_reports.sql`                                                                             |
+| 8     | Daily metrics cron, cleanup indexes                          | `20260701_stock_metrics.sql`, `20260710_stock_v2_cleanup.sql`                                            |
+
+#### Stock cron
+
+- `/api/cron/stock-metrics` — daily at 21:55 UTC (23:55 Kyiv). Calls `snapshot_stock_metrics_daily()` for yesterday + today. Registered in `vercel.json`.
+
+---
 
 ## Open limitations
 

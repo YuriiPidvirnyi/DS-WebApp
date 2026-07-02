@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createClient as createServiceClient } from '@supabase/supabase-js'
 import {
   checkRateLimit,
   rateLimitResponse,
   validateCSRF,
   csrfErrorResponse,
 } from '@/lib/api-security'
+import { invalidateMonobankInvoice } from '@/lib/monobank'
 import { captureException } from '@/utils/sentry'
 import { logger } from '@/utils/logger'
 
@@ -85,6 +87,36 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         { success: false, error: 'Не вдалося скасувати запис' },
         { status: 500 }
       )
+    }
+
+    // Invalidate any open Monobank invoice for this appointment
+    const svcUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const svcKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    if (svcUrl && svcKey) {
+      const svc = createServiceClient(svcUrl, svcKey)
+      const { data: openPayment } = await svc
+        .from('payments')
+        .select('id, invoice_id, status')
+        .eq('appointment_id', id)
+        .not(
+          'status',
+          'in',
+          '("success","failure","reversed","expired","cancelled")'
+        )
+        .maybeSingle()
+
+      if (openPayment?.invoice_id) {
+        const removed = await invalidateMonobankInvoice(openPayment.invoice_id)
+        await svc
+          .from('payments')
+          .update({ status: removed ? 'cancelled' : 'expired' })
+          .eq('id', openPayment.id)
+        if (!removed) {
+          logger.warn('[cancel] Monobank invoice invalidation failed', {
+            invoiceId: openPayment.invoice_id,
+          })
+        }
+      }
     }
 
     // Queue cancellation email if user has an email
