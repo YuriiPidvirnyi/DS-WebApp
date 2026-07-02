@@ -16,6 +16,24 @@ export interface ChatMessage {
   created_at: string
 }
 
+/**
+ * Merge a freshly fetched message list into existing state by id, keeping any
+ * items the fetch didn't return (optimistic sends, realtime rows that arrived
+ * mid-fetch) so a late snapshot can never drop newer messages. Ordered by
+ * created_at.
+ */
+export function mergeMessagesById(
+  prev: ChatMessage[],
+  fetched: ChatMessage[]
+): ChatMessage[] {
+  const byId = new Map<string, ChatMessage>()
+  for (const m of fetched) byId.set(m.id, m)
+  for (const m of prev) if (!byId.has(m.id)) byId.set(m.id, m)
+  return Array.from(byId.values()).sort((a, b) =>
+    a.created_at.localeCompare(b.created_at)
+  )
+}
+
 interface UseLiveChatOptions {
   /** If true, the hook is active and will connect */
   enabled: boolean
@@ -34,9 +52,17 @@ export function useLiveChat({ enabled }: UseLiveChatOptions) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [isConnected, setIsConnected] = useState(false)
   const [requiresAuth, setRequiresAuth] = useState(false)
+  const [isPeerTyping, setIsPeerTyping] = useState(false)
+  const [retryNonce, setRetryNonce] = useState(0)
   const channelRef = useRef<ReturnType<
     NonNullable<ReturnType<typeof createClient>>['channel']
   > | null>(null)
+  const typingChannelRef = useRef<ReturnType<
+    NonNullable<ReturnType<typeof createClient>>['channel']
+  > | null>(null)
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const lastTypingSentRef = useRef(0)
+  const wasDisconnectedRef = useRef(false)
 
   // Stable reference — createClient() is a singleton
   const supabase = useMemo(
@@ -63,26 +89,29 @@ export function useLiveChat({ enabled }: UseLiveChatOptions) {
     if (stored) setSessionId(stored)
   }, [enabled])
 
-  // Load existing messages when session is known
-  useEffect(() => {
+  // Load existing messages when session is known (and after reconnects,
+  // to catch up on anything missed while the channel was down)
+  const loadMessages = useCallback(async () => {
     if (!sessionId || !supabase) return
+    const { data } = await supabase
+      .from('chat_messages')
+      .select('*')
+      .eq('session_id', sessionId)
+      .order('created_at', { ascending: true })
 
-    const loadMessages = async () => {
-      const { data } = await supabase
-        .from('chat_messages')
-        .select('*')
-        .eq('session_id', sessionId)
-        .order('created_at', { ascending: true })
-
-      if (data) setMessages(data as ChatMessage[])
-    }
-
-    loadMessages()
+    if (data)
+      setMessages(prev => mergeMessagesById(prev, data as ChatMessage[]))
   }, [sessionId, supabase])
+
+  useEffect(() => {
+    loadMessages()
+  }, [loadMessages])
 
   // Subscribe to Realtime
   useEffect(() => {
     if (!sessionId || !supabase || !enabled) return
+
+    let retryTimer: ReturnType<typeof setTimeout> | null = null
 
     const channel = supabase
       .channel(`chat:${sessionId}`)
@@ -105,16 +134,77 @@ export function useLiveChat({ enabled }: UseLiveChatOptions) {
       )
       .subscribe((status: string) => {
         setIsConnected(status === 'SUBSCRIBED')
+        if (status === 'SUBSCRIBED') {
+          if (wasDisconnectedRef.current) {
+            wasDisconnectedRef.current = false
+            loadMessages()
+          }
+          return
+        }
+        wasDisconnectedRef.current = true
+        // Channel errors are not always auto-rejoined — rebuild the channel.
+        if (
+          (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') &&
+          !retryTimer
+        ) {
+          retryTimer = setTimeout(() => setRetryNonce(n => n + 1), 5000)
+        }
       })
 
     channelRef.current = channel
 
     return () => {
+      if (retryTimer) clearTimeout(retryTimer)
       supabase.removeChannel(channel)
       channelRef.current = null
       setIsConnected(false)
     }
+  }, [sessionId, supabase, enabled, retryNonce, loadMessages])
+
+  // Shared broadcast channel for typing indicators (admin <-> patient)
+  useEffect(() => {
+    if (!sessionId || !supabase || !enabled) return
+
+    const channel = supabase
+      .channel(`chat-typing:${sessionId}`)
+      .on(
+        'broadcast',
+        { event: 'typing' },
+        (message: { payload?: { sender?: string } }) => {
+          if (message.payload?.sender !== 'admin') return
+          setIsPeerTyping(true)
+          if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current)
+          typingTimeoutRef.current = setTimeout(
+            () => setIsPeerTyping(false),
+            3000
+          )
+        }
+      )
+      .subscribe()
+
+    typingChannelRef.current = channel
+
+    return () => {
+      supabase.removeChannel(channel)
+      typingChannelRef.current = null
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current)
+      setIsPeerTyping(false)
+    }
   }, [sessionId, supabase, enabled])
+
+  /** Broadcast that the patient is typing (throttled). */
+  const notifyTyping = useCallback(() => {
+    const channel = typingChannelRef.current
+    if (!channel) return
+    const now = Date.now()
+    if (now - lastTypingSentRef.current < 1500) return
+    lastTypingSentRef.current = now
+    channel.send({
+      type: 'broadcast',
+      event: 'typing',
+      payload: { sender: 'patient' },
+    })
+  }, [])
 
   /** Create a new session (called on first message) */
   const createSession = useCallback(
@@ -230,6 +320,8 @@ export function useLiveChat({ enabled }: UseLiveChatOptions) {
     sessionId,
     messages,
     isConnected,
+    isPeerTyping,
+    notifyTyping,
     sendMessage,
     closeSession,
     requiresAuth,
