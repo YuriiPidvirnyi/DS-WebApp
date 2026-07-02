@@ -15,12 +15,17 @@ import {
   AnalyticsEventCategory,
 } from '@/utils/analytics'
 
-export type ServiceLandingSlug = 'implantation' | 'aligners' | 'veneers'
+export type ServiceLandingSlug =
+  | 'implantation'
+  | 'aligners'
+  | 'veneers'
+  | 'sedation'
 
 const ROUTE_META_KEY: Record<ServiceLandingSlug, string> = {
   implantation: 'serviceImplantation',
   aligners: 'serviceAligners',
   veneers: 'serviceVeneers',
+  sedation: 'serviceSedation',
 }
 
 const BENEFIT_KEYS = ['b1', 'b2', 'b3', 'b4'] as const

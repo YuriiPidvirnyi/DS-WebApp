@@ -6,12 +6,18 @@ import uk from '@/locales/uk'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://dentalstory.ua'
 
-const SLUGS: ServiceLandingSlug[] = ['implantation', 'aligners', 'veneers']
+const SLUGS: ServiceLandingSlug[] = [
+  'implantation',
+  'aligners',
+  'veneers',
+  'sedation',
+]
 
 const ROUTE_META_KEY = {
   implantation: 'serviceImplantation',
   aligners: 'serviceAligners',
   veneers: 'serviceVeneers',
+  sedation: 'serviceSedation',
 } as const
 
 function isServiceSlug(slug: string): slug is ServiceLandingSlug {

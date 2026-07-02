@@ -240,6 +240,10 @@
     "cta": {
       "title": "Potrzebujesz konsultacji?",
       "description": "Nasi lekarze przeprowadzą szczegółowe badanie i opracują indywidualny plan leczenia dopasowany do Twoich potrzeb"
+    },
+    "landingLinks": {
+      "title": "Najważniejsze usługi szczegółowo",
+      "subtitle": "Osobne strony z odpowiedziami na najczęstsze pytania"
     }
   },
   "caseStudies": {
@@ -3209,6 +3213,14 @@
       "openGraphTitle": "Licówki we Lwowie — Dental Story",
       "openGraphDescription": "Nowy uśmiech w 2–3 wizyty: indywidualny projekt, naturalny wygląd. Bezpłatna konsultacja.",
       "breadcrumb": "Licówki"
+    },
+    "serviceSedation": {
+      "title": "Leczenie zębów w sedacji we Lwowie",
+      "description": "Sedacja we Lwowie: leczenie zębów bez strachu i bólu, pod nadzorem anestezjologa. Dla osób z dentofobią, dzieci i przy dużym zakresie leczenia. Bezpłatna konsultacja.",
+      "keywords": "sedacja Lwów, leczenie zębów we śnie Lwów, dentysta bez strachu, leczenie w sedacji",
+      "openGraphTitle": "Sedacja we Lwowie — Dental Story",
+      "openGraphDescription": "Leczenie zębów we śnie: bez strachu i bólu, pod nadzorem anestezjologa. Bezpłatna konsultacja.",
+      "breadcrumb": "Sedacja"
     }
   },
   "stock": {
@@ -3538,6 +3550,84 @@
       "cta": {
         "title": "Gotowi na nowy uśmiech?",
         "subtitle": "Umów bezpłatną konsultację z projektem uśmiechu",
+        "button": "Umów konsultację"
+      }
+    },
+    "sedation": {
+      "badge": "Stomatologia bez strachu",
+      "title": "Leczenie zębów w sedacji — bez strachu i bólu",
+      "subtitle": "Leczymy zęby, gdy Ty spokojnie drzemiesz: sedacja dla pacjentów z lękiem, dentofobią i przy dużym zakresie leczenia w jednej wizycie.",
+      "intro": "Sedacja to farmakologiczny sen pod nadzorem anestezjologa: jesteś zrelaksowany, nie czujesz strachu ani bólu, a budzisz się z wyleczonymi zębami. W odróżnieniu od znieczulenia ogólnego oddychasz samodzielnie, a powrót do pełnej świadomości zajmuje kilka minut.",
+      "benefits": {
+        "title": "Dlaczego sedacja w Dental Story",
+        "items": {
+          "b1": {
+            "title": "Bez strachu i stresu",
+            "description": "Idealna przy dentofobii i dla wszystkich, którzy latami odkładali wizytę: żadnych przykrych wspomnień z zabiegu."
+          },
+          "b2": {
+            "title": "Anestezjolog obok",
+            "description": "Twój stan przez cały zabieg monitoruje lekarz anestezjolog."
+          },
+          "b3": {
+            "title": "Duży zakres w jednej wizycie",
+            "description": "Kilka zębów lub złożone leczenie podczas jednej wizyty zamiast serii spotkań."
+          },
+          "b4": {
+            "title": "Dla dzieci i dorosłych",
+            "description": "Bezpieczne protokoły sedacji dla małych pacjentów i dorosłych."
+          }
+        }
+      },
+      "process": {
+        "title": "Jak przebiega leczenie",
+        "steps": {
+          "s1": {
+            "title": "Konsultacja i badania",
+            "description": "Badanie, niezbędne analizy i konsultacja anestezjologiczna."
+          },
+          "s2": {
+            "title": "Plan leczenia z kosztorysem",
+            "description": "Uzgadniamy zakres, czas trwania i stałą cenę."
+          },
+          "s3": {
+            "title": "Leczenie w sedacji",
+            "description": "Ty śpisz — zespół pracuje. Anestezjolog stale monitoruje Twój stan."
+          },
+          "s4": {
+            "title": "Wybudzenie i odpoczynek",
+            "description": "Budzisz się po kilku minutach, odpoczywasz w klinice i wracasz do domu z osobą towarzyszącą."
+          }
+        }
+      },
+      "faq": {
+        "title": "Sedacja — częste pytania",
+        "items": {
+          "q1": {
+            "question": "Czym sedacja różni się od narkozy?",
+            "answer": "Sedacja to płytki sen farmakologiczny: oddychasz samodzielnie, odruchy są zachowane, a wybudzenie zajmuje kilka minut. Znieczulenie ogólne jest głębsze i wymaga dłuższej rekonwalescencji."
+          },
+          "q2": {
+            "question": "Czy to bezpieczne?",
+            "answer": "Tak — pod warunkiem badań przed zabiegiem i stałego nadzoru anestezjologa. Przed sedacją wykonujesz badania i przechodzisz konsultację anestezjologiczną."
+          },
+          "q3": {
+            "question": "Dla kogo jest leczenie we śnie?",
+            "answer": "Dla osób z dentofobią, pacjentów z silnym odruchem wymiotnym, dzieci oraz gdy trzeba wykonać duży zakres leczenia w jednej wizycie."
+          },
+          "q4": {
+            "question": "Co będę czuć?",
+            "answer": "Nic nieprzyjemnego: zasypiasz kilka sekund po podaniu leku i budzisz się, gdy wszystko jest zakończone. Większość pacjentów opisuje to jako krótki, głęboki sen."
+          },
+          "q5": {
+            "question": "Czy można jeść przed sedacją i prowadzić auto po zabiegu?",
+            "answer": "Przed zabiegiem konieczna jest przerwa w jedzeniu — dokładny czas poda lekarz. Po sedacji nie wolno prowadzić auta do końca dnia, dlatego zalecamy przyjazd z osobą towarzyszącą."
+          }
+        }
+      },
+      "cta": {
+        "title": "Latami odkładasz leczenie ze strachu?",
+        "subtitle": "Bezpłatna konsultacja — omówimy, czy sedacja jest dla Ciebie",
         "button": "Umów konsultację"
       }
     }

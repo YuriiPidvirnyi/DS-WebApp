@@ -184,6 +184,45 @@ const Services = () => {
           })}
         </div>
 
+        {/* Key service landing links */}
+        <div className="mt-20">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-dental-dark mb-3">
+              {t('services.landingLinks.title')}
+            </h2>
+            <p className="text-dental-muted max-w-2xl mx-auto">
+              {t('services.landingLinks.subtitle')}
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {(['implantation', 'aligners', 'veneers', 'sedation'] as const).map(
+              slug => (
+                <Link
+                  key={slug}
+                  href={`/services/${slug}`}
+                  className="group p-6 rounded-2xl border border-dental-secondary-200 bg-white hover:bg-dental-primary-50 hover:border-dental-primary-300 transition-all duration-300"
+                >
+                  <span className="block text-xs font-semibold text-dental-primary-700 uppercase tracking-wide mb-2">
+                    {t(`serviceLanding.${slug}.badge`)}
+                  </span>
+                  <span className="block text-lg font-bold text-dental-dark mb-3">
+                    {t(`serviceLanding.${slug}.title`)}
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-sm font-semibold text-dental-primary-600 group-hover:text-dental-primary-700 transition-colors">
+                    {t('buttons.learnMore')}
+                    <span
+                      aria-hidden="true"
+                      className="transition-transform group-hover:translate-x-1"
+                    >
+                      →
+                    </span>
+                  </span>
+                </Link>
+              )
+            )}
+          </div>
+        </div>
+
         {/* Features */}
         <div
           ref={featuresRef}

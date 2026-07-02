@@ -240,6 +240,10 @@
     "cta": {
       "title": "Need a Consultation?",
       "description": "Our doctors will conduct a detailed examination and develop a personalized treatment plan tailored just for you"
+    },
+    "landingLinks": {
+      "title": "Key services in detail",
+      "subtitle": "Dedicated pages answering the most common questions"
     }
   },
   "caseStudies": {
@@ -3191,6 +3195,14 @@
       "openGraphTitle": "Veneers in Lviv — Dental Story",
       "openGraphDescription": "A new smile in 2–3 visits: individual design, natural look. Free consultation.",
       "breadcrumb": "Veneers"
+    },
+    "serviceSedation": {
+      "title": "Sedation Dentistry in Lviv — Treatment While You Sleep",
+      "description": "Sedation dentistry in Lviv: no fear, no pain, supervised by an anaesthesiologist. For dental phobia, children, and large treatment plans. Free consultation.",
+      "keywords": "sedation dentistry Lviv, sleep dentistry Lviv, fear-free dentist Lviv, dental treatment under sedation",
+      "openGraphTitle": "Sedation Dentistry in Lviv — Dental Story",
+      "openGraphDescription": "Dental treatment while you sleep: no fear, no pain, anaesthesiologist supervised. Free consultation.",
+      "breadcrumb": "Sedation"
     }
   },
   "stock": {
@@ -3520,6 +3532,84 @@
       "cta": {
         "title": "Ready for a new smile?",
         "subtitle": "Book a free smile-design consultation",
+        "button": "Book a consultation"
+      }
+    },
+    "sedation": {
+      "badge": "Fear-Free Dentistry",
+      "title": "Sedation Dentistry — Treatment Without Fear or Pain",
+      "subtitle": "We treat your teeth while you doze calmly: sedation for anxious patients, dental phobia, and large treatment plans in a single visit.",
+      "intro": "Sedation is medication-induced sleep supervised by an anaesthesiologist: you are relaxed, feel no fear or pain, and wake up with your teeth already treated. Unlike general anaesthesia, you breathe on your own and recovery takes just minutes.",
+      "benefits": {
+        "title": "Why sedation at Dental Story",
+        "items": {
+          "b1": {
+            "title": "No fear or stress",
+            "description": "Ideal for dental phobia and anyone who has postponed visits for years: no unpleasant memories of the procedure."
+          },
+          "b2": {
+            "title": "Anaesthesiologist present",
+            "description": "A dedicated anaesthesiologist monitors your condition throughout the procedure."
+          },
+          "b3": {
+            "title": "More done in one visit",
+            "description": "Several teeth or complex treatment in a single appointment instead of a series of visits."
+          },
+          "b4": {
+            "title": "For children and adults",
+            "description": "Safe sedation protocols for young patients and adults alike."
+          }
+        }
+      },
+      "process": {
+        "title": "How treatment works",
+        "steps": {
+          "s1": {
+            "title": "Consultation & screening",
+            "description": "Examination, required tests, and an anaesthesiologist consultation."
+          },
+          "s2": {
+            "title": "Treatment plan & estimate",
+            "description": "We agree on scope, duration, and a fixed price."
+          },
+          "s3": {
+            "title": "Treatment under sedation",
+            "description": "You sleep — the team works. The anaesthesiologist monitors you continuously."
+          },
+          "s4": {
+            "title": "Waking up & rest",
+            "description": "You wake within minutes, rest at the clinic, and go home accompanied."
+          }
+        }
+      },
+      "faq": {
+        "title": "Sedation FAQ",
+        "items": {
+          "q1": {
+            "question": "How is sedation different from general anaesthesia?",
+            "answer": "Sedation is a light medication-induced sleep: you breathe on your own, reflexes are preserved, and waking up takes minutes. General anaesthesia is deeper and requires longer recovery."
+          },
+          "q2": {
+            "question": "Is it safe?",
+            "answer": "Yes — with pre-procedure screening and continuous monitoring by an anaesthesiologist. Before sedation you complete tests and an anaesthesiologist consultation."
+          },
+          "q3": {
+            "question": "Who is sleep dentistry for?",
+            "answer": "People with dental phobia, patients with a strong gag reflex, children, and anyone needing a large volume of treatment in one visit."
+          },
+          "q4": {
+            "question": "What will I feel?",
+            "answer": "Nothing unpleasant: you fall asleep seconds after the medication is given and wake up when everything is done. Most patients describe it as a short, deep sleep."
+          },
+          "q5": {
+            "question": "Can I eat before sedation and drive afterwards?",
+            "answer": "You will need to pause eating before the procedure — the doctor will give exact timing. After sedation you must not drive until the next day, so we recommend coming with an escort."
+          }
+        }
+      },
+      "cta": {
+        "title": "Been putting off treatment out of fear?",
+        "subtitle": "Free consultation — let's discuss whether sedation is right for you",
         "button": "Book a consultation"
       }
     }
