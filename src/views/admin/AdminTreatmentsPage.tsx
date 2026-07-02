@@ -81,7 +81,7 @@ const PY_CSS: Record<PayStatus, string> = {
   unpaid: 'bg-red-100 text-red-800',
   partial: 'bg-orange-100 text-orange-800',
   paid: 'bg-green-100 text-green-800',
-  waived: 'bg-gray-100 text-gray-700',
+  waived: 'bg-dental-secondary-100 text-dental-text',
   refunded: 'bg-slate-100 text-slate-700',
 }
 const TREATMENT_STATUSES: TreatmentStatus[] = ['draft', 'signed', 'completed']
@@ -454,7 +454,7 @@ export default function AdminTreatmentsPage() {
   }
 
   const cell = preferences.compactTables ? 'px-3 py-2' : 'px-4 py-3'
-  const head = `${cell} text-left text-xs font-semibold uppercase text-gray-500`
+  const head = `${cell} text-left text-xs font-semibold uppercase text-dental-text-light`
   const editingRow = editId ? rows.find(x => x.id === editId) : undefined
   const TAB_H = [
     t('admin.treatmentsPage.columns.date'),

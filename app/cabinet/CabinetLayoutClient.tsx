@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
@@ -12,7 +12,6 @@ import {
   Menu,
   X,
   LogOut,
-  ChevronRight,
   Plus,
   CreditCard,
   ArrowLeft,
@@ -20,6 +19,9 @@ import {
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import Logo from '@/components/ui/Logo'
+import SidebarNavItem from '@/components/ui/SidebarNavItem'
+import UserSidebarCard from '@/components/ui/UserSidebarCard'
+import { useDrawerA11y } from '@/hooks/useDrawerA11y'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 
 interface NavItem {
@@ -75,8 +77,15 @@ export default function CabinetLayoutClient({
   const [isLoading, setIsLoading] = useState(true)
   const pathname = usePathname()
   const router = useRouter()
-  const sidebarRef = useRef<HTMLDivElement>(null)
-  const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const {
+    triggerRef,
+    drawerRef,
+    close: closeSidebar,
+  } = useDrawerA11y({
+    open: sidebarOpen,
+    onClose: () => setSidebarOpen(false),
+    autoFocusSelector: '[data-drawer-autofocus]',
+  })
 
   const isActive = (href: string) => {
     if (href === '/cabinet') return pathname === '/cabinet'
@@ -88,71 +97,10 @@ export default function CabinetLayoutClient({
     return active ? t(active.nameKey) : t('cabinet.sidebar.title')
   })()
 
-  // Close sidebar on Escape
-  const closeSidebar = useCallback(() => {
-    setSidebarOpen(false)
-    // Return focus to menu button
-    menuButtonRef.current?.focus()
-  }, [])
-
-  useEffect(() => {
-    if (!sidebarOpen) return
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        closeSidebar()
-      }
-
-      // Focus trap within sidebar
-      if (e.key === 'Tab' && sidebarRef.current) {
-        const focusable = sidebarRef.current.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        )
-        if (focusable.length === 0) return
-
-        const first = focusable[0]
-        const last = focusable[focusable.length - 1]
-
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault()
-          last.focus()
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault()
-          first.focus()
-        }
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [sidebarOpen, closeSidebar])
-
-  // Move focus into sidebar when opened
-  useEffect(() => {
-    if (sidebarOpen && sidebarRef.current) {
-      const closeBtn = sidebarRef.current.querySelector<HTMLElement>(
-        '[data-sidebar-close]'
-      )
-      closeBtn?.focus()
-    }
-  }, [sidebarOpen])
-
   // Close sidebar on route change
   useEffect(() => {
     setSidebarOpen(false)
   }, [pathname])
-
-  // Prevent body scroll when sidebar is open
-  useEffect(() => {
-    if (sidebarOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [sidebarOpen])
 
   // Auth check on mount + session listener
   useEffect(() => {
@@ -264,7 +212,7 @@ export default function CabinetLayoutClient({
       {/* Mobile sidebar */}
       <aside
         id="mobile-sidebar"
-        ref={sidebarRef}
+        ref={drawerRef}
         role="dialog"
         aria-modal={sidebarOpen}
         aria-label={t('cabinet.sidebar.title')}
@@ -281,7 +229,7 @@ export default function CabinetLayoutClient({
             <Logo size="sm" />
           </Link>
           <button
-            data-sidebar-close
+            data-drawer-autofocus
             onClick={closeSidebar}
             tabIndex={sidebarOpen ? 0 : -1}
             aria-label={t('common.close')}
@@ -291,52 +239,23 @@ export default function CabinetLayoutClient({
           </button>
         </div>
 
-        {/* Mobile user card */}
-        <div className="px-4 py-4 border-b border-dental-secondary-100">
-          <div className="flex items-center gap-3">
-            <div
-              className="w-10 h-10 rounded-full bg-dental-primary-600 flex items-center justify-center text-white font-semibold text-sm shrink-0"
-              aria-hidden="true"
-            >
-              {initials}
-            </div>
-            <div className="min-w-0">
-              <p className="text-sm font-medium text-dental-dark truncate">
-                {displayName}
-              </p>
-              <p className="text-xs text-dental-muted truncate">{user.email}</p>
-            </div>
-          </div>
-        </div>
+        <UserSidebarCard name={displayName} email={user.email} />
 
         <nav
           aria-label={t('cabinet.sidebar.navigation')}
           className="px-3 py-4 space-y-1"
         >
           {navigation.map(item => (
-            <Link
+            <SidebarNavItem
               key={item.nameKey}
               href={item.href}
+              icon={item.icon}
+              label={t(item.nameKey)}
+              active={isActive(item.href)}
+              badge={item.badge ? t(item.badge) : undefined}
               onClick={closeSidebar}
               tabIndex={sidebarOpen ? 0 : -1}
-              aria-current={isActive(item.href) ? 'page' : undefined}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500 ${
-                isActive(item.href)
-                  ? 'bg-dental-primary-600 text-white shadow-md shadow-dental-primary-600/25'
-                  : 'text-dental-text hover:bg-dental-secondary-50'
-              }`}
-            >
-              {item.icon}
-              <span className="flex-1">{t(item.nameKey)}</span>
-              {item.badge && (
-                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-dental-secondary-200 text-dental-muted font-medium">
-                  {t(item.badge)}
-                </span>
-              )}
-              {isActive(item.href) && !item.badge && (
-                <ChevronRight className="w-4 h-4" />
-              )}
-            </Link>
+            />
           ))}
         </nav>
 
@@ -388,24 +307,7 @@ export default function CabinetLayoutClient({
           </div>
 
           {/* User card */}
-          <div className="px-4 py-4 border-b border-dental-secondary-100">
-            <div className="flex items-center gap-3">
-              <div
-                className="w-10 h-10 rounded-full bg-dental-primary-600 flex items-center justify-center text-white font-semibold text-sm shrink-0"
-                aria-hidden="true"
-              >
-                {initials}
-              </div>
-              <div className="min-w-0">
-                <p className="text-sm font-medium text-dental-dark truncate">
-                  {displayName}
-                </p>
-                <p className="text-xs text-dental-muted truncate">
-                  {user.email}
-                </p>
-              </div>
-            </div>
-          </div>
+          <UserSidebarCard name={displayName} email={user.email} />
 
           {/* Navigation */}
           <nav
@@ -413,27 +315,14 @@ export default function CabinetLayoutClient({
             className="flex-1 px-3 py-4 space-y-1 overflow-y-auto"
           >
             {navigation.map(item => (
-              <Link
+              <SidebarNavItem
                 key={item.nameKey}
                 href={item.href}
-                aria-current={isActive(item.href) ? 'page' : undefined}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-dental-primary-500 ${
-                  isActive(item.href)
-                    ? 'bg-dental-primary-600 text-white shadow-md shadow-dental-primary-600/25'
-                    : 'text-dental-text hover:bg-dental-secondary-50'
-                }`}
-              >
-                {item.icon}
-                <span className="flex-1">{t(item.nameKey)}</span>
-                {item.badge && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-dental-secondary-200 text-dental-muted font-medium">
-                    {t(item.badge)}
-                  </span>
-                )}
-                {isActive(item.href) && !item.badge && (
-                  <ChevronRight className="w-4 h-4" />
-                )}
-              </Link>
+                icon={item.icon}
+                label={t(item.nameKey)}
+                active={isActive(item.href)}
+                badge={item.badge ? t(item.badge) : undefined}
+              />
             ))}
           </nav>
 
@@ -469,7 +358,7 @@ export default function CabinetLayoutClient({
         {/* Top bar */}
         <header className="sticky top-0 z-30 flex items-center h-16 px-4 bg-white/95 backdrop-blur-sm border-b border-dental-secondary-100 lg:px-8">
           <button
-            ref={menuButtonRef}
+            ref={triggerRef}
             onClick={() => setSidebarOpen(true)}
             aria-label={t('cabinet.sidebar.openMenu')}
             aria-expanded={sidebarOpen}

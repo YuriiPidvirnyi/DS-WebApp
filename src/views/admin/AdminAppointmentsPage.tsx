@@ -4,12 +4,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button, Input, Select } from '@/components/ui'
+import { Button, Input, Select, Skeleton } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
 import { TableSkeleton } from '@/components/ui'
+import AdminDataCard from '@/components/admin/AdminDataCard'
 import {
   formatDate,
   formatDateTime,
@@ -176,7 +177,7 @@ export default function AdminAppointmentsPage() {
   const allSelected =
     rows.length > 0 && rows.every(row => selectedSet.has(row.id))
   const tableCellClass = preferences.compactTables ? 'px-3 py-2' : 'px-4 py-3'
-  const tableHeadClass = `${tableCellClass} text-left text-xs font-semibold uppercase text-gray-500`
+  const tableHeadClass = `${tableCellClass} text-left text-xs font-semibold uppercase text-dental-text-light`
   const tableEmptyStateClass = `${
     preferences.compactTables ? 'px-3 py-6' : 'px-4 py-8'
   } text-center text-dental-text-light`
@@ -473,10 +474,11 @@ export default function AdminAppointmentsPage() {
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-dental-secondary-200 bg-white">
+      {/* Desktop table — lg and above */}
+      <div className="hidden lg:block overflow-hidden rounded-xl border border-dental-secondary-200 bg-white">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-dental-secondary-200">
+            <thead className="bg-dental-secondary-50">
               <tr>
                 <th className={tableHeadClass}>
                   <input
@@ -509,7 +511,7 @@ export default function AdminAppointmentsPage() {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 bg-white text-sm">
+            <tbody className="divide-y divide-dental-secondary-100 bg-white text-sm">
               {isLoading ? (
                 <TableSkeleton cols={8} />
               ) : rows.length === 0 ? (
@@ -604,6 +606,65 @@ export default function AdminAppointmentsPage() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile / tablet card list — below lg */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:hidden">
+        {isLoading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-36 rounded-xl" />
+          ))
+        ) : rows.length === 0 ? (
+          <p className="col-span-full text-center py-8 text-dental-muted">
+            {t('admin.appointmentsPage.table.empty')}
+          </p>
+        ) : (
+          rows.map(row => (
+            <AdminDataCard
+              key={row.id}
+              selected={selectedSet.has(row.id)}
+              onSelect={() => toggleSelection(row.id)}
+              title={resolvePatientName(row)}
+              subtitle={
+                <span className="flex flex-col gap-0.5">
+                  <span className="truncate">{resolveServiceName(row)}</span>
+                  <span className="text-dental-muted truncate">
+                    {resolveDoctorName(row)}
+                  </span>
+                </span>
+              }
+              meta={`${formatDate(row.appointment_date)} · ${formatTime(row.appointment_time)}`}
+              badge={
+                <span
+                  className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${getStatusTone(row.status)}`}
+                >
+                  {getStatusLabel(row.status)}
+                </span>
+              }
+              actions={
+                <Select
+                  selectSize="dense"
+                  fullWidth
+                  value={row.status}
+                  onChange={e =>
+                    void updateStatus(
+                      row.id,
+                      e.target.value as AppointmentStatus
+                    )
+                  }
+                  disabled={isUpdatingId === row.id}
+                  aria-label={`${t('admin.appointmentsPage.table.headers.status')}: ${resolvePatientName(row)}`}
+                >
+                  {STATUS_OPTIONS.map(status => (
+                    <option key={status} value={status}>
+                      {getStatusLabel(status)}
+                    </option>
+                  ))}
+                </Select>
+              }
+            />
+          ))
+        )}
       </div>
     </div>
   )

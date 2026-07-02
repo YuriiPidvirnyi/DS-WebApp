@@ -171,7 +171,7 @@ export default function AdminMaterialsPage() {
   }, [rows, search])
 
   const c = preferences.compactTables ? 'px-3 py-2' : 'px-4 py-3'
-  const th = `${c} text-left text-xs font-semibold uppercase text-gray-500`
+  const th = `${c} text-left text-xs font-semibold uppercase text-dental-text-light`
 
   const F = (k: keyof Form, label: string) => (
     <div>
@@ -450,7 +450,7 @@ export default function AdminMaterialsPage() {
             {t('admin.materialsPage.searchByName')}
           </label>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-dental-muted" />
             <Input
               value={search}
               onChange={e => setSearch(e.target.value)}

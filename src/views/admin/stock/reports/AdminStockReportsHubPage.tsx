@@ -45,41 +45,39 @@ const REPORTS = [
 
 export default function AdminStockReportsHubPage() {
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-8 flex items-center gap-3">
-          <Link
-            href="/admin/stock"
-            className="text-dental-text hover:text-dental-primary-600"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </Link>
-          <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-            Звіти по складу
-          </h1>
-        </div>
+    <div className="max-w-4xl mx-auto">
+      <div className="mb-8 flex items-center gap-3">
+        <Link
+          href="/admin/stock"
+          className="text-dental-text hover:text-dental-primary-600"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </Link>
+        <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
+          Звіти по складу
+        </h1>
+      </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          {REPORTS.map(r => (
-            <Link
-              key={r.href}
-              href={r.href}
-              className="group flex gap-4 rounded-xl border bg-white p-5 hover:border-dental-primary-600 hover:shadow-sm transition-all"
-            >
-              <div className="flex-shrink-0 mt-0.5 text-dental-primary-600 group-hover:text-dental-dark transition-colors">
-                <r.icon className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="font-medium text-dental-dark group-hover:text-dental-primary-600 transition-colors">
-                  {r.title}
-                </p>
-                <p className="mt-1 text-sm text-dental-text leading-relaxed">
-                  {r.desc}
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        {REPORTS.map(r => (
+          <Link
+            key={r.href}
+            href={r.href}
+            className="group flex gap-4 rounded-xl border bg-white p-5 hover:border-dental-primary-600 hover:shadow-sm transition-all"
+          >
+            <div className="flex-shrink-0 mt-0.5 text-dental-primary-600 group-hover:text-dental-dark transition-colors">
+              <r.icon className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="font-medium text-dental-dark group-hover:text-dental-primary-600 transition-colors">
+                {r.title}
+              </p>
+              <p className="mt-1 text-sm text-dental-text leading-relaxed">
+                {r.desc}
+              </p>
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   )

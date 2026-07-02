@@ -5,10 +5,10 @@ import { useTranslation } from 'react-i18next'
 import { X } from 'lucide-react'
 import Image from 'next/image'
 import { AsyncState } from '@/components/ui'
+import { Card, CardMedia } from '@/components/ui'
 import type { GalleryImage } from '@/types'
 import galleryData from '@/content/gallery.json'
 
-// Local gallery data (replaces external Unsplash links). Drop real photos into public/assets/images and update src/content/gallery.json
 const galleryImages: GalleryImage[] = galleryData as unknown as GalleryImage[]
 
 const categoryKeys = [
@@ -31,7 +31,6 @@ const Gallery = () => {
 
   const openLightbox = (image: GalleryImage) => {
     setSelectedImage(image)
-    // Prevent body scroll when lightbox is open
     document.body.style.overflow = 'hidden'
   }
 
@@ -59,24 +58,29 @@ const Gallery = () => {
     setSelectedImage(filteredImages[newIndex])
   }
 
-  // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!selectedImage) return
-
     if (e.key === 'Escape') closeLightbox()
     if (e.key === 'ArrowLeft') navigateImage('prev')
     if (e.key === 'ArrowRight') navigateImage('next')
   }
 
+  const handleCardKeyDown = (e: React.KeyboardEvent, image: GalleryImage) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      openLightbox(image)
+    }
+  }
+
   return (
-    <div className="py-16">
+    <div className="py-16 lg:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl lg:text-5xl font-bold text-dental-dark mb-6">
             {t('gallery.title')}
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-dental-text max-w-3xl mx-auto">
             {t('gallery.subtitle')}
           </p>
         </div>
@@ -87,10 +91,10 @@ const Gallery = () => {
             <button
               key={category.value}
               onClick={() => setSelectedCategory(category.value)}
-              className={`px-6 py-2 rounded-full font-medium transition-colors ${
+              className={`px-6 py-2 rounded-full font-medium transition-colors min-h-[44px] ${
                 selectedCategory === category.value
                   ? 'bg-dental-teal text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  : 'bg-dental-secondary-100 text-dental-text hover:bg-dental-secondary-200'
               }`}
             >
               {t(category.labelKey)}
@@ -101,27 +105,42 @@ const Gallery = () => {
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredImages.map(image => (
-            <div
+            <Card
               key={image.id}
-              className="group relative overflow-hidden rounded-xl cursor-pointer bg-gray-100"
+              variant="ghost"
+              padding="none"
+              className="group relative overflow-hidden cursor-pointer focus-within:ring-2 focus-within:ring-dental-primary-600"
               onClick={() => openLightbox(image)}
             >
-              <Image
-                src={image.url}
-                alt={image.title}
-                width={400}
-                height={256}
-                className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                  <h3 className="font-semibold text-lg mb-1">{image.title}</h3>
-                  {image.description && (
-                    <p className="text-sm text-gray-200">{image.description}</p>
-                  )}
-                </div>
-              </div>
-            </div>
+              <button
+                className="block w-full text-left focus:outline-none"
+                onClick={() => openLightbox(image)}
+                onKeyDown={e => handleCardKeyDown(e, image)}
+                aria-label={image.title}
+              >
+                <CardMedia aspectRatio="video" className="relative">
+                  <Image
+                    src={image.url}
+                    alt={image.title}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-110"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  />
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                      <h3 className="font-semibold text-lg mb-1">
+                        {image.title}
+                      </h3>
+                      {image.description && (
+                        <p className="text-sm text-white/80">
+                          {image.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </CardMedia>
+              </button>
+            </Card>
           ))}
         </div>
 
@@ -144,7 +163,7 @@ const Gallery = () => {
           aria-label={t('gallery.navigation.viewImage')}
         >
           <button
-            className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10"
+            className="absolute top-4 right-4 text-white hover:text-white/70 transition-colors z-10 min-h-[44px] min-w-[44px] flex items-center justify-center"
             onClick={closeLightbox}
             aria-label={t('gallery.navigation.close')}
           >
@@ -152,7 +171,7 @@ const Gallery = () => {
           </button>
 
           <button
-            className="absolute left-4 text-white hover:text-gray-300 transition-colors text-4xl"
+            className="absolute left-4 text-white hover:text-white/70 transition-colors text-4xl min-h-[44px] min-w-[44px] flex items-center justify-center"
             onClick={e => {
               e.stopPropagation()
               navigateImage('prev')
@@ -163,7 +182,7 @@ const Gallery = () => {
           </button>
 
           <button
-            className="absolute right-4 text-white hover:text-gray-300 transition-colors text-4xl"
+            className="absolute right-4 text-white hover:text-white/70 transition-colors text-4xl min-h-[44px] min-w-[44px] flex items-center justify-center"
             onClick={e => {
               e.stopPropagation()
               navigateImage('next')
@@ -187,7 +206,7 @@ const Gallery = () => {
                 {selectedImage.title}
               </h3>
               {selectedImage.description && (
-                <p className="text-gray-300">{selectedImage.description}</p>
+                <p className="text-white/70">{selectedImage.description}</p>
               )}
             </div>
           </div>

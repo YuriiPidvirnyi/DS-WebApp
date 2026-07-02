@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import {
   Package,
   ShoppingCart,
@@ -44,11 +45,12 @@ export default function MaterialCard({
       <div className="flex items-start gap-3">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-dental-primary/10">
           {material.image_url ? (
-            <img
+            <Image
               src={material.image_url}
               alt=""
-              className="h-8 w-8 rounded object-cover"
-              loading="lazy"
+              width={32}
+              height={32}
+              className="rounded object-cover"
             />
           ) : (
             <Package className="w-5 h-5 text-dental-primary-600" />

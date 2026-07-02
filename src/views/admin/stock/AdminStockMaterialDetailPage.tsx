@@ -205,396 +205,390 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center py-24">
         <Loader2 className="w-8 h-8 animate-spin text-dental-primary-600" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-3xl mx-auto">
-        <div className="mb-6 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/admin/stock/materials"
-              className="text-dental-text hover:text-dental-primary-600"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </Link>
-            <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-              {isNew ? 'Новий матеріал' : (material?.name_uk ?? 'Матеріал')}
-            </h1>
-          </div>
-          {!isNew && canEdit && material && !material.is_active && (
-            <button
-              onClick={handleArchive}
-              className="inline-flex items-center gap-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-medium text-amber-700 hover:bg-amber-100"
-            >
-              <Archive className="w-4 h-4" />
-              Деактивувати
-            </button>
-          )}
+    <div className="max-w-3xl mx-auto">
+      <div className="mb-6 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin/stock/materials"
+            className="text-dental-text hover:text-dental-primary-600"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </Link>
+          <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
+            {isNew ? 'Новий матеріал' : (material?.name_uk ?? 'Матеріал')}
+          </h1>
         </div>
-
-        {error && (
-          <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
-            {error}
-          </div>
+        {!isNew && canEdit && material && !material.is_active && (
+          <button
+            onClick={handleArchive}
+            className="inline-flex items-center gap-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-medium text-amber-700 hover:bg-amber-100"
+          >
+            <Archive className="w-4 h-4" />
+            Деактивувати
+          </button>
         )}
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic info */}
-          <section className="rounded-xl border bg-white p-5 space-y-4">
-            <h2 className="font-medium text-dental-dark">Основна інформація</h2>
+      {error && (
+        <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Basic info */}
+        <section className="rounded-xl border bg-white p-5 space-y-4">
+          <h2 className="font-medium text-dental-dark">Основна інформація</h2>
+          <div>
+            <label className="block text-sm font-medium text-dental-dark mb-1">
+              Назва (UA)*
+            </label>
+            <input
+              value={nameUk}
+              onChange={e => setNameUk(e.target.value)}
+              required
+              disabled={!canEdit}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-dental-dark mb-1">
-                Назва (UA)*
+                Назва (EN)
               </label>
               <input
-                value={nameUk}
-                onChange={e => setNameUk(e.target.value)}
-                required
+                value={nameEn}
+                onChange={e => setNameEn(e.target.value)}
                 disabled={!canEdit}
                 className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-dental-dark mb-1">
-                  Назва (EN)
-                </label>
-                <input
-                  value={nameEn}
-                  onChange={e => setNameEn(e.target.value)}
-                  disabled={!canEdit}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-dental-dark mb-1">
-                  Одиниця виміру
-                </label>
-                <input
-                  value={unit}
-                  onChange={e => setUnit(e.target.value)}
-                  disabled={!canEdit}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
-                />
-              </div>
-            </div>
             <div>
               <label className="block text-sm font-medium text-dental-dark mb-1">
-                Опис
-              </label>
-              <textarea
-                value={descriptionUk}
-                onChange={e => setDescriptionUk(e.target.value)}
-                rows={2}
-                disabled={!canEdit}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50 resize-none"
-              />
-            </div>
-          </section>
-
-          {/* Directories */}
-          <section className="rounded-xl border bg-white p-5 space-y-4">
-            <h2 className="font-medium text-dental-dark">Довідники</h2>
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-dental-dark mb-1">
-                  Бренд
-                </label>
-                <select
-                  value={brandId}
-                  onChange={e => setBrandId(e.target.value)}
-                  disabled={!canEdit}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
-                >
-                  <option value="">— не вказано —</option>
-                  {brands.map(b => (
-                    <option key={b.id} value={b.id}>
-                      {b.name_uk ?? b.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-dental-dark mb-1">
-                  Категорія
-                </label>
-                <select
-                  value={categoryId}
-                  onChange={e => setCategoryId(e.target.value)}
-                  disabled={!canEdit}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
-                >
-                  <option value="">— не вказано —</option>
-                  {categories.map(c => (
-                    <option key={c.id} value={c.id}>
-                      {c.name_uk ?? c.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-dental-dark mb-1">
-                  Постачальник
-                </label>
-                <select
-                  value={supplierId}
-                  onChange={e => setSupplierId(e.target.value)}
-                  disabled={!canEdit}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
-                >
-                  <option value="">— не вказано —</option>
-                  {suppliers.map(s => (
-                    <option key={s.id} value={s.id}>
-                      {s.name_uk ?? s.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </section>
-
-          {/* Pack / Unit */}
-          <section className="rounded-xl border bg-white p-5 space-y-4">
-            <h2 className="font-medium text-dental-dark">Упаковка</h2>
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-dental-dark mb-1">
-                  Формат упаковки
-                </label>
-                <input
-                  value={packFormatLabel}
-                  onChange={e => setPackFormatLabel(e.target.value)}
-                  disabled={!canEdit}
-                  placeholder="Банка, Флакон, Упаковка..."
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-dental-dark mb-1">
-                  К-сть в упаковці
-                </label>
-                <input
-                  type="number"
-                  min="0.0001"
-                  step="any"
-                  value={packSizeNumerator}
-                  onChange={e => setPackSizeNumerator(e.target.value)}
-                  disabled={!canEdit}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-dental-dark mb-1">
-                  Одиниця в уп.
-                </label>
-                <select
-                  value={packSizeUnit}
-                  onChange={e =>
-                    setPackSizeUnit(
-                      e.target.value as (typeof PACK_UNITS)[number]
-                    )
-                  }
-                  disabled={!canEdit}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
-                >
-                  {PACK_UNITS.map(u => (
-                    <option key={u} value={u}>
-                      {u}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </section>
-
-          {/* Barcode / Article */}
-          <section className="rounded-xl border bg-white p-5 space-y-4">
-            <h2 className="font-medium text-dental-dark">
-              Штрихкоди та артикул
-            </h2>
-            <div>
-              <label className="block text-sm font-medium text-dental-dark mb-1">
-                Артикул
+                Одиниця виміру
               </label>
               <input
-                value={articleCode}
-                onChange={e => setArticleCode(e.target.value)}
+                value={unit}
+                onChange={e => setUnit(e.target.value)}
                 disabled={!canEdit}
                 className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
               />
             </div>
-            {canEdit && (
-              <div>
-                <label className="block text-sm font-medium text-dental-dark mb-1">
-                  Додати штрихкод
-                </label>
-                <div className="flex gap-2">
-                  <BarcodeInput
-                    value={barcodeInput}
-                    onChange={setBarcodeInput}
-                    onScanned={code => {
-                      if (!barcodes.includes(code))
-                        setBarcodes(prev => [...prev, code])
-                    }}
-                    className="flex-1"
-                  />
-                  <button
-                    type="button"
-                    onClick={addBarcode}
-                    className="rounded-lg border border-dental-primary-600 px-3 py-2 text-dental-primary-600 hover:bg-dental-primary/10"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            )}
-            {barcodes.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {barcodes.map(code => (
-                  <span
-                    key={code}
-                    className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-sm text-dental-dark font-mono"
-                  >
-                    {code}
-                    {canEdit && (
-                      <button type="button" onClick={() => removeBarcode(code)}>
-                        <X className="w-3 h-3 text-dental-text hover:text-red-500" />
-                      </button>
-                    )}
-                  </span>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-dental-dark mb-1">
+              Опис
+            </label>
+            <textarea
+              value={descriptionUk}
+              onChange={e => setDescriptionUk(e.target.value)}
+              rows={2}
+              disabled={!canEdit}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50 resize-none"
+            />
+          </div>
+        </section>
+
+        {/* Directories */}
+        <section className="rounded-xl border bg-white p-5 space-y-4">
+          <h2 className="font-medium text-dental-dark">Довідники</h2>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-dental-dark mb-1">
+                Бренд
+              </label>
+              <select
+                value={brandId}
+                onChange={e => setBrandId(e.target.value)}
+                disabled={!canEdit}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+              >
+                <option value="">— не вказано —</option>
+                {brands.map(b => (
+                  <option key={b.id} value={b.id}>
+                    {b.name_uk ?? b.name}
+                  </option>
                 ))}
-              </div>
-            )}
-          </section>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-dental-dark mb-1">
+                Категорія
+              </label>
+              <select
+                value={categoryId}
+                onChange={e => setCategoryId(e.target.value)}
+                disabled={!canEdit}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+              >
+                <option value="">— не вказано —</option>
+                {categories.map(c => (
+                  <option key={c.id} value={c.id}>
+                    {c.name_uk ?? c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-dental-dark mb-1">
+                Постачальник
+              </label>
+              <select
+                value={supplierId}
+                onChange={e => setSupplierId(e.target.value)}
+                disabled={!canEdit}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+              >
+                <option value="">— не вказано —</option>
+                {suppliers.map(s => (
+                  <option key={s.id} value={s.id}>
+                    {s.name_uk ?? s.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </section>
 
-          {/* Per-warehouse matrix */}
-          {!isNew && matrix.length > 0 && (
-            <section className="rounded-xl border bg-white p-5">
-              <h2 className="font-medium text-dental-dark mb-4">
-                Матриця складів
-              </h2>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="text-left py-2 font-medium text-dental-text">
-                        Склад
-                      </th>
-                      <th className="text-right py-2 font-medium text-dental-text">
-                        Залишок
-                      </th>
-                      <th className="text-right py-2 font-medium text-dental-text">
-                        Критичний
-                      </th>
-                      <th className="text-right py-2 font-medium text-dental-text">
-                        Замовлення
-                      </th>
-                      <th className="text-center py-2 font-medium text-dental-text">
-                        Видно
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {matrix.map(row => (
-                      <tr
-                        key={row.warehouse_id}
-                        className="border-b border-gray-100"
+        {/* Pack / Unit */}
+        <section className="rounded-xl border bg-white p-5 space-y-4">
+          <h2 className="font-medium text-dental-dark">Упаковка</h2>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-dental-dark mb-1">
+                Формат упаковки
+              </label>
+              <input
+                value={packFormatLabel}
+                onChange={e => setPackFormatLabel(e.target.value)}
+                disabled={!canEdit}
+                placeholder="Банка, Флакон, Упаковка..."
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-dental-dark mb-1">
+                К-сть в упаковці
+              </label>
+              <input
+                type="number"
+                min="0.0001"
+                step="any"
+                value={packSizeNumerator}
+                onChange={e => setPackSizeNumerator(e.target.value)}
+                disabled={!canEdit}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-dental-dark mb-1">
+                Одиниця в уп.
+              </label>
+              <select
+                value={packSizeUnit}
+                onChange={e =>
+                  setPackSizeUnit(e.target.value as (typeof PACK_UNITS)[number])
+                }
+                disabled={!canEdit}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+              >
+                {PACK_UNITS.map(u => (
+                  <option key={u} value={u}>
+                    {u}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </section>
+
+        {/* Barcode / Article */}
+        <section className="rounded-xl border bg-white p-5 space-y-4">
+          <h2 className="font-medium text-dental-dark">Штрихкоди та артикул</h2>
+          <div>
+            <label className="block text-sm font-medium text-dental-dark mb-1">
+              Артикул
+            </label>
+            <input
+              value={articleCode}
+              onChange={e => setArticleCode(e.target.value)}
+              disabled={!canEdit}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+            />
+          </div>
+          {canEdit && (
+            <div>
+              <label className="block text-sm font-medium text-dental-dark mb-1">
+                Додати штрихкод
+              </label>
+              <div className="flex gap-2">
+                <BarcodeInput
+                  value={barcodeInput}
+                  onChange={setBarcodeInput}
+                  onScanned={code => {
+                    if (!barcodes.includes(code))
+                      setBarcodes(prev => [...prev, code])
+                  }}
+                  className="flex-1"
+                />
+                <button
+                  type="button"
+                  onClick={addBarcode}
+                  className="rounded-lg border border-dental-primary-600 px-3 py-2 text-dental-primary-600 hover:bg-dental-primary/10"
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+          {barcodes.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {barcodes.map(code => (
+                <span
+                  key={code}
+                  className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-sm text-dental-dark font-mono"
+                >
+                  {code}
+                  {canEdit && (
+                    <button type="button" onClick={() => removeBarcode(code)}>
+                      <X className="w-3 h-3 text-dental-text hover:text-red-500" />
+                    </button>
+                  )}
+                </span>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* Per-warehouse matrix */}
+        {!isNew && matrix.length > 0 && (
+          <section className="rounded-xl border bg-white p-5">
+            <h2 className="font-medium text-dental-dark mb-4">
+              Матриця складів
+            </h2>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-2 font-medium text-dental-text">
+                      Склад
+                    </th>
+                    <th className="text-right py-2 font-medium text-dental-text">
+                      Залишок
+                    </th>
+                    <th className="text-right py-2 font-medium text-dental-text">
+                      Критичний
+                    </th>
+                    <th className="text-right py-2 font-medium text-dental-text">
+                      Замовлення
+                    </th>
+                    <th className="text-center py-2 font-medium text-dental-text">
+                      Видно
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {matrix.map(row => (
+                    <tr
+                      key={row.warehouse_id}
+                      className="border-b border-gray-100"
+                    >
+                      <td className="py-2 text-dental-dark">
+                        {row.warehouse?.name_uk ?? row.warehouse_id}
+                      </td>
+                      <td
+                        className={`py-2 text-right font-mono ${(row.current_quantity ?? 0) <= 0 ? 'text-red-600' : 'text-dental-dark'}`}
                       >
-                        <td className="py-2 text-dental-dark">
-                          {row.warehouse?.name_uk ?? row.warehouse_id}
-                        </td>
-                        <td
-                          className={`py-2 text-right font-mono ${(row.current_quantity ?? 0) <= 0 ? 'text-red-600' : 'text-dental-dark'}`}
-                        >
-                          {row.current_quantity ?? 0}
-                        </td>
-                        <td className="py-2 text-right">
-                          {canEdit ? (
-                            <input
-                              type="number"
-                              min="0"
-                              step="any"
-                              defaultValue={row.critical_level_unit_qty ?? ''}
-                              onBlur={e =>
-                                patchMatrix(row.warehouse_id, {
-                                  criticalLevelUnitQty: e.target.value || null,
-                                })
-                              }
-                              className="w-20 rounded border border-gray-300 px-2 py-1 text-right text-sm focus:outline-none focus:ring-1 focus:ring-dental-primary-600"
-                            />
-                          ) : (
-                            <span className="text-dental-text">
-                              {row.critical_level_unit_qty ?? '—'}
-                            </span>
-                          )}
-                        </td>
-                        <td className="py-2 text-right">
-                          {canEdit ? (
-                            <input
-                              type="number"
-                              min="0"
-                              step="any"
-                              defaultValue={row.default_reorder_unit_qty ?? ''}
-                              onBlur={e =>
-                                patchMatrix(row.warehouse_id, {
-                                  defaultReorderUnitQty: e.target.value || null,
-                                })
-                              }
-                              className="w-20 rounded border border-gray-300 px-2 py-1 text-right text-sm focus:outline-none focus:ring-1 focus:ring-dental-primary-600"
-                            />
-                          ) : (
-                            <span className="text-dental-text">
-                              {row.default_reorder_unit_qty ?? '—'}
-                            </span>
-                          )}
-                        </td>
-                        <td className="py-2 text-center">
+                        {row.current_quantity ?? 0}
+                      </td>
+                      <td className="py-2 text-right">
+                        {canEdit ? (
                           <input
-                            type="checkbox"
-                            checked={row.is_visible}
-                            disabled={!canEdit}
-                            onChange={e =>
+                            type="number"
+                            min="0"
+                            step="any"
+                            defaultValue={row.critical_level_unit_qty ?? ''}
+                            onBlur={e =>
                               patchMatrix(row.warehouse_id, {
-                                isVisible: e.target.checked,
+                                criticalLevelUnitQty: e.target.value || null,
                               })
                             }
-                            className="rounded"
+                            className="w-20 rounded border border-gray-300 px-2 py-1 text-right text-sm focus:outline-none focus:ring-1 focus:ring-dental-primary-600"
                           />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </section>
-          )}
-
-          {canEdit && (
-            <div className="flex justify-end gap-3">
-              <Link
-                href="/admin/stock/materials"
-                className="px-4 py-2 text-sm text-dental-text hover:text-dental-dark"
-              >
-                Скасувати
-              </Link>
-              <button
-                type="submit"
-                disabled={saving}
-                className="inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-dental-dark disabled:opacity-60 transition-colors"
-              >
-                {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-                <Save className="w-4 h-4" />
-                Зберегти
-              </button>
+                        ) : (
+                          <span className="text-dental-text">
+                            {row.critical_level_unit_qty ?? '—'}
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-2 text-right">
+                        {canEdit ? (
+                          <input
+                            type="number"
+                            min="0"
+                            step="any"
+                            defaultValue={row.default_reorder_unit_qty ?? ''}
+                            onBlur={e =>
+                              patchMatrix(row.warehouse_id, {
+                                defaultReorderUnitQty: e.target.value || null,
+                              })
+                            }
+                            className="w-20 rounded border border-gray-300 px-2 py-1 text-right text-sm focus:outline-none focus:ring-1 focus:ring-dental-primary-600"
+                          />
+                        ) : (
+                          <span className="text-dental-text">
+                            {row.default_reorder_unit_qty ?? '—'}
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-2 text-center">
+                        <input
+                          type="checkbox"
+                          checked={row.is_visible}
+                          disabled={!canEdit}
+                          onChange={e =>
+                            patchMatrix(row.warehouse_id, {
+                              isVisible: e.target.checked,
+                            })
+                          }
+                          className="rounded"
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          )}
-        </form>
-      </div>
+          </section>
+        )}
+
+        {canEdit && (
+          <div className="flex justify-end gap-3">
+            <Link
+              href="/admin/stock/materials"
+              className="px-4 py-2 text-sm text-dental-text hover:text-dental-dark"
+            >
+              Скасувати
+            </Link>
+            <button
+              type="submit"
+              disabled={saving}
+              className="inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-dental-dark disabled:opacity-60 transition-colors"
+            >
+              {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+              <Save className="w-4 h-4" />
+              Зберегти
+            </button>
+          </div>
+        )}
+      </form>
     </div>
   )
 }

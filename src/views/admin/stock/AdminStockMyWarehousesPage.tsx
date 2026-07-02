@@ -87,7 +87,7 @@ export default function AdminStockMyWarehousesPage() {
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <>
       <div className={'max-w-6xl mx-auto'}>
         <div className="mb-6 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -243,6 +243,6 @@ export default function AdminStockMyWarehousesPage() {
           onDocPosted={() => loadBalances()}
         />
       )}
-    </div>
+    </>
   )
 }

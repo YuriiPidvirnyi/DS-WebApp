@@ -9,11 +9,19 @@ import {
 } from 'react'
 import { Edit, Plus, RefreshCw, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button, Input, Select, TableSkeleton, Textarea } from '@/components/ui'
+import {
+  Button,
+  Input,
+  Select,
+  Skeleton,
+  TableSkeleton,
+  Textarea,
+} from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
 import AdminModal from './components/AdminModal'
+import AdminDataCard from '@/components/admin/AdminDataCard'
 import { formatCurrency, formatDateTime, getStatusTone } from './utils'
 
 interface ServiceRow {
@@ -179,7 +187,7 @@ export default function AdminServicesPage() {
   const allSelected =
     rows.length > 0 && rows.every(row => selectedSet.has(row.id))
   const tableCellClass = preferences.compactTables ? 'px-3 py-2' : 'px-4 py-3'
-  const tableHeadClass = `${tableCellClass} text-left text-xs font-semibold uppercase text-gray-500`
+  const tableHeadClass = `${tableCellClass} text-left text-xs font-semibold uppercase text-dental-text-light`
   const tableEmptyStateClass = `${
     preferences.compactTables ? 'px-3 py-6' : 'px-4 py-8'
   } text-center text-dental-text-light`
@@ -579,10 +587,11 @@ export default function AdminServicesPage() {
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-dental-secondary-200 bg-white">
+      {/* Desktop table — lg and above */}
+      <div className="hidden lg:block overflow-hidden rounded-xl border border-dental-secondary-200 bg-white">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-dental-secondary-200">
+            <thead className="bg-dental-secondary-50">
               <tr>
                 <th className={tableHeadClass}>
                   <input
@@ -615,7 +624,7 @@ export default function AdminServicesPage() {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 bg-white text-sm">
+            <tbody className="divide-y divide-dental-secondary-100 bg-white text-sm">
               {isLoading ? (
                 <TableSkeleton cols={8} />
               ) : rows.length === 0 ? (
@@ -720,6 +729,79 @@ export default function AdminServicesPage() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile / tablet card list — below lg */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:hidden">
+        {isLoading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-28 rounded-xl" />
+          ))
+        ) : rows.length === 0 ? (
+          <p className="col-span-full text-center py-8 text-dental-muted">
+            {t('admin.servicesPage.table.empty')}
+          </p>
+        ) : (
+          rows.map(row => (
+            <AdminDataCard
+              key={row.id}
+              selected={selectedSet.has(row.id)}
+              onSelect={() => toggleSelection(row.id)}
+              title={row.name_uk}
+              subtitle={
+                <span className="flex flex-col gap-0.5">
+                  <span className="truncate text-dental-muted">
+                    {row.category}
+                  </span>
+                  <span>{formatCurrency(row.price_uah)}</span>
+                </span>
+              }
+              meta={formatDateTime(row.updated_at)}
+              badge={
+                <span
+                  className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${getStatusTone(row.is_active ? 'active' : 'inactive')}`}
+                >
+                  {row.is_active
+                    ? getAvailabilityLabel('active')
+                    : getAvailabilityLabel('inactive')}
+                </span>
+              }
+              actions={
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => openEditModal(row)}
+                    className="rounded-md border border-dental-secondary p-2.5 text-dental-text hover:bg-dental-secondary-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    aria-label={t('admin.servicesPage.actions.editAria')}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      void toggleServiceStatus(row.id, row.is_active)
+                    }
+                    disabled={isUpdatingId === row.id}
+                    className="rounded-md border border-dental-secondary px-3 py-2.5 text-xs font-semibold text-dental-text hover:bg-dental-secondary-50 disabled:opacity-60 min-h-[44px]"
+                  >
+                    {row.is_active
+                      ? t('admin.servicesPage.actions.hide')
+                      : t('admin.servicesPage.actions.show')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void deleteService(row.id)}
+                    disabled={isUpdatingId === row.id}
+                    className="rounded-md border border-red-200 p-2.5 text-red-600 hover:bg-red-50 disabled:opacity-60 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    aria-label={t('admin.servicesPage.actions.deleteAria')}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              }
+            />
+          ))
+        )}
       </div>
 
       <AdminModal

@@ -21,9 +21,9 @@ function emit(level: LogLevel, msg: string, meta?: Record<string, unknown>) {
     ...meta,
   }
 
-  // Always emit structured JSON (stdout via console.log as specified)
+  // Always emit structured JSON (stdout via console.info as specified)
   const line = JSON.stringify(record)
-  console.log(line)
+  console.info(line)
 }
 
 export const logger = {

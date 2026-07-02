@@ -25,7 +25,7 @@ const Footer = memo(() => {
       {/* ─── Map + Contact overlay ─── */}
       <div className="relative">
         {/* Full-width satellite map */}
-        <div className="h-[480px] md:h-[380px] w-full">
+        <div className="h-[480px] md:h-[380px] mx-4 sm:mx-6 rounded-2xl overflow-hidden">
           <iframe
             src={MAPS_EMBED_URL}
             width="100%"

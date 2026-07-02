@@ -32,14 +32,15 @@ const STATUS_ICON: Record<ServiceStatus, ReactElement> = {
   ok: <CheckCircle className="h-5 w-5 text-green-500" />,
   degraded: <MinusCircle className="h-5 w-5 text-yellow-500" />,
   error: <XCircle className="h-5 w-5 text-red-500" />,
-  unknown: <MinusCircle className="h-5 w-5 text-gray-400" />,
+  unknown: <MinusCircle className="h-5 w-5 text-dental-muted" />,
 }
 
 const STATUS_BADGE_CLASS: Record<ServiceStatus, string> = {
   ok: 'bg-green-50 text-green-700 border-green-200',
   degraded: 'bg-yellow-50 text-yellow-700 border-yellow-200',
   error: 'bg-red-50 text-red-700 border-red-200',
-  unknown: 'bg-gray-50 text-gray-500 border-gray-200',
+  unknown:
+    'bg-dental-secondary-50 text-dental-text-light border-dental-secondary-200',
 }
 
 const STATUS_LABEL: Record<ServiceStatus, string> = {
@@ -227,7 +228,7 @@ export default function AdminHealthPage() {
           ? Array.from({ length: 5 }).map((_, i) => (
               <div
                 key={i}
-                className="h-16 bg-gray-100 rounded-xl animate-pulse"
+                className="h-16 bg-dental-secondary-100 rounded-xl animate-pulse"
               />
             ))
           : services.map(s => <ServiceCard key={s.name} service={s} />)}
