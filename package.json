@@ -1,6 +1,6 @@
 {
   "name": "dental-story-webapp",
-  "version": "3.1.0-dev",
+  "version": "3.1.0",
   "description": "Modern webapp for Dental Story dental clinic",
   "type": "module",
   "scripts": {
