@@ -3167,6 +3167,30 @@
     "openGraphImage": {
       "alt": "Dental Story — Сучасна стоматологія у Львові",
       "tagline": "Сучасна стоматологія у Львові"
+    },
+    "serviceImplantation": {
+      "title": "Dental Implants in Lviv",
+      "description": "Dental implants in Lviv: 3D diagnostics, painless placement, fixed estimate agreed before treatment. Free consultation.",
+      "keywords": "dental implants Lviv, tooth implant Lviv, implant placement Lviv, implant price Lviv",
+      "openGraphTitle": "Dental Implants in Lviv — Dental Story",
+      "openGraphDescription": "3D diagnostics, painless placement, fixed estimate. Free consultation.",
+      "breadcrumb": "Implants"
+    },
+    "serviceAligners": {
+      "title": "Clear Aligners in Lviv — Straighten Teeth Without Braces",
+      "description": "Clear aligners in Lviv: invisible bite correction for adults and teens. Digital 3D outcome planning. Free consultation.",
+      "keywords": "clear aligners Lviv, invisible braces Lviv, teeth straightening Lviv, bite correction Lviv",
+      "openGraphTitle": "Clear Aligners in Lviv — Dental Story",
+      "openGraphDescription": "Invisible bite correction with clear trays. 3D outcome plan before treatment starts.",
+      "breadcrumb": "Aligners"
+    },
+    "serviceVeneers": {
+      "title": "Veneers in Lviv — Aesthetic Restoration",
+      "description": "Ceramic and composite veneers in Lviv: a new smile in 2–3 visits. Individual design, natural look. Free consultation.",
+      "keywords": "veneers Lviv, ceramic veneers Lviv, composite veneers, aesthetic dentistry Lviv",
+      "openGraphTitle": "Veneers in Lviv — Dental Story",
+      "openGraphDescription": "A new smile in 2–3 visits: individual design, natural look. Free consultation.",
+      "breadcrumb": "Veneers"
     }
   },
   "stock": {
@@ -3262,6 +3286,242 @@
       "negativeBalance": "Insufficient balance",
       "docLocked": "Document already posted",
       "flagOff": "Inventory v2 not enabled"
+    }
+  },
+  "serviceLanding": {
+    "implantation": {
+      "badge": "Surgical Dentistry",
+      "title": "Dental Implants in Lviv",
+      "subtitle": "Restore teeth for good: 3D planning, painless placement, and a fixed treatment estimate that will not change.",
+      "intro": "An implant is an artificial tooth root that supports a crown. It is the most reliable way to replace a missing tooth: neighbouring teeth stay untouched, bone tissue is preserved, and the new crown looks just like your own tooth.",
+      "benefits": {
+        "title": "Why implants at Dental Story",
+        "items": {
+          "b1": {
+            "title": "3D diagnostics first",
+            "description": "CT scan and digital implant positioning before surgery — no surprises during the procedure."
+          },
+          "b2": {
+            "title": "Painless",
+            "description": "Modern anaesthesia makes implant placement no harder than a routine filling."
+          },
+          "b3": {
+            "title": "Fixed estimate",
+            "description": "The price is agreed before treatment starts — it will not change at payment."
+          },
+          "b4": {
+            "title": "Full cycle in one clinic",
+            "description": "From sinus lift and bone grafting to the final crown — all at 10 Sumska St."
+          }
+        }
+      },
+      "process": {
+        "title": "How treatment works",
+        "steps": {
+          "s1": {
+            "title": "Consultation & CT",
+            "description": "Examination, CT scan, and bone tissue assessment."
+          },
+          "s2": {
+            "title": "Treatment plan & estimate",
+            "description": "We agree on stages, timeline, and a fixed price."
+          },
+          "s3": {
+            "title": "Implant placement",
+            "description": "The surgery takes 30–60 minutes under local anaesthesia."
+          },
+          "s4": {
+            "title": "Permanent crown",
+            "description": "After osseointegration (3–6 months) we fix the crown — good as new."
+          }
+        }
+      },
+      "faq": {
+        "title": "Implant FAQ",
+        "items": {
+          "q1": {
+            "question": "Does implant placement hurt?",
+            "answer": "No. The surgery is done under local anaesthesia and feels no harder than treating a cavity. Minor discomfort for 1–2 days afterwards is managed with common painkillers."
+          },
+          "q2": {
+            "question": "How long does it take?",
+            "answer": "Placing one implant takes 30–60 minutes. The full cycle with a permanent crown takes 3 to 6 months depending on healing."
+          },
+          "q3": {
+            "question": "Are there contraindications?",
+            "answer": "Absolute contraindications are rare: uncontrolled diabetes and certain blood or bone diseases. Most limitations are temporary — the doctor will assess your case after a CT scan."
+          },
+          "q4": {
+            "question": "What if I lack bone tissue?",
+            "answer": "We perform sinus lifts and bone grafting — standard procedures that restore bone volume before implantation."
+          },
+          "q5": {
+            "question": "How long do implants last?",
+            "answer": "With proper hygiene and regular check-ups implants last for decades. The key is professional cleaning twice a year and good home care."
+          }
+        }
+      },
+      "cta": {
+        "title": "Find out if implants are right for you",
+        "subtitle": "Free consultation with an examination — no obligations",
+        "button": "Book a consultation"
+      }
+    },
+    "aligners": {
+      "badge": "Orthodontics",
+      "title": "Clear Aligners — Straighten Teeth Without Braces",
+      "subtitle": "Transparent trays invisible in daily life and photos: we correct your bite without metal, discomfort, or food restrictions.",
+      "intro": "Aligners are a series of clear removable trays, each gradually moving your teeth into the planned position. They are barely visible, gentle on soft tissue, and come off for meals and brushing.",
+      "benefits": {
+        "title": "Why aligners at Dental Story",
+        "items": {
+          "b1": {
+            "title": "Invisible",
+            "description": "The transparent material cannot be seen from half a metre away — colleagues and friends will not notice."
+          },
+          "b2": {
+            "title": "Removable",
+            "description": "Eat whatever you like and brush as usual — the trays come off for meals and hygiene."
+          },
+          "b3": {
+            "title": "Digital plan",
+            "description": "See a 3D model of your future smile and the timeline before treatment even starts."
+          },
+          "b4": {
+            "title": "Comfortable",
+            "description": "No wires or brackets: the smooth material does not rub or scratch."
+          }
+        }
+      },
+      "process": {
+        "title": "How treatment works",
+        "steps": {
+          "s1": {
+            "title": "Consultation & 3D scan",
+            "description": "The orthodontist assesses your bite and creates a digital model."
+          },
+          "s2": {
+            "title": "Plan & tray series",
+            "description": "We approve the 3D outcome plan and produce your individual aligner series."
+          },
+          "s3": {
+            "title": "Wear 20–22 h/day",
+            "description": "You switch to the next tray on schedule, usually every 1–2 weeks."
+          },
+          "s4": {
+            "title": "Check-ups & retainers",
+            "description": "Reviews every 1.5–2 months; retainers afterwards to keep the result."
+          }
+        }
+      },
+      "faq": {
+        "title": "Aligner FAQ",
+        "items": {
+          "q1": {
+            "question": "Are aligners really invisible?",
+            "answer": "Yes. The trays are made of clear material and fit tightly on the teeth. They can only be noticed up close with a careful look."
+          },
+          "q2": {
+            "question": "How long does treatment take?",
+            "answer": "From 6 months in simple cases to 1.5–2 years in complex ones. The orthodontist gives the exact timeline after 3D planning."
+          },
+          "q3": {
+            "question": "Do aligners work for complex cases?",
+            "answer": "Aligners handle most crowding and spacing cases well. For complex bite anomalies the orthodontist may recommend braces or combined treatment."
+          },
+          "q4": {
+            "question": "How many hours a day do I wear them?",
+            "answer": "20–22 hours a day, removing them only for meals and brushing — wearing discipline directly affects the treatment time."
+          },
+          "q5": {
+            "question": "What happens after treatment?",
+            "answer": "To keep teeth from shifting back you will wear retainers — a fixed wire or a night guard."
+          }
+        }
+      },
+      "cta": {
+        "title": "See your future smile",
+        "subtitle": "Free orthodontist consultation with a 3D scan",
+        "button": "Book a consultation"
+      }
+    },
+    "veneers": {
+      "badge": "Aesthetic Dentistry",
+      "title": "Veneers — a New Smile in a Few Visits",
+      "subtitle": "Thin ceramic or composite shells that fix colour, shape, and minor defects — with a natural-looking result.",
+      "intro": "A veneer is a thin shell bonded to the front surface of a tooth. Veneers cover chips, gaps, discolouration, and irregularities while preserving as much of your own tooth as possible.",
+      "benefits": {
+        "title": "Why veneers at Dental Story",
+        "items": {
+          "b1": {
+            "title": "Individual design",
+            "description": "We match shape and shade to your face and wishes — from natural to Hollywood white."
+          },
+          "b2": {
+            "title": "Fast result",
+            "description": "Composite veneers in one visit, ceramic in 2–3 visits."
+          },
+          "b3": {
+            "title": "Minimal preparation",
+            "description": "Modern protocols preserve as much natural enamel as possible."
+          },
+          "b4": {
+            "title": "Colour stability",
+            "description": "Ceramic does not darken from coffee, tea, or red wine."
+          }
+        }
+      },
+      "process": {
+        "title": "How treatment works",
+        "steps": {
+          "s1": {
+            "title": "Consultation & design",
+            "description": "We discuss expectations and choose the shape and shade of your future smile."
+          },
+          "s2": {
+            "title": "Preparation & scan",
+            "description": "Gentle surface preparation and a digital impression."
+          },
+          "s3": {
+            "title": "Try-in & bonding",
+            "description": "We verify aesthetics and bite, then bond the veneers permanently."
+          },
+          "s4": {
+            "title": "Aftercare",
+            "description": "Home-care recommendations and a preventive check-up schedule."
+          }
+        }
+      },
+      "faq": {
+        "title": "Veneer FAQ",
+        "items": {
+          "q1": {
+            "question": "Do veneers damage teeth?",
+            "answer": "No. Modern protocols require minimal enamel preparation, and the bonded veneer protects the tooth surface. What matters is proper clinical technique."
+          },
+          "q2": {
+            "question": "How long do veneers last?",
+            "answer": "Composite — 5–7 years; ceramic — 10–15 years and more with good care and regular professional hygiene."
+          },
+          "q3": {
+            "question": "How many teeth get veneers?",
+            "answer": "Usually the smile zone — 8–10 upper teeth. The exact number is decided at the consultation based on your smile and wishes."
+          },
+          "q4": {
+            "question": "Composite vs ceramic — what is the difference?",
+            "answer": "Composite veneers are built directly in the mouth in one visit and cost less; ceramic ones are lab-made — more durable, colour-stable, and natural-looking."
+          },
+          "q5": {
+            "question": "How do I care for veneers?",
+            "answer": "Like your own teeth: brush twice a day, floss, and get professional cleaning twice a year. Avoid biting nails, ice, or opening packages with your teeth."
+          }
+        }
+      },
+      "cta": {
+        "title": "Ready for a new smile?",
+        "subtitle": "Book a free smile-design consultation",
+        "button": "Book a consultation"
+      }
     }
   }
 }

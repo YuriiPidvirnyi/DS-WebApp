@@ -1106,136 +1106,11 @@ const en = {
       'dentist Lviv, dentist Sumska, dental clinic Lviv, dental treatment, dental implants, braces, teeth whitening, Dental Story',
     openGraphTitle: 'Dental Story — Modern Dental Clinic in Lviv',
     openGraphDescription:
-      'Modern dentistry in Lviv. Painless dental treatment, implants, whitening. Experienced doctors, state-of-the-art equipment.',
+      'Modern dentistry in Lviv. Painless dental treatment, implants, whitening. Experienced doctors, modern equipment.',
+    ogImageAlt: 'Dental Story — Modern Dental Clinic in Lviv',
     twitterTitle: 'Dental Story — Modern Dental Clinic in Lviv',
     twitterDescription:
       'Modern dentistry in Lviv. Painless treatment, experienced doctors, quality guarantee.',
-    ogImageAlt: 'Dental Story — Modern Dental Clinic in Lviv',
-  },
-  routeMeta: {
-    home: {
-      title: 'Dental Story — Modern Dental Clinic in Lviv',
-      description:
-        'Professional dentistry in Lviv. Painless dental treatment, implants, whitening. Experienced doctors, state-of-the-art equipment.',
-      keywords:
-        'dentist lviv, dental treatment, implants, teeth whitening, dental story',
-      openGraphTitle: 'Dental Story — Modern Dental Clinic in Lviv',
-      openGraphDescription:
-        'Professional dentistry in Lviv. Painless dental treatment, implants, whitening.',
-    },
-    about: {
-      title: 'About Us — Dental Story Lviv',
-      description:
-        'Dental Story — a team of professionals with 10 years of experience. Modern equipment, European treatment standards.',
-      keywords: 'dental clinic about us lviv, dental story team',
-      openGraphTitle: 'About Us — Dental Story Lviv',
-      openGraphDescription:
-        'Dental Story — a team of professionals with 10 years of experience.',
-      breadcrumb: 'About Us',
-    },
-    contact: {
-      title: 'Contact — Dental Story Lviv',
-      description:
-        'Address, phone, and opening hours of Dental Story dental clinic in Lviv. Directions and map.',
-      keywords: 'dental story address, dental clinic phone, contact lviv',
-      openGraphTitle: 'Contact — Dental Story Lviv',
-      openGraphDescription:
-        'Address, phone, and opening hours of Dental Story.',
-      breadcrumb: 'Contact',
-    },
-    booking: {
-      title: 'Book Online — Dental Story',
-      description:
-        'Book a dental appointment online. Choose a convenient time and doctor. Fast and secure.',
-      keywords: 'book dentist, online booking, dental story lviv',
-      openGraphTitle: 'Book a Dental Appointment at Dental Story',
-      openGraphDescription:
-        'Book your appointment online. Choose a convenient time and doctor.',
-      breadcrumb: 'Book Appointment',
-    },
-    bookingSuccess: {
-      title: 'Booking Created — Dental Story',
-      description:
-        'Thank you! We will contact you to confirm your booking. Add the event to your calendar and enable reminders.',
-    },
-    services: {
-      title: 'Dental Story Services — Full Range',
-      description:
-        'All types of dental services: therapy, prosthetics, implants, orthodontics, pediatric dentistry. Transparent pricing.',
-      keywords: 'dental services, dental treatment prices, dental implants',
-      openGraphTitle: 'Dental Story Services',
-      openGraphDescription:
-        'All types of dental services: therapy, prosthetics, implants, orthodontics. Transparent pricing.',
-      breadcrumb: 'Services',
-    },
-    reviews: {
-      title: 'Patient Reviews — Dental Story',
-      description:
-        'Rate our service and read patient reviews about treatment at Dental Story.',
-      keywords:
-        'dental clinic reviews, dental story reviews, dental treatment lviv',
-      openGraphTitle: 'Patient Reviews — Dental Story',
-      openGraphDescription: 'Rate our service and read patient reviews.',
-      breadcrumb: 'Reviews',
-    },
-    gallery: {
-      title: 'Gallery — Treatment Results at Dental Story',
-      description:
-        'Portfolio of our work: before and after treatment photos. Implants, restorations, teeth whitening.',
-      keywords:
-        'dental treatment results, before and after photos, dental story portfolio',
-      openGraphTitle: 'Dental Story Gallery',
-      openGraphDescription:
-        'Portfolio of our work: before and after treatment photos.',
-      breadcrumb: 'Gallery',
-    },
-    privacyPolicy: {
-      title: 'Privacy Policy — Dental Story',
-      description:
-        'How we collect, store, and process your personal data. Patient privacy is our priority.',
-    },
-    termsOfService: {
-      title: 'Terms of Service — Dental Story',
-      description:
-        'Terms of use of the website and dental services provided by Dental Story.',
-    },
-    symptomChecker: {
-      title: 'Symptom Checker — Dental Story',
-      description:
-        'Free online dental symptom checker. Find out what your pain might mean.',
-    },
-    admin: {
-      title: 'Admin Panel — Dental Story',
-      loginTitle: 'Admin Login — Dental Story',
-      patientsTitle: 'Patients — Dental Story',
-    },
-    patientCard: {
-      title: 'Patient Card — Dental Story',
-    },
-    cabinet: {
-      title: 'Patient Portal — Dental Story',
-      appointmentsTitle: 'My Appointments — Dental Story',
-      profileTitle: 'My Profile — Dental Story',
-      paymentsTitle: 'My Payments — Dental Story',
-      treatmentsTitle: 'My Treatment — Dental Story',
-    },
-    auth: {
-      loginTitle: 'Sign In — Dental Story',
-      loginDescription: 'Sign in to your Dental Story patient portal',
-      signUpTitle: 'Sign Up — Dental Story',
-      signUpDescription: 'Create your Dental Story patient account',
-      signUpSuccessTitle: 'Registration Successful — Dental Story',
-      forgotPasswordTitle: 'Forgot Password — Dental Story',
-      forgotPasswordDescription:
-        'Receive a password reset email and restore access to your portal.',
-      resetPasswordTitle: 'New Password — Dental Story',
-      resetPasswordDescription:
-        'Set a new password for your Dental Story patient account.',
-    },
-    openGraphImage: {
-      alt: 'Dental Story — Modern Dentistry in Lviv',
-      tagline: 'Modern dentistry in Lviv',
-    },
   },
   structuredData: {
     organizationAlternateName: 'Dental clinic',
@@ -1393,8 +1268,6 @@ const en = {
       goHome: 'Home',
       createAnother: 'Create another booking',
       addToCalendar: 'Add to calendar',
-      payDeposit: 'Pay deposit',
-      payingDeposit: 'Redirecting...',
       calendarTitle: 'Visit: {{service}}',
       calendarDescription: 'Booking #{{ref}}. Patient: {{name}}',
       calendarLocation: 'Dental Studio',
@@ -1485,6 +1358,9 @@ const en = {
       doctorNotLinked:
         'Your account is not linked to a doctor profile. Please contact an administrator.',
       loadError: 'Failed to load dashboard data.',
+      completed: 'Completed visits',
+      myTodayAppointments: 'My appointments today',
+      myTreatments: 'My records',
     },
     sidebar: {
       dashboard: 'Dashboard',
@@ -1498,12 +1374,10 @@ const en = {
       treatments: 'Treatment Acts',
       materials: 'Materials',
       orders: 'Orders',
-      stock: 'Stock v2',
       analytics: 'Analytics',
-      dataQuality: 'Data Quality',
-      health: 'Service Health',
       settings: 'Settings',
       users: 'Users',
+      stock: 'Inventory v2',
     },
     login: {
       title: 'Admin Login',
@@ -1535,46 +1409,6 @@ const en = {
       defaultUser: 'Admin',
       openSidebar: 'Open menu',
       sidebarNav: 'Admin panel navigation',
-      patientCabinet: 'My patient cabinet',
-    },
-    onboarding: {
-      step1: {
-        title: 'Welcome to DentalStory!',
-        body: "Let's quickly set up your clinic. This short guide will walk you through the essential first steps.",
-      },
-      step2: {
-        title: 'Add your services',
-        body: 'Go to the Services section and add your dental services — name, price, and duration.',
-      },
-      step3: {
-        title: 'Add your doctors',
-        body: 'Go to the Doctors section and add your team. Patients will be able to choose a doctor when booking.',
-      },
-      step4: {
-        title: 'Test online booking',
-        body: 'Open the website and try making a test booking through the form. Make sure everything works correctly.',
-      },
-      step5: {
-        title: 'Check email notifications',
-        body: "After the test booking, you'll receive a confirmation email. Make sure the emails arrive and look correct.",
-      },
-      skip: 'Skip tour',
-      next: 'Next',
-      finish: 'Done',
-    },
-    onboardingChecklist: {
-      title: 'Clinic setup',
-      subtitle: '{{done}} of {{total}} steps complete',
-      go: 'Go',
-      gotIt: 'Got it',
-      dismiss: 'Dismiss checklist',
-      step: {
-        services: 'Add at least one service',
-        doctors: 'Add at least one doctor',
-        materials: 'Add materials to inventory',
-        appointment: 'Make a test booking',
-        workingHours: 'Configure working hours',
-      },
     },
     modal: {
       closeAria: 'Close modal window',
@@ -1617,6 +1451,7 @@ const en = {
         active: 'Active',
         closed: 'Closed',
       },
+      typing: 'Patient is typing…',
     },
     appointmentStatuses: {
       pending: 'Pending',
@@ -2464,16 +2299,56 @@ const en = {
       },
       you: 'you',
       deleteConfirm: 'Delete this user?',
+      loading: 'Loading users…',
       empty: 'No users found',
       note: 'Role changes take effect on next login.',
     },
-    dataQuality: {
-      title: 'Data Quality',
-      lastChecked: 'Last checked',
-      refresh: 'Refresh',
-      allClean: 'No data quality issues found',
-      issuesFound: '{{count}} issue(s) require attention',
-      cleanDescription: 'Your clinic data is clean and consistent.',
+    onboarding: {
+      step1: {
+        title: 'Welcome to DentalStory Admin',
+        body: "Welcome! Let's get you set up — this will only take a few minutes.",
+      },
+      step2: {
+        title: 'Add services',
+        body: 'Go to Services and add your dental services.',
+        action: 'Go to services',
+      },
+      step3: {
+        title: 'Add doctors',
+        body: 'Go to Doctors and add your team members.',
+        action: 'Go to doctors',
+      },
+      step4: {
+        title: 'Seed your materials catalog',
+        body: 'Add materials and set minimum stock levels so you get low-stock alerts automatically.',
+        action: 'Go to materials',
+      },
+      step5: {
+        title: 'Test a booking',
+        body: 'Try a test booking at dentalstory.ua/booking to verify the booking form works.',
+        action: 'Open booking form',
+      },
+      step6: {
+        title: 'Check email',
+        body: 'You will receive a booking confirmation email — confirm that email notifications are working correctly.',
+      },
+      skip: 'Skip tour',
+      next: 'Next',
+      finish: 'Done!',
+    },
+    onboardingChecklist: {
+      title: 'Clinic setup',
+      subtitle: '{{done}} of {{total}} steps complete',
+      go: 'Go',
+      gotIt: 'Got it',
+      dismiss: 'Dismiss checklist',
+      step: {
+        services: 'Add at least one service',
+        doctors: 'Add at least one doctor',
+        materials: 'Add materials to inventory',
+        appointment: 'Make a test booking',
+        workingHours: 'Configure working hours',
+      },
     },
   },
   auth: {
@@ -2503,6 +2378,12 @@ const en = {
         invalidCredentials: 'Invalid email or password',
         emailNotConfirmed: 'Please confirm your email before signing in.',
         generic: 'Sign-in error. Please try again later.',
+      },
+      resendConfirmation: {
+        action: 'Resend confirmation email',
+        sending: 'Sending…',
+        sent: 'Confirmation email sent. Check your inbox.',
+        error: 'Could not send the email. Try again later.',
       },
     },
     signUp: {
@@ -2670,7 +2551,11 @@ const en = {
         success: 'Appointment successfully rescheduled',
         error: 'Failed to reschedule appointment',
         at: 'at',
+        slotsError:
+          'Could not load available times. Check your connection and try again.',
       },
+      loadMore: 'Show more',
+      loadMoreError: 'Could not load more appointments',
     },
     profile: {
       title: 'Edit Profile',
@@ -2693,6 +2578,13 @@ const en = {
       contactInfo: 'Contact information',
       additionalInfo: 'Additional information',
       unsavedChanges: 'You have unsaved changes',
+      dataExport: 'Download my data',
+      deleteAccount: 'Delete account',
+      deleteConfirmTitle: 'Delete account?',
+      deleteConfirmMessage:
+        'This will permanently delete your account and cancel all upcoming appointments. This cannot be undone.',
+      downloading: 'Downloading...',
+      deleting: 'Deleting...',
     },
     title: 'Patient Cabinet',
     profileTitle: 'My Profile',
@@ -2724,6 +2616,27 @@ const en = {
       goHome: 'Go home',
       devDetails: 'Error details',
     },
+    settings: {
+      title: 'Privacy & data',
+      subtitle: 'Manage your personal data',
+      exportSection: {
+        title: 'Download my data',
+        description:
+          'Get a copy of all your data in JSON format (appointments, reviews, messages).',
+        button: 'Download my data',
+      },
+      deleteSection: {
+        title: 'Delete account',
+        description:
+          'This is an irreversible action. All your data will be deleted.',
+        button: 'Delete account',
+        confirm: 'Are you sure? This action cannot be undone.',
+        confirmButton: 'Yes, delete my account',
+        cancel: 'Cancel',
+        deleting: 'Deleting...',
+      },
+      navLink: 'Settings',
+    },
     sidebar: {
       title: 'Patient Cabinet',
       dashboard: 'Dashboard',
@@ -2731,11 +2644,11 @@ const en = {
       treatments: 'Treatments',
       payments: 'Payments',
       profile: 'Profile',
+      settings: 'Settings',
       soon: 'Soon',
       navigation: 'Cabinet navigation',
       openMenu: 'Open menu',
       backToSite: 'Back to site',
-      settings: 'Settings',
     },
     treatments: {
       title: 'Treatments',
@@ -2757,6 +2670,8 @@ const en = {
         waived: 'Waived',
         refunded: 'Refunded',
       },
+      loadMore: 'Show more',
+      loadMoreError: 'Could not load more records',
     },
     payments: {
       title: 'Payments',
@@ -2769,27 +2684,6 @@ const en = {
       feature3Title: 'Reminders',
       feature3Desc: 'Payment notifications',
       meanwhile: 'Currently, payment is made at the clinic.',
-    },
-    settings: {
-      title: 'Settings & Privacy',
-      subtitle: 'Manage your data and account',
-      navLink: 'Settings',
-      exportSection: {
-        title: 'Download my data',
-        description:
-          'You will receive a JSON file with all your data: appointments, treatments and messages.',
-        button: 'Download data',
-      },
-      deleteSection: {
-        title: 'Delete account',
-        description:
-          'Permanently delete your account and all associated data. This action cannot be undone.',
-        button: 'Delete account',
-        confirm: 'Type DELETE to confirm',
-        confirmButton: 'Delete permanently',
-        cancel: 'Cancel',
-        deleting: 'Deleting...',
-      },
     },
   },
   patientDashboard: {
@@ -2908,7 +2802,6 @@ const en = {
     consentText: 'I agree to receive news and promotions via email',
     subscribeError: 'Failed to subscribe',
     successMessage: 'Thank you! You are subscribed.',
-    turnstileError: 'Security check failed. Please try again.',
   },
   feedback: {
     question: 'Was this form helpful?',
@@ -2969,12 +2862,6 @@ const en = {
     },
   },
   chat: {
-    chooser: {
-      title: 'Support Chat',
-      subtitle: 'Choose a contact method:',
-      human: 'Write to administrator',
-      ai: 'AI Assistant',
-    },
     openChat: 'Open Chat',
     closeChat: 'Close Chat',
     onlineChat: 'Online Chat',
@@ -2990,6 +2877,14 @@ const en = {
     dialogAriaLabel: 'Dental Story Online Chat',
     welcomeMessage: 'Welcome to Dental Story! How can we help you?',
     quickRepliesLabel: 'Quick Replies',
+    messagesLabel: 'Chat messages',
+    messageInputLabel: 'Type your message',
+    chooser: {
+      title: 'Support Chat',
+      subtitle: 'Choose a contact method:',
+      human: 'Write to Administrator',
+      ai: 'AI Assistant',
+    },
     inputPlaceholder: 'Type a message...',
     sendMessage: 'Send',
     quickReplies: {
@@ -3010,6 +2905,7 @@ const en = {
       default:
         'Thank you for your message! Our manager will contact you shortly. For quick contact, call: +380 44 123 45 67',
     },
+    typing: 'Consultant is typing…',
   },
   pricing: {
     title: 'Transparent Pricing',
@@ -3084,6 +2980,8 @@ const en = {
   hero: {
     badge: 'Modern Dentistry',
     bookConsultation: 'Book Consultation',
+    bookConsultationB: 'Find a Time That Works',
+    bookConsultationC: 'Free Consultation',
     ourServices: 'Our Services',
   },
   language: {
@@ -3288,6 +3186,539 @@ const en = {
           conditions: ['Periapical abscess', 'Periodontal abscess'],
           recommendation: 'URGENT! Call immediately for emergency appointment',
         },
+      },
+    },
+  },
+  routeMeta: {
+    home: {
+      title: 'Dental Story — Сучасна стоматологічна клініка в Львові',
+      description:
+        'Професійна стоматологія у Львові. Безболісне лікування зубів, імплантація, відбілювання. Досвідчені лікарі, сучасне обладнання.',
+      keywords:
+        'стоматологія львів, лікування зубів, імплантація, відбілювання зубів, dental story',
+      openGraphTitle: 'Dental Story — Сучасна стоматологічна клініка у Львові',
+      openGraphDescription:
+        'Професійна стоматологія у Львові. Безболісне лікування зубів, імплантація, відбілювання.',
+    },
+    about: {
+      title: 'Про нас — Dental Story Львів',
+      description:
+        'Dental Story — команда професіоналів з 10-річним досвідом. Сучасне обладнання, європейські стандарти лікування.',
+      keywords: 'стоматологія львів про клініку, команда dental story',
+      openGraphTitle: 'Про нас — Dental Story Львів',
+      openGraphDescription:
+        'Dental Story — команда професіоналів з 10-річним досвідом.',
+      breadcrumb: 'Про нас',
+    },
+    contact: {
+      title: 'Контакти — Dental Story Львів',
+      description:
+        'Адреса, телефон, години роботи стоматології Dental Story у Львові. Як нас знайти, карта проїзду.',
+      keywords: 'dental story адреса, телефон стоматології, контакти львів',
+      openGraphTitle: 'Контакти — Dental Story Львів',
+      openGraphDescription:
+        'Адреса, телефон, години роботи стоматології Dental Story.',
+      breadcrumb: 'Контакти',
+    },
+    booking: {
+      title: 'Онлайн запис до стоматолога — Dental Story',
+      description:
+        'Запишіться на прийом до стоматолога онлайн. Вибирайте зручний час та лікаря. Швидко та безпечно.',
+      keywords: 'запис до стоматолога, онлайн запис, dental story львів',
+      openGraphTitle: 'Онлайн запис до стоматолога Dental Story',
+      openGraphDescription:
+        'Запишіться на прийом онлайн. Вибирайте зручний час та лікаря.',
+      breadcrumb: 'Запис на прийом',
+    },
+    bookingSuccess: {
+      title: 'Запис створено — Dental Story',
+      description:
+        "Дякуємо! Ми зв'яжемося для підтвердження запису. Додайте подію в календар та увімкніть нагадування.",
+    },
+    services: {
+      title: 'Послуги стоматології Dental Story — Повний спектр',
+      description:
+        'Всі види стоматологічних послуг: терапія, ортопедія, імплантація, ортодонтія, дитяча стоматологія. Прозорі ціни.',
+      keywords:
+        'стоматологічні послуги, ціни на лікування зубів, імплантація зубів',
+      openGraphTitle: 'Послуги стоматології Dental Story',
+      openGraphDescription:
+        'Всі види стоматологічних послуг: терапія, ортопедія, імплантація, ортодонтія. Прозорі ціни.',
+      breadcrumb: 'Послуги',
+    },
+    reviews: {
+      title: 'Відгуки пацієнтів — Dental Story',
+      description:
+        'Оцініть наш сервіс та прочитайте відгуки пацієнтів про лікування у Dental Story.',
+      keywords:
+        'відгуки стоматології, dental story відгуки, лікування зубів львів',
+      openGraphTitle: 'Відгуки пацієнтів Dental Story',
+      openGraphDescription:
+        'Оцініть наш сервіс та прочитайте відгуки пацієнтів.',
+      breadcrumb: 'Відгуки',
+    },
+    gallery: {
+      title: 'Галерея робіт — Результати лікування Dental Story',
+      description:
+        'Портфоліо наших робіт: фото до і після лікування. Імплантація, реставрація, відбілювання зубів.',
+      keywords:
+        'результати лікування зубів, фото до і після, dental story портфоліо',
+      openGraphTitle: 'Галерея робіт Dental Story',
+      openGraphDescription: 'Портфоліо наших робіт: фото до і після лікування.',
+      breadcrumb: 'Галерея',
+    },
+    privacyPolicy: {
+      title: 'Політика конфіденційності — Dental Story',
+      description:
+        'Як ми збираємо, зберігаємо та обробляємо ваші персональні дані. Конфіденційність пацієнтів — наш пріоритет.',
+    },
+    termsOfService: {
+      title: 'Умови використання — Dental Story',
+      description:
+        'Правила користування веб-сайтом та надання стоматологічних послуг Dental Story.',
+    },
+    symptomChecker: {
+      title: 'Перевірка симптомів — Dental Story',
+      description:
+        'Безкоштовна онлайн-перевірка стоматологічних симптомів. Дізнайтеся, що може означати ваш біль.',
+    },
+    admin: {
+      title: 'Адмін панель — Dental Story',
+      loginTitle: 'Вхід в адмін панель — Dental Story',
+      patientsTitle: 'Пацієнти — Dental Story',
+    },
+    patientCard: {
+      title: 'Картка пацієнта — Dental Story',
+    },
+    cabinet: {
+      title: 'Особистий кабінет — Dental Story',
+      appointmentsTitle: 'Мої записи — Dental Story',
+      profileTitle: 'Мій профіль — Dental Story',
+      paymentsTitle: 'Мої платежі — Dental Story',
+      treatmentsTitle: 'Моє лікування — Dental Story',
+    },
+    auth: {
+      loginTitle: 'Вхід — Dental Story',
+      loginDescription:
+        'Увійдіть у свій особистий кабінет пацієнта Dental Story',
+      signUpTitle: 'Реєстрація — Dental Story',
+      signUpDescription: 'Створіть обліковий запис пацієнта Dental Story',
+      signUpSuccessTitle: 'Реєстрація успішна — Dental Story',
+      forgotPasswordTitle: 'Відновлення пароля — Dental Story',
+      forgotPasswordDescription:
+        'Отримайте лист для скидання пароля та відновіть доступ до кабінету.',
+      resetPasswordTitle: 'Новий пароль — Dental Story',
+      resetPasswordDescription:
+        'Встановіть новий пароль для свого облікового запису пацієнта Dental Story.',
+    },
+    openGraphImage: {
+      alt: 'Dental Story — Сучасна стоматологія у Львові',
+      tagline: 'Сучасна стоматологія у Львові',
+    },
+    serviceImplantation: {
+      title: 'Dental Implants in Lviv',
+      description:
+        'Dental implants in Lviv: 3D diagnostics, painless placement, fixed estimate agreed before treatment. Free consultation.',
+      keywords:
+        'dental implants Lviv, tooth implant Lviv, implant placement Lviv, implant price Lviv',
+      openGraphTitle: 'Dental Implants in Lviv — Dental Story',
+      openGraphDescription:
+        '3D diagnostics, painless placement, fixed estimate. Free consultation.',
+      breadcrumb: 'Implants',
+    },
+    serviceAligners: {
+      title: 'Clear Aligners in Lviv — Straighten Teeth Without Braces',
+      description:
+        'Clear aligners in Lviv: invisible bite correction for adults and teens. Digital 3D outcome planning. Free consultation.',
+      keywords:
+        'clear aligners Lviv, invisible braces Lviv, teeth straightening Lviv, bite correction Lviv',
+      openGraphTitle: 'Clear Aligners in Lviv — Dental Story',
+      openGraphDescription:
+        'Invisible bite correction with clear trays. 3D outcome plan before treatment starts.',
+      breadcrumb: 'Aligners',
+    },
+    serviceVeneers: {
+      title: 'Veneers in Lviv — Aesthetic Restoration',
+      description:
+        'Ceramic and composite veneers in Lviv: a new smile in 2–3 visits. Individual design, natural look. Free consultation.',
+      keywords:
+        'veneers Lviv, ceramic veneers Lviv, composite veneers, aesthetic dentistry Lviv',
+      openGraphTitle: 'Veneers in Lviv — Dental Story',
+      openGraphDescription:
+        'A new smile in 2–3 visits: individual design, natural look. Free consultation.',
+      breadcrumb: 'Veneers',
+    },
+  },
+  stock: {
+    title: 'Inventory',
+    nav: {
+      documents: 'Documents',
+      warehouses: 'Warehouses',
+      balances: 'Balances',
+      reports: 'Reports',
+      settings: 'Settings',
+      permissions: 'Permissions',
+      suppliers: 'Suppliers',
+      brands: 'Brands',
+      categories: 'Categories',
+      calcCards: 'Calc Cards',
+      audits: 'Inventory Audits',
+    },
+    docType: {
+      incoming: 'Receipt',
+      writeoff: 'Write-off',
+      return: 'Return',
+      transfer: 'Transfer',
+      adjustment: 'Adjustment',
+    },
+    docStatus: {
+      draft: 'Draft',
+      posted: 'Posted',
+      void: 'Void',
+    },
+    warehouseKind: {
+      main: 'Main',
+      cabinet: 'Cabinet',
+      doctor: 'Doctor',
+      other: 'Other',
+    },
+    document: {
+      number: 'Number',
+      date: 'Date',
+      warehouse: 'Warehouse',
+      warehouseFrom: 'From warehouse',
+      warehouseTo: 'To warehouse',
+      supplier: 'Supplier',
+      responsible: 'Responsible',
+      comment: 'Comment',
+      total: 'Total',
+      items: 'Items',
+      createDraft: 'Create draft',
+      post: 'Post',
+      unpost: 'Unpost',
+      copy: 'Copy',
+      unpostReason: 'Unpost reason',
+      noItems: 'No items',
+      addItem: 'Add item',
+      emptyDocuments: 'No documents',
+    },
+    warehouse: {
+      name: 'Name',
+      kind: 'Type',
+      responsible: 'Responsible',
+      doctor: 'Doctor',
+      sortOrder: 'Sort order',
+      comment: 'Comment',
+      archived: 'Archived',
+      createWarehouse: 'Add warehouse',
+      editWarehouse: 'Edit warehouse',
+      archiveWarehouse: 'Archive warehouse',
+      emptyWarehouses: 'No warehouses',
+    },
+    settings: {
+      allowNegativeBalance: 'Allow negative balance',
+      writeoffMode: 'Write-off mode',
+      writeoffModeNone: 'Disabled',
+      writeoffModeDraftHybrid: 'Auto-draft',
+      writeoffModeAuto: 'Automatic',
+      autoApBillOnIncoming: 'Auto-bill on receipt',
+      defaultExpenseCategory: 'Default expense category',
+      enforceStockPermissions: 'Enforce stock permissions',
+      showMyInventory: 'Show my inventory',
+    },
+    balance: {
+      material: 'Material',
+      warehouse: 'Warehouse',
+      quantity: 'Quantity',
+      unit: 'Unit',
+      criticalLevel: 'Critical level',
+      reorderQty: 'Reorder qty',
+      lowStock: 'Low stock',
+    },
+    errors: {
+      loadFailed: 'Load failed',
+      saveFailed: 'Save failed',
+      postFailed: 'Post failed',
+      negativeBalance: 'Insufficient balance',
+      docLocked: 'Document already posted',
+      flagOff: 'Inventory v2 not enabled',
+    },
+  },
+  serviceLanding: {
+    implantation: {
+      badge: 'Surgical Dentistry',
+      title: 'Dental Implants in Lviv',
+      subtitle:
+        'Restore teeth for good: 3D planning, painless placement, and a fixed treatment estimate that will not change.',
+      intro:
+        'An implant is an artificial tooth root that supports a crown. It is the most reliable way to replace a missing tooth: neighbouring teeth stay untouched, bone tissue is preserved, and the new crown looks just like your own tooth.',
+      benefits: {
+        title: 'Why implants at Dental Story',
+        items: {
+          b1: {
+            title: '3D diagnostics first',
+            description:
+              'CT scan and digital implant positioning before surgery — no surprises during the procedure.',
+          },
+          b2: {
+            title: 'Painless',
+            description:
+              'Modern anaesthesia makes implant placement no harder than a routine filling.',
+          },
+          b3: {
+            title: 'Fixed estimate',
+            description:
+              'The price is agreed before treatment starts — it will not change at payment.',
+          },
+          b4: {
+            title: 'Full cycle in one clinic',
+            description:
+              'From sinus lift and bone grafting to the final crown — all at 10 Sumska St.',
+          },
+        },
+      },
+      process: {
+        title: 'How treatment works',
+        steps: {
+          s1: {
+            title: 'Consultation & CT',
+            description: 'Examination, CT scan, and bone tissue assessment.',
+          },
+          s2: {
+            title: 'Treatment plan & estimate',
+            description: 'We agree on stages, timeline, and a fixed price.',
+          },
+          s3: {
+            title: 'Implant placement',
+            description:
+              'The surgery takes 30–60 minutes under local anaesthesia.',
+          },
+          s4: {
+            title: 'Permanent crown',
+            description:
+              'After osseointegration (3–6 months) we fix the crown — good as new.',
+          },
+        },
+      },
+      faq: {
+        title: 'Implant FAQ',
+        items: {
+          q1: {
+            question: 'Does implant placement hurt?',
+            answer:
+              'No. The surgery is done under local anaesthesia and feels no harder than treating a cavity. Minor discomfort for 1–2 days afterwards is managed with common painkillers.',
+          },
+          q2: {
+            question: 'How long does it take?',
+            answer:
+              'Placing one implant takes 30–60 minutes. The full cycle with a permanent crown takes 3 to 6 months depending on healing.',
+          },
+          q3: {
+            question: 'Are there contraindications?',
+            answer:
+              'Absolute contraindications are rare: uncontrolled diabetes and certain blood or bone diseases. Most limitations are temporary — the doctor will assess your case after a CT scan.',
+          },
+          q4: {
+            question: 'What if I lack bone tissue?',
+            answer:
+              'We perform sinus lifts and bone grafting — standard procedures that restore bone volume before implantation.',
+          },
+          q5: {
+            question: 'How long do implants last?',
+            answer:
+              'With proper hygiene and regular check-ups implants last for decades. The key is professional cleaning twice a year and good home care.',
+          },
+        },
+      },
+      cta: {
+        title: 'Find out if implants are right for you',
+        subtitle: 'Free consultation with an examination — no obligations',
+        button: 'Book a consultation',
+      },
+    },
+    aligners: {
+      badge: 'Orthodontics',
+      title: 'Clear Aligners — Straighten Teeth Without Braces',
+      subtitle:
+        'Transparent trays invisible in daily life and photos: we correct your bite without metal, discomfort, or food restrictions.',
+      intro:
+        'Aligners are a series of clear removable trays, each gradually moving your teeth into the planned position. They are barely visible, gentle on soft tissue, and come off for meals and brushing.',
+      benefits: {
+        title: 'Why aligners at Dental Story',
+        items: {
+          b1: {
+            title: 'Invisible',
+            description:
+              'The transparent material cannot be seen from half a metre away — colleagues and friends will not notice.',
+          },
+          b2: {
+            title: 'Removable',
+            description:
+              'Eat whatever you like and brush as usual — the trays come off for meals and hygiene.',
+          },
+          b3: {
+            title: 'Digital plan',
+            description:
+              'See a 3D model of your future smile and the timeline before treatment even starts.',
+          },
+          b4: {
+            title: 'Comfortable',
+            description:
+              'No wires or brackets: the smooth material does not rub or scratch.',
+          },
+        },
+      },
+      process: {
+        title: 'How treatment works',
+        steps: {
+          s1: {
+            title: 'Consultation & 3D scan',
+            description:
+              'The orthodontist assesses your bite and creates a digital model.',
+          },
+          s2: {
+            title: 'Plan & tray series',
+            description:
+              'We approve the 3D outcome plan and produce your individual aligner series.',
+          },
+          s3: {
+            title: 'Wear 20–22 h/day',
+            description:
+              'You switch to the next tray on schedule, usually every 1–2 weeks.',
+          },
+          s4: {
+            title: 'Check-ups & retainers',
+            description:
+              'Reviews every 1.5–2 months; retainers afterwards to keep the result.',
+          },
+        },
+      },
+      faq: {
+        title: 'Aligner FAQ',
+        items: {
+          q1: {
+            question: 'Are aligners really invisible?',
+            answer:
+              'Yes. The trays are made of clear material and fit tightly on the teeth. They can only be noticed up close with a careful look.',
+          },
+          q2: {
+            question: 'How long does treatment take?',
+            answer:
+              'From 6 months in simple cases to 1.5–2 years in complex ones. The orthodontist gives the exact timeline after 3D planning.',
+          },
+          q3: {
+            question: 'Do aligners work for complex cases?',
+            answer:
+              'Aligners handle most crowding and spacing cases well. For complex bite anomalies the orthodontist may recommend braces or combined treatment.',
+          },
+          q4: {
+            question: 'How many hours a day do I wear them?',
+            answer:
+              '20–22 hours a day, removing them only for meals and brushing — wearing discipline directly affects the treatment time.',
+          },
+          q5: {
+            question: 'What happens after treatment?',
+            answer:
+              'To keep teeth from shifting back you will wear retainers — a fixed wire or a night guard.',
+          },
+        },
+      },
+      cta: {
+        title: 'See your future smile',
+        subtitle: 'Free orthodontist consultation with a 3D scan',
+        button: 'Book a consultation',
+      },
+    },
+    veneers: {
+      badge: 'Aesthetic Dentistry',
+      title: 'Veneers — a New Smile in a Few Visits',
+      subtitle:
+        'Thin ceramic or composite shells that fix colour, shape, and minor defects — with a natural-looking result.',
+      intro:
+        'A veneer is a thin shell bonded to the front surface of a tooth. Veneers cover chips, gaps, discolouration, and irregularities while preserving as much of your own tooth as possible.',
+      benefits: {
+        title: 'Why veneers at Dental Story',
+        items: {
+          b1: {
+            title: 'Individual design',
+            description:
+              'We match shape and shade to your face and wishes — from natural to Hollywood white.',
+          },
+          b2: {
+            title: 'Fast result',
+            description:
+              'Composite veneers in one visit, ceramic in 2–3 visits.',
+          },
+          b3: {
+            title: 'Minimal preparation',
+            description:
+              'Modern protocols preserve as much natural enamel as possible.',
+          },
+          b4: {
+            title: 'Colour stability',
+            description:
+              'Ceramic does not darken from coffee, tea, or red wine.',
+          },
+        },
+      },
+      process: {
+        title: 'How treatment works',
+        steps: {
+          s1: {
+            title: 'Consultation & design',
+            description:
+              'We discuss expectations and choose the shape and shade of your future smile.',
+          },
+          s2: {
+            title: 'Preparation & scan',
+            description: 'Gentle surface preparation and a digital impression.',
+          },
+          s3: {
+            title: 'Try-in & bonding',
+            description:
+              'We verify aesthetics and bite, then bond the veneers permanently.',
+          },
+          s4: {
+            title: 'Aftercare',
+            description:
+              'Home-care recommendations and a preventive check-up schedule.',
+          },
+        },
+      },
+      faq: {
+        title: 'Veneer FAQ',
+        items: {
+          q1: {
+            question: 'Do veneers damage teeth?',
+            answer:
+              'No. Modern protocols require minimal enamel preparation, and the bonded veneer protects the tooth surface. What matters is proper clinical technique.',
+          },
+          q2: {
+            question: 'How long do veneers last?',
+            answer:
+              'Composite — 5–7 years; ceramic — 10–15 years and more with good care and regular professional hygiene.',
+          },
+          q3: {
+            question: 'How many teeth get veneers?',
+            answer:
+              'Usually the smile zone — 8–10 upper teeth. The exact number is decided at the consultation based on your smile and wishes.',
+          },
+          q4: {
+            question: 'Composite vs ceramic — what is the difference?',
+            answer:
+              'Composite veneers are built directly in the mouth in one visit and cost less; ceramic ones are lab-made — more durable, colour-stable, and natural-looking.',
+          },
+          q5: {
+            question: 'How do I care for veneers?',
+            answer:
+              'Like your own teeth: brush twice a day, floss, and get professional cleaning twice a year. Avoid biting nails, ice, or opening packages with your teeth.',
+          },
+        },
+      },
+      cta: {
+        title: 'Ready for a new smile?',
+        subtitle: 'Book a free smile-design consultation',
+        button: 'Book a consultation',
       },
     },
   },
