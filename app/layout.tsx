@@ -110,12 +110,26 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   // Read CSP nonce injected by root proxy (`proxy.ts`) — makes this layout dynamically rendered
-  const nonce = (await headers()).get('x-nonce') ?? ''
+  const requestHeaders = await headers()
+  const nonce = requestHeaders.get('x-nonce') ?? ''
+  // URL locale (/en, /pl prefix) injected by proxy.ts; default is Ukrainian
+  const headerLocale = requestHeaders.get('x-locale')
+  const locale: 'uk' | 'en' | 'pl' =
+    headerLocale === 'en' || headerLocale === 'pl' ? headerLocale : 'uk'
+  // Server-side bundle load for non-uk locales so the first SSR paint is
+  // already translated (site chrome + page content). uk ships in the client
+  // bundle as before — zero cost for the default language.
+  const localeBundle =
+    locale === 'en'
+      ? (await import('@/locales/en')).default
+      : locale === 'pl'
+        ? (await import('@/locales/pl')).default
+        : null
   const reviewStats = await getReviewStats()
 
   return (
     <html
-      lang="uk"
+      lang={locale}
       className={`${nunito.variable} ${rubik.variable}`}
       data-scroll-behavior="smooth"
     >
@@ -175,7 +189,10 @@ export default async function RootLayout({
           >
             {uk.accessibility.skipToContent}
           </a>
-          <ClientProviders>
+          <ClientProviders
+            locale={locale}
+            localeBundle={localeBundle as Record<string, unknown> | null}
+          >
             <Header />
             <div className="flex flex-1 min-h-0 relative">
               <SidebarNav />

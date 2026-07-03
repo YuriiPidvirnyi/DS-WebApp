@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Gallery from '@/views/Gallery'
 import { generateBreadcrumbSchema } from '@/utils/seo'
 import uk from '@/locales/uk'
+import { hreflangAlternates } from '@/utils/locale-alternates'
 
 const galleryMeta = uk.routeMeta.gallery
 
@@ -9,7 +10,10 @@ export const metadata: Metadata = {
   title: galleryMeta.title,
   description: galleryMeta.description,
   keywords: galleryMeta.keywords,
-  alternates: { canonical: '/gallery' },
+  alternates: {
+    canonical: '/gallery',
+    languages: hreflangAlternates('/gallery'),
+  },
   openGraph: {
     title: galleryMeta.openGraphTitle,
     description: galleryMeta.openGraphDescription,

@@ -85,12 +85,12 @@ export default function Error({ error, reset }: ErrorProps) {
         <div className="mt-8 p-4 bg-dental-info-light rounded-lg text-center">
           <p className="text-sm text-dental-info">
             {t('errors.page.supportPrompt')}{' '}
-            <a
+            <Link
               href="/contact"
               className="font-semibold hover:underline text-dental-info"
             >
               {t('errors.page.supportLink')}
-            </a>
+            </Link>
           </p>
         </div>
       </div>

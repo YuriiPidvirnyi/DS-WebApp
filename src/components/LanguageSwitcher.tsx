@@ -1,15 +1,35 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { Globe, ChevronDown, Check } from 'lucide-react'
 import uk from '@/locales/uk'
-import { setLanguage } from '@/i18n/config'
+import { switchLanguage } from '@/i18n/runtime'
 import {
   trackEvent,
   EngagementEvent,
   AnalyticsEventCategory,
 } from '@/utils/analytics'
+
+/**
+ * Public pages that exist as /en and /pl URL trees. Switching language on
+ * one of these navigates to the URL variant (full SSR in the new language);
+ * everywhere else the language changes client-side on the current i18n
+ * instance, as before.
+ */
+const LOCALIZED_BASE_PATHS = new Set([
+  '/',
+  '/services',
+  '/about',
+  '/contact',
+  '/gallery',
+])
+
+function stripLocalePrefix(pathname: string): string {
+  const base = pathname.replace(/^\/(en|pl)(?=\/|$)/, '')
+  return base === '' ? '/' : base
+}
 
 interface Language {
   code: 'uk' | 'en' | 'pl'
@@ -36,6 +56,8 @@ export default function LanguageSwitcher({
   className = '',
 }: LanguageSwitcherProps) {
   const { t, i18n } = useTranslation()
+  const pathname = usePathname()
+  const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -48,26 +70,45 @@ export default function LanguageSwitcher({
   const currentLanguage =
     languages.find(lang => lang.code === i18n.language) || languages[0]
 
-  const handleLanguageChange = useCallback((langCode: Language['code']) => {
-    void setLanguage(langCode)
-    setIsOpen(false)
+  const handleLanguageChange = useCallback(
+    (langCode: Language['code']) => {
+      setIsOpen(false)
 
-    if (typeof document !== 'undefined') {
-      document.documentElement.lang = langCode
-    }
+      try {
+        trackEvent(
+          EngagementEvent.LanguageChanged,
+          AnalyticsEventCategory.Engagement,
+          {
+            language: langCode,
+          }
+        )
+      } catch {
+        // analytics may fail silently
+      }
 
-    try {
-      trackEvent(
-        EngagementEvent.LanguageChanged,
-        AnalyticsEventCategory.Engagement,
-        {
-          language: langCode,
+      const base = stripLocalePrefix(pathname ?? '/')
+      if (LOCALIZED_BASE_PATHS.has(base)) {
+        // Persist choice, then navigate to the URL variant — the new request
+        // server-renders the whole page in the selected language.
+        try {
+          localStorage.setItem('i18nextLng', langCode)
+        } catch {
+          // storage may be unavailable
         }
-      )
-    } catch {
-      // analytics may fail silently
-    }
-  }, [])
+        const target =
+          langCode === 'uk' ? base : `/${langCode}${base === '/' ? '' : base}`
+        router.push(target)
+        return
+      }
+
+      // Non-localized route: client-side switch on the current instance
+      void switchLanguage(i18n, langCode)
+      if (typeof document !== 'undefined') {
+        document.documentElement.lang = langCode
+      }
+    },
+    [pathname, router, i18n]
+  )
 
   const getLanguageMeta = (code: Language['code']) => {
     if (!isMounted) {
