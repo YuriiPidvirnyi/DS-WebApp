@@ -240,6 +240,10 @@
     "cta": {
       "title": "Potrzebujesz konsultacji?",
       "description": "Nasi lekarze przeprowadzą szczegółowe badanie i opracują indywidualny plan leczenia dopasowany do Twoich potrzeb"
+    },
+    "landingLinks": {
+      "title": "Najważniejsze usługi szczegółowo",
+      "subtitle": "Osobne strony z odpowiedziami na najczęstsze pytania"
     }
   },
   "caseStudies": {
@@ -2859,7 +2863,8 @@
     "workingNow": "Teraz otwarte",
     "closedNow": "Teraz zamknięte",
     "opensAt": "Otwieramy o {{time}}",
-    "qualityGuarantee": "Gwarancja jakości"
+    "qualityGuarantee": "Gwarancja jakości",
+    "onlineBooking247": "Rezerwacja online 24/7"
   },
   "hero": {
     "badge": "Nowoczesna stomatologia",
@@ -3185,6 +3190,38 @@
     "openGraphImage": {
       "alt": "Dental Story — Сучасна стоматологія у Львові",
       "tagline": "Сучасна стоматологія у Львові"
+    },
+    "serviceImplantation": {
+      "title": "Implanty zębowe we Lwowie",
+      "description": "Implanty zębowe we Lwowie: diagnostyka 3D, bezbolesny zabieg, stały kosztorys przed leczeniem. Bezpłatna konsultacja.",
+      "keywords": "implanty zębowe Lwów, implant zęba Lwów, wszczepienie implantu Lwów, cena implantu Lwów",
+      "openGraphTitle": "Implanty zębowe we Lwowie — Dental Story",
+      "openGraphDescription": "Diagnostyka 3D, bezbolesny zabieg, stały kosztorys. Bezpłatna konsultacja.",
+      "breadcrumb": "Implanty"
+    },
+    "serviceAligners": {
+      "title": "Alignery we Lwowie — proste zęby bez aparatu",
+      "description": "Alignery (przezroczyste nakładki) we Lwowie: niewidoczna korekta zgryzu dla dorosłych i młodzieży. Cyfrowe planowanie 3D. Bezpłatna konsultacja.",
+      "keywords": "alignery Lwów, przezroczyste nakładki Lwów, prostowanie zębów bez aparatu, korekta zgryzu Lwów",
+      "openGraphTitle": "Alignery we Lwowie — Dental Story",
+      "openGraphDescription": "Niewidoczna korekta zgryzu przezroczystymi nakładkami. Plan 3D przed leczeniem.",
+      "breadcrumb": "Alignery"
+    },
+    "serviceVeneers": {
+      "title": "Licówki we Lwowie — stomatologia estetyczna",
+      "description": "Licówki ceramiczne i kompozytowe we Lwowie: nowy uśmiech w 2–3 wizyty. Indywidualny projekt, naturalny wygląd. Bezpłatna konsultacja.",
+      "keywords": "licówki Lwów, licówki ceramiczne Lwów, licówki kompozytowe, stomatologia estetyczna Lwów",
+      "openGraphTitle": "Licówki we Lwowie — Dental Story",
+      "openGraphDescription": "Nowy uśmiech w 2–3 wizyty: indywidualny projekt, naturalny wygląd. Bezpłatna konsultacja.",
+      "breadcrumb": "Licówki"
+    },
+    "serviceSedation": {
+      "title": "Leczenie zębów w sedacji we Lwowie",
+      "description": "Sedacja we Lwowie: leczenie zębów bez strachu i bólu, pod nadzorem anestezjologa. Dla osób z dentofobią, dzieci i przy dużym zakresie leczenia. Bezpłatna konsultacja.",
+      "keywords": "sedacja Lwów, leczenie zębów we śnie Lwów, dentysta bez strachu, leczenie w sedacji",
+      "openGraphTitle": "Sedacja we Lwowie — Dental Story",
+      "openGraphDescription": "Leczenie zębów we śnie: bez strachu i bólu, pod nadzorem anestezjologa. Bezpłatna konsultacja.",
+      "breadcrumb": "Sedacja"
     }
   },
   "stock": {
@@ -3280,6 +3317,320 @@
       "negativeBalance": "Недостатньо залишків",
       "docLocked": "Документ вже проведено",
       "flagOff": "Inventory v2 не активовано"
+    }
+  },
+  "serviceLanding": {
+    "implantation": {
+      "badge": "Stomatologia chirurgiczna",
+      "title": "Implanty zębowe we Lwowie",
+      "subtitle": "Odbudowa zębów na zawsze: planowanie 3D, bezbolesny zabieg i stały kosztorys, który nie zmieni się w trakcie leczenia.",
+      "intro": "Implant to sztuczny korzeń zęba, na którym mocowana jest korona. To najpewniejszy sposób odbudowy utraconego zęba: sąsiednie zęby pozostają nienaruszone, kość jest zachowana, a nowa korona wygląda jak własny ząb.",
+      "benefits": {
+        "title": "Dlaczego implanty w Dental Story",
+        "items": {
+          "b1": {
+            "title": "Najpierw diagnostyka 3D",
+            "description": "Tomografia komputerowa i cyfrowe planowanie pozycji implantu przed zabiegiem — bez niespodzianek."
+          },
+          "b2": {
+            "title": "Bezboleśnie",
+            "description": "Nowoczesne znieczulenie sprawia, że wszczepienie implantu nie jest trudniejsze niż zwykłe leczenie zęba."
+          },
+          "b3": {
+            "title": "Stały kosztorys",
+            "description": "Cenę uzgadniamy przed rozpoczęciem leczenia — nie zmieni się przy płatności."
+          },
+          "b4": {
+            "title": "Pełny cykl w jednej klinice",
+            "description": "Od podniesienia zatoki i augmentacji kości po stałą koronę — wszystko przy ul. Sumskiej 10."
+          }
+        }
+      },
+      "process": {
+        "title": "Jak przebiega leczenie",
+        "steps": {
+          "s1": {
+            "title": "Konsultacja i tomografia",
+            "description": "Badanie, tomografia i ocena stanu tkanki kostnej."
+          },
+          "s2": {
+            "title": "Plan leczenia z kosztorysem",
+            "description": "Uzgadniamy etapy, terminy i stałą cenę."
+          },
+          "s3": {
+            "title": "Wszczepienie implantu",
+            "description": "Zabieg trwa 30–60 minut w znieczuleniu miejscowym."
+          },
+          "s4": {
+            "title": "Stała korona",
+            "description": "Po osseointegracji (3–6 miesięcy) mocujemy koronę — ząb jak nowy."
+          }
+        }
+      },
+      "faq": {
+        "title": "Implanty — częste pytania",
+        "items": {
+          "q1": {
+            "question": "Czy wszczepienie implantu boli?",
+            "answer": "Nie. Zabieg odbywa się w znieczuleniu miejscowym i nie jest trudniejszy niż leczenie próchnicy. Niewielki dyskomfort przez 1–2 dni łagodzą zwykłe leki przeciwbólowe."
+          },
+          "q2": {
+            "question": "Jak długo trwa implantacja?",
+            "answer": "Wszczepienie jednego implantu trwa 30–60 minut. Pełny cykl ze stałą koroną to 3–6 miesięcy, zależnie od gojenia."
+          },
+          "q3": {
+            "question": "Czy są przeciwwskazania?",
+            "answer": "Bezwzględnych przeciwwskazań jest niewiele: niewyrównana cukrzyca oraz niektóre choroby krwi i kości. Większość ograniczeń jest tymczasowa — lekarz oceni Twój przypadek po tomografii."
+          },
+          "q4": {
+            "question": "Co jeśli brakuje kości?",
+            "answer": "Wykonujemy podniesienie dna zatoki (sinus lift) i augmentację kości — standardowe zabiegi odbudowujące objętość kości przed implantacją."
+          },
+          "q5": {
+            "question": "Jak długo służy implant?",
+            "answer": "Przy właściwej higienie i regularnych kontrolach implanty służą dziesięciolecia. Kluczowa jest profesjonalna higiena dwa razy w roku i staranna pielęgnacja domowa."
+          }
+        }
+      },
+      "cta": {
+        "title": "Sprawdź, czy implanty są dla Ciebie",
+        "subtitle": "Bezpłatna konsultacja z badaniem — bez zobowiązań",
+        "button": "Umów konsultację"
+      }
+    },
+    "aligners": {
+      "badge": "Ortodoncja",
+      "title": "Alignery — proste zęby bez aparatu",
+      "subtitle": "Przezroczyste nakładki niewidoczne na co dzień i na zdjęciach: korygujemy zgryz bez metalu, dyskomfortu i ograniczeń w jedzeniu.",
+      "intro": "Alignery to seria przezroczystych, zdejmowanych nakładek, z których każda stopniowo przesuwa zęby do zaplanowanej pozycji. Są prawie niewidoczne, nie podrażniają śluzówki i zdejmuje się je do posiłków i mycia zębów.",
+      "benefits": {
+        "title": "Dlaczego alignery w Dental Story",
+        "items": {
+          "b1": {
+            "title": "Niewidoczne",
+            "description": "Przezroczysty materiał jest niewidoczny już z pół metra — koledzy i znajomi nie zauważą."
+          },
+          "b2": {
+            "title": "Zdejmowane",
+            "description": "Jedz co chcesz i myj zęby jak zwykle — nakładki zdejmuje się do posiłków i higieny."
+          },
+          "b3": {
+            "title": "Cyfrowy plan",
+            "description": "Jeszcze przed leczeniem zobaczysz model 3D przyszłego uśmiechu i orientacyjny czas."
+          },
+          "b4": {
+            "title": "Komfortowe",
+            "description": "Bez drutów i zamków: gładki materiał nie obciera i nie drapie."
+          }
+        }
+      },
+      "process": {
+        "title": "Jak przebiega leczenie",
+        "steps": {
+          "s1": {
+            "title": "Konsultacja i skan 3D",
+            "description": "Ortodonta ocenia zgryz i tworzy cyfrowy model zębów."
+          },
+          "s2": {
+            "title": "Plan i seria nakładek",
+            "description": "Zatwierdzamy plan 3D i produkujemy indywidualną serię alignerów."
+          },
+          "s3": {
+            "title": "Noszenie 20–22 h/dobę",
+            "description": "Nakładki zmieniasz według harmonogramu, zwykle co 1–2 tygodnie."
+          },
+          "s4": {
+            "title": "Kontrole i retainery",
+            "description": "Wizyty co 1,5–2 miesiące; po zakończeniu — retainery utrwalające efekt."
+          }
+        }
+      },
+      "faq": {
+        "title": "Alignery — częste pytania",
+        "items": {
+          "q1": {
+            "question": "Czy alignery są naprawdę niewidoczne?",
+            "answer": "Tak. Nakładki wykonane są z przezroczystego materiału i ściśle przylegają do zębów. Można je dostrzec tylko z bliska, przy uważnym spojrzeniu."
+          },
+          "q2": {
+            "question": "Jak długo trwa leczenie?",
+            "answer": "Od 6 miesięcy w prostych przypadkach do 1,5–2 lat w złożonych. Dokładny czas ortodonta poda po planowaniu 3D."
+          },
+          "q3": {
+            "question": "Czy alignery działają w trudnych przypadkach?",
+            "answer": "Alignery radzą sobie z większością stłoczeń i szpar. Przy złożonych wadach zgryzu ortodonta może zalecić aparat stały lub leczenie łączone."
+          },
+          "q4": {
+            "question": "Ile godzin dziennie nosić nakładki?",
+            "answer": "20–22 godziny na dobę, zdejmując je tylko do posiłków i mycia zębów — dyscyplina noszenia wprost wpływa na czas leczenia."
+          },
+          "q5": {
+            "question": "Co po zakończeniu leczenia?",
+            "answer": "Aby zęby nie wróciły do poprzedniej pozycji, stosuje się retainery — stały drucik lub nocną nakładkę."
+          }
+        }
+      },
+      "cta": {
+        "title": "Zobacz swój przyszły uśmiech",
+        "subtitle": "Bezpłatna konsultacja ortodontyczna ze skanem 3D",
+        "button": "Umów konsultację"
+      }
+    },
+    "veneers": {
+      "badge": "Stomatologia estetyczna",
+      "title": "Licówki — nowy uśmiech w kilka wizyt",
+      "subtitle": "Cienkie ceramiczne lub kompozytowe nakładki korygujące kolor, kształt i drobne wady zębów — z naturalnym efektem.",
+      "intro": "Licówka to cienka płytka mocowana na przedniej powierzchni zęba. Licówki maskują ukruszenia, szpary, przebarwienia i nierówności, zachowując maksimum własnych tkanek zęba.",
+      "benefits": {
+        "title": "Dlaczego licówki w Dental Story",
+        "items": {
+          "b1": {
+            "title": "Indywidualny projekt",
+            "description": "Kształt i odcień dobieramy do Twojej twarzy i oczekiwań — od naturalnego po hollywoodzką biel."
+          },
+          "b2": {
+            "title": "Szybki efekt",
+            "description": "Licówki kompozytowe — na jednej wizycie, ceramiczne — w 2–3 wizyty."
+          },
+          "b3": {
+            "title": "Minimalne szlifowanie",
+            "description": "Nowoczesne protokoły zachowują maksimum własnego szkliwa."
+          },
+          "b4": {
+            "title": "Trwały kolor",
+            "description": "Ceramika nie ciemnieje od kawy, herbaty ani czerwonego wina."
+          }
+        }
+      },
+      "process": {
+        "title": "Jak przebiega leczenie",
+        "steps": {
+          "s1": {
+            "title": "Konsultacja i projekt",
+            "description": "Omawiamy oczekiwania, dobieramy kształt i kolor przyszłego uśmiechu."
+          },
+          "s2": {
+            "title": "Przygotowanie i skan",
+            "description": "Delikatne opracowanie powierzchni zęba i wycisk cyfrowy."
+          },
+          "s3": {
+            "title": "Przymiarka i cementowanie",
+            "description": "Sprawdzamy estetykę i zgryz, mocujemy licówki na stałe."
+          },
+          "s4": {
+            "title": "Pielęgnacja",
+            "description": "Zalecenia domowe i harmonogram wizyt kontrolnych."
+          }
+        }
+      },
+      "faq": {
+        "title": "Licówki — częste pytania",
+        "items": {
+          "q1": {
+            "question": "Czy licówki niszczą zęby?",
+            "answer": "Nie. Nowoczesne protokoły wymagają minimalnego opracowania szkliwa, a zacementowana licówka chroni powierzchnię zęba. Kluczowa jest poprawna technika kliniczna."
+          },
+          "q2": {
+            "question": "Jak długo służą licówki?",
+            "answer": "Kompozytowe — 5–7 lat; ceramiczne — 10–15 lat i dłużej przy dobrej pielęgnacji i regularnej higienizacji."
+          },
+          "q3": {
+            "question": "Na ile zębów zakłada się licówki?",
+            "answer": "Zwykle na strefę uśmiechu — 8–10 górnych zębów. Dokładną liczbę ustalamy na konsultacji, zależnie od Twojego uśmiechu i oczekiwań."
+          },
+          "q4": {
+            "question": "Kompozyt czy ceramika — czym się różnią?",
+            "answer": "Licówki kompozytowe powstają bezpośrednio w ustach na jednej wizycie i kosztują mniej; ceramiczne wykonuje laboratorium — są trwalsze, stabilniejsze kolorystycznie i wyglądają naturalniej."
+          },
+          "q5": {
+            "question": "Jak dbać o licówki?",
+            "answer": "Jak o własne zęby: szczotkowanie dwa razy dziennie, nić dentystyczna, higienizacja dwa razy w roku. Nie należy obgryzać paznokci, gryźć lodu ani otwierać zębami opakowań."
+          }
+        }
+      },
+      "cta": {
+        "title": "Gotowi na nowy uśmiech?",
+        "subtitle": "Umów bezpłatną konsultację z projektem uśmiechu",
+        "button": "Umów konsultację"
+      }
+    },
+    "sedation": {
+      "badge": "Stomatologia bez strachu",
+      "title": "Leczenie zębów w sedacji — bez strachu i bólu",
+      "subtitle": "Leczymy zęby, gdy Ty spokojnie drzemiesz: sedacja dla pacjentów z lękiem, dentofobią i przy dużym zakresie leczenia w jednej wizycie.",
+      "intro": "Sedacja to farmakologiczny sen pod nadzorem anestezjologa: jesteś zrelaksowany, nie czujesz strachu ani bólu, a budzisz się z wyleczonymi zębami. W odróżnieniu od znieczulenia ogólnego oddychasz samodzielnie, a powrót do pełnej świadomości zajmuje kilka minut.",
+      "benefits": {
+        "title": "Dlaczego sedacja w Dental Story",
+        "items": {
+          "b1": {
+            "title": "Bez strachu i stresu",
+            "description": "Idealna przy dentofobii i dla wszystkich, którzy latami odkładali wizytę: żadnych przykrych wspomnień z zabiegu."
+          },
+          "b2": {
+            "title": "Anestezjolog obok",
+            "description": "Twój stan przez cały zabieg monitoruje lekarz anestezjolog."
+          },
+          "b3": {
+            "title": "Duży zakres w jednej wizycie",
+            "description": "Kilka zębów lub złożone leczenie podczas jednej wizyty zamiast serii spotkań."
+          },
+          "b4": {
+            "title": "Dla dzieci i dorosłych",
+            "description": "Bezpieczne protokoły sedacji dla małych pacjentów i dorosłych."
+          }
+        }
+      },
+      "process": {
+        "title": "Jak przebiega leczenie",
+        "steps": {
+          "s1": {
+            "title": "Konsultacja i badania",
+            "description": "Badanie, niezbędne analizy i konsultacja anestezjologiczna."
+          },
+          "s2": {
+            "title": "Plan leczenia z kosztorysem",
+            "description": "Uzgadniamy zakres, czas trwania i stałą cenę."
+          },
+          "s3": {
+            "title": "Leczenie w sedacji",
+            "description": "Ty śpisz — zespół pracuje. Anestezjolog stale monitoruje Twój stan."
+          },
+          "s4": {
+            "title": "Wybudzenie i odpoczynek",
+            "description": "Budzisz się po kilku minutach, odpoczywasz w klinice i wracasz do domu z osobą towarzyszącą."
+          }
+        }
+      },
+      "faq": {
+        "title": "Sedacja — częste pytania",
+        "items": {
+          "q1": {
+            "question": "Czym sedacja różni się od narkozy?",
+            "answer": "Sedacja to płytki sen farmakologiczny: oddychasz samodzielnie, odruchy są zachowane, a wybudzenie zajmuje kilka minut. Znieczulenie ogólne jest głębsze i wymaga dłuższej rekonwalescencji."
+          },
+          "q2": {
+            "question": "Czy to bezpieczne?",
+            "answer": "Tak — pod warunkiem badań przed zabiegiem i stałego nadzoru anestezjologa. Przed sedacją wykonujesz badania i przechodzisz konsultację anestezjologiczną."
+          },
+          "q3": {
+            "question": "Dla kogo jest leczenie we śnie?",
+            "answer": "Dla osób z dentofobią, pacjentów z silnym odruchem wymiotnym, dzieci oraz gdy trzeba wykonać duży zakres leczenia w jednej wizycie."
+          },
+          "q4": {
+            "question": "Co będę czuć?",
+            "answer": "Nic nieprzyjemnego: zasypiasz kilka sekund po podaniu leku i budzisz się, gdy wszystko jest zakończone. Większość pacjentów opisuje to jako krótki, głęboki sen."
+          },
+          "q5": {
+            "question": "Czy można jeść przed sedacją i prowadzić auto po zabiegu?",
+            "answer": "Przed zabiegiem konieczna jest przerwa w jedzeniu — dokładny czas poda lekarz. Po sedacji nie wolno prowadzić auta do końca dnia, dlatego zalecamy przyjazd z osobą towarzyszącą."
+          }
+        }
+      },
+      "cta": {
+        "title": "Latami odkładasz leczenie ze strachu?",
+        "subtitle": "Bezpłatna konsultacja — omówimy, czy sedacja jest dla Ciebie",
+        "button": "Umów konsultację"
+      }
     }
   }
 }
