@@ -12,7 +12,9 @@ export default defineConfig({
     css: false,
     coverage: {
       provider: 'v8',
-      include: ['src/**/*.{ts,tsx}'],
+      // API route handlers live under app/api — include them so their coverage
+      // is actually measured, not just the src/ tree.
+      include: ['src/**/*.{ts,tsx}', 'app/api/**/*.{ts,tsx}'],
       exclude: [
         'src/test/**',
         'src/**/*.test.{ts,tsx}',
@@ -23,10 +25,10 @@ export default defineConfig({
       // Thresholds reflect current coverage after API route additions.
       // Raise these incrementally as test coverage improves.
       thresholds: {
-        lines: 15,
-        functions: 13,
-        branches: 12,
-        statements: 15,
+        lines: 17,
+        functions: 15,
+        branches: 13,
+        statements: 17,
       },
     },
   },
