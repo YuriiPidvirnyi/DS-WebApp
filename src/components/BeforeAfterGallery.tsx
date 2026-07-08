@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import Image from 'next/image'
 import { useTranslation } from 'react-i18next'
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
@@ -53,10 +54,12 @@ function ComparisonSlider({
   beforeImage,
   afterImage,
   t,
+  priority,
 }: {
   beforeImage: string
   afterImage: string
   t: (key: string) => string
+  priority?: boolean
 }) {
   const [sliderPosition, setSliderPosition] = useState(50)
   const [isDragging, setIsDragging] = useState(false)
@@ -106,12 +109,14 @@ function ComparisonSlider({
     >
       {/* After image (full width, underneath) */}
       <div className="absolute inset-0">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={afterImage}
           alt={t('caseStudies.afterTreatment')}
-          className="absolute inset-0 w-full h-full object-cover"
+          fill
+          className="object-cover"
+          sizes="(max-width: 1024px) 100vw, 50vw"
           draggable={false}
+          priority={priority}
         />
         <div className="absolute top-4 right-4 bg-dental-primary-500 text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1.5">
           <Sparkles className="h-4 w-4" />
@@ -124,12 +129,14 @@ function ComparisonSlider({
         className="absolute inset-0 overflow-hidden"
         style={{ width: `${sliderPosition}%` }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={beforeImage}
           alt={t('caseStudies.beforeTreatment')}
-          className="absolute inset-0 w-full h-full object-cover"
+          fill
+          className="object-cover"
+          sizes="(max-width: 1024px) 100vw, 50vw"
           draggable={false}
+          priority={priority}
         />
         <div className="absolute top-4 left-4 bg-dental-primary-900 text-white px-3 py-1.5 rounded-full text-sm font-medium">
           {t('labels.before')}
@@ -193,6 +200,7 @@ export default function BeforeAfterGallery() {
                 beforeImage={currentCase.beforeImage}
                 afterImage={currentCase.afterImage}
                 t={t}
+                priority={activeCase === 0}
               />
 
               {/* Navigation arrows */}
