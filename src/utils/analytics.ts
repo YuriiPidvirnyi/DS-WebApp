@@ -105,14 +105,49 @@ export const initializeAnalytics = (): void => {
   }
 }
 
+// Query params that must never be sent to analytics: one-time auth tokens and
+// codes. If a page-view fires before an auth page scrubs its URL, page_location
+// would otherwise leak a still-valid recovery token to GA (readable by anyone
+// with property access → account takeover).
+const SENSITIVE_QUERY_PARAMS = [
+  'token_hash',
+  'token',
+  'code',
+  'access_token',
+  'refresh_token',
+  'otp',
+]
+
+/** Strip sensitive params from a full URL (and its hash) before reporting it. */
+export const sanitizeUrlForAnalytics = (href: string): string => {
+  try {
+    const url = new URL(href)
+    for (const p of SENSITIVE_QUERY_PARAMS) url.searchParams.delete(p)
+    if (url.hash) {
+      const hash = new URLSearchParams(url.hash.replace(/^#/, ''))
+      let touched = false
+      for (const p of SENSITIVE_QUERY_PARAMS) {
+        if (hash.has(p)) {
+          hash.delete(p)
+          touched = true
+        }
+      }
+      if (touched) url.hash = hash.toString() ? `#${hash.toString()}` : ''
+    }
+    return url.toString()
+  } catch {
+    return href.split('?')[0].split('#')[0]
+  }
+}
+
 export const trackPageView = (pagePath: string, pageTitle: string): void => {
   if (typeof window === 'undefined' || !window.gtag) return
 
   try {
     window.gtag('event', 'page_view', {
-      page_path: pagePath,
+      page_path: pagePath.split('?')[0].split('#')[0],
       page_title: pageTitle,
-      page_location: window.location.href,
+      page_location: sanitizeUrlForAnalytics(window.location.href),
     })
   } catch (error) {
     console.error('Failed to track page view:', error)

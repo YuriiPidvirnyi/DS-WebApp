@@ -2454,7 +2454,8 @@
       "errors": {
         "unavailable": "Odzyskiwanie hasła jest tymczasowo niedostępne",
         "generic": "Nie udało się wysłać emaila. Spróbuj ponownie później."
-      }
+      },
+      "expiredNotice": "Link wygasł. Podaj adres e-mail, aby otrzymać nowy."
     },
     "resetPassword": {
       "subtitle": "Ustaw nowe hasło dla swojego konta.",
@@ -2483,6 +2484,26 @@
         "unavailable": "Autoryzacja jest tymczasowo niedostępna",
         "sessionMissing": "Nie udało się aktywować sesji. Zaloguj się ponownie.",
         "generic": "Nie udało się zakończyć autoryzacji. Spróbuj ponownie."
+      }
+    },
+    "confirm": {
+      "recovery": {
+        "title": "Odzyskiwanie hasła",
+        "description": "Kliknij przycisk poniżej, aby potwierdzić żądanie i ustawić nowe hasło.",
+        "submit": "Potwierdź i kontynuuj"
+      },
+      "default": {
+        "title": "Potwierdzenie",
+        "description": "Kliknij przycisk poniżej, aby potwierdzić żądanie i kontynuować.",
+        "submit": "Potwierdź"
+      },
+      "verifying": "Weryfikujemy link...",
+      "backToLogin": "Powrót do logowania",
+      "requestNewLink": "Poproś o nowy link",
+      "errors": {
+        "invalidLink": "Link jest uszkodzony lub niekompletny. Poproś o nowy.",
+        "unavailable": "Usługa jest chwilowo niedostępna",
+        "generic": "Link jest nieprawidłowy lub wygasł. Poproś o nowy."
       }
     }
   },
