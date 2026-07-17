@@ -267,6 +267,40 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   }
 
   if (
+    updates.status === 'completed' &&
+    currentRow?.status !== 'completed' &&
+    currentRow?.guest_email
+  ) {
+    // Post-visit review ask, delivered ~2h after completion by the
+    // notifications cron. The partial unique index uniq_review_request_per_appt
+    // guarantees at most one ask per appointment (23505 = already queued once).
+    const { data: confirmationEvent } = await auth
+      .supabase!.from('notification_events')
+      .select('details')
+      .eq('appointment_id', id)
+      .eq('type', 'booking_confirmation')
+      .maybeSingle()
+    const locale =
+      (confirmationEvent?.details as { locale?: string } | null)?.locale ?? 'uk'
+
+    const { error: reviewErr } = await auth
+      .supabase!.from('notification_events')
+      .insert({
+        type: 'review_request',
+        appointment_id: id,
+        recipient_email: currentRow.guest_email,
+        status: 'queued',
+        scheduled_at: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+        details: { source: 'status_completed', locale },
+      })
+    if (reviewErr && reviewErr.code !== '23505') {
+      logger.warn('[appointments/[id]] Failed to queue review request:', {
+        data: reviewErr.message,
+      })
+    }
+  }
+
+  if (
     updates.status === 'cancelled' &&
     currentRow?.status !== 'cancelled' &&
     currentRow?.guest_email

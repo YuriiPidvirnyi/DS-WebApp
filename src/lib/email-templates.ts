@@ -650,3 +650,83 @@ export function recallEmail(
 
   return { subject, html, text }
 }
+
+// ─── Review Request (post-visit) ──────────────────────────────────────────────
+//
+// Compliance: the ask is unconditional (sent to every completed visit, no
+// incentive, no sentiment filter) per Google Maps UGC policy. The "something
+// went wrong" line routes service issues to the clinic but the review link is
+// shown to everyone regardless.
+
+const REVIEW_REQUEST_STRINGS: Record<
+  Locale,
+  {
+    subject: string
+    heading: string
+    body: (name: string) => string
+    cta: string
+    problem: (phone: string) => string
+    optOut: string
+  }
+> = {
+  uk: {
+    subject: 'Дякуємо за візит до Dental Story 💙',
+    heading: 'Дякуємо за ваш візит!',
+    body: name =>
+      `${name}, сподіваємось, усе пройшло добре. Якщо у вас є хвилинка — поділіться враженнями у Google: ваш відгук допомагає іншим пацієнтам знайти нас.`,
+    cta: 'Залишити відгук у Google',
+    problem: phone =>
+      `Якщо щось було не так — зателефонуйте нам ${phone}, ми все виправимо.`,
+    optOut: 'Відписатися від листів',
+  },
+  en: {
+    subject: 'Thank you for visiting Dental Story 💙',
+    heading: 'Thank you for your visit!',
+    body: name =>
+      `${name}, we hope everything went well. If you have a minute, share your experience on Google — your review helps other patients find us.`,
+    cta: 'Leave a review on Google',
+    problem: phone =>
+      `If something wasn't right, please call us at ${phone} and we'll make it right.`,
+    optOut: 'Unsubscribe from emails',
+  },
+  pl: {
+    subject: 'Dziękujemy za wizytę w Dental Story 💙',
+    heading: 'Dziękujemy za wizytę!',
+    body: name =>
+      `${name}, mamy nadzieję, że wszystko poszło dobrze. Jeśli masz chwilę, podziel się wrażeniami w Google — Twoja opinia pomaga innym pacjentom nas znaleźć.`,
+    cta: 'Zostaw opinię w Google',
+    problem: phone =>
+      `Jeśli coś było nie tak, zadzwoń do nas pod ${phone}, a wszystko naprawimy.`,
+    optOut: 'Zrezygnuj z wiadomości',
+  },
+}
+
+export type ReviewRequestData = {
+  patientName: string
+}
+
+export function reviewRequestEmail(
+  data: ReviewRequestData,
+  locale: Locale = 'uk'
+): { subject: string; html: string; text: string } {
+  const s = REVIEW_REQUEST_STRINGS[locale]
+  const reviewUrl = `${SITE_URL}/r/google?src=email`
+  const body = s.body(data.patientName)
+  const problem = s.problem(CLINIC_PHONE)
+
+  const content = `
+    <h1 style="margin:0 0 16px;font-size:24px;color:${COLORS.navy};">${s.heading}</h1>
+    <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:${COLORS.text};">${body}</p>
+    <div style="text-align:center;margin:8px 0 24px;">
+      <a href="${reviewUrl}" class="btn" style="display:inline-block;padding:14px 32px;background-color:${COLORS.teal};color:#ffffff;border-radius:8px;font-weight:600;font-size:15px;text-decoration:none;">${s.cta}</a>
+    </div>
+    <p style="margin:0 0 8px;font-size:13px;line-height:1.6;color:${COLORS.text};">${problem}</p>
+    <p style="margin:0;font-size:12px;">
+      <a href="${SITE_URL}/cabinet/profile#notifications" style="color:#9CA3AF;text-decoration:underline;">${s.optOut}</a>
+    </p>`
+
+  const html = baseLayout(content, body, locale)
+  const text = `${s.heading}\n\n${body}\n\n${s.cta}: ${reviewUrl}\n\n${problem}\n\n${s.optOut}: ${SITE_URL}/cabinet/profile#notifications`
+
+  return { subject: s.subject, html, text }
+}
