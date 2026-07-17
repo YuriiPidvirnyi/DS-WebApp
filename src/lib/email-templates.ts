@@ -702,16 +702,30 @@ const PASSWORD_RESET_STRINGS: Record<
   },
 }
 
+// patientName comes from mutable user metadata (first_name). It's only ever
+// echoed back into the recipient's own inbox, but this is a security-sensitive
+// auth email, so escape it before interpolating into HTML rather than trusting
+// the source. Plain-text output keeps the raw value.
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 export function passwordResetEmail(
   data: PasswordResetData,
   locale: Locale = 'uk'
 ): { subject: string; html: string; text: string } {
   const s = PASSWORD_RESET_STRINGS[locale]
   const greeting = s.greeting(data.patientName)
+  const htmlGreeting = escapeHtml(greeting)
 
   const content = `
     <h1 style="margin:0 0 16px;font-size:24px;color:${COLORS.navy};">${s.heading}</h1>
-    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:${COLORS.text};">${greeting}</p>
+    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:${COLORS.text};">${htmlGreeting}</p>
     <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:${COLORS.text};">${s.body}</p>
     <div style="text-align:center;margin:8px 0 24px;">
       <a href="${data.resetUrl}" class="btn" style="display:inline-block;padding:14px 32px;background-color:${COLORS.teal};color:#ffffff;border-radius:8px;font-weight:600;font-size:15px;text-decoration:none;">${s.cta}</a>

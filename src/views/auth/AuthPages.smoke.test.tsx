@@ -89,11 +89,13 @@ describe('Auth pages smoke', () => {
     )
 
     // Goes through our own endpoint (branded email → click-gated /auth/confirm),
-    // NOT Supabase's default resetPasswordForEmail / /verify flow.
+    // NOT Supabase's default resetPasswordForEmail / /verify flow. Assert the
+    // exact normalized locale (uk is the test i18n default) so a locale
+    // regression in the page — e.g. passing a raw `en-US` — is caught.
     await waitFor(() =>
       expect(requestPasswordResetMock).toHaveBeenCalledWith(
         'patient@example.com',
-        expect.any(String)
+        'uk'
       )
     )
 

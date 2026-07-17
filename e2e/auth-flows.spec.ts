@@ -80,10 +80,10 @@ test.describe('Auth flows', () => {
     // links to the token-burning /verify). It posts to our own /api/auth/recover
     // which mints the token server-side and emails a click-gated /auth/confirm
     // link. Assert the page drives that endpoint and shows success.
-    let recoverBody = ''
+    let recoverBody: Record<string, unknown> | null = null
 
     await page.route('**/api/auth/recover', async route => {
-      recoverBody = route.request().postData() ?? ''
+      recoverBody = route.request().postDataJSON() as Record<string, unknown>
       await route.fulfill({
         status: 200,
         headers: jsonHeaders,
@@ -95,7 +95,14 @@ test.describe('Auth flows', () => {
     await page.getByLabel('Email').fill('patient@example.com')
     await page.getByRole('button', { name: 'Надіслати посилання' }).click()
 
-    await expect.poll(() => recoverBody).toContain('patient@example.com')
+    // Assert the full payload — a substring check would pass on a malformed key
+    // or the wrong locale. Ukrainian is the default UI language in the e2e env.
+    await expect
+      .poll(() => recoverBody)
+      .toEqual({
+        email: 'patient@example.com',
+        locale: 'uk',
+      })
     await expect(page.getByText('Лист надіслано')).toBeVisible()
   })
 

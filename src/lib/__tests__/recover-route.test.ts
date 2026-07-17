@@ -68,7 +68,11 @@ vi.mock('@/lib/redis', () => ({
 vi.mock('@/utils/sentry', () => ({ captureException: vi.fn() }))
 
 import { POST } from '../../../app/api/auth/recover/route'
-import { validateCSRF, checkRateLimit } from '@/lib/api-security'
+import {
+  validateCSRF,
+  checkRateLimit,
+  memoryRateLimit,
+} from '@/lib/api-security'
 
 const OLD_ENV = process.env
 beforeEach(() => {
@@ -187,11 +191,27 @@ describe('POST /api/auth/recover', () => {
     expect(sendEmail).not.toHaveBeenCalled()
   })
 
-  it('still sends when Redis (per-email limiter) is unavailable (fail-open)', async () => {
+  it('falls back to the in-memory limiter and still sends when Redis is down but under the memory cap', async () => {
     keyedRateLimit.mockRejectedValue(new Error('redis down'))
+    vi.mocked(memoryRateLimit).mockReturnValueOnce({
+      allowed: true,
+      remaining: 1,
+    })
     const res = await POST(makeRequest({ email: 'p@example.com' }))
     expect(res.status).toBe(200)
     await flushAfter()
     expect(sendEmail).toHaveBeenCalledTimes(1)
+  })
+
+  it('suppresses delivery when Redis is down AND the in-memory fallback is over cap (bounded, not fail-open)', async () => {
+    keyedRateLimit.mockRejectedValue(new Error('redis down'))
+    vi.mocked(memoryRateLimit).mockReturnValue({ allowed: false, remaining: 0 })
+    const res = await POST(makeRequest({ email: 'victim@example.com' }))
+    expect(res.status).toBe(200)
+    await flushAfter()
+    // Redis outage must NOT become an email-bomb vector: over the memory cap,
+    // no token is minted and no mail is sent.
+    expect(generateLink).not.toHaveBeenCalled()
+    expect(sendEmail).not.toHaveBeenCalled()
   })
 })

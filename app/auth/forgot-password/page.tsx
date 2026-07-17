@@ -76,9 +76,14 @@ export default function ForgotPasswordPage() {
     setError(null)
     setLoading(true)
 
-    const locale = (
-      ['uk', 'en', 'pl'].includes(i18n.language) ? i18n.language : 'uk'
-    ) as 'uk' | 'en' | 'pl'
+    // Normalize a possibly-regional tag (e.g. `en-US`, `pl-PL`) down to its base
+    // language before matching supported locales — otherwise a user browsing in
+    // en-US would silently fall through to the Ukrainian email.
+    const base = (i18n.language || 'uk').split('-')[0].toLowerCase()
+    const locale = (['uk', 'en', 'pl'].includes(base) ? base : 'uk') as
+      | 'uk'
+      | 'en'
+      | 'pl'
 
     try {
       const res = await requestPasswordReset(email.trim(), locale)
