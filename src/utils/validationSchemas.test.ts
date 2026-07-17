@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { contactFormSchema } from './validationSchemas'
+import { contactFormSchema, intakeFormSchema } from './validationSchemas'
 
 describe('contactFormSchema', () => {
   const validData = {
@@ -58,5 +58,76 @@ describe('contactFormSchema', () => {
       consent: false,
     })
     expect(result.success).toBe(false)
+  })
+})
+
+describe('intakeFormSchema', () => {
+  const validData = {
+    lastName: 'Шевченко',
+    firstName: 'Тарас',
+    patronymic: '',
+    phone: '+380671234567',
+    email: '',
+    dateOfBirth: '',
+    allergies: '',
+    medications: '',
+    chronicConditions: '',
+    pregnancy: '' as const,
+    complaints: '',
+    dataConsent: true,
+    marketingConsent: false,
+  }
+
+  it('accepts a minimal valid intake', () => {
+    expect(intakeFormSchema.safeParse(validData).success).toBe(true)
+  })
+
+  it('accepts a full intake with medical history', () => {
+    const result = intakeFormSchema.safeParse({
+      ...validData,
+      patronymic: 'Григорович',
+      email: 'taras@example.com',
+      dateOfBirth: '1990-03-09',
+      allergies: 'лідокаїн',
+      medications: 'вітамін D',
+      chronicConditions: 'гіпертонія',
+      pregnancy: 'no',
+      complaints: 'Болить зуб праворуч зверху',
+      marketingConsent: true,
+    })
+    expect(result.success).toBe(true)
+  })
+
+  it('rejects when data consent is not given', () => {
+    const result = intakeFormSchema.safeParse({
+      ...validData,
+      dataConsent: false,
+    })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects invalid phone', () => {
+    expect(
+      intakeFormSchema.safeParse({ ...validData, phone: '067123' }).success
+    ).toBe(false)
+  })
+
+  it('rejects names with digits', () => {
+    expect(
+      intakeFormSchema.safeParse({ ...validData, firstName: 'Tara5' }).success
+    ).toBe(false)
+  })
+
+  it('rejects an unknown pregnancy value', () => {
+    expect(
+      intakeFormSchema.safeParse({ ...validData, pregnancy: 'maybe' }).success
+    ).toBe(false)
+  })
+
+  it('rejects an implausible date of birth', () => {
+    expect(
+      intakeFormSchema.safeParse({ ...validData, dateOfBirth: '1830-01-01' })
+        .success
+    ).toBe(false)
   })
 })
