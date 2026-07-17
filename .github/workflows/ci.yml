@@ -66,7 +66,12 @@ jobs:
 
   e2e-ui-smoke:
     name: E2E UI smoke (Select + language)
-    runs-on: ubuntu-latest
+    # ubuntu-22.04, NOT ubuntu-latest: on 24.04 images since ~2026-07-06 the
+    # next start prod server enters an allocation loop at startup (0 requests
+    # served, OOM at the 4GB heap cap ~2min later). Same build passes locally
+    # and on Vercel; every repo-side axis (deps/lockfile, Node, Chromium,
+    # .next cache) was eliminated by A/B runs on PR #359.
+    runs-on: ubuntu-22.04
     needs: [test]
 
     steps:
@@ -104,6 +109,7 @@ jobs:
       - name: Start server and wait for ready
         run: |
           PORT=3000 NEXT_TELEMETRY_DISABLED=1 \
+            UV_USE_IO_URING=0 \
             NODE_OPTIONS=--max-old-space-size=4096 \
             NEXT_PUBLIC_SITE_URL=http://127.0.0.1:3000 \
             NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:3000/supabase-mock \
@@ -129,7 +135,8 @@ jobs:
 
   e2e-feature-suites:
     name: E2E feature suites (booking, cabinet, admin RBAC, cron)
-    runs-on: ubuntu-latest
+    # ubuntu-22.04 — see the note on e2e-ui-smoke
+    runs-on: ubuntu-22.04
     needs: [test]
 
     steps:
@@ -166,6 +173,7 @@ jobs:
       - name: Start server and wait for ready
         run: |
           PORT=3000 NEXT_TELEMETRY_DISABLED=1 \
+            UV_USE_IO_URING=0 \
             NODE_OPTIONS=--max-old-space-size=4096 \
             NEXT_PUBLIC_SITE_URL=http://127.0.0.1:3000 \
             NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:3000/supabase-mock \

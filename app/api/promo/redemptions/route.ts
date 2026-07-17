@@ -87,7 +87,15 @@ export async function POST(request: NextRequest) {
       .eq('id', intakeFormId)
       .maybeSingle()
 
-    if (intakeError) throw intakeError
+    if (intakeError) {
+      captureException(new Error('[promo/redemptions] intake fetch error'), {
+        supabaseError: intakeError,
+      })
+      return NextResponse.json(
+        { success: false, error: 'Не вдалося зафіксувати видачу подарунка' },
+        { status: 500 }
+      )
+    }
     if (!intake) {
       return NextResponse.json(
         { success: false, error: 'Анкету не знайдено' },
@@ -125,7 +133,8 @@ export async function POST(request: NextRequest) {
     captureException(
       error instanceof Error
         ? error
-        : new Error('[promo/redemptions] unexpected error')
+        : new Error('[promo/redemptions] unexpected error'),
+      error instanceof Error ? undefined : { supabaseError: error }
     )
     return NextResponse.json(
       { success: false, error: 'Не вдалося зафіксувати видачу подарунка' },
