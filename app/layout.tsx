@@ -186,13 +186,19 @@ export default async function RootLayout({
               >
                 {children}
                 <Footer />
+                {/* Fixed-positioned, but MUST live inside the <main> scroller:
+                    touch scrolls that start on the banner chain up the DOM to
+                    the nearest scrollable ancestor. Outside <main> that chain
+                    ends at <body> (which never scrolls in this layout), making
+                    the banner a scroll-dead zone on mobile. position:fixed
+                    still positions it against the viewport from here. */}
+                <CookieConsent />
               </main>
             </div>
             {/* Floating chat/messenger buttons — mobile only (desktop uses SidebarNav) */}
             <div className="lg:hidden">
               <ClientFloatingButtons />
             </div>
-            <CookieConsent />
           </ClientProviders>
         </div>
         <ConsentGateAnalytics />
