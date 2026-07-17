@@ -238,4 +238,53 @@ describe('Auth confirm page', () => {
       screen.getByText(t('auth.confirm.errors.invalidLink'))
     ).toBeInTheDocument()
   })
+  it('recovers if verifyOtp rejects (network error) — button re-enabled + error', async () => {
+    const verifyOtp = vi.fn().mockRejectedValue(new Error('network down'))
+    createClientMock.mockReturnValue({
+      auth: { verifyOtp },
+    } as unknown as ReturnType<typeof createClient>)
+
+    currentSearchParams = new URLSearchParams({
+      token_hash: 'abc123',
+      type: 'recovery',
+    })
+
+    render(<ConfirmPage />)
+    fireEvent.click(
+      screen.getByRole('button', { name: t('auth.confirm.recovery.submit') })
+    )
+
+    await waitFor(() =>
+      expect(
+        screen.getByText(t('auth.confirm.errors.generic'))
+      ).toBeInTheDocument()
+    )
+    // button must not be stuck disabled
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: t('auth.confirm.recovery.submit') })
+      ).not.toBeDisabled()
+    )
+  })
+
+  it('shows service-unavailable when the client cannot be created', async () => {
+    createClientMock.mockReturnValue(
+      null as unknown as ReturnType<typeof createClient>
+    )
+    currentSearchParams = new URLSearchParams({
+      token_hash: 'abc123',
+      type: 'recovery',
+    })
+
+    render(<ConfirmPage />)
+    fireEvent.click(
+      screen.getByRole('button', { name: t('auth.confirm.recovery.submit') })
+    )
+
+    await waitFor(() =>
+      expect(
+        screen.getByText(t('auth.confirm.errors.unavailable'))
+      ).toBeInTheDocument()
+    )
+  })
 })

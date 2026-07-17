@@ -43,6 +43,12 @@ export default function ForgotPasswordPage() {
     if (typeof window === 'undefined') return
     if (new URLSearchParams(window.location.search).get('expired') === '1') {
       setExpired(true)
+      // Clear the flag from the URL so a refresh doesn't re-show the notice.
+      window.history.replaceState(
+        window.history.state,
+        '',
+        window.location.pathname
+      )
     }
   }, [])
 

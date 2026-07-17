@@ -2381,14 +2381,18 @@
     },
     "confirm": {
       "recovery": {
+        "title": "Password recovery",
         "description": "Click the button below to confirm your request and set a new password.",
         "submit": "Confirm and continue"
       },
       "default": {
+        "title": "Confirmation",
         "description": "Click the button below to confirm your request and continue.",
         "submit": "Confirm"
       },
+      "verifying": "Verifying the link...",
       "backToLogin": "Back to login",
+      "requestNewLink": "Request a new link",
       "errors": {
         "invalidLink": "The link is broken or incomplete. Request a new one.",
         "unavailable": "The service is temporarily unavailable",

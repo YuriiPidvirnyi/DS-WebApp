@@ -24,6 +24,7 @@ const FALLBACK = {
   },
   verifying: 'Перевіряємо посилання...',
   backToLogin: 'Повернутись до входу',
+  requestNewLink: 'Запросити нове посилання',
   errors: {
     invalidLink: 'Посилання пошкоджене або неповне. Запросіть нове посилання.',
     unavailable: 'Сервіс тимчасово недоступний',
@@ -123,19 +124,26 @@ function ConfirmInner() {
     }
 
     setLoading(true)
-    const { error: verifyError } = await supabase.auth.verifyOtp({
-      token_hash: tokenHash,
-      type,
-    })
+    try {
+      const { error: verifyError } = await supabase.auth.verifyOtp({
+        token_hash: tokenHash,
+        type,
+      })
 
-    if (verifyError) {
+      if (verifyError) {
+        setError(tx('auth.confirm.errors.generic', FALLBACK.errors.generic))
+        setLoading(false)
+        return
+      }
+
+      router.replace(safeNext)
+      router.refresh()
+    } catch {
+      // Network/thrown rejection (not resolved-with-error): re-enable the
+      // button and show a message rather than leaving it stuck disabled.
       setError(tx('auth.confirm.errors.generic', FALLBACK.errors.generic))
       setLoading(false)
-      return
     }
-
-    router.replace(safeNext)
-    router.refresh()
   }
 
   if (!ready) {
@@ -161,20 +169,29 @@ function ConfirmInner() {
           <Link href="/" className="inline-block">
             <Logo variant="default" size="md" />
           </Link>
-          <p className="text-dental-muted text-sm mt-2">
+          <h1 className="mt-3 text-lg font-bold text-dental-dark">
+            {tx(`auth.confirm.${copyKey}.title`, copy.title)}
+          </h1>
+          <p className="text-dental-muted text-sm mt-1">
             {tx(`auth.confirm.${copyKey}.description`, copy.description)}
           </p>
         </div>
 
         <div className="bg-white shadow-soft rounded-2xl p-6 sm:p-8">
           {error && (
-            <div className="mb-6 p-3 bg-dental-error-light border border-red-200 rounded-xl text-dental-error-dark text-sm">
+            <div
+              role="alert"
+              className="mb-6 p-3 bg-dental-error-light border border-red-200 rounded-xl text-dental-error-dark text-sm"
+            >
               {error}
             </div>
           )}
 
           {!linkComplete && !error ? (
-            <div className="p-3 bg-dental-error-light border border-red-200 rounded-xl text-dental-error-dark text-sm">
+            <div
+              role="alert"
+              className="p-3 bg-dental-error-light border border-red-200 rounded-xl text-dental-error-dark text-sm"
+            >
               {tx(
                 'auth.confirm.errors.invalidLink',
                 FALLBACK.errors.invalidLink
@@ -186,15 +203,24 @@ function ConfirmInner() {
                 type="button"
                 onClick={handleConfirm}
                 disabled={loading}
+                aria-busy={loading}
                 className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:bg-gray-400 text-white font-semibold text-sm rounded-xl transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-400"
               >
                 {loading ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <>
+                    <span
+                      className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"
+                      aria-hidden="true"
+                    />
+                    <span className="sr-only">
+                      {tx('auth.confirm.verifying', FALLBACK.verifying)}
+                    </span>
+                  </>
                 ) : (
                   <>
-                    <ShieldCheck size={18} />
+                    <ShieldCheck size={18} aria-hidden="true" />
                     {tx(`auth.confirm.${copyKey}.submit`, copy.submit)}
-                    <ArrowRight size={16} />
+                    <ArrowRight size={16} aria-hidden="true" />
                   </>
                 )}
               </button>
@@ -202,12 +228,21 @@ function ConfirmInner() {
           )}
 
           <p className="text-center mt-6 text-sm text-dental-muted">
-            <Link
-              href="/auth/login"
-              className="font-semibold text-dental-primary-600 hover:text-dental-primary-700 transition-colors"
-            >
-              {tx('auth.confirm.backToLogin', FALLBACK.backToLogin)}
-            </Link>
+            {error || !linkComplete ? (
+              <Link
+                href="/auth/forgot-password"
+                className="font-semibold text-dental-primary-600 hover:text-dental-primary-700 transition-colors"
+              >
+                {tx('auth.confirm.requestNewLink', FALLBACK.requestNewLink)}
+              </Link>
+            ) : (
+              <Link
+                href="/auth/login"
+                className="font-semibold text-dental-primary-600 hover:text-dental-primary-700 transition-colors"
+              >
+                {tx('auth.confirm.backToLogin', FALLBACK.backToLogin)}
+              </Link>
+            )}
           </p>
         </div>
       </div>

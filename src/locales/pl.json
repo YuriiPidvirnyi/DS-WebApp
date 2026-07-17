@@ -2383,14 +2383,18 @@
     },
     "confirm": {
       "recovery": {
+        "title": "Odzyskiwanie hasła",
         "description": "Kliknij przycisk poniżej, aby potwierdzić żądanie i ustawić nowe hasło.",
         "submit": "Potwierdź i kontynuuj"
       },
       "default": {
+        "title": "Potwierdzenie",
         "description": "Kliknij przycisk poniżej, aby potwierdzić żądanie i kontynuować.",
         "submit": "Potwierdź"
       },
+      "verifying": "Weryfikujemy link...",
       "backToLogin": "Powrót do logowania",
+      "requestNewLink": "Poproś o nowy link",
       "errors": {
         "invalidLink": "Link jest uszkodzony lub niekompletny. Poproś o nowy.",
         "unavailable": "Usługa jest chwilowo niedostępna",
