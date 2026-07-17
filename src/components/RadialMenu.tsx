@@ -155,8 +155,13 @@ export default function RadialMenu({
         />
       )}
 
-      {/* Expanded menu items */}
-      <div className="absolute bottom-16 right-0 flex flex-col gap-2 items-end">
+      {/* Expanded menu items. The container must NEVER be hit-testable: it is
+          always mounted, ~200×260px, sits fixed outside the <main> scroller —
+          without pointer-events-none it swallows touch scrolling in the
+          thumb zone on mobile (touches land here, scroll chain goes to body,
+          which has nothing to scroll). Items re-enable pointer events when
+          the menu is open. */}
+      <div className="pointer-events-none absolute bottom-16 right-0 flex flex-col gap-2 items-end">
         {items.map((item, idx) => {
           const style = {
             transitionDelay: isOpen
@@ -170,7 +175,7 @@ export default function RadialMenu({
             'hover:shadow-xl active:scale-[0.96]',
             item.color,
             isOpen
-              ? 'opacity-100 translate-y-0'
+              ? 'pointer-events-auto opacity-100 translate-y-0'
               : 'opacity-0 translate-y-3 pointer-events-none',
           ].join(' ')
 
