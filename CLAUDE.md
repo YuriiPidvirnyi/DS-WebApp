@@ -167,7 +167,15 @@ CSS-first; there is no `tailwind.config.js`):
 - Client: `src/lib/email.ts` — Resend wrapper with graceful fallback when not configured
 - On booking: queues `booking_confirmation` (patient) + `new_booking_admin` (admin)
 - On cancellation: queues `appointment_cancellation` (patient)
+- On completion: queues `review_request` (patient, +2h, one per appointment ever) — post-visit Google review ask via `/r/google?src=email`
 - Reminders: auto-scheduled 24h before appointment (deferred via `scheduled_at`)
+
+#### Welcome-pack promo campaign
+
+- Patient intake questionnaire at `/anketa` (`patient_intake_forms` table) with `?promo=&src=` attribution from printed QR codes; staff queue at `/admin/intake`
+- Gift redemptions: `promo_redemptions` (one per intake form / known patient), issued via `promo:redeem` permission (incl. receptionist) at `/admin/intake`
+- Review funnel: `/r/google?src=<channel>` logs a click (`review_link_clicks`) and 302s to the Google write-review URL; print materials at `/promo/flyer`
+- **Compliance invariant: the gift is tied to the questionnaire, never to a review.** Google's UGC policy bans review incentives and review gating — flyer copy (gift) and review-ask copy must stay on separate materials/touchpoints
 
 #### Clinical Records & Inventory
 
@@ -207,22 +215,23 @@ CSS-first; there is no `tailwind.config.js`):
 
 ### Environment Variables
 
-| Variable                           | Required     | Description                                                                          |
-| ---------------------------------- | ------------ | ------------------------------------------------------------------------------------ |
-| `NEXT_PUBLIC_SITE_URL`             | No           | Site URL (default: `https://dentalstory.com.ua`)                                     |
-| `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`  | No           | GA4 measurement ID                                                                   |
-| `NEXT_PUBLIC_SUPABASE_URL`         | For auth     | Supabase project URL                                                                 |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY`    | For auth     | Supabase anon key                                                                    |
-| `UPSTASH_REDIS_REST_URL`           | For cache    | Upstash Redis URL                                                                    |
-| `UPSTASH_REDIS_REST_TOKEN`         | For cache    | Upstash Redis token                                                                  |
-| `SENTRY_AUTH_TOKEN`                | No           | For source map upload (skipped if missing)                                           |
-| `RESEND_API_KEY`                   | For email    | Resend API key                                                                       |
-| `RESEND_FROM_EMAIL`                | No           | Sender address (default: `DentalStory <noreply@dentalstory.com.ua>`)                 |
-| `ADMIN_NOTIFICATION_EMAIL`         | No           | Email for admin booking alerts                                                       |
-| `CRON_SECRET`                      | For cron     | Bearer token for `/api/cron/*` routes                                                |
-| `SUPABASE_SERVICE_ROLE_KEY`        | For cron     | Service role key for server-side Supabase calls                                      |
-| `MONOBANK_TOKEN`                   | For payments | Monobank acquiring token (test: api.monobank.ua, prod: web.monobank.ua)              |
-| `NEXT_PUBLIC_INVENTORY_V2_ENABLED` | No           | Set `true` to expose `/admin/stock` shell (off by default; enable per-env in Vercel) |
+| Variable                           | Required     | Description                                                                                                   |
+| ---------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL`             | No           | Site URL (default: `https://dentalstory.com.ua`)                                                              |
+| `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`  | No           | GA4 measurement ID                                                                                            |
+| `NEXT_PUBLIC_GOOGLE_PLACE_ID`      | No           | GBP Place ID — powers the tracked write-review redirect `/r/google?src=…` (falls back to the Maps share link) |
+| `NEXT_PUBLIC_SUPABASE_URL`         | For auth     | Supabase project URL                                                                                          |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`    | For auth     | Supabase anon key                                                                                             |
+| `UPSTASH_REDIS_REST_URL`           | For cache    | Upstash Redis URL                                                                                             |
+| `UPSTASH_REDIS_REST_TOKEN`         | For cache    | Upstash Redis token                                                                                           |
+| `SENTRY_AUTH_TOKEN`                | No           | For source map upload (skipped if missing)                                                                    |
+| `RESEND_API_KEY`                   | For email    | Resend API key                                                                                                |
+| `RESEND_FROM_EMAIL`                | No           | Sender address (default: `DentalStory <noreply@dentalstory.com.ua>`)                                          |
+| `ADMIN_NOTIFICATION_EMAIL`         | No           | Email for admin booking alerts                                                                                |
+| `CRON_SECRET`                      | For cron     | Bearer token for `/api/cron/*` routes                                                                         |
+| `SUPABASE_SERVICE_ROLE_KEY`        | For cron     | Service role key for server-side Supabase calls                                                               |
+| `MONOBANK_TOKEN`                   | For payments | Monobank acquiring token (test: api.monobank.ua, prod: web.monobank.ua)                                       |
+| `NEXT_PUBLIC_INVENTORY_V2_ENABLED` | No           | Set `true` to expose `/admin/stock` shell (off by default; enable per-env in Vercel)                          |
 
 ### Inventory v2 — posting primitive contract
 

@@ -51,9 +51,9 @@ describe('ROLE_PERMISSIONS matrix', () => {
 
   it('should match expected permission counts per role', () => {
     const expectedCounts: Record<AdminRole, number> = {
-      superadmin: 25,
-      admin: 22,
-      receptionist: 10,
+      superadmin: 26,
+      admin: 23,
+      receptionist: 11,
       doctor: 12,
       assistant: 10,
       billing_manager: 9,
