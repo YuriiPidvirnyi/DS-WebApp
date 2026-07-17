@@ -35,6 +35,10 @@ interface IntakeRecord {
 }
 
 /**
+ * Texts here are intentionally Ukrainian-only (not i18n): the printout is a
+ * clinical document for the patient's paper file, reproducing the official
+ * paper blank — same rationale as PromoFlyer.
+ *
  * Layout map that reproduces the official paper анкети:
  * section 1 = personal data (fixed fields + the `merged` section's answers),
  * section 2 = two columns of question groups, section 3 = dental history,

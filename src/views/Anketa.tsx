@@ -8,7 +8,6 @@ import { useTranslation } from 'react-i18next'
 import { Send, CheckCircle, Gift } from 'lucide-react'
 import { Input, Textarea, Select, Button } from '@/components/ui'
 import { useSubmissionCooldown } from '@/hooks/useSubmissionCooldown'
-import { useCSRF } from '@/hooks/useCSRF'
 import {
   intakeFormSchema,
   type IntakeFormData,
@@ -32,7 +31,6 @@ export default function Anketa() {
   const { t } = useTranslation()
   const searchParams = useSearchParams()
   const turnstileRef = useRef<TurnstileRef>(null)
-  const { token: csrfToken } = useCSRF()
   const {
     isCoolingDown,
     remainingSec,
@@ -165,8 +163,6 @@ export default function Anketa() {
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <input type="hidden" name="_csrf" value={csrfToken} />
-
               <h2 className="text-lg font-semibold text-dental-dark">
                 {t('anketa.sections.personal')}
               </h2>

@@ -199,13 +199,14 @@ export default function CabinetAnketaPage() {
           className="flex flex-wrap items-center justify-between gap-2 border-b border-dental-secondary-100 py-2"
         >
           <span className="max-w-[70%] text-sm text-dental-text">{label}</span>
-          <div className="flex gap-1" role="radiogroup" aria-label={label}>
+          {/* Toggle buttons (press again to clear), not an ARIA radiogroup —
+              radios would require roving tabindex per the APG pattern */}
+          <div className="flex gap-1" role="group" aria-label={label}>
             {(['yes', 'no'] as const).map(option => (
               <button
                 key={option}
                 type="button"
-                role="radio"
-                aria-checked={value === option}
+                aria-pressed={value === option}
                 onClick={() =>
                   setAnswer(field.id, value === option ? '' : option)
                 }
@@ -411,6 +412,7 @@ export default function CabinetAnketaPage() {
         <div className="grid gap-3 sm:grid-cols-2">
           <Input
             required
+            aria-label={t('anketa.fields.lastNameLabel')}
             placeholder={t('anketa.fields.lastNameLabel')}
             value={personal.lastName}
             onChange={e =>
@@ -419,6 +421,7 @@ export default function CabinetAnketaPage() {
           />
           <Input
             required
+            aria-label={t('anketa.fields.firstNameLabel')}
             placeholder={t('anketa.fields.firstNameLabel')}
             value={personal.firstName}
             onChange={e =>
@@ -426,6 +429,7 @@ export default function CabinetAnketaPage() {
             }
           />
           <Input
+            aria-label={t('anketa.fields.patronymicLabel')}
             placeholder={t('anketa.fields.patronymicLabel')}
             value={personal.patronymic}
             onChange={e =>
@@ -443,6 +447,7 @@ export default function CabinetAnketaPage() {
           <Input
             required
             type="tel"
+            aria-label={t('anketa.fields.phoneLabel')}
             placeholder={t('anketa.fields.phoneLabel')}
             value={personal.phone}
             onChange={e => setPersonal(p => ({ ...p, phone: e.target.value }))}
@@ -455,6 +460,7 @@ export default function CabinetAnketaPage() {
           />
           <Input
             type="email"
+            aria-label={t('anketa.fields.emailLabel')}
             placeholder={t('anketa.fields.emailLabel')}
             value={personal.email}
             onChange={e => setPersonal(p => ({ ...p, email: e.target.value }))}

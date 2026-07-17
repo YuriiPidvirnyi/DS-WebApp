@@ -10,7 +10,10 @@ import {
   turnstileInvalidResponse,
 } from '@/lib/api-security'
 import { captureException } from '@/utils/sentry'
-import { intakeFormSchema } from '@/utils/validationSchemas'
+import {
+  intakeFormSchema,
+  isPlausibleBirthDate,
+} from '@/utils/validationSchemas'
 import { intakeFormFields } from '@/content/intake-form-definitions'
 
 export const runtime = 'nodejs'
@@ -24,12 +27,7 @@ const intakeSchema = intakeFormSchema.extend({
   dateOfBirth: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Невірний формат дати')
-    .refine(date => {
-      const birthDate = new Date(date)
-      const today = new Date()
-      const age = today.getFullYear() - birthDate.getFullYear()
-      return age >= 0 && age <= 120
-    }, 'Невірна дата народження')
+    .refine(isPlausibleBirthDate, 'Невірна дата народження')
     .optional()
     .or(z.literal('')),
   // The form always sends these; keep them optional for other API callers

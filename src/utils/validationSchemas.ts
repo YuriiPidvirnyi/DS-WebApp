@@ -5,6 +5,20 @@ const phoneRegex = /^\+?380\d{9}$/
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 // Contact Form Schema
+/**
+ * Plausibility bound for a birth date: not in the future and at most 120
+ * years back. Compares full dates — plain year subtraction lets a future
+ * date within the current calendar year through.
+ */
+export const isPlausibleBirthDate = (date: string): boolean => {
+  const birthDate = new Date(date)
+  if (Number.isNaN(birthDate.getTime())) return false
+  const today = new Date()
+  const oldest = new Date(today)
+  oldest.setFullYear(oldest.getFullYear() - 120)
+  return birthDate <= today && birthDate >= oldest
+}
+
 export const contactFormSchema = z.object({
   name: z
     .string()
@@ -67,12 +81,7 @@ export const appointmentSchema = z.object({
   dateOfBirth: z
     .string()
     .min(1, "Дата народження обов'язкова")
-    .refine(date => {
-      const birthDate = new Date(date)
-      const today = new Date()
-      const age = today.getFullYear() - birthDate.getFullYear()
-      return age >= 0 && age <= 120
-    }, 'Невірна дата народження'),
+    .refine(isPlausibleBirthDate, 'Невірна дата народження'),
 
   // Appointment Details
   service: z.string().min(1, 'Виберіть послугу'),
@@ -382,13 +391,10 @@ export const intakeFormSchema = z.object({
   dateOfBirth: z
     .string()
     .optional()
-    .refine(date => {
-      if (!date) return true
-      const birthDate = new Date(date)
-      const today = new Date()
-      const age = today.getFullYear() - birthDate.getFullYear()
-      return age >= 0 && age <= 120
-    }, 'Невірна дата народження'),
+    .refine(
+      date => !date || isPlausibleBirthDate(date),
+      'Невірна дата народження'
+    ),
 
   allergies: z.string().max(500, 'Максимум 500 символів').optional(),
 
