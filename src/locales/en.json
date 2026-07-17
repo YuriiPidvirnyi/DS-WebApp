@@ -2347,7 +2347,8 @@
       "errors": {
         "unavailable": "Password recovery is temporarily unavailable",
         "generic": "Unable to send reset email. Please try again later."
-      }
+      },
+      "expiredNotice": "The link has expired. Enter your email to get a new one."
     },
     "resetPassword": {
       "subtitle": "Set a new password for your account.",
@@ -2376,6 +2377,22 @@
         "unavailable": "Authorization is temporarily unavailable",
         "sessionMissing": "Could not activate session. Please sign in again.",
         "generic": "Could not complete authorization. Please try again."
+      }
+    },
+    "confirm": {
+      "recovery": {
+        "description": "Click the button below to confirm your request and set a new password.",
+        "submit": "Confirm and continue"
+      },
+      "default": {
+        "description": "Click the button below to confirm your request and continue.",
+        "submit": "Confirm"
+      },
+      "backToLogin": "Back to login",
+      "errors": {
+        "invalidLink": "The link is broken or incomplete. Request a new one.",
+        "unavailable": "The service is temporarily unavailable",
+        "generic": "The link is invalid or has expired. Request a new one."
       }
     }
   },

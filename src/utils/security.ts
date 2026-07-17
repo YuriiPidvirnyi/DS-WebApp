@@ -477,3 +477,20 @@ export function initSecurity(): void {
   // Log initialization
   auditLogger.log('security_initialized', 'info')
 }
+
+/**
+ * Whether a post-auth `next` redirect target is a safe same-origin path.
+ *
+ * Accepts only absolute in-app paths ("/cabinet"). Rejects protocol-relative
+ * ("//evil.com") and backslash-escaped ("/\\evil.com") forms that browsers
+ * treat as cross-origin — the classic open-redirect vector on auth callbacks.
+ */
+export const isSafeInternalPath = (
+  path: string | null | undefined
+): boolean => {
+  if (!path) return false
+  if (!path.startsWith('/')) return false
+  if (path.startsWith('//')) return false
+  if (path.startsWith('/\\') || path.startsWith('/%5C')) return false
+  return true
+}

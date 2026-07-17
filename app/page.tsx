@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Home from '@/views/Home'
+import RootAuthRedirect from '@/components/RootAuthRedirect'
 import uk from '@/locales/uk'
 import { getVariant } from '@/lib/ab-test'
 
@@ -19,5 +20,10 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const heroCTAVariant = await getVariant('hero-cta')
-  return <Home heroCTAVariant={heroCTAVariant} />
+  return (
+    <>
+      <RootAuthRedirect />
+      <Home heroCTAVariant={heroCTAVariant} />
+    </>
+  )
 }

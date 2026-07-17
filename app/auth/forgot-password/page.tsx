@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight, Mail } from 'lucide-react'
@@ -28,6 +28,7 @@ export default function ForgotPasswordPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
+  const [expired, setExpired] = useState(false)
   const tx = useMemo(
     () => (key: string, fallback: string) => {
       const value = t(key)
@@ -35,6 +36,15 @@ export default function ForgotPasswordPage() {
     },
     [t]
   )
+
+  // Set when an expired/consumed recovery link bounced back here (see
+  // RootAuthRedirect). Read from the URL directly to avoid a Suspense boundary.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (new URLSearchParams(window.location.search).get('expired') === '1') {
+      setExpired(true)
+    }
+  }, [])
 
   if (!ready) {
     return (
@@ -131,6 +141,14 @@ export default function ForgotPasswordPage() {
             </div>
           ) : (
             <form onSubmit={handleSubmit}>
+              {expired && !error && (
+                <div className="mb-6 p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-sm">
+                  {tx(
+                    'auth.forgotPassword.expiredNotice',
+                    'Термін дії посилання минув. Введіть email, щоб отримати нове.'
+                  )}
+                </div>
+              )}
               {error && (
                 <div className="mb-6 p-3 bg-dental-error-light border border-red-200 rounded-xl text-dental-error-dark text-sm">
                   {error}

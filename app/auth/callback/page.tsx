@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import type { EmailOtpType } from '@supabase/supabase-js'
 import Logo from '@/components/ui/Logo'
 import { createClient } from '@/lib/supabase/client'
+import { isSafeInternalPath } from '@/utils/security'
 
 const SESSION_CHECK_ATTEMPTS = 20
 const SESSION_CHECK_DELAY_MS = 400
@@ -43,7 +44,7 @@ export default function AuthCallbackPage() {
   const refreshTokenFromQuery = searchParams.get('refresh_token')
   const nextParam = searchParams.get('next')
   const safeNext = useMemo(
-    () => (nextParam && nextParam.startsWith('/') ? nextParam : '/cabinet'),
+    () => (isSafeInternalPath(nextParam) ? (nextParam as string) : '/cabinet'),
     [nextParam]
   )
 
