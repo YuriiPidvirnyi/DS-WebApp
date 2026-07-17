@@ -155,8 +155,9 @@ export default function AdminIntakePrintPage({
           __html: `
 @page { size: A4 portrait; margin: 12mm; }
 @media print {
-  body * { visibility: hidden; }
-  #print-area, #print-area * { visibility: visible; }
+  /* !important beats inline styles / utility classes on floating widgets */
+  body * { visibility: hidden !important; }
+  #print-area, #print-area * { visibility: visible !important; }
   #print-area { position: absolute; left: 0; top: 0; width: 100%; }
 }
 `,

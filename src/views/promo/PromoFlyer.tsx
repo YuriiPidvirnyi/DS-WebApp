@@ -35,8 +35,10 @@ export default function PromoFlyer({
           __html: `
 @page { size: A4 portrait; margin: 8mm; }
 @media print {
-  body * { visibility: hidden; }
-  #print-area, #print-area * { visibility: visible; }
+  /* !important beats inline styles / utility classes on floating widgets
+     (radial menu, header CTA) that set their own visibility */
+  body * { visibility: hidden !important; }
+  #print-area, #print-area * { visibility: visible !important; }
   #print-area { position: absolute; left: 0; top: 0; width: 100%; }
   .print-sheet { page-break-after: always; }
   .print-sheet:last-child { page-break-after: auto; }

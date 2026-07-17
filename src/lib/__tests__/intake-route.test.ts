@@ -42,7 +42,7 @@ vi.mock('@/utils/sentry', () => ({
 }))
 
 import { POST } from '../../../app/api/intake/route'
-import { validateCSRF } from '@/lib/api-security'
+import { validateCSRF, verifyTurnstileServer } from '@/lib/api-security'
 
 const validBody = {
   firstName: 'Тарас',
@@ -178,5 +178,103 @@ describe('POST /api/intake', () => {
         patient_id: '7c9e6679-7425-40de-944b-e07fc1f90ae7',
       })
     )
+  })
+
+  // ── Full clinic анкети (formType adult/child + structured answers) ────────
+
+  it('accepts an adult анкета and stores form_type + answers', async () => {
+    const res = await POST(
+      makeRequest({
+        ...validBody,
+        formType: 'adult',
+        answers: {
+          asthma: 'yes',
+          smoking: 'no',
+          diseases_note: 'Астма в дитинстві',
+          allergy_antibiotics: 'Пеніцилін',
+        },
+      })
+    )
+
+    expect(res.status).toBe(201)
+    expect(mockInsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        form_type: 'adult',
+        submitted_via: 'public',
+        answers: expect.objectContaining({
+          asthma: 'yes',
+          diseases_note: 'Астма в дитинстві',
+        }),
+      })
+    )
+  })
+
+  it('rejects answers with keys outside the form definition (strict schema)', async () => {
+    const res = await POST(
+      makeRequest({
+        ...validBody,
+        formType: 'adult',
+        answers: { asthma: 'yes', not_a_real_field: 'oops' },
+      })
+    )
+    const body = await res.json()
+
+    expect(res.status).toBe(400)
+    expect(body.error).toBe('Невірні відповіді анкети')
+    expect(mockInsert).not.toHaveBeenCalled()
+  })
+
+  it('rejects a child scale answer outside its range', async () => {
+    const res = await POST(
+      makeRequest({
+        ...validBody,
+        formType: 'child',
+        answers: { fear_level: 11 },
+      })
+    )
+
+    expect(res.status).toBe(400)
+    expect(mockInsert).not.toHaveBeenCalled()
+  })
+
+  it('rejects an unknown formType', async () => {
+    const res = await POST(makeRequest({ ...validBody, formType: 'dog' }))
+
+    expect(res.status).toBe(400)
+    expect(mockInsert).not.toHaveBeenCalled()
+  })
+
+  it('marks signed-in submissions as cabinet and skips Turnstile', async () => {
+    mockGetUser.mockResolvedValueOnce({
+      data: {
+        user: { id: '7c9e6679-7425-40de-944b-e07fc1f90ae7' },
+      } as never,
+      error: null,
+    })
+
+    const res = await POST(
+      makeRequest({
+        ...validBody,
+        formType: 'child',
+        answers: { habits: 'yes', fear_level: 6, dental_note: 'Боїться' },
+      })
+    )
+
+    expect(res.status).toBe(201)
+    expect(vi.mocked(verifyTurnstileServer)).not.toHaveBeenCalled()
+    expect(mockInsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        form_type: 'child',
+        submitted_via: 'cabinet',
+        answers: expect.objectContaining({ fear_level: 6 }),
+      })
+    )
+  })
+
+  it('requires Turnstile for guest submissions', async () => {
+    const res = await POST(makeRequest(validBody))
+
+    expect(res.status).toBe(201)
+    expect(vi.mocked(verifyTurnstileServer)).toHaveBeenCalledTimes(1)
   })
 })
