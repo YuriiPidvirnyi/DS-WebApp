@@ -76,6 +76,14 @@ const nextConfig: NextConfig = {
   // React strict mode for catching issues early
   reactStrictMode: true,
 
+  // Pin the workspace root explicitly. When it is inferred, a stray lockfile
+  // in a PARENT directory (present on GitHub Actions runner images) makes
+  // Turbopack misdetect the root — the production server then spins in
+  // infinite module re-resolution and allocates until OOM without serving a
+  // single request (vercel/next.js#92978; bit our e2e jobs on PR #359).
+  turbopack: { root: import.meta.dirname },
+  outputFileTracingRoot: import.meta.dirname,
+
   // Gzip/Brotli compression for all responses
   compress: true,
 
