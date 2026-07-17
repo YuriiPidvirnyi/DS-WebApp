@@ -89,8 +89,7 @@ jobs:
         run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: '1'
-          # 127.0.0.1 (not localhost): runner image 20260714+ resolves localhost
-          # to ::1 where connections hang — every page.goto timed out (PR #359)
+          # 127.0.0.1 (not localhost) avoids IPv6 resolution ambiguity on runners
           NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:3000/supabase-mock
           NEXT_PUBLIC_SUPABASE_ANON_KEY: test-anon-key
           # Cap Node heap during build to leave room for subsequent server + Chromium
@@ -152,8 +151,7 @@ jobs:
         run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: '1'
-          # 127.0.0.1 (not localhost): runner image 20260714+ resolves localhost
-          # to ::1 where connections hang — every page.goto timed out (PR #359)
+          # 127.0.0.1 (not localhost) avoids IPv6 resolution ambiguity on runners
           NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:3000/supabase-mock
           NEXT_PUBLIC_SUPABASE_ANON_KEY: test-anon-key
           NODE_OPTIONS: --max-old-space-size=3072
