@@ -123,10 +123,10 @@ jobs:
 
       # Step-level continue-on-error keeps the JOB green (a job-level flag
       # still paints a red X on the PR) while the outcome drives the warning.
-      - name: Browser E2E (UI smoke + booking + auth gates)
+      - name: Browser E2E (UI smoke + booking + auth gates + auth flows)
         id: e2e
         continue-on-error: true
-        run: npx playwright test e2e/ui-form-controls.smoke.spec.ts e2e/booking-flow.spec.ts e2e/cabinet-flows.spec.ts e2e/admin-rbac.spec.ts --config=playwright.auth.config.ts
+        run: npx playwright test e2e/ui-form-controls.smoke.spec.ts e2e/booking-flow.spec.ts e2e/cabinet-flows.spec.ts e2e/admin-rbac.spec.ts e2e/auth-flows.spec.ts e2e/auth-confirm-flow.spec.ts --config=playwright.auth.config.ts
         env:
           PW_BASE_URL: http://127.0.0.1:3000
 

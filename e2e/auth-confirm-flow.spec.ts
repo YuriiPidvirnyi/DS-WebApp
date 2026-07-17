@@ -148,6 +148,26 @@ test.describe('Click-gated /auth/confirm (prefetch-proof reset)', () => {
     ).toBeVisible()
   })
 
+  test('rejects an external `next` and falls back to the reset page', async ({
+    page,
+  }) => {
+    await mockVerify(page)
+
+    for (const evil of ['https://evil.example', '//evil.example']) {
+      await page.goto(
+        `/auth/confirm?token_hash=e2e-token&type=recovery&next=${encodeURIComponent(evil)}`
+      )
+      await page
+        .getByRole('button', { name: 'Підтвердити та продовжити' })
+        .click()
+
+      // isSafeInternalPath must discard the external target: the user stays
+      // on-origin and lands on the type-derived default, never on evil.example.
+      await expect(page).toHaveURL('/auth/reset-password')
+      await expect(page.locator('#password')).toBeVisible()
+    }
+  })
+
   test('expired token on click shows error with a request-new-link path', async ({
     page,
   }) => {
