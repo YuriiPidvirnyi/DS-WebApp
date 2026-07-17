@@ -39,7 +39,9 @@
     "optional": "Optional",
     "confirm": "Confirm",
     "actions": "Actions",
-    "guest": "Guest"
+    "guest": "Guest",
+    "yes": "Yes",
+    "no": "No"
   },
   "asyncState": {
     "loading": {
@@ -361,6 +363,50 @@
           "a": "Yes, we provide warranty on all services according to medical standards and requirements."
         }
       }
+    }
+  },
+  "anketa": {
+    "title": "New patient intake form",
+    "subtitle": "Fill in the form before your visit — it takes about 5 minutes and helps your doctor prepare for the appointment.",
+    "giftNote": "Filling in the form for the first time? Show the confirmation to the receptionist — a welcome gift is waiting for you.",
+    "sections": {
+      "personal": "Personal details",
+      "medical": "Medical information",
+      "consent": "Consents"
+    },
+    "fields": {
+      "lastNameLabel": "Last name",
+      "firstNameLabel": "First name",
+      "patronymicLabel": "Patronymic",
+      "dateOfBirthLabel": "Date of birth",
+      "phoneLabel": "Phone",
+      "emailLabel": "Email",
+      "allergiesLabel": "Allergies",
+      "allergiesPlaceholder": "Medications, materials or anaesthetics you have reacted to",
+      "medicationsLabel": "Medications you take",
+      "medicationsPlaceholder": "Regular or recent medications",
+      "chronicConditionsLabel": "Chronic conditions",
+      "chronicConditionsPlaceholder": "Diabetes, hypertension, cardiovascular conditions, etc.",
+      "pregnancyLabel": "Pregnancy",
+      "pregnancyOptions": {
+        "notApplicable": "Not applicable",
+        "no": "No",
+        "yes": "Yes"
+      },
+      "complaintsLabel": "What brings you in?",
+      "complaintsPlaceholder": "Describe your complaints or the purpose of the visit",
+      "dataConsentLabel": "I consent to the processing of my personal data",
+      "marketingConsentLabel": "I want to receive news and reminders from the clinic"
+    },
+    "submit": "Submit the form",
+    "cooldown": "You can resubmit in {{seconds}} s",
+    "requiredFields": "* — required fields",
+    "successTitle": "Form submitted!",
+    "successDescription": "Thank you! Show this confirmation to the receptionist — a welcome gift is waiting for you.",
+    "errors": {
+      "cooldown": "Please wait {{seconds}} s before resubmitting",
+      "turnstile": "Please confirm you are not a robot",
+      "submitFailed": "Failed to submit the form. Please try again."
     }
   },
   "home": {
@@ -1295,6 +1341,7 @@
       "services": "Services",
       "reviews": "Reviews",
       "contacts": "Contacts",
+      "intake": "Intake forms",
       "chat": "Chat",
       "treatments": "Treatment Acts",
       "materials": "Materials",
@@ -1611,6 +1658,11 @@
       "resolved": "Resolved",
       "closed": "Closed"
     },
+    "intakeStatuses": {
+      "new": "New",
+      "reviewed": "Reviewed",
+      "linked": "Linked"
+    },
     "contactsPage": {
       "title": "Customer Inquiries",
       "description": "Contact queue with SLA state and quick operational handling.",
@@ -1659,6 +1711,51 @@
         "loadFailed": "Failed to load inquiries.",
         "bulkUpdateFailed": "Failed to apply bulk changes for inquiries.",
         "updateFailed": "Failed to update inquiry."
+      }
+    },
+    "intakePage": {
+      "title": "Patient intake forms",
+      "description": "New patient questionnaires from /anketa: medical info, consents and promo codes.",
+      "refresh": "Refresh",
+      "loading": "Loading intake forms…",
+      "empty": "No intake forms yet",
+      "summary": {
+        "total": "Total",
+        "new": "New",
+        "reviewed": "Reviewed",
+        "withPromo": "With promo code"
+      },
+      "filters": {
+        "searchPlaceholder": "Search: name, phone, email",
+        "allStatuses": "All statuses"
+      },
+      "card": {
+        "promo": "Promo code: {{code}}",
+        "patientLinked": "Patient in system",
+        "source": "Source: {{source}}",
+        "statusSelectAria": "Status of {{name}} intake form",
+        "showDetails": "Show form details",
+        "dob": "Date of birth",
+        "pregnancy": "Pregnancy",
+        "allergies": "Allergies",
+        "medications": "Medications",
+        "chronicConditions": "Chronic conditions",
+        "complaints": "Complaints",
+        "marketingConsent": "Marketing consent",
+        "adminNote": "Note",
+        "notesPlaceholder": "Add a note…"
+      },
+      "gift": {
+        "give": "Give the gift",
+        "given": "Gift given {{date}}",
+        "confirm": "Give the welcome gift for this intake form?",
+        "error": "Failed to record the gift redemption",
+        "already": "The gift for this form has already been given"
+      },
+      "errors": {
+        "supabaseUnavailable": "Supabase is unavailable. Check the configuration.",
+        "loadFailed": "Failed to load intake forms",
+        "updateFailed": "Failed to update the intake form"
       }
     },
     "serviceStatuses": {
@@ -3089,6 +3186,11 @@
       "openGraphTitle": "Контакти — Dental Story Львів",
       "openGraphDescription": "Адреса, телефон, години роботи стоматології Dental Story.",
       "breadcrumb": "Контакти"
+    },
+    "anketa": {
+      "title": "Patient intake form — Dental Story",
+      "description": "Fill in the Dental Story new patient form online — it takes 5 minutes and helps your doctor prepare for your visit.",
+      "breadcrumb": "Intake form"
     },
     "booking": {
       "title": "Онлайн запис до стоматолога — Dental Story",

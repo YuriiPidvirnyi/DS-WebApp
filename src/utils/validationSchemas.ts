@@ -342,3 +342,72 @@ export const VALIDATION_MESSAGES = {
   maxLength: (max: number) => `Максимум ${max} символів`,
   consent: 'Потрібна згода на обробку персональних даних',
 } as const
+
+// Patient Intake Form Schema (анкета нового пацієнта, /anketa)
+export const intakeFormSchema = z.object({
+  lastName: z
+    .string()
+    .min(2, 'Прізвище повинно містити принаймні 2 символи')
+    .max(50, 'Прізвище не може містити більше 50 символів')
+    .regex(/^[a-zA-ZаА-яЯієїґІЄЇҐ\s'-]+$/, 'Прізвище може містити лише літери'),
+
+  firstName: z
+    .string()
+    .min(2, "Ім'я повинно містити принаймні 2 символи")
+    .max(50, "Ім'я не може містити більше 50 символів")
+    .regex(/^[a-zA-ZаА-яЯієїґІЄЇҐ\s'-]+$/, "Ім'я може містити лише літери"),
+
+  patronymic: z
+    .string()
+    .max(50, 'По батькові не може містити більше 50 символів')
+    .regex(
+      /^[a-zA-ZаА-яЯієїґІЄЇҐ\s'-]*$/,
+      'По батькові може містити лише літери'
+    )
+    .optional()
+    .or(z.literal('')),
+
+  phone: z
+    .string()
+    .min(1, "Телефон обов'язковий")
+    .regex(phoneRegex, 'Невірний формат телефону (приклад: +380501234567)'),
+
+  email: z
+    .string()
+    .email('Невірний формат email')
+    .regex(emailRegex, 'Невірний формат email')
+    .optional()
+    .or(z.literal('')),
+
+  dateOfBirth: z
+    .string()
+    .optional()
+    .refine(date => {
+      if (!date) return true
+      const birthDate = new Date(date)
+      const today = new Date()
+      const age = today.getFullYear() - birthDate.getFullYear()
+      return age >= 0 && age <= 120
+    }, 'Невірна дата народження'),
+
+  allergies: z.string().max(500, 'Максимум 500 символів').optional(),
+
+  medications: z.string().max(500, 'Максимум 500 символів').optional(),
+
+  chronicConditions: z.string().max(500, 'Максимум 500 символів').optional(),
+
+  pregnancy: z.enum(['', 'no', 'yes']),
+
+  complaints: z.string().max(1000, 'Максимум 1000 символів').optional(),
+
+  dataConsent: z
+    .boolean()
+    .refine(
+      val => val === true,
+      'Потрібна згода на обробку персональних даних'
+    ),
+
+  marketingConsent: z.boolean(),
+})
+
+export type IntakeFormData = z.infer<typeof intakeFormSchema>

@@ -266,6 +266,8 @@ export const ROLE_NAV_PERMISSIONS: Record<string, Permission | Permission[]> = {
   '/admin/reviews': 'settings:view',
   // Contact inquiries visible to anyone who handles all appointments (includes receptionist)
   '/admin/contacts': 'appointments:view_all',
+  // Intake questionnaires are handled by the same staff that manages patients
+  '/admin/intake': 'patients:view',
 }
 
 export function canAccessNavItem(role: AdminRole, href: string): boolean {
