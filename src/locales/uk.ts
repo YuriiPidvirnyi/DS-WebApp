@@ -1954,6 +1954,7 @@ const uk = {
       card: {
         promo: 'Промокод: {{code}}',
         patientLinked: 'Пацієнт у системі',
+        duplicatePhone: 'Повторна анкета — той самий телефон',
         source: 'Джерело: {{source}}',
         statusSelectAria: 'Статус анкети {{name}}',
         showDetails: 'Показати деталі анкети',

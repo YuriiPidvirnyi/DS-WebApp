@@ -1824,6 +1824,7 @@ const en = {
       card: {
         promo: 'Promo code: {{code}}',
         patientLinked: 'Patient in system',
+        duplicatePhone: 'Repeat form — same phone number',
         source: 'Source: {{source}}',
         statusSelectAria: 'Status of {{name}} intake form',
         showDetails: 'Show form details',

@@ -115,6 +115,17 @@ export default function AdminIntakePage() {
     return { total, fresh, reviewed, withPromo }
   }, [rows])
 
+  // Guests (patient_id = null) are not covered by the one-gift-per-patient DB
+  // constraint, so surface repeat submissions from the same phone as a signal
+  // for reception before they hand out a second welcome gift.
+  const phoneCounts = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const row of rows) {
+      counts.set(row.phone, (counts.get(row.phone) ?? 0) + 1)
+    }
+    return counts
+  }, [rows])
+
   const cardPaddingClass = preferences.compactTables ? 'p-3' : 'p-4'
   const getStatusLabel = useCallback(
     (status: string) => t(`admin.intakeStatuses.${status}`),
@@ -316,6 +327,11 @@ export default function AdminIntakePage() {
                     {row.patient_id ? (
                       <span className="inline-flex rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
                         {t('admin.intakePage.card.patientLinked')}
+                      </span>
+                    ) : null}
+                    {(phoneCounts.get(row.phone) ?? 0) > 1 ? (
+                      <span className="inline-flex rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">
+                        {t('admin.intakePage.card.duplicatePhone')}
                       </span>
                     ) : null}
                   </div>

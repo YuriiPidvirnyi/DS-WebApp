@@ -86,8 +86,7 @@ export async function POST(request: NextRequest) {
   }
 
   const cfToken = (rawBody as Record<string, unknown>).cf_turnstile_response as
-    | string
-    | undefined
+    string | undefined
   const { valid: botOk } = await verifyTurnstileServer(cfToken, request)
   if (!botOk) return turnstileInvalidResponse()
 
@@ -135,7 +134,7 @@ export async function POST(request: NextRequest) {
               ? false
               : null,
         complaints: trimOrNull(body.complaints),
-        data_consent: true,
+        data_consent: body.dataConsent,
         marketing_consent: body.marketingConsent ?? false,
         promo_code: trimOrNull(body.promoCode),
         source: trimOrNull(body.source) ?? 'direct',

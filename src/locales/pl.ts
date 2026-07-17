@@ -1830,6 +1830,7 @@ const pl = {
       card: {
         promo: 'Kod promo: {{code}}',
         patientLinked: 'Pacjent w systemie',
+        duplicatePhone: 'Powtórna ankieta — ten sam telefon',
         source: 'Źródło: {{source}}',
         statusSelectAria: 'Status ankiety {{name}}',
         showDetails: 'Pokaż szczegóły ankiety',
