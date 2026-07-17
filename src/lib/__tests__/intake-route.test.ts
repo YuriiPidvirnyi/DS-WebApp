@@ -87,6 +87,22 @@ describe('POST /api/intake', () => {
     expect(res.status).toBe(400)
   })
 
+  it('rejects names with digits server-side (client schema parity)', async () => {
+    const res = await POST(makeRequest({ ...validBody, firstName: 'Tara5' }))
+
+    expect(res.status).toBe(400)
+    expect(mockInsert).not.toHaveBeenCalled()
+  })
+
+  it('rejects an implausible date of birth server-side', async () => {
+    const res = await POST(
+      makeRequest({ ...validBody, dateOfBirth: '1830-01-01' })
+    )
+
+    expect(res.status).toBe(400)
+    expect(mockInsert).not.toHaveBeenCalled()
+  })
+
   it('rejects promo codes with unexpected characters', async () => {
     const res = await POST(
       makeRequest({ ...validBody, promoCode: 'WELCOME 26!' })

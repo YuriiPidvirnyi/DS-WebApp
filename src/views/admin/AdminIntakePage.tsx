@@ -117,7 +117,8 @@ export default function AdminIntakePage() {
 
   // Guests (patient_id = null) are not covered by the one-gift-per-patient DB
   // constraint, so surface repeat submissions from the same phone as a signal
-  // for reception before they hand out a second welcome gift.
+  // for reception before they hand out a second welcome gift. Heuristic only:
+  // it sees the currently loaded rows (limit 300, newest first), not history.
   const phoneCounts = useMemo(() => {
     const counts = new Map<string, number>()
     for (const row of rows) {

@@ -10,39 +10,29 @@ import {
   turnstileInvalidResponse,
 } from '@/lib/api-security'
 import { captureException } from '@/utils/sentry'
+import { intakeFormSchema } from '@/utils/validationSchemas'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const nameField = z
-  .string()
-  .min(2, 'Мінімум 2 символи')
-  .max(50, 'Максимум 50 символів')
-
-const intakeSchema = z.object({
-  firstName: nameField,
-  lastName: nameField,
-  patronymic: z.string().max(50).optional().or(z.literal('')),
-  phone: z
-    .string()
-    .regex(/^\+?380\d{9}$/, 'Невірний формат телефону (+380XXXXXXXXX)'),
-  email: z.string().email('Невірний формат email').optional().or(z.literal('')),
+// Server-side validation = the same schema the /anketa form runs (letters-only
+// names, plausible birth date, field limits) + campaign attribution fields.
+// This endpoint is public and directly scriptable, so it must never be weaker
+// than the client-side schema.
+const intakeSchema = intakeFormSchema.extend({
   dateOfBirth: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Невірний формат дати')
+    .refine(date => {
+      const birthDate = new Date(date)
+      const today = new Date()
+      const age = today.getFullYear() - birthDate.getFullYear()
+      return age >= 0 && age <= 120
+    }, 'Невірна дата народження')
     .optional()
     .or(z.literal('')),
-  allergies: z.string().max(500).optional(),
-  medications: z.string().max(500).optional(),
-  chronicConditions: z.string().max(500).optional(),
+  // The form always sends these; keep them optional for other API callers
   pregnancy: z.enum(['', 'no', 'yes']).optional(),
-  complaints: z.string().max(1000).optional(),
-  dataConsent: z
-    .boolean()
-    .refine(
-      val => val === true,
-      'Потрібна згода на обробку персональних даних'
-    ),
   marketingConsent: z.boolean().optional(),
   promoCode: z
     .string()
