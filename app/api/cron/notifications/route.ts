@@ -8,6 +8,7 @@ import {
   appointmentCancellationEmail,
   newBookingAdminEmail,
   recallEmail,
+  reviewRequestEmail,
 } from '@/lib/email-templates'
 import { captureException } from '@/utils/sentry'
 import { logger } from '@/utils/logger'
@@ -248,6 +249,10 @@ async function processEvent(
         },
         locale
       )
+      break
+
+    case 'review_request':
+      email = reviewRequestEmail({ patientName }, locale)
       break
 
     case 'new_booking_admin':

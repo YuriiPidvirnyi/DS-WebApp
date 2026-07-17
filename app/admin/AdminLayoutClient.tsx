@@ -18,6 +18,7 @@ import {
   Menu,
   X,
   LogOut,
+  ClipboardCheck,
   ClipboardList,
   Package,
   ShoppingCart,
@@ -82,6 +83,11 @@ const ALL_NAV_ITEMS: NavItem[] = [
     nameKey: 'admin.sidebar.contacts',
     href: '/admin/contacts',
     icon: <Phone className="w-5 h-5" />,
+  },
+  {
+    nameKey: 'admin.sidebar.intake',
+    href: '/admin/intake',
+    icon: <ClipboardCheck className="w-5 h-5" />,
   },
   {
     nameKey: 'admin.sidebar.chat',

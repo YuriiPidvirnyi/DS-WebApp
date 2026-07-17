@@ -1,7 +1,9 @@
 import { defineConfig, devices } from '@playwright/test'
 
 const port = 3000
-const baseURL = `http://localhost:${port}`
+// CI pins the base URL via PW_BASE_URL (127.0.0.1 — avoids localhost/IPv6
+// resolution ambiguity on GitHub runners). Locally nothing changes.
+const baseURL = process.env.PW_BASE_URL ?? `http://localhost:${port}`
 
 export default defineConfig({
   testDir: './e2e',

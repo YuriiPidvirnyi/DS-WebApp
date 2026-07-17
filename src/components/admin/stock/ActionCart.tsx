@@ -114,8 +114,8 @@ const ActionCart = forwardRef<ActionCartHandle, Props>(function ActionCart(
         },
         body: JSON.stringify({
           docType,
-          fromWarehouseId: warehouseId,
-          toWarehouseId: type === 'transfer' ? toWarehouse || null : null,
+          warehouseFrom: warehouseId,
+          warehouseTo: type === 'transfer' ? toWarehouse || null : null,
         }),
       })
       const createJson = await createRes.json()

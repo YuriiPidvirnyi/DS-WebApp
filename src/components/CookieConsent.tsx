@@ -47,7 +47,12 @@ export default function CookieConsent() {
     <div
       role="dialog"
       aria-label={t('cookies.title')}
-      className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6"
+      // sticky (not fixed) on purpose: rendered inside the <main> scroller,
+      // an in-flow sticky element keeps touch-scroll chaining to <main>.
+      // position:fixed chains scrolls to the viewport instead — and body
+      // never scrolls in this app shell, so the banner becomes a dead zone
+      // for touch scrolling on mobile.
+      className="sticky bottom-0 z-50 p-4 md:p-6"
     >
       <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl border border-dental-secondary-200 p-6 flex flex-col md:flex-row items-start md:items-center gap-4">
         <div className="flex items-start gap-3 flex-1">

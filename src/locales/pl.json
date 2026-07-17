@@ -39,7 +39,9 @@
     "optional": "Opcjonalne",
     "confirm": "Potwierdź",
     "actions": "Akcje",
-    "guest": "Gość"
+    "guest": "Gość",
+    "yes": "Tak",
+    "no": "Nie"
   },
   "asyncState": {
     "loading": {
@@ -361,6 +363,50 @@
           "a": "Tak, udzielamy gwarancji na wszystkie usługi zgodnie ze standardami medycznymi i wymogami."
         }
       }
+    }
+  },
+  "anketa": {
+    "title": "Ankieta nowego pacjenta",
+    "subtitle": "Wypełnij ankietę przed wizytą — zajmie to około 5 minut i pomoże lekarzowi przygotować się do przyjęcia.",
+    "giftNote": "Wypełniasz ankietę po raz pierwszy? Pokaż potwierdzenie w recepcji — czeka na Ciebie prezent powitalny.",
+    "sections": {
+      "personal": "Dane osobowe",
+      "medical": "Informacje medyczne",
+      "consent": "Zgody"
+    },
+    "fields": {
+      "lastNameLabel": "Nazwisko",
+      "firstNameLabel": "Imię",
+      "patronymicLabel": "Imię ojca",
+      "dateOfBirthLabel": "Data urodzenia",
+      "phoneLabel": "Telefon",
+      "emailLabel": "Email",
+      "allergiesLabel": "Alergie",
+      "allergiesPlaceholder": "Leki, materiały lub znieczulenia, na które wystąpiła reakcja",
+      "medicationsLabel": "Przyjmowane leki",
+      "medicationsPlaceholder": "Leki stałe lub przyjmowane niedawno",
+      "chronicConditionsLabel": "Choroby przewlekłe",
+      "chronicConditionsPlaceholder": "Cukrzyca, nadciśnienie, choroby sercowo-naczyniowe itp.",
+      "pregnancyLabel": "Ciąża",
+      "pregnancyOptions": {
+        "notApplicable": "Nie dotyczy",
+        "no": "Nie",
+        "yes": "Tak"
+      },
+      "complaintsLabel": "Co Cię niepokoi?",
+      "complaintsPlaceholder": "Opisz dolegliwości lub cel wizyty",
+      "dataConsentLabel": "Wyrażam zgodę na przetwarzanie moich danych osobowych",
+      "marketingConsentLabel": "Chcę otrzymywać wiadomości i przypomnienia od kliniki"
+    },
+    "submit": "Wyślij ankietę",
+    "cooldown": "Ponowna wysyłka za {{seconds}} s",
+    "requiredFields": "* — pola obowiązkowe",
+    "successTitle": "Ankieta wysłana!",
+    "successDescription": "Dziękujemy! Pokaż to potwierdzenie w recepcji — czeka na Ciebie prezent powitalny.",
+    "errors": {
+      "cooldown": "Poczekaj {{seconds}} s przed ponowną wysyłką",
+      "turnstile": "Potwierdź, że nie jesteś robotem",
+      "submitFailed": "Nie udało się wysłać ankiety. Spróbuj ponownie."
     }
   },
   "home": {
@@ -1297,6 +1343,7 @@
       "services": "Usługi",
       "reviews": "Opinie",
       "contacts": "Kontakty",
+      "intake": "Ankiety",
       "chat": "Czat",
       "treatments": "Akty prac",
       "materials": "Materiały",
@@ -1613,6 +1660,11 @@
       "resolved": "Rozwiązane",
       "closed": "Zamknięte"
     },
+    "intakeStatuses": {
+      "new": "Nowa",
+      "reviewed": "Przejrzana",
+      "linked": "Powiązana"
+    },
     "contactsPage": {
       "title": "Zgłoszenia klientów",
       "description": "Kolejka zgłoszeń kontaktowych ze stanem SLA i szybką obsługą operacyjną.",
@@ -1662,6 +1714,59 @@
         "bulkUpdateFailed": "Nie udało się zastosować masowych zmian dla zgłoszeń.",
         "updateFailed": "Nie udało się zaktualizować zgłoszenia."
       }
+    },
+    "intakePage": {
+      "title": "Ankiety pacjentów",
+      "description": "Ankiety nowych pacjentów z formularza /anketa: informacje medyczne, zgody i kody promocyjne.",
+      "refresh": "Odśwież",
+      "loading": "Ładowanie ankiet…",
+      "empty": "Brak ankiet",
+      "summary": {
+        "total": "Razem",
+        "new": "Nowe",
+        "reviewed": "Przejrzane",
+        "withPromo": "Z kodem promo"
+      },
+      "filters": {
+        "searchPlaceholder": "Szukaj: imię, telefon, email",
+        "allStatuses": "Wszystkie statusy"
+      },
+      "card": {
+        "promo": "Kod promo: {{code}}",
+        "patientLinked": "Pacjent w systemie",
+        "duplicatePhone": "Powtórna ankieta — ten sam telefon",
+        "source": "Źródło: {{source}}",
+        "statusSelectAria": "Status ankiety {{name}}",
+        "showDetails": "Pokaż szczegóły ankiety",
+        "dob": "Data urodzenia",
+        "pregnancy": "Ciąża",
+        "allergies": "Alergie",
+        "medications": "Leki",
+        "chronicConditions": "Choroby przewlekłe",
+        "complaints": "Dolegliwości",
+        "marketingConsent": "Zgoda marketingowa",
+        "adminNote": "Notatka",
+        "notesPlaceholder": "Dodaj notatkę…",
+        "formTypes": {
+          "adult": "Ankieta dla dorosłych",
+          "child": "Ankieta dla dziecka"
+        },
+        "print": "Drukuj / PDF"
+      },
+      "gift": {
+        "give": "Wydaj prezent",
+        "given": "Prezent wydany {{date}}",
+        "confirm": "Wydać prezent powitalny za tę ankietę?",
+        "error": "Nie udało się zarejestrować wydania prezentu",
+        "already": "Prezent za tę ankietę został już wydany"
+      },
+      "errors": {
+        "supabaseUnavailable": "Supabase jest niedostępny. Sprawdź konfigurację.",
+        "loadFailed": "Nie udało się załadować ankiet",
+        "updateFailed": "Nie udało się zaktualizować ankiety"
+      },
+      "blankAdult": "Formularz (dorosły)",
+      "blankChild": "Formularz (dziecko)"
     },
     "serviceStatuses": {
       "active": "active",
@@ -2393,7 +2498,7 @@
     "notSpecified": "Nie podano",
     "myAppointments": "Moje wizyty",
     "treatmentHistory": "Historia leczenia",
-    "myReviews": "Moje opinie",
+    "googleReview": "Zostaw opinię w Google",
     "recentAppointments": "Ostatnie wizyty",
     "allAppointments": "Wszystkie wizyty",
     "noAppointments": "Brak wizyt",
@@ -2537,6 +2642,7 @@
       "dashboard": "Panel",
       "appointments": "Moje wizyty",
       "treatments": "Leczenie",
+      "anketa": "Ankiety",
       "payments": "Płatności",
       "profile": "Profil",
       "settings": "Ustawienia",
@@ -2544,6 +2650,36 @@
       "navigation": "Nawigacja gabinetu",
       "openMenu": "Otwórz menu",
       "backToSite": "Na stronę"
+    },
+    "anketa": {
+      "title": "Ankiety pacjenta",
+      "subtitle": "Wypełnij ankietę medyczną online — zaoszczędzisz czas podczas wizyty. Dane widzi tylko Twój lekarz.",
+      "fillAdult": "Wypełnij ankietę (dorosły)",
+      "fillChild": "Wypełnij ankietę (dziecko)",
+      "submittedTitle": "Wypełnione ankiety",
+      "empty": "Nie wypełniono jeszcze żadnej ankiety",
+      "types": {
+        "basic": "Krótka",
+        "adult": "Dla dorosłych",
+        "child": "Dla dziecka"
+      },
+      "adultTitle": "Ankieta pacjenta",
+      "childTitle": "Ankieta pacjenta (dziecko)",
+      "back": "Wstecz",
+      "personal": "Dane osobowe",
+      "childPersonal": "Dane dziecka",
+      "consentAdult": "Zapoznałem(-am) się z cennikiem i zakresem usług kliniki oraz zobowiązuję się do opłacenia leczenia. Potwierdzam, że podane informacje są prawdziwe i kompletne, oraz wyrażam zgodę na przetwarzanie danych osobowych.",
+      "consentChild": "Jako przedstawiciel ustawowy dziecka zapoznałem(-am) się z cennikiem i zakresem usług kliniki oraz zobowiązuję się do opłacenia leczenia. Potwierdzam prawdziwość podanych informacji, wyrażam zgodę na badanie i leczenie dziecka oraz na przetwarzanie danych osobowych.",
+      "submit": "Wyślij ankietę",
+      "yes": "Tak",
+      "no": "Nie",
+      "loading": "Ładowanie...",
+      "blanksTitle": "Formularze papierowe (PDF)",
+      "blankAdult": "Ankieta dla dorosłych",
+      "blankChild": "Ankieta dla dziecka",
+      "errors": {
+        "submitFailed": "Nie udało się wysłać ankiety. Spróbuj ponownie."
+      }
     },
     "treatments": {
       "title": "Leczenie",
@@ -3107,6 +3243,11 @@
       "openGraphTitle": "Контакти — Dental Story Львів",
       "openGraphDescription": "Адреса, телефон, години роботи стоматології Dental Story.",
       "breadcrumb": "Контакти"
+    },
+    "anketa": {
+      "title": "Ankieta pacjenta — Dental Story",
+      "description": "Wypełnij ankietę nowego pacjenta Dental Story online — zajmie to 5 minut i pomoże lekarzowi przygotować się do wizyty.",
+      "breadcrumb": "Ankieta"
     },
     "booking": {
       "title": "Онлайн запис до стоматолога — Dental Story",

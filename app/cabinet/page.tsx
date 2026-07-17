@@ -497,8 +497,10 @@ export default function CabinetPage() {
                 <ChevronRight className="w-4 h-4 text-dental-muted" />
               </div>
             </Link>
-            <Link
-              href="/reviews"
+            <a
+              href="/r/google?src=cabinet"
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-dental-primary-500"
             >
               <div className="flex items-center gap-3">
@@ -506,11 +508,11 @@ export default function CabinetPage() {
                   <Star className="w-4 h-4 text-amber-500" />
                 </div>
                 <span className="font-medium text-dental-dark text-sm">
-                  {t('cabinet.myReviews')}
+                  {t('cabinet.googleReview')}
                 </span>
               </div>
               <ChevronRight className="w-4 h-4 text-dental-muted" />
-            </Link>
+            </a>
           </div>
         </div>
 

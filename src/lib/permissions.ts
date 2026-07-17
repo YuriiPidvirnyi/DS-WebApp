@@ -77,6 +77,9 @@ export const PERMISSIONS = [
   // Chat
   'chat:view',
   'chat:reply',
+
+  // Promo campaigns (welcome-pack gift redemption at reception)
+  'promo:redeem',
 ] as const
 
 export type Permission = (typeof PERMISSIONS)[number]
@@ -110,6 +113,7 @@ export const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
     'users:manage',
     'chat:view',
     'chat:reply',
+    'promo:redeem',
   ],
 
   admin: [
@@ -135,6 +139,7 @@ export const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
     'settings:edit',
     'chat:view',
     'chat:reply',
+    'promo:redeem',
   ],
 
   receptionist: [
@@ -148,6 +153,7 @@ export const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
     'treatments:view_all',
     'chat:view',
     'chat:reply',
+    'promo:redeem',
   ],
 
   doctor: [
@@ -266,6 +272,8 @@ export const ROLE_NAV_PERMISSIONS: Record<string, Permission | Permission[]> = {
   '/admin/reviews': 'settings:view',
   // Contact inquiries visible to anyone who handles all appointments (includes receptionist)
   '/admin/contacts': 'appointments:view_all',
+  // Intake questionnaires are handled by the same staff that manages patients
+  '/admin/intake': 'patients:view',
 }
 
 export function canAccessNavItem(role: AdminRole, href: string): boolean {
