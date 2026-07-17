@@ -2791,9 +2791,9 @@ const pl = {
       personal: 'Dane osobowe',
       childPersonal: 'Dane dziecka',
       consentAdult:
-        'Potwierdzam prawdziwość podanych danych i wyrażam zgodę na przetwarzanie danych osobowych',
+        'Zapoznałem(-am) się z cennikiem i zakresem usług kliniki oraz zobowiązuję się do opłacenia leczenia. Potwierdzam, że podane informacje są prawdziwe i kompletne, oraz wyrażam zgodę na przetwarzanie danych osobowych.',
       consentChild:
-        'Jako przedstawiciel ustawowy dziecka potwierdzam prawdziwość podanych danych i wyrażam zgodę na przetwarzanie danych osobowych',
+        'Jako przedstawiciel ustawowy dziecka zapoznałem(-am) się z cennikiem i zakresem usług kliniki oraz zobowiązuję się do opłacenia leczenia. Potwierdzam prawdziwość podanych informacji, wyrażam zgodę na badanie i leczenie dziecka oraz na przetwarzanie danych osobowych.',
       submit: 'Wyślij ankietę',
       yes: 'Tak',
       no: 'Nie',

@@ -17,6 +17,8 @@ export interface YesNoField {
   kind: 'yesno'
   id: string
   label: IntakeLabel
+  /** In a numbered section: skip this field when assigning numbers */
+  unnumbered?: boolean
 }
 
 export interface TextField {
@@ -25,6 +27,8 @@ export interface TextField {
   label: IntakeLabel
   multiline?: boolean
   maxLength?: number
+  /** In a numbered section: skip this field when assigning numbers */
+  unnumbered?: boolean
 }
 
 export interface ScaleField {
@@ -40,6 +44,8 @@ export type IntakeField = YesNoField | TextField | ScaleField
 export interface IntakeSection {
   id: string
   title: IntakeLabel
+  /** Paper blank numbers the items of this section (1, 2, 3…) */
+  numbered?: boolean
   fields: IntakeField[]
 }
 
@@ -54,20 +60,46 @@ const txt = (
   uk: string,
   en: string,
   pl: string,
-  opts: { multiline?: boolean; maxLength?: number } = {}
+  opts: { multiline?: boolean; maxLength?: number; unnumbered?: boolean } = {}
 ): TextField => ({
   kind: 'text',
   id,
   label: { uk, en, pl },
   multiline: opts.multiline ?? false,
   maxLength: opts.maxLength ?? 300,
+  ...(opts.unnumbered ? { unnumbered: true } : {}),
 })
 
 // ── Adult questionnaire ──────────────────────────────────────────────────────
 
 export const ADULT_FORM: IntakeSection[] = [
   {
+    id: 'contact',
+    title: {
+      uk: 'Контактні дані',
+      en: 'Contact details',
+      pl: 'Dane kontaktowe',
+    },
+    fields: [
+      txt(
+        'address',
+        'Адреса проживання',
+        'Home address',
+        'Adres zamieszkania',
+        { maxLength: 200 }
+      ),
+      txt(
+        'referral_source',
+        'Як дізналися про нашу клініку',
+        'How did you hear about our clinic',
+        'Skąd dowiedzieli się Państwo o naszej klinice',
+        { maxLength: 200 }
+      ),
+    ],
+  },
+  {
     id: 'diseases',
+    numbered: true,
     title: {
       uk: 'Перенесені та супутні захворювання',
       en: 'Past and concurrent conditions',
@@ -175,12 +207,13 @@ export const ADULT_FORM: IntakeSection[] = [
         'Уточнення / інше',
         'Clarification / other',
         'Doprecyzowanie / inne',
-        { multiline: true, maxLength: 500 }
+        { multiline: true, maxLength: 500, unnumbered: true }
       ),
     ],
   },
   {
     id: 'allergies',
+    numbered: true,
     title: {
       uk: 'Алергічні реакції',
       en: 'Allergic reactions',
@@ -282,6 +315,7 @@ export const ADULT_FORM: IntakeSection[] = [
   },
   {
     id: 'dental',
+    numbered: true,
     title: {
       uk: 'Стоматологічний анамнез',
       en: 'Dental history',
@@ -352,6 +386,9 @@ export const CHILD_FORM: IntakeSection[] = [
         'Stopień pokrewieństwa z dzieckiem',
         { maxLength: 100 }
       ),
+      txt('home_address', 'Домашня адреса', 'Home address', 'Adres domowy', {
+        maxLength: 200,
+      }),
     ],
   },
   {
@@ -391,6 +428,7 @@ export const CHILD_FORM: IntakeSection[] = [
   },
   {
     id: 'diseases',
+    numbered: true,
     title: {
       uk: 'Перенесені та супутні захворювання',
       en: 'Past and concurrent conditions',
@@ -471,7 +509,7 @@ export const CHILD_FORM: IntakeSection[] = [
         'Якщо є алергія — вкажіть, на що',
         'If allergic — specify to what',
         'Jeśli występuje alergia — na co',
-        { multiline: true, maxLength: 500 }
+        { multiline: true, maxLength: 500, unnumbered: true }
       ),
     ],
   },
@@ -529,6 +567,7 @@ export const CHILD_FORM: IntakeSection[] = [
   },
   {
     id: 'dental',
+    numbered: true,
     title: {
       uk: 'Стоматологічний анамнез',
       en: 'Dental history',
@@ -575,7 +614,7 @@ export const CHILD_FORM: IntakeSection[] = [
         'Уточнення / інше',
         'Clarification / other',
         'Doprecyzowanie / inne',
-        { multiline: true, maxLength: 500 }
+        { multiline: true, maxLength: 500, unnumbered: true }
       ),
     ],
   },

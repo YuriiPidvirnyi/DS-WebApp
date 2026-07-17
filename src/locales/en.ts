@@ -2784,9 +2784,9 @@ const en = {
       personal: 'Personal details',
       childPersonal: "Child's details",
       consentAdult:
-        'I confirm the information provided is accurate and consent to the processing of my personal data',
+        "I have reviewed the clinic's price list and range of services and undertake to pay for the treatment. I confirm that all information provided is accurate and complete, and I consent to the processing of my personal data.",
       consentChild:
-        "As the child's legal representative, I confirm the information provided is accurate and consent to the processing of personal data",
+        "As the child's legal representative, I have reviewed the clinic's price list and range of services and undertake to pay for the treatment. I confirm the information provided is accurate, and I consent to the examination and treatment of the child and to the processing of personal data.",
       submit: 'Submit questionnaire',
       yes: 'Yes',
       no: 'No',
