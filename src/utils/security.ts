@@ -481,16 +481,28 @@ export function initSecurity(): void {
 /**
  * Whether a post-auth `next` redirect target is a safe same-origin path.
  *
- * Accepts only absolute in-app paths ("/cabinet"). Rejects protocol-relative
- * ("//evil.com") and backslash-escaped ("/\\evil.com") forms that browsers
- * treat as cross-origin — the classic open-redirect vector on auth callbacks.
+ * Accepts only absolute in-app paths ("/cabinet"). Rejects the classic
+ * open-redirect vectors on auth callbacks:
+ *  - protocol-relative ("//evil.com")
+ *  - backslash separators, raw or encoded ("/\\evil", "/%5cevil") — browsers
+ *    treat "\" like "/", and the check is case-insensitive (%5c / %5C)
+ *  - encoded slash that decodes to protocol-relative ("/%2f%2fevil")
+ *  - control characters/whitespace some browsers strip before parsing the URL
+ *    ("/\t/evil.com"), a known bypass for hand-rolled guards
  */
 export const isSafeInternalPath = (
   path: string | null | undefined
 ): boolean => {
   if (!path) return false
+  // Control chars (C0 + DEL) — stripped by some browsers before URL parsing.
+  for (let i = 0; i < path.length; i += 1) {
+    const c = path.charCodeAt(i)
+    if (c <= 0x1f || c === 0x7f) return false
+  }
   if (!path.startsWith('/')) return false
   if (path.startsWith('//')) return false
-  if (path.startsWith('/\\') || path.startsWith('/%5C')) return false
+  if (path.includes('\\')) return false
+  const lower = path.toLowerCase()
+  if (lower.startsWith('/%5c') || lower.startsWith('/%2f')) return false
   return true
 }

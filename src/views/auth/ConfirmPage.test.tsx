@@ -146,6 +146,60 @@ describe('Auth confirm page', () => {
     )
   })
 
+  it('maps type=invite to /auth/reset-password', async () => {
+    const verifyOtp = vi.fn().mockResolvedValue({ error: null })
+    createClientMock.mockReturnValue({
+      auth: { verifyOtp },
+    } as unknown as ReturnType<typeof createClient>)
+
+    currentSearchParams = new URLSearchParams({
+      token_hash: 'abc123',
+      type: 'invite',
+    })
+
+    render(<ConfirmPage />)
+    fireEvent.click(
+      screen.getByRole('button', { name: t('auth.confirm.recovery.submit') })
+    )
+
+    await waitFor(() =>
+      expect(replaceMock).toHaveBeenCalledWith('/auth/reset-password')
+    )
+  })
+
+  it('disables the button while verifying (no double-submit)', async () => {
+    let resolveVerify: (v: { error: null }) => void = () => {}
+    const verifyOtp = vi.fn().mockReturnValue(
+      new Promise(resolve => {
+        resolveVerify = resolve
+      })
+    )
+    createClientMock.mockReturnValue({
+      auth: { verifyOtp },
+    } as unknown as ReturnType<typeof createClient>)
+
+    currentSearchParams = new URLSearchParams({
+      token_hash: 'abc123',
+      type: 'recovery',
+    })
+
+    render(<ConfirmPage />)
+    const button = screen.getByRole('button', {
+      name: t('auth.confirm.recovery.submit'),
+    })
+    fireEvent.click(button)
+
+    // in-flight: button is disabled, a second click cannot re-trigger verify
+    await waitFor(() => expect(screen.getByRole('button')).toBeDisabled())
+    fireEvent.click(screen.getByRole('button'))
+    expect(verifyOtp).toHaveBeenCalledTimes(1)
+
+    resolveVerify({ error: null })
+    await waitFor(() =>
+      expect(replaceMock).toHaveBeenCalledWith('/auth/reset-password')
+    )
+  })
+
   it('shows an error when the token is already used/expired', async () => {
     const verifyOtp = vi
       .fn()

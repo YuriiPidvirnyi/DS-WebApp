@@ -70,6 +70,8 @@ function ConfirmInner() {
     [t]
   )
 
+  // Supabase links carry `token_hash`; `token` is the legacy param name for the
+  // same value in older templates — accept both, verify via verifyOtp below.
   const tokenHash = searchParams.get('token_hash') ?? searchParams.get('token')
   const type = (searchParams.get('type') as EmailOtpType | null) ?? null
   const nextParam = searchParams.get('next')

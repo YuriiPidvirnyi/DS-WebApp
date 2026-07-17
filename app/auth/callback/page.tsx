@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
@@ -28,6 +28,12 @@ export default function AuthCallbackPage() {
   const searchParams = useSearchParams()
   const { t, ready } = useTranslation()
   const [error, setError] = useState<string | null>(null)
+  // The email token/code is one-time. This effect's deps include `tx` (derived
+  // from react-i18next's `t`), and `t`'s identity changes when the en/pl bundle
+  // finishes lazy-loading — which would re-run the effect and try to consume the
+  // already-used token a second time, overwriting success with a spurious error.
+  // Guard so the consume+redirect runs at most once per mount.
+  const handledRef = useRef(false)
   const tx = useMemo(
     () => (key: string, fallback: string) => {
       const value = t(key)
@@ -52,6 +58,10 @@ export default function AuthCallbackPage() {
     if (!ready) {
       return
     }
+    if (handledRef.current) {
+      return
+    }
+    handledRef.current = true
 
     let cancelled = false
 
