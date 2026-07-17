@@ -12,6 +12,12 @@ vi.mock('@/lib/supabase/client', () => ({
   createClient: vi.fn(),
 }))
 
+const requestPasswordResetMock = vi.fn()
+vi.mock('@/services/auth', () => ({
+  requestPasswordReset: (...args: unknown[]) =>
+    requestPasswordResetMock(...args),
+}))
+
 const pushMock = vi.fn()
 const replaceMock = vi.fn()
 const refreshMock = vi.fn()
@@ -67,14 +73,8 @@ describe('Auth pages smoke', () => {
     )
   })
 
-  it('sends reset password email with callback redirect', async () => {
-    const resetPasswordForEmail = vi.fn().mockResolvedValue({ error: null })
-
-    createClientMock.mockReturnValue({
-      auth: {
-        resetPasswordForEmail,
-      },
-    } as unknown as ReturnType<typeof createClient>)
+  it('requests a password reset via the custom recover endpoint', async () => {
+    requestPasswordResetMock.mockResolvedValue({ success: true })
 
     render(<ForgotPasswordPage />)
 
@@ -88,12 +88,14 @@ describe('Auth pages smoke', () => {
       screen.getByRole('button', { name: t('auth.forgotPassword.submit') })
     )
 
+    // Goes through our own endpoint (branded email → click-gated /auth/confirm),
+    // NOT Supabase's default resetPasswordForEmail / /verify flow. Assert the
+    // exact normalized locale (uk is the test i18n default) so a locale
+    // regression in the page — e.g. passing a raw `en-US` — is caught.
     await waitFor(() =>
-      expect(resetPasswordForEmail).toHaveBeenCalledWith(
+      expect(requestPasswordResetMock).toHaveBeenCalledWith(
         'patient@example.com',
-        {
-          redirectTo: `${window.location.origin}/auth/callback?next=/auth/reset-password`,
-        }
+        'uk'
       )
     )
 

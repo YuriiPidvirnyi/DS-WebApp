@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight, Mail } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
-import { createClient } from '@/lib/supabase/client'
+import { requestPasswordReset } from '@/services/auth'
 
 const FALLBACK = {
   subtitle: 'Вкажіть email, і ми надішлемо посилання для відновлення доступу.',
@@ -23,7 +23,7 @@ const FALLBACK = {
 }
 
 export default function ForgotPasswordPage() {
-  const { t, ready } = useTranslation()
+  const { t, i18n, ready } = useTranslation()
   const [email, setEmail] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -76,35 +76,32 @@ export default function ForgotPasswordPage() {
     setError(null)
     setLoading(true)
 
-    const supabase = createClient()
-    if (!supabase) {
-      setError(
-        tx(
-          'auth.forgotPassword.errors.unavailable',
-          FALLBACK.errors.unavailable
+    // Normalize a possibly-regional tag (e.g. `en-US`, `pl-PL`) down to its base
+    // language before matching supported locales — otherwise a user browsing in
+    // en-US would silently fall through to the Ukrainian email.
+    const base = (i18n.language || 'uk').split('-')[0].toLowerCase()
+    const locale = (['uk', 'en', 'pl'].includes(base) ? base : 'uk') as
+      | 'uk'
+      | 'en'
+      | 'pl'
+
+    try {
+      const res = await requestPasswordReset(email.trim(), locale)
+      if (!res.success) {
+        setError(
+          tx('auth.forgotPassword.errors.generic', FALLBACK.errors.generic)
         )
-      )
-      setLoading(false)
-      return
-    }
-
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(
-      email,
-      {
-        redirectTo: `${window.location.origin}/auth/callback?next=/auth/reset-password`,
+        setLoading(false)
+        return
       }
-    )
-
-    if (resetError) {
+      setSent(true)
+    } catch {
       setError(
         tx('auth.forgotPassword.errors.generic', FALLBACK.errors.generic)
       )
+    } finally {
       setLoading(false)
-      return
     }
-
-    setSent(true)
-    setLoading(false)
   }
 
   return (
