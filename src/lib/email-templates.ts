@@ -676,7 +676,7 @@ const PASSWORD_RESET_STRINGS: Record<
     greeting: name => (name ? `Вітаємо, ${name}!` : 'Вітаємо!'),
     body: 'Ви надіслали запит на відновлення пароля до вашого акаунту DentalStory. Натисніть кнопку нижче, щоб встановити новий пароль.',
     cta: 'Встановити новий пароль',
-    note: 'Посилання дійсне протягом 1 години й може бути використане один раз.',
+    note: 'Посилання одноразове й діє обмежений час — скористайтесь ним найближчим часом.',
     ignore:
       'Якщо ви не надсилали цей запит, просто проігноруйте цей лист — ваш пароль залишиться без змін.',
   },
@@ -686,7 +686,7 @@ const PASSWORD_RESET_STRINGS: Record<
     greeting: name => (name ? `Hello, ${name}!` : 'Hello!'),
     body: 'You requested a password reset for your DentalStory account. Click the button below to set a new password.',
     cta: 'Set a new password',
-    note: 'The link is valid for 1 hour and can be used once.',
+    note: 'The link is single-use and valid for a limited time — please use it soon.',
     ignore:
       "If you didn't request this, simply ignore this email — your password will stay unchanged.",
   },
@@ -696,7 +696,7 @@ const PASSWORD_RESET_STRINGS: Record<
     greeting: name => (name ? `Witaj, ${name}!` : 'Witaj!'),
     body: 'Poprosiłeś(-aś) o zresetowanie hasła do konta DentalStory. Kliknij przycisk poniżej, aby ustawić nowe hasło.',
     cta: 'Ustaw nowe hasło',
-    note: 'Link jest ważny przez 1 godzinę i można go użyć jednorazowo.',
+    note: 'Link jest jednorazowy i ważny przez ograniczony czas — użyj go wkrótce.',
     ignore:
       'Jeśli to nie Ty wysłałeś(-aś) tę prośbę, po prostu zignoruj tę wiadomość — hasło pozostanie bez zmian.',
   },

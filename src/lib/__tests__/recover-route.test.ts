@@ -1,6 +1,23 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NextRequest } from 'next/server'
 
+// Capture next/server's `after()` callbacks so the test can flush the deferred
+// mint+send work (the route runs it post-response for timing uniformity).
+const afterCallbacks: Array<() => unknown> = []
+vi.mock('next/server', async importOriginal => {
+  const actual = await importOriginal<typeof import('next/server')>()
+  return {
+    ...actual,
+    after: (fn: () => unknown) => {
+      afterCallbacks.push(fn)
+    },
+  }
+})
+async function flushAfter() {
+  const cbs = afterCallbacks.splice(0)
+  await Promise.all(cbs.map(fn => fn()))
+}
+
 const generateLink = vi.fn()
 vi.mock('@supabase/supabase-js', () => ({
   createClient: vi.fn(() => ({
@@ -35,6 +52,17 @@ vi.mock('@/lib/api-security', () => ({
   csrfErrorResponse: vi.fn(
     () => new Response(JSON.stringify({ error: 'CSRF' }), { status: 403 })
   ),
+  memoryRateLimit: vi.fn(() => ({ allowed: true, remaining: 2 })),
+}))
+
+const keyedRateLimit = vi.fn(async () => ({
+  allowed: true,
+  remaining: 2,
+  resetAt: 0,
+}))
+vi.mock('@/lib/redis', () => ({
+  checkRateLimit: (...a: unknown[]) =>
+    (keyedRateLimit as (...x: unknown[]) => unknown)(...a),
 }))
 
 vi.mock('@/utils/sentry', () => ({ captureException: vi.fn() }))
@@ -45,6 +73,7 @@ import { validateCSRF, checkRateLimit } from '@/lib/api-security'
 const OLD_ENV = process.env
 beforeEach(() => {
   vi.clearAllMocks()
+  afterCallbacks.length = 0
   process.env = {
     ...OLD_ENV,
     NEXT_PUBLIC_SUPABASE_URL: 'https://x.supabase.co',
@@ -59,6 +88,7 @@ beforeEach(() => {
     error: null,
   })
   isEmailConfigured.mockReturnValue(true)
+  keyedRateLimit.mockResolvedValue({ allowed: true, remaining: 2, resetAt: 0 })
 })
 
 function makeRequest(body?: unknown) {
@@ -78,6 +108,7 @@ describe('POST /api/auth/recover', () => {
       makeRequest({ email: 'p@example.com', locale: 'uk' })
     )
     expect(res.status).toBe(200)
+    await flushAfter()
 
     expect(generateLink).toHaveBeenCalledWith({
       type: 'recovery',
@@ -102,6 +133,7 @@ describe('POST /api/auth/recover', () => {
 
     const res = await POST(makeRequest({ email: 'nobody@example.com' }))
     const json = await res.json()
+    await flushAfter()
 
     expect(res.status).toBe(200)
     expect(json.success).toBe(true)
@@ -134,6 +166,32 @@ describe('POST /api/auth/recover', () => {
     isEmailConfigured.mockReturnValue(false)
     const res = await POST(makeRequest({ email: 'p@example.com' }))
     expect(res.status).toBe(200)
+    await flushAfter()
     expect(sendEmail).not.toHaveBeenCalled()
+  })
+
+  it('suppresses the email over the per-email cap (silent 200, no send/mint)', async () => {
+    keyedRateLimit.mockResolvedValue({
+      allowed: false,
+      remaining: 0,
+      resetAt: 0,
+    })
+    const res = await POST(makeRequest({ email: 'victim@example.com' }))
+    const json = await res.json()
+    await flushAfter()
+
+    expect(res.status).toBe(200)
+    expect(json.success).toBe(true)
+    // neither a token is minted nor an email sent — anti inbox-spam
+    expect(generateLink).not.toHaveBeenCalled()
+    expect(sendEmail).not.toHaveBeenCalled()
+  })
+
+  it('still sends when Redis (per-email limiter) is unavailable (fail-open)', async () => {
+    keyedRateLimit.mockRejectedValue(new Error('redis down'))
+    const res = await POST(makeRequest({ email: 'p@example.com' }))
+    expect(res.status).toBe(200)
+    await flushAfter()
+    expect(sendEmail).toHaveBeenCalledTimes(1)
   })
 })

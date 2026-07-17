@@ -73,34 +73,21 @@ test.describe('Auth flows', () => {
     ).toBeVisible()
   })
 
-  test('sends forgot password request with safe callback redirect', async ({
+  test('sends forgot password request via the custom recover endpoint', async ({
     page,
   }) => {
-    let recoverPayload = ''
-    let recoverUrl = ''
+    // The reset flow no longer calls Supabase's /auth/v1/recover (whose email
+    // links to the token-burning /verify). It posts to our own /api/auth/recover
+    // which mints the token server-side and emails a click-gated /auth/confirm
+    // link. Assert the page drives that endpoint and shows success.
+    let recoverBody = ''
 
-    await page.route('**/auth/v1/recover**', async route => {
-      if (route.request().method() === 'OPTIONS') {
-        await route.fulfill({ status: 204, headers: jsonHeaders, body: '' })
-        return
-      }
-
-      const payload = route.request().postDataJSON() as {
-        redirect_to?: string
-        redirectTo?: string
-      }
-      recoverUrl = decodeURIComponent(route.request().url())
-      recoverPayload = decodeURIComponent(
-        payload.redirect_to ??
-          payload.redirectTo ??
-          route.request().postData() ??
-          ''
-      )
-
+    await page.route('**/api/auth/recover', async route => {
+      recoverBody = route.request().postData() ?? ''
       await route.fulfill({
         status: 200,
         headers: jsonHeaders,
-        body: JSON.stringify({}),
+        body: JSON.stringify({ success: true }),
       })
     })
 
@@ -108,9 +95,7 @@ test.describe('Auth flows', () => {
     await page.getByLabel('Email').fill('patient@example.com')
     await page.getByRole('button', { name: 'Надіслати посилання' }).click()
 
-    await expect
-      .poll(() => `${recoverPayload} ${recoverUrl}`)
-      .toContain('/auth/callback?next=/auth/reset-password')
+    await expect.poll(() => recoverBody).toContain('patient@example.com')
     await expect(page.getByText('Лист надіслано')).toBeVisible()
   })
 

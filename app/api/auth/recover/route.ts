@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse, after } from 'next/server'
+import { createHash } from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
 import { z } from 'zod'
 import {
@@ -6,7 +7,9 @@ import {
   rateLimitResponse,
   validateCSRF,
   csrfErrorResponse,
+  memoryRateLimit,
 } from '@/lib/api-security'
+import { checkRateLimit as checkKeyedRateLimit } from '@/lib/redis'
 import { sendEmail, isEmailConfigured } from '@/lib/email'
 import { passwordResetEmail } from '@/lib/email-templates'
 import { captureException } from '@/utils/sentry'
@@ -15,6 +18,32 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://dentalstory.ua'
+
+// Per-email throttle: cap reset emails to one victim inbox regardless of source
+// IP, so a distributed attacker can't spam it (the per-IP limit above is not
+// enough on its own). Keyed by a hash of the normalized email — no PII in Redis.
+const PER_EMAIL_MAX = 3
+const PER_EMAIL_WINDOW_S = 15 * 60
+
+async function perEmailAllowed(email: string): Promise<boolean> {
+  const key = `pwreset:${createHash('sha256')
+    .update(email.trim().toLowerCase())
+    .digest('hex')}`
+  try {
+    const { allowed } = await checkKeyedRateLimit(
+      key,
+      PER_EMAIL_MAX,
+      PER_EMAIL_WINDOW_S
+    )
+    return allowed
+  } catch {
+    // Redis unavailable → fall back to the in-memory limiter rather than fully
+    // failing open, so a Redis outage can't turn this into an email-bomb vector
+    // (per-instance only, but bounded > unbounded).
+    return memoryRateLimit(key, PER_EMAIL_MAX, PER_EMAIL_WINDOW_S * 1000)
+      .allowed
+  }
+}
 
 const bodySchema = z.object({
   email: z.string().email().max(254),
@@ -36,6 +65,74 @@ const bodySchema = z.object({
  * an account exists and whether or not the send succeeds. Failures are logged
  * server-side only.
  */
+/** Mint the token + send the branded email. Runs AFTER the response is sent so
+ *  the request's timing can't be used to distinguish existing vs unknown emails
+ *  (existing → generateLink work + Resend send; unknown → fast error, no send).
+ *  Also applies the per-email throttle here (a suppressed send costs no time on
+ *  the response path). Every branch swallows errors to Sentry — the client
+ *  already received a uniform 200. */
+async function deliverReset(
+  email: string,
+  locale: 'uk' | 'en' | 'pl'
+): Promise<void> {
+  try {
+    if (!(await perEmailAllowed(email))) return
+
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+    if (!url || !key) {
+      captureException(
+        new Error('[auth/recover] SUPABASE service role not configured')
+      )
+      return
+    }
+
+    const admin = createClient(url, key, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    })
+
+    // Fresh recovery token WITHOUT sending Supabase's own email. For 'recovery'
+    // this errors (does not create a user) on an unknown email — swallowed.
+    const { data, error } = await admin.auth.admin.generateLink({
+      type: 'recovery',
+      email,
+    })
+    const tokenHash = data?.properties?.hashed_token
+    if (error || !tokenHash) return
+
+    if (!isEmailConfigured()) {
+      captureException(
+        new Error('[auth/recover] RESEND not configured — reset email not sent')
+      )
+      return
+    }
+
+    const resetUrl = `${SITE_URL}/auth/confirm?token_hash=${encodeURIComponent(
+      tokenHash
+    )}&type=recovery&next=${encodeURIComponent('/auth/reset-password')}`
+    const firstName =
+      (data?.user?.user_metadata?.first_name as string | undefined) ?? undefined
+    const { subject, html, text } = passwordResetEmail(
+      { resetUrl, patientName: firstName },
+      locale
+    )
+    const result = await sendEmail({
+      to: email,
+      subject,
+      html,
+      text,
+      tags: [{ name: 'type', value: 'password_reset' }],
+    })
+    if (!result.success) {
+      captureException(
+        new Error(`[auth/recover] reset email send failed: ${result.error}`)
+      )
+    }
+  } catch (err) {
+    captureException(err instanceof Error ? err : new Error(String(err)))
+  }
+}
+
 export async function POST(request: NextRequest) {
   if (!validateCSRF(request)) return csrfErrorResponse()
 
@@ -61,70 +158,10 @@ export async function POST(request: NextRequest) {
   }
   const { email, locale = 'uk' } = parsed.data
 
-  // Uniform response for every valid request — never reveals whether the
-  // account exists or whether email delivery succeeded.
-  const genericOk = NextResponse.json({ success: true }, { status: 200 })
+  // Defer all account-existence-dependent work past the response so the timing
+  // of this handler is uniform (no enumeration side-channel). The response is
+  // always a uniform 200 regardless of whether the account exists.
+  after(() => deliverReset(email, locale))
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !key) {
-    captureException(
-      new Error('[auth/recover] SUPABASE service role not configured')
-    )
-    return genericOk
-  }
-
-  const admin = createClient(url, key, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  })
-
-  try {
-    // Generates a fresh recovery token WITHOUT sending Supabase's own email.
-    // For type 'recovery' this errors (does not create a user) when the email
-    // is unknown — which we swallow to avoid account enumeration.
-    const { data, error } = await admin.auth.admin.generateLink({
-      type: 'recovery',
-      email,
-    })
-
-    const tokenHash = data?.properties?.hashed_token
-    if (error || !tokenHash) {
-      return genericOk
-    }
-
-    const resetUrl = `${SITE_URL}/auth/confirm?token_hash=${encodeURIComponent(
-      tokenHash
-    )}&type=recovery&next=${encodeURIComponent('/auth/reset-password')}`
-
-    if (!isEmailConfigured()) {
-      captureException(
-        new Error('[auth/recover] RESEND not configured — reset email not sent')
-      )
-      return genericOk
-    }
-
-    const firstName =
-      (data?.user?.user_metadata?.first_name as string | undefined) ?? undefined
-    const { subject, html, text } = passwordResetEmail(
-      { resetUrl, patientName: firstName },
-      locale
-    )
-    const result = await sendEmail({
-      to: email,
-      subject,
-      html,
-      text,
-      tags: [{ name: 'type', value: 'password_reset' }],
-    })
-    if (!result.success) {
-      captureException(
-        new Error(`[auth/recover] reset email send failed: ${result.error}`)
-      )
-    }
-
-    return genericOk
-  } catch (err) {
-    captureException(err instanceof Error ? err : new Error(String(err)))
-    return genericOk
-  }
+  return NextResponse.json({ success: true }, { status: 200 })
 }
