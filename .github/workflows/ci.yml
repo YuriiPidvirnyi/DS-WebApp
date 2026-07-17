@@ -5,6 +5,9 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+  # Manual re-runs of the same commit — used to sample runner-dependent
+  # failures (e2e prod-server spin reproduces only on some runners)
+  workflow_dispatch:
 
 # Cancel superseded runs on the same branch
 concurrency:
@@ -106,6 +109,7 @@ jobs:
             NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:3000/supabase-mock \
             NEXT_PUBLIC_SUPABASE_ANON_KEY=test-anon-key \
             npm start > server.log 2>&1 &
+          grep -m1 'model name' /proc/cpuinfo; nproc; uname -r
           npx wait-on tcp:127.0.0.1:3000 --timeout 120000
           curl -4 -sS -o /dev/null -m 15 -w "probe GET / via 127.0.0.1 -> %{http_code} in %{time_total}s\n" http://127.0.0.1:3000/ || true
           curl -6 -sS -o /dev/null -m 15 -w "probe GET / via [::1] -> %{http_code} in %{time_total}s\n" "http://[::1]:3000/" || true
@@ -167,6 +171,7 @@ jobs:
             NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:3000/supabase-mock \
             NEXT_PUBLIC_SUPABASE_ANON_KEY=test-anon-key \
             npm start > server.log 2>&1 &
+          grep -m1 'model name' /proc/cpuinfo; nproc; uname -r
           npx wait-on tcp:127.0.0.1:3000 --timeout 120000
           curl -4 -sS -o /dev/null -m 15 -w "probe GET / via 127.0.0.1 -> %{http_code} in %{time_total}s\n" http://127.0.0.1:3000/ || true
           curl -6 -sS -o /dev/null -m 15 -w "probe GET / via [::1] -> %{http_code} in %{time_total}s\n" "http://[::1]:3000/" || true
