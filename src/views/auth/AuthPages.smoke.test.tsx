@@ -229,33 +229,43 @@ describe('Auth pages smoke', () => {
     await waitFor(() => expect(replaceMock).toHaveBeenCalledWith('/cabinet'))
   })
 
-  it('verifies token-based callback params and redirects', async () => {
+  it('routes a token_hash callback through the click-gated /auth/confirm', async () => {
+    // token_hash arriving at the auto-verifying callback (old template, cached
+    // link) must NOT be consumed on load — it is forwarded to the click gate.
     currentSearchParams = new URLSearchParams(
       'token=test-token&type=recovery&next=%2Fauth%2Freset-password'
     )
 
     const verifyOtp = vi.fn().mockResolvedValue({ error: null })
-    const getSession = vi.fn().mockResolvedValue({
-      data: { session: { user: { id: 'user-1' } } },
-    })
-
     createClientMock.mockReturnValue({
-      auth: {
-        verifyOtp,
-        getSession,
-      },
+      auth: { verifyOtp },
     } as unknown as ReturnType<typeof createClient>)
 
     render(<AuthCallbackPage />)
 
     await waitFor(() =>
-      expect(verifyOtp).toHaveBeenCalledWith({
-        token_hash: 'test-token',
-        type: 'recovery',
-      })
+      expect(replaceMock).toHaveBeenCalledWith(
+        '/auth/confirm?token_hash=test-token&type=recovery&next=%2Fauth%2Freset-password'
+      )
     )
+    // crucially, the token is NOT verified on load
+    expect(verifyOtp).not.toHaveBeenCalled()
+  })
+
+  it('sends an expired callback link to forgot-password', async () => {
+    currentSearchParams = new URLSearchParams(
+      'error=access_denied&error_code=otp_expired'
+    )
+    createClientMock.mockReturnValue({
+      auth: { verifyOtp: vi.fn() },
+    } as unknown as ReturnType<typeof createClient>)
+
+    render(<AuthCallbackPage />)
+
     await waitFor(() =>
-      expect(replaceMock).toHaveBeenCalledWith('/auth/reset-password')
+      expect(replaceMock).toHaveBeenCalledWith(
+        '/auth/forgot-password?expired=1'
+      )
     )
   })
 
