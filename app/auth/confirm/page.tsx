@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useMemo, useState } from 'react'
+import { Suspense, useEffect, useMemo, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
@@ -72,9 +72,26 @@ function ConfirmInner() {
 
   // Supabase links carry `token_hash`; `token` is the legacy param name for the
   // same value in older templates — accept both, verify via verifyOtp below.
+  // Read via useSearchParams (unaffected by the URL scrub below).
   const tokenHash = searchParams.get('token_hash') ?? searchParams.get('token')
   const type = (searchParams.get('type') as EmailOtpType | null) ?? null
   const nextParam = searchParams.get('next')
+
+  // Scrub the recovery token out of the visible URL on mount, so it can't leak
+  // to analytics page-view tracking or the Referer header while the user reads
+  // the confirmation page. useSearchParams keeps the captured values above;
+  // window.history.replaceState does not disturb them or trigger a navigation.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const current = new URLSearchParams(window.location.search)
+    if (current.get('token_hash') || current.get('token')) {
+      window.history.replaceState(
+        window.history.state,
+        '',
+        window.location.pathname
+      )
+    }
+  }, [])
   const safeNext = useMemo(() => {
     if (isSafeInternalPath(nextParam)) return nextParam as string
     return (type && NEXT_BY_TYPE[type]) || '/cabinet'
