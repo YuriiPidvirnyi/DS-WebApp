@@ -1,11 +1,13 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { ClipboardList, RefreshCw } from 'lucide-react'
+import { ClipboardList, Gift, RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button, EmptyState, ErrorState, Input, Select } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { createClient } from '@/lib/supabase/client'
+import { redeemWelcomeGift } from '@/services/promo'
+import { APIError } from '@/services/api'
 import { captureException } from '@/utils/sentry'
 import { formatDateTime, getStatusTone } from './utils'
 
@@ -29,6 +31,7 @@ export interface IntakeRow {
   status: string
   admin_notes: string | null
   created_at: string
+  promo_redemptions: { id: string; redeemed_at: string }[] | null
 }
 
 const STATUS_OPTIONS = ['new', 'reviewed', 'linked']
@@ -61,7 +64,9 @@ export default function AdminIntakePage() {
       setError(null)
 
       try {
-        let query = supabase.from('patient_intake_forms').select('*')
+        let query = supabase
+          .from('patient_intake_forms')
+          .select('*, promo_redemptions(id, redeemed_at)')
 
         if (statusFilter !== 'all') {
           query = query.eq('status', statusFilter)
@@ -114,6 +119,49 @@ export default function AdminIntakePage() {
   const getStatusLabel = useCallback(
     (status: string) => t(`admin.intakeStatuses.${status}`),
     [t]
+  )
+
+  const redeemGift = useCallback(
+    async (row: IntakeRow) => {
+      if (!window.confirm(t('admin.intakePage.gift.confirm'))) return
+
+      setIsUpdatingId(row.id)
+      setError(null)
+      try {
+        const res = await redeemWelcomeGift(row.id)
+        if (!res.success || !res.data) {
+          throw new Error(res.error || t('admin.intakePage.gift.error'))
+        }
+        const redemption = res.data
+        setRows(prev =>
+          prev.map(r =>
+            r.id === row.id
+              ? {
+                  ...r,
+                  promo_redemptions: [
+                    { id: redemption.id, redeemed_at: redemption.redeemed_at },
+                  ],
+                }
+              : r
+          )
+        )
+      } catch (redeemError) {
+        if (redeemError instanceof APIError && redeemError.statusCode === 409) {
+          setError(t('admin.intakePage.gift.already'))
+          await loadIntakes(true)
+          return
+        }
+        captureException(
+          redeemError instanceof Error
+            ? redeemError
+            : new Error(String(redeemError))
+        )
+        setError(t('admin.intakePage.gift.error'))
+      } finally {
+        setIsUpdatingId(null)
+      }
+    },
+    [loadIntakes, t]
   )
 
   const patchIntake = useCallback(
@@ -280,6 +328,26 @@ export default function AdminIntakePage() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
+                  {row.promo_redemptions?.length ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1.5 text-xs font-medium text-green-700">
+                      <Gift className="h-3.5 w-3.5" />
+                      {t('admin.intakePage.gift.given', {
+                        date: formatDateTime(
+                          row.promo_redemptions[0].redeemed_at
+                        ),
+                      })}
+                    </span>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => void redeemGift(row)}
+                      disabled={isUpdatingId === row.id}
+                    >
+                      <Gift className="mr-1.5 h-4 w-4" />
+                      {t('admin.intakePage.gift.give')}
+                    </Button>
+                  )}
                   <Select
                     selectSize="dense"
                     value={row.status}

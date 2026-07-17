@@ -77,6 +77,9 @@ export const PERMISSIONS = [
   // Chat
   'chat:view',
   'chat:reply',
+
+  // Promo campaigns (welcome-pack gift redemption at reception)
+  'promo:redeem',
 ] as const
 
 export type Permission = (typeof PERMISSIONS)[number]
@@ -110,6 +113,7 @@ export const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
     'users:manage',
     'chat:view',
     'chat:reply',
+    'promo:redeem',
   ],
 
   admin: [
@@ -135,6 +139,7 @@ export const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
     'settings:edit',
     'chat:view',
     'chat:reply',
+    'promo:redeem',
   ],
 
   receptionist: [
@@ -148,6 +153,7 @@ export const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
     'treatments:view_all',
     'chat:view',
     'chat:reply',
+    'promo:redeem',
   ],
 
   doctor: [
