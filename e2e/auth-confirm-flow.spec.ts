@@ -125,8 +125,10 @@ test.describe('Click-gated /auth/confirm (prefetch-proof reset)', () => {
         body: JSON.stringify(mockUser),
       })
     })
+    let logoutCalls = 0
     await page.route('**/auth/v1/logout**', async route => {
       if (await fulfillOptions(route)) return
+      logoutCalls += 1
       await route.fulfill({ status: 204, headers: jsonHeaders, body: '' })
     })
 
@@ -146,6 +148,10 @@ test.describe('Click-gated /auth/confirm (prefetch-proof reset)', () => {
     await expect(
       page.getByText('Пароль оновлено. Увійдіть з новим паролем.')
     ).toBeVisible()
+    // The recovery session must be terminated before landing on login —
+    // reaching the flash without a sign-out call would leave the user
+    // silently authenticated with the one-time recovery session.
+    expect(logoutCalls).toBe(1)
   })
 
   test('rejects an external `next` and falls back to the reset page', async ({
@@ -193,13 +199,20 @@ test.describe('Click-gated /auth/confirm (prefetch-proof reset)', () => {
   }) => {
     const verifyCalls = await mockVerify(page)
 
-    await page.goto('/auth/confirm')
-
-    await expect(
-      page.getByText(
-        'Посилання пошкоджене або неповне. Запросіть нове посилання.'
-      )
-    ).toBeVisible()
+    // Fully empty and both partial combinations: the gate requires
+    // token_hash AND type, anything less is an invalid link.
+    for (const url of [
+      '/auth/confirm',
+      '/auth/confirm?token_hash=only-token',
+      '/auth/confirm?type=recovery',
+    ]) {
+      await page.goto(url)
+      await expect(
+        page.getByText(
+          'Посилання пошкоджене або неповне. Запросіть нове посилання.'
+        )
+      ).toBeVisible()
+    }
     expect(verifyCalls()).toBe(0)
   })
 })
