@@ -89,7 +89,9 @@ jobs:
         run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: '1'
-          NEXT_PUBLIC_SUPABASE_URL: http://localhost:3000/supabase-mock
+          # 127.0.0.1 (not localhost): runner image 20260714+ resolves localhost
+          # to ::1 where connections hang — every page.goto timed out (PR #359)
+          NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:3000/supabase-mock
           NEXT_PUBLIC_SUPABASE_ANON_KEY: test-anon-key
           # Cap Node heap during build to leave room for subsequent server + Chromium
           NODE_OPTIONS: --max-old-space-size=3072
@@ -101,14 +103,26 @@ jobs:
         run: |
           PORT=3000 NEXT_TELEMETRY_DISABLED=1 \
             NODE_OPTIONS=--max-old-space-size=4096 \
-            NEXT_PUBLIC_SITE_URL=http://localhost:3000 \
-            NEXT_PUBLIC_SUPABASE_URL=http://localhost:3000/supabase-mock \
+            NEXT_PUBLIC_SITE_URL=http://127.0.0.1:3000 \
+            NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:3000/supabase-mock \
             NEXT_PUBLIC_SUPABASE_ANON_KEY=test-anon-key \
-            npm start &
-          npx wait-on tcp:3000 --timeout 120000
+            npm start > server.log 2>&1 &
+          npx wait-on tcp:127.0.0.1:3000 --timeout 120000
+          curl -4 -sS -o /dev/null -m 15 -w "probe GET / via 127.0.0.1 -> %{http_code} in %{time_total}s\n" http://127.0.0.1:3000/ || true
+          curl -6 -sS -o /dev/null -m 15 -w "probe GET / via [::1] -> %{http_code} in %{time_total}s\n" "http://[::1]:3000/" || true
 
       - name: Playwright UI smoke
         run: npm run test:e2e:ui-smoke
+        env:
+          PW_BASE_URL: http://127.0.0.1:3000
+
+      - name: Server diagnostics on failure
+        if: failure()
+        run: |
+          echo "--- port 3000 listeners"; ss -tlnp | grep 3000 || true
+          echo "--- memory"; free -m || true
+          echo "--- top processes by RSS"; ps aux --sort=-rss | head -12 || true
+          echo "--- server.log tail"; tail -n 200 server.log || true
 
   e2e-feature-suites:
     name: E2E feature suites (booking, cabinet, admin RBAC, cron)
@@ -138,7 +152,9 @@ jobs:
         run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: '1'
-          NEXT_PUBLIC_SUPABASE_URL: http://localhost:3000/supabase-mock
+          # 127.0.0.1 (not localhost): runner image 20260714+ resolves localhost
+          # to ::1 where connections hang — every page.goto timed out (PR #359)
+          NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:3000/supabase-mock
           NEXT_PUBLIC_SUPABASE_ANON_KEY: test-anon-key
           NODE_OPTIONS: --max-old-space-size=3072
 
@@ -149,14 +165,26 @@ jobs:
         run: |
           PORT=3000 NEXT_TELEMETRY_DISABLED=1 \
             NODE_OPTIONS=--max-old-space-size=4096 \
-            NEXT_PUBLIC_SITE_URL=http://localhost:3000 \
-            NEXT_PUBLIC_SUPABASE_URL=http://localhost:3000/supabase-mock \
+            NEXT_PUBLIC_SITE_URL=http://127.0.0.1:3000 \
+            NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:3000/supabase-mock \
             NEXT_PUBLIC_SUPABASE_ANON_KEY=test-anon-key \
-            npm start &
-          npx wait-on tcp:3000 --timeout 120000
+            npm start > server.log 2>&1 &
+          npx wait-on tcp:127.0.0.1:3000 --timeout 120000
+          curl -4 -sS -o /dev/null -m 15 -w "probe GET / via 127.0.0.1 -> %{http_code} in %{time_total}s\n" http://127.0.0.1:3000/ || true
+          curl -6 -sS -o /dev/null -m 15 -w "probe GET / via [::1] -> %{http_code} in %{time_total}s\n" "http://[::1]:3000/" || true
 
       - name: Run feature E2E suites
         run: npx playwright test e2e/cron-notifications.spec.ts e2e/booking-flow.spec.ts e2e/cabinet-flows.spec.ts e2e/admin-rbac.spec.ts --config=playwright.auth.config.ts
+        env:
+          PW_BASE_URL: http://127.0.0.1:3000
+
+      - name: Server diagnostics on failure
+        if: failure()
+        run: |
+          echo "--- port 3000 listeners"; ss -tlnp | grep 3000 || true
+          echo "--- memory"; free -m || true
+          echo "--- top processes by RSS"; ps aux --sort=-rss | head -12 || true
+          echo "--- server.log tail"; tail -n 200 server.log || true
 
 # NOTE: The production build job has been removed.
 # Vercel's GitHub integration already builds and checks every PR —

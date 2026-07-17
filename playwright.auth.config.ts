@@ -1,7 +1,10 @@
 import { defineConfig, devices } from '@playwright/test'
 
 const port = 3000
-const baseURL = `http://localhost:${port}`
+// CI pins the base URL to 127.0.0.1 (PW_BASE_URL): on GitHub runner image
+// 20260714+ connections to `localhost` resolve to ::1 and hang/refuse, so
+// every page.goto timed out while the server sat idle. Locally nothing changes.
+const baseURL = process.env.PW_BASE_URL ?? `http://localhost:${port}`
 
 export default defineConfig({
   testDir: './e2e',
