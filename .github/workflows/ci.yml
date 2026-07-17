@@ -108,6 +108,7 @@ jobs:
 
       - name: Start server and wait for ready
         run: |
+          mkdir -p /tmp/node-reports
           PORT=3000 NEXT_TELEMETRY_DISABLED=1 \
             UV_USE_IO_URING=0 \
             NODE_OPTIONS="--max-old-space-size=1024 --report-on-fatalerror --report-directory=/tmp/node-reports" \
@@ -177,6 +178,7 @@ jobs:
 
       - name: Start server and wait for ready
         run: |
+          mkdir -p /tmp/node-reports
           PORT=3000 NEXT_TELEMETRY_DISABLED=1 \
             UV_USE_IO_URING=0 \
             NODE_OPTIONS="--max-old-space-size=1024 --report-on-fatalerror --report-directory=/tmp/node-reports" \
