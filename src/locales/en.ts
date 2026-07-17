@@ -1837,6 +1837,11 @@ const en = {
         marketingConsent: 'Marketing consent',
         adminNote: 'Note',
         notesPlaceholder: 'Add a note…',
+        formTypes: {
+          adult: 'Adult form',
+          child: 'Child form',
+        },
+        print: 'Print / PDF',
       },
       gift: {
         give: 'Give the gift',
@@ -1851,6 +1856,8 @@ const en = {
         loadFailed: 'Failed to load intake forms',
         updateFailed: 'Failed to update the intake form',
       },
+      blankAdult: 'Blank (adult)',
+      blankChild: 'Blank (child)',
     },
     serviceStatuses: {
       active: 'active',
@@ -2749,6 +2756,7 @@ const en = {
       dashboard: 'Dashboard',
       appointments: 'My Appointments',
       treatments: 'Treatments',
+      anketa: 'Questionnaires',
       payments: 'Payments',
       profile: 'Profile',
       settings: 'Settings',
@@ -2756,6 +2764,39 @@ const en = {
       navigation: 'Cabinet navigation',
       openMenu: 'Open menu',
       backToSite: 'Back to site',
+    },
+    anketa: {
+      title: 'Patient questionnaires',
+      subtitle:
+        'Fill in the medical questionnaire online — it saves time at your visit. Only your doctor sees the data.',
+      fillAdult: 'Fill in the form (adult)',
+      fillChild: 'Fill in the form (child)',
+      submittedTitle: 'Submitted questionnaires',
+      empty: "You haven't submitted any questionnaires yet",
+      types: {
+        basic: 'Short',
+        adult: 'Adult',
+        child: 'Child',
+      },
+      adultTitle: 'Patient questionnaire',
+      childTitle: 'Patient questionnaire (child)',
+      back: 'Back',
+      personal: 'Personal details',
+      childPersonal: "Child's details",
+      consentAdult:
+        'I confirm the information provided is accurate and consent to the processing of my personal data',
+      consentChild:
+        "As the child's legal representative, I confirm the information provided is accurate and consent to the processing of personal data",
+      submit: 'Submit questionnaire',
+      yes: 'Yes',
+      no: 'No',
+      loading: 'Loading...',
+      blanksTitle: 'Paper blanks (PDF)',
+      blankAdult: 'Adult questionnaire',
+      blankChild: 'Child questionnaire',
+      errors: {
+        submitFailed: 'Failed to submit the questionnaire. Please try again.',
+      },
     },
     treatments: {
       title: 'Treatments',

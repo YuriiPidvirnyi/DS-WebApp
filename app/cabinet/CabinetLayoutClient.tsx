@@ -9,6 +9,7 @@ import {
   Calendar,
   User,
   FileText,
+  ClipboardList,
   Menu,
   X,
   LogOut,
@@ -46,6 +47,11 @@ const navigation: NavItem[] = [
     nameKey: 'cabinet.sidebar.treatments',
     href: '/cabinet/treatments',
     icon: <FileText className="w-5 h-5" />,
+  },
+  {
+    nameKey: 'cabinet.sidebar.anketa',
+    href: '/cabinet/anketa',
+    icon: <ClipboardList className="w-5 h-5" />,
   },
   {
     nameKey: 'cabinet.sidebar.payments',

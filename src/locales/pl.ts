@@ -1843,6 +1843,11 @@ const pl = {
         marketingConsent: 'Zgoda marketingowa',
         adminNote: 'Notatka',
         notesPlaceholder: 'Dodaj notatkę…',
+        formTypes: {
+          adult: 'Ankieta dla dorosłych',
+          child: 'Ankieta dla dziecka',
+        },
+        print: 'Drukuj / PDF',
       },
       gift: {
         give: 'Wydaj prezent',
@@ -1856,6 +1861,8 @@ const pl = {
         loadFailed: 'Nie udało się załadować ankiet',
         updateFailed: 'Nie udało się zaktualizować ankiety',
       },
+      blankAdult: 'Formularz (dorosły)',
+      blankChild: 'Formularz (dziecko)',
     },
     serviceStatuses: {
       active: 'active',
@@ -2756,6 +2763,7 @@ const pl = {
       dashboard: 'Panel',
       appointments: 'Moje wizyty',
       treatments: 'Leczenie',
+      anketa: 'Ankiety',
       payments: 'Płatności',
       profile: 'Profil',
       settings: 'Ustawienia',
@@ -2763,6 +2771,39 @@ const pl = {
       navigation: 'Nawigacja gabinetu',
       openMenu: 'Otwórz menu',
       backToSite: 'Na stronę',
+    },
+    anketa: {
+      title: 'Ankiety pacjenta',
+      subtitle:
+        'Wypełnij ankietę medyczną online — zaoszczędzisz czas podczas wizyty. Dane widzi tylko Twój lekarz.',
+      fillAdult: 'Wypełnij ankietę (dorosły)',
+      fillChild: 'Wypełnij ankietę (dziecko)',
+      submittedTitle: 'Wypełnione ankiety',
+      empty: 'Nie wypełniono jeszcze żadnej ankiety',
+      types: {
+        basic: 'Krótka',
+        adult: 'Dla dorosłych',
+        child: 'Dla dziecka',
+      },
+      adultTitle: 'Ankieta pacjenta',
+      childTitle: 'Ankieta pacjenta (dziecko)',
+      back: 'Wstecz',
+      personal: 'Dane osobowe',
+      childPersonal: 'Dane dziecka',
+      consentAdult:
+        'Potwierdzam prawdziwość podanych danych i wyrażam zgodę na przetwarzanie danych osobowych',
+      consentChild:
+        'Jako przedstawiciel ustawowy dziecka potwierdzam prawdziwość podanych danych i wyrażam zgodę na przetwarzanie danych osobowych',
+      submit: 'Wyślij ankietę',
+      yes: 'Tak',
+      no: 'Nie',
+      loading: 'Ładowanie...',
+      blanksTitle: 'Formularze papierowe (PDF)',
+      blankAdult: 'Ankieta dla dorosłych',
+      blankChild: 'Ankieta dla dziecka',
+      errors: {
+        submitFailed: 'Nie udało się wysłać ankiety. Spróbuj ponownie.',
+      },
     },
     treatments: {
       title: 'Leczenie',

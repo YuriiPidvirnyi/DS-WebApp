@@ -53,8 +53,15 @@ CREATE INDEX idx_intake_patient ON public.patient_intake_forms (patient_id);
 
 ALTER TABLE public.patient_intake_forms ENABLE ROW LEVEL SECURITY;
 
+-- Guests insert with patient_id NULL; signed-in patients may only link a row
+-- to THEMSELVES. WITH CHECK (true) would let anyone holding the public anon
+-- key plant medical data against an arbitrary patient_id via PostgREST.
 CREATE POLICY "intake_insert_public" ON public.patient_intake_forms
-  FOR INSERT WITH CHECK (true);
+  FOR INSERT WITH CHECK (patient_id IS NULL OR patient_id = auth.uid());
+
+-- Patients see their own questionnaires in the cabinet
+CREATE POLICY "intake_own_read" ON public.patient_intake_forms
+  FOR SELECT USING (patient_id = auth.uid());
 
 CREATE POLICY "intake_admin_all" ON public.patient_intake_forms
   FOR ALL USING (public.is_admin())

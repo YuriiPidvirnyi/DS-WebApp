@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { ClipboardList, Gift, RefreshCw } from 'lucide-react'
+import { ClipboardList, Download, Gift, Printer, RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button, EmptyState, ErrorState, Input, Select } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
@@ -30,6 +30,7 @@ export interface IntakeRow {
   source: string
   status: string
   admin_notes: string | null
+  form_type: string | null
   created_at: string
   promo_redemptions: { id: string; redeemed_at: string }[] | null
 }
@@ -223,15 +224,33 @@ export default function AdminIntakePage() {
             {t('admin.intakePage.description')}
           </p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => void loadIntakes(true)}
-          isLoading={isRefreshing}
-        >
-          <RefreshCw className="mr-2 h-4 w-4" />
-          {t('admin.intakePage.refresh')}
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <a
+            href="/forms/anketa-adult.pdf"
+            download
+            className="inline-flex items-center gap-1.5 rounded-lg border border-dental-secondary-300 px-3 py-1.5 text-xs font-medium text-dental-text transition-colors hover:bg-dental-secondary-50"
+          >
+            <Download className="h-3.5 w-3.5" />
+            {t('admin.intakePage.blankAdult')}
+          </a>
+          <a
+            href="/forms/anketa-child.pdf"
+            download
+            className="inline-flex items-center gap-1.5 rounded-lg border border-dental-secondary-300 px-3 py-1.5 text-xs font-medium text-dental-text transition-colors hover:bg-dental-secondary-50"
+          >
+            <Download className="h-3.5 w-3.5" />
+            {t('admin.intakePage.blankChild')}
+          </a>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => void loadIntakes(true)}
+            isLoading={isRefreshing}
+          >
+            <RefreshCw className="mr-2 h-4 w-4" />
+            {t('admin.intakePage.refresh')}
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -325,6 +344,11 @@ export default function AdminIntakePage() {
                         })}
                       </span>
                     ) : null}
+                    {row.form_type === 'adult' || row.form_type === 'child' ? (
+                      <span className="inline-flex rounded-full bg-indigo-100 px-2 py-1 text-xs font-medium text-indigo-700">
+                        {t(`admin.intakePage.card.formTypes.${row.form_type}`)}
+                      </span>
+                    ) : null}
                     {row.patient_id ? (
                       <span className="inline-flex rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
                         {t('admin.intakePage.card.patientLinked')}
@@ -345,6 +369,15 @@ export default function AdminIntakePage() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
+                  <a
+                    href={`/admin/intake/${row.id}/print`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-dental-secondary-300 px-3 py-1.5 text-xs font-medium text-dental-text transition-colors hover:bg-dental-secondary-50"
+                  >
+                    <Printer className="h-3.5 w-3.5" />
+                    {t('admin.intakePage.card.print')}
+                  </a>
                   {row.promo_redemptions?.length ? (
                     <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1.5 text-xs font-medium text-green-700">
                       <Gift className="h-3.5 w-3.5" />

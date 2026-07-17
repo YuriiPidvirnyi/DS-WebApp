@@ -11,6 +11,7 @@ import {
 } from '@/lib/api-security'
 import { captureException } from '@/utils/sentry'
 import { intakeFormSchema } from '@/utils/validationSchemas'
+import { intakeFormFields } from '@/content/intake-form-definitions'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -53,6 +54,32 @@ const trimOrNull = (value: string | undefined): string | null => {
   return trimmed ? trimmed : null
 }
 
+const formTypeSchema = z.enum(['basic', 'adult', 'child']).default('basic')
+
+/** Answers are validated strictly against the digitized questionnaire fields. */
+function answersSchema(formType: 'adult' | 'child') {
+  const shape: Record<string, z.ZodTypeAny> = {}
+  for (const field of intakeFormFields(formType)) {
+    if (field.kind === 'yesno') {
+      shape[field.id] = z.enum(['', 'yes', 'no']).optional()
+    } else if (field.kind === 'scale') {
+      shape[field.id] = z
+        .number()
+        .int()
+        .min(field.min)
+        .max(field.max)
+        .nullable()
+        .optional()
+    } else {
+      shape[field.id] = z
+        .string()
+        .max(field.maxLength ?? 300)
+        .optional()
+    }
+  }
+  return z.object(shape).strict()
+}
+
 /** POST /api/intake — public patient intake questionnaire submission. */
 export async function POST(request: NextRequest) {
   if (!validateCSRF(request)) return csrfErrorResponse()
@@ -75,11 +102,27 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const cfToken = (rawBody as Record<string, unknown>).cf_turnstile_response as
-    | string
-    | undefined
-  const { valid: botOk } = await verifyTurnstileServer(cfToken, request)
-  if (!botOk) return turnstileInvalidResponse()
+  const supabase = await createClient()
+  if (!supabase) {
+    return NextResponse.json(
+      { success: false, error: 'Внутрішня помилка сервера' },
+      { status: 500 }
+    )
+  }
+
+  // Link to the patient row when the visitor is signed in (guests → null)
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  // Turnstile guards anonymous submissions; authenticated cabinet submissions
+  // are already gated by the session (and still CSRF + rate limited).
+  if (!user) {
+    const cfToken = (rawBody as Record<string, unknown>)
+      .cf_turnstile_response as string | undefined
+    const { valid: botOk } = await verifyTurnstileServer(cfToken, request)
+    if (!botOk) return turnstileInvalidResponse()
+  }
 
   const parseResult = intakeSchema.safeParse(rawBody)
   if (!parseResult.success) {
@@ -91,20 +134,32 @@ export async function POST(request: NextRequest) {
   }
   const body = parseResult.data
 
-  try {
-    const supabase = await createClient()
-    if (!supabase) {
+  const formTypeResult = formTypeSchema.safeParse(
+    (rawBody as Record<string, unknown>).formType ?? 'basic'
+  )
+  if (!formTypeResult.success) {
+    return NextResponse.json(
+      { success: false, error: 'Невірний тип анкети' },
+      { status: 400 }
+    )
+  }
+  const formType = formTypeResult.data
+
+  let answers: Record<string, unknown> | null = null
+  if (formType !== 'basic') {
+    const answersResult = answersSchema(formType).safeParse(
+      (rawBody as Record<string, unknown>).answers ?? {}
+    )
+    if (!answersResult.success) {
       return NextResponse.json(
-        { success: false, error: 'Внутрішня помилка сервера' },
-        { status: 500 }
+        { success: false, error: 'Невірні відповіді анкети' },
+        { status: 400 }
       )
     }
+    answers = answersResult.data
+  }
 
-    // Link to the patient row when the visitor is signed in (guests → null)
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
+  try {
     const { data: inserted, error: dbError } = await supabase
       .from('patient_intake_forms')
       .insert({
@@ -129,6 +184,10 @@ export async function POST(request: NextRequest) {
         marketing_consent: body.marketingConsent ?? false,
         promo_code: trimOrNull(body.promoCode),
         source: trimOrNull(body.source) ?? 'direct',
+        form_type: formType,
+        answers,
+        // Derived server-side — the client is not trusted for this
+        submitted_via: user ? 'cabinet' : 'public',
       })
       .select('id')
       .single()

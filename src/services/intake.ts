@@ -5,6 +5,8 @@ const ENDPOINTS = {
   create: '/intake',
 } as const
 
+export type IntakeAnswerValue = '' | 'yes' | 'no' | string | number | null
+
 export interface IntakeRequest {
   firstName: string
   lastName: string
@@ -21,6 +23,10 @@ export interface IntakeRequest {
   marketingConsent: boolean
   promoCode?: string
   source?: string
+  /** 'basic' (short promo form) | 'adult' | 'child' — full clinic анкети */
+  formType?: 'basic' | 'adult' | 'child'
+  /** Structured answers keyed by intake-form-definitions field ids */
+  answers?: Record<string, IntakeAnswerValue>
   cf_turnstile_response?: string
 }
 
