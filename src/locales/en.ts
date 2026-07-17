@@ -2556,6 +2556,7 @@ const en = {
       goHome: 'Go Home',
     },
     forgotPassword: {
+      expiredNotice: 'The link has expired. Enter your email to get a new one.',
       subtitle: 'Enter your email and we will send a password reset link.',
       emailLabel: 'Email',
       emailPlaceholder: 'your@email.com',
@@ -2586,6 +2587,28 @@ const en = {
         passwordsMismatch: 'Passwords do not match',
         passwordTooShort: 'Password must be at least 8 characters',
         generic: 'Unable to update password. Please try again.',
+      },
+    },
+    confirm: {
+      recovery: {
+        title: 'Password recovery',
+        description:
+          'Click the button below to confirm your request and set a new password.',
+        submit: 'Confirm and continue',
+      },
+      default: {
+        title: 'Confirmation',
+        description:
+          'Click the button below to confirm your request and continue.',
+        submit: 'Confirm',
+      },
+      verifying: 'Verifying the link...',
+      backToLogin: 'Back to login',
+      requestNewLink: 'Request a new link',
+      errors: {
+        invalidLink: 'The link is broken or incomplete. Request a new one.',
+        unavailable: 'The service is temporarily unavailable',
+        generic: 'The link is invalid or has expired. Request a new one.',
       },
     },
     callback: {

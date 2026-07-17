@@ -2566,6 +2566,7 @@ const pl = {
       goHome: 'Na stronę główną',
     },
     forgotPassword: {
+      expiredNotice: 'Link wygasł. Podaj adres e-mail, aby otrzymać nowy.',
       subtitle: 'Podaj email, a wyślemy link do zresetowania hasła.',
       emailLabel: 'Email',
       emailPlaceholder: 'twoj@email.com',
@@ -2597,6 +2598,28 @@ const pl = {
         passwordsMismatch: 'Hasła nie są zgodne',
         passwordTooShort: 'Hasło musi zawierać co najmniej 8 znaków',
         generic: 'Nie udało się zaktualizować hasła. Spróbuj ponownie.',
+      },
+    },
+    confirm: {
+      recovery: {
+        title: 'Odzyskiwanie hasła',
+        description:
+          'Kliknij przycisk poniżej, aby potwierdzić żądanie i ustawić nowe hasło.',
+        submit: 'Potwierdź i kontynuuj',
+      },
+      default: {
+        title: 'Potwierdzenie',
+        description:
+          'Kliknij przycisk poniżej, aby potwierdzić żądanie i kontynuować.',
+        submit: 'Potwierdź',
+      },
+      verifying: 'Weryfikujemy link...',
+      backToLogin: 'Powrót do logowania',
+      requestNewLink: 'Poproś o nowy link',
+      errors: {
+        invalidLink: 'Link jest uszkodzony lub niekompletny. Poproś o nowy.',
+        unavailable: 'Usługa jest chwilowo niedostępna',
+        generic: 'Link jest nieprawidłowy lub wygasł. Poproś o nowy.',
       },
     },
     callback: {

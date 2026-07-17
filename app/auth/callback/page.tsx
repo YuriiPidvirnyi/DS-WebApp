@@ -1,12 +1,13 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import type { EmailOtpType } from '@supabase/supabase-js'
 import Logo from '@/components/ui/Logo'
 import { createClient } from '@/lib/supabase/client'
+import { isSafeInternalPath } from '@/utils/security'
 
 const SESSION_CHECK_ATTEMPTS = 20
 const SESSION_CHECK_DELAY_MS = 400
@@ -27,6 +28,12 @@ export default function AuthCallbackPage() {
   const searchParams = useSearchParams()
   const { t, ready } = useTranslation()
   const [error, setError] = useState<string | null>(null)
+  // The email token/code is one-time. This effect's deps include `tx` (derived
+  // from react-i18next's `t`), and `t`'s identity changes when the en/pl bundle
+  // finishes lazy-loading — which would re-run the effect and try to consume the
+  // already-used token a second time, overwriting success with a spurious error.
+  // Guard so the consume+redirect runs at most once per mount.
+  const handledRef = useRef(false)
   const tx = useMemo(
     () => (key: string, fallback: string) => {
       const value = t(key)
@@ -43,7 +50,7 @@ export default function AuthCallbackPage() {
   const refreshTokenFromQuery = searchParams.get('refresh_token')
   const nextParam = searchParams.get('next')
   const safeNext = useMemo(
-    () => (nextParam && nextParam.startsWith('/') ? nextParam : '/cabinet'),
+    () => (isSafeInternalPath(nextParam) ? (nextParam as string) : '/cabinet'),
     [nextParam]
   )
 
@@ -51,6 +58,10 @@ export default function AuthCallbackPage() {
     if (!ready) {
       return
     }
+    if (handledRef.current) {
+      return
+    }
+    handledRef.current = true
 
     let cancelled = false
 
@@ -72,6 +83,31 @@ export default function AuthCallbackPage() {
       const hasCode = Boolean(code)
       const hasOtp = Boolean(resolvedTokenHash && callbackType)
       const hasSessionTokens = Boolean(accessToken && refreshToken)
+
+      // Expired/denied link → the friendly "request a new one" page.
+      const errorCode =
+        searchParams.get('error_code') ?? hashParams.get('error_code')
+      const errorKind = searchParams.get('error') ?? hashParams.get('error')
+      if (errorCode === 'otp_expired' || errorKind === 'access_denied') {
+        router.replace('/auth/forgot-password?expired=1')
+        return
+      }
+
+      // A raw token_hash reaching this auto-verifying page (old email template,
+      // cached link, bookmark) would be consumed on load — reproducing the very
+      // prefetch bug this change fixes. Route it through the click-gated page
+      // instead. The PKCE `code` / implicit-session paths below stay here: they
+      // are same-browser flows a scanner GET can't complete.
+      if (hasOtp && !hasCode && !hasSessionTokens) {
+        const params = new URLSearchParams()
+        params.set('token_hash', resolvedTokenHash as string)
+        params.set('type', callbackType as string)
+        if (isSafeInternalPath(nextParam))
+          params.set('next', nextParam as string)
+        router.replace(`/auth/confirm?${params.toString()}`)
+        return
+      }
+
       if (!hasCode && !hasOtp && !hasSessionTokens) {
         if (!cancelled) {
           setError(
@@ -90,6 +126,16 @@ export default function AuthCallbackPage() {
           )
         }
         return
+      }
+
+      // Scrub any auth material from the address bar so a page-view or Referer
+      // can't leak the code/tokens while the exchange is in flight.
+      if (typeof window !== 'undefined') {
+        window.history.replaceState(
+          window.history.state,
+          '',
+          window.location.pathname
+        )
       }
 
       if (hasSessionTokens) {
@@ -175,23 +221,22 @@ export default function AuthCallbackPage() {
       }
     }
 
-    void handleCallback()
+    // A rejected Supabase call (network/thrown, not resolved-with-error) must
+    // still surface a message rather than leaving the page on its spinner.
+    void handleCallback().catch(() => {
+      if (!cancelled) {
+        setError(tx('auth.callback.errors.generic', FALLBACK.errors.generic))
+      }
+    })
 
     return () => {
       cancelled = true
     }
-  }, [
-    code,
-    accessTokenFromQuery,
-    refreshTokenFromQuery,
-    ready,
-    router,
-    safeNext,
-    token,
-    tokenHash,
-    tx,
-    type,
-  ])
+    // Deliberately excludes tx/searchParams-derived values: the token is
+    // one-time and handledRef ensures a single run; re-running on `t` identity
+    // changes would double-consume it. See handledRef above.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready])
 
   if (!ready) {
     return (
@@ -224,7 +269,10 @@ export default function AuthCallbackPage() {
         <div className="bg-white shadow-soft rounded-2xl p-6 sm:p-8">
           {error ? (
             <div className="space-y-4">
-              <div className="p-3 bg-dental-error-light border border-red-200 rounded-xl text-dental-error-dark text-sm">
+              <div
+                role="alert"
+                className="p-3 bg-dental-error-light border border-red-200 rounded-xl text-dental-error-dark text-sm"
+              >
                 {error}
               </div>
               <Link
