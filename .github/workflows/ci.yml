@@ -110,7 +110,7 @@ jobs:
         run: |
           PORT=3000 NEXT_TELEMETRY_DISABLED=1 \
             UV_USE_IO_URING=0 \
-            NODE_OPTIONS=--max-old-space-size=4096 \
+            NODE_OPTIONS="--max-old-space-size=1024 --report-on-fatalerror --report-directory=/tmp/node-reports" \
             NEXT_PUBLIC_SITE_URL=http://127.0.0.1:3000 \
             NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:3000/supabase-mock \
             NEXT_PUBLIC_SUPABASE_ANON_KEY=test-anon-key \
@@ -132,6 +132,11 @@ jobs:
           echo "--- memory"; free -m || true
           echo "--- top processes by RSS"; ps aux --sort=-rss | head -12 || true
           echo "--- server.log tail"; tail -n 200 server.log || true
+          echo "--- node fatal-error report (JS stack at OOM)"
+          for f in /tmp/node-reports/report.*.json; do
+            [ -e "$f" ] || continue
+            jq '{trigger: .header.trigger, stack: .javascriptStack, heapTotal: .javascriptHeap.totalMemory, heapSpaces: (.javascriptHeap.heapSpaces | keys)}' "$f" || head -c 8000 "$f"
+          done
 
   e2e-feature-suites:
     name: E2E feature suites (booking, cabinet, admin RBAC, cron)
@@ -174,7 +179,7 @@ jobs:
         run: |
           PORT=3000 NEXT_TELEMETRY_DISABLED=1 \
             UV_USE_IO_URING=0 \
-            NODE_OPTIONS=--max-old-space-size=4096 \
+            NODE_OPTIONS="--max-old-space-size=1024 --report-on-fatalerror --report-directory=/tmp/node-reports" \
             NEXT_PUBLIC_SITE_URL=http://127.0.0.1:3000 \
             NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:3000/supabase-mock \
             NEXT_PUBLIC_SUPABASE_ANON_KEY=test-anon-key \
@@ -196,6 +201,11 @@ jobs:
           echo "--- memory"; free -m || true
           echo "--- top processes by RSS"; ps aux --sort=-rss | head -12 || true
           echo "--- server.log tail"; tail -n 200 server.log || true
+          echo "--- node fatal-error report (JS stack at OOM)"
+          for f in /tmp/node-reports/report.*.json; do
+            [ -e "$f" ] || continue
+            jq '{trigger: .header.trigger, stack: .javascriptStack, heapTotal: .javascriptHeap.totalMemory, heapSpaces: (.javascriptHeap.heapSpaces | keys)}' "$f" || head -c 8000 "$f"
+          done
 
 # NOTE: The production build job has been removed.
 # Vercel's GitHub integration already builds and checks every PR —
