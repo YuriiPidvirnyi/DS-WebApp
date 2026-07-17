@@ -79,7 +79,6 @@ jobs:
     name: E2E browser suites (non-blocking — runner infra broken, see PR #359)
     runs-on: ubuntu-latest
     needs: [test]
-    continue-on-error: true
 
     steps:
       - uses: actions/checkout@v7
@@ -122,13 +121,17 @@ jobs:
           npx wait-on tcp:127.0.0.1:3000 --timeout 120000
           curl -4 -sS -o /dev/null -m 15 -w "probe GET / -> %{http_code} in %{time_total}s\n" http://127.0.0.1:3000/ || true
 
+      # Step-level continue-on-error keeps the JOB green (a job-level flag
+      # still paints a red X on the PR) while the outcome drives the warning.
       - name: Browser E2E (UI smoke + booking + auth gates)
+        id: e2e
+        continue-on-error: true
         run: npx playwright test e2e/ui-form-controls.smoke.spec.ts e2e/booking-flow.spec.ts e2e/cabinet-flows.spec.ts e2e/admin-rbac.spec.ts --config=playwright.auth.config.ts
         env:
           PW_BASE_URL: http://127.0.0.1:3000
 
       - name: Server diagnostics on failure
-        if: failure()
+        if: steps.e2e.outcome == 'failure'
         run: |
           echo "--- server.log tail"; tail -n 60 server.log || true
           for f in /tmp/node-reports/report.*.json; do
@@ -137,7 +140,7 @@ jobs:
           done
 
       - name: Non-blocking notice
-        if: failure()
+        if: steps.e2e.outcome == 'failure'
         run: |
           echo "## ⚠️ E2E browser suites failed (non-blocking)" >> "$GITHUB_STEP_SUMMARY"
           echo "next start is currently broken on GitHub-hosted runners (native allocation loop → OOM, zero requests served)." >> "$GITHUB_STEP_SUMMARY"
