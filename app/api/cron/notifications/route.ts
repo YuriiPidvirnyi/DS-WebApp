@@ -99,7 +99,7 @@ async function processLowStockAlert(
     .join('')
 
   const html = `<div style="font-family:sans-serif;color:#2C3E42;max-width:600px">
-<h2 style="color:#5A8A94">${subject}</h2>
+<h2 style="color:#3f6f79">${subject}</h2>
 <p>${text.replace(/\n/g, '<br>')}</p>
 ${
   rows

@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next'
 import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
 import { AsyncState } from '@/components/ui'
-import { Card } from '@/components/ui'
 import i18n from '@/i18n/config'
 
 // Dynamically import heavy BookingForm component with loading fallback
@@ -32,20 +31,19 @@ export default function BookingPage() {
           </h1>
           <p className="text-lg text-dental-muted">{t('booking.subtitle')}</p>
         </div>
-        <Card variant="elevated" padding="lg">
-          <Suspense
-            fallback={
-              <AsyncState
-                variant="loading"
-                title={t('booking.loading.formTitle')}
-                message={t('booking.loading.stepsMessage')}
-                className="bg-white shadow-xs"
-              />
-            }
-          >
-            <BookingForm />
-          </Suspense>
-        </Card>
+        {/* Одна рамка: картку малює сама форма (знахідка 02 — без картки-в-картці) */}
+        <Suspense
+          fallback={
+            <AsyncState
+              variant="loading"
+              title={t('booking.loading.formTitle')}
+              message={t('booking.loading.stepsMessage')}
+              className="bg-white shadow-xs"
+            />
+          }
+        >
+          <BookingForm />
+        </Suspense>
       </div>
     </div>
   )

@@ -34,13 +34,13 @@ export default function EditableField({
 
   return (
     <div className={`relative ${className}`}>
-      <div className="text-gray-500 flex justify-between">
+      <div className="text-dental-muted flex justify-between">
         <span>{label}</span>
         {!isEditing && (
           <button
             type="button"
             onClick={onStartEdit}
-            className="text-gray-400 hover:text-dental-teal"
+            className="text-dental-muted hover:text-dental-teal"
             aria-label={t('common.edit')}
           >
             <PenSquare className="h-3.5 w-3.5" />
@@ -55,7 +55,7 @@ export default function EditableField({
             <button
               type="button"
               onClick={onCancel}
-              className="p-1 text-gray-500 hover:text-gray-700"
+              className="p-1 text-dental-muted hover:text-dental-dark"
               aria-label={t('common.cancel')}
             >
               <X className="h-4 w-4" />
@@ -71,7 +71,7 @@ export default function EditableField({
           </div>
         </div>
       ) : (
-        <div className="font-medium text-gray-900">{value}</div>
+        <div className="font-medium text-dental-dark">{value}</div>
       )}
     </div>
   )

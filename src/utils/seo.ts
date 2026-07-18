@@ -3,6 +3,7 @@
  * Note: sitemap and robots.txt are handled by app/sitemap.ts and app/robots.ts
  */
 import { getOpeningHoursSchemaStrings } from '@/config/clinicSchedule'
+import { CONTACT_INFO } from '@/utils/constants'
 import uk from '@/locales/uk'
 
 export interface Organization {
@@ -70,20 +71,20 @@ export function generateOrganizationSchema(): MedicalBusiness {
     name: uk.common.brandName,
     url: 'https://dentalstory.ua',
     logo: 'https://dentalstory.ua/logo.png',
-    telephone: '+380XXXXXXXXX',
-    email: 'info@dentalstory.ua',
+    telephone: CONTACT_INFO.phone,
+    email: CONTACT_INFO.email,
     address: {
       '@type': 'PostalAddress',
-      streetAddress: 'вул. Прикладна, 1',
-      addressLocality: 'Київ',
-      addressRegion: 'Київська область',
-      postalCode: '01001',
+      streetAddress: CONTACT_INFO.address.street,
+      addressLocality: CONTACT_INFO.address.city,
+      addressRegion: CONTACT_INFO.address.district,
+      postalCode: CONTACT_INFO.address.postalCode,
       addressCountry: 'UA',
     },
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: 50.4501,
-      longitude: 30.5234,
+      latitude: CONTACT_INFO.coordinates.lat,
+      longitude: CONTACT_INFO.coordinates.lng,
     },
     openingHours: getOpeningHoursSchemaStrings(),
     priceRange: '₴₴',
@@ -95,11 +96,7 @@ export function generateOrganizationSchema(): MedicalBusiness {
       'Implantology',
     ],
     acceptedPaymentMethod: ['Cash', 'CreditCard', 'BankTransfer'],
-    sameAs: [
-      'https://www.facebook.com/dentalstory',
-      'https://www.instagram.com/dentalstory',
-      'https://www.linkedin.com/company/dentalstory',
-    ],
+    sameAs: [CONTACT_INFO.social.facebook, CONTACT_INFO.social.instagram],
   }
 }
 

@@ -30,7 +30,7 @@ export default function BookingStepPersonal({
         <div>
           <label
             htmlFor="firstName"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-dental-dark mb-1"
           >
             {t('booking.fields.firstNameLabel')} *
           </label>
@@ -46,7 +46,7 @@ export default function BookingStepPersonal({
         <div>
           <label
             htmlFor="lastName"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-dental-dark mb-1"
           >
             {t('booking.fields.lastNameLabel')} *
           </label>
@@ -64,7 +64,7 @@ export default function BookingStepPersonal({
         <div>
           <label
             htmlFor="phone"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-dental-dark mb-1"
           >
             {t('booking.fields.phoneLabel')} *
           </label>
@@ -86,7 +86,7 @@ export default function BookingStepPersonal({
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-dental-dark mb-1"
           >
             {t('booking.fields.emailLabel')} *
           </label>
@@ -103,7 +103,7 @@ export default function BookingStepPersonal({
         <div>
           <label
             htmlFor="dateOfBirth"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-dental-dark mb-1"
           >
             {t('booking.fields.dateOfBirthLabel')} *
           </label>

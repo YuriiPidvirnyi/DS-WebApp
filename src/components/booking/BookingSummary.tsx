@@ -54,10 +54,10 @@ export default function BookingSummary({
   return (
     <>
       {/* Summary grid */}
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">
+      <div className="bg-dental-secondary-50 border border-dental-secondary-200 rounded-xl p-4 mb-4">
+        <h3 className="text-sm font-semibold text-dental-dark mb-3">
           {t('booking.summary.title')}
-          <span className="ml-2 text-xs text-gray-500 font-normal">
+          <span className="ml-2 text-xs text-dental-muted font-normal">
             ({t('booking.summary.hint')})
           </span>
         </h3>
@@ -291,7 +291,7 @@ export default function BookingSummary({
         <div>
           <label
             htmlFor="reminderPreference"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-dental-dark mb-1"
           >
             {t('booking.fields.reminderPreferenceLabel')}
           </label>
@@ -315,17 +315,22 @@ export default function BookingSummary({
           </Select>
         </div>
 
-        <div className="flex items-start">
+        {/* Повнорядковий label згоди — тач-ціль ≥44px (знахідка 04) */}
+        <label
+          htmlFor="consent"
+          className="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border border-dental-secondary-200 px-4 py-2.5 transition-colors hover:bg-dental-primary-50 has-checked:border-dental-primary-400 has-checked:bg-dental-primary-50"
+        >
           <input
             id="consent"
             type="checkbox"
-            className="mt-1"
+            className="h-5 w-5 shrink-0 accent-dental-primary-600"
             {...register('consent')}
           />
-          <label htmlFor="consent" className="ml-2 text-sm text-gray-700">
-            {t('booking.fields.consentLabel')} *
-          </label>
-        </div>
+          <span className="text-sm text-dental-text">
+            {t('booking.fields.consentLabel')}{' '}
+            <span className="text-dental-error">*</span>
+          </span>
+        </label>
       </div>
     </>
   )

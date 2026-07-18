@@ -32,7 +32,7 @@ export function createICSEvent(options: {
     start,
     end,
     url = window.location.origin,
-    organizer = 'noreply@example.com',
+    organizer = 'noreply@dentalstory.ua',
   } = options
 
   const dtstamp = formatDateToICS(new Date())

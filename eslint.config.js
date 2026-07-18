@@ -154,6 +154,7 @@ export default tseslint.config(
       'src/views/admin/AdminStockPage.tsx',
       // Друковані/промо-документи навмисно україномовні (клінічні папери).
       'src/views/admin/AdminIntakePrintPage.tsx',
+      'src/views/admin/AdminTreatmentPrintPage.tsx',
       'src/views/promo/**',
       // Легасі-сторінки, заплановані на Ф-2.
       'app/cabinet/payments/page.tsx',
