@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { CreditCard } from 'lucide-react'
 import { EmptyState } from '@/components/ui/EmptyState'
-import { StatusBadge, type StatusTone } from '@/components/ui'
+import { StatusBadge, type StatusTone } from '@/components/ui/StatusBadge'
 import { WalletCards, type WalletCard } from '@/components/cabinet/WalletCards'
 
 type PaymentStatus =

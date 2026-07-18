@@ -151,8 +151,7 @@ export default function BookingForm() {
                   <div
                     className={clsx(
                       'flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-heading text-sm font-bold',
-                      i < step &&
-                        'bg-dental-primary-600 text-white',
+                      i < step && 'bg-dental-primary-600 text-white',
                       i === step && 'bg-dental-primary-600 text-white',
                       i === step + 1 &&
                         'border-2 border-dental-primary-200 bg-white text-dental-primary-500',
@@ -192,11 +191,7 @@ export default function BookingForm() {
           <div className="space-y-6 min-w-0">
             {/* Current step title — visually the stepper labels carry it;
                 kept sr-only and focused on step change for SR/keyboard users */}
-            <h3
-              ref={stepHeadingRef}
-              tabIndex={-1}
-              className="sr-only"
-            >
+            <h3 ref={stepHeadingRef} tabIndex={-1} className="sr-only">
               {t(stepTitleKeys[step])}
             </h3>
 

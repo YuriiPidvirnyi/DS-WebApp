@@ -189,9 +189,7 @@ export default function AdminTreatmentPrintPage({
             </div>
           </div>
           <div className="text-right text-[11px] leading-relaxed text-dental-muted">
-            <p>
-              dentalstory.ua · {CONTACT_INFO.email}
-            </p>
+            <p>dentalstory.ua · {CONTACT_INFO.email}</p>
             <p>
               {CONTACT_INFO.phone} · {CONTACT_INFO.address.city}
             </p>

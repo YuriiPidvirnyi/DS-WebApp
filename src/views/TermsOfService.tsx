@@ -48,7 +48,9 @@ const TermsOfService = () => {
           <h1 className="text-4xl font-bold text-dental-dark mb-4">
             {t('termsOfServicePage.title')}
           </h1>
-          <p className="text-dental-muted">{t('termsOfServicePage.lastUpdated')}</p>
+          <p className="text-dental-muted">
+            {t('termsOfServicePage.lastUpdated')}
+          </p>
         </div>
 
         {/* Content */}

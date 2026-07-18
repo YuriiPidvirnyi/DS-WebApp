@@ -123,7 +123,9 @@ export default function AdminStockCalcCardsPage() {
             </div>
           )}
           {error && (
-            <div className="p-4 text-sm text-status-error-700 bg-status-error-100">{error}</div>
+            <div className="p-4 text-sm text-status-error-700 bg-status-error-100">
+              {error}
+            </div>
           )}
           {!loading && !error && services.length === 0 && (
             <p className="text-center text-dental-text py-12">

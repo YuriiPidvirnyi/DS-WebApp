@@ -133,7 +133,9 @@ export default function LiveChat({ onClose }: LiveChatProps) {
           <button
             onClick={handleClose}
             className="w-11 h-11 bg-white/10 hover:bg-white/20 rounded-xl flex items-center justify-center transition-colors"
-            aria-label={t(isControlled ? 'chat.closeChat' : 'chat.minimizeChat')}
+            aria-label={t(
+              isControlled ? 'chat.closeChat' : 'chat.minimizeChat'
+            )}
           >
             {isControlled ? (
               <X className="h-5 w-5" />

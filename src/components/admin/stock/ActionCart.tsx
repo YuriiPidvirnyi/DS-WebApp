@@ -248,7 +248,9 @@ const ActionCart = forwardRef<ActionCartHandle, Props>(function ActionCart(
                     </div>
                   ))}
 
-                  {error && <p className="text-xs text-status-error-700">{error}</p>}
+                  {error && (
+                    <p className="text-xs text-status-error-700">{error}</p>
+                  )}
 
                   <button
                     type="button"

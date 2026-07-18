@@ -59,9 +59,12 @@ describe('Auth pages smoke', () => {
     fireEvent.change(screen.getByLabelText(t('auth.login.emailLabel') + '*'), {
       target: { value: 'test@example.com' },
     })
-    fireEvent.change(screen.getByLabelText(t('auth.login.passwordLabel') + '*'), {
-      target: { value: 'Secret123!' },
-    })
+    fireEvent.change(
+      screen.getByLabelText(t('auth.login.passwordLabel') + '*'),
+      {
+        target: { value: 'Secret123!' },
+      }
+    )
     fireEvent.click(
       screen.getByRole('button', { name: t('auth.login.submit') })
     )

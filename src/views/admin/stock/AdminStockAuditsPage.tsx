@@ -110,7 +110,9 @@ export default function AdminStockAuditsPage() {
           </div>
         )}
         {error && (
-          <div className="p-4 text-sm text-status-error-700 bg-status-error-100">{error}</div>
+          <div className="p-4 text-sm text-status-error-700 bg-status-error-100">
+            {error}
+          </div>
         )}
         {!loading && !error && audits.length === 0 && (
           <div className="flex flex-col items-center py-16 gap-3">

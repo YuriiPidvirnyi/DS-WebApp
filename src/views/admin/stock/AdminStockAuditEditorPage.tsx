@@ -152,7 +152,9 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
     return (
       <span
         className={
-          d > 0 ? 'text-status-success-700 font-medium' : 'text-status-error-700 font-medium'
+          d > 0
+            ? 'text-status-success-700 font-medium'
+            : 'text-status-error-700 font-medium'
         }
       >
         {d > 0 ? '+' : ''}

@@ -36,7 +36,9 @@ const PrivacyPolicy = () => {
           <h1 className="text-4xl font-bold text-dental-dark mb-4">
             {t('privacyPolicyPage.title')}
           </h1>
-          <p className="text-dental-muted">{t('privacyPolicyPage.lastUpdated')}</p>
+          <p className="text-dental-muted">
+            {t('privacyPolicyPage.lastUpdated')}
+          </p>
         </div>
 
         {/* Content */}
