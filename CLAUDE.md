@@ -222,7 +222,7 @@ CSS-first; there is no `tailwind.config.js`):
 
 #### Testing Strategy
 
-- Unit tests: Vitest + @testing-library/react (24 test files, 201 tests)
+- Unit tests: Vitest + @testing-library/react (37 test files, 308 tests)
 - Custom render wrapper in `src/test/test-utils.tsx`
 - Import `screen`, `waitFor` etc. directly from `@testing-library/react`, not from test-utils
 - E2E: Playwright (`e2e/` directory) — auth flows with mocked and live Supabase

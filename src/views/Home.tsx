@@ -125,8 +125,9 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
             isVisible={featuresVisible}
             className="text-center mb-16"
           >
+            {/* Кікер не дублює H2 (знахідка 06) */}
             <span className="inline-block text-sm font-semibold text-dental-primary-ink tracking-wider uppercase mb-4">
-              {t('home.features.title')}
+              {t('home.features.kicker')}
             </span>
             <h2
               id="features-heading"

@@ -450,6 +450,7 @@ const pl = {
       title: 'Dlaczego pacjenci wybierają Dental Story',
       subtitle:
         'Łączymy profesjonalizm, nowoczesne technologie i indywidualne podejście, aby osiągnąć najlepsze wyniki leczenia',
+      kicker: 'Atuty',
     },
     services: {
       title: 'Pełen zakres usług',
@@ -2419,6 +2420,7 @@ const pl = {
       editAria: 'Edytuj',
       deleteAria: 'Usuń',
       removeLineAria: 'Usuń wiersz',
+      printAria: 'Drukuj akt',
     },
     users: {
       title: 'Zarządzanie użytkownikami',
@@ -2681,6 +2683,12 @@ const pl = {
         unavailable: 'Usługa jest chwilowo niedostępna',
         generic: 'Link jest nieprawidłowy lub wygasł. Poproś o nowy.',
       },
+    },
+    split: {
+      welcomeBack: 'Witaj ponownie w Dental Story',
+      welcomeNew: 'Witaj w Dental Story',
+      subtitle:
+        'Twoje wizyty, historia leczenia i dokumenty — w jednym miejscu.',
     },
   },
   cabinet: {
@@ -3440,6 +3448,8 @@ const pl = {
           recommendation: 'PILNE! Zadzwoń natychmiast po wizytę nagłą',
         },
       },
+      notSpecified: 'nie podano',
+      durationHint: 'Wpływa na pilność wizyty',
     },
   },
   routeMeta: {

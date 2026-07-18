@@ -17,19 +17,31 @@ import {
   Activity,
   Sparkles,
   Shield,
+  Zap,
+  Thermometer,
+  CircleDot,
+  Droplet,
+  Wind,
+  MoveHorizontal,
+  Palette,
+  Apple,
+  Frown,
+  TriangleAlert,
+  type LucideIcon,
 } from 'lucide-react'
 
-const symptoms = [
-  { id: 'toothache', icon: '🦷' },
-  { id: 'sensitivity', icon: '❄️' },
-  { id: 'swelling', icon: '🔴' },
-  { id: 'bleeding', icon: '💉' },
-  { id: 'badBreath', icon: '💨' },
-  { id: 'looseTooth', icon: '↔️' },
-  { id: 'discoloration', icon: '🎨' },
-  { id: 'chewingPain', icon: '🍎' },
-  { id: 'jawPain', icon: '😣' },
-  { id: 'abscess', icon: '⚠️' },
+/* Lucide-іконки замість емодзі — одна іконографіка з рештою продукту (А2) */
+const symptoms: { id: string; icon: LucideIcon }[] = [
+  { id: 'toothache', icon: Zap },
+  { id: 'sensitivity', icon: Thermometer },
+  { id: 'swelling', icon: CircleDot },
+  { id: 'bleeding', icon: Droplet },
+  { id: 'badBreath', icon: Wind },
+  { id: 'looseTooth', icon: MoveHorizontal },
+  { id: 'discoloration', icon: Palette },
+  { id: 'chewingPain', icon: Apple },
+  { id: 'jawPain', icon: Frown },
+  { id: 'abscess', icon: TriangleAlert },
 ]
 
 type Urgency = 'low' | 'medium' | 'high' | 'emergency'
@@ -144,7 +156,8 @@ export default function SymptomCheckerPage() {
   const { t } = useTranslation()
 
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([])
-  const [painLevel, setPainLevel] = useState<number>(5)
+  // Слайдер болю стартує «не вказано» й не рахується, поки його не торкнулись (А4)
+  const [painLevel, setPainLevel] = useState<number | null>(null)
   const [duration, setDuration] = useState<string>('')
   const [showResults, setShowResults] = useState(false)
   const [expandedConditions, setExpandedConditions] = useState<string[]>([])
@@ -165,7 +178,7 @@ export default function SymptomCheckerPage() {
   }
 
   const analyzeSymptoms = () => {
-    if (selectedSymptoms.length === 0) return
+    if (selectedSymptoms.length === 0 || !duration) return
     setShowResults(true)
     try {
       trackEvent(AIEvent.SymptomCheckerCompleted, AnalyticsEventCategory.AI, {
@@ -180,10 +193,16 @@ export default function SymptomCheckerPage() {
     const urgencies = selectedSymptoms.map(
       s => symptomAnalysis[s]?.urgency || 'low'
     )
-    if (urgencies.includes('emergency') || painLevel >= 9) return 'emergency'
-    if (urgencies.includes('high') || painLevel >= 7) return 'high'
-    if (urgencies.includes('medium')) return 'medium'
-    return 'low'
+    if (urgencies.includes('emergency') || (painLevel ?? 0) >= 9)
+      return 'emergency'
+    let urgency: Urgency = 'low'
+    if (urgencies.includes('high') || (painLevel ?? 0) >= 7) urgency = 'high'
+    else if (urgencies.includes('medium')) urgency = 'medium'
+    // «Тривалість» впливає на терміновість (А3): затяжні симптоми — вище
+    if ((duration === 'weeks' || duration === 'months') && urgency !== 'high') {
+      urgency = urgency === 'medium' ? 'high' : 'medium'
+    }
+    return urgency
   }
 
   const overallUrgency = getOverallUrgency()
@@ -219,26 +238,39 @@ export default function SymptomCheckerPage() {
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {symptoms.map(symptom => (
-              <button
-                key={symptom.id}
-                onClick={() => toggleSymptom(symptom.id)}
-                aria-pressed={selectedSymptoms.includes(symptom.id)}
-                className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all duration-200 text-left ${
-                  selectedSymptoms.includes(symptom.id)
-                    ? 'border-dental-primary-500 bg-dental-primary-50 text-dental-primary-900'
-                    : 'border-dental-secondary-200 hover:border-dental-secondary-300 text-dental-text'
-                }`}
-              >
-                <span className="text-2xl">{symptom.icon}</span>
-                <span className="font-medium">
-                  {t(`ai.symptomChecker.symptoms.${symptom.id}`)}
-                </span>
-                {selectedSymptoms.includes(symptom.id) && (
-                  <CheckCircle className="w-5 h-5 text-dental-primary-ink ml-auto" />
-                )}
-              </button>
-            ))}
+            {symptoms.map(symptom => {
+              const selected = selectedSymptoms.includes(symptom.id)
+              const SymptomIcon = symptom.icon
+              return (
+                <button
+                  key={symptom.id}
+                  onClick={() => toggleSymptom(symptom.id)}
+                  aria-pressed={selected}
+                  className={`flex min-h-12 items-center gap-3 p-3.5 rounded-[14px] border-[1.5px] transition-all duration-200 text-left ${
+                    selected
+                      ? 'border-dental-primary-600 bg-dental-primary-50'
+                      : 'border-dental-secondary-300 bg-white hover:border-dental-primary-400'
+                  }`}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] transition-colors ${
+                      selected
+                        ? 'bg-dental-primary-600 text-white'
+                        : 'bg-status-neutral-100 text-dental-primary-600'
+                    }`}
+                  >
+                    <SymptomIcon className="h-5 w-5" />
+                  </span>
+                  <span className="font-medium text-dental-dark">
+                    {t(`ai.symptomChecker.symptoms.${symptom.id}`)}
+                  </span>
+                  {selected && (
+                    <CheckCircle className="w-5 h-5 text-dental-primary-ink ml-auto" />
+                  )}
+                </button>
+              )
+            })}
           </div>
         </div>
 
@@ -246,20 +278,31 @@ export default function SymptomCheckerPage() {
         <div className="bg-white rounded-2xl shadow-xs border border-dental-secondary-200 p-6 mb-8">
           <h2 className="text-xl font-semibold text-dental-dark mb-6">
             {t('ai.symptomChecker.painLevel')}:{' '}
-            <span className="text-dental-primary-ink">{painLevel}/10</span>
+            {painLevel === null ? (
+              <span className="text-dental-muted italic font-normal text-base">
+                {t('ai.symptomChecker.notSpecified')}
+              </span>
+            ) : (
+              <span className="text-dental-primary-ink">{painLevel}/10</span>
+            )}
           </h2>
 
           <input
             type="range"
             min="1"
             max="10"
-            value={painLevel}
+            value={painLevel ?? 1}
             onChange={e => setPainLevel(parseInt(e.target.value))}
-            className="w-full h-3 bg-dental-secondary-200 rounded-lg appearance-none cursor-pointer accent-dental-primary-600"
+            className={`w-full h-3 bg-dental-secondary-200 rounded-lg appearance-none cursor-pointer accent-dental-primary-600 ${painLevel === null ? 'opacity-60' : ''}`}
             aria-label={t('ai.symptomChecker.painLevel')}
             aria-valuemin={1}
             aria-valuemax={10}
-            aria-valuenow={painLevel}
+            aria-valuenow={painLevel ?? 1}
+            aria-valuetext={
+              painLevel === null
+                ? t('ai.symptomChecker.notSpecified')
+                : `${painLevel}/10`
+            }
           />
           <div className="flex justify-between text-sm text-dental-muted mt-2">
             <span>{t('ai.symptomChecker.scale.mild')}</span>
@@ -271,7 +314,10 @@ export default function SymptomCheckerPage() {
         {/* Duration */}
         <div className="bg-white rounded-2xl shadow-xs border border-dental-secondary-200 p-6 mb-8">
           <h2 className="text-xl font-semibold text-dental-dark mb-6">
-            {t('ai.symptomChecker.duration')}
+            {t('ai.symptomChecker.duration')}{' '}
+            <span className="text-dental-error" aria-hidden="true">
+              *
+            </span>
           </h2>
 
           <div className="flex flex-wrap gap-3">
@@ -280,22 +326,25 @@ export default function SymptomCheckerPage() {
                 key={option.value}
                 onClick={() => setDuration(option.value)}
                 aria-pressed={duration === option.value}
-                className={`px-4 py-2 rounded-lg border-2 font-medium transition-all ${
+                className={`min-h-11 px-4 py-2 rounded-lg border-2 font-medium transition-all ${
                   duration === option.value
-                    ? 'border-dental-primary-500 bg-dental-primary-50 text-dental-primary-900'
-                    : 'border-dental-secondary-200 hover:border-dental-secondary-300 text-dental-text'
+                    ? 'border-dental-primary-600 bg-dental-primary-600 text-white'
+                    : 'border-dental-secondary-300 hover:border-dental-primary-400 text-dental-muted'
                 }`}
               >
                 {t(option.labelKey)}
               </button>
             ))}
           </div>
+          <p className="mt-3 text-sm text-dental-muted">
+            {t('ai.symptomChecker.durationHint')}
+          </p>
         </div>
 
         {/* Analyze Button */}
         <button
           onClick={analyzeSymptoms}
-          disabled={selectedSymptoms.length === 0}
+          disabled={selectedSymptoms.length === 0 || !duration}
           className="w-full py-4 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:bg-dental-secondary-300 text-white font-semibold rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed mb-8"
         >
           <Sparkles className="w-5 h-5" />
@@ -399,7 +448,12 @@ export default function SymptomCheckerPage() {
                         className="w-full flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors"
                       >
                         <div className="flex items-center gap-3">
-                          <span className="text-xl">{symptom.icon}</span>
+                          <span
+                            aria-hidden="true"
+                            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-status-neutral-100 text-dental-primary-600"
+                          >
+                            <symptom.icon className="h-4 w-4" />
+                          </span>
                           <span className="font-medium text-dental-dark">
                             {t(`ai.symptomChecker.symptoms.${symptom.id}`)}
                           </span>

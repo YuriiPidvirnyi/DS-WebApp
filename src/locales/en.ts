@@ -449,6 +449,7 @@ const en = {
       title: 'Why Patients Choose Dental Story',
       subtitle:
         'We combine professionalism, modern technologies and an individual approach to achieve the best treatment results',
+      kicker: 'Why us',
     },
     services: {
       title: 'Full Range of Services',
@@ -2413,6 +2414,7 @@ const en = {
       editAria: 'Edit',
       deleteAria: 'Delete',
       removeLineAria: 'Remove line',
+      printAria: 'Print act',
     },
     users: {
       title: 'User Management',
@@ -2674,6 +2676,11 @@ const en = {
         unavailable: 'The service is temporarily unavailable',
         generic: 'The link is invalid or has expired. Request a new one.',
       },
+    },
+    split: {
+      welcomeBack: 'Welcome back to Dental Story',
+      welcomeNew: 'Welcome to Dental Story',
+      subtitle: 'Your visits, treatment history and documents — in one place.',
     },
   },
   cabinet: {
@@ -3422,6 +3429,8 @@ const en = {
           recommendation: 'URGENT! Call immediately for emergency appointment',
         },
       },
+      notSpecified: 'not specified',
+      durationHint: 'Affects booking urgency',
     },
   },
   routeMeta: {

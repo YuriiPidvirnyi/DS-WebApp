@@ -43,14 +43,15 @@ const ResponsiveContainer = dynamic(
   { ssr: false }
 )
 
+/* Тональна шкала бренду (Ф-1): 600/500/300/900 + secondary */
 const COLORS = [
-  '#5A8A94',
-  '#D1CAC0',
-  '#2C3E42',
-  '#AECED3',
-  '#8B6F5E',
-  '#6B9CA6',
-  '#E8E0D6',
+  '#3f6f79',
+  '#7ba8b0',
+  '#aeced3',
+  '#2a3c40',
+  '#d1cac0',
+  '#c5dde1',
+  '#ebe7e1',
 ]
 
 const CATEGORY_KEYS: Record<string, string> = {
@@ -290,7 +291,7 @@ export default function AdminInventoryAnalyticsPage() {
                     tick={{ fontSize: 11 }}
                   />
                   <Tooltip />
-                  <Bar dataKey="total" fill="#5A8A94" radius={[0, 4, 4, 0]} />
+                  <Bar dataKey="total" fill="#3f6f79" radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

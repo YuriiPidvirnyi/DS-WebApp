@@ -45,11 +45,25 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string
   helperText?: string
   fullWidth?: boolean
+  /** Провідна іконка всередині поля (макет 1j: спільний ui/Input з іконкою) */
+  icon?: React.ReactNode
+  /** Хвостовий елемент у безпечній зоні поля (наприклад, кнопка показу пароля) */
+  trailing?: React.ReactNode
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
-    { label, error, helperText, fullWidth = false, className, id, ...props },
+    {
+      label,
+      error,
+      helperText,
+      fullWidth = false,
+      icon,
+      trailing,
+      className,
+      id,
+      ...props
+    },
     ref
   ) => {
     const inputId = id || label?.toLowerCase().replace(/\s+/g, '-')
@@ -69,33 +83,52 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             className="block text-sm font-medium text-dental-text mb-2"
           >
             {label}
-            {props.required && <span className="text-dental-error ml-1">*</span>}
+            {props.required && (
+              <span className="text-dental-error ml-1">*</span>
+            )}
           </label>
         )}
 
-        <input
-          ref={ref}
-          id={inputId}
-          className={clsx(
-            baseStyles,
-            stateStyles,
-            fullWidth && 'w-full',
-            className
+        <div className={clsx('relative', fullWidth && 'w-full')}>
+          {icon && (
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-dental-primary-500"
+            >
+              {icon}
+            </span>
           )}
-          aria-invalid={error ? 'true' : 'false'}
-          aria-describedby={
-            error
-              ? `${inputId}-error`
-              : helperText
-                ? `${inputId}-helper`
-                : undefined
-          }
-          autoComplete={
-            props.autoComplete ||
-            getAutoCompleteFromType(props.type, props.name)
-          }
-          {...props}
-        />
+          <input
+            ref={ref}
+            id={inputId}
+            className={clsx(
+              baseStyles,
+              stateStyles,
+              fullWidth && 'w-full',
+              icon && 'pl-11',
+              trailing && 'pr-12',
+              className
+            )}
+            aria-invalid={error ? 'true' : 'false'}
+            aria-describedby={
+              error
+                ? `${inputId}-error`
+                : helperText
+                  ? `${inputId}-helper`
+                  : undefined
+            }
+            autoComplete={
+              props.autoComplete ||
+              getAutoCompleteFromType(props.type, props.name)
+            }
+            {...props}
+          />
+          {trailing && (
+            <span className="absolute right-2 top-1/2 -translate-y-1/2">
+              {trailing}
+            </span>
+          )}
+        </div>
 
         {error && (
           <p
@@ -152,7 +185,9 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             className="block text-sm font-medium text-dental-text mb-2"
           >
             {label}
-            {props.required && <span className="text-dental-error ml-1">*</span>}
+            {props.required && (
+              <span className="text-dental-error ml-1">*</span>
+            )}
           </label>
         )}
 
@@ -266,7 +301,9 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             className="block text-sm font-medium text-dental-text mb-2"
           >
             {label}
-            {props.required && <span className="text-dental-error ml-1">*</span>}
+            {props.required && (
+              <span className="text-dental-error ml-1">*</span>
+            )}
           </label>
         )}
 

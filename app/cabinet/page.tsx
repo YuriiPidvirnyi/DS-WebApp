@@ -238,37 +238,38 @@ export default function CabinetPage() {
 
       {/* Next Appointment Highlight OR Empty CTA */}
       {nextAppointment ? (
-        <div className="bg-linear-to-r from-dental-primary-600 to-dental-primary-700 rounded-2xl p-5 sm:p-6 text-white shadow-lg">
+        /* Плаский брендовий тінт замість єдиного в системі градієнта (1f, знахідка 20) */
+        <div className="bg-dental-primary-100 border border-dental-primary-200 rounded-md p-5 sm:p-6 text-dental-dark">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-start gap-4">
-              <div className="w-14 h-16 bg-white/20 rounded-xl flex flex-col items-center justify-center shrink-0">
-                <span className="text-[10px] text-white/70 font-medium uppercase leading-none">
+              <div className="w-14 h-16 bg-dental-primary-600 text-white rounded-md flex flex-col items-center justify-center shrink-0">
+                <span className="text-[10px] text-white/80 font-medium uppercase leading-none">
                   {getDayOfWeek(nextAppointment.appointment_date)}
                 </span>
-                <span className="text-lg font-bold leading-tight">
+                <span className="font-heading text-lg font-extrabold leading-tight">
                   {new Date(nextAppointment.appointment_date).getDate()}
                 </span>
-                <span className="text-[10px] text-white/80 leading-none">
+                <span className="text-[10px] text-white/80 uppercase leading-none">
                   {new Date(
                     nextAppointment.appointment_date
                   ).toLocaleDateString(dateLocale, { month: 'short' })}
                 </span>
               </div>
               <div>
-                <p className="text-white/70 text-xs font-medium uppercase tracking-wider mb-1">
+                <p className="text-dental-muted text-xs font-medium uppercase tracking-wider mb-1">
                   {t('cabinet.dashboard.nextAppointment')}
                 </p>
-                <h3 className="font-semibold text-lg">
+                <h3 className="font-semibold text-lg text-dental-dark">
                   {nextAppointment.services?.[0]?.name_uk ||
                     t('cabinet.consultation')}
                 </h3>
-                <p className="text-white/80 text-sm mt-0.5">
+                <p className="text-dental-text text-sm mt-0.5">
                   {nextAppointment.doctors?.[0]?.last_name}{' '}
                   {nextAppointment.doctors?.[0]?.first_name}
                   {nextAppointment.doctors?.[0]?.specialization &&
                     ` — ${nextAppointment.doctors[0].specialization}`}
                 </p>
-                <div className="flex items-center gap-1.5 mt-1.5 text-white/70 text-sm">
+                <div className="flex items-center gap-1.5 mt-1.5 text-dental-muted text-sm">
                   <Clock className="w-3.5 h-3.5" />
                   {nextAppointment.appointment_time.slice(0, 5)}
                 </div>
@@ -276,7 +277,7 @@ export default function CabinetPage() {
             </div>
             <Link
               href="/cabinet/appointments"
-              className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors shrink-0 focus:outline-hidden focus:ring-2 focus:ring-white/50"
+              className="inline-flex items-center gap-2 min-h-11 bg-white border border-dental-primary-200 text-dental-primary-ink hover:bg-dental-primary-50 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors shrink-0 focus:outline-hidden focus:ring-2 focus:ring-dental-primary-400"
             >
               {t('cabinet.dashboard.viewDetails')}
               <ChevronRight className="w-4 h-4" />

@@ -9,6 +9,7 @@ import {
   X,
   Phone,
   Mail,
+  Clock,
   User,
   LogIn,
   Calendar,
@@ -229,7 +230,8 @@ const Header = memo(() => {
             <div className="flex lg:hidden items-center gap-2">
               <Link
                 href="/booking"
-                className="flex items-center gap-1.5 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-4 py-2 rounded-full font-semibold text-sm transition-colors"
+                aria-label={t('buttons.bookAppointment')}
+                className="flex min-h-11 items-center gap-1.5 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-4 py-2 rounded-full font-semibold text-sm transition-colors"
                 style={nunitoFont}
               >
                 <Calendar className="w-4 h-4" />
@@ -257,6 +259,20 @@ const Header = memo(() => {
             </div>
           </div>
         </div>
+
+        {/* Телефон і години не зникають на телефоні (знахідка М1) */}
+        <a
+          href={`tel:${CONTACT_INFO.phoneRaw}`}
+          className="sm:hidden flex min-h-10 items-center justify-center gap-4 bg-dental-primary-50 border-y border-dental-primary-100 text-[13px]"
+        >
+          <span className="flex items-center gap-1.5 font-semibold text-dental-primary-ink">
+            <Phone className="h-3.5 w-3.5" aria-hidden="true" />
+            {CONTACT_INFO.phone}
+          </span>
+          <span className="text-dental-muted">
+            {CONTACT_INFO.workingHours.weekdays}
+          </span>
+        </a>
       </div>
 
       {/* Mobile menu — nav + messengers + auth + language */}
@@ -349,6 +365,23 @@ const Header = memo(() => {
                     </span>
                   </a>
                 )}
+                <div className="mt-2 rounded-xl bg-dental-secondary-50 border border-dental-secondary-200 px-4 py-3 text-sm text-dental-text space-y-1.5">
+                  <p className="flex items-center gap-2">
+                    <Clock
+                      className="h-4 w-4 text-dental-primary-500"
+                      aria-hidden="true"
+                    />
+                    {CONTACT_INFO.workingHours.weekdays} ·{' '}
+                    {CONTACT_INFO.workingHours.saturday}
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <MapPin
+                      className="h-4 w-4 text-dental-primary-500"
+                      aria-hidden="true"
+                    />
+                    {CONTACT_INFO.address.street}, {CONTACT_INFO.address.city}
+                  </p>
+                </div>
               </div>
 
               {/* Auth + Language */}

@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
-import { Edit, Package, Plus, RefreshCw, Trash2 } from 'lucide-react'
+import { Edit, Package, Plus, Printer, RefreshCw, Trash2 } from 'lucide-react'
+import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import {
   Button,
@@ -620,6 +621,16 @@ export default function AdminTreatmentsPage() {
                     </td>
                     <td className={cell}>
                       <div className="flex gap-1">
+                        {r.status !== 'draft' && (
+                          /* Друк лише для «Підписано»/«Завершено» (макет 2c) */
+                          <Link
+                            href={`/admin/treatments/${r.id}/print`}
+                            className="rounded-lg p-2 text-dental-primary-ink hover:bg-dental-primary-50"
+                            aria-label={t('admin.treatmentsPage.printAria')}
+                          >
+                            <Printer className="h-4 w-4" />
+                          </Link>
+                        )}
                         <button
                           type="button"
                           onClick={() => openEdit(r)}
