@@ -121,9 +121,8 @@ CSS-first; there is no `tailwind.config.js`):
 | `dental.dark` / `dental-navy`        | `#2C3E42` | Headings, dark text             |
 | `dental.text`                        | `#4A5E63` | Body copy                       |
 | `dental.secondary`                   | `#D1CAC0` | Warm neutral surfaces           |
-
-| `dental.muted` | `#425960` | Captions/metadata (AA on white) |
-| `dental.primary-ink` | `#2F5962` | Teal ink for links/text accents |
+| `dental.muted`                       | `#425960` | Captions/metadata (AA on white) |
+| `dental.primary-ink`                 | `#2F5962` | Teal ink for links/text accents |
 
 **Semantic status scale (Ф-3)** — the single source for status chips in both the patient cabinet and the admin panel: `status-{accent,success,warning,neutral,error}-{100,700}` (`*-100` tint background + `*-700` ink text). Render via the `StatusBadge` ui primitive (`tone` + optional `live` dot). Statuses map: scheduled/confirmed → `accent`, completed/paid → `success`, pending/awaiting → `warning`, cancelled/archived/draft → `neutral`, failed/unpaid → `error`. Do **not** color statuses with raw Tailwind palettes.
 
