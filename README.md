@@ -187,10 +187,14 @@ proxy.ts               # Edge middleware (CSP + nonce, rate limit, auth, securit
 - `GET/POST /api/treatment-records` - Treatment records CRUD
 - `PATCH /api/treatment-records/[id]` - Treatment record updates
 
-### Cron Endpoints (requires CRON_SECRET)
+### Scheduled Jobs (Supabase `pg_cron`)
 
-- `POST /api/cron/notifications` - Process notification queue (every 5 min)
-- `POST /api/cron/reminders` - Schedule appointment reminders (daily 18:00 UTC)
+Scheduled work runs on Supabase-native `pg_cron` (migrated off Vercel Cron — there are no `/api/cron/*` endpoints):
+
+- `ds-drain-notifications` (every 5 min) → `process-notifications` edge function drains `notification_events` and sends via Resend
+- `ds-reminders` (daily 18:00 UTC), `ds-recall` (18:10), `ds-low-stock` (weekdays 08:00), `ds-stock-metrics` (21:55) → plpgsql producers
+
+See [`docs/RUNBOOKS.md` §4](docs/RUNBOOKS.md#4-cron-job-failures). `CRON_SECRET` now only guards the admin `/api/payments/*` routes.
 
 ## Configuration
 

@@ -8,20 +8,23 @@
 
 ### 1.1 Environment Variables (Vercel → Settings → Environment Variables)
 
-| Variable                          | Value source                                                  | Done |
-| --------------------------------- | ------------------------------------------------------------- | ---- |
-| `NEXT_PUBLIC_SUPABASE_URL`        | Supabase project settings                                     | ☐    |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY`   | Supabase project settings                                     | ☐    |
-| `SUPABASE_SERVICE_ROLE_KEY`       | Supabase project settings                                     | ☐    |
-| `RESEND_API_KEY`                  | Resend dashboard                                              | ☐    |
-| `RESEND_FROM_EMAIL`               | Verified sender (e.g. `DentalStory <noreply@dentalstory.ua>`) | ☐    |
-| `ADMIN_NOTIFICATION_EMAIL`        | Clinic admin inbox                                            | ☐    |
-| `CRON_SECRET`                     | Generate: `openssl rand -hex 32`                              | ☐    |
-| `UPSTASH_REDIS_REST_URL`          | Upstash console                                               | ☐    |
-| `UPSTASH_REDIS_REST_TOKEN`        | Upstash console                                               | ☐    |
-| `NEXT_PUBLIC_SITE_URL`            | `https://dentalstory.ua`                                      | ☐    |
-| `SENTRY_AUTH_TOKEN`               | Sentry → Settings → Auth Tokens                               | ☐    |
-| `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` | GA4 property (optional)                                       | ☐    |
+| Variable                                                                                                           | Value source                                                         | Done |
+| ------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------- | ---- |
+| `NEXT_PUBLIC_SUPABASE_URL`                                                                                         | Supabase project settings                                            | ☐    |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`                                                                                    | Supabase project settings                                            | ☐    |
+| `SUPABASE_SERVICE_ROLE_KEY`                                                                                        | Supabase project settings                                            | ☐    |
+| `RESEND_API_KEY`                                                                                                   | Resend dashboard                                                     | ☐    |
+| `RESEND_FROM_EMAIL`                                                                                                | Verified sender (e.g. `DentalStory <noreply@dentalstory.ua>`)        | ☐    |
+| `ADMIN_NOTIFICATION_EMAIL`                                                                                         | Clinic admin inbox                                                   | ☐    |
+| `CRON_SECRET`                                                                                                      | Generate: `openssl rand -hex 32` (now only guards `/api/payments/*`) | ☐    |
+| Supabase Vault `process_notifications_invoke_secret`                                                               | `openssl rand -hex 32` (== edge-fn `NOTIFY_FN_SECRET`)               | ☐    |
+| Supabase Vault `admin_notification_email`                                                                          | Clinic admin inbox (low-stock recipient)                             | ☐    |
+| Edge-fn secrets: `NOTIFY_FN_SECRET`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `ADMIN_NOTIFICATION_EMAIL`, `SITE_URL` | Supabase → Edge Functions → secrets                                  | ☐    |
+| `UPSTASH_REDIS_REST_URL`                                                                                           | Upstash console                                                      | ☐    |
+| `UPSTASH_REDIS_REST_TOKEN`                                                                                         | Upstash console                                                      | ☐    |
+| `NEXT_PUBLIC_SITE_URL`                                                                                             | `https://dentalstory.ua`                                             | ☐    |
+| `SENTRY_AUTH_TOKEN`                                                                                                | Sentry → Settings → Auth Tokens                                      | ☐    |
+| `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`                                                                                  | GA4 property (optional)                                              | ☐    |
 
 ### 1.2 Supabase Production
 
@@ -29,7 +32,8 @@
 - [ ] Verify RLS is enabled on all tables (`patients`, `appointments`, `reviews`, `chat_sessions`, `chat_messages`, `treatment_records`, `materials`, `material_inventory`, `material_orders`)
 - [ ] Verify `admin_users` seed: at least one `superadmin` row exists
 - [ ] Confirm `notification_events` table exists and is empty
-- [ ] Confirm `cron_runs` table exists (migration `20260419_cron_runs.sql`)
+- [ ] Confirm `cron_runs` table + producer functions exist (migration `20260718_cron_runs_and_producers.sql`)
+- [ ] Confirm `pg_cron` + `pg_net` extensions are installed and `SHOW timezone;` is `UTC`
 - [ ] Enable Supabase Realtime for `chat_messages` and `chat_sessions` channels
 
 ### 1.3 Email Delivery
@@ -38,17 +42,20 @@
 - [ ] Send a test booking from `/booking` and confirm both patient and admin emails arrive
 - [ ] Check Resend dashboard logs — no bounces or blocks
 
-### 1.4 Vercel Cron Jobs
+### 1.4 Scheduled Jobs (Supabase `pg_cron`)
 
-Verify all 3 crons are active in Vercel Dashboard → Project → Cron Jobs:
+Apply `20260718_cron_schedules.sql`, then verify with `SELECT jobid, jobname, schedule, active FROM cron.job;` (5 active jobs):
 
-| Path                      | Schedule      | Purpose                                         |
-| ------------------------- | ------------- | ----------------------------------------------- |
-| `/api/cron/notifications` | `*/5 * * * *` | Send queued email notifications                 |
-| `/api/cron/reminders`     | `0 15 * * *`  | Schedule 24h appointment reminders (18:00 Kyiv) |
-| `/api/cron/low-stock`     | `0 8 * * *`   | Alert on low material inventory                 |
+| `cron.job.jobname`       | Schedule (UTC) | Purpose                                                |
+| ------------------------ | -------------- | ------------------------------------------------------ |
+| `ds-drain-notifications` | `*/5 * * * *`  | Invoke `process-notifications` edge fn → send emails   |
+| `ds-reminders`           | `0 18 * * *`   | Schedule 24h appointment reminders (deliver 07:00 UTC) |
+| `ds-recall`              | `10 18 * * *`  | 3-touch recall producer                                |
+| `ds-low-stock`           | `0 8 * * 1-5`  | Alert on low material inventory (weekdays)             |
+| `ds-stock-metrics`       | `55 21 * * *`  | Snapshot daily stock metrics                           |
 
-- [ ] Trigger each cron manually once with `CRON_SECRET` bearer token and confirm 200 response
+- [ ] Isolation-test the edge fn: insert a `queued` event → `curl` it with `Authorization: Bearer $NOTIFY_FN_SECRET` → assert `{success:true,processed:1}`, row → `sent` + `resend_id`, and a wrong bearer → 401
+- [ ] Dry-run the producers by hand (`SELECT public.run_reminders_job();` …) → correct `notification_events`, re-run → 0 duplicates
 - [ ] Check `/admin/analytics` → Cron Health widget shows last run times
 
 ### 1.5 Turnstile (Cloudflare)
