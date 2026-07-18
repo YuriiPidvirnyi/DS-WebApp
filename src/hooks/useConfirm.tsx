@@ -24,6 +24,10 @@ export type ConfirmOptions = Omit<
  */
 export function useConfirm() {
   const [options, setOptions] = useState<ConfirmOptions | null>(null)
+  // Монотонний лічильник — key для примусового ремонту діалогу, щоб внутрішній
+  // стан (набране контрольне слово) не переносився між викликами, коли
+  // попередній діалог ще змонтований (open лишається true).
+  const [seq, setSeq] = useState(0)
   const resolveRef = useRef<((confirmed: boolean) => void) | null>(null)
 
   const confirm = useCallback((opts: ConfirmOptions) => {
@@ -31,6 +35,7 @@ export function useConfirm() {
       // Якщо діалог уже відкритий — попередній виклик вважаємо скасованим
       resolveRef.current?.(false)
       resolveRef.current = resolve
+      setSeq(n => n + 1)
       setOptions(opts)
     })
   }, [])
@@ -43,6 +48,7 @@ export function useConfirm() {
 
   const confirmDialog: ReactNode = options ? (
     <ConfirmDialog
+      key={seq}
       {...options}
       open
       onConfirm={() => settle(true)}

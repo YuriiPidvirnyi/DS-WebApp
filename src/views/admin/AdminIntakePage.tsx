@@ -14,6 +14,8 @@ import {
 } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { useConfirm } from '@/hooks/useConfirm'
+import { useAdminAuth } from '@/hooks/useAdminAuth'
+import { can } from '@/lib/permissions'
 import { createClient } from '@/lib/supabase/client'
 import { redeemWelcomeGift } from '@/services/promo'
 import { APIError } from '@/services/api'
@@ -55,7 +57,11 @@ const STATUS_TONE: Record<string, StatusTone> = {
 export default function AdminIntakePage() {
   const { t } = useTranslation()
   const { preferences } = useAdminPreferences()
+  const { user } = useAdminAuth()
   const { confirm, confirmDialog } = useConfirm()
+  // RBAC-гейт (Р1): видати подарунок може лише роль з promo:redeem
+  // (/admin/intake доступний і аналітику/лікарю/асистенту через patients:view)
+  const canRedeem = user ? can(user.role, 'promo:redeem') : false
   const [rows, setRows] = useState<IntakeRow[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
@@ -407,7 +413,7 @@ export default function AdminIntakePage() {
                         ),
                       })}
                     </span>
-                  ) : (
+                  ) : canRedeem ? (
                     <Button
                       variant="outline"
                       size="sm"
@@ -417,7 +423,7 @@ export default function AdminIntakePage() {
                       <Gift className="mr-1.5 h-4 w-4" />
                       {t('admin.intakePage.gift.give')}
                     </Button>
-                  )}
+                  ) : null}
                   <Select
                     selectSize="dense"
                     value={row.status}

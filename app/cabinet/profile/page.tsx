@@ -651,6 +651,7 @@ export default function ProfilePage() {
         onConfirm={handleDeleteAccount}
         onClose={() => {
           if (deleting) return
+          setDataRightsError(null)
           setShowDeleteConfirm(false)
         }}
       />

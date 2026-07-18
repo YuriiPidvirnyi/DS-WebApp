@@ -102,3 +102,19 @@ describe('бейджі ролей: інк на тінті ≥ AA 4.5:1', () => {
     ).toBeGreaterThanOrEqual(AA)
   })
 })
+
+describe('суцільні кнопкові заливки з білим текстом ≥ AA', () => {
+  // Тільки фони, на яких у продукті реально стоїть білий текст. Світлі
+  // dental-success/-warning білим текстом не проходять AA — тому кнопки
+  // потоку замовлень/стоку використовують dental-success-dark і
+  // status-warning-700 (див. AdminOrdersPage/stock), що й перевіряється тут.
+  it.each([
+    'dental-error', // Button variant="danger" + ConfirmDialog irreversible
+    'dental-success-dark',
+    'status-warning-700',
+    'dental-primary-600',
+    'dental-primary-700',
+  ])('білий на %s', name => {
+    expect(contrast('#ffffff', token(name))).toBeGreaterThanOrEqual(AA)
+  })
+})

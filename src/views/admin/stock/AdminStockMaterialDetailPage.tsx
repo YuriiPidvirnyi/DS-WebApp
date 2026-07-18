@@ -241,7 +241,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
         {!isNew && canEdit && material && !material.is_active && (
           <button
             onClick={handleArchive}
-            className="inline-flex items-center gap-2 rounded-lg border border-dental-warning/30 bg-status-warning-100 px-4 py-2 text-sm font-medium text-status-warning-700 hover:bg-status-warning-100"
+            className="inline-flex items-center gap-2 rounded-lg border border-dental-warning/30 bg-status-warning-100 px-4 py-2 text-sm font-medium text-status-warning-700 hover:bg-dental-warning/20"
           >
             <Archive className="w-4 h-4" />
             Деактивувати

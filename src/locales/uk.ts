@@ -364,7 +364,6 @@ const uk = {
     emergency: {
       title: 'Екстрена допомога',
       description: "У разі гострого болю або травми зв'яжіться з нами негайно:",
-      phone: '+380 50 455 47 74',
       availability: 'Екстрені виклики приймаємо 24/7',
     },
     faq: {
@@ -1465,7 +1464,6 @@ const uk = {
       addToCalendar: 'Додати в календар',
       calendarTitle: 'Візит: {{service}}',
       calendarDescription: 'Запис №{{ref}}. Пацієнт: {{name}}',
-      calendarLocation: 'Dental Studio',
     },
   },
   apiDocsPage: {
@@ -2551,6 +2549,8 @@ const uk = {
       deleteAria: 'Видалити',
       removeLineAria: 'Прибрати рядок',
       printAria: 'Друк акта',
+      draftNotPrintable:
+        'Чернетки не друкуються — підпишіть акт, щоб роздрукувати.',
     },
     users: {
       title: 'Управління користувачами',
@@ -3214,7 +3214,6 @@ const uk = {
     calendar: {
       title: 'Візит: {{service}}',
       description: 'Запис №{{id}}. Не забудьте взяти з собою документи!',
-      location: 'Dental Studio',
     },
     appointmentShort: 'Запис #{{id}}...',
     reminderTypes: {

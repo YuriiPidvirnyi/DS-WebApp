@@ -345,7 +345,6 @@
     "emergency": {
       "title": "Екстрена допомога",
       "description": "У разі гострого болю або травми зв'яжіться з нами негайно:",
-      "phone": "+380 50 455 47 74",
       "availability": "Екстрені виклики приймаємо 24/7"
     },
     "faq": {
@@ -1363,8 +1362,7 @@
       "createAnother": "Створити ще один запис",
       "addToCalendar": "Додати в календар",
       "calendarTitle": "Візит: {{service}}",
-      "calendarDescription": "Запис №{{ref}}. Пацієнт: {{name}}",
-      "calendarLocation": "Dental Studio"
+      "calendarDescription": "Запис №{{ref}}. Пацієнт: {{name}}"
     }
   },
   "apiDocsPage": {
@@ -2419,7 +2417,8 @@
       "editAria": "Редагувати",
       "deleteAria": "Видалити",
       "removeLineAria": "Прибрати рядок",
-      "printAria": "Друк акта"
+      "printAria": "Друк акта",
+      "draftNotPrintable": "Чернетки не друкуються — підпишіть акт, щоб роздрукувати."
     },
     "users": {
       "title": "Управління користувачами",
@@ -3054,8 +3053,7 @@
     },
     "calendar": {
       "title": "Візит: {{service}}",
-      "description": "Запис №{{id}}. Не забудьте взяти з собою документи!",
-      "location": "Dental Studio"
+      "description": "Запис №{{id}}. Не забудьте взяти з собою документи!"
     },
     "appointmentShort": "Запис #{{id}}...",
     "reminderTypes": {

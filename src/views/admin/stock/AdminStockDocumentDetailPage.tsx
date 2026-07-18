@@ -313,7 +313,7 @@ export default function AdminStockDocumentDetailPage() {
                 <button
                   onClick={unpostDocument}
                   disabled={unpostReason.trim().length < 3 || actionLoading}
-                  className="inline-flex items-center gap-2 rounded-lg bg-dental-warning px-4 py-2 text-sm font-medium text-white hover:bg-dental-warning-dark disabled:opacity-60 transition-colors"
+                  className="inline-flex items-center gap-2 rounded-lg bg-status-warning-700 px-4 py-2 text-sm font-medium text-white hover:brightness-95 disabled:opacity-60 transition-colors"
                 >
                   {actionLoading && (
                     <Loader2 className="w-4 h-4 animate-spin" />

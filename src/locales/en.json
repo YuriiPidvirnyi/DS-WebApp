@@ -345,7 +345,6 @@
     "emergency": {
       "title": "Emergency Care",
       "description": "In case of acute pain or injury, contact us immediately:",
-      "phone": "+380 50 455 47 74",
       "availability": "We accept emergency calls 24/7"
     },
     "faq": {
@@ -1255,8 +1254,7 @@
       "createAnother": "Create another booking",
       "addToCalendar": "Add to calendar",
       "calendarTitle": "Visit: {{service}}",
-      "calendarDescription": "Booking #{{ref}}. Patient: {{name}}",
-      "calendarLocation": "Dental Studio"
+      "calendarDescription": "Booking #{{ref}}. Patient: {{name}}"
     }
   },
   "apiDocsPage": {
@@ -2311,7 +2309,8 @@
       "editAria": "Edit",
       "deleteAria": "Delete",
       "removeLineAria": "Remove line",
-      "printAria": "Print act"
+      "printAria": "Print act",
+      "draftNotPrintable": "Drafts cannot be printed — sign the act to print it."
     },
     "users": {
       "title": "User Management",
@@ -2946,8 +2945,7 @@
     },
     "calendar": {
       "title": "Visit: {{service}}",
-      "description": "Booking #{{id}}. Don't forget to bring your documents!",
-      "location": "Dental Studio"
+      "description": "Booking #{{id}}. Don't forget to bring your documents!"
     },
     "appointmentShort": "Booking #{{id}}...",
     "reminderTypes": {

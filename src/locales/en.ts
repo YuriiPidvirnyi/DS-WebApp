@@ -361,7 +361,6 @@ const en = {
     emergency: {
       title: 'Emergency Care',
       description: 'In case of acute pain or injury, contact us immediately:',
-      phone: '+380 50 455 47 74',
       availability: 'We accept emergency calls 24/7',
     },
     faq: {
@@ -1336,7 +1335,6 @@ const en = {
       addToCalendar: 'Add to calendar',
       calendarTitle: 'Visit: {{service}}',
       calendarDescription: 'Booking #{{ref}}. Patient: {{name}}',
-      calendarLocation: 'Dental Studio',
     },
   },
   apiDocsPage: {
@@ -2421,6 +2419,7 @@ const en = {
       deleteAria: 'Delete',
       removeLineAria: 'Remove line',
       printAria: 'Print act',
+      draftNotPrintable: 'Drafts cannot be printed — sign the act to print it.',
     },
     users: {
       title: 'User Management',
@@ -3081,7 +3080,6 @@ const en = {
     calendar: {
       title: 'Visit: {{service}}',
       description: "Booking #{{id}}. Don't forget to bring your documents!",
-      location: 'Dental Studio',
     },
     appointmentShort: 'Booking #{{id}}...',
     reminderTypes: {

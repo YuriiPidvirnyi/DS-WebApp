@@ -345,7 +345,6 @@
     "emergency": {
       "title": "Pomoc w nagłych wypadkach",
       "description": "W przypadku ostrego bólu lub urazu, skontaktuj się z nami natychmiast:",
-      "phone": "+380 50 455 47 74",
       "availability": "Przyjmujemy połączenia alarmowe 24/7"
     },
     "faq": {
@@ -1257,8 +1256,7 @@
       "createAnother": "Utwórz kolejną rezerwację",
       "addToCalendar": "Dodaj do kalendarza",
       "calendarTitle": "Wizyta: {{service}}",
-      "calendarDescription": "Rezerwacja nr {{ref}}. Pacjent: {{name}}",
-      "calendarLocation": "Dental Studio"
+      "calendarDescription": "Rezerwacja nr {{ref}}. Pacjent: {{name}}"
     }
   },
   "apiDocsPage": {
@@ -2313,7 +2311,8 @@
       "editAria": "Edytuj",
       "deleteAria": "Usuń",
       "removeLineAria": "Usuń wiersz",
-      "printAria": "Drukuj akt"
+      "printAria": "Drukuj akt",
+      "draftNotPrintable": "Szkiców nie można drukować — podpisz akt, aby go wydrukować."
     },
     "users": {
       "title": "Zarządzanie użytkownikami",
@@ -2948,8 +2947,7 @@
     },
     "calendar": {
       "title": "Wizyta: {{service}}",
-      "description": "Rezerwacja nr {{id}}. Nie zapomnij zabrać dokumentów!",
-      "location": "Dental Studio"
+      "description": "Rezerwacja nr {{id}}. Nie zapomnij zabrać dokumentów!"
     },
     "appointmentShort": "Rezerwacja #{{id}}...",
     "reminderTypes": {

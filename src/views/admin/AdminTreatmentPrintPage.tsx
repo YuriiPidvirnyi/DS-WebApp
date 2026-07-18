@@ -165,145 +165,155 @@ export default function AdminTreatmentPrintPage({
           <PrintButton label="Друк" />
         ) : (
           <p className="text-sm text-dental-muted">
-            Чернетки не друкуються — підпишіть акт, щоб роздрукувати.
+            {t('admin.treatmentsPage.draftNotPrintable')}
           </p>
         )}
       </div>
 
-      {/* Printable act */}
-      <div
-        id="print-area"
-        className="mx-auto max-w-2xl rounded-md border border-dental-secondary-200 bg-white p-10 text-[13px] leading-relaxed text-dental-dark shadow-soft print:max-w-none print:rounded-none print:border-0 print:p-0 print:shadow-none"
-      >
-        {/* Брендова шапка — реквізити з CONTACT_INFO */}
-        <div className="flex items-start justify-between border-b-2 border-dental-primary-600 pb-5">
-          <div className="flex items-center gap-3">
-            <Logo />
-            <div>
-              <p className="font-heading text-lg font-extrabold">
-                {SITE_INFO.name}
-              </p>
-              <p className="text-[11px] text-dental-muted">
-                Стоматологічна клініка
+      {/* Чернетки не рендеряться в друковану поверхню взагалі — інакше їх
+          можна було б надрукувати браузерним Ctrl+P попри прихований PrintButton */}
+      {!printable ? (
+        <div className="mx-auto max-w-2xl rounded-md border border-dashed border-dental-secondary-300 bg-dental-secondary-50 px-6 py-12 text-center text-sm text-dental-muted">
+          {t('admin.treatmentsPage.draftNotPrintable')}
+        </div>
+      ) : (
+        /* Printable act */
+        <div
+          id="print-area"
+          className="mx-auto max-w-2xl rounded-md border border-dental-secondary-200 bg-white p-10 text-[13px] leading-relaxed text-dental-dark shadow-soft print:max-w-none print:rounded-none print:border-0 print:p-0 print:shadow-none"
+        >
+          {/* Брендова шапка — реквізити з CONTACT_INFO */}
+          <div className="flex items-start justify-between border-b-2 border-dental-primary-600 pb-5">
+            <div className="flex items-center gap-3">
+              <Logo />
+              <div>
+                <p className="font-heading text-lg font-extrabold">
+                  {SITE_INFO.name}
+                </p>
+                <p className="text-[11px] text-dental-muted">
+                  Стоматологічна клініка
+                </p>
+              </div>
+            </div>
+            <div className="text-right text-[11px] leading-relaxed text-dental-muted">
+              <p>dentalstory.ua · {CONTACT_INFO.email}</p>
+              <p>
+                {CONTACT_INFO.phone} · {CONTACT_INFO.address.city}
               </p>
             </div>
           </div>
-          <div className="text-right text-[11px] leading-relaxed text-dental-muted">
-            <p>dentalstory.ua · {CONTACT_INFO.email}</p>
+
+          {/* Назва акта */}
+          <div className="mt-6 flex items-baseline justify-between">
+            <h1 className="font-heading text-xl font-extrabold">
+              Акт виконаних робіт № {actNumber}
+            </h1>
+            <p className="text-xs text-dental-muted">{actDate}</p>
+          </div>
+
+          {/* Метадані */}
+          <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-1.5">
             <p>
-              {CONTACT_INFO.phone} · {CONTACT_INFO.address.city}
+              <span className="text-status-neutral-700">Пацієнт:</span>{' '}
+              <span className="font-semibold">{patientName}</span>
+            </p>
+            <p>
+              <span className="text-status-neutral-700">Лікар:</span>{' '}
+              <span className="font-semibold">{doctorName}</span>
+            </p>
+            <p>
+              <span className="text-status-neutral-700">Діагноз:</span>{' '}
+              <span className="font-semibold">{row.diagnosis || '—'}</span>
+            </p>
+            <p>
+              <span className="text-status-neutral-700">Зуби:</span>{' '}
+              <span className="font-semibold">{row.tooth_numbers || '—'}</span>
             </p>
           </div>
-        </div>
 
-        {/* Назва акта */}
-        <div className="mt-6 flex items-baseline justify-between">
-          <h1 className="font-heading text-xl font-extrabold">
-            Акт виконаних робіт № {actNumber}
-          </h1>
-          <p className="text-xs text-dental-muted">{actDate}</p>
-        </div>
-
-        {/* Метадані */}
-        <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-1.5">
-          <p>
-            <span className="text-status-neutral-700">Пацієнт:</span>{' '}
-            <span className="font-semibold">{patientName}</span>
-          </p>
-          <p>
-            <span className="text-status-neutral-700">Лікар:</span>{' '}
-            <span className="font-semibold">{doctorName}</span>
-          </p>
-          <p>
-            <span className="text-status-neutral-700">Діагноз:</span>{' '}
-            <span className="font-semibold">{row.diagnosis || '—'}</span>
-          </p>
-          <p>
-            <span className="text-status-neutral-700">Зуби:</span>{' '}
-            <span className="font-semibold">{row.tooth_numbers || '—'}</span>
-          </p>
-        </div>
-
-        {/* Таблиця процедур */}
-        <table className="mt-6 w-full border-collapse">
-          <thead>
-            <tr className="border-b-[1.5px] border-dental-dark">
-              <th className="py-2 pr-2 text-left font-heading text-xs">
-                Процедура
-              </th>
-              <th className="w-14 py-2 text-center font-heading text-xs">
-                Зуб
-              </th>
-              <th className="w-16 py-2 text-center font-heading text-xs">
-                К-сть
-              </th>
-              <th className="w-24 py-2 text-right font-heading text-xs">
-                Ціна, грн
-              </th>
-              <th className="w-24 py-2 text-right font-heading text-xs">
-                Сума, грн
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map(item => (
-              <tr
-                key={item.id}
-                className="border-b border-status-neutral-200 break-inside-avoid"
-              >
-                <td className="py-2.5 pr-2">{serviceName(item)}</td>
-                <td className="py-2.5 text-center">
-                  {item.tooth_number || '—'}
-                </td>
-                <td className="py-2.5 text-center">{item.quantity}</td>
-                <td className="py-2.5 text-right">
-                  {money(item.price_at_time)}
-                </td>
-                <td className="py-2.5 text-right">
-                  {money(item.quantity * item.price_at_time)}
-                </td>
+          {/* Таблиця процедур */}
+          <table className="mt-6 w-full border-collapse">
+            <thead>
+              <tr className="border-b-[1.5px] border-dental-dark">
+                <th className="py-2 pr-2 text-left font-heading text-xs">
+                  Процедура
+                </th>
+                <th className="w-14 py-2 text-center font-heading text-xs">
+                  Зуб
+                </th>
+                <th className="w-16 py-2 text-center font-heading text-xs">
+                  К-сть
+                </th>
+                <th className="w-24 py-2 text-right font-heading text-xs">
+                  Ціна, грн
+                </th>
+                <th className="w-24 py-2 text-right font-heading text-xs">
+                  Сума, грн
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {items.map(item => (
+                <tr
+                  key={item.id}
+                  className="border-b border-status-neutral-200 break-inside-avoid"
+                >
+                  <td className="py-2.5 pr-2">{serviceName(item)}</td>
+                  <td className="py-2.5 text-center">
+                    {item.tooth_number || '—'}
+                  </td>
+                  <td className="py-2.5 text-center">{item.quantity}</td>
+                  <td className="py-2.5 text-right">
+                    {money(item.price_at_time)}
+                  </td>
+                  <td className="py-2.5 text-right">
+                    {money(item.quantity * item.price_at_time)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-        {/* Разом + статус оплати зі шкали 1f */}
-        <div className="mt-4 flex items-center justify-end gap-4">
-          <span
-            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${PAYMENT_CHIP[row.payment_status]}`}
-          >
-            {PAYMENT_LABELS[row.payment_status]}
-          </span>
-          <p className="font-heading text-lg font-extrabold">
-            Разом: {money(total)} грн
-          </p>
-        </div>
+          {/* Разом + статус оплати зі шкали 1f */}
+          <div className="mt-4 flex items-center justify-end gap-4">
+            <span
+              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${PAYMENT_CHIP[row.payment_status]}`}
+            >
+              {PAYMENT_LABELS[row.payment_status]}
+            </span>
+            <p className="font-heading text-lg font-extrabold">
+              Разом: {money(total)} грн
+            </p>
+          </div>
 
-        {/* Підписи та печатка */}
-        <div className="mt-10 grid grid-cols-[1fr_1fr_auto] items-end gap-8 break-inside-avoid">
-          <div>
-            <p className="mb-8 text-xs text-status-neutral-700">
-              Роботи виконано в повному обсязі, пацієнт претензій не має.
-            </p>
-            <div className="border-b border-dental-dark" />
-            <p className="mt-1 text-[11px] text-dental-muted">Підпис лікаря</p>
-          </div>
-          <div>
-            <div className="border-b border-dental-dark" />
-            <p className="mt-1 text-[11px] text-dental-muted">
-              Підпис пацієнта
-            </p>
-          </div>
-          <div
-            className="flex h-24 w-24 items-center justify-center rounded-full border border-dashed border-dental-primary-400 text-center text-[9px] uppercase tracking-wider text-dental-primary-500"
-            aria-hidden="true"
-          >
-            Місце
-            <br />
-            печатки
+          {/* Підписи та печатка */}
+          <div className="mt-10 grid grid-cols-[1fr_1fr_auto] items-end gap-8 break-inside-avoid">
+            <div>
+              <p className="mb-8 text-xs text-status-neutral-700">
+                Роботи виконано в повному обсязі, пацієнт претензій не має.
+              </p>
+              <div className="border-b border-dental-dark" />
+              <p className="mt-1 text-[11px] text-dental-muted">
+                Підпис лікаря
+              </p>
+            </div>
+            <div>
+              <div className="border-b border-dental-dark" />
+              <p className="mt-1 text-[11px] text-dental-muted">
+                Підпис пацієнта
+              </p>
+            </div>
+            <div
+              className="flex h-24 w-24 items-center justify-center rounded-full border border-dashed border-dental-primary-400 text-center text-[9px] uppercase tracking-wider text-dental-primary-500"
+              aria-hidden="true"
+            >
+              Місце
+              <br />
+              печатки
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

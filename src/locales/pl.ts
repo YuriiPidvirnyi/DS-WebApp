@@ -363,7 +363,6 @@ const pl = {
       title: 'Pomoc w nagłych wypadkach',
       description:
         'W przypadku ostrego bólu lub urazu, skontaktuj się z nami natychmiast:',
-      phone: '+380 50 455 47 74',
       availability: 'Przyjmujemy połączenia alarmowe 24/7',
     },
     faq: {
@@ -1341,7 +1340,6 @@ const pl = {
       addToCalendar: 'Dodaj do kalendarza',
       calendarTitle: 'Wizyta: {{service}}',
       calendarDescription: 'Rezerwacja nr {{ref}}. Pacjent: {{name}}',
-      calendarLocation: 'Dental Studio',
     },
   },
   apiDocsPage: {
@@ -2427,6 +2425,8 @@ const pl = {
       deleteAria: 'Usuń',
       removeLineAria: 'Usuń wiersz',
       printAria: 'Drukuj akt',
+      draftNotPrintable:
+        'Szkiców nie można drukować — podpisz akt, aby go wydrukować.',
     },
     users: {
       title: 'Zarządzanie użytkownikami',
@@ -3089,7 +3089,6 @@ const pl = {
     calendar: {
       title: 'Wizyta: {{service}}',
       description: 'Rezerwacja nr {{id}}. Nie zapomnij zabrać dokumentów!',
-      location: 'Dental Studio',
     },
     appointmentShort: 'Rezerwacja #{{id}}...',
     reminderTypes: {

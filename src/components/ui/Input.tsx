@@ -72,7 +72,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       'min-h-[44px] px-4 py-3 border rounded-2xl transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-0 text-base text-dental-dark placeholder:text-dental-muted sm:text-sm'
 
     const stateStyles = error
-      ? 'border-dental-error/20 focus:border-dental-error focus:ring-dental-error'
+      ? 'border-dental-error/70 focus:border-dental-error focus:ring-dental-error'
       : 'border-dental-secondary focus:border-dental-primary focus:ring-dental-primary'
 
     return (
@@ -174,7 +174,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       'min-h-[44px] px-4 py-3 border rounded-2xl transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-0 resize-vertical text-base text-dental-dark placeholder:text-dental-muted sm:text-sm'
 
     const stateStyles = error
-      ? 'border-dental-error/20 focus:border-dental-error focus:ring-dental-error'
+      ? 'border-dental-error/70 focus:border-dental-error focus:ring-dental-error'
       : 'border-dental-secondary focus:border-dental-primary focus:ring-dental-primary'
 
     return (
@@ -290,7 +290,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     )
 
     const stateStyles = error
-      ? 'border-dental-error/20 focus:border-dental-error focus:ring-dental-error'
+      ? 'border-dental-error/70 focus:border-dental-error focus:ring-dental-error'
       : 'border-dental-secondary focus:border-dental-primary focus:ring-dental-primary'
 
     return (

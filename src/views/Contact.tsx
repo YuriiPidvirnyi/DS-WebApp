@@ -148,7 +148,9 @@ const Contact = () => {
                     href={`tel:${CONTACT_INFO.emergencyPhoneRaw}`}
                     className="hover:underline"
                   >
-                    {t('contact.emergency.phone')}
+                    {/* Показуємо те саме джерело, що й у tel:, щоб текст і ціль
+                        дзвінка не розходились per-environment */}
+                    {CONTACT_INFO.emergencyPhone}
                   </a>
                 </p>
                 <p className="text-dental-error-dark text-sm">

@@ -136,6 +136,7 @@ export default function CabinetSettingsPage() {
         onConfirm={handleDeleteAccount}
         onClose={() => {
           if (deleting) return
+          setDeleteError(null)
           setShowDeleteConfirm(false)
         }}
       />

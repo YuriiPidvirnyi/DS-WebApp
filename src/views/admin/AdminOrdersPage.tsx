@@ -115,7 +115,7 @@ const PATCH_ACTS: PatchAct[] = [
     from: 'draft',
     next: 'pending_approval',
     label: 'admin.ordersPage.actions.sendForApproval',
-    cls: 'bg-dental-warning hover:bg-dental-warning-dark text-white border-0 focus:ring-dental-warning',
+    cls: 'bg-status-warning-700 hover:brightness-95 text-white border-0 focus:ring-dental-warning',
   },
   {
     from: 'pending_approval',
@@ -143,7 +143,7 @@ const PATCH_ACTS: PatchAct[] = [
     from: 'ordered',
     next: 'delivered',
     label: 'admin.ordersPage.actions.markDelivered',
-    cls: 'bg-dental-success hover:bg-dental-success-dark text-white border-0 focus:ring-dental-success',
+    cls: 'bg-dental-success-dark hover:brightness-95 text-white border-0 focus:ring-dental-success',
   },
   {
     from: 'ordered',

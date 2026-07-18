@@ -71,7 +71,7 @@ export default function BookingError({ error, reset }: ErrorProps) {
 
           <a
             href={`tel:${CONTACT_INFO.phoneRaw}`}
-            className="inline-flex items-center justify-center px-6 py-3 bg-dental-success hover:bg-dental-success text-white font-semibold rounded-lg transition-colors"
+            className="inline-flex items-center justify-center px-6 py-3 bg-dental-success-dark hover:brightness-95 text-white font-semibold rounded-lg transition-colors"
             data-track-id="call_from_booking_error"
             data-track-category="error"
             data-track-label="booking_error_call"
