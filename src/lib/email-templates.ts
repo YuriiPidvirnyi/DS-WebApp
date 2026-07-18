@@ -164,12 +164,12 @@ function baseLayout(
     <tr>
       <td align="center" style="padding:32px 16px;">
         <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
-          <!-- Header — solid teal chip keeps the wordmark legible in dark mode
-               (clients don't invert a solid dark fill, white text stays white) -->
+          <!-- Header — white logo on a solid teal chip: the chip isn't
+               inverted in dark mode, so the logo stays legible everywhere -->
           <tr>
             <td align="center" style="padding:8px 0 24px;">
-              <a href="${SITE_URL}" style="display:inline-block;background-color:${COLORS.teal};border-radius:12px;padding:16px 34px;font-size:26px;font-weight:700;color:#ffffff;letter-spacing:-0.5px;text-decoration:none;">
-                Dental<span style="color:${COLORS.primary};">Story</span>
+              <a href="${SITE_URL}" style="display:inline-block;background-color:${COLORS.teal};border-radius:12px;padding:18px 28px;">
+                <img src="${SITE_URL}/assets/images/logo/logo-email-white.png" width="180" height="87" alt="DentalStory" style="display:block;border:0;width:180px;height:87px;" />
               </a>
             </td>
           </tr>

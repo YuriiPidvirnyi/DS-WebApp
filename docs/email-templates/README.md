@@ -7,14 +7,24 @@ version-controlled source: edit here, then paste into the Dashboard.
 
 They mirror the design of the in-app transactional templates in
 `src/lib/email-templates.ts` (same brand colours, Lviv contacts, dark-mode-safe
-header chip).
+header).
 
-## Why the header is a solid teal chip
+## The logo
 
-Gmail (and other clients) force-invert white email backgrounds in dark mode.
-A plain dark-navy wordmark then disappears against the inverted dark card. A
-solid teal chip is **not** inverted, so the white "Dental" + light-blue "Story"
-stay legible in both light and dark mode.
+The header shows the white DentalStory logo
+(`public/assets/images/logo/logo-email-white.png`, rasterised from
+`logo-mark-tight.svg`) on a solid teal chip.
+
+- **Why an image, not the SVG:** Gmail and most clients strip inline SVG.
+- **Why white-on-teal:** clients force-invert white email backgrounds in dark
+  mode; a solid teal chip is **not** inverted, so the white logo stays legible
+  in both light and dark mode.
+- **⚠️ Deploy dependency:** the `<img>` loads from
+  `https://dentalstory.ua/assets/images/logo/logo-email-white.png`, so the PNG
+  must be **live on prod** before the logo renders. It ships with this branch —
+  until it reaches prod (release `develop → main`), the header shows the
+  `alt="DentalStory"` text. Don't paste these into the Dashboard until the PNG
+  is deployed, or the logo will be a broken image for a while.
 
 ## Why the button links to `/auth/confirm`
 
