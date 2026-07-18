@@ -3,13 +3,28 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { RefreshCw, Star } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button, EmptyState, ErrorState, Input, Select } from '@/components/ui'
+import {
+  Button,
+  EmptyState,
+  ErrorState,
+  Input,
+  Select,
+  StatusBadge,
+  type StatusTone,
+} from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
+import { useConfirm, type ConfirmOptions } from '@/hooks/useConfirm'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
-import { formatDateTime, getStatusTone } from './utils'
+import { formatDateTime } from './utils'
 
 type ReviewStatus = 'pending' | 'approved' | 'rejected'
+
+const STATUS_TONE: Record<ReviewStatus, StatusTone> = {
+  pending: 'warning',
+  approved: 'success',
+  rejected: 'error',
+}
 
 interface ReviewRow {
   id: string
@@ -27,6 +42,7 @@ interface ReviewRow {
 export default function AdminReviewsPage() {
   const { t } = useTranslation()
   const { preferences } = useAdminPreferences()
+  const { confirm, confirmDialog } = useConfirm()
   const [rows, setRows] = useState<ReviewRow[]>([])
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [searchTerm, setSearchTerm] = useState('')
@@ -130,18 +146,18 @@ export default function AdminReviewsPage() {
   const cardPaddingClass = preferences.compactTables ? 'p-3' : 'p-4'
   const emptyStateClass = `${
     preferences.compactTables ? 'px-3 py-6' : 'px-4 py-8'
-  } text-center text-dental-text-light`
+  } text-center text-dental-muted`
   const getStatusLabel = useCallback(
     (status: ReviewStatus) => t(`admin.reviewStatuses.${status}`),
     [t]
   )
 
   const confirmIfNeeded = useCallback(
-    (message: string) => {
+    async (opts: ConfirmOptions) => {
       if (!preferences.confirmSensitiveActions) return true
-      return window.confirm(message)
+      return confirm(opts)
     },
-    [preferences.confirmSensitiveActions]
+    [preferences.confirmSensitiveActions, confirm]
   )
 
   const toggleSelection = (id: string) => {
@@ -161,11 +177,13 @@ export default function AdminReviewsPage() {
   const applyBulkChanges = async () => {
     if (selectedIds.length === 0) return
     if (
-      !confirmIfNeeded(
-        t('admin.reviewsPage.confirmations.bulkModeration', {
+      !(await confirmIfNeeded({
+        title: t('admin.reviewsPage.confirmations.bulkModeration', {
           count: selectedIds.length,
-        })
-      )
+        }),
+        severity: 'significant',
+        confirmLabel: t('common.confirm'),
+      }))
     ) {
       return
     }
@@ -228,7 +246,13 @@ export default function AdminReviewsPage() {
       id: string,
       patch: Partial<Pick<ReviewRow, 'status' | 'is_featured'>>
     ) => {
-      if (!confirmIfNeeded(t('admin.reviewsPage.confirmations.singleUpdate'))) {
+      if (
+        !(await confirmIfNeeded({
+          title: t('admin.reviewsPage.confirmations.singleUpdate'),
+          severity: 'significant',
+          confirmLabel: t('common.confirm'),
+        }))
+      ) {
         return
       }
 
@@ -269,12 +293,13 @@ export default function AdminReviewsPage() {
 
   return (
     <div className="space-y-6">
+      {confirmDialog}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-dental-dark">
             {t('admin.reviewsPage.title')}
           </h1>
-          <p className="text-sm text-dental-text-light">
+          <p className="text-sm text-dental-muted">
             {t('admin.reviewsPage.description')}
           </p>
         </div>
@@ -291,25 +316,29 @@ export default function AdminReviewsPage() {
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">
+          <p className="text-xs text-dental-muted">
             {t('admin.reviewsPage.summary.total')}
           </p>
           <p className="text-2xl font-bold text-dental-dark">{stats.total}</p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">
+          <p className="text-xs text-dental-muted">
             {t('admin.reviewsPage.summary.pending')}
           </p>
-          <p className="text-2xl font-bold text-amber-600">{stats.pending}</p>
+          <p className="text-2xl font-bold text-status-warning-700">
+            {stats.pending}
+          </p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">
+          <p className="text-xs text-dental-muted">
             {t('admin.reviewsPage.summary.approved')}
           </p>
-          <p className="text-2xl font-bold text-green-600">{stats.approved}</p>
+          <p className="text-2xl font-bold text-status-success-700">
+            {stats.approved}
+          </p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">
+          <p className="text-xs text-dental-muted">
             {t('admin.reviewsPage.summary.featured')}
           </p>
           <p className="text-2xl font-bold text-dental-dark">
@@ -363,7 +392,7 @@ export default function AdminReviewsPage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-2 rounded-xl border border-dental-secondary-200 bg-white px-4 py-3">
-        <span className="text-sm text-dental-text-light">
+        <span className="text-sm text-dental-muted">
           {t('admin.reviewsPage.bulk.selected', { count: selectedIds.length })}
         </span>
         <Button variant="outline" size="sm" onClick={toggleSelectAll}>
@@ -455,21 +484,17 @@ export default function AdminReviewsPage() {
                       })}
                     />
                     <p className="font-semibold text-dental-dark">{row.name}</p>
-                    <span
-                      className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${getStatusTone(
-                        row.status
-                      )}`}
-                    >
+                    <StatusBadge tone={STATUS_TONE[row.status]}>
                       {getStatusLabel(row.status)}
-                    </span>
+                    </StatusBadge>
                     {row.is_featured ? (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">
+                      <StatusBadge tone="accent">
                         <Star className="h-3 w-3 fill-current" />
                         {t('admin.reviewsPage.card.featured')}
-                      </span>
+                      </StatusBadge>
                     ) : null}
                   </div>
-                  <p className="mt-1 text-sm text-dental-text-light">
+                  <p className="mt-1 text-sm text-dental-muted">
                     {row.service}
                     {row.doctor ? ` • ${row.doctor}` : ''} •{' '}
                     {formatDateTime(row.created_at)}
@@ -491,7 +516,7 @@ export default function AdminReviewsPage() {
                     void patchReview(row.id, { status: 'approved' })
                   }
                   disabled={isUpdatingId === row.id}
-                  className="rounded-md border border-green-200 bg-green-50 px-3 py-1.5 text-xs font-semibold text-green-700 hover:bg-green-100 disabled:opacity-60"
+                  className="rounded-md border border-dental-success/30 bg-status-success-100 px-3 py-1.5 text-xs font-semibold text-status-success-700 hover:bg-dental-success/20 disabled:opacity-60"
                 >
                   {t('admin.reviewsPage.actions.approve')}
                 </button>
@@ -501,7 +526,7 @@ export default function AdminReviewsPage() {
                     void patchReview(row.id, { status: 'rejected' })
                   }
                   disabled={isUpdatingId === row.id}
-                  className="rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:opacity-60"
+                  className="rounded-md border border-dental-error/20 bg-status-error-100 px-3 py-1.5 text-xs font-semibold text-status-error-700 hover:bg-dental-error/20 disabled:opacity-60"
                 >
                   {t('admin.reviewsPage.actions.reject')}
                 </button>
@@ -511,7 +536,7 @@ export default function AdminReviewsPage() {
                     void patchReview(row.id, { status: 'pending' })
                   }
                   disabled={isUpdatingId === row.id}
-                  className="rounded-md border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-100 disabled:opacity-60"
+                  className="rounded-md border border-dental-warning/30 bg-status-warning-100 px-3 py-1.5 text-xs font-semibold text-status-warning-700 hover:bg-dental-warning/20 disabled:opacity-60"
                 >
                   {t('admin.reviewsPage.actions.toPending')}
                 </button>
@@ -527,7 +552,7 @@ export default function AdminReviewsPage() {
                     ? t('admin.reviewsPage.actions.unfeature')
                     : t('admin.reviewsPage.actions.feature')}
                 </button>
-                <span className="text-xs text-dental-text-light">
+                <span className="text-xs text-dental-muted">
                   {t('admin.reviewsPage.card.wouldRecommend', {
                     value: row.would_recommend
                       ? t('admin.reviewsPage.card.yes')

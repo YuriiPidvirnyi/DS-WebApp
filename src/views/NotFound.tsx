@@ -16,10 +16,10 @@ const NotFound = () => {
         </div>
 
         {/* Message */}
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">
+        <h2 className="text-3xl font-bold text-dental-dark mb-4">
           {t('notFound.title')}
         </h2>
-        <p className="text-xl text-gray-600 mb-8">
+        <p className="text-xl text-dental-muted mb-8">
           {t('notFound.description')}
         </p>
 
@@ -30,7 +30,7 @@ const NotFound = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/"
-            className="inline-flex items-center justify-center px-6 py-3 bg-teal-800 text-white font-semibold rounded-lg hover:bg-teal-900 transition-colors"
+            className="inline-flex items-center justify-center px-6 py-3 bg-dental-primary-800 text-white font-semibold rounded-lg hover:bg-dental-primary-900 transition-colors"
           >
             <Home className="h-5 w-5 mr-2" />
             {t('notFound.actions.home')}
@@ -46,23 +46,23 @@ const NotFound = () => {
         </div>
 
         {/* Quick Links */}
-        <div className="mt-12 pt-8 border-t border-gray-200">
-          <p className="text-sm text-gray-500 mb-4">
+        <div className="mt-12 pt-8 border-t border-dental-secondary-200">
+          <p className="text-sm text-dental-muted mb-4">
             {t('notFound.suggestions.title')}
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <Link href="/services" className="text-dental-teal hover:underline">
               {t('notFound.suggestions.services')}
             </Link>
-            <span className="text-gray-300">•</span>
+            <span className="text-dental-secondary-300">•</span>
             <Link href="/about" className="text-dental-teal hover:underline">
               {t('notFound.suggestions.about')}
             </Link>
-            <span className="text-gray-300">•</span>
+            <span className="text-dental-secondary-300">•</span>
             <Link href="/gallery" className="text-dental-teal hover:underline">
               {t('notFound.suggestions.gallery')}
             </Link>
-            <span className="text-gray-300">•</span>
+            <span className="text-dental-secondary-300">•</span>
             <Link href="/contact" className="text-dental-teal hover:underline">
               {t('notFound.suggestions.contact')}
             </Link>

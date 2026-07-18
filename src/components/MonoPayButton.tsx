@@ -213,7 +213,7 @@ export function MonoPayButton({
   if (phase === 'success') {
     return (
       <div
-        className={`flex items-center gap-2 text-green-700 font-medium ${className ?? ''}`}
+        className={`flex items-center gap-2 text-status-success-700 font-medium ${className ?? ''}`}
       >
         <CheckCircle2 className="w-5 h-5 shrink-0" />
         <span>Оплату успішно здійснено</span>
@@ -224,7 +224,7 @@ export function MonoPayButton({
   if (phase === 'error') {
     return (
       <div className={`space-y-2 ${className ?? ''}`}>
-        <div className="flex items-center gap-2 text-red-600 font-medium">
+        <div className="flex items-center gap-2 text-status-error-700 font-medium">
           <XCircle className="w-5 h-5 shrink-0" />
           <span>{errorMsg ?? 'Помилка оплати'}</span>
         </div>

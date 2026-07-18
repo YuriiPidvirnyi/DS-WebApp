@@ -19,7 +19,7 @@ import {
   Activity,
   AlertCircle,
 } from 'lucide-react'
-import { Card } from '@/components/ui'
+import { Card, StatusBadge, type StatusTone } from '@/components/ui'
 import { StatCard } from '@/components/cards'
 
 interface Appointment {
@@ -142,18 +142,16 @@ export default function CabinetPage() {
   }, [t])
 
   const getStatusBadge = (status: string) => {
-    const styles: Record<string, string> = {
-      pending: 'bg-amber-100 text-amber-700',
-      confirmed: 'bg-dental-primary-100 text-dental-primary-600',
-      completed: 'bg-dental-secondary-200 text-dental-dark',
-      cancelled: 'bg-red-100 text-red-700',
+    const tones: Record<string, StatusTone> = {
+      pending: 'warning',
+      confirmed: 'accent',
+      completed: 'success',
+      cancelled: 'neutral',
     }
     return (
-      <span
-        className={`px-2.5 py-1 rounded-full text-xs font-medium ${styles[status] || styles.pending}`}
-      >
+      <StatusBadge tone={tones[status] || 'warning'}>
         {t(`cabinet.status.${status}`, status)}
-      </span>
+      </StatusBadge>
     )
   }
 
@@ -173,9 +171,9 @@ export default function CabinetPage() {
 
   if (fetchError) {
     return (
-      <div className="bg-white rounded-2xl p-8 sm:p-10 text-center shadow-xs border border-red-100">
-        <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-          <AlertCircle className="w-8 h-8 text-red-500" />
+      <div className="bg-white rounded-2xl p-8 sm:p-10 text-center shadow-xs border border-dental-error/20">
+        <div className="w-16 h-16 bg-status-error-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <AlertCircle className="w-8 h-8 text-dental-error" />
         </div>
         <h2 className="text-lg font-semibold text-dental-dark mb-2">
           {t('cabinet.error.title')}
@@ -290,7 +288,7 @@ export default function CabinetPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-start gap-4">
               <div className="w-14 h-14 bg-dental-primary-50 rounded-xl flex items-center justify-center shrink-0">
-                <Calendar className="w-7 h-7 text-dental-primary-600" />
+                <Calendar className="w-7 h-7 text-dental-primary-ink" />
               </div>
               <div>
                 <h3 className="font-semibold text-dental-dark text-lg">
@@ -317,22 +315,22 @@ export default function CabinetPage() {
         <StatCard
           label={t('cabinet.dashboard.upcoming')}
           value={upcomingAppointments.length}
-          icon={<CalendarCheck className="w-5 h-5 text-dental-primary-600" />}
+          icon={<CalendarCheck className="w-5 h-5 text-dental-primary-ink" />}
           iconBg="bg-dental-primary-50"
           href="/cabinet/appointments?filter=upcoming"
         />
         <StatCard
           label={t('cabinet.dashboard.completed')}
           value={completedCount}
-          icon={<CheckCircle2 className="w-5 h-5 text-green-600" />}
-          iconBg="bg-green-50"
+          icon={<CheckCircle2 className="w-5 h-5 text-dental-success" />}
+          iconBg="bg-status-success-100"
           href="/cabinet/appointments?filter=past"
         />
         <StatCard
           label={t('cabinet.dashboard.total')}
           value={appointments.length}
-          icon={<Activity className="w-5 h-5 text-violet-600" />}
-          iconBg="bg-violet-50"
+          icon={<Activity className="w-5 h-5 text-dental-primary-ink" />}
+          iconBg="bg-dental-primary-50"
           href="/cabinet/appointments"
         />
         <Link
@@ -358,9 +356,9 @@ export default function CabinetPage() {
         <div className="space-y-5">
           {/* Profile Completeness */}
           {!profileComplete && (
-            <div className="bg-white rounded-2xl p-5 shadow-xs border border-amber-100">
+            <div className="bg-white rounded-2xl p-5 shadow-xs border border-dental-warning/30">
               <div className="flex items-center gap-3 mb-3">
-                <AlertCircle className="w-5 h-5 text-amber-500 shrink-0" />
+                <AlertCircle className="w-5 h-5 text-dental-warning shrink-0" />
                 <h3 className="font-semibold text-dental-dark text-sm">
                   {t('cabinet.dashboard.profileIncomplete')}
                 </h3>
@@ -368,7 +366,7 @@ export default function CabinetPage() {
               <div className="flex items-center gap-3 mb-2">
                 <div className="flex-1 h-2 bg-dental-secondary-100 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-amber-400 rounded-full transition-all"
+                    className="h-full bg-dental-warning rounded-full transition-all"
                     style={{ width: `${profilePercent}%` }}
                   />
                 </div>
@@ -381,7 +379,7 @@ export default function CabinetPage() {
               </p>
               <Link
                 href="/cabinet/profile"
-                className="text-xs font-medium text-dental-primary-600 hover:text-dental-primary-700 transition-colors rounded focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
+                className="text-xs font-medium text-dental-primary-ink hover:text-dental-primary-700 transition-colors rounded focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
               >
                 {t('cabinet.dashboard.completeProfile')}
                 <ChevronRight className="w-3 h-3 inline ml-0.5" />
@@ -399,7 +397,7 @@ export default function CabinetPage() {
                 {t('cabinet.treatmentHistory')}
               </h3>
               <div className="w-10 h-10 bg-dental-primary-50 rounded-xl flex items-center justify-center shrink-0">
-                <FileText className="w-5 h-5 text-dental-primary-600" />
+                <FileText className="w-5 h-5 text-dental-primary-ink" />
               </div>
             </div>
           </Link>
@@ -412,7 +410,7 @@ export default function CabinetPage() {
               </h3>
               <Link
                 href="/cabinet/profile"
-                className="text-dental-primary-600 hover:text-dental-primary-700 text-sm font-medium rounded focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
+                className="text-dental-primary-ink hover:text-dental-primary-700 text-sm font-medium rounded focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
               >
                 {t('cabinet.edit')}
               </Link>
@@ -470,7 +468,7 @@ export default function CabinetPage() {
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 bg-dental-primary-50 rounded-lg flex items-center justify-center">
-                  <Calendar className="w-4 h-4 text-dental-primary-600" />
+                  <Calendar className="w-4 h-4 text-dental-primary-ink" />
                 </div>
                 <span className="font-medium text-dental-dark text-sm">
                   {t('cabinet.myAppointments')}
@@ -484,7 +482,7 @@ export default function CabinetPage() {
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 bg-dental-primary-50 rounded-lg flex items-center justify-center">
-                  <FileText className="w-4 h-4 text-dental-primary-600" />
+                  <FileText className="w-4 h-4 text-dental-primary-ink" />
                 </div>
                 <span className="font-medium text-dental-dark text-sm">
                   {t('cabinet.sidebar.payments')}
@@ -504,8 +502,8 @@ export default function CabinetPage() {
               className="flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-dental-primary-500"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-amber-50 rounded-lg flex items-center justify-center">
-                  <Star className="w-4 h-4 text-amber-500" />
+                <div className="w-9 h-9 bg-status-warning-100 rounded-lg flex items-center justify-center">
+                  <Star className="w-4 h-4 text-dental-warning" />
                 </div>
                 <span className="font-medium text-dental-dark text-sm">
                   {t('cabinet.googleReview')}
@@ -525,7 +523,7 @@ export default function CabinetPage() {
               </h3>
               <Link
                 href="/cabinet/appointments"
-                className="text-dental-primary-600 hover:text-dental-primary-700 text-sm font-medium rounded focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
+                className="text-dental-primary-ink hover:text-dental-primary-700 text-sm font-medium rounded focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
               >
                 {t('cabinet.allAppointments')}
               </Link>
@@ -570,7 +568,7 @@ export default function CabinetPage() {
                             <span className="text-[9px] sm:text-[10px] text-dental-primary-500 font-medium uppercase leading-none">
                               {getDayOfWeek(apt.appointment_date)}
                             </span>
-                            <span className="text-base sm:text-lg font-bold text-dental-primary-600 leading-tight">
+                            <span className="text-base sm:text-lg font-bold text-dental-primary-ink leading-tight">
                               {new Date(apt.appointment_date).getDate()}
                             </span>
                             <span className="text-[10px] sm:text-xs text-dental-primary-500 leading-none">

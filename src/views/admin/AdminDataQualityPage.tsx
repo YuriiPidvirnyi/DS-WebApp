@@ -29,15 +29,16 @@ interface DataQualityResponse {
 }
 
 const SEVERITY_ICON: Record<DataQualityIssue['severity'], ReactElement> = {
-  high: <AlertCircle className="h-5 w-5 text-red-500" />,
-  medium: <AlertTriangle className="h-5 w-5 text-amber-500" />,
-  low: <Info className="h-5 w-5 text-blue-400" />,
+  high: <AlertCircle className="h-5 w-5 text-dental-error" />,
+  medium: <AlertTriangle className="h-5 w-5 text-dental-warning" />,
+  low: <Info className="h-5 w-5 text-dental-info" />,
 }
 
 const SEVERITY_BADGE: Record<DataQualityIssue['severity'], string> = {
-  high: 'bg-red-50 text-red-700 border-red-200',
-  medium: 'bg-amber-50 text-amber-700 border-amber-200',
-  low: 'bg-blue-50 text-blue-700 border-blue-200',
+  high: 'bg-status-error-100 text-status-error-700 border-dental-error/20',
+  medium:
+    'bg-status-warning-100 text-status-warning-700 border-dental-warning/30',
+  low: 'bg-dental-info-light text-dental-info-dark border-dental-info/30',
 }
 
 const SEVERITY_LABEL: Record<DataQualityIssue['severity'], string> = {
@@ -129,7 +130,7 @@ export default function AdminDataQualityPage() {
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+        <div className="mb-4 p-3 bg-status-error-100 border border-dental-error/20 rounded-lg text-sm text-status-error-700">
           {error}
         </div>
       )}
@@ -138,8 +139,8 @@ export default function AdminDataQualityPage() {
         <div className="mb-4 p-3 rounded-lg border text-sm font-medium flex items-center gap-2">
           {!hasIssues ? (
             <>
-              <CheckCircle className="h-4 w-4 text-green-500" />
-              <span className="text-green-700">
+              <CheckCircle className="h-4 w-4 text-dental-success" />
+              <span className="text-status-success-700">
                 {t(
                   'admin.dataQuality.allClean',
                   'No data quality issues found'
@@ -148,8 +149,8 @@ export default function AdminDataQualityPage() {
             </>
           ) : (
             <>
-              <AlertCircle className="h-4 w-4 text-red-500" />
-              <span className="text-red-700">
+              <AlertCircle className="h-4 w-4 text-dental-error" />
+              <span className="text-status-error-700">
                 {t('admin.dataQuality.issuesFound', {
                   count: data.totalIssues,
                   defaultValue: `${data.totalIssues} issue(s) require attention`,
@@ -175,7 +176,7 @@ export default function AdminDataQualityPage() {
 
       {!loading && data && !hasIssues && (
         <div className="mt-8 text-center">
-          <CheckCircle className="h-12 w-12 text-green-400 mx-auto mb-3" />
+          <CheckCircle className="h-12 w-12 text-dental-success mx-auto mb-3" />
           <p className="text-dental-text text-sm">
             {t(
               'admin.dataQuality.cleanDescription',

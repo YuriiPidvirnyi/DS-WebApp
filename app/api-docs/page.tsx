@@ -49,7 +49,7 @@ export default function ApiDocsPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-dental-secondary-50">
       {/* Header */}
       <header className="bg-white border-b sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -57,13 +57,13 @@ export default function ApiDocsPage() {
             <div className="flex items-center gap-4">
               <Link
                 href="/"
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+                className="flex items-center gap-2 text-dental-muted hover:text-dental-dark transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>{t('apiDocsPage.backToSite')}</span>
               </Link>
-              <div className="h-6 w-px bg-gray-300" />
-              <h1 className="text-xl font-semibold text-gray-900">
+              <div className="h-6 w-px bg-dental-secondary-300" />
+              <h1 className="text-xl font-semibold text-dental-dark">
                 {t('apiDocsPage.title')}
               </h1>
             </div>
@@ -72,7 +72,7 @@ export default function ApiDocsPage() {
                 href="/openapi.json"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                className="flex items-center gap-2 px-3 py-2 text-sm text-dental-muted hover:text-dental-dark hover:bg-dental-secondary-100 rounded-lg transition-colors"
               >
                 <FileJson className="w-4 h-4" />
                 {t('apiDocsPage.openApiSpec')}
@@ -90,7 +90,7 @@ export default function ApiDocsPage() {
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
                 <div className="w-8 h-8 border-4 border-dental-teal border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                <p className="text-gray-500">{t('apiDocsPage.loading')}</p>
+                <p className="text-dental-muted">{t('apiDocsPage.loading')}</p>
               </div>
             </div>
           </div>
@@ -99,25 +99,25 @@ export default function ApiDocsPage() {
         {/* Additional Info */}
         <div className="mt-8 grid md:grid-cols-2 gap-6">
           <div className="bg-white rounded-lg shadow-xs border p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">
+            <h2 className="text-lg font-semibold text-dental-dark mb-3">
               {t('apiDocsPage.auth.title')}
             </h2>
-            <p className="text-gray-600 text-sm mb-4">
+            <p className="text-dental-muted text-sm mb-4">
               {t('apiDocsPage.auth.description')}
             </p>
-            <code className="block bg-gray-100 p-3 rounded text-xs">
+            <code className="block bg-dental-secondary-100 p-3 rounded text-xs">
               {t('apiDocsPage.auth.authorizationHeader')}
             </code>
           </div>
 
           <div className="bg-white rounded-lg shadow-xs border p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">
+            <h2 className="text-lg font-semibold text-dental-dark mb-3">
               {t('apiDocsPage.rateLimit.title')}
             </h2>
-            <p className="text-gray-600 text-sm mb-4">
+            <p className="text-dental-muted text-sm mb-4">
               {t('apiDocsPage.rateLimit.description')}
             </p>
-            <ul className="text-sm text-gray-600 space-y-1">
+            <ul className="text-sm text-dental-muted space-y-1">
               <li>{t('apiDocsPage.rateLimit.publicEndpoints')}</li>
               <li>{t('apiDocsPage.rateLimit.contactForm')}</li>
               <li>{t('apiDocsPage.rateLimit.booking')}</li>

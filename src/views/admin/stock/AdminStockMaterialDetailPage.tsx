@@ -4,7 +4,9 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronLeft, Loader2, Save, Archive, X, Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useCSRF } from '@/hooks/useCSRF'
+import { useConfirm } from '@/hooks/useConfirm'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { hasPermission } from '@/lib/permissions'
 import BarcodeInput from '@/components/admin/stock/BarcodeInput'
@@ -34,7 +36,9 @@ const PACK_UNITS = [
 
 export default function AdminStockMaterialDetailPage({ materialId }: Props) {
   const router = useRouter()
+  const { t } = useTranslation()
   const { token: csrfToken } = useCSRF()
+  const { confirm, confirmDialog } = useConfirm()
   const { user } = useAdminAuth()
   const canEdit = user ? hasPermission(user.role, 'inventory:edit') : false
 
@@ -174,7 +178,16 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
   }
 
   async function handleArchive() {
-    if (!materialId || !confirm('Деактивувати матеріал?')) return
+    if (!materialId) return
+    if (
+      !(await confirm({
+        title: t('admin.stock.confirm.deactivateMaterial.title'),
+        description: t('admin.stock.confirm.deactivateMaterial.description'),
+        confirmLabel: t('admin.stock.confirm.deactivateMaterial.action'),
+        severity: 'significant',
+      }))
+    )
+      return
     const res = await fetch(`/api/stock/materials/${materialId}`, {
       method: 'DELETE',
       headers: { 'X-CSRF-Token': csrfToken },
@@ -228,7 +241,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
         {!isNew && canEdit && material && !material.is_active && (
           <button
             onClick={handleArchive}
-            className="inline-flex items-center gap-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-medium text-amber-700 hover:bg-amber-100"
+            className="inline-flex items-center gap-2 rounded-lg border border-dental-warning/30 bg-status-warning-100 px-4 py-2 text-sm font-medium text-status-warning-700 hover:bg-status-warning-100"
           >
             <Archive className="w-4 h-4" />
             Деактивувати
@@ -237,7 +250,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
       </div>
 
       {error && (
-        <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+        <div className="mb-4 rounded-lg bg-status-error-100 border border-dental-error/20 p-4 text-sm text-status-error-700">
           {error}
         </div>
       )}
@@ -255,7 +268,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
               onChange={e => setNameUk(e.target.value)}
               required
               disabled={!canEdit}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+              className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-dental-secondary-50"
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -267,7 +280,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                 value={nameEn}
                 onChange={e => setNameEn(e.target.value)}
                 disabled={!canEdit}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+                className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-dental-secondary-50"
               />
             </div>
             <div>
@@ -278,7 +291,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                 value={unit}
                 onChange={e => setUnit(e.target.value)}
                 disabled={!canEdit}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+                className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-dental-secondary-50"
               />
             </div>
           </div>
@@ -291,7 +304,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
               onChange={e => setDescriptionUk(e.target.value)}
               rows={2}
               disabled={!canEdit}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50 resize-none"
+              className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-dental-secondary-50 resize-none"
             />
           </div>
         </section>
@@ -308,7 +321,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                 value={brandId}
                 onChange={e => setBrandId(e.target.value)}
                 disabled={!canEdit}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+                className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-dental-secondary-50"
               >
                 <option value="">— не вказано —</option>
                 {brands.map(b => (
@@ -326,7 +339,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                 value={categoryId}
                 onChange={e => setCategoryId(e.target.value)}
                 disabled={!canEdit}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+                className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-dental-secondary-50"
               >
                 <option value="">— не вказано —</option>
                 {categories.map(c => (
@@ -344,7 +357,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                 value={supplierId}
                 onChange={e => setSupplierId(e.target.value)}
                 disabled={!canEdit}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+                className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-dental-secondary-50"
               >
                 <option value="">— не вказано —</option>
                 {suppliers.map(s => (
@@ -370,7 +383,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                 onChange={e => setPackFormatLabel(e.target.value)}
                 disabled={!canEdit}
                 placeholder="Банка, Флакон, Упаковка..."
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+                className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-dental-secondary-50"
               />
             </div>
             <div>
@@ -384,7 +397,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                 value={packSizeNumerator}
                 onChange={e => setPackSizeNumerator(e.target.value)}
                 disabled={!canEdit}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+                className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-dental-secondary-50"
               />
             </div>
             <div>
@@ -397,7 +410,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                   setPackSizeUnit(e.target.value as (typeof PACK_UNITS)[number])
                 }
                 disabled={!canEdit}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+                className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-dental-secondary-50"
               >
                 {PACK_UNITS.map(u => (
                   <option key={u} value={u}>
@@ -420,7 +433,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
               value={articleCode}
               onChange={e => setArticleCode(e.target.value)}
               disabled={!canEdit}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-gray-50"
+              className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-dental-secondary-50"
             />
           </div>
           {canEdit && (
@@ -453,12 +466,12 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
               {barcodes.map(code => (
                 <span
                   key={code}
-                  className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-sm text-dental-dark font-mono"
+                  className="inline-flex items-center gap-1 rounded-full bg-dental-secondary-100 px-3 py-1 text-sm text-dental-dark font-mono"
                 >
                   {code}
                   {canEdit && (
                     <button type="button" onClick={() => removeBarcode(code)}>
-                      <X className="w-3 h-3 text-dental-text hover:text-red-500" />
+                      <X className="w-3 h-3 text-dental-text hover:text-dental-error" />
                     </button>
                   )}
                 </span>
@@ -476,7 +489,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-200">
+                  <tr className="border-b border-dental-secondary-200">
                     <th className="text-left py-2 font-medium text-dental-text">
                       Склад
                     </th>
@@ -498,13 +511,13 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                   {matrix.map(row => (
                     <tr
                       key={row.warehouse_id}
-                      className="border-b border-gray-100"
+                      className="border-b border-dental-secondary-100"
                     >
                       <td className="py-2 text-dental-dark">
                         {row.warehouse?.name_uk ?? row.warehouse_id}
                       </td>
                       <td
-                        className={`py-2 text-right font-mono ${(row.current_quantity ?? 0) <= 0 ? 'text-red-600' : 'text-dental-dark'}`}
+                        className={`py-2 text-right font-mono ${(row.current_quantity ?? 0) <= 0 ? 'text-status-error-700' : 'text-dental-dark'}`}
                       >
                         {row.current_quantity ?? 0}
                       </td>
@@ -520,7 +533,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                                 criticalLevelUnitQty: e.target.value || null,
                               })
                             }
-                            className="w-20 rounded border border-gray-300 px-2 py-1 text-right text-sm focus:outline-hidden focus:ring-1 focus:ring-dental-primary-600"
+                            className="w-20 rounded border border-dental-secondary-300 px-2 py-1 text-right text-sm focus:outline-hidden focus:ring-1 focus:ring-dental-primary-600"
                           />
                         ) : (
                           <span className="text-dental-text">
@@ -540,7 +553,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                                 defaultReorderUnitQty: e.target.value || null,
                               })
                             }
-                            className="w-20 rounded border border-gray-300 px-2 py-1 text-right text-sm focus:outline-hidden focus:ring-1 focus:ring-dental-primary-600"
+                            className="w-20 rounded border border-dental-secondary-300 px-2 py-1 text-right text-sm focus:outline-hidden focus:ring-1 focus:ring-dental-primary-600"
                           />
                         ) : (
                           <span className="text-dental-text">
@@ -589,6 +602,8 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
           </div>
         )}
       </form>
+
+      {confirmDialog}
     </div>
   )
 }

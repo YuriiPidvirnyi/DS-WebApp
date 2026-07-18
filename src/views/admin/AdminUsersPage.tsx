@@ -6,14 +6,9 @@ import { useTranslation } from 'react-i18next'
 import { Shield, Pencil, Trash2, X, Check } from 'lucide-react'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { useCSRF } from '@/hooks/useCSRF'
-import {
-  ADMIN_ROLES,
-  ROLE_BADGE_CLASSES,
-  hasPermission,
-  type AdminRole,
-} from '@/lib/permissions'
+import { ADMIN_ROLES, hasPermission, type AdminRole } from '@/lib/permissions'
 import { captureException } from '@/utils/sentry'
-import { AsyncState, ErrorState } from '@/components/ui'
+import { AsyncState, ErrorState, RoleBadge } from '@/components/ui'
 
 interface AdminUserRow {
   id: string
@@ -172,7 +167,7 @@ export default function AdminUsersPage() {
             <h1 className="text-2xl font-bold text-dental-dark">
               {t('admin.users.title')}
             </h1>
-            <p className="text-sm text-dental-text-light mt-0.5">
+            <p className="text-sm text-dental-muted mt-0.5">
               {t('admin.users.subtitle')}
             </p>
           </div>
@@ -185,12 +180,7 @@ export default function AdminUsersPage() {
       {/* Role legend */}
       <div className="flex flex-wrap gap-2">
         {ADMIN_ROLES.map(role => (
-          <span
-            key={role}
-            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${ROLE_BADGE_CLASSES[role]}`}
-          >
-            {t(`admin.roles.${role}`)}
-          </span>
+          <RoleBadge key={role} role={role} />
         ))}
       </div>
 
@@ -200,20 +190,20 @@ export default function AdminUsersPage() {
           <table className="min-w-full divide-y divide-dental-secondary-200">
             <thead className="bg-dental-secondary-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-dental-text-light uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-dental-muted uppercase tracking-wider">
                   {t('admin.users.columns.name')}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-dental-text-light uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-dental-muted uppercase tracking-wider">
                   {t('admin.users.columns.role')}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-dental-text-light uppercase tracking-wider hidden md:table-cell">
+                <th className="px-6 py-3 text-left text-xs font-medium text-dental-muted uppercase tracking-wider hidden md:table-cell">
                   {t('admin.users.columns.specialization')}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-dental-text-light uppercase tracking-wider hidden lg:table-cell">
+                <th className="px-6 py-3 text-left text-xs font-medium text-dental-muted uppercase tracking-wider hidden lg:table-cell">
                   {t('admin.users.columns.lastLogin')}
                 </th>
                 {canManage && (
-                  <th className="px-6 py-3 text-right text-xs font-medium text-dental-text-light uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-dental-muted uppercase tracking-wider">
                     {t('common.actions')}
                   </th>
                 )}
@@ -280,11 +270,7 @@ export default function AdminUsersPage() {
                           ))}
                         </select>
                       ) : (
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ROLE_BADGE_CLASSES[u.role]}`}
-                        >
-                          {t(`admin.roles.${u.role}`)}
-                        </span>
+                        <RoleBadge role={u.role} />
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
@@ -306,7 +292,7 @@ export default function AdminUsersPage() {
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-dental-text-light hidden lg:table-cell">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-dental-muted hidden lg:table-cell">
                       {formatDate(u.last_login_at)}
                     </td>
                     {canManage && (
@@ -316,7 +302,7 @@ export default function AdminUsersPage() {
                             <button
                               onClick={saveEdit}
                               disabled={saving}
-                              className="p-2 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 disabled:opacity-50 transition-colors"
+                              className="p-2 rounded-lg bg-status-success-100 text-status-success-700 hover:bg-dental-success/20 disabled:opacity-50 transition-colors"
                               aria-label={t('common.save')}
                             >
                               <Check className="w-4 h-4" />
@@ -332,13 +318,13 @@ export default function AdminUsersPage() {
                           </div>
                         ) : deleteConfirmId === u.id ? (
                           <div className="flex items-center justify-end gap-2">
-                            <span className="text-xs text-red-600 mr-1">
+                            <span className="text-xs text-status-error-700 mr-1">
                               {t('admin.users.deleteConfirm')}
                             </span>
                             <button
                               onClick={() => handleDelete(u.id)}
                               disabled={deleting}
-                              className="p-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 disabled:opacity-50 transition-colors"
+                              className="p-2 rounded-lg bg-status-error-100 text-status-error-700 hover:bg-dental-error/20 disabled:opacity-50 transition-colors"
                               aria-label={t('common.confirm')}
                             >
                               <Check className="w-4 h-4" />
@@ -363,7 +349,7 @@ export default function AdminUsersPage() {
                             {isSuperadmin && !isCurrentUser && (
                               <button
                                 onClick={() => setDeleteConfirmId(u.id)}
-                                className="p-2 rounded-lg text-red-500 hover:bg-red-50 transition-colors"
+                                className="p-2 rounded-lg text-dental-error hover:bg-status-error-100 transition-colors"
                                 aria-label={t('common.delete')}
                               >
                                 <Trash2 className="w-4 h-4" />

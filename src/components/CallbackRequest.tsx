@@ -79,7 +79,7 @@ export default function CallbackRequest() {
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-xs">
-      <h3 className="text-lg font-bold text-gray-900 mb-4">
+      <h3 className="text-lg font-bold text-dental-dark mb-4">
         {t('callback.title')}
       </h3>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -143,7 +143,7 @@ export default function CallbackRequest() {
             className="mt-1"
             {...register('consent')}
           />
-          <label htmlFor="cb-consent" className="text-xs text-gray-600">
+          <label htmlFor="cb-consent" className="text-xs text-dental-muted">
             {t('callback.consentText')}
           </label>
         </div>
@@ -152,7 +152,7 @@ export default function CallbackRequest() {
         </Button>
         {isSubmitSuccessful && (
           <div className="mt-2">
-            <p className="text-xs text-green-600 mb-1">
+            <p className="text-xs text-status-success-700 mb-1">
               {t('callback.successMessage')}
             </p>
             <MicroFeedback form="callback" compact />

@@ -3145,6 +3145,9 @@ const pl = {
     },
     typing: 'Konsultant pisze…',
     minimizeChat: 'Zwiń czat',
+    chooseChannel: 'Wybierz sposób kontaktu:',
+    adminChannel: 'Napisz do administratora',
+    aiChannel: 'Asystent AI',
   },
   pricing: {
     title: 'Przejrzyste ceny',

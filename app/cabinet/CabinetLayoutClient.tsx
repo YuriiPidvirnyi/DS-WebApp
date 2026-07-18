@@ -288,7 +288,7 @@ export default function CabinetLayoutClient({
           <button
             onClick={handleLogout}
             tabIndex={sidebarOpen ? 0 : -1}
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-red-600 hover:bg-red-50 transition-colors text-sm focus:outline-hidden focus:ring-2 focus:ring-red-300"
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-status-error-700 hover:bg-status-error-100 transition-colors text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-error"
           >
             <LogOut className="w-4 h-4" />
             {t('cabinet.logout')}
@@ -350,7 +350,7 @@ export default function CabinetLayoutClient({
             </Link>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-red-600 hover:bg-red-50 transition-colors text-sm focus:outline-hidden focus:ring-2 focus:ring-red-300"
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-status-error-700 hover:bg-status-error-100 transition-colors text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-error"
             >
               <LogOut className="w-4 h-4" />
               {t('cabinet.logout')}

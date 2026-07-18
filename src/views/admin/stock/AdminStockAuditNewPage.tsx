@@ -142,14 +142,14 @@ export default function AdminStockAuditNewPage() {
               type="date"
               value={auditDate}
               onChange={e => setAuditDate(e.target.value)}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
+              className="rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
             />
           </div>
 
           {/* Warehouses */}
           <div className="rounded-xl border bg-white p-5">
             <h2 className="font-semibold text-dental-dark mb-3">
-              Склади <span className="text-red-500">*</span>
+              Склади <span className="text-dental-error">*</span>
             </h2>
             {warehouses.length === 0 ? (
               <p className="text-sm text-dental-text">Складів не знайдено</p>
@@ -196,7 +196,7 @@ export default function AdminStockAuditNewPage() {
                     className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs cursor-pointer transition-colors ${
                       selectedCategories.has(cat.id)
                         ? 'border-dental-primary-600 bg-dental-primary/10 text-dental-primary-600'
-                        : 'border-gray-200 text-dental-text hover:bg-gray-50'
+                        : 'border-dental-secondary-200 text-dental-text hover:bg-dental-secondary-50'
                     }`}
                   >
                     <input
@@ -232,7 +232,7 @@ export default function AdminStockAuditNewPage() {
                     className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs cursor-pointer transition-colors ${
                       selectedBrands.has(brand.id)
                         ? 'border-dental-primary-600 bg-dental-primary/10 text-dental-primary-600'
-                        : 'border-gray-200 text-dental-text hover:bg-gray-50'
+                        : 'border-dental-secondary-200 text-dental-text hover:bg-dental-secondary-50'
                     }`}
                   >
                     <input
@@ -260,12 +260,12 @@ export default function AdminStockAuditNewPage() {
               onChange={e => setComment(e.target.value)}
               rows={3}
               placeholder="Необов'язково..."
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 resize-none"
+              className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 resize-none"
             />
           </div>
 
           {error && (
-            <div className="rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+            <div className="rounded-lg bg-status-error-100 border border-dental-error/20 p-4 text-sm text-status-error-700">
               {error}
             </div>
           )}
@@ -273,7 +273,7 @@ export default function AdminStockAuditNewPage() {
           <div className="flex justify-end gap-3">
             <Link
               href="/admin/stock/audits"
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-dental-text hover:bg-gray-100 transition-colors"
+              className="rounded-lg border border-dental-secondary-300 px-4 py-2 text-sm font-medium text-dental-text hover:bg-dental-secondary-100 transition-colors"
             >
               Скасувати
             </Link>

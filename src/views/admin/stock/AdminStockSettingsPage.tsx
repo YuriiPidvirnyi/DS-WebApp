@@ -130,7 +130,7 @@ export default function AdminStockSettingsPage() {
                     className={`flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-colors ${
                       settings.writeoff_mode === mode
                         ? 'border-dental-primary-600 bg-dental-primary/5'
-                        : 'border-gray-200 hover:bg-gray-50'
+                        : 'border-dental-secondary-200 hover:bg-dental-secondary-50'
                     }`}
                   >
                     <input
@@ -221,7 +221,7 @@ export default function AdminStockSettingsPage() {
           </div>
 
           {error && (
-            <div className="rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+            <div className="rounded-lg bg-status-error-100 border border-dental-error/20 p-4 text-sm text-status-error-700">
               {error}
             </div>
           )}

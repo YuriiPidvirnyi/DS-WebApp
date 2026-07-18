@@ -67,7 +67,7 @@ export default function AiUsageWidget() {
       </h2>
 
       {error ? (
-        <p className="mt-3 text-sm text-red-600">{error}</p>
+        <p className="mt-3 text-sm text-status-error-700">{error}</p>
       ) : isLoading ? (
         <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
           {[1, 2, 3, 4].map(i => (

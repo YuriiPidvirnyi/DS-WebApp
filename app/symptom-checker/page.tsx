@@ -100,27 +100,27 @@ const urgencyColors: Record<
   { bg: string; border: string; text: string; icon: typeof CheckCircle }
 > = {
   low: {
-    bg: 'bg-green-50',
-    border: 'border-green-200',
-    text: 'text-green-800',
+    bg: 'bg-status-success-100',
+    border: 'border-dental-success/30',
+    text: 'text-status-success-700',
     icon: CheckCircle,
   },
   medium: {
-    bg: 'bg-yellow-50',
-    border: 'border-yellow-200',
-    text: 'text-yellow-800',
+    bg: 'bg-status-warning-100',
+    border: 'border-dental-warning/30',
+    text: 'text-status-warning-700',
     icon: Clock,
   },
   high: {
-    bg: 'bg-orange-50',
-    border: 'border-orange-200',
-    text: 'text-orange-800',
+    bg: 'bg-status-warning-100',
+    border: 'border-dental-warning/50',
+    text: 'text-status-warning-700',
     icon: AlertTriangle,
   },
   emergency: {
-    bg: 'bg-red-50',
-    border: 'border-red-200',
-    text: 'text-red-800',
+    bg: 'bg-status-error-100',
+    border: 'border-dental-error/20',
+    text: 'text-status-error-700',
     icon: AlertTriangle,
   },
 }
@@ -190,7 +190,7 @@ export default function SymptomCheckerPage() {
   const UrgencyIcon = urgencyColors[overallUrgency].icon
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-dental-secondary-50">
       {/* Header */}
       <section className="py-16 bg-dental-primary-700 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -200,7 +200,7 @@ export default function SymptomCheckerPage() {
           <h1 className="text-4xl font-bold mb-4">
             {t('ai.symptomChecker.title')}
           </h1>
-          <p className="text-xl text-teal-100 max-w-2xl mx-auto">
+          <p className="text-xl text-dental-primary-100 max-w-2xl mx-auto">
             {t('ai.symptomChecker.description')}
           </p>
           <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full text-sm">
@@ -212,9 +212,9 @@ export default function SymptomCheckerPage() {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Symptom Selection */}
-        <div className="bg-white rounded-2xl shadow-xs border border-slate-200 p-6 mb-8">
-          <h2 className="text-xl font-semibold text-slate-900 mb-6 flex items-center gap-2">
-            <Activity className="w-5 h-5 text-teal-600" />
+        <div className="bg-white rounded-2xl shadow-xs border border-dental-secondary-200 p-6 mb-8">
+          <h2 className="text-xl font-semibold text-dental-dark mb-6 flex items-center gap-2">
+            <Activity className="w-5 h-5 text-dental-primary-ink" />
             {t('ai.symptomChecker.selectSymptoms')}
           </h2>
 
@@ -226,8 +226,8 @@ export default function SymptomCheckerPage() {
                 aria-pressed={selectedSymptoms.includes(symptom.id)}
                 className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all duration-200 text-left ${
                   selectedSymptoms.includes(symptom.id)
-                    ? 'border-teal-500 bg-teal-50 text-teal-900'
-                    : 'border-slate-200 hover:border-slate-300 text-slate-700'
+                    ? 'border-dental-primary-500 bg-dental-primary-50 text-dental-primary-900'
+                    : 'border-dental-secondary-200 hover:border-dental-secondary-300 text-dental-text'
                 }`}
               >
                 <span className="text-2xl">{symptom.icon}</span>
@@ -235,7 +235,7 @@ export default function SymptomCheckerPage() {
                   {t(`ai.symptomChecker.symptoms.${symptom.id}`)}
                 </span>
                 {selectedSymptoms.includes(symptom.id) && (
-                  <CheckCircle className="w-5 h-5 text-teal-600 ml-auto" />
+                  <CheckCircle className="w-5 h-5 text-dental-primary-ink ml-auto" />
                 )}
               </button>
             ))}
@@ -243,10 +243,10 @@ export default function SymptomCheckerPage() {
         </div>
 
         {/* Pain Level */}
-        <div className="bg-white rounded-2xl shadow-xs border border-slate-200 p-6 mb-8">
-          <h2 className="text-xl font-semibold text-slate-900 mb-6">
+        <div className="bg-white rounded-2xl shadow-xs border border-dental-secondary-200 p-6 mb-8">
+          <h2 className="text-xl font-semibold text-dental-dark mb-6">
             {t('ai.symptomChecker.painLevel')}:{' '}
-            <span className="text-teal-600">{painLevel}/10</span>
+            <span className="text-dental-primary-ink">{painLevel}/10</span>
           </h2>
 
           <input
@@ -255,13 +255,13 @@ export default function SymptomCheckerPage() {
             max="10"
             value={painLevel}
             onChange={e => setPainLevel(parseInt(e.target.value))}
-            className="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-dental-primary-600"
+            className="w-full h-3 bg-dental-secondary-200 rounded-lg appearance-none cursor-pointer accent-dental-primary-600"
             aria-label={t('ai.symptomChecker.painLevel')}
             aria-valuemin={1}
             aria-valuemax={10}
             aria-valuenow={painLevel}
           />
-          <div className="flex justify-between text-sm text-slate-500 mt-2">
+          <div className="flex justify-between text-sm text-dental-muted mt-2">
             <span>{t('ai.symptomChecker.scale.mild')}</span>
             <span>{t('ai.symptomChecker.scale.moderate')}</span>
             <span>{t('ai.symptomChecker.scale.severe')}</span>
@@ -269,8 +269,8 @@ export default function SymptomCheckerPage() {
         </div>
 
         {/* Duration */}
-        <div className="bg-white rounded-2xl shadow-xs border border-slate-200 p-6 mb-8">
-          <h2 className="text-xl font-semibold text-slate-900 mb-6">
+        <div className="bg-white rounded-2xl shadow-xs border border-dental-secondary-200 p-6 mb-8">
+          <h2 className="text-xl font-semibold text-dental-dark mb-6">
             {t('ai.symptomChecker.duration')}
           </h2>
 
@@ -282,8 +282,8 @@ export default function SymptomCheckerPage() {
                 aria-pressed={duration === option.value}
                 className={`px-4 py-2 rounded-lg border-2 font-medium transition-all ${
                   duration === option.value
-                    ? 'border-teal-500 bg-teal-50 text-teal-900'
-                    : 'border-slate-200 hover:border-slate-300 text-slate-700'
+                    ? 'border-dental-primary-500 bg-dental-primary-50 text-dental-primary-900'
+                    : 'border-dental-secondary-200 hover:border-dental-secondary-300 text-dental-text'
                 }`}
               >
                 {t(option.labelKey)}
@@ -296,7 +296,7 @@ export default function SymptomCheckerPage() {
         <button
           onClick={analyzeSymptoms}
           disabled={selectedSymptoms.length === 0}
-          className="w-full py-4 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:bg-slate-300 text-white font-semibold rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed mb-8"
+          className="w-full py-4 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:bg-dental-secondary-300 text-white font-semibold rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed mb-8"
         >
           <Sparkles className="w-5 h-5" />
           {t('ai.symptomChecker.analyze')}
@@ -313,12 +313,12 @@ export default function SymptomCheckerPage() {
                 <div
                   className={`w-12 h-12 rounded-full flex items-center justify-center ${
                     overallUrgency === 'emergency'
-                      ? 'bg-red-200'
+                      ? 'bg-dental-error/20'
                       : overallUrgency === 'high'
-                        ? 'bg-orange-200'
+                        ? 'bg-dental-warning/30'
                         : overallUrgency === 'medium'
-                          ? 'bg-yellow-200'
-                          : 'bg-green-200'
+                          ? 'bg-dental-warning/20'
+                          : 'bg-dental-success/20'
                   }`}
                 >
                   <UrgencyIcon
@@ -332,7 +332,7 @@ export default function SymptomCheckerPage() {
                     {t('ai.symptomChecker.urgency')}:{' '}
                     {t(urgencyLabelKeys[overallUrgency])}
                   </h3>
-                  <p className="text-slate-700">
+                  <p className="text-dental-text">
                     {overallUrgency === 'emergency' ||
                     overallUrgency === 'high' ? (
                       <span className="font-semibold">
@@ -350,14 +350,14 @@ export default function SymptomCheckerPage() {
                 <div className="mt-4 flex flex-col sm:flex-row gap-3">
                   <a
                     href={`tel:${CONTACT_INFO.emergencyPhoneRaw}`}
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-colors"
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-dental-error hover:bg-dental-error-dark text-white font-semibold rounded-xl transition-colors"
                   >
                     <Phone className="w-5 h-5" />
                     {t('ai.symptomChecker.actions.callNow')}
                   </a>
                   <Link
                     href="/booking"
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-white hover:bg-slate-50 text-slate-900 font-semibold rounded-xl border-2 border-slate-200 transition-colors"
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-white hover:bg-dental-secondary-50 text-dental-dark font-semibold rounded-xl border-2 border-dental-secondary-200 transition-colors"
                   >
                     {t('ai.symptomChecker.actions.bookOnline')}
                     <ArrowRight className="w-5 h-5" />
@@ -367,8 +367,8 @@ export default function SymptomCheckerPage() {
             </div>
 
             {/* Detailed Analysis */}
-            <div className="bg-white rounded-2xl shadow-xs border border-slate-200 p-6">
-              <h3 className="text-xl font-semibold text-slate-900 mb-6">
+            <div className="bg-white rounded-2xl shadow-xs border border-dental-secondary-200 p-6">
+              <h3 className="text-xl font-semibold text-dental-dark mb-6">
                 {t('ai.symptomChecker.possibleCauses')}
               </h3>
 
@@ -386,7 +386,7 @@ export default function SymptomCheckerPage() {
                   return (
                     <div
                       key={symptomId}
-                      className="border border-slate-200 rounded-xl overflow-hidden"
+                      className="border border-dental-secondary-200 rounded-xl overflow-hidden"
                     >
                       <button
                         onClick={() =>
@@ -396,32 +396,32 @@ export default function SymptomCheckerPage() {
                               : [...prev, symptomId]
                           )
                         }
-                        className="w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors"
+                        className="w-full flex items-center justify-between p-4 hover:bg-dental-secondary-50 transition-colors"
                       >
                         <div className="flex items-center gap-3">
                           <span className="text-xl">{symptom.icon}</span>
-                          <span className="font-medium text-slate-900">
+                          <span className="font-medium text-dental-dark">
                             {t(`ai.symptomChecker.symptoms.${symptom.id}`)}
                           </span>
                         </div>
                         {isExpanded ? (
-                          <ChevronUp className="w-5 h-5 text-slate-400" />
+                          <ChevronUp className="w-5 h-5 text-dental-secondary-400" />
                         ) : (
-                          <ChevronDown className="w-5 h-5 text-slate-400" />
+                          <ChevronDown className="w-5 h-5 text-dental-secondary-400" />
                         )}
                       </button>
 
                       {isExpanded && (
-                        <div className="px-4 pb-4 border-t border-slate-100">
+                        <div className="px-4 pb-4 border-t border-dental-secondary-100">
                           <div className="pt-4">
-                            <p className="text-sm text-slate-500 mb-3">
+                            <p className="text-sm text-dental-muted mb-3">
                               {t('ai.symptomChecker.possibleCauses')}:
                             </p>
                             <div className="flex flex-wrap gap-2 mb-4">
                               {conditions.map((condition, idx) => (
                                 <span
                                   key={idx}
-                                  className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm"
+                                  className="px-3 py-1 bg-dental-secondary-100 text-dental-text rounded-full text-sm"
                                 >
                                   {condition}
                                 </span>
@@ -451,12 +451,12 @@ export default function SymptomCheckerPage() {
                 <h3 className="text-xl font-bold mb-2">
                   {t('ai.symptomChecker.cta.title')}
                 </h3>
-                <p className="text-teal-100 mb-4">
+                <p className="text-dental-primary-100 mb-4">
                   {t('ai.symptomChecker.cta.subtitle')}
                 </p>
                 <Link
                   href="/booking"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-white hover:bg-slate-100 text-teal-700 font-semibold rounded-xl transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-white hover:bg-dental-secondary-100 text-dental-primary-700 font-semibold rounded-xl transition-colors"
                 >
                   {t('buttons.bookAppointment')}
                   <ArrowRight className="w-5 h-5" />
@@ -465,7 +465,7 @@ export default function SymptomCheckerPage() {
             )}
 
             {/* Disclaimer */}
-            <p className="text-center text-sm text-slate-500 italic">
+            <p className="text-center text-sm text-dental-muted italic">
               {t('ai.symptomChecker.disclaimerDetailed')}
             </p>
           </div>

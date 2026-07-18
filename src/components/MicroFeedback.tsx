@@ -86,7 +86,7 @@ export default function MicroFeedback({
         (submitted === (false as boolean) && !showCommentForm)) && (
         <>
           {!compact && (
-            <span className="text-sm text-gray-600 mr-2">
+            <span className="text-sm text-dental-muted mr-2">
               {t('feedback.question')}
             </span>
           )}
@@ -94,22 +94,22 @@ export default function MicroFeedback({
             type="button"
             aria-label={t('feedback.ariaYes')}
             onClick={() => handle(true)}
-            className={`px-2 py-1 rounded-md border transition-colors ${submitted === (true as boolean) ? 'bg-green-50 border-green-300' : 'hover:bg-gray-50 border-gray-300'}`}
+            className={`px-2 py-1 rounded-md border transition-colors ${submitted === (true as boolean) ? 'bg-status-success-100 border-dental-success/30' : 'hover:bg-dental-secondary-50 border-dental-secondary-300'}`}
             disabled={submitted !== null}
           >
-            <ThumbsUp className="h-4 w-4 text-green-600" />
+            <ThumbsUp className="h-4 w-4 text-dental-success" />
           </button>
           <button
             type="button"
             aria-label={t('feedback.ariaNo')}
             onClick={() => handle(false)}
-            className={`px-2 py-1 rounded-md border transition-colors ${submitted === false ? 'bg-red-50 border-red-300' : 'hover:bg-gray-50 border-gray-300'}`}
+            className={`px-2 py-1 rounded-md border transition-colors ${submitted === false ? 'bg-status-error-100 border-dental-error/20' : 'hover:bg-dental-secondary-50 border-dental-secondary-300'}`}
             disabled={submitted !== null}
           >
-            <ThumbsDown className="h-4 w-4 text-red-600" />
+            <ThumbsDown className="h-4 w-4 text-dental-error" />
           </button>
           {submitted === true && (
-            <span className="ml-2 text-xs text-gray-500">
+            <span className="ml-2 text-xs text-dental-muted">
               {t('feedback.thankYou')}
             </span>
           )}
@@ -126,19 +126,19 @@ export default function MicroFeedback({
             <div>
               <label
                 htmlFor="feedback-comment"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-dental-dark mb-1"
               >
                 {t('feedback.improveLabel')}
               </label>
               <textarea
                 id="feedback-comment"
                 {...register('comment')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="w-full px-3 py-2 border border-dental-secondary-300 rounded-md shadow-xs focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500 focus:border-dental-primary-500 sm:text-sm"
                 rows={3}
                 placeholder={t('feedback.improvePlaceholder')}
               />
               {errors.comment && (
-                <p className="mt-1 text-sm text-red-600">
+                <p className="mt-1 text-sm text-status-error-700">
                   {errors.comment.message}
                 </p>
               )}
@@ -147,7 +147,7 @@ export default function MicroFeedback({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-xs text-white bg-blue-600 hover:bg-blue-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-colors"
+                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-xs text-white bg-dental-primary-600 hover:bg-dental-primary-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-500 disabled:opacity-50 transition-colors"
               >
                 <Send className="h-4 w-4 mr-1" />
                 {t('feedback.submit')}
@@ -157,7 +157,7 @@ export default function MicroFeedback({
                 onClick={() => {
                   setShowCommentForm(false)
                 }}
-                className="text-sm text-gray-500 hover:text-gray-700"
+                className="text-sm text-dental-muted hover:text-dental-text"
               >
                 {t('feedback.skip')}
               </button>
@@ -168,7 +168,7 @@ export default function MicroFeedback({
 
       {/* Thank you message after comment submission or skip */}
       {submitted === false && !showCommentForm && (
-        <span className="ml-2 text-xs text-gray-500">
+        <span className="ml-2 text-xs text-dental-muted">
           {t('feedback.thankYou')}
         </span>
       )}

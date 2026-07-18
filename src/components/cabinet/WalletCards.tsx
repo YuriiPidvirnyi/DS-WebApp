@@ -55,7 +55,7 @@ export function WalletCards({ initialCards }: Props) {
             className="flex items-center justify-between px-5 py-4 gap-4"
           >
             <div className="flex items-center gap-3 min-w-0">
-              <CreditCard className="w-5 h-5 text-dental-primary-600 shrink-0" />
+              <CreditCard className="w-5 h-5 text-dental-primary-ink shrink-0" />
               <span className="font-mono text-sm text-dental-dark truncate">
                 {card.masked_pan !== 'unknown'
                   ? card.masked_pan
@@ -66,14 +66,14 @@ export function WalletCards({ initialCards }: Props) {
               onClick={() => handleDelete(card.card_token)}
               disabled={deleting === card.card_token}
               aria-label="Видалити картку"
-              className="shrink-0 p-2 rounded-lg text-dental-muted hover:text-red-600 hover:bg-red-50 disabled:opacity-40 transition-colors"
+              className="shrink-0 p-2 rounded-lg text-dental-muted hover:text-status-error-700 hover:bg-status-error-100 disabled:opacity-40 transition-colors"
             >
               <Trash2 className="w-4 h-4" />
             </button>
           </div>
         ))}
       </div>
-      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-2 text-sm text-status-error-700">{error}</p>}
     </section>
   )
 }

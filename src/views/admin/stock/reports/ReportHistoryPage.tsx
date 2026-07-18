@@ -149,7 +149,7 @@ export default function ReportHistoryPage() {
       </div>
 
       {error && (
-        <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+        <div className="mb-4 rounded-lg bg-status-error-100 border border-dental-error/20 p-4 text-sm text-status-error-700">
           {error}
         </div>
       )}
@@ -196,7 +196,7 @@ export default function ReportHistoryPage() {
                     {row.doc_number}
                   </td>
                   <td
-                    className={`px-4 py-2 text-right font-mono ${row.qty_delta > 0 ? 'text-green-600' : 'text-red-600'}`}
+                    className={`px-4 py-2 text-right font-mono ${row.qty_delta > 0 ? 'text-status-success-700' : 'text-status-error-700'}`}
                   >
                     {row.qty_delta > 0 ? '+' : ''}
                     {row.qty_delta}

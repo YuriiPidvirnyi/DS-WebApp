@@ -3270,6 +3270,9 @@ const uk = {
     },
     typing: 'Консультант друкує…',
     minimizeChat: 'Згорнути чат',
+    chooseChannel: "Оберіть спосіб зв'язку:",
+    adminChannel: 'Написати адміністратору',
+    aiChannel: 'AI-асистент',
   },
   pricing: {
     title: 'Прозорі ціни',

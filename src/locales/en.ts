@@ -3137,6 +3137,9 @@ const en = {
     },
     typing: 'Consultant is typing…',
     minimizeChat: 'Minimize chat',
+    chooseChannel: 'Choose a contact channel:',
+    adminChannel: 'Message the administrator',
+    aiChannel: 'AI assistant',
   },
   pricing: {
     title: 'Transparent Pricing',

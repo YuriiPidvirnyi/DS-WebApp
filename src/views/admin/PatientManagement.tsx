@@ -18,6 +18,7 @@ import {
   Textarea,
 } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
+import { useConfirm, type ConfirmOptions } from '@/hooks/useConfirm'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
 import AdminModal from './components/AdminModal'
@@ -73,6 +74,7 @@ const PATIENT_SELECT =
 export default function PatientManagement() {
   const { t, i18n } = useTranslation()
   const { preferences } = useAdminPreferences()
+  const { confirm, confirmDialog } = useConfirm()
   const [rows, setRows] = useState<PatientRow[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [isLoading, setIsLoading] = useState(true)
@@ -155,17 +157,17 @@ export default function PatientManagement() {
   }, [rows])
 
   const tableCellClass = preferences.compactTables ? 'px-3 py-2' : 'px-4 py-3'
-  const tableHeadClass = `${tableCellClass} text-left text-xs font-semibold uppercase text-dental-text-light`
+  const tableHeadClass = `${tableCellClass} text-left text-xs font-semibold uppercase text-dental-muted`
   const tableEmptyStateClass = `${
     preferences.compactTables ? 'px-3 py-6' : 'px-4 py-8'
-  } text-center text-dental-text-light`
+  } text-center text-dental-muted`
 
   const confirmIfNeeded = useCallback(
-    (message: string) => {
+    async (opts: ConfirmOptions) => {
       if (!preferences.confirmSensitiveActions) return true
-      return window.confirm(message)
+      return confirm(opts)
     },
-    [preferences.confirmSensitiveActions]
+    [preferences.confirmSensitiveActions, confirm]
   )
 
   const openCreateModal = () => {
@@ -267,7 +269,11 @@ export default function PatientManagement() {
 
   const deletePatient = async (id: string) => {
     if (
-      !confirmIfNeeded(t('admin.patientManagement.confirmations.deletePatient'))
+      !(await confirmIfNeeded({
+        title: t('admin.patientManagement.confirmations.deletePatient'),
+        severity: 'irreversible',
+        confirmLabel: t('common.delete'),
+      }))
     )
       return
 
@@ -307,12 +313,13 @@ export default function PatientManagement() {
 
   return (
     <div className="space-y-6">
+      {confirmDialog}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-dental-dark">
             {t('admin.patientManagement.title')}
           </h1>
-          <p className="text-sm text-dental-text-light">
+          <p className="text-sm text-dental-muted">
             {t('admin.patientManagement.totalPatients', {
               total: stats.total,
             })}
@@ -337,13 +344,13 @@ export default function PatientManagement() {
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">
+          <p className="text-xs text-dental-muted">
             {t('admin.patientManagement.summary.total')}
           </p>
           <p className="text-2xl font-bold text-dental-dark">{stats.total}</p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">
+          <p className="text-xs text-dental-muted">
             {t('admin.patientManagement.summary.totalVisits')}
           </p>
           <p className="text-2xl font-bold text-dental-dark">
@@ -351,10 +358,10 @@ export default function PatientManagement() {
           </p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">
+          <p className="text-xs text-dental-muted">
             {t('admin.patientManagement.summary.totalRevenue')}
           </p>
-          <p className="text-2xl font-bold text-green-600">
+          <p className="text-2xl font-bold text-status-success-700">
             {stats.totalRevenue.toLocaleString(locale)} {t('cabinet.currency')}
           </p>
         </div>
@@ -363,7 +370,7 @@ export default function PatientManagement() {
       <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
         <div className="flex gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-dental-text-light" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-dental-muted" />
             <Input
               value={searchTerm}
               onChange={event => setSearchTerm(event.target.value)}
@@ -375,7 +382,7 @@ export default function PatientManagement() {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-xl border border-dental-error/20 bg-status-error-100 px-4 py-3 text-sm text-status-error-700">
           {error}
         </div>
       )}
@@ -431,7 +438,7 @@ export default function PatientManagement() {
                             {row.last_name} {row.first_name}
                           </p>
                           {row.patronymic && (
-                            <p className="text-xs text-dental-text-light">
+                            <p className="text-xs text-dental-muted">
                               {row.patronymic}
                             </p>
                           )}
@@ -444,18 +451,18 @@ export default function PatientManagement() {
                       {row.phone || '—'}
                     </td>
                     <td
-                      className={`${tableCellClass} text-dental-text-light whitespace-nowrap`}
+                      className={`${tableCellClass} text-dental-muted whitespace-nowrap`}
                     >
                       {row.email || '—'}
                     </td>
                     <td
-                      className={`${tableCellClass} text-xs text-dental-text-light whitespace-nowrap`}
+                      className={`${tableCellClass} text-xs text-dental-muted whitespace-nowrap`}
                     >
                       {formatDateTime(row.updated_at)}
                     </td>
                     <td className={`${tableCellClass} whitespace-nowrap`}>
                       <span
-                        className={`text-sm font-medium ${row.total_spent_uah > 0 ? 'text-green-600' : 'text-dental-text-light'}`}
+                        className={`text-sm font-medium ${row.total_spent_uah > 0 ? 'text-status-success-700' : 'text-dental-muted'}`}
                       >
                         {row.total_spent_uah.toLocaleString(locale)}{' '}
                         {t('cabinet.currency')}
@@ -466,7 +473,7 @@ export default function PatientManagement() {
                         <button
                           type="button"
                           onClick={() => openViewModal(row)}
-                          className="rounded-md border border-dental-secondary p-1.5 text-blue-600 hover:bg-blue-50"
+                          className="rounded-md border border-dental-secondary p-1.5 text-dental-primary-ink hover:bg-dental-primary-50"
                           aria-label={t(
                             'admin.patientManagement.table.actions.view'
                           )}
@@ -487,7 +494,7 @@ export default function PatientManagement() {
                           type="button"
                           onClick={() => void deletePatient(row.id)}
                           disabled={isUpdatingId === row.id}
-                          className="rounded-md border border-red-200 p-1.5 text-red-600 hover:bg-red-50 disabled:opacity-60"
+                          className="rounded-md border border-dental-error/20 p-1.5 text-dental-error hover:bg-status-error-100 disabled:opacity-60"
                           aria-label={t(
                             'admin.patientManagement.table.actions.delete'
                           )}
@@ -543,7 +550,7 @@ export default function PatientManagement() {
                   <button
                     type="button"
                     onClick={() => openViewModal(row)}
-                    className="rounded-md border border-dental-secondary p-2.5 text-blue-600 hover:bg-blue-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    className="rounded-md border border-dental-secondary p-2.5 text-dental-primary-ink hover:bg-dental-primary-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
                     aria-label={t('admin.patientManagement.table.actions.view')}
                   >
                     <Eye className="h-4 w-4" />
@@ -560,7 +567,7 @@ export default function PatientManagement() {
                     type="button"
                     onClick={() => void deletePatient(row.id)}
                     disabled={isUpdatingId === row.id}
-                    className="rounded-md border border-red-200 p-2.5 text-red-600 hover:bg-red-50 disabled:opacity-60 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    className="rounded-md border border-dental-error/20 p-2.5 text-dental-error hover:bg-status-error-100 disabled:opacity-60 min-h-[44px] min-w-[44px] flex items-center justify-center"
                     aria-label={t(
                       'admin.patientManagement.table.actions.delete'
                     )}
@@ -594,7 +601,7 @@ export default function PatientManagement() {
           <div className="space-y-4 text-sm">
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <p className="text-dental-text-light">
+                <p className="text-dental-muted">
                   {t('admin.patientManagement.form.firstName')}
                 </p>
                 <p className="font-medium text-dental-dark">
@@ -602,7 +609,7 @@ export default function PatientManagement() {
                 </p>
               </div>
               <div>
-                <p className="text-dental-text-light">
+                <p className="text-dental-muted">
                   {t('admin.patientManagement.form.lastName')}
                 </p>
                 <p className="font-medium text-dental-dark">
@@ -610,7 +617,7 @@ export default function PatientManagement() {
                 </p>
               </div>
               <div>
-                <p className="text-dental-text-light">
+                <p className="text-dental-muted">
                   {t('admin.patientManagement.form.patronymic')}
                 </p>
                 <p className="font-medium text-dental-dark">
@@ -618,7 +625,7 @@ export default function PatientManagement() {
                 </p>
               </div>
               <div>
-                <p className="text-dental-text-light">
+                <p className="text-dental-muted">
                   {t('admin.patientManagement.form.phone')}
                 </p>
                 <p className="font-medium text-dental-dark">
@@ -626,7 +633,7 @@ export default function PatientManagement() {
                 </p>
               </div>
               <div>
-                <p className="text-dental-text-light">
+                <p className="text-dental-muted">
                   {t('admin.patientManagement.form.email')}
                 </p>
                 <p className="font-medium text-dental-dark">
@@ -634,7 +641,7 @@ export default function PatientManagement() {
                 </p>
               </div>
               <div>
-                <p className="text-dental-text-light">
+                <p className="text-dental-muted">
                   {t('admin.patientManagement.form.dateOfBirth')}
                 </p>
                 <p className="font-medium text-dental-dark">
@@ -646,7 +653,7 @@ export default function PatientManagement() {
                 </p>
               </div>
               <div>
-                <p className="text-dental-text-light">
+                <p className="text-dental-muted">
                   {t('admin.patientManagement.form.gender')}
                 </p>
                 <p className="font-medium text-dental-dark">
@@ -654,7 +661,7 @@ export default function PatientManagement() {
                 </p>
               </div>
               <div>
-                <p className="text-dental-text-light">
+                <p className="text-dental-muted">
                   {t('admin.patientManagement.form.address')}
                 </p>
                 <p className="font-medium text-dental-dark">
@@ -665,7 +672,7 @@ export default function PatientManagement() {
             {viewingPatientRow && (
               <div className="grid gap-4 md:grid-cols-2 border-t border-dental-secondary-200 pt-4">
                 <div>
-                  <p className="text-dental-text-light">
+                  <p className="text-dental-muted">
                     {t('admin.patientManagement.summary.totalVisits')}
                   </p>
                   <p className="font-medium text-dental-dark">
@@ -673,10 +680,10 @@ export default function PatientManagement() {
                   </p>
                 </div>
                 <div>
-                  <p className="text-dental-text-light">
+                  <p className="text-dental-muted">
                     {t('admin.patientManagement.summary.totalRevenue')}
                   </p>
-                  <p className="font-medium text-green-600">
+                  <p className="font-medium text-status-success-700">
                     {viewingPatientRow.total_spent_uah.toLocaleString(locale)}{' '}
                     {t('cabinet.currency')}
                   </p>
@@ -685,7 +692,7 @@ export default function PatientManagement() {
             )}
             {formState.medical_notes && (
               <div className="border-t border-dental-secondary-200 pt-4">
-                <p className="text-dental-text-light mb-1">
+                <p className="text-dental-muted mb-1">
                   {t('admin.patientManagement.form.medicalNotes')}
                 </p>
                 <p className="whitespace-pre-wrap text-dental-text">

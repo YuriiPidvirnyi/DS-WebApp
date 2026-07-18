@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { Button, Select, Textarea } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
+import { useConfirm } from '@/hooks/useConfirm'
 import {
   listAdminAuditLogs,
   restoreFromAuditLog,
@@ -51,6 +52,7 @@ export default function AdminSettingsPage() {
   const { t } = useTranslation()
   const router = useRouter()
   const { preferences, updatePreferences } = useAdminPreferences()
+  const { confirm, confirmDialog } = useConfirm()
   const [profile, setProfile] = useState<ProfileState | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -308,13 +310,15 @@ export default function AdminSettingsPage() {
 
     if (
       preferences.confirmSensitiveActions &&
-      !window.confirm(
-        t('admin.settingsPage.rollback.confirmPrompt', {
+      !(await confirm({
+        title: t('admin.settingsPage.rollback.confirmPrompt', {
           action: getAuditActionLabel(rollbackTarget.action),
           table: rollbackTarget.table_name,
           recordId: rollbackTarget.record_id,
-        })
-      )
+        }),
+        severity: 'significant',
+        confirmLabel: t('admin.settingsPage.rollback.modal.confirm'),
+      }))
     ) {
       return
     }
@@ -455,23 +459,24 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="space-y-6">
+      {confirmDialog}
       <div>
         <h1 className="text-2xl font-bold text-dental-dark">
           {t('admin.settingsPage.title')}
         </h1>
-        <p className="text-sm text-dental-text-light">
+        <p className="text-sm text-dental-muted">
           {t('admin.settingsPage.description')}
         </p>
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-xl border border-dental-error/20 bg-status-error-100 px-4 py-3 text-sm text-status-error-700">
           {error}
         </div>
       )}
 
       {isLoading || !profile ? (
-        <div className="rounded-xl border border-dental-secondary-200 bg-white px-4 py-8 text-center text-dental-text-light">
+        <div className="rounded-xl border border-dental-secondary-200 bg-white px-4 py-8 text-center text-dental-muted">
           {t('admin.settingsPage.loading')}
         </div>
       ) : (
@@ -483,7 +488,7 @@ export default function AdminSettingsPage() {
               </h2>
               <dl className="mt-3 space-y-2 text-sm">
                 <div className="flex items-center justify-between gap-2">
-                  <dt className="text-dental-text-light">
+                  <dt className="text-dental-muted">
                     {t('admin.settingsPage.profile.email')}
                   </dt>
                   <dd className="font-medium text-dental-dark">
@@ -491,7 +496,7 @@ export default function AdminSettingsPage() {
                   </dd>
                 </div>
                 <div className="flex items-center justify-between gap-2">
-                  <dt className="text-dental-text-light">
+                  <dt className="text-dental-muted">
                     {t('admin.settingsPage.profile.role')}
                   </dt>
                   <dd className="font-medium text-dental-dark">
@@ -501,7 +506,7 @@ export default function AdminSettingsPage() {
                   </dd>
                 </div>
                 <div className="flex items-center justify-between gap-2">
-                  <dt className="text-dental-text-light">
+                  <dt className="text-dental-muted">
                     {t('admin.settingsPage.profile.displayName')}
                   </dt>
                   <dd className="font-medium text-dental-dark">
@@ -509,7 +514,7 @@ export default function AdminSettingsPage() {
                   </dd>
                 </div>
                 <div className="flex items-center justify-between gap-2">
-                  <dt className="text-dental-text-light">
+                  <dt className="text-dental-muted">
                     {t('admin.settingsPage.profile.lastSignIn')}
                   </dt>
                   <dd className="font-medium text-dental-dark">
@@ -517,7 +522,7 @@ export default function AdminSettingsPage() {
                   </dd>
                 </div>
                 <div className="flex items-center justify-between gap-2">
-                  <dt className="text-dental-text-light">
+                  <dt className="text-dental-muted">
                     {t('admin.settingsPage.profile.membershipCreated')}
                   </dt>
                   <dd className="font-medium text-dental-dark">
@@ -709,22 +714,22 @@ export default function AdminSettingsPage() {
             </div>
 
             {auditError ? (
-              <div className="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              <div className="mt-3 rounded-lg border border-dental-error/20 bg-status-error-100 px-3 py-2 text-sm text-status-error-700">
                 {auditError}
               </div>
             ) : null}
             {restoreSuccess ? (
-              <div className="mt-3 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-700">
+              <div className="mt-3 rounded-lg border border-dental-success/30 bg-status-success-100 px-3 py-2 text-sm text-status-success-700">
                 {restoreSuccess}
               </div>
             ) : null}
 
             {isLoadingAudit ? (
-              <div className="mt-4 text-sm text-dental-text-light">
+              <div className="mt-4 text-sm text-dental-muted">
                 {t('admin.settingsPage.audit.loading')}
               </div>
             ) : auditLogs.length === 0 ? (
-              <div className="mt-4 text-sm text-dental-text-light">
+              <div className="mt-4 text-sm text-dental-muted">
                 {t('admin.settingsPage.audit.empty')}
               </div>
             ) : (
@@ -733,37 +738,37 @@ export default function AdminSettingsPage() {
                   <thead className="bg-dental-secondary-50">
                     <tr>
                       <th
-                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-text-light`}
+                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-muted`}
                       >
                         {t('admin.settingsPage.audit.tableHeaders.when')}
                       </th>
                       <th
-                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-text-light`}
+                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-muted`}
                       >
                         {t('admin.settingsPage.audit.tableHeaders.table')}
                       </th>
                       <th
-                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-text-light`}
+                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-muted`}
                       >
                         {t('admin.settingsPage.audit.tableHeaders.action')}
                       </th>
                       <th
-                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-text-light`}
+                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-muted`}
                       >
                         {t('admin.settingsPage.audit.tableHeaders.changedBy')}
                       </th>
                       <th
-                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-text-light`}
+                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-muted`}
                       >
                         {t('admin.settingsPage.audit.tableHeaders.record')}
                       </th>
                       <th
-                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-text-light`}
+                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-muted`}
                       >
                         {t('admin.settingsPage.audit.tableHeaders.summary')}
                       </th>
                       <th
-                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-text-light`}
+                        className={`${auditCellPaddingClass} text-left text-xs font-semibold uppercase text-dental-muted`}
                       >
                         {t('admin.settingsPage.audit.tableHeaders.actions')}
                       </th>
@@ -773,7 +778,7 @@ export default function AdminSettingsPage() {
                     {auditLogs.map(log => (
                       <tr key={log.id}>
                         <td
-                          className={`${auditCellPaddingClass} text-xs text-dental-text-light`}
+                          className={`${auditCellPaddingClass} text-xs text-dental-muted`}
                         >
                           {formatDateTime(log.changed_at)}
                         </td>
@@ -796,13 +801,13 @@ export default function AdminSettingsPage() {
                           </span>
                         </td>
                         <td
-                          className={`${auditCellPaddingClass} text-xs text-dental-text-light`}
+                          className={`${auditCellPaddingClass} text-xs text-dental-muted`}
                         >
                           {log.changed_by ||
                             t('admin.settingsPage.audit.systemActor')}
                         </td>
                         <td
-                          className={`${auditCellPaddingClass} text-xs text-dental-text-light`}
+                          className={`${auditCellPaddingClass} text-xs text-dental-muted`}
                         >
                           {log.record_id}
                         </td>
@@ -891,7 +896,7 @@ export default function AdminSettingsPage() {
                 </div>
 
                 {auditPreviewDiffRows.length === 0 ? (
-                  <div className="rounded-lg border border-dental-secondary-200 bg-white p-3 text-sm text-dental-text-light">
+                  <div className="rounded-lg border border-dental-secondary-200 bg-white p-3 text-sm text-dental-muted">
                     {t('admin.settingsPage.audit.diffModal.noChanges')}
                   </div>
                 ) : (
@@ -901,23 +906,23 @@ export default function AdminSettingsPage() {
                         key={row.key}
                         className="rounded-lg border border-dental-secondary-200 bg-white p-3"
                       >
-                        <p className="mb-2 text-xs font-semibold uppercase text-dental-text-light">
+                        <p className="mb-2 text-xs font-semibold uppercase text-dental-muted">
                           {row.key}
                         </p>
                         <div className="grid gap-3 md:grid-cols-2">
                           <div>
-                            <p className="mb-1 text-xs font-semibold text-dental-text-light">
+                            <p className="mb-1 text-xs font-semibold text-dental-muted">
                               {t('admin.settingsPage.audit.diffModal.before')}
                             </p>
-                            <pre className="overflow-x-auto rounded-md bg-red-50 p-2 text-xs text-red-800">
+                            <pre className="overflow-x-auto rounded-md bg-status-error-100 p-2 text-xs text-status-error-700">
                               {formatAuditValue(row.beforeValue)}
                             </pre>
                           </div>
                           <div>
-                            <p className="mb-1 text-xs font-semibold text-dental-text-light">
+                            <p className="mb-1 text-xs font-semibold text-dental-muted">
                               {t('admin.settingsPage.audit.diffModal.after')}
                             </p>
-                            <pre className="overflow-x-auto rounded-md bg-green-50 p-2 text-xs text-green-800">
+                            <pre className="overflow-x-auto rounded-md bg-status-success-100 p-2 text-xs text-status-success-700">
                               {formatAuditValue(row.afterValue)}
                             </pre>
                           </div>
@@ -939,7 +944,7 @@ export default function AdminSettingsPage() {
           >
             {rollbackTarget ? (
               <div className="space-y-4">
-                <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+                <div className="rounded-lg border border-dental-warning/30 bg-status-warning-100 p-3 text-sm text-status-warning-700">
                   <p>
                     {t('admin.settingsPage.rollback.modal.targetPrefix')}{' '}
                     <strong>{rollbackTarget.table_name}</strong> /{' '}
@@ -950,14 +955,14 @@ export default function AdminSettingsPage() {
                     </strong>
                     .
                   </p>
-                  <p className="mt-1 text-xs text-amber-800">
+                  <p className="mt-1 text-xs text-status-warning-700">
                     {summarizeAuditLog(rollbackTarget)}
                   </p>
                 </div>
 
                 <div className="max-h-52 space-y-2 overflow-y-auto">
                   {rollbackPreviewDiffRows.length === 0 ? (
-                    <div className="rounded-lg border border-dental-secondary-200 bg-white p-3 text-sm text-dental-text-light">
+                    <div className="rounded-lg border border-dental-secondary-200 bg-white p-3 text-sm text-dental-muted">
                       {t('admin.settingsPage.rollback.modal.noPreviewChanges')}
                     </div>
                   ) : (
@@ -970,10 +975,10 @@ export default function AdminSettingsPage() {
                           {row.key}
                         </p>
                         <div className="grid gap-2 md:grid-cols-2">
-                          <pre className="overflow-x-auto rounded-md bg-red-50 p-2 text-xs text-red-800">
+                          <pre className="overflow-x-auto rounded-md bg-status-error-100 p-2 text-xs text-status-error-700">
                             {formatAuditValue(row.beforeValue)}
                           </pre>
-                          <pre className="overflow-x-auto rounded-md bg-green-50 p-2 text-xs text-green-800">
+                          <pre className="overflow-x-auto rounded-md bg-status-success-100 p-2 text-xs text-status-success-700">
                             {formatAuditValue(row.afterValue)}
                           </pre>
                         </div>

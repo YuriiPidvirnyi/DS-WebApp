@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { FileText, Calendar, Activity, ChevronDown } from 'lucide-react'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { ErrorState } from '@/components/ui/ErrorState'
+import { StatusBadge, type StatusTone } from '@/components/ui'
 import {
   trackEvent,
   CabinetEvent,
@@ -39,18 +40,18 @@ type TreatmentRecord = {
 
 const TREATMENTS_PAGE_SIZE = 20
 
-const STATUS_STYLES: Record<string, string> = {
-  draft: 'bg-dental-secondary-200 text-dental-dark',
-  signed: 'bg-dental-primary-100 text-dental-primary-600',
-  completed: 'bg-green-100 text-green-700',
+const STATUS_TONES: Record<string, StatusTone> = {
+  draft: 'neutral',
+  signed: 'accent',
+  completed: 'success',
 }
 
-const PAYMENT_STYLES: Record<string, string> = {
-  unpaid: 'bg-amber-100 text-amber-700',
-  partial: 'bg-orange-100 text-orange-700',
-  paid: 'bg-green-100 text-green-700',
-  waived: 'bg-dental-secondary-100 text-dental-muted',
-  refunded: 'bg-violet-100 text-violet-700',
+const PAYMENT_TONES: Record<string, StatusTone> = {
+  unpaid: 'error',
+  partial: 'warning',
+  paid: 'success',
+  waived: 'neutral',
+  refunded: 'neutral',
 }
 
 function doctorName(d: TreatmentRecord['doctors']): string {
@@ -186,7 +187,7 @@ export default function TreatmentsHistoryPage() {
         <EmptyState
           icon={
             <div className="w-16 h-16 bg-dental-primary-50 rounded-full flex items-center justify-center">
-              <FileText className="w-8 h-8 text-dental-primary-600" />
+              <FileText className="w-8 h-8 text-dental-primary-ink" />
             </div>
           }
           title={t('cabinet.treatments.empty')}
@@ -228,7 +229,7 @@ export default function TreatmentsHistoryPage() {
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
                     <div className="flex items-center gap-2 text-dental-dark">
-                      <Calendar className="w-4 h-4 text-dental-primary-600 shrink-0" />
+                      <Calendar className="w-4 h-4 text-dental-primary-ink shrink-0" />
                       <span className="font-semibold text-sm">
                         {new Date(rec.created_at).toLocaleDateString(
                           dateLocale,
@@ -241,20 +242,18 @@ export default function TreatmentsHistoryPage() {
                       </span>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <span
-                        className={`px-2.5 py-0.5 rounded-full text-[11px] font-medium ${STATUS_STYLES[rec.status] || 'bg-dental-secondary-100 text-dental-muted'}`}
-                      >
+                      <StatusBadge tone={STATUS_TONES[rec.status] || 'neutral'}>
                         {t(`cabinet.treatments.status.${rec.status}`, {
                           defaultValue: rec.status,
                         })}
-                      </span>
-                      <span
-                        className={`px-2.5 py-0.5 rounded-full text-[11px] font-medium ${PAYMENT_STYLES[rec.payment_status] || 'bg-dental-secondary-100 text-dental-muted'}`}
+                      </StatusBadge>
+                      <StatusBadge
+                        tone={PAYMENT_TONES[rec.payment_status] || 'neutral'}
                       >
                         {t(`cabinet.treatments.payment.${rec.payment_status}`, {
                           defaultValue: rec.payment_status,
                         })}
-                      </span>
+                      </StatusBadge>
                       <ChevronDown
                         className={`w-4 h-4 text-dental-muted transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
                         aria-hidden="true"
@@ -296,7 +295,7 @@ export default function TreatmentsHistoryPage() {
                       {rec.treatment_record_items &&
                         rec.treatment_record_items.length > 0 && (
                           <div className="pt-2">
-                            <div className="flex items-center gap-2 text-dental-primary-600 text-sm font-medium mb-2">
+                            <div className="flex items-center gap-2 text-dental-primary-ink text-sm font-medium mb-2">
                               <Activity className="w-4 h-4" />
                               {t('cabinet.treatments.procedures')}
                             </div>
@@ -308,7 +307,7 @@ export default function TreatmentsHistoryPage() {
                                     className="flex items-start gap-2"
                                   >
                                     <span
-                                      className="text-dental-primary-600 mt-0.5"
+                                      className="text-dental-primary-ink mt-0.5"
                                       aria-hidden="true"
                                     >
                                       •
@@ -365,7 +364,7 @@ export default function TreatmentsHistoryPage() {
       {hasMore && (
         <div className="flex flex-col items-center gap-2">
           {loadMoreError && (
-            <p role="alert" className="text-sm text-red-700">
+            <p role="alert" className="text-sm text-status-error-700">
               {t('cabinet.treatments.loadMoreError')}
             </p>
           )}

@@ -49,7 +49,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
   return (
     <div className={`relative overflow-hidden ${className}`}>
       {!isLoaded && !hasError && (
-        <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
+        <div className="absolute inset-0 bg-dental-secondary-100 flex items-center justify-center">
           <div className="flex space-x-1">
             <div className="w-2 h-2 bg-dental-teal rounded-full animate-pulse" />
             <div
@@ -65,7 +65,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
       )}
 
       {hasError && !fallback ? (
-        <div className="absolute inset-0 bg-gray-100 flex items-center justify-center text-gray-400 text-sm">
+        <div className="absolute inset-0 bg-dental-secondary-100 flex items-center justify-center text-dental-muted text-sm">
           {t('lazyImage.unavailable')}
         </div>
       ) : (

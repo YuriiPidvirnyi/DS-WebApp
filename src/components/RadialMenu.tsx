@@ -115,7 +115,7 @@ export default function RadialMenu({
           onOpenAccessibility?.()
           setIsOpen(false)
         },
-        color: 'bg-gray-700 text-white',
+        color: 'bg-dental-text text-white',
       },
     ],
     [t, phone, whatsapp, viber, telegram, onOpenChat, onOpenAccessibility]

@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Search, Plus, Trash2, Loader2, CheckCircle2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { useConfirm } from '@/hooks/useConfirm'
 import BarcodeInput from './BarcodeInput'
 import type {
   DocType,
@@ -43,6 +45,8 @@ export default function InvoiceEditor({
   onPosted,
   onDeleted,
 }: Props) {
+  const { t } = useTranslation()
+  const { confirm, confirmDialog } = useConfirm()
   const [items, setItems] = useState(doc.items ?? [])
   const [suppliers, setSuppliers] = useState<Supplier[]>([])
   const [matSearch, setMatSearch] = useState('')
@@ -170,7 +174,16 @@ export default function InvoiceEditor({
   }
 
   async function handleDelete() {
-    if (!isDraft || !confirm('Видалити документ?')) return
+    if (!isDraft) return
+    if (
+      !(await confirm({
+        title: t('admin.stock.confirm.deleteDocument.title'),
+        description: t('admin.stock.confirm.deleteDocument.description'),
+        confirmLabel: t('admin.stock.confirm.deleteDocument.action'),
+        severity: 'irreversible',
+      }))
+    )
+      return
     setDeleting(true)
     try {
       const res = await fetch(`/api/stock/documents/${doc.id}`, {
@@ -210,7 +223,7 @@ export default function InvoiceEditor({
             </span>
           </h2>
           {posted && (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-status-success-100 px-3 py-1 text-sm font-medium text-status-success-700">
               <CheckCircle2 className="w-4 h-4" />
               Проведено
             </span>
@@ -252,7 +265,7 @@ export default function InvoiceEditor({
       {/* Items table */}
       <div className="rounded-xl border bg-white overflow-hidden">
         {isDraft && (
-          <div className="border-b border-gray-100 p-4 space-y-2">
+          <div className="border-b border-dental-secondary-100 p-4 space-y-2">
             <div className="flex gap-2">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dental-text" />
@@ -261,7 +274,7 @@ export default function InvoiceEditor({
                   value={matSearch}
                   onChange={e => setMatSearch(e.target.value)}
                   placeholder="Пошук матеріалу..."
-                  className="w-full rounded-lg border border-gray-300 pl-9 pr-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
+                  className="w-full rounded-lg border border-dental-secondary-300 pl-9 pr-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
                 />
                 {searching && (
                   <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-dental-text" />
@@ -276,13 +289,13 @@ export default function InvoiceEditor({
               />
             </div>
             {matResults.length > 0 && (
-              <div className="rounded-lg border border-gray-200 bg-white shadow-xs max-h-48 overflow-y-auto">
+              <div className="rounded-lg border border-dental-secondary-200 bg-white shadow-xs max-h-48 overflow-y-auto">
                 {matResults.map(mat => (
                   <button
                     key={mat.id}
                     type="button"
                     onClick={() => addItem(mat)}
-                    className="w-full flex items-center gap-3 px-4 py-2 text-sm hover:bg-gray-50 text-left"
+                    className="w-full flex items-center gap-3 px-4 py-2 text-sm hover:bg-dental-secondary-50 text-left"
                   >
                     <Plus className="w-4 h-4 shrink-0 text-dental-primary-600" />
                     <span className="font-medium text-dental-dark">
@@ -301,7 +314,7 @@ export default function InvoiceEditor({
         ) : (
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-200 bg-gray-50">
+              <tr className="border-b border-dental-secondary-200 bg-dental-secondary-50">
                 <th className="text-left px-4 py-3 font-medium text-dental-text">
                   Матеріал
                 </th>
@@ -321,7 +334,7 @@ export default function InvoiceEditor({
               {items.map(item => (
                 <tr
                   key={item.id}
-                  className="border-b border-gray-100 last:border-0"
+                  className="border-b border-dental-secondary-100 last:border-0"
                 >
                   <td className="px-4 py-3 text-dental-dark">
                     {item.material_id}
@@ -336,7 +349,7 @@ export default function InvoiceEditor({
                         onBlur={e =>
                           updateItemQty(item.id, Number(e.target.value))
                         }
-                        className="w-24 rounded border border-gray-300 px-2 py-1 text-right text-sm focus:outline-hidden focus:ring-1 focus:ring-dental-primary-600"
+                        className="w-24 rounded border border-dental-secondary-300 px-2 py-1 text-right text-sm focus:outline-hidden focus:ring-1 focus:ring-dental-primary-600"
                       />
                     ) : (
                       <span className="font-mono">{item.unit_qty}</span>
@@ -353,7 +366,7 @@ export default function InvoiceEditor({
                       <button
                         type="button"
                         onClick={() => removeItem(item.id)}
-                        className="rounded p-1 text-dental-text hover:text-red-600 hover:bg-red-50"
+                        className="rounded p-1 text-dental-text hover:text-status-error-700 hover:bg-status-error-100"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -364,7 +377,7 @@ export default function InvoiceEditor({
             </tbody>
             {doc.total_amount != null && (
               <tfoot>
-                <tr className="border-t border-gray-200 bg-gray-50">
+                <tr className="border-t border-dental-secondary-200 bg-dental-secondary-50">
                   <td
                     colSpan={isDraft ? 3 : 2}
                     className="px-4 py-3 text-sm font-medium text-dental-dark"
@@ -383,7 +396,7 @@ export default function InvoiceEditor({
       </div>
 
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+        <div className="rounded-lg bg-status-error-100 border border-dental-error/20 p-4 text-sm text-status-error-700">
           {error}
         </div>
       )}
@@ -394,7 +407,7 @@ export default function InvoiceEditor({
             type="button"
             onClick={handleDelete}
             disabled={deleting}
-            className="inline-flex items-center gap-2 rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-60"
+            className="inline-flex items-center gap-2 rounded-lg border border-dental-error/20 px-4 py-2 text-sm font-medium text-status-error-700 hover:bg-status-error-100 disabled:opacity-60"
           >
             {deleting && <Loader2 className="w-4 h-4 animate-spin" />}
             Видалити чернетку
@@ -410,6 +423,8 @@ export default function InvoiceEditor({
           </button>
         </div>
       )}
+
+      {confirmDialog}
     </div>
   )
 }

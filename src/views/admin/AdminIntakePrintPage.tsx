@@ -123,7 +123,7 @@ export default function AdminIntakePrintPage({
 
   if (status === 'loading') {
     return (
-      <div className="rounded-xl border border-dental-secondary-200 bg-white px-4 py-8 text-center text-dental-text-light">
+      <div className="rounded-xl border border-dental-secondary-200 bg-white px-4 py-8 text-center text-dental-muted">
         {t('admin.intakePage.loading')}
       </div>
     )
@@ -160,12 +160,12 @@ export default function AdminIntakePrintPage({
     let num = 0
     return (
       <div key={section.id} className="break-inside-avoid">
-        <div className="flex items-end justify-between border-b border-gray-700 pb-0.5">
+        <div className="flex items-end justify-between border-b border-dental-dark pb-0.5">
           <h3 className="text-[10.5px] font-bold uppercase tracking-wide">
             {titleOverride ?? section.title.uk}
           </h3>
           {hasYesNo ? (
-            <span className="flex shrink-0 gap-1 text-[9px] font-bold text-gray-500">
+            <span className="flex shrink-0 gap-1 text-[9px] font-bold text-dental-muted">
               <span className="w-7 text-center">ТАК</span>
               <span className="w-7 text-center">НІ</span>
             </span>
@@ -178,7 +178,7 @@ export default function AdminIntakePrintPage({
             const label = (
               <>
                 {numbered ? (
-                  <span className="mr-1 inline-block w-4 text-right text-gray-400">
+                  <span className="mr-1 inline-block w-4 text-right text-dental-secondary-400">
                     {++num}
                   </span>
                 ) : null}
@@ -191,7 +191,7 @@ export default function AdminIntakePrintPage({
               return (
                 <div
                   key={field.id}
-                  className="flex items-center justify-between gap-2 border-b border-dotted border-gray-300 py-[3px]"
+                  className="flex items-center justify-between gap-2 border-b border-dotted border-dental-secondary-300 py-[3px]"
                 >
                   <span className="text-[10.5px] leading-tight">{label}</span>
                   <span className="flex shrink-0 gap-1">
@@ -211,7 +211,7 @@ export default function AdminIntakePrintPage({
               return (
                 <div
                   key={field.id}
-                  className="flex items-center justify-between gap-2 border-b border-dotted border-gray-300 py-[3px]"
+                  className="flex items-center justify-between gap-2 border-b border-dotted border-dental-secondary-300 py-[3px]"
                 >
                   <span className="text-[10.5px] leading-tight">{label}</span>
                   <span className="shrink-0 text-[10.5px] font-bold">
@@ -228,7 +228,7 @@ export default function AdminIntakePrintPage({
             return (
               <div
                 key={field.id}
-                className="border-b border-dotted border-gray-300 py-[3px] text-[10.5px] leading-tight"
+                className="border-b border-dotted border-dental-secondary-300 py-[3px] text-[10.5px] leading-tight"
               >
                 {label}: <span className="font-bold">{text || '—'}</span>
               </div>
@@ -270,7 +270,7 @@ export default function AdminIntakePrintPage({
 
       <div
         id="print-area"
-        className="mx-auto max-w-[210mm] rounded-xl border border-dental-secondary-200 bg-white p-8 text-gray-900 print:rounded-none print:border-0 print:p-0"
+        className="mx-auto max-w-[210mm] rounded-xl border border-dental-secondary-200 bg-white p-8 text-dental-dark print:rounded-none print:border-0 print:p-0"
       >
         {/* ── Blank header: logo | title | clinic contacts ─────────────── */}
         <div className="flex items-start justify-between gap-4 border-b-2 border-dental-primary pb-3">
@@ -279,12 +279,12 @@ export default function AdminIntakePrintPage({
             <h1 className="text-lg font-extrabold uppercase tracking-wide">
               Анкета пацієнта
             </h1>
-            <p className="text-[10px] uppercase tracking-widest text-gray-500">
+            <p className="text-[10px] uppercase tracking-widest text-dental-muted">
               {layout ? layout.subtitle : 'Коротка анкета (промо)'}
             </p>
           </div>
-          <div className="shrink-0 text-right text-[9.5px] leading-relaxed text-gray-600">
-            <p className="font-bold text-gray-800">
+          <div className="shrink-0 text-right text-[9.5px] leading-relaxed text-dental-muted">
+            <p className="font-bold text-dental-text">
               {CONTACT_INFO.address.city}, {CONTACT_INFO.address.street}
             </p>
             <p>{CONTACT_INFO.email}</p>
@@ -294,7 +294,7 @@ export default function AdminIntakePrintPage({
 
         {/* Intro note */}
         {layout ? (
-          <div className="mt-3 rounded-md bg-gray-100 px-4 py-2.5 text-[9.5px] leading-relaxed text-gray-700 print:bg-gray-100">
+          <div className="mt-3 rounded-md bg-dental-secondary-100 px-4 py-2.5 text-[9.5px] leading-relaxed text-dental-text print:bg-dental-secondary-100">
             {layout.intro}
           </div>
         ) : null}
@@ -397,13 +397,13 @@ export default function AdminIntakePrintPage({
             <h3 className="text-[10.5px] font-bold uppercase tracking-wide">
               {layout.consentTitle}
             </h3>
-            <p className="mt-1 text-[9.5px] leading-relaxed text-gray-700">
+            <p className="mt-1 text-[9.5px] leading-relaxed text-dental-text">
               {layout.consentText}
             </p>
           </div>
         ) : null}
 
-        <p className="mt-3 text-[9px] text-gray-500">
+        <p className="mt-3 text-[9px] text-dental-muted">
           Анкету заповнено онлайн у кабінеті пацієнта {submittedDate}. Згоду з
           умовами підтверджено електронно: {row.data_consent ? 'так' : 'ні'}.
         </p>
@@ -411,12 +411,12 @@ export default function AdminIntakePrintPage({
         <div className="mt-6 grid grid-cols-2 gap-12">
           <div>
             <p className="text-[11px]">«____» ____________________ 20____ р.</p>
-            <p className="mt-1 border-t border-gray-400 pt-0.5 text-center text-[9px] text-gray-500">
+            <p className="mt-1 border-t border-dental-secondary-400 pt-0.5 text-center text-[9px] text-dental-muted">
               Дата
             </p>
           </div>
           <div className="flex flex-col justify-end">
-            <p className="mt-1 border-t border-gray-400 pt-0.5 text-center text-[9px] text-gray-500">
+            <p className="mt-1 border-t border-dental-secondary-400 pt-0.5 text-center text-[9px] text-dental-muted">
               {layout ? layout.signatureCaption : 'Підпис пацієнта'}
             </p>
           </div>
@@ -447,7 +447,7 @@ function SectionPill({
 
 function MarkBox({ checked }: { checked: boolean }) {
   return (
-    <span className="inline-flex h-3 w-3 items-center justify-center rounded-[2px] border border-gray-700 text-[9px] font-bold leading-none">
+    <span className="inline-flex h-3 w-3 items-center justify-center rounded-[2px] border border-dental-dark text-[9px] font-bold leading-none">
       {checked ? '✕' : ' '}
     </span>
   )
@@ -464,8 +464,8 @@ function BlankLine({
 }) {
   return (
     <p className={`text-[10.5px] leading-relaxed ${wide ? 'col-span-2' : ''}`}>
-      <span className="text-gray-600">{label}:</span>{' '}
-      <span className="font-bold underline decoration-gray-400 decoration-dotted underline-offset-2">
+      <span className="text-dental-muted">{label}:</span>{' '}
+      <span className="font-bold underline decoration-dental-secondary-400 decoration-dotted underline-offset-2">
         {value || '          '}
       </span>
     </p>

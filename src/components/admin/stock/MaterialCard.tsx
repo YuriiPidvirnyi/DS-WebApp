@@ -21,9 +21,9 @@ function qtyColour(
   critical: number | null,
   kind: WarehouseKind
 ): string {
-  if (qty <= 0) return 'text-red-600'
-  if (critical != null && qty <= critical) return 'text-amber-600'
-  return kind === 'main' ? 'text-green-700' : 'text-dental-primary-600'
+  if (qty <= 0) return 'text-status-error-700'
+  if (critical != null && qty <= critical) return 'text-status-warning-700'
+  return kind === 'main' ? 'text-status-success-700' : 'text-dental-primary-600'
 }
 
 export default function MaterialCard({
@@ -85,12 +85,12 @@ export default function MaterialCard({
       </div>
 
       {/* Actions */}
-      <div className="flex gap-2 pt-1 border-t border-gray-100">
+      <div className="flex gap-2 pt-1 border-t border-dental-secondary-100">
         <button
           type="button"
           onClick={() => onWriteoff?.(balance)}
           title="Списати"
-          className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg border border-dental-text/20 px-2 py-1.5 text-xs font-medium text-dental-text hover:bg-gray-50 transition-colors"
+          className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg border border-dental-text/20 px-2 py-1.5 text-xs font-medium text-dental-text hover:bg-dental-secondary-50 transition-colors"
         >
           <MinusCircle className="w-3.5 h-3.5" />
           Списати
@@ -99,7 +99,7 @@ export default function MaterialCard({
           type="button"
           onClick={() => onTransfer?.(balance)}
           title="Перемістити"
-          className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg border border-dental-text/20 px-2 py-1.5 text-xs font-medium text-dental-text hover:bg-gray-50 transition-colors"
+          className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg border border-dental-text/20 px-2 py-1.5 text-xs font-medium text-dental-text hover:bg-dental-secondary-50 transition-colors"
         >
           <ArrowLeftRight className="w-3.5 h-3.5" />
           Перемістити
@@ -108,7 +108,7 @@ export default function MaterialCard({
           type="button"
           onClick={() => onRequisition?.(balance)}
           title="Заявка"
-          className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg border border-dental-text/20 px-2 py-1.5 text-xs font-medium text-dental-text hover:bg-gray-50 transition-colors"
+          className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg border border-dental-text/20 px-2 py-1.5 text-xs font-medium text-dental-text hover:bg-dental-secondary-50 transition-colors"
         >
           <ShoppingCart className="w-3.5 h-3.5" />
           Заявка

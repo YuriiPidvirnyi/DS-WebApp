@@ -51,14 +51,14 @@ export default function ClientFloatingButtons() {
       {/* Chat mode chooser */}
       {chatMode === 'choose' && (
         <div className="fixed z-50 bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))] right-[calc(1.5rem+env(safe-area-inset-right,0px))]">
-          <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 w-72 max-w-[calc(100vw-3rem)]">
+          <div className="bg-white rounded-2xl shadow-2xl border border-dental-secondary-100 p-5 w-72 max-w-[calc(100vw-3rem)]">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-dental-dark font-semibold text-base">
                 {t('chat.chooser.title')}
               </h3>
               <button
                 onClick={() => setChatMode(null)}
-                className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
+                className="w-8 h-8 rounded-full hover:bg-dental-secondary-100 flex items-center justify-center text-dental-secondary-400 hover:text-dental-muted transition-colors"
                 aria-label={t('common.close')}
               >
                 <svg
@@ -144,7 +144,7 @@ export default function ClientFloatingButtons() {
             <AccessibilityPanelDynamic defaultOpen hideToggle />
             <button
               onClick={() => setAccessibilityOpen(false)}
-              className="absolute top-2 right-2 w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors z-10"
+              className="absolute top-2 right-2 w-8 h-8 rounded-full hover:bg-dental-secondary-100 flex items-center justify-center text-dental-secondary-400 hover:text-dental-muted transition-colors z-10"
               aria-label={t('accessibility.closePanel')}
             >
               <svg

@@ -27,6 +27,7 @@ import { useTranslation } from 'react-i18next'
 import { Button, ErrorState, Input, Select } from '@/components/ui'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
+import { useConfirm } from '@/hooks/useConfirm'
 import { useCSRF } from '@/hooks/useCSRF'
 import { hasPermission } from '@/lib/permissions'
 import { captureException } from '@/utils/sentry'
@@ -106,6 +107,7 @@ export default function AdminMaterialsPage() {
   const { t } = useTranslation()
   const { user } = useAdminAuth()
   const { preferences } = useAdminPreferences()
+  const { confirm, confirmDialog } = useConfirm()
   const { token, refreshToken } = useCSRF()
   const canViewAnalytics =
     !!user?.role && hasPermission(user.role, 'analytics:view')
@@ -171,7 +173,7 @@ export default function AdminMaterialsPage() {
   }, [rows, search])
 
   const c = preferences.compactTables ? 'px-3 py-2' : 'px-4 py-3'
-  const th = `${c} text-left text-xs font-semibold uppercase text-dental-text-light`
+  const th = `${c} text-left text-xs font-semibold uppercase text-dental-muted`
 
   const F = (k: keyof Form, label: string) => (
     <div>
@@ -299,7 +301,14 @@ export default function AdminMaterialsPage() {
   }
 
   const deactivate = async (id: string) => {
-    if (!confirm(t('admin.materialsPage.deactivateConfirm'))) return
+    if (
+      !(await confirm({
+        title: t('admin.materialsPage.deactivateConfirm'),
+        severity: 'significant',
+        confirmLabel: t('admin.materialsPage.deactivate'),
+      }))
+    )
+      return
     try {
       const res = await fetch(`/api/materials/${id}`, {
         method: 'DELETE',
@@ -385,6 +394,7 @@ export default function AdminMaterialsPage() {
 
   return (
     <div className="space-y-6">
+      {confirmDialog}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <div className="rounded-xl bg-dental-primary-100 p-3 text-dental-teal">
@@ -505,7 +515,7 @@ export default function AdminMaterialsPage() {
             {t('admin.materialsPage.loading')}
           </p>
         ) : list.length === 0 ? (
-          <p className="p-8 text-center text-dental-text-light">
+          <p className="p-8 text-center text-dental-muted">
             {t('admin.materialsPage.empty')}
           </p>
         ) : (
@@ -528,7 +538,7 @@ export default function AdminMaterialsPage() {
                 return (
                   <tr
                     key={r.id}
-                    className={`border-t border-dental-secondary-100 ${low ? 'bg-red-50/80' : ''}`}
+                    className={`border-t border-dental-secondary-100 ${low ? 'bg-status-error-100/80' : ''}`}
                   >
                     <td className={`${c} w-12`}>
                       {r.image_url ? (
@@ -540,7 +550,7 @@ export default function AdminMaterialsPage() {
                           className="h-10 w-10 rounded-lg object-cover border border-dental-secondary-200"
                         />
                       ) : (
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-dental-secondary-50 text-dental-text-light">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-dental-secondary-50 text-dental-muted">
                           <Package className="h-5 w-5" />
                         </div>
                       )}
@@ -550,7 +560,7 @@ export default function AdminMaterialsPage() {
                         {r.name_uk}
                         {low ? (
                           <AlertTriangle
-                            className="h-4 w-4 shrink-0 text-red-600"
+                            className="h-4 w-4 shrink-0 text-dental-error"
                             aria-label={t('admin.inventory.kpi.lowStock')}
                           />
                         ) : null}
@@ -585,8 +595,8 @@ export default function AdminMaterialsPage() {
                       <span
                         className={
                           r.is_active
-                            ? 'text-green-700'
-                            : 'text-dental-text-light'
+                            ? 'text-status-success-700'
+                            : 'text-dental-muted'
                         }
                       >
                         {r.is_active
@@ -613,7 +623,7 @@ export default function AdminMaterialsPage() {
                           <button
                             type="button"
                             onClick={() => void deactivate(r.id)}
-                            className="rounded-lg p-2 text-red-600 hover:bg-red-50"
+                            className="rounded-lg p-2 text-dental-error hover:bg-status-error-100"
                             aria-label={t('admin.materialsPage.deactivate')}
                           >
                             <Trash2 className="h-4 w-4" />
@@ -654,7 +664,7 @@ export default function AdminMaterialsPage() {
                   <button
                     type="button"
                     onClick={() => void removeImage()}
-                    className="absolute -right-2 -top-2 rounded-full bg-red-500 p-0.5 text-white shadow-sm hover:bg-red-600"
+                    className="absolute -right-2 -top-2 rounded-full bg-dental-error p-0.5 text-white shadow-sm hover:bg-dental-error-dark"
                     aria-label={t('common.delete')}
                   >
                     <X className="h-3.5 w-3.5" />
@@ -665,7 +675,7 @@ export default function AdminMaterialsPage() {
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploadingImage}
-                  className="flex h-20 w-20 flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-dental-secondary-300 text-dental-text-light hover:border-dental-teal hover:text-dental-teal transition-colors"
+                  className="flex h-20 w-20 flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-dental-secondary-300 text-dental-muted hover:border-dental-teal hover:text-dental-teal transition-colors"
                 >
                   <ImagePlus className="h-6 w-6" />
                   <span className="text-[10px]">
@@ -673,7 +683,7 @@ export default function AdminMaterialsPage() {
                   </span>
                 </button>
               )}
-              <div className="flex-1 text-sm text-dental-text-light">
+              <div className="flex-1 text-sm text-dental-muted">
                 {uploadingImage ? (
                   <span className="text-dental-teal">
                     {t('admin.materialsPage.image.uploading')}

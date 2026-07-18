@@ -58,7 +58,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       'min-h-[44px] px-4 py-3 border rounded-2xl transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-0 text-base text-dental-dark placeholder:text-dental-muted sm:text-sm'
 
     const stateStyles = error
-      ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+      ? 'border-dental-error/20 focus:border-dental-error focus:ring-dental-error'
       : 'border-dental-secondary focus:border-dental-primary focus:ring-dental-primary'
 
     return (
@@ -69,7 +69,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             className="block text-sm font-medium text-dental-text mb-2"
           >
             {label}
-            {props.required && <span className="text-red-500 ml-1">*</span>}
+            {props.required && <span className="text-dental-error ml-1">*</span>}
           </label>
         )}
 
@@ -100,7 +100,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {error && (
           <p
             id={`${inputId}-error`}
-            className="mt-2 text-sm text-red-600"
+            className="mt-2 text-sm text-status-error-700"
             role="alert"
           >
             {error}
@@ -141,7 +141,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       'min-h-[44px] px-4 py-3 border rounded-2xl transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-0 resize-vertical text-base text-dental-dark placeholder:text-dental-muted sm:text-sm'
 
     const stateStyles = error
-      ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+      ? 'border-dental-error/20 focus:border-dental-error focus:ring-dental-error'
       : 'border-dental-secondary focus:border-dental-primary focus:ring-dental-primary'
 
     return (
@@ -152,7 +152,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             className="block text-sm font-medium text-dental-text mb-2"
           >
             {label}
-            {props.required && <span className="text-red-500 ml-1">*</span>}
+            {props.required && <span className="text-dental-error ml-1">*</span>}
           </label>
         )}
 
@@ -179,7 +179,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         {error && (
           <p
             id={`${textareaId}-error`}
-            className="mt-2 text-sm text-red-600"
+            className="mt-2 text-sm text-status-error-700"
             role="alert"
           >
             {error}
@@ -255,7 +255,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     )
 
     const stateStyles = error
-      ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+      ? 'border-dental-error/20 focus:border-dental-error focus:ring-dental-error'
       : 'border-dental-secondary focus:border-dental-primary focus:ring-dental-primary'
 
     return (
@@ -266,7 +266,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             className="block text-sm font-medium text-dental-text mb-2"
           >
             {label}
-            {props.required && <span className="text-red-500 ml-1">*</span>}
+            {props.required && <span className="text-dental-error ml-1">*</span>}
           </label>
         )}
 
@@ -304,7 +304,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {error && (
           <p
             id={`${selectId}-error`}
-            className="mt-2 text-sm text-red-600"
+            className="mt-2 text-sm text-status-error-700"
             role="alert"
           >
             {error}

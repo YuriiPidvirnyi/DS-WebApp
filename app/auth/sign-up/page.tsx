@@ -144,10 +144,10 @@ export default function SignUpPage() {
     ]
     const colors = [
       '',
-      'bg-red-500',
-      'bg-yellow-500',
-      'bg-teal-500',
-      'bg-green-500',
+      'bg-dental-error',
+      'bg-dental-warning',
+      'bg-dental-primary-500',
+      'bg-dental-success',
     ]
     return { strength, label: labels[strength], color: colors[strength] }
   }
@@ -171,7 +171,7 @@ export default function SignUpPage() {
         <div className="bg-white rounded-2xl shadow-soft p-5 sm:p-8">
           <form onSubmit={handleSignUp} className="space-y-5">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+              <div className="bg-status-error-100 border border-dental-error/20 text-status-error-700 px-4 py-3 rounded-xl text-sm">
                 {error}
               </div>
             )}
@@ -308,7 +308,7 @@ export default function SignUpPage() {
                     {[1, 2, 3, 4].map(i => (
                       <div
                         key={i}
-                        className={`h-1 flex-1 rounded-full ${i <= strength ? color : 'bg-slate-200'}`}
+                        className={`h-1 flex-1 rounded-full ${i <= strength ? color : 'bg-dental-secondary-200'}`}
                       />
                     ))}
                   </div>
@@ -338,7 +338,7 @@ export default function SignUpPage() {
                 />
                 {formData.confirmPassword &&
                   formData.password === formData.confirmPassword && (
-                    <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500" />
+                    <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-dental-success" />
                   )}
               </div>
             </div>
@@ -355,14 +355,14 @@ export default function SignUpPage() {
                 {t('auth.signUp.agreePrefix')}{' '}
                 <Link
                   href="/terms-of-service"
-                  className="text-dental-primary-600 hover:text-dental-primary-700 underline"
+                  className="text-dental-primary-ink hover:text-dental-primary-700 underline"
                 >
                   {t('auth.signUp.termsLink')}
                 </Link>{' '}
                 {t('auth.signUp.agreeAnd')}{' '}
                 <Link
                   href="/privacy-policy"
-                  className="text-dental-primary-600 hover:text-dental-primary-700 underline"
+                  className="text-dental-primary-ink hover:text-dental-primary-700 underline"
                 >
                   {t('auth.signUp.privacyLink')}
                 </Link>
@@ -390,7 +390,7 @@ export default function SignUpPage() {
               {t('auth.signUp.hasAccount')}{' '}
               <Link
                 href="/auth/login"
-                className="text-dental-primary-600 hover:text-dental-primary-700 font-semibold underline"
+                className="text-dental-primary-ink hover:text-dental-primary-700 font-semibold underline"
               >
                 {t('auth.signUp.loginLink')}
               </Link>

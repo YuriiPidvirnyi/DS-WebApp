@@ -13,7 +13,8 @@ import {
   ArrowRight,
   X,
 } from 'lucide-react'
-import { AsyncState } from '@/components/ui'
+import { AsyncState, StatusBadge } from '@/components/ui'
+import type { StatusTone } from '@/components/ui'
 
 interface Recommendation {
   primaryRecommendation: {
@@ -42,10 +43,10 @@ interface LastVisitOption {
   label: string
 }
 
-const urgencyColors = {
-  routine: 'bg-dental-primary-100 text-dental-primary-800',
-  soon: 'bg-amber-100 text-amber-800',
-  urgent: 'bg-red-100 text-red-800',
+const urgencyTones: Record<'routine' | 'soon' | 'urgent', StatusTone> = {
+  routine: 'accent',
+  soon: 'warning',
+  urgent: 'error',
 }
 
 export default function SmartRecommendations() {
@@ -135,7 +136,7 @@ export default function SmartRecommendations() {
       {/* Trigger */}
       <button
         onClick={() => setIsOpen(o => !o)}
-        className="inline-flex items-center gap-2 text-sm font-medium text-dental-primary-600 hover:text-dental-primary-700 border border-dental-primary-200 hover:border-dental-primary-400 bg-dental-primary-50 hover:bg-dental-primary-100 px-4 py-2.5 rounded-lg transition-colors"
+        className="inline-flex items-center gap-2 text-sm font-medium text-dental-primary-ink hover:text-dental-primary-700 border border-dental-primary-200 hover:border-dental-primary-400 bg-dental-primary-50 hover:bg-dental-primary-100 px-4 py-2.5 rounded-lg transition-colors"
       >
         <Sparkles className="w-4 h-4" />
         <span>{t('ai.recommendations.triggerButton')}</span>
@@ -259,7 +260,7 @@ export default function SmartRecommendations() {
                   value={additionalInfo}
                   onChange={e => setAdditionalInfo(e.target.value)}
                   placeholder={t('ai.recommendations.step3.placeholder')}
-                  className="w-full h-24 px-3 py-2 border border-dental-secondary-200 rounded-lg text-sm text-dental-text placeholder:text-dental-text-light focus:outline-hidden focus:ring-2 focus:ring-dental-primary-400 focus:border-transparent resize-none"
+                  className="w-full h-24 px-3 py-2 border border-dental-secondary-200 rounded-lg text-sm text-dental-text placeholder:text-dental-muted focus:outline-hidden focus:ring-2 focus:ring-dental-primary-400 focus:border-transparent resize-none"
                 />
                 <div className="flex gap-2">
                   <button
@@ -302,13 +303,17 @@ export default function SmartRecommendations() {
                       <span className="font-bold text-dental-dark text-sm">
                         {recommendations.primaryRecommendation.serviceName}
                       </span>
-                      <span
-                        className={`text-xs font-semibold px-2 py-0.5 rounded-full ${urgencyColors[recommendations.primaryRecommendation.urgency]}`}
+                      <StatusBadge
+                        tone={
+                          urgencyTones[
+                            recommendations.primaryRecommendation.urgency
+                          ]
+                        }
                       >
                         {t(
                           `ai.recommendations.urgency.${recommendations.primaryRecommendation.urgency}`
                         )}
-                      </span>
+                      </StatusBadge>
                     </div>
                     <p className="text-xs text-dental-text mb-1.5">
                       {recommendations.primaryRecommendation.reason}

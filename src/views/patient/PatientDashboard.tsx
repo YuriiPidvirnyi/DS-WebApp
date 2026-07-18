@@ -43,11 +43,26 @@ const STATUS_CONFIG: Record<
   string,
   { icon: typeof CheckCircle; className: string }
 > = {
-  completed: { icon: CheckCircle, className: 'text-green-600 bg-green-50' },
-  confirmed: { icon: Clock, className: 'text-blue-600 bg-blue-50' },
-  pending: { icon: AlertCircle, className: 'text-amber-600 bg-amber-50' },
-  cancelled: { icon: XCircle, className: 'text-red-600 bg-red-50' },
-  no_show: { icon: XCircle, className: 'text-gray-500 bg-gray-50' },
+  completed: {
+    icon: CheckCircle,
+    className: 'text-status-success-700 bg-status-success-100',
+  },
+  confirmed: {
+    icon: Clock,
+    className: 'text-status-accent-700 bg-status-accent-100',
+  },
+  pending: {
+    icon: AlertCircle,
+    className: 'text-status-warning-700 bg-status-warning-100',
+  },
+  cancelled: {
+    icon: XCircle,
+    className: 'text-status-neutral-700 bg-status-neutral-100',
+  },
+  no_show: {
+    icon: XCircle,
+    className: 'text-status-neutral-700 bg-status-neutral-100',
+  },
 }
 
 export default function PatientDashboard({ patientId }: { patientId: string }) {
@@ -159,7 +174,7 @@ export default function PatientDashboard({ patientId }: { patientId: string }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-dental-secondary-50">
       {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -171,14 +186,16 @@ export default function PatientDashboard({ patientId }: { patientId: string }) {
               <h1 className="text-2xl font-bold">
                 {patient.first_name} {patient.last_name}
               </h1>
-              <p className="text-gray-600">{t('patientDashboard.subtitle')}</p>
+              <p className="text-dental-muted">
+                {t('patientDashboard.subtitle')}
+              </p>
             </div>
           </div>
 
           {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-            <div className="p-4 bg-blue-50 rounded-lg">
-              <Calendar className="w-6 h-6 text-blue-600 mb-2" />
+            <div className="p-4 bg-dental-primary-50 rounded-lg">
+              <Calendar className="w-6 h-6 text-dental-primary-ink mb-2" />
               <p className="text-2xl font-bold">
                 {upcomingAppointments.length > 0
                   ? new Date(
@@ -186,31 +203,31 @@ export default function PatientDashboard({ patientId }: { patientId: string }) {
                     ).toLocaleDateString(locale)
                   : '—'}
               </p>
-              <p className="text-sm text-blue-700">
+              <p className="text-sm text-dental-primary-ink">
                 {t('patientDashboard.cards.nextVisit')}
               </p>
             </div>
-            <div className="p-4 bg-green-50 rounded-lg">
-              <FileText className="w-6 h-6 text-green-600 mb-2" />
+            <div className="p-4 bg-status-success-100 rounded-lg">
+              <FileText className="w-6 h-6 text-dental-success mb-2" />
               <p className="text-2xl font-bold">{completedCount}</p>
-              <p className="text-sm text-green-700">
+              <p className="text-sm text-status-success-700">
                 {t('patientDashboard.cards.completedVisits')}
               </p>
             </div>
-            <div className="p-4 bg-orange-50 rounded-lg">
-              <CreditCard className="w-6 h-6 text-orange-600 mb-2" />
+            <div className="p-4 bg-status-warning-100 rounded-lg">
+              <CreditCard className="w-6 h-6 text-dental-warning mb-2" />
               <p className="text-2xl font-bold">
                 {patient.total_spent_uah.toLocaleString(locale)}{' '}
                 {t('cabinet.currency')}
               </p>
-              <p className="text-sm text-orange-700">
+              <p className="text-sm text-status-warning-700">
                 {t('patientDashboard.cards.totalSpent')}
               </p>
             </div>
-            <div className="p-4 bg-purple-50 rounded-lg">
-              <MessageSquare className="w-6 h-6 text-purple-600 mb-2" />
+            <div className="p-4 bg-dental-secondary-100 rounded-lg">
+              <MessageSquare className="w-6 h-6 text-dental-primary-ink mb-2" />
               <p className="text-2xl font-bold">{appointments.length}</p>
-              <p className="text-sm text-purple-700">
+              <p className="text-sm text-dental-primary-ink">
                 {t('patientDashboard.cards.totalAppointments')}
               </p>
             </div>
@@ -230,7 +247,7 @@ export default function PatientDashboard({ patientId }: { patientId: string }) {
                   className={`flex items-center gap-2 px-6 py-3 rounded-lg transition-colors ${
                     activeTab === tab.id
                       ? 'bg-dental-teal text-white'
-                      : 'text-gray-600 hover:bg-gray-100'
+                      : 'text-dental-muted hover:bg-dental-secondary-100'
                   }`}
                 >
                   <tab.icon className="w-5 h-5" />
@@ -247,7 +264,7 @@ export default function PatientDashboard({ patientId }: { patientId: string }) {
                   {t('patientDashboard.sections.appointments.title')}
                 </h2>
                 {appointments.length === 0 ? (
-                  <p className="text-gray-500">
+                  <p className="text-dental-muted">
                     {t('patientDashboard.sections.appointments.empty')}
                   </p>
                 ) : (
@@ -259,7 +276,7 @@ export default function PatientDashboard({ patientId }: { patientId: string }) {
                       return (
                         <div
                           key={apt.id}
-                          className="flex items-center justify-between p-4 border border-gray-100 rounded-lg hover:bg-gray-50"
+                          className="flex items-center justify-between p-4 border border-dental-secondary-100 rounded-lg hover:bg-dental-secondary-50"
                         >
                           <div className="flex items-center gap-4">
                             <div
@@ -271,7 +288,7 @@ export default function PatientDashboard({ patientId }: { patientId: string }) {
                               <p className="font-medium text-dental-dark">
                                 {getServiceName(apt.service)}
                               </p>
-                              <p className="text-sm text-gray-500">
+                              <p className="text-sm text-dental-muted">
                                 {new Date(
                                   apt.appointment_date
                                 ).toLocaleDateString(locale)}{' '}
@@ -291,7 +308,7 @@ export default function PatientDashboard({ patientId }: { patientId: string }) {
                               )}
                             </span>
                             {apt.price_uah != null && (
-                              <p className="text-sm text-gray-500 mt-1">
+                              <p className="text-sm text-dental-muted mt-1">
                                 {apt.price_uah.toLocaleString(locale)}{' '}
                                 {t('cabinet.currency')}
                               </p>
@@ -349,10 +366,10 @@ function ComingSoonTab({
   return (
     <div className="text-center py-12">
       <div className="mx-auto w-16 h-16 rounded-full bg-dental-secondary-100 flex items-center justify-center mb-4">
-        <Icon className="w-8 h-8 text-dental-text-light" />
+        <Icon className="w-8 h-8 text-dental-muted" />
       </div>
       <h2 className="text-xl font-bold mb-2 text-dental-dark">{title}</h2>
-      <p className="text-gray-500 max-w-md mx-auto">{description}</p>
+      <p className="text-dental-muted max-w-md mx-auto">{description}</p>
     </div>
   )
 }

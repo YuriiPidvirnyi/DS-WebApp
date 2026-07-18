@@ -3000,7 +3000,10 @@
       "default": "Dziękujemy za wiadomość! Nasz menedżer skontaktuje się z Tobą wkrótce. W pilnych sprawach zadzwoń: +38 068 232 38 38"
     },
     "typing": "Konsultant pisze…",
-    "minimizeChat": "Zwiń czat"
+    "minimizeChat": "Zwiń czat",
+    "chooseChannel": "Wybierz sposób kontaktu:",
+    "adminChannel": "Napisz do administratora",
+    "aiChannel": "Asystent AI"
   },
   "pricing": {
     "title": "Przejrzyste ceny",

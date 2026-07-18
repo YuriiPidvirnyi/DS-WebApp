@@ -65,7 +65,7 @@ export default function ReportServiceCostPage() {
         </h1>
       </div>
 
-      <div className="mb-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-xs text-amber-700">
+      <div className="mb-2 rounded-lg border border-dental-warning/30 bg-status-warning-100 px-4 py-2 text-xs text-status-warning-700">
         Матеріали, введені як відкриті залишки (вартість = 0), не враховуються у
         розрахунку маржі. Перші 30–60 днів роботи з системою цифри будуть
         неповними.
@@ -105,7 +105,7 @@ export default function ReportServiceCostPage() {
       </div>
 
       {error && (
-        <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+        <div className="mb-4 rounded-lg bg-status-error-100 border border-dental-error/20 p-4 text-sm text-status-error-700">
           {error}
         </div>
       )}
@@ -170,7 +170,7 @@ export default function ReportServiceCostPage() {
                       {row.avg_margin.toFixed(2)}
                     </td>
                     <td
-                      className={`px-4 py-2 text-right font-mono font-semibold ${row.total_margin >= 0 ? 'text-green-600' : 'text-red-600'}`}
+                      className={`px-4 py-2 text-right font-mono font-semibold ${row.total_margin >= 0 ? 'text-status-success-700' : 'text-status-error-700'}`}
                     >
                       {row.total_margin.toFixed(2)}
                     </td>

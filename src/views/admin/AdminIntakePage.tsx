@@ -3,13 +3,22 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ClipboardList, Download, Gift, Printer, RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button, EmptyState, ErrorState, Input, Select } from '@/components/ui'
+import {
+  Button,
+  EmptyState,
+  ErrorState,
+  Input,
+  Select,
+  StatusBadge,
+  type StatusTone,
+} from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
+import { useConfirm } from '@/hooks/useConfirm'
 import { createClient } from '@/lib/supabase/client'
 import { redeemWelcomeGift } from '@/services/promo'
 import { APIError } from '@/services/api'
 import { captureException } from '@/utils/sentry'
-import { formatDateTime, getStatusTone } from './utils'
+import { formatDateTime } from './utils'
 
 export interface IntakeRow {
   id: string
@@ -37,9 +46,16 @@ export interface IntakeRow {
 
 const STATUS_OPTIONS = ['new', 'reviewed', 'linked']
 
+const STATUS_TONE: Record<string, StatusTone> = {
+  new: 'warning',
+  reviewed: 'accent',
+  linked: 'success',
+}
+
 export default function AdminIntakePage() {
   const { t } = useTranslation()
   const { preferences } = useAdminPreferences()
+  const { confirm, confirmDialog } = useConfirm()
   const [rows, setRows] = useState<IntakeRow[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
@@ -136,7 +152,14 @@ export default function AdminIntakePage() {
 
   const redeemGift = useCallback(
     async (row: IntakeRow) => {
-      if (!window.confirm(t('admin.intakePage.gift.confirm'))) return
+      if (
+        !(await confirm({
+          title: t('admin.intakePage.gift.confirm'),
+          severity: 'significant',
+          confirmLabel: t('common.confirm'),
+        }))
+      )
+        return
 
       setIsUpdatingId(row.id)
       setError(null)
@@ -174,7 +197,7 @@ export default function AdminIntakePage() {
         setIsUpdatingId(null)
       }
     },
-    [loadIntakes, t]
+    [confirm, loadIntakes, t]
   )
 
   const patchIntake = useCallback(
@@ -215,12 +238,13 @@ export default function AdminIntakePage() {
 
   return (
     <div className="space-y-6">
+      {confirmDialog}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-dental-dark">
             {t('admin.intakePage.title')}
           </h1>
-          <p className="text-sm text-dental-text-light">
+          <p className="text-sm text-dental-muted">
             {t('admin.intakePage.description')}
           </p>
         </div>
@@ -262,17 +286,17 @@ export default function AdminIntakePage() {
         <SummaryTile
           label={t('admin.intakePage.summary.new')}
           value={stats.fresh}
-          tone="text-amber-600"
+          tone="text-status-warning-700"
         />
         <SummaryTile
           label={t('admin.intakePage.summary.reviewed')}
           value={stats.reviewed}
-          tone="text-blue-600"
+          tone="text-dental-primary-ink"
         />
         <SummaryTile
           label={t('admin.intakePage.summary.withPromo')}
           value={stats.withPromo}
-          tone="text-green-600"
+          tone="text-status-success-700"
         />
       </div>
 
@@ -308,7 +332,7 @@ export default function AdminIntakePage() {
       <div className="space-y-3">
         {isLoading ? (
           <div
-            className={`rounded-xl border border-dental-secondary-200 bg-white px-4 py-8 text-center text-dental-text-light`}
+            className={`rounded-xl border border-dental-secondary-200 bg-white px-4 py-8 text-center text-dental-muted`}
           >
             {t('admin.intakePage.loading')}
           </div>
@@ -330,13 +354,9 @@ export default function AdminIntakePage() {
                       {row.last_name} {row.first_name}
                       {row.patronymic ? ` ${row.patronymic}` : ''}
                     </p>
-                    <span
-                      className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${getStatusTone(
-                        row.status
-                      )}`}
-                    >
+                    <StatusBadge tone={STATUS_TONE[row.status] ?? 'neutral'}>
                       {getStatusLabel(row.status)}
-                    </span>
+                    </StatusBadge>
                     {row.promo_code ? (
                       <span className="inline-flex rounded-full bg-dental-primary-50 px-2 py-1 text-xs font-medium text-dental-primary-700">
                         {t('admin.intakePage.card.promo', {
@@ -345,22 +365,22 @@ export default function AdminIntakePage() {
                       </span>
                     ) : null}
                     {row.form_type === 'adult' || row.form_type === 'child' ? (
-                      <span className="inline-flex rounded-full bg-indigo-100 px-2 py-1 text-xs font-medium text-indigo-700">
+                      <span className="inline-flex rounded-full bg-dental-primary-100 px-2 py-1 text-xs font-medium text-dental-primary-700">
                         {t(`admin.intakePage.card.formTypes.${row.form_type}`)}
                       </span>
                     ) : null}
                     {row.patient_id ? (
-                      <span className="inline-flex rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
+                      <StatusBadge tone="success">
                         {t('admin.intakePage.card.patientLinked')}
-                      </span>
+                      </StatusBadge>
                     ) : null}
                     {(phoneCounts.get(row.phone) ?? 0) > 1 ? (
-                      <span className="inline-flex rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">
+                      <StatusBadge tone="error">
                         {t('admin.intakePage.card.duplicatePhone')}
-                      </span>
+                      </StatusBadge>
                     ) : null}
                   </div>
-                  <p className="mt-1 text-sm text-dental-text-light">
+                  <p className="mt-1 text-sm text-dental-muted">
                     {row.phone}
                     {row.email ? ` • ${row.email}` : ''} •{' '}
                     {formatDateTime(row.created_at)} •{' '}
@@ -379,7 +399,7 @@ export default function AdminIntakePage() {
                     {t('admin.intakePage.card.print')}
                   </a>
                   {row.promo_redemptions?.length ? (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1.5 text-xs font-medium text-green-700">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-status-success-100 px-3 py-1.5 text-xs font-medium text-status-success-700">
                       <Gift className="h-3.5 w-3.5" />
                       {t('admin.intakePage.gift.given', {
                         date: formatDateTime(
@@ -490,7 +510,7 @@ function SummaryTile({
 }) {
   return (
     <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-      <p className="text-xs text-dental-text-light">{label}</p>
+      <p className="text-xs text-dental-muted">{label}</p>
       <p className={`text-2xl font-bold ${tone}`}>{value}</p>
     </div>
   )
@@ -506,7 +526,7 @@ function DetailField({
   if (!value) return null
   return (
     <div>
-      <dt className="text-xs font-medium text-dental-text-light">{label}</dt>
+      <dt className="text-xs font-medium text-dental-muted">{label}</dt>
       <dd className="whitespace-pre-wrap text-dental-text">{value}</dd>
     </div>
   )
@@ -543,7 +563,7 @@ function IntakeNotes({
   if (isEditing) {
     return (
       <div className="mt-3">
-        <label className="mb-1 block text-xs font-medium text-dental-text-light">
+        <label className="mb-1 block text-xs font-medium text-dental-muted">
           {label}
         </label>
         <textarea
@@ -570,7 +590,7 @@ function IntakeNotes({
     <button
       type="button"
       onClick={() => setIsEditing(true)}
-      className="mt-3 flex w-full items-start gap-2 rounded-lg px-3 py-2 text-left text-xs text-dental-text-light transition-colors hover:bg-dental-secondary-50"
+      className="mt-3 flex w-full items-start gap-2 rounded-lg px-3 py-2 text-left text-xs text-dental-muted transition-colors hover:bg-dental-secondary-50"
     >
       {value ? (
         <span>

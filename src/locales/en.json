@@ -2998,7 +2998,10 @@
       "default": "Thank you for your message! Our manager will contact you shortly. For a quick response, call us: +38 068 232 38 38"
     },
     "typing": "Consultant is typing…",
-    "minimizeChat": "Minimize chat"
+    "minimizeChat": "Minimize chat",
+    "chooseChannel": "Choose a contact channel:",
+    "adminChannel": "Message the administrator",
+    "aiChannel": "AI assistant"
   },
   "pricing": {
     "title": "Transparent Pricing",

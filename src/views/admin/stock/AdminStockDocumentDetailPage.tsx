@@ -4,7 +4,9 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronLeft, Send, Undo2, Loader2, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useCSRF } from '@/hooks/useCSRF'
+import { useConfirm } from '@/hooks/useConfirm'
 import type { StockDocumentWithItems, DocType, DocStatus } from '@/types/stock'
 
 const DOC_TYPE_LABELS: Record<DocType, string> = {
@@ -16,9 +18,9 @@ const DOC_TYPE_LABELS: Record<DocType, string> = {
 }
 
 const STATUS_STYLES: Record<DocStatus, string> = {
-  draft: 'bg-gray-100 text-gray-600',
-  posted: 'bg-green-100 text-green-700',
-  void: 'bg-red-100 text-red-600',
+  draft: 'bg-dental-secondary-100 text-dental-muted',
+  posted: 'bg-status-success-100 text-status-success-700',
+  void: 'bg-status-error-100 text-status-error-700',
 }
 
 const STATUS_LABELS: Record<DocStatus, string> = {
@@ -30,7 +32,9 @@ const STATUS_LABELS: Record<DocStatus, string> = {
 export default function AdminStockDocumentDetailPage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
+  const { t } = useTranslation()
   const { token: csrfToken } = useCSRF()
+  const { confirm, confirmDialog } = useConfirm()
   const [doc, setDoc] = useState<StockDocumentWithItems | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -51,7 +55,15 @@ export default function AdminStockDocumentDetailPage() {
   }, [id])
 
   async function postDocument() {
-    if (!confirm('Провести документ?')) return
+    if (
+      !(await confirm({
+        title: t('admin.stock.confirm.postDocument.title'),
+        description: t('admin.stock.confirm.postDocument.description'),
+        confirmLabel: t('admin.stock.confirm.postDocument.action'),
+        severity: 'significant',
+      }))
+    )
+      return
     setActionLoading(true)
     try {
       const res = await fetch(`/api/stock/documents/${id}/post`, {
@@ -92,7 +104,15 @@ export default function AdminStockDocumentDetailPage() {
   }
 
   async function deleteDocument() {
-    if (!confirm('Видалити документ?')) return
+    if (
+      !(await confirm({
+        title: t('admin.stock.confirm.deleteDocument.title'),
+        description: t('admin.stock.confirm.deleteDocument.description'),
+        confirmLabel: t('admin.stock.confirm.deleteDocument.action'),
+        severity: 'irreversible',
+      }))
+    )
+      return
     setActionLoading(true)
     try {
       const res = await fetch(`/api/stock/documents/${id}`, {
@@ -119,7 +139,7 @@ export default function AdminStockDocumentDetailPage() {
   if (error && !doc) {
     return (
       <div className="p-6">
-        <p className="text-red-600">{error}</p>
+        <p className="text-status-error-700">{error}</p>
         <Link
           href="/admin/stock/documents"
           className="mt-4 inline-block text-dental-primary-600 underline"
@@ -163,7 +183,7 @@ export default function AdminStockDocumentDetailPage() {
                 <button
                   onClick={deleteDocument}
                   disabled={actionLoading}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-60 transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-dental-error/20 px-3 py-2 text-sm text-status-error-700 hover:bg-status-error-100 disabled:opacity-60 transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
                   Видалити
@@ -186,7 +206,7 @@ export default function AdminStockDocumentDetailPage() {
               <button
                 onClick={() => setShowUnpostModal(true)}
                 disabled={actionLoading}
-                className="inline-flex items-center gap-2 rounded-lg border border-amber-300 px-3 py-2 text-sm text-amber-700 hover:bg-amber-50 disabled:opacity-60 transition-colors"
+                className="inline-flex items-center gap-2 rounded-lg border border-dental-warning/30 px-3 py-2 text-sm text-status-warning-700 hover:bg-status-warning-100 disabled:opacity-60 transition-colors"
               >
                 <Undo2 className="w-4 h-4" />
                 Скасувати проведення
@@ -196,7 +216,7 @@ export default function AdminStockDocumentDetailPage() {
         </div>
 
         {error && (
-          <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+          <div className="mb-4 rounded-lg bg-status-error-100 border border-dental-error/20 p-4 text-sm text-status-error-700">
             {error}
           </div>
         )}
@@ -280,7 +300,7 @@ export default function AdminStockDocumentDetailPage() {
                   onChange={e => setUnpostReason(e.target.value)}
                   rows={3}
                   placeholder="Мінімум 3 символи..."
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 resize-none"
+                  className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 resize-none"
                 />
               </div>
               <div className="flex justify-end gap-3">
@@ -293,7 +313,7 @@ export default function AdminStockDocumentDetailPage() {
                 <button
                   onClick={unpostDocument}
                   disabled={unpostReason.trim().length < 3 || actionLoading}
-                  className="inline-flex items-center gap-2 rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-60 transition-colors"
+                  className="inline-flex items-center gap-2 rounded-lg bg-dental-warning px-4 py-2 text-sm font-medium text-white hover:bg-dental-warning-dark disabled:opacity-60 transition-colors"
                 >
                   {actionLoading && (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -305,6 +325,8 @@ export default function AdminStockDocumentDetailPage() {
           </div>
         </div>
       )}
+
+      {confirmDialog}
     </>
   )
 }

@@ -233,10 +233,10 @@ export default function PriceCalculator() {
       <div className="flex items-center mb-6">
         <Calculator className="h-8 w-8 text-dental-teal mr-3" />
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-2xl font-bold text-dental-dark">
             {t('priceCalculator.title')}
           </h2>
-          <p className="text-gray-600 text-sm">
+          <p className="text-dental-muted text-sm">
             {t('priceCalculator.subtitle')}
           </p>
         </div>
@@ -245,7 +245,7 @@ export default function PriceCalculator() {
       <div className="space-y-6">
         {categoryKeys.map(categoryKey => (
           <div key={categoryKey}>
-            <h3 className="font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">
+            <h3 className="font-semibold text-dental-dark mb-3 pb-2 border-b border-dental-secondary-200">
               {t(categoryKey)}
             </h3>
             <div className="space-y-2">
@@ -257,10 +257,10 @@ export default function PriceCalculator() {
                     className="flex items-center justify-between py-2"
                   >
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900 text-sm">
+                      <p className="font-medium text-dental-dark text-sm">
                         {t(service.nameKey)}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-dental-muted">
                         {service.priceFrom} - {service.priceTo}{' '}
                         {t('priceCalculator.currency')}
                       </p>
@@ -273,7 +273,7 @@ export default function PriceCalculator() {
                             Math.max(0, (selectedServices[service.id] || 0) - 1)
                           )
                         }
-                        className="w-10 h-10 sm:w-8 sm:h-8 rounded-lg border border-gray-300 hover:bg-gray-100 flex items-center justify-center"
+                        className="w-10 h-10 sm:w-8 sm:h-8 rounded-lg border border-dental-secondary-300 hover:bg-dental-secondary-100 flex items-center justify-center"
                         disabled={!selectedServices[service.id]}
                         aria-label={`${t('priceCalculator.decreaseQuantity')}: ${t(service.nameKey)}`}
                       >
@@ -292,7 +292,7 @@ export default function PriceCalculator() {
                             (selectedServices[service.id] || 0) + 1
                           )
                         }
-                        className="w-10 h-10 sm:w-8 sm:h-8 rounded-lg border border-gray-300 hover:bg-gray-100 flex items-center justify-center"
+                        className="w-10 h-10 sm:w-8 sm:h-8 rounded-lg border border-dental-secondary-300 hover:bg-dental-secondary-100 flex items-center justify-center"
                         aria-label={`${t('priceCalculator.increaseQuantity')}: ${t(service.nameKey)}`}
                       >
                         +
@@ -306,10 +306,10 @@ export default function PriceCalculator() {
       </div>
 
       {hasSelection && (
-        <div className="mt-8 pt-6 border-t-2 border-gray-200">
+        <div className="mt-8 pt-6 border-t-2 border-dental-secondary-200">
           <div className="bg-dental-blue/10 rounded-xl p-6">
             <div className="flex justify-between items-center mb-4">
-              <span className="text-lg font-semibold text-gray-900">
+              <span className="text-lg font-semibold text-dental-dark">
                 {t('priceCalculator.estimatedCost')}:
               </span>
               <div className="text-right">
@@ -317,7 +317,7 @@ export default function PriceCalculator() {
                   {total.min.toLocaleString()} - {total.max.toLocaleString()}{' '}
                   {t('priceCalculator.currency')}
                 </div>
-                <p className="text-xs text-gray-600 mt-1">
+                <p className="text-xs text-dental-muted mt-1">
                   {t('priceCalculator.exactCostDisclaimer')}
                 </p>
               </div>
@@ -326,7 +326,7 @@ export default function PriceCalculator() {
             {!showForm ? (
               <button
                 onClick={() => setShowForm(true)}
-                className="w-full bg-dental-teal text-white py-3 px-6 rounded-lg font-semibold hover:bg-teal-700 transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-dental-teal text-white py-3 px-6 rounded-lg font-semibold hover:bg-dental-primary-700 transition-colors flex items-center justify-center gap-2"
               >
                 <Send className="h-5 w-5" />
                 {t('priceCalculator.getExactCalculation')}
@@ -336,7 +336,7 @@ export default function PriceCalculator() {
                 <div>
                   <label
                     htmlFor="calc-name"
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-sm font-medium text-dental-dark mb-1"
                   >
                     {t('priceCalculator.nameLabel')}
                   </label>
@@ -345,7 +345,7 @@ export default function PriceCalculator() {
                     id="calc-name"
                     value={name}
                     onChange={e => setName(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dental-teal focus:border-transparent"
+                    className="w-full px-4 py-2 border border-dental-secondary-300 rounded-lg focus:ring-2 focus:ring-dental-teal focus:border-transparent"
                     placeholder={t('priceCalculator.namePlaceholder')}
                     required
                   />
@@ -353,7 +353,7 @@ export default function PriceCalculator() {
                 <div>
                   <label
                     htmlFor="calc-phone"
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-sm font-medium text-dental-dark mb-1"
                   >
                     {t('priceCalculator.phoneLabel')}
                   </label>
@@ -362,7 +362,7 @@ export default function PriceCalculator() {
                     id="calc-phone"
                     value={phone}
                     onChange={e => setPhone(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dental-teal focus:border-transparent"
+                    className="w-full px-4 py-2 border border-dental-secondary-300 rounded-lg focus:ring-2 focus:ring-dental-teal focus:border-transparent"
                     placeholder={t('priceCalculator.phonePlaceholder')}
                     required
                   />
@@ -371,14 +371,14 @@ export default function PriceCalculator() {
                   <button
                     type="button"
                     onClick={() => setShowForm(false)}
-                    className="flex-1 bg-gray-200 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                    className="flex-1 bg-dental-secondary-200 text-dental-text py-3 px-6 rounded-lg font-semibold hover:bg-dental-secondary-300 transition-colors"
                   >
                     {t('priceCalculator.cancel')}
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-1 bg-dental-teal text-white py-3 px-6 rounded-lg font-semibold hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 bg-dental-teal text-white py-3 px-6 rounded-lg font-semibold hover:bg-dental-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting
                       ? t('priceCalculator.sending')
@@ -392,7 +392,7 @@ export default function PriceCalculator() {
       )}
 
       {!hasSelection && (
-        <div className="mt-6 text-center text-gray-500 text-sm">
+        <div className="mt-6 text-center text-dental-muted text-sm">
           {t('priceCalculator.selectServicesHint')}
         </div>
       )}

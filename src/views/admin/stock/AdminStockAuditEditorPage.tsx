@@ -4,7 +4,9 @@ import { useState, useEffect, useCallback } from 'react'
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { ChevronLeft, Loader2, CheckCircle2, RefreshCw } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useCSRF } from '@/hooks/useCSRF'
+import { useConfirm } from '@/hooks/useConfirm'
 import type { InventoryAuditWithItems, InventoryAuditItem } from '@/types/stock'
 
 interface Props {
@@ -12,7 +14,9 @@ interface Props {
 }
 
 export default function AdminStockAuditEditorPage({ auditId }: Props) {
+  const { t } = useTranslation()
   const { token: csrfToken } = useCSRF()
+  const { confirm, confirmDialog } = useConfirm()
   const [audit, setAudit] = useState<InventoryAuditWithItems | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -104,7 +108,16 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
   }
 
   async function handlePost() {
-    if (!confirm('Провести інвентаризацію? Цю дію неможливо скасувати.')) return
+    if (
+      !(await confirm({
+        title: t('admin.stock.confirm.postAudit.title'),
+        description: t('admin.stock.confirm.postAudit.description'),
+        confirmLabel: t('admin.stock.confirm.postAudit.action'),
+        severity: 'irreversible',
+        warning: t('confirmDialog.irreversibleWarning'),
+      }))
+    )
+      return
     setPosting(true)
     setError(null)
     try {
@@ -126,20 +139,20 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
     const qty = getDisplayQty(item)
     if (qty == null) return ''
     const d = qty - item.qty_before
-    if (d > 0) return 'bg-green-50'
-    if (d < 0) return 'bg-red-50'
+    if (d > 0) return 'bg-status-success-100'
+    if (d < 0) return 'bg-status-error-100'
     return ''
   }
 
   function deltaLabel(item: InventoryAuditItem): ReactNode {
     const qty = getDisplayQty(item)
-    if (qty == null) return <span className="text-gray-300">—</span>
+    if (qty == null) return <span className="text-dental-secondary-300">—</span>
     const d = qty - item.qty_before
     if (d === 0) return <span className="text-dental-text">0</span>
     return (
       <span
         className={
-          d > 0 ? 'text-green-600 font-medium' : 'text-red-600 font-medium'
+          d > 0 ? 'text-status-success-700 font-medium' : 'text-status-error-700 font-medium'
         }
       >
         {d > 0 ? '+' : ''}
@@ -173,8 +186,8 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
                   <span
                     className={`ml-2 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
                       audit.status === 'posted'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-gray-100 text-gray-500'
+                        ? 'bg-status-success-100 text-status-success-700'
+                        : 'bg-dental-secondary-100 text-dental-muted'
                     }`}
                   >
                     {audit.status === 'posted' ? 'Проведено' : 'Анульовано'}
@@ -191,7 +204,7 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
               type="button"
               onClick={handleAutofill}
               disabled={autofilling}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-sm text-dental-text hover:bg-gray-100 transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm text-dental-text hover:bg-dental-secondary-100 transition-colors disabled:opacity-50"
             >
               {autofilling ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -218,7 +231,7 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
               type="button"
               onClick={handlePost}
               disabled={posting || hasPending}
-              className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-60 transition-colors"
+              className="inline-flex items-center gap-2 rounded-lg bg-dental-success px-4 py-2 text-sm font-medium text-white hover:bg-dental-success-dark disabled:opacity-60 transition-colors"
               title={hasPending ? 'Спочатку збережіть зміни' : undefined}
             >
               {posting && <Loader2 className="w-4 h-4 animate-spin" />}
@@ -235,7 +248,7 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
       )}
 
       {error && (
-        <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+        <div className="mb-4 rounded-lg bg-status-error-100 border border-dental-error/20 p-4 text-sm text-status-error-700">
           {error}
         </div>
       )}
@@ -249,7 +262,7 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
           ) : (
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
+                <tr className="border-b border-dental-secondary-200 bg-dental-secondary-50">
                   <th className="text-left px-4 py-3 font-medium text-dental-text">
                     Матеріал
                   </th>
@@ -271,7 +284,7 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
                 {audit.items.map(item => (
                   <tr
                     key={item.id}
-                    className={`border-b border-gray-100 last:border-0 transition-colors ${deltaClass(item)}`}
+                    className={`border-b border-dental-secondary-100 last:border-0 transition-colors ${deltaClass(item)}`}
                   >
                     <td className="px-4 py-2.5 text-dental-dark">
                       <p className="truncate max-w-[200px]">
@@ -298,7 +311,7 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
                             handleQtyChange(item.id, e.target.value)
                           }
                           placeholder="—"
-                          className="w-24 rounded border border-gray-300 px-2 py-1 text-right text-sm focus:outline-hidden focus:ring-1 focus:ring-dental-primary-600"
+                          className="w-24 rounded border border-dental-secondary-300 px-2 py-1 text-right text-sm focus:outline-hidden focus:ring-1 focus:ring-dental-primary-600"
                         />
                       ) : (
                         <span className="font-mono">
@@ -316,6 +329,8 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
           )}
         </div>
       )}
+
+      {confirmDialog}
     </div>
   )
 }

@@ -22,13 +22,13 @@ const FAQAccordionItem = ({
   onToggle,
 }: FAQAccordionItemProps) => {
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
+    <div className="border border-dental-secondary-200 rounded-lg overflow-hidden">
       <button
         onClick={onToggle}
-        className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"
+        className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-dental-secondary-50 transition-colors"
         aria-expanded={isOpen}
       >
-        <span className="font-semibold text-gray-900 pr-4">
+        <span className="font-semibold text-dental-dark pr-4">
           {item.question}
         </span>
         <ChevronDown
@@ -42,7 +42,7 @@ const FAQAccordionItem = ({
           isOpen ? 'max-h-96' : 'max-h-0'
         }`}
       >
-        <div className="px-6 py-4 bg-gray-50 text-gray-600 border-t border-gray-200">
+        <div className="px-6 py-4 bg-dental-secondary-50 text-dental-muted border-t border-dental-secondary-200">
           {item.answer}
         </div>
       </div>
@@ -66,10 +66,10 @@ export default function FAQ() {
     <div className="py-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl lg:text-4xl font-bold text-dental-dark mb-4">
             {t('faqPage.title')}
           </h2>
-          <p className="text-lg text-gray-600">{t('faqPage.subtitle')}</p>
+          <p className="text-lg text-dental-muted">{t('faqPage.subtitle')}</p>
         </div>
 
         <div className="space-y-4">
@@ -84,7 +84,7 @@ export default function FAQ() {
         </div>
 
         <div className="mt-12 text-center">
-          <p className="text-gray-600 mb-4">{t('faqPage.cta.question')}</p>
+          <p className="text-dental-muted mb-4">{t('faqPage.cta.question')}</p>
           <Link
             href="/contact"
             className="inline-flex items-center justify-center px-6 py-3 bg-dental-primary-700 text-white font-semibold rounded-lg hover:bg-dental-primary-800 transition-colors"

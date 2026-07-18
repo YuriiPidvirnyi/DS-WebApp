@@ -239,7 +239,7 @@ const Header = memo(() => {
               </Link>
               <button
                 onClick={toggleMenu}
-                className="p-2 text-dental-text hover:text-dental-primary-600 focus:outline-hidden focus:ring-2 focus:ring-dental-primary-400 focus:ring-offset-2 rounded-lg transition-colors"
+                className="flex h-11 w-11 items-center justify-center text-dental-text hover:text-dental-primary-ink focus:outline-hidden focus:ring-2 focus:ring-dental-primary-400 focus:ring-offset-2 rounded-lg transition-colors"
                 aria-label={
                   isMenuOpen
                     ? t('accessibility.closeMenu')
@@ -284,8 +284,8 @@ const Header = memo(() => {
                       href={item.href}
                       className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors duration-200 ${
                         isActive(item.href)
-                          ? 'text-dental-primary-600 bg-dental-primary-50 font-semibold'
-                          : 'text-dental-dark hover:text-dental-primary-600 hover:bg-gray-50'
+                          ? 'text-dental-primary-ink bg-dental-primary-50 font-semibold'
+                          : 'text-dental-dark hover:text-dental-primary-ink hover:bg-dental-secondary-50'
                       }`}
                       style={nunitoFont}
                       onClick={closeMenu}
@@ -298,10 +298,10 @@ const Header = memo(() => {
               </div>
 
               {/* Messengers */}
-              <div className="mt-3 pt-3 border-t border-gray-100 space-y-1">
+              <div className="mt-3 pt-3 border-t border-dental-secondary-100 space-y-1">
                 <a
                   href={`tel:${CONTACT_INFO.phoneRaw}`}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-dental-dark hover:text-dental-primary-600 hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-dental-dark hover:text-dental-primary-ink hover:bg-dental-secondary-50 transition-colors"
                   onClick={closeMenu}
                 >
                   <Phone className="w-5 h-5" />
@@ -314,7 +314,7 @@ const Header = memo(() => {
                     href={CONTACT_INFO.social.whatsapp}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-dental-dark hover:text-[#25D366] hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-dental-dark hover:text-dental-primary-ink hover:bg-dental-secondary-50 transition-colors"
                     onClick={closeMenu}
                   >
                     <svg
@@ -334,7 +334,7 @@ const Header = memo(() => {
                     href={CONTACT_INFO.social.telegram}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-dental-dark hover:text-[#26A5E4] hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-dental-dark hover:text-dental-primary-ink hover:bg-dental-secondary-50 transition-colors"
                     onClick={closeMenu}
                   >
                     <svg
@@ -352,14 +352,14 @@ const Header = memo(() => {
               </div>
 
               {/* Auth + Language */}
-              <div className="mt-3 pt-3 border-t border-gray-100 space-y-3">
+              <div className="mt-3 pt-3 border-t border-dental-secondary-100 space-y-3">
                 {user ? (
                   <Link
                     href="/cabinet"
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-dental-dark hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-dental-dark hover:bg-dental-secondary-50 transition-colors"
                     onClick={closeMenu}
                   >
-                    <User className="w-5 h-5 text-dental-primary-600" />
+                    <User className="w-5 h-5 text-dental-primary-ink" />
                     <span className="font-medium" style={nunitoFont}>
                       {t('cabinet.myProfile')}
                     </span>
@@ -367,10 +367,10 @@ const Header = memo(() => {
                 ) : (
                   <Link
                     href="/auth/login"
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-dental-dark hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-dental-dark hover:bg-dental-secondary-50 transition-colors"
                     onClick={closeMenu}
                   >
-                    <LogIn className="w-5 h-5 text-dental-primary-600" />
+                    <LogIn className="w-5 h-5 text-dental-primary-ink" />
                     <span className="font-medium" style={nunitoFont}>
                       {t('auth.login.submit')}
                     </span>

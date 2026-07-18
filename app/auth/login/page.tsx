@@ -108,18 +108,18 @@ export default function LoginPage() {
         <div className="bg-white shadow-soft rounded-2xl p-6 sm:p-8">
           <form onSubmit={handleLogin}>
             {passwordResetSuccess && (
-              <div className="mb-6 p-3 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm">
+              <div className="mb-6 p-3 bg-status-success-100 border border-dental-success/30 rounded-xl text-status-success-700 text-sm">
                 {t('auth.login.passwordResetSuccess')}
               </div>
             )}
 
             {error && (
-              <div className="mb-6 p-3 bg-dental-error-light border border-red-200 rounded-xl text-dental-error-dark text-sm">
+              <div className="mb-6 p-3 bg-dental-error-light border border-dental-error/20 rounded-xl text-dental-error-dark text-sm">
                 {error}
                 {emailNotConfirmed && (
                   <div className="mt-2">
                     {resendState === 'sent' ? (
-                      <span className="text-green-700">
+                      <span className="text-status-success-700">
                         {t('auth.login.resendConfirmation.sent')}
                       </span>
                     ) : (
@@ -127,7 +127,7 @@ export default function LoginPage() {
                         type="button"
                         onClick={handleResendConfirmation}
                         disabled={resendState === 'sending'}
-                        className="font-semibold text-dental-primary-600 hover:text-dental-primary-700 underline disabled:opacity-50 focus:outline-hidden focus:ring-2 focus:ring-dental-primary-400 rounded"
+                        className="font-semibold text-dental-primary-ink hover:text-dental-primary-700 underline disabled:opacity-50 focus:outline-hidden focus:ring-2 focus:ring-dental-primary-400 rounded"
                       >
                         {resendState === 'sending'
                           ? t('auth.login.resendConfirmation.sending')
@@ -162,7 +162,7 @@ export default function LoginPage() {
                   placeholder={t('auth.login.emailPlaceholder')}
                   required
                   autoComplete="email"
-                  className="w-full text-sm text-dental-dark placeholder:text-dental-text-light outline-hidden bg-transparent"
+                  className="w-full text-sm text-dental-dark placeholder:text-dental-muted outline-hidden bg-transparent"
                 />
               </div>
             </div>
@@ -185,7 +185,7 @@ export default function LoginPage() {
                   placeholder={t('auth.login.passwordPlaceholder')}
                   required
                   autoComplete="current-password"
-                  className="w-full text-sm text-dental-dark placeholder:text-dental-text-light outline-hidden bg-transparent"
+                  className="w-full text-sm text-dental-dark placeholder:text-dental-muted outline-hidden bg-transparent"
                 />
                 <button
                   type="button"
@@ -206,7 +206,7 @@ export default function LoginPage() {
             <div className="flex items-center justify-end mb-6">
               <Link
                 href="/auth/forgot-password"
-                className="text-sm font-medium text-dental-primary-600 hover:text-dental-primary-700 transition-colors"
+                className="text-sm font-medium text-dental-primary-ink hover:text-dental-primary-700 transition-colors"
               >
                 {t('auth.login.forgotPassword')}
               </Link>
@@ -216,7 +216,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:bg-gray-400 text-white font-semibold text-sm rounded-xl transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-400"
+              className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:bg-dental-secondary-400 text-white font-semibold text-sm rounded-xl transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-400"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -234,7 +234,7 @@ export default function LoginPage() {
             {t('auth.login.noAccount')}{' '}
             <Link
               href="/auth/sign-up"
-              className="font-semibold text-dental-primary-600 hover:text-dental-primary-700 transition-colors"
+              className="font-semibold text-dental-primary-ink hover:text-dental-primary-700 transition-colors"
             >
               {t('auth.login.signUpLink')}
             </Link>

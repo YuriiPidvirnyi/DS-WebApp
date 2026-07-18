@@ -4,6 +4,7 @@ import { useEffect, useCallback } from 'react'
 import { checkDueReminders, ScheduledReminder } from '@/services/reminders'
 import { showInfo } from '@/utils/toast'
 import { createICSEvent, downloadICS } from '@/utils/calendar'
+import { SITE_INFO, CONTACT_INFO } from '@/utils/constants'
 import toast from 'react-hot-toast'
 import i18n from '@/i18n/config'
 
@@ -141,7 +142,7 @@ function offerCalendarDownload(booking: BookingData) {
       description: i18n.t('reminderSettings.calendar.description', {
         id: booking.id,
       }),
-      location: i18n.t('reminderSettings.calendar.location'),
+      location: `${SITE_INFO.name}, ${CONTACT_INFO.address.full}`,
       start: startLocal,
       end: endLocal,
       url: window.location.origin,
@@ -158,7 +159,7 @@ function offerCalendarDownload(booking: BookingData) {
               downloadICS(`appointment-${booking.id}.ics`, ics)
               toast.dismiss(t.id)
             }}
-            className="ml-2 px-2 py-1 bg-blue-500 text-white rounded text-sm"
+            className="ml-2 px-2 py-1 bg-dental-primary-600 text-white rounded text-sm"
           >
             {i18n.t('feedback.ariaYes')}
           </button>
@@ -167,7 +168,7 @@ function offerCalendarDownload(booking: BookingData) {
       {
         duration: 10000,
         style: {
-          borderLeft: '4px solid #3b82f6',
+          borderLeft: '4px solid var(--color-dental-info)',
         },
       }
     )

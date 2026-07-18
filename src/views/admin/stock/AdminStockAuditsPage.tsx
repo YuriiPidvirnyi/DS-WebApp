@@ -21,9 +21,9 @@ const STATUS_LABELS: Record<AuditStatus, string> = {
 }
 
 const STATUS_CLASSES: Record<AuditStatus, string> = {
-  draft: 'bg-yellow-100 text-yellow-700',
-  posted: 'bg-green-100 text-green-700',
-  void: 'bg-gray-100 text-gray-500',
+  draft: 'bg-status-warning-100 text-status-warning-700',
+  posted: 'bg-status-success-100 text-status-success-700',
+  void: 'bg-dental-secondary-100 text-dental-muted',
 }
 
 export default function AdminStockAuditsPage() {
@@ -110,7 +110,7 @@ export default function AdminStockAuditsPage() {
           </div>
         )}
         {error && (
-          <div className="p-4 text-sm text-red-700 bg-red-50">{error}</div>
+          <div className="p-4 text-sm text-status-error-700 bg-status-error-100">{error}</div>
         )}
         {!loading && !error && audits.length === 0 && (
           <div className="flex flex-col items-center py-16 gap-3">
@@ -129,7 +129,7 @@ export default function AdminStockAuditsPage() {
         {!loading && audits.length > 0 && (
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-200 bg-gray-50">
+              <tr className="border-b border-dental-secondary-200 bg-dental-secondary-50">
                 <th className="text-left px-4 py-3 font-medium text-dental-text">
                   Номер
                 </th>
@@ -146,14 +146,14 @@ export default function AdminStockAuditsPage() {
               {audits.map(audit => (
                 <tr
                   key={audit.id}
-                  className="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors"
+                  className="border-b border-dental-secondary-100 last:border-0 hover:bg-dental-secondary-50 transition-colors"
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       {audit.status === 'posted' ? (
-                        <CheckCircle2 className="w-4 h-4 shrink-0 text-green-600" />
+                        <CheckCircle2 className="w-4 h-4 shrink-0 text-status-success-700" />
                       ) : (
-                        <Clock className="w-4 h-4 shrink-0 text-yellow-500" />
+                        <Clock className="w-4 h-4 shrink-0 text-dental-warning" />
                       )}
                       <Link
                         href={`/admin/stock/audits/${audit.id}`}
@@ -178,7 +178,7 @@ export default function AdminStockAuditsPage() {
                   <td className="px-4 py-3 text-right flex items-center justify-end gap-2">
                     <Link
                       href={`/admin/stock/audits/${audit.id}`}
-                      className="rounded-lg border border-dental-text/20 px-3 py-1.5 text-xs font-medium text-dental-text hover:bg-gray-100 transition-colors"
+                      className="rounded-lg border border-dental-text/20 px-3 py-1.5 text-xs font-medium text-dental-text hover:bg-dental-secondary-100 transition-colors"
                     >
                       {audit.status === 'draft' ? 'Редагувати' : 'Переглянути'}
                     </Link>
@@ -187,7 +187,7 @@ export default function AdminStockAuditsPage() {
                         type="button"
                         onClick={() => handleDelete(audit.id)}
                         disabled={deleting === audit.id}
-                        className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                        className="rounded-lg border border-dental-error/20 px-3 py-1.5 text-xs font-medium text-status-error-700 hover:bg-status-error-100 transition-colors disabled:opacity-50"
                       >
                         {deleting === audit.id ? (
                           <Loader2 className="w-3 h-3 animate-spin" />
@@ -210,7 +210,7 @@ export default function AdminStockAuditsPage() {
           <button
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 disabled:opacity-40 hover:bg-gray-50"
+            className="px-3 py-1.5 text-sm rounded-lg border border-dental-secondary-300 disabled:opacity-40 hover:bg-dental-secondary-50"
           >
             ←
           </button>
@@ -220,7 +220,7 @@ export default function AdminStockAuditsPage() {
           <button
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 disabled:opacity-40 hover:bg-gray-50"
+            className="px-3 py-1.5 text-sm rounded-lg border border-dental-secondary-300 disabled:opacity-40 hover:bg-dental-secondary-50"
           >
             →
           </button>

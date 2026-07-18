@@ -19,8 +19,10 @@ import {
   AlertTriangle,
 } from 'lucide-react'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { StatusBadge, type StatusTone } from '@/components/ui'
 import { useCSRF } from '@/hooks/useCSRF'
 import { createICSEvent, downloadICS } from '@/utils/calendar'
+import { SITE_INFO, CONTACT_INFO } from '@/utils/constants'
 import { trackBooking, BookingEvent } from '@/utils/analytics'
 
 const APPOINTMENTS_PAGE_SIZE = 20
@@ -97,8 +99,8 @@ function Toast({
       <div
         className={`flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-lg border ${
           type === 'success'
-            ? 'bg-green-50 border-green-200 text-green-700'
-            : 'bg-red-50 border-red-200 text-red-700'
+            ? 'bg-status-success-100 border-dental-success/30 text-status-success-700'
+            : 'bg-status-error-100 border-dental-error/20 text-status-error-700'
         }`}
       >
         {type === 'success' ? (
@@ -155,8 +157,8 @@ function CancelConfirmModal({
       />
       <div className="relative bg-white rounded-2xl shadow-xl max-w-sm w-full">
         <div className="p-6 text-center">
-          <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-            <AlertTriangle className="w-7 h-7 text-red-500" />
+          <div className="w-14 h-14 bg-status-error-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertTriangle className="w-7 h-7 text-dental-error" />
           </div>
           <h3
             id="cancel-modal-title"
@@ -192,7 +194,7 @@ function CancelConfirmModal({
             <button
               onClick={onConfirm}
               disabled={cancelling}
-              className="flex-1 py-3 rounded-xl bg-red-500 text-white font-medium hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 focus:outline-hidden focus:ring-2 focus:ring-red-300"
+              className="flex-1 py-3 rounded-xl bg-dental-error text-white font-medium hover:bg-dental-error-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 focus:outline-hidden focus:ring-2 focus:ring-dental-error"
             >
               {cancelling ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -462,7 +464,7 @@ function RescheduleModal({
                         : isDisabled
                           ? 'text-dental-secondary-200 cursor-not-allowed'
                           : isToday
-                            ? 'text-dental-primary-600 font-semibold ring-1 ring-dental-primary-400 hover:bg-dental-primary-50'
+                            ? 'text-dental-primary-ink font-semibold ring-1 ring-dental-primary-400 hover:bg-dental-primary-50'
                             : 'text-dental-dark hover:bg-dental-primary-50'
                     }`}
                   >
@@ -488,14 +490,14 @@ function RescheduleModal({
             ) : slotsError ? (
               <div
                 role="alert"
-                className="text-center py-4 bg-red-50 border border-red-100 rounded-xl px-4"
+                className="text-center py-4 bg-status-error-100 border border-dental-error/20 rounded-xl px-4"
               >
-                <p className="text-sm text-red-700 mb-2">
+                <p className="text-sm text-status-error-700 mb-2">
                   {t('cabinet.appointments.reschedule.slotsError')}
                 </p>
                 <button
                   onClick={() => selectedDate && fetchSlots(selectedDate)}
-                  className="text-sm font-medium text-dental-primary-600 hover:text-dental-primary-700 underline focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500 rounded"
+                  className="text-sm font-medium text-dental-primary-ink hover:text-dental-primary-700 underline focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500 rounded"
                 >
                   {t('asyncState.actions.retry')}
                 </button>
@@ -525,7 +527,7 @@ function RescheduleModal({
 
           {/* Error */}
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl">
+            <div className="bg-status-error-100 border border-dental-error/20 text-status-error-700 text-sm px-4 py-3 rounded-xl">
               {error}
             </div>
           )}
@@ -739,7 +741,7 @@ export default function AppointmentsPage() {
       description: doctorName
         ? `${t('cabinet.treatments.doctor')}: ${doctorName}`
         : serviceName,
-      location: t('booking.successPage.calendarLocation'),
+      location: `${SITE_INFO.name}, ${CONTACT_INFO.address.full}`,
       start,
       end,
     })
@@ -778,18 +780,16 @@ export default function AppointmentsPage() {
   })
 
   const getStatusBadge = (status: string) => {
-    const styles: Record<string, string> = {
-      pending: 'bg-amber-100 text-amber-700',
-      confirmed: 'bg-dental-primary-100 text-dental-primary-600',
-      completed: 'bg-dental-secondary-200 text-dental-dark',
-      cancelled: 'bg-red-100 text-red-700',
+    const tones: Record<string, StatusTone> = {
+      pending: 'warning',
+      confirmed: 'accent',
+      completed: 'success',
+      cancelled: 'neutral',
     }
     return (
-      <span
-        className={`px-2.5 py-1 rounded-full text-xs font-medium ${styles[status] || styles.pending}`}
-      >
+      <StatusBadge tone={tones[status] || 'warning'}>
         {t(`cabinet.appointments.status.${status}`, status)}
-      </span>
+      </StatusBadge>
     )
   }
 
@@ -808,9 +808,9 @@ export default function AppointmentsPage() {
 
   if (fetchError && appointments.length === 0) {
     return (
-      <div className="bg-white rounded-2xl p-8 sm:p-10 text-center shadow-xs border border-red-100">
-        <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-          <AlertTriangle className="w-8 h-8 text-red-500" />
+      <div className="bg-white rounded-2xl p-8 sm:p-10 text-center shadow-xs border border-dental-error/20">
+        <div className="w-16 h-16 bg-status-error-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <AlertTriangle className="w-8 h-8 text-dental-error" />
         </div>
         <h2 className="text-lg font-semibold text-dental-dark mb-2">
           {t('cabinet.error.title')}
@@ -872,7 +872,7 @@ export default function AppointmentsPage() {
               onClick={() => setFilter(f)}
               className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors whitespace-nowrap focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500 ${
                 filter === f
-                  ? 'bg-dental-primary-100 text-dental-primary-600'
+                  ? 'bg-dental-primary-100 text-dental-primary-ink'
                   : 'bg-white text-dental-muted hover:bg-dental-secondary-50 border border-dental-secondary-100'
               }`}
             >
@@ -927,7 +927,7 @@ export default function AppointmentsPage() {
                       <span className="text-[10px] text-dental-primary-500 font-medium uppercase leading-none">
                         {getDayOfWeek(apt.appointment_date)}
                       </span>
-                      <span className="text-lg sm:text-xl font-bold text-dental-primary-600 leading-tight">
+                      <span className="text-lg sm:text-xl font-bold text-dental-primary-ink leading-tight">
                         {new Date(apt.appointment_date).getDate()}
                       </span>
                       <span className="text-[10px] sm:text-xs text-dental-primary-500 leading-none">
@@ -995,7 +995,7 @@ export default function AppointmentsPage() {
                           aria-label={t(
                             'cabinet.appointments.reschedule.button'
                           )}
-                          className="flex items-center gap-1 text-xs px-2 py-1 sm:px-0 sm:py-0 rounded-lg sm:rounded-none bg-dental-primary-50 sm:bg-transparent text-dental-primary-600 hover:text-dental-primary-700 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
+                          className="flex items-center gap-1 text-xs px-2 py-1 sm:px-0 sm:py-0 rounded-lg sm:rounded-none bg-dental-primary-50 sm:bg-transparent text-dental-primary-ink hover:text-dental-primary-700 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
                         >
                           <CalendarClock className="w-3.5 h-3.5" />
                           <span className="hidden sm:inline">
@@ -1012,7 +1012,7 @@ export default function AppointmentsPage() {
                           onClick={() => setCancelApt(apt)}
                           disabled={cancellingId === apt.id}
                           aria-label={t('cabinet.appointments.cancel')}
-                          className="flex items-center gap-1 text-xs px-2 py-1 sm:px-0 sm:py-0 rounded-lg sm:rounded-none bg-red-50 sm:bg-transparent text-red-500 hover:text-red-600 disabled:opacity-50 transition-colors focus:outline-hidden focus:ring-2 focus:ring-red-300"
+                          className="flex items-center gap-1 text-xs px-2 py-1 sm:px-0 sm:py-0 rounded-lg sm:rounded-none bg-status-error-100 sm:bg-transparent text-dental-error hover:text-status-error-700 disabled:opacity-50 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-error"
                         >
                           <X className="w-3.5 h-3.5" />
                           <span className="hidden sm:inline">

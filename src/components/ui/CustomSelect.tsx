@@ -104,7 +104,7 @@ export function CustomSelect({
           'w-full min-h-[44px] flex items-center justify-between gap-2 px-4 py-2.5 text-base sm:text-sm text-dental-dark bg-white border transition-all duration-200 shadow-xs',
           'focus:outline-hidden focus-visible:ring-2 focus-visible:ring-dental-primary-500 focus-visible:ring-offset-1',
           error
-            ? 'border-red-300 focus-visible:ring-red-500'
+            ? 'border-dental-error/20 focus-visible:ring-dental-error'
             : 'border-dental-secondary-200 hover:border-dental-primary-400',
           isOpen
             ? 'rounded-t-2xl border-dental-primary-400 border-b-transparent shadow-md'
@@ -163,7 +163,7 @@ export function CustomSelect({
       )}
 
       {error && (
-        <p className="mt-1.5 text-xs text-red-600" role="alert">
+        <p className="mt-1.5 text-xs text-status-error-700" role="alert">
           {error}
         </p>
       )}
