@@ -111,5 +111,96 @@ export default tseslint.config(
       'react-refresh/only-export-components': 'off',
       'react-hooks/exhaustive-deps': 'off',
     },
+  },
+
+  // ── Дизайн-системні гарди (Ф-1/Ф-2, обов'язкова частина Фази 1) ──────────
+  // Гард 1: сирі Tailwind-палітри поза токенами заборонені. Всі кольори — з
+  // бренд-рампи (dental-*), семантичної шкали статусів (status-*) або ролей
+  // (role-*). Див. src/styles/globals.css @theme.
+  {
+    files: ['src/**/*.{ts,tsx}', 'app/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            'Literal[value=/(^|[\\s:\'"`(!])(bg|text|border|ring|from|to|via|fill|stroke|divide|outline|decoration|accent|caret|placeholder)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-[0-9]/]',
+          message:
+            'Сирі Tailwind-кольори заборонені (Ф-1): використовуйте токени dental-* / status-* / role-* з globals.css.',
+        },
+        {
+          selector:
+            'TemplateElement[value.raw=/(^|[\\s:\'"`(!])(bg|text|border|ring|from|to|via|fill|stroke|divide|outline|decoration|accent|caret|placeholder)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-[0-9]/]',
+          message:
+            'Сирі Tailwind-кольори заборонені (Ф-1): використовуйте токени dental-* / status-* / role-* з globals.css.',
+        },
+        {
+          selector:
+            "JSXAttribute[name.name='className'] Literal[value=/\\[#[0-9a-fA-F]{3,8}\\]/]",
+          message:
+            'Довільні hex-кольори в className заборонені (Ф-1): додайте токен у globals.css @theme.',
+        },
+      ],
+    },
+  },
+  // Гард 2: рядкові літерали кирилицею в JSX поза i18n заборонені (Ф-2).
+  // Текст живе в src/locales/*, компонент отримує його через t().
+  {
+    files: ['src/**/*.tsx', 'app/**/*.tsx'],
+    ignores: [
+      // Легасі до Ф-2 (Фаза 2): складський модуль ще не інтернаціоналізовано.
+      'src/views/admin/stock/**',
+      'src/components/admin/stock/**',
+      'src/views/admin/AdminStockPage.tsx',
+      // Друковані/промо-документи навмисно україномовні (клінічні папери).
+      'src/views/admin/AdminIntakePrintPage.tsx',
+      'src/views/promo/**',
+      // Легасі-сторінки, заплановані на Ф-2.
+      'app/cabinet/payments/page.tsx',
+      'app/booking/payment-result/page.tsx',
+      'app/auth/reset-password/page.tsx',
+      'app/auth/confirm/page.tsx',
+      'app/auth/callback/page.tsx',
+      'app/auth/forgot-password/page.tsx',
+      'app/global-error.tsx',
+      'app/cabinet/error.tsx',
+      'src/views/About.tsx',
+      'src/components/cabinet/WalletCards.tsx',
+      'src/components/MonoPayButton.tsx',
+      'src/components/AccessibilityPanel.tsx',
+      'src/views/admin/AdminEmailTemplatesPage.tsx',
+      'src/views/admin/AdminMaterialsPage.tsx',
+      '**/*.test.tsx',
+    ],
+    rules: {
+      // Увага: flat config перезаписує no-restricted-syntax цілком, тому цей
+      // блок повторює селектори Гарда 1 і додає JSXText-гард поверх них.
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            'Literal[value=/(^|[\\s:\'"`(!])(bg|text|border|ring|from|to|via|fill|stroke|divide|outline|decoration|accent|caret|placeholder)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-[0-9]/]',
+          message:
+            'Сирі Tailwind-кольори заборонені (Ф-1): використовуйте токени dental-* / status-* / role-* з globals.css.',
+        },
+        {
+          selector:
+            'TemplateElement[value.raw=/(^|[\\s:\'"`(!])(bg|text|border|ring|from|to|via|fill|stroke|divide|outline|decoration|accent|caret|placeholder)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-[0-9]/]',
+          message:
+            'Сирі Tailwind-кольори заборонені (Ф-1): використовуйте токени dental-* / status-* / role-* з globals.css.',
+        },
+        {
+          selector:
+            "JSXAttribute[name.name='className'] Literal[value=/\\[#[0-9a-fA-F]{3,8}\\]/]",
+          message:
+            'Довільні hex-кольори в className заборонені (Ф-1): додайте токен у globals.css @theme.',
+        },
+        {
+          selector: 'JSXText[value=/[А-Яа-яЄєІіЇїҐґ]/]',
+          message:
+            'Захардкоджений текст у JSX заборонено (Ф-2): винесіть рядок у словник i18n і використовуйте t().',
+        },
+      ],
+    },
   }
 )

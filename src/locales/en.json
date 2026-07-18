@@ -338,9 +338,9 @@
       }
     },
     "emergency": {
-      "title": "🚨 Emergency Care",
+      "title": "Emergency Care",
       "description": "In case of acute pain or injury, contact us immediately:",
-      "phone": "📞 +380 50 455 47 74",
+      "phone": "+380 50 455 47 74",
       "availability": "We accept emergency calls 24/7"
     },
     "faq": {
@@ -419,7 +419,8 @@
         "Warranty on All Services",
         "Modern Equipment",
         "Qualified Doctors"
-      ]
+      ],
+      "photoAlt": "A happy Dental Story patient smiling after a visit"
     },
     "features": {
       "title": "Why Patients Choose Dental Story",
@@ -1223,7 +1224,11 @@
       "heading": "Book an appointment",
       "submit": "Book now",
       "cooldown": "Wait {{seconds}} s",
-      "submittingOverlay": "Submitting request..."
+      "submittingOverlay": "Submitting request...",
+      "nextPersonal": "Next: your details",
+      "nextSummary": "Next: confirmation",
+      "panelTitle": "Your appointment",
+      "panelNote": "Payment at the clinic. Rescheduling or cancelling is free up to 24 hours before the visit."
     },
     "errors": {
       "cooldown": "Too many submissions. Try again in {{seconds}} s.",
@@ -1349,7 +1354,13 @@
       "analytics": "Analytics",
       "settings": "Settings",
       "users": "Users",
-      "stock": "Inventory v2"
+      "stock": "Inventory v2",
+      "groups": {
+        "operations": "Operations",
+        "communications": "Communications",
+        "inventory": "Inventory",
+        "system": "System"
+      }
     },
     "login": {
       "title": "Admin Login",
@@ -2356,6 +2367,45 @@
         "appointment": "Make a test booking",
         "workingHours": "Configure working hours"
       }
+    },
+    "stock": {
+      "confirm": {
+        "postDocument": {
+          "title": "Post this document?",
+          "description": "Posting updates warehouse balances from the document lines; editing becomes unavailable.",
+          "action": "Post"
+        },
+        "deleteDocument": {
+          "title": "Delete this draft document?",
+          "description": "The draft and all of its lines will be deleted permanently.",
+          "action": "Delete"
+        },
+        "archiveDirectoryItem": {
+          "title": "Archive this directory item?",
+          "description": "The item will disappear from pickers but remain in document history.",
+          "action": "Archive"
+        },
+        "archiveWarehouse": {
+          "title": "Archive this warehouse?",
+          "description": "The warehouse becomes unavailable for new documents; movement history is kept.",
+          "action": "Archive"
+        },
+        "deactivateMaterial": {
+          "title": "Deactivate this material?",
+          "description": "The material disappears from the catalog for new documents; stock and history are kept.",
+          "action": "Deactivate"
+        },
+        "postAudit": {
+          "title": "Post this inventory audit?",
+          "description": "Stock balances will be adjusted to the counted quantities.",
+          "action": "Post"
+        },
+        "removePermissions": {
+          "title": "Remove these access rights?",
+          "description": "The user will lose access to the stock operations granted by this entry.",
+          "action": "Remove"
+        }
+      }
     }
   },
   "auth": {
@@ -2652,7 +2702,8 @@
         "confirm": "Are you sure? This action cannot be undone.",
         "confirmButton": "Yes, delete my account",
         "cancel": "Cancel",
-        "deleting": "Deleting..."
+        "deleting": "Deleting...",
+        "confirmWord": "DELETE"
       },
       "navLink": "Settings"
     },
@@ -2940,13 +2991,14 @@
       "contact": "Contacts"
     },
     "responses": {
-      "booking": "To book an appointment, go to the booking page or call us at +380 44 123 45 67. We are open every day from 9:00 to 20:00.",
+      "booking": "To book an appointment, go to the booking page or call us at +38 068 232 38 38. Opening hours: Mon–Fri 09:00–20:00, Sat 10:00–18:00.",
       "prices": "You can check service prices on the \"Services\" page. Free consultation for new patients!",
       "hours": "Our hours:\n• Mon-Fri: 9:00 - 20:00\n• Sat: 10:00 - 18:00\n• Sun: Closed",
-      "contact": "Our contacts:\n• Phone: +380 44 123 45 67\n• Email: info@dentalstory.ua\n• Address: 1 Khreshchatyk St., Kyiv",
-      "default": "Thank you for your message! Our manager will contact you shortly. For quick contact, call: +380 44 123 45 67"
+      "contact": "Our contacts:\n• Phone: +38 068 232 38 38\n• Email: info@dentalstory.ua\n• Address: 10 Sumska St, Lviv",
+      "default": "Thank you for your message! Our manager will contact you shortly. For a quick response, call us: +38 068 232 38 38"
     },
-    "typing": "Consultant is typing…"
+    "typing": "Consultant is typing…",
+    "minimizeChat": "Minimize chat"
   },
   "pricing": {
     "title": "Transparent Pricing",
@@ -3014,7 +3066,8 @@
     "workingNow": "Open Now",
     "closedNow": "Closed Now",
     "opensAt": "Opens at {{time}}",
-    "qualityGuarantee": "Quality Guarantee"
+    "qualityGuarantee": "Quality Guarantee",
+    "googleReviews": "{{count}} reviews on Google"
   },
   "hero": {
     "badge": "Modern Dentistry",
@@ -3425,5 +3478,10 @@
       "docLocked": "Document already posted",
       "flagOff": "Inventory v2 not enabled"
     }
+  },
+  "confirmDialog": {
+    "consequencesTitle": "This will also remove",
+    "typeToConfirm": "To confirm, type",
+    "irreversibleWarning": "This action cannot be undone."
   }
 }

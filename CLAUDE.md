@@ -122,7 +122,23 @@ CSS-first; there is no `tailwind.config.js`):
 | `dental.text`                        | `#4A5E63` | Body copy                       |
 | `dental.secondary`                   | `#D1CAC0` | Warm neutral surfaces           |
 
-**Accessibility rule**: Never use white text on Brand Blue (`#AECED3`) — contrast ratio fails WCAG AA.
+| `dental.muted` | `#425960` | Captions/metadata (AA on white) |
+| `dental.primary-ink` | `#2F5962` | Teal ink for links/text accents |
+
+**Semantic status scale (Ф-3)** — the single source for status chips in both the patient cabinet and the admin panel: `status-{accent,success,warning,neutral,error}-{100,700}` (`*-100` tint background + `*-700` ink text). Render via the `StatusBadge` ui primitive (`tone` + optional `live` dot). Statuses map: scheduled/confirmed → `accent`, completed/paid → `success`, pending/awaiting → `warning`, cancelled/archived/draft → `neutral`, failed/unpaid → `error`. Do **not** color statuses with raw Tailwind palettes.
+
+**Role badges (1i)**: one formula for all roles — tier tint + tier ink + Lucide icon via the `RoleBadge` ui primitive (`role-clinical-*`, `role-ops-*` tokens). Tone encodes access level; the icon carries identity. No per-role rainbow palettes.
+
+**Confirmations (1d)**: one branded pattern — `ConfirmDialog` (`src/components/ui/ConfirmDialog.tsx`) + promise wrapper `useConfirm()`. `severity: 'significant'` = modal with consequences; `'irreversible'` = adds red styling and (optionally) a typed `confirmationWord`. Reversible actions get no modal — perform immediately with an undo toast. **`window.confirm` is banned**; UI actions gate on `can(role, permission)` from `src/lib/permissions.ts`.
+
+**Design-system guards (CI-enforced)**:
+
+1. ESLint bans raw Tailwind palette colors (`bg-blue-600`, `text-slate-500`, arbitrary hex in `className`, …) in `src/` and `app/` — use `dental-*` / `status-*` / `role-*` tokens only (`eslint.config.js`).
+2. ESLint bans hardcoded Cyrillic literals in JSX outside i18n (legacy stock-module/print files are temporarily exempt until Ф-2).
+3. `src/styles/design-tokens.contrast.test.ts` asserts WCAG AA (≥4.5:1) for every ink-on-tint token pair — darkening-proof.
+4. Touch-target smoke checks (≥44px) live in `e2e/ui-form-controls.smoke.spec.ts`.
+
+**Accessibility rules**: Never use white text on Brand Blue (`#AECED3`) — contrast ratio fails WCAG AA. `text-dental-text-light` (`#8fa3a8`) is decorative-only — captions use `text-dental-muted`. Interactive targets are ≥44×44px.
 
 **Fonts**: Nunito (`--font-nunito`) for headings, Rubik (`--font-rubik`) for body. Both loaded in `app/layout.tsx` via `next/font`.
 

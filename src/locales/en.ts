@@ -1302,6 +1302,11 @@ const en = {
       submit: 'Book now',
       cooldown: 'Wait {{seconds}} s',
       submittingOverlay: 'Submitting request...',
+      nextPersonal: 'Next: your details',
+      nextSummary: 'Next: confirmation',
+      panelTitle: 'Your appointment',
+      panelNote:
+        'Payment at the clinic. Rescheduling or cancelling is free up to 24 hours before the visit.',
     },
     errors: {
       cooldown: 'Too many submissions. Try again in {{seconds}} s.',
@@ -1432,6 +1437,12 @@ const en = {
       settings: 'Settings',
       users: 'Users',
       stock: 'Inventory v2',
+      groups: {
+        operations: 'Operations',
+        communications: 'Communications',
+        inventory: 'Inventory',
+        system: 'System',
+      },
     },
     login: {
       title: 'Admin Login',
@@ -2464,6 +2475,52 @@ const en = {
         workingHours: 'Configure working hours',
       },
     },
+    stock: {
+      confirm: {
+        postDocument: {
+          title: 'Post this document?',
+          description:
+            'Posting updates warehouse balances from the document lines; editing becomes unavailable.',
+          action: 'Post',
+        },
+        deleteDocument: {
+          title: 'Delete this draft document?',
+          description:
+            'The draft and all of its lines will be deleted permanently.',
+          action: 'Delete',
+        },
+        archiveDirectoryItem: {
+          title: 'Archive this directory item?',
+          description:
+            'The item will disappear from pickers but remain in document history.',
+          action: 'Archive',
+        },
+        archiveWarehouse: {
+          title: 'Archive this warehouse?',
+          description:
+            'The warehouse becomes unavailable for new documents; movement history is kept.',
+          action: 'Archive',
+        },
+        deactivateMaterial: {
+          title: 'Deactivate this material?',
+          description:
+            'The material disappears from the catalog for new documents; stock and history are kept.',
+          action: 'Deactivate',
+        },
+        postAudit: {
+          title: 'Post this inventory audit?',
+          description:
+            'Stock balances will be adjusted to the counted quantities.',
+          action: 'Post',
+        },
+        removePermissions: {
+          title: 'Remove these access rights?',
+          description:
+            'The user will lose access to the stock operations granted by this entry.',
+          action: 'Remove',
+        },
+      },
+    },
   },
   auth: {
     login: {
@@ -2551,7 +2608,6 @@ const en = {
       goHome: 'Go Home',
     },
     forgotPassword: {
-      expiredNotice: 'The link has expired. Enter your email to get a new one.',
       subtitle: 'Enter your email and we will send a password reset link.',
       emailLabel: 'Email',
       emailPlaceholder: 'your@email.com',
@@ -2564,6 +2620,7 @@ const en = {
         unavailable: 'Password recovery is temporarily unavailable',
         generic: 'Unable to send reset email. Please try again later.',
       },
+      expiredNotice: 'The link has expired. Enter your email to get a new one.',
     },
     resetPassword: {
       subtitle: 'Set a new password for your account.',
@@ -2582,6 +2639,17 @@ const en = {
         passwordsMismatch: 'Passwords do not match',
         passwordTooShort: 'Password must be at least 8 characters',
         generic: 'Unable to update password. Please try again.',
+      },
+    },
+    callback: {
+      loading: 'Finishing sign-in, please wait...',
+      goToLogin: 'Go to Sign In',
+      errors: {
+        invalidLink:
+          'This recovery link is incomplete or broken. Request a new one.',
+        unavailable: 'Authorization is temporarily unavailable',
+        sessionMissing: 'Could not activate session. Please sign in again.',
+        generic: 'Could not complete authorization. Please try again.',
       },
     },
     confirm: {
@@ -2604,17 +2672,6 @@ const en = {
         invalidLink: 'The link is broken or incomplete. Request a new one.',
         unavailable: 'The service is temporarily unavailable',
         generic: 'The link is invalid or has expired. Request a new one.',
-      },
-    },
-    callback: {
-      loading: 'Finishing sign-in, please wait...',
-      goToLogin: 'Go to Sign In',
-      errors: {
-        invalidLink:
-          'This recovery link is incomplete or broken. Request a new one.',
-        unavailable: 'Authorization is temporarily unavailable',
-        sessionMissing: 'Could not activate session. Please sign in again.',
-        generic: 'Could not complete authorization. Please try again.',
       },
     },
   },
@@ -2771,6 +2828,7 @@ const en = {
         confirmButton: 'Yes, delete my account',
         cancel: 'Cancel',
         deleting: 'Deleting...',
+        confirmWord: 'DELETE',
       },
       navLink: 'Settings',
     },
@@ -3077,6 +3135,7 @@ const en = {
         'Thank you for your message! Our manager will contact you shortly. For quick contact, call: +380 44 123 45 67',
     },
     typing: 'Consultant is typing…',
+    minimizeChat: 'Minimize chat',
   },
   pricing: {
     title: 'Transparent Pricing',
@@ -3587,6 +3646,11 @@ const en = {
       docLocked: 'Document already posted',
       flagOff: 'Inventory v2 not enabled',
     },
+  },
+  confirmDialog: {
+    consequencesTitle: 'This will also remove',
+    typeToConfirm: 'To confirm, type',
+    irreversibleWarning: 'This action cannot be undone.',
   },
 } as const
 

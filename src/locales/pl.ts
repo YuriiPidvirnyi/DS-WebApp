@@ -1306,6 +1306,11 @@ const pl = {
       submit: 'Zarezerwuj',
       cooldown: 'Poczekaj {{seconds}} s',
       submittingOverlay: 'Wysyłamy zgłoszenie...',
+      nextPersonal: 'Dalej: twoje dane',
+      nextSummary: 'Dalej: potwierdzenie',
+      panelTitle: 'Twoja wizyta',
+      panelNote:
+        'Płatność w klinice. Przełożenie lub odwołanie wizyty jest bezpłatne do 24 godzin przed wizytą.',
     },
     errors: {
       cooldown: 'Zbyt częste wysyłanie. Spróbuj ponownie za {{seconds}} s.',
@@ -1438,6 +1443,12 @@ const pl = {
       settings: 'Ustawienia',
       users: 'Użytkownicy',
       stock: 'Magazyn v2',
+      groups: {
+        operations: 'Operacje',
+        communications: 'Komunikacja',
+        inventory: 'Magazyn',
+        system: 'System',
+      },
     },
     login: {
       title: 'Logowanie do panelu',
@@ -2470,6 +2481,52 @@ const pl = {
         workingHours: 'Skonfiguruj godziny pracy',
       },
     },
+    stock: {
+      confirm: {
+        postDocument: {
+          title: 'Zaksięgować dokument?',
+          description:
+            'Po zaksięgowaniu stany magazynowe zostaną zaktualizowane według pozycji dokumentu; edycja będzie niedostępna.',
+          action: 'Zaksięguj',
+        },
+        deleteDocument: {
+          title: 'Usunąć szkic dokumentu?',
+          description:
+            'Szkic i wszystkie jego pozycje zostaną trwale usunięte.',
+          action: 'Usuń',
+        },
+        archiveDirectoryItem: {
+          title: 'Zarchiwizować pozycję słownika?',
+          description:
+            'Pozycja zniknie z list wyboru, ale pozostanie w historii dokumentów.',
+          action: 'Archiwizuj',
+        },
+        archiveWarehouse: {
+          title: 'Zarchiwizować magazyn?',
+          description:
+            'Magazyn będzie niedostępny dla nowych dokumentów; historia ruchów zostanie zachowana.',
+          action: 'Archiwizuj',
+        },
+        deactivateMaterial: {
+          title: 'Dezaktywować materiał?',
+          description:
+            'Materiał zniknie z katalogu dla nowych dokumentów; stany i historia zostaną zachowane.',
+          action: 'Dezaktywuj',
+        },
+        postAudit: {
+          title: 'Zaksięgować inwentaryzację?',
+          description:
+            'Stany magazynowe zostaną skorygowane zgodnie z wynikami liczenia.',
+          action: 'Zaksięguj',
+        },
+        removePermissions: {
+          title: 'Odebrać uprawnienia?',
+          description:
+            'Użytkownik utraci dostęp do operacji magazynowych nadanych tym wpisem.',
+          action: 'Odbierz',
+        },
+      },
+    },
   },
   auth: {
     login: {
@@ -2557,7 +2614,6 @@ const pl = {
       goHome: 'Na stronę główną',
     },
     forgotPassword: {
-      expiredNotice: 'Link wygasł. Podaj adres e-mail, aby otrzymać nowy.',
       subtitle: 'Podaj email, a wyślemy link do zresetowania hasła.',
       emailLabel: 'Email',
       emailPlaceholder: 'twoj@email.com',
@@ -2570,6 +2626,7 @@ const pl = {
         unavailable: 'Odzyskiwanie hasła jest tymczasowo niedostępne',
         generic: 'Nie udało się wysłać emaila. Spróbuj ponownie później.',
       },
+      expiredNotice: 'Link wygasł. Podaj adres e-mail, aby otrzymać nowy.',
     },
     resetPassword: {
       subtitle: 'Ustaw nowe hasło dla swojego konta.',
@@ -2589,6 +2646,17 @@ const pl = {
         passwordsMismatch: 'Hasła nie są zgodne',
         passwordTooShort: 'Hasło musi zawierać co najmniej 8 znaków',
         generic: 'Nie udało się zaktualizować hasła. Spróbuj ponownie.',
+      },
+    },
+    callback: {
+      loading: 'Kończymy logowanie, proszę czekać...',
+      goToLogin: 'Przejdź do logowania',
+      errors: {
+        invalidLink:
+          'Link odzyskiwania jest niekompletny lub uszkodzony. Poproś o nowy.',
+        unavailable: 'Autoryzacja jest tymczasowo niedostępna',
+        sessionMissing: 'Nie udało się aktywować sesji. Zaloguj się ponownie.',
+        generic: 'Nie udało się zakończyć autoryzacji. Spróbuj ponownie.',
       },
     },
     confirm: {
@@ -2611,17 +2679,6 @@ const pl = {
         invalidLink: 'Link jest uszkodzony lub niekompletny. Poproś o nowy.',
         unavailable: 'Usługa jest chwilowo niedostępna',
         generic: 'Link jest nieprawidłowy lub wygasł. Poproś o nowy.',
-      },
-    },
-    callback: {
-      loading: 'Kończymy logowanie, proszę czekać...',
-      goToLogin: 'Przejdź do logowania',
-      errors: {
-        invalidLink:
-          'Link odzyskiwania jest niekompletny lub uszkodzony. Poproś o nowy.',
-        unavailable: 'Autoryzacja jest tymczasowo niedostępna',
-        sessionMissing: 'Nie udało się aktywować sesji. Zaloguj się ponownie.',
-        generic: 'Nie udało się zakończyć autoryzacji. Spróbuj ponownie.',
       },
     },
   },
@@ -2778,6 +2835,7 @@ const pl = {
         confirmButton: 'Tak, usuń moje konto',
         cancel: 'Anuluj',
         deleting: 'Usuwanie...',
+        confirmWord: 'USUŃ',
       },
       navLink: 'Ustawienia',
     },
@@ -3085,6 +3143,7 @@ const pl = {
         'Dziękujemy za wiadomość! Nasz menedżer skontaktuje się z Tobą wkrótce. Aby uzyskać szybki kontakt, zadzwoń: +380 44 123 45 67',
     },
     typing: 'Konsultant pisze…',
+    minimizeChat: 'Zwiń czat',
   },
   pricing: {
     title: 'Przejrzyste ceny',
@@ -3605,6 +3664,11 @@ const pl = {
       docLocked: 'Документ вже проведено',
       flagOff: 'Inventory v2 не активовано',
     },
+  },
+  confirmDialog: {
+    consequencesTitle: 'Razem z tym znikną',
+    typeToConfirm: 'Aby potwierdzić, wpisz',
+    irreversibleWarning: 'Tej akcji nie można cofnąć.',
   },
 } as const
 

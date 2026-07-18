@@ -338,9 +338,9 @@
       }
     },
     "emergency": {
-      "title": "🚨 Pomoc w nagłych wypadkach",
+      "title": "Pomoc w nagłych wypadkach",
       "description": "W przypadku ostrego bólu lub urazu, skontaktuj się z nami natychmiast:",
-      "phone": "📞 +380 50 455 47 74",
+      "phone": "+380 50 455 47 74",
       "availability": "Przyjmujemy połączenia alarmowe 24/7"
     },
     "faq": {
@@ -419,7 +419,8 @@
         "Gwarancja na wszystkie usługi",
         "Nowoczesny sprzęt",
         "Wykwalifikowani lekarze"
-      ]
+      ],
+      "photoAlt": "Pacjentka Dental Story uśmiecha się po wizycie"
     },
     "features": {
       "title": "Dlaczego pacjenci wybierają Dental Story",
@@ -1225,7 +1226,11 @@
       "heading": "Rezerwacja wizyty",
       "submit": "Zarezerwuj",
       "cooldown": "Poczekaj {{seconds}} s",
-      "submittingOverlay": "Wysyłamy zgłoszenie..."
+      "submittingOverlay": "Wysyłamy zgłoszenie...",
+      "nextPersonal": "Dalej: twoje dane",
+      "nextSummary": "Dalej: potwierdzenie",
+      "panelTitle": "Twoja wizyta",
+      "panelNote": "Płatność w klinice. Przełożenie lub odwołanie wizyty jest bezpłatne do 24 godzin przed wizytą."
     },
     "errors": {
       "cooldown": "Zbyt częste wysyłanie. Spróbuj ponownie za {{seconds}} s.",
@@ -1351,7 +1356,13 @@
       "analytics": "Analityka",
       "settings": "Ustawienia",
       "users": "Użytkownicy",
-      "stock": "Magazyn v2"
+      "stock": "Magazyn v2",
+      "groups": {
+        "operations": "Operacje",
+        "communications": "Komunikacja",
+        "inventory": "Magazyn",
+        "system": "System"
+      }
     },
     "login": {
       "title": "Logowanie do panelu",
@@ -2358,6 +2369,45 @@
         "appointment": "Wykonaj testową rezerwację",
         "workingHours": "Skonfiguruj godziny pracy"
       }
+    },
+    "stock": {
+      "confirm": {
+        "postDocument": {
+          "title": "Zaksięgować dokument?",
+          "description": "Po zaksięgowaniu stany magazynowe zostaną zaktualizowane według pozycji dokumentu; edycja będzie niedostępna.",
+          "action": "Zaksięguj"
+        },
+        "deleteDocument": {
+          "title": "Usunąć szkic dokumentu?",
+          "description": "Szkic i wszystkie jego pozycje zostaną trwale usunięte.",
+          "action": "Usuń"
+        },
+        "archiveDirectoryItem": {
+          "title": "Zarchiwizować pozycję słownika?",
+          "description": "Pozycja zniknie z list wyboru, ale pozostanie w historii dokumentów.",
+          "action": "Archiwizuj"
+        },
+        "archiveWarehouse": {
+          "title": "Zarchiwizować magazyn?",
+          "description": "Magazyn będzie niedostępny dla nowych dokumentów; historia ruchów zostanie zachowana.",
+          "action": "Archiwizuj"
+        },
+        "deactivateMaterial": {
+          "title": "Dezaktywować materiał?",
+          "description": "Materiał zniknie z katalogu dla nowych dokumentów; stany i historia zostaną zachowane.",
+          "action": "Dezaktywuj"
+        },
+        "postAudit": {
+          "title": "Zaksięgować inwentaryzację?",
+          "description": "Stany magazynowe zostaną skorygowane zgodnie z wynikami liczenia.",
+          "action": "Zaksięguj"
+        },
+        "removePermissions": {
+          "title": "Odebrać uprawnienia?",
+          "description": "Użytkownik utraci dostęp do operacji magazynowych nadanych tym wpisem.",
+          "action": "Odbierz"
+        }
+      }
     }
   },
   "auth": {
@@ -2654,7 +2704,8 @@
         "confirm": "Czy jesteś pewny? Tej akcji nie można cofnąć.",
         "confirmButton": "Tak, usuń moje konto",
         "cancel": "Anuluj",
-        "deleting": "Usuwanie..."
+        "deleting": "Usuwanie...",
+        "confirmWord": "USUŃ"
       },
       "navLink": "Ustawienia"
     },
@@ -2942,13 +2993,14 @@
       "contact": "Kontakt"
     },
     "responses": {
-      "booking": "Aby umówić wizytę, przejdź na stronę rezerwacji lub zadzwoń pod numer +380 44 123 45 67. Pracujemy codziennie od 9:00 do 20:00.",
+      "booking": "Aby umówić wizytę, przejdź na stronę rezerwacji lub zadzwoń pod numer +38 068 232 38 38. Godziny pracy: pon.–pt. 09:00–20:00, sob. 10:00–18:00.",
       "prices": "Ceny usług znajdziesz na stronie \"Usługi\". Bezpłatna konsultacja dla nowych pacjentów!",
       "hours": "Nasze godziny otwarcia:\n• Pn-Pt: 9:00 - 20:00\n• Sob: 10:00 - 18:00\n• Niedz: Zamknięte",
-      "contact": "Nasze dane kontaktowe:\n• Telefon: +380 44 123 45 67\n• Email: info@dentalstory.ua\n• Adres: ul. Chreszczatyk 1, Kijów",
-      "default": "Dziękujemy za wiadomość! Nasz menedżer skontaktuje się z Tobą wkrótce. Aby uzyskać szybki kontakt, zadzwoń: +380 44 123 45 67"
+      "contact": "Nasze kontakty:\n• Telefon: +38 068 232 38 38\n• Email: info@dentalstory.ua\n• Adres: ul. Sumska 10, Lwów",
+      "default": "Dziękujemy za wiadomość! Nasz menedżer skontaktuje się z Tobą wkrótce. W pilnych sprawach zadzwoń: +38 068 232 38 38"
     },
-    "typing": "Konsultant pisze…"
+    "typing": "Konsultant pisze…",
+    "minimizeChat": "Zwiń czat"
   },
   "pricing": {
     "title": "Przejrzyste ceny",
@@ -3016,7 +3068,8 @@
     "workingNow": "Teraz otwarte",
     "closedNow": "Teraz zamknięte",
     "opensAt": "Otwieramy o {{time}}",
-    "qualityGuarantee": "Gwarancja jakości"
+    "qualityGuarantee": "Gwarancja jakości",
+    "googleReviews": "{{count}} opinii w Google"
   },
   "hero": {
     "badge": "Nowoczesna stomatologia",
@@ -3443,5 +3496,10 @@
       "docLocked": "Документ вже проведено",
       "flagOff": "Inventory v2 не активовано"
     }
+  },
+  "confirmDialog": {
+    "consequencesTitle": "Razem z tym znikną",
+    "typeToConfirm": "Aby potwierdzić, wpisz",
+    "irreversibleWarning": "Tej akcji nie można cofnąć."
   }
 }

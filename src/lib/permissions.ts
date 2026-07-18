@@ -238,6 +238,12 @@ export function hasAnyPermission(
   return permissions.some(p => hasPermission(role, p))
 }
 
+/**
+ * Гейт дій в UI (Р1): кнопки/пункти меню, недоступні ролі, ховаються через
+ * can(role, permission) — щоб read-only ролі не бачили дій, які відхилить API.
+ */
+export const can = hasPermission
+
 /** Returns true for roles with full management privileges (owner / practice manager). */
 export function isManagementRole(role: AdminRole): boolean {
   return role === 'superadmin' || role === 'admin'
@@ -305,15 +311,3 @@ export function canAccessFeature(
 }
 
 // ─── Role display helpers ────────────────────────────────────────────────────
-
-/** Tailwind badge colour for each role (bg + text pairing). */
-export const ROLE_BADGE_CLASSES: Record<AdminRole, string> = {
-  superadmin: 'bg-purple-100 text-purple-800',
-  admin: 'bg-dental-primary text-dental-dark',
-  receptionist: 'bg-blue-100 text-blue-800',
-  doctor: 'bg-emerald-100 text-emerald-800',
-  assistant: 'bg-orange-100 text-orange-800',
-  billing_manager: 'bg-green-100 text-green-800',
-  inventory_manager: 'bg-cyan-100 text-cyan-800',
-  analyst: 'bg-indigo-100 text-indigo-800',
-}
