@@ -353,9 +353,9 @@ const en = {
       },
     },
     emergency: {
-      title: '🚨 Emergency Care',
+      title: 'Emergency Care',
       description: 'In case of acute pain or injury, contact us immediately:',
-      phone: '📞 +380 50 455 47 74',
+      phone: '+380 50 455 47 74',
       availability: 'We accept emergency calls 24/7',
     },
     faq: {
@@ -443,6 +443,7 @@ const en = {
         'Modern Equipment',
         'Qualified Doctors',
       ],
+      photoAlt: 'A happy Dental Story patient smiling after a visit',
     },
     features: {
       title: 'Why Patients Choose Dental Story',
@@ -3124,15 +3125,15 @@ const en = {
     },
     responses: {
       booking:
-        'To book an appointment, go to the booking page or call us at +380 44 123 45 67. We are open every day from 9:00 to 20:00.',
+        'To book an appointment, go to the booking page or call us at +38 068 232 38 38. Opening hours: Mon–Fri 09:00–20:00, Sat 10:00–18:00.',
       prices:
         'You can check service prices on the "Services" page. Free consultation for new patients!',
       hours:
         'Our hours:\n• Mon-Fri: 9:00 - 20:00\n• Sat: 10:00 - 18:00\n• Sun: Closed',
       contact:
-        'Our contacts:\n• Phone: +380 44 123 45 67\n• Email: info@dentalstory.ua\n• Address: 1 Khreshchatyk St., Kyiv',
+        'Our contacts:\n• Phone: +38 068 232 38 38\n• Email: info@dentalstory.ua\n• Address: 10 Sumska St, Lviv',
       default:
-        'Thank you for your message! Our manager will contact you shortly. For quick contact, call: +380 44 123 45 67',
+        'Thank you for your message! Our manager will contact you shortly. For a quick response, call us: +38 068 232 38 38',
     },
     typing: 'Consultant is typing…',
     minimizeChat: 'Minimize chat',
@@ -3206,6 +3207,7 @@ const en = {
     closedNow: 'Closed Now',
     opensAt: 'Opens at {{time}}',
     qualityGuarantee: 'Quality Guarantee',
+    googleReviews: '{{count}} reviews on Google',
   },
   hero: {
     badge: 'Modern Dentistry',

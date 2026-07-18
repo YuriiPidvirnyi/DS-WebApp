@@ -92,9 +92,8 @@ export default function BookingForm() {
 
   return (
     <div className="bg-white rounded-md border border-dental-secondary-200 shadow-soft p-5 sm:p-9 relative">
-      <h2 className="text-2xl font-bold text-dental-dark mb-6">
-        {t('booking.form.heading')}
-      </h2>
+      {/* Заголовок несе сторінка; в картці він лишається лише для SR */}
+      <h2 className="sr-only">{t('booking.form.heading')}</h2>
 
       {isSubmitSuccessful && (
         <div className="mb-6 p-4 bg-dental-primary/10 border border-dental-primary/30 rounded-lg">
@@ -191,11 +190,12 @@ export default function BookingForm() {
 
         <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
           <div className="space-y-6 min-w-0">
-            {/* Current step title — focused on step change for SR/keyboard users */}
+            {/* Current step title — visually the stepper labels carry it;
+                kept sr-only and focused on step change for SR/keyboard users */}
             <h3
               ref={stepHeadingRef}
               tabIndex={-1}
-              className="text-lg font-semibold text-dental-dark focus:outline-hidden"
+              className="sr-only"
             >
               {t(stepTitleKeys[step])}
             </h3>

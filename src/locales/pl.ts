@@ -354,10 +354,10 @@ const pl = {
       },
     },
     emergency: {
-      title: '🚨 Pomoc w nagłych wypadkach',
+      title: 'Pomoc w nagłych wypadkach',
       description:
         'W przypadku ostrego bólu lub urazu, skontaktuj się z nami natychmiast:',
-      phone: '📞 +380 50 455 47 74',
+      phone: '+380 50 455 47 74',
       availability: 'Przyjmujemy połączenia alarmowe 24/7',
     },
     faq: {
@@ -444,6 +444,7 @@ const pl = {
         'Nowoczesny sprzęt',
         'Wykwalifikowani lekarze',
       ],
+      photoAlt: 'Pacjentka Dental Story uśmiecha się po wizycie',
     },
     features: {
       title: 'Dlaczego pacjenci wybierają Dental Story',
@@ -3132,15 +3133,15 @@ const pl = {
     },
     responses: {
       booking:
-        'Aby umówić wizytę, przejdź na stronę rezerwacji lub zadzwoń pod numer +380 44 123 45 67. Pracujemy codziennie od 9:00 do 20:00.',
+        'Aby umówić wizytę, przejdź na stronę rezerwacji lub zadzwoń pod numer +38 068 232 38 38. Godziny pracy: pon.–pt. 09:00–20:00, sob. 10:00–18:00.',
       prices:
         'Ceny usług znajdziesz na stronie "Usługi". Bezpłatna konsultacja dla nowych pacjentów!',
       hours:
         'Nasze godziny otwarcia:\n• Pn-Pt: 9:00 - 20:00\n• Sob: 10:00 - 18:00\n• Niedz: Zamknięte',
       contact:
-        'Nasze dane kontaktowe:\n• Telefon: +380 44 123 45 67\n• Email: info@dentalstory.ua\n• Adres: ul. Chreszczatyk 1, Kijów',
+        'Nasze kontakty:\n• Telefon: +38 068 232 38 38\n• Email: info@dentalstory.ua\n• Adres: ul. Sumska 10, Lwów',
       default:
-        'Dziękujemy za wiadomość! Nasz menedżer skontaktuje się z Tobą wkrótce. Aby uzyskać szybki kontakt, zadzwoń: +380 44 123 45 67',
+        'Dziękujemy za wiadomość! Nasz menedżer skontaktuje się z Tobą wkrótce. W pilnych sprawach zadzwoń: +38 068 232 38 38',
     },
     typing: 'Konsultant pisze…',
     minimizeChat: 'Zwiń czat',
@@ -3213,6 +3214,7 @@ const pl = {
     closedNow: 'Teraz zamknięte',
     opensAt: 'Otwieramy o {{time}}',
     qualityGuarantee: 'Gwarancja jakości',
+    googleReviews: '{{count}} opinii w Google',
   },
   hero: {
     badge: 'Nowoczesna stomatologia',
