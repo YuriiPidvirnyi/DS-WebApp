@@ -285,6 +285,12 @@ const en = {
         duration: '18 months',
       },
     },
+    beforePlaceholder: 'BEFORE photo — case “{{case}}”',
+    afterPlaceholder: 'AFTER photo — case “{{case}}”',
+    keyboardHint: '←/→ step 5% · Home/End — edges',
+    sliderAria:
+      'Comparison slider: {{value}}%. Arrows — step 5%, Home/End — edges',
+    selectCase: 'Select case',
   },
   labels: {
     before: 'Before',
@@ -1873,8 +1879,8 @@ const en = {
       blankChild: 'Blank (child)',
     },
     serviceStatuses: {
-      active: 'active',
-      inactive: 'inactive',
+      active: 'Active',
+      inactive: 'Inactive',
     },
     servicesPage: {
       title: 'Service Management',
@@ -1964,8 +1970,8 @@ const en = {
       },
     },
     doctorStatuses: {
-      active: 'active',
-      inactive: 'inactive',
+      active: 'Active',
+      inactive: 'Inactive',
     },
     doctorsPage: {
       title: 'Doctor Management',
@@ -2144,7 +2150,7 @@ const en = {
           deleted: 'Record deleted ({{count}} fields)',
           changed: 'Fields changed: {{count}}',
         },
-        nullValue: 'null',
+        nullValue: '—',
         errors: {
           supabaseUnavailable: 'Supabase is not configured.',
           loadFailed:

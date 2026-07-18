@@ -111,6 +111,8 @@ export default function AdminMaterialsPage() {
   const { token, refreshToken } = useCSRF()
   const canViewAnalytics =
     !!user?.role && hasPermission(user.role, 'analytics:view')
+  // RBAC-гейт дій (Р1): редагувати каталог можуть лише ролі з inventory:edit
+  const canEdit = !!user?.role && hasPermission(user.role, 'inventory:edit')
   const [rows, setRows] = useState<Row[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -437,20 +439,22 @@ export default function AdminMaterialsPage() {
             />
             {t('admin.materialsPage.refresh')}
           </Button>
-          <Button
-            type="button"
-            size="sm"
-            onClick={() => {
-              setEditId(null)
-              setForm(emptyForm())
-              setImagePreview(null)
-              setOpen(true)
-            }}
-            className="bg-dental-teal hover:bg-dental-primary-600"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            {t('admin.materialsPage.addMaterial')}
-          </Button>
+          {canEdit && (
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => {
+                setEditId(null)
+                setForm(emptyForm())
+                setImagePreview(null)
+                setOpen(true)
+              }}
+              className="bg-dental-teal hover:bg-dental-primary-600"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              {t('admin.materialsPage.addMaterial')}
+            </Button>
+          )}
         </div>
       </div>
       {error ? <ErrorState title={error} onRetry={() => void load()} /> : null}
@@ -606,20 +610,22 @@ export default function AdminMaterialsPage() {
                     </td>
                     <td className={c}>
                       <div className="flex gap-1">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setEditId(r.id)
-                            setForm(toForm(r))
-                            setImagePreview(r.image_url)
-                            setOpen(true)
-                          }}
-                          className="rounded-lg p-2 text-dental-teal hover:bg-dental-primary-50"
-                          aria-label={t('common.edit')}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </button>
-                        {r.is_active ? (
+                        {canEdit && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditId(r.id)
+                              setForm(toForm(r))
+                              setImagePreview(r.image_url)
+                              setOpen(true)
+                            }}
+                            className="rounded-lg p-2 text-dental-teal hover:bg-dental-primary-50"
+                            aria-label={t('common.edit')}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </button>
+                        )}
+                        {canEdit && r.is_active ? (
                           <button
                             type="button"
                             onClick={() => void deactivate(r.id)}

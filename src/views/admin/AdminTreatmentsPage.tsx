@@ -15,6 +15,8 @@ import {
   type StatusTone,
 } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
+import { useAdminAuth } from '@/hooks/useAdminAuth'
+import { can } from '@/lib/permissions'
 import { useConfirm } from '@/hooks/useConfirm'
 import { useCSRF } from '@/hooks/useCSRF'
 import { createClient } from '@/lib/supabase/client'
@@ -143,8 +145,12 @@ const emptyMatLine = (): MatUsedLine => ({ materialId: '', quantityUsed: '1' })
 export default function AdminTreatmentsPage() {
   const { t } = useTranslation()
   const { preferences } = useAdminPreferences()
+  const { user } = useAdminAuth()
   const { confirm, confirmDialog } = useConfirm()
   const { token: csrfToken, refreshToken } = useCSRF()
+  // RBAC-гейт дій (Р1): read-only ролі бачать лише перегляд і друк
+  const canCreate = user ? can(user.role, 'treatments:create') : false
+  const canEdit = user ? can(user.role, 'treatments:edit_draft') : false
   const [rows, setRows] = useState<TreatmentRow[]>([])
   const [searchPatient, setSearchPatient] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | TreatmentStatus>(
@@ -512,17 +518,19 @@ export default function AdminTreatmentsPage() {
             />
             {t('admin.treatmentsPage.refresh')}
           </Button>
-          <Button
-            type="button"
-            onClick={() => {
-              resetForm()
-              setModalOpen(true)
-            }}
-            className="gap-2 bg-dental-teal"
-          >
-            <Plus className="h-4 w-4" />
-            {t('admin.treatmentsPage.createAct')}
-          </Button>
+          {canCreate && (
+            <Button
+              type="button"
+              onClick={() => {
+                resetForm()
+                setModalOpen(true)
+              }}
+              className="gap-2 bg-dental-teal"
+            >
+              <Plus className="h-4 w-4" />
+              {t('admin.treatmentsPage.createAct')}
+            </Button>
+          )}
         </div>
       </div>
       <div className="grid gap-3 rounded-xl border border-dental-secondary-200 bg-white p-4 md:grid-cols-3">
@@ -631,22 +639,26 @@ export default function AdminTreatmentsPage() {
                             <Printer className="h-4 w-4" />
                           </Link>
                         )}
-                        <button
-                          type="button"
-                          onClick={() => openEdit(r)}
-                          className="rounded-lg p-2 text-dental-teal hover:bg-dental-primary/40"
-                          aria-label={t('admin.treatmentsPage.editAria')}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => void remove(r.id)}
-                          className="rounded-lg p-2 text-dental-error hover:bg-status-error-100"
-                          aria-label={t('admin.treatmentsPage.deleteAria')}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                        {canEdit && (
+                          <button
+                            type="button"
+                            onClick={() => openEdit(r)}
+                            className="rounded-lg p-2 text-dental-teal hover:bg-dental-primary/40"
+                            aria-label={t('admin.treatmentsPage.editAria')}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </button>
+                        )}
+                        {canEdit && (
+                          <button
+                            type="button"
+                            onClick={() => void remove(r.id)}
+                            className="rounded-lg p-2 text-dental-error hover:bg-status-error-100"
+                            aria-label={t('admin.treatmentsPage.deleteAria')}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

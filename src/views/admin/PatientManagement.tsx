@@ -18,6 +18,8 @@ import {
   Textarea,
 } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
+import { useAdminAuth } from '@/hooks/useAdminAuth'
+import { can } from '@/lib/permissions'
 import { useConfirm, type ConfirmOptions } from '@/hooks/useConfirm'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
@@ -74,7 +76,11 @@ const PATIENT_SELECT =
 export default function PatientManagement() {
   const { t, i18n } = useTranslation()
   const { preferences } = useAdminPreferences()
+  const { user } = useAdminAuth()
   const { confirm, confirmDialog } = useConfirm()
+  // RBAC-гейт дій в UI (Р1): read-only ролі не бачать edit/delete
+  const canEdit = user ? can(user.role, 'patients:edit') : false
+  const canDelete = user ? can(user.role, 'patients:delete') : false
   const [rows, setRows] = useState<PatientRow[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [isLoading, setIsLoading] = useState(true)
@@ -326,10 +332,12 @@ export default function PatientManagement() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="secondary" size="sm" onClick={openCreateModal}>
-            <Plus className="mr-2 h-4 w-4" />
-            {t('admin.patientManagement.newPatient')}
-          </Button>
+          {canEdit && (
+            <Button variant="secondary" size="sm" onClick={openCreateModal}>
+              <Plus className="mr-2 h-4 w-4" />
+              {t('admin.patientManagement.newPatient')}
+            </Button>
+          )}
           <Button
             variant="outline"
             size="sm"
@@ -480,27 +488,31 @@ export default function PatientManagement() {
                         >
                           <Eye className="h-4 w-4" />
                         </button>
-                        <button
-                          type="button"
-                          onClick={() => openEditModal(row)}
-                          className="rounded-md border border-dental-secondary p-1.5 text-dental-text hover:bg-dental-secondary-50"
-                          aria-label={t(
-                            'admin.patientManagement.table.actions.edit'
-                          )}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => void deletePatient(row.id)}
-                          disabled={isUpdatingId === row.id}
-                          className="rounded-md border border-dental-error/20 p-1.5 text-dental-error hover:bg-status-error-100 disabled:opacity-60"
-                          aria-label={t(
-                            'admin.patientManagement.table.actions.delete'
-                          )}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                        {canEdit && (
+                          <button
+                            type="button"
+                            onClick={() => openEditModal(row)}
+                            className="rounded-md border border-dental-secondary p-1.5 text-dental-text hover:bg-dental-secondary-50"
+                            aria-label={t(
+                              'admin.patientManagement.table.actions.edit'
+                            )}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </button>
+                        )}
+                        {canDelete && (
+                          <button
+                            type="button"
+                            onClick={() => void deletePatient(row.id)}
+                            disabled={isUpdatingId === row.id}
+                            className="rounded-md border border-dental-error/20 p-1.5 text-dental-error hover:bg-status-error-100 disabled:opacity-60"
+                            aria-label={t(
+                              'admin.patientManagement.table.actions.delete'
+                            )}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -555,25 +567,31 @@ export default function PatientManagement() {
                   >
                     <Eye className="h-4 w-4" />
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => openEditModal(row)}
-                    className="rounded-md border border-dental-secondary p-2.5 text-dental-text hover:bg-dental-secondary-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
-                    aria-label={t('admin.patientManagement.table.actions.edit')}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => void deletePatient(row.id)}
-                    disabled={isUpdatingId === row.id}
-                    className="rounded-md border border-dental-error/20 p-2.5 text-dental-error hover:bg-status-error-100 disabled:opacity-60 min-h-[44px] min-w-[44px] flex items-center justify-center"
-                    aria-label={t(
-                      'admin.patientManagement.table.actions.delete'
-                    )}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+                  {canEdit && (
+                    <button
+                      type="button"
+                      onClick={() => openEditModal(row)}
+                      className="rounded-md border border-dental-secondary p-2.5 text-dental-text hover:bg-dental-secondary-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                      aria-label={t(
+                        'admin.patientManagement.table.actions.edit'
+                      )}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
+                  )}
+                  {canDelete && (
+                    <button
+                      type="button"
+                      onClick={() => void deletePatient(row.id)}
+                      disabled={isUpdatingId === row.id}
+                      className="rounded-md border border-dental-error/20 p-2.5 text-dental-error hover:bg-status-error-100 disabled:opacity-60 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                      aria-label={t(
+                        'admin.patientManagement.table.actions.delete'
+                      )}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  )}
                 </div>
               }
             />

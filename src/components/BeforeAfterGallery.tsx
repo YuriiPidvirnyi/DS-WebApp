@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react'
+import { ChevronsLeftRight, Keyboard } from 'lucide-react'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 import { AnimatedSection } from '@/components/ui/AnimatedCard'
 
@@ -10,20 +10,22 @@ interface BeforeAfterCase {
   id: string
   titleKey: string
   descriptionKey: string
-  beforeImage: string
-  afterImage: string
+  /**
+   * Реальні клінічні фото «до/після» одного пацієнта (за згодою) кладуться в
+   * public/assets/images/before-after/. Поки їх немає — рендериться брендовий
+   * плейсхолдер-слот; інтер'єри більше не видаються за клінічні результати (18).
+   */
+  beforeImage?: string
+  afterImage?: string
   treatmentKey: string
   durationKey: string
 }
 
-// Demo cases - in production these would come from a CMS/database
 const cases: BeforeAfterCase[] = [
   {
     id: '1',
     titleKey: 'caseStudies.cases.1.title',
     descriptionKey: 'caseStudies.cases.1.description',
-    beforeImage: '/assets/images/gallery/dental-equipment.jpg',
-    afterImage: '/assets/images/gallery/treatment-room.jpg',
     treatmentKey: 'caseStudies.cases.1.treatment',
     durationKey: 'caseStudies.cases.1.duration',
   },
@@ -31,8 +33,6 @@ const cases: BeforeAfterCase[] = [
     id: '2',
     titleKey: 'caseStudies.cases.2.title',
     descriptionKey: 'caseStudies.cases.2.description',
-    beforeImage: '/assets/images/gallery/clinic-reception.jpg',
-    afterImage: '/assets/images/gallery/dental-team.jpg',
     treatmentKey: 'caseStudies.cases.2.treatment',
     durationKey: 'caseStudies.cases.2.duration',
   },
@@ -40,121 +40,152 @@ const cases: BeforeAfterCase[] = [
     id: '3',
     titleKey: 'caseStudies.cases.3.title',
     descriptionKey: 'caseStudies.cases.3.description',
-    beforeImage: '/assets/images/services/orthodontics.jpg',
-    afterImage: '/assets/images/services/teeth-whitening.jpg',
     treatmentKey: 'caseStudies.cases.3.treatment',
     durationKey: 'caseStudies.cases.3.duration',
   },
 ]
 
-// Before/After Slider Component
-// Comparison slider with before/after overlay
+/** Слот під реальне клінічне фото; поки фото немає — брендовий плейсхолдер. */
+function CasePhoto({
+  src,
+  label,
+  className,
+}: {
+  src?: string
+  label: string
+  className?: string
+}) {
+  if (src) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={src}
+        alt={label}
+        className="absolute inset-0 h-full w-full object-cover"
+        draggable={false}
+      />
+    )
+  }
+  return (
+    <div
+      className={`absolute inset-0 flex items-center justify-center bg-dental-secondary-200 p-6 text-center ${className ?? ''}`}
+    >
+      <span className="text-sm font-medium text-dental-muted">{label}</span>
+    </div>
+  )
+}
+
+/**
+ * Слайдер порівняння «до/після» (макет 2a): ручка — фокусована кнопка 48px
+ * з role="slider" і aria-valuenow; ←/→ = крок 5%, Home/End = краї;
+ * порівняння повністю доступне з клавіатури (закриває 19). Drag/touch
+ * лишаються для миші.
+ */
 function ComparisonSlider({
   beforeImage,
   afterImage,
+  beforeLabel,
+  afterLabel,
   t,
 }: {
-  beforeImage: string
-  afterImage: string
-  t: (key: string) => string
+  beforeImage?: string
+  afterImage?: string
+  beforeLabel: string
+  afterLabel: string
+  t: (key: string, opts?: Record<string, unknown>) => string
 }) {
-  const [sliderPosition, setSliderPosition] = useState(50)
+  const [position, setPosition] = useState(55)
   const [isDragging, setIsDragging] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const handleMove = (clientX: number) => {
+  const moveTo = useCallback((clientX: number) => {
     if (!containerRef.current) return
     const rect = containerRef.current.getBoundingClientRect()
-    const x = clientX - rect.left
-    const percentage = Math.min(Math.max((x / rect.width) * 100, 0), 100)
-    setSliderPosition(percentage)
-  }
+    const pct = ((clientX - rect.left) / rect.width) * 100
+    setPosition(Math.min(Math.max(pct, 0), 100))
+  }, [])
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return
-    handleMove(e.clientX)
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+      e.preventDefault()
+      setPosition(p => Math.max(0, p - 5))
+    } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+      e.preventDefault()
+      setPosition(p => Math.min(100, p + 5))
+    } else if (e.key === 'Home') {
+      e.preventDefault()
+      setPosition(0)
+    } else if (e.key === 'End') {
+      e.preventDefault()
+      setPosition(100)
+    }
   }
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return
-    handleMove(e.touches[0].clientX)
-  }
-
-  const handleStart = () => setIsDragging(true)
-  const handleEnd = () => setIsDragging(false)
 
   useEffect(() => {
-    const handleGlobalEnd = () => setIsDragging(false)
-    window.addEventListener('mouseup', handleGlobalEnd)
-    window.addEventListener('touchend', handleGlobalEnd)
+    if (!isDragging) return
+    const onMove = (e: MouseEvent) => moveTo(e.clientX)
+    const onTouch = (e: TouchEvent) => moveTo(e.touches[0].clientX)
+    const onEnd = () => setIsDragging(false)
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('touchmove', onTouch)
+    window.addEventListener('mouseup', onEnd)
+    window.addEventListener('touchend', onEnd)
     return () => {
-      window.removeEventListener('mouseup', handleGlobalEnd)
-      window.removeEventListener('touchend', handleGlobalEnd)
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('touchmove', onTouch)
+      window.removeEventListener('mouseup', onEnd)
+      window.removeEventListener('touchend', onEnd)
     }
-  }, [])
+  }, [isDragging, moveTo])
+
+  const rounded = Math.round(position)
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-80 md:h-96 rounded-2xl overflow-hidden cursor-ew-resize select-none"
-      onMouseMove={handleMouseMove}
-      onTouchMove={handleTouchMove}
-      onMouseDown={handleStart}
-      onTouchStart={handleStart}
-      onMouseUp={handleEnd}
-      onTouchEnd={handleEnd}
+      className="relative aspect-4/3 w-full overflow-hidden rounded-xl bg-dental-secondary-200 shadow-soft-lg select-none"
     >
-      {/* After image (full width, underneath) */}
+      {/* Фото ПІСЛЯ — на всю ширину знизу */}
       <div className="absolute inset-0">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={afterImage}
-          alt={t('caseStudies.afterTreatment')}
-          className="absolute inset-0 w-full h-full object-cover"
-          draggable={false}
-        />
-        <div className="absolute top-4 right-4 bg-dental-primary-500 text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1.5">
-          <Sparkles className="h-4 w-4" />
+        <CasePhoto src={afterImage} label={afterLabel} />
+        <span className="absolute right-4 top-4 rounded-full bg-white/90 px-3.5 py-1 text-[13px] font-semibold text-dental-dark">
           {t('labels.after')}
-        </div>
+        </span>
       </div>
 
-      {/* Before image (clipped) */}
+      {/* Фото ДО — обрізане позицією повзунка */}
       <div
         className="absolute inset-0 overflow-hidden"
-        style={{ width: `${sliderPosition}%` }}
+        style={{ width: `${position}%` }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={beforeImage}
-          alt={t('caseStudies.beforeTreatment')}
-          className="absolute inset-0 w-full h-full object-cover"
-          draggable={false}
-        />
-        <div className="absolute top-4 left-4 bg-dental-primary-900 text-white px-3 py-1.5 rounded-full text-sm font-medium">
+        <CasePhoto src={beforeImage} label={beforeLabel} />
+        <span className="absolute left-4 top-4 rounded-full bg-dental-dark/85 px-3.5 py-1 text-[13px] font-semibold text-white">
           {t('labels.before')}
-        </div>
+        </span>
       </div>
 
-      {/* Slider handle */}
+      {/* Роздільник + ручка */}
       <div
-        className="absolute top-0 bottom-0 w-1 bg-white shadow-lg cursor-ew-resize z-10"
-        style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
+        className="pointer-events-none absolute inset-y-0 z-10 w-0.5 -translate-x-1/2 bg-white shadow-[0_0_8px_rgba(0,0,0,0.25)]"
+        style={{ left: `${position}%` }}
       >
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center">
-          <div className="flex items-center gap-0.5">
-            <ChevronLeft className="h-4 w-4 text-dental-text" />
-            <ChevronRight className="h-4 w-4 text-dental-text" />
-          </div>
-        </div>
+        <button
+          type="button"
+          role="slider"
+          aria-label={t('caseStudies.sliderAria', { value: rounded })}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={rounded}
+          aria-valuetext={`${rounded}%`}
+          aria-orientation="horizontal"
+          onKeyDown={onKeyDown}
+          onMouseDown={() => setIsDragging(true)}
+          onTouchStart={() => setIsDragging(true)}
+          className="pointer-events-auto absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize items-center justify-center rounded-full bg-white shadow-[0_6px_18px_rgba(20,28,30,0.3)] focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2"
+        >
+          <ChevronsLeftRight className="h-5.5 w-5.5 text-dental-primary-600" />
+        </button>
       </div>
-
-      {/* Instruction overlay */}
-      {!isDragging && (
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/60 text-white px-4 py-2 rounded-full text-sm backdrop-blur-xs pointer-events-none animate-pulse">
-          {t('caseStudies.dragToCompare')}
-        </div>
-      )}
     </div>
   )
 }
@@ -164,106 +195,100 @@ export default function BeforeAfterGallery() {
   const [activeCase, setActiveCase] = useState(0)
   const { ref, isVisible } = useScrollAnimation()
 
-  const nextCase = () => setActiveCase(prev => (prev + 1) % cases.length)
-  const prevCase = () =>
-    setActiveCase(prev => (prev - 1 + cases.length) % cases.length)
-
   const currentCase = cases[activeCase]
+  const caseName = t(currentCase.treatmentKey)
 
   return (
-    <section ref={ref} className="py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <AnimatedSection isVisible={isVisible} className="text-center mb-16">
-          <span className="inline-block text-sm font-semibold text-dental-primary-ink tracking-wider uppercase mb-4">
+    <section ref={ref} className="bg-white py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <AnimatedSection isVisible={isVisible} className="mb-16 text-center">
+          <span className="mb-4 inline-block text-sm font-semibold uppercase tracking-wider text-dental-primary-ink">
             {t('caseStudies.results')}
           </span>
-          <h2 className="text-4xl lg:text-5xl font-bold text-dental-dark mb-6 leading-tight">
+          <h2 className="mb-6 text-4xl font-bold leading-tight text-dental-dark lg:text-5xl">
             {t('caseStudies.beforeAfter')}
           </h2>
-          <p className="text-xl text-dental-muted max-w-3xl mx-auto leading-relaxed">
+          <p className="mx-auto max-w-3xl text-xl leading-relaxed text-dental-muted">
             {t('caseStudies.description')}
           </p>
         </AnimatedSection>
 
         <AnimatedSection isVisible={isVisible} delay={200}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Comparison Slider */}
-            <div className="relative">
+          <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[1.6fr_1fr]">
+            {/* Слайдер + метадані */}
+            <div>
               <ComparisonSlider
                 beforeImage={currentCase.beforeImage}
                 afterImage={currentCase.afterImage}
+                beforeLabel={t('caseStudies.beforePlaceholder', {
+                  case: caseName,
+                })}
+                afterLabel={t('caseStudies.afterPlaceholder', {
+                  case: caseName,
+                })}
                 t={t}
               />
 
-              {/* Navigation arrows */}
-              <div className="absolute left-1 sm:-left-4 top-1/2 transform -translate-y-1/2 z-20">
-                <button
-                  onClick={prevCase}
-                  className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-dental-secondary-50 transition-colors"
-                  aria-label={t('accessibility.prevCase')}
-                >
-                  <ChevronLeft className="h-6 w-6 text-dental-dark" />
-                </button>
-              </div>
-              <div className="absolute right-1 sm:-right-4 top-1/2 transform -translate-y-1/2 z-20">
-                <button
-                  onClick={nextCase}
-                  className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-dental-secondary-50 transition-colors"
-                  aria-label={t('accessibility.nextCase')}
-                >
-                  <ChevronRight className="h-6 w-6 text-dental-dark" />
-                </button>
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-[13px] text-dental-muted">
+                  <span>
+                    {t('caseStudies.procedureType')}:{' '}
+                    <strong className="font-semibold text-dental-dark">
+                      {caseName}
+                    </strong>
+                  </span>
+                  <span>
+                    {t('caseStudies.duration')}:{' '}
+                    <strong className="font-semibold text-dental-dark">
+                      {t(currentCase.durationKey)}
+                    </strong>
+                  </span>
+                </div>
+                <span className="flex items-center gap-1.5 text-xs text-dental-secondary-500">
+                  <Keyboard className="h-3.5 w-3.5" aria-hidden="true" />
+                  {t('caseStudies.keyboardHint')}
+                </span>
               </div>
             </div>
 
-            {/* Case details */}
-            <div className="lg:pl-8">
-              <div className="mb-6">
-                <span className="inline-block bg-dental-primary-50 text-dental-primary-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
-                  {t(currentCase.treatmentKey)}
-                </span>
-                <h3 className="text-3xl font-bold text-dental-dark mb-3">
-                  {t(currentCase.titleKey)}
-                </h3>
-                <p className="text-lg text-dental-muted leading-relaxed">
-                  {t(currentCase.descriptionKey)}
-                </p>
-              </div>
-
-              <div className="flex items-center gap-8 mb-8">
-                <div>
-                  <p className="text-sm text-dental-muted mb-1">
-                    {t('caseStudies.duration')}
-                  </p>
-                  <p className="text-xl font-bold text-dental-dark">
-                    {t(currentCase.durationKey)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-dental-muted mb-1">
-                    {t('caseStudies.procedureType')}
-                  </p>
-                  <p className="text-xl font-bold text-dental-dark">
-                    {t(currentCase.treatmentKey)}
-                  </p>
-                </div>
-              </div>
-
-              {/* Case indicators */}
-              <div className="flex items-center gap-2">
-                {cases.map((_, index) => (
+            {/* Список кейсів — активний у бренд-рамці (як вибрані стани анкети) */}
+            <div className="flex flex-col gap-3.5">
+              {cases.map((c, index) => {
+                const active = index === activeCase
+                return (
                   <button
-                    key={index}
+                    key={c.id}
+                    type="button"
                     onClick={() => setActiveCase(index)}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      index === activeCase
-                        ? 'w-8 bg-dental-primary-500'
-                        : 'bg-dental-secondary-300 hover:bg-dental-secondary-400'
+                    aria-pressed={active}
+                    aria-label={`${t('caseStudies.selectCase')}: ${t(c.titleKey)}`}
+                    className={`flex items-center gap-3 rounded-[14px] p-3 text-left transition-colors ${
+                      active
+                        ? 'border-[1.5px] border-dental-primary-600 bg-white'
+                        : 'border border-dental-secondary-200 bg-white hover:border-dental-primary-400'
                     }`}
-                    aria-label={`${t('accessibility.goToCase')} ${index + 1}`}
-                  />
-                ))}
-              </div>
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] font-heading text-base font-extrabold ${
+                        active
+                          ? 'bg-dental-primary-600 text-white'
+                          : 'bg-status-neutral-100 text-dental-primary-600'
+                      }`}
+                    >
+                      {index + 1}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block font-semibold text-dental-dark">
+                        {t(c.titleKey)}
+                      </span>
+                      <span className="block truncate text-sm text-dental-muted">
+                        {t(c.descriptionKey)}
+                      </span>
+                    </span>
+                  </button>
+                )
+              })}
             </div>
           </div>
         </AnimatedSection>

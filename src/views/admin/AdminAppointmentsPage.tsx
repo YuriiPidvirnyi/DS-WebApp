@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { Button, Input, Select, Skeleton } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
+import { can } from '@/lib/permissions'
 import { useConfirm, type ConfirmOptions } from '@/hooks/useConfirm'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
@@ -61,6 +62,8 @@ export default function AdminAppointmentsPage() {
   const { user } = useAdminAuth()
   const { confirm, confirmDialog } = useConfirm()
   const isDoctor = user?.role === 'doctor'
+  // RBAC-гейт дій (Р1): міняти статус можуть лише ролі з appointments:edit
+  const canEdit = user ? can(user.role, 'appointments:edit') : false
   const [rows, setRows] = useState<AppointmentRow[]>([])
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [searchTerm, setSearchTerm] = useState('')
@@ -445,37 +448,39 @@ export default function AdminAppointmentsPage() {
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-dental-secondary-200 bg-white px-4 py-3">
-        <span className="text-sm text-dental-muted">
-          {t('admin.appointmentsPage.bulk.selected', {
-            count: selectedIds.length,
-          })}
-        </span>
-        <Select
-          selectSize="compact"
-          value={bulkStatus}
-          onChange={event =>
-            setBulkStatus(event.target.value as AppointmentStatus)
-          }
-          aria-label={t('admin.appointmentsPage.bulk.apply')}
-        >
-          {STATUS_OPTIONS.map(status => (
-            <option key={status} value={status}>
-              {t('admin.appointmentsPage.bulk.moveTo', {
-                status: getStatusLabel(status),
-              })}
-            </option>
-          ))}
-        </Select>
-        <Button
-          size="sm"
-          onClick={() => void applyBulkStatus()}
-          disabled={selectedIds.length === 0 || isUpdatingId === 'bulk'}
-          isLoading={isUpdatingId === 'bulk'}
-        >
-          {t('admin.appointmentsPage.bulk.apply')}
-        </Button>
-      </div>
+      {canEdit && (
+        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-dental-secondary-200 bg-white px-4 py-3">
+          <span className="text-sm text-dental-muted">
+            {t('admin.appointmentsPage.bulk.selected', {
+              count: selectedIds.length,
+            })}
+          </span>
+          <Select
+            selectSize="compact"
+            value={bulkStatus}
+            onChange={event =>
+              setBulkStatus(event.target.value as AppointmentStatus)
+            }
+            aria-label={t('admin.appointmentsPage.bulk.apply')}
+          >
+            {STATUS_OPTIONS.map(status => (
+              <option key={status} value={status}>
+                {t('admin.appointmentsPage.bulk.moveTo', {
+                  status: getStatusLabel(status),
+                })}
+              </option>
+            ))}
+          </Select>
+          <Button
+            size="sm"
+            onClick={() => void applyBulkStatus()}
+            disabled={selectedIds.length === 0 || isUpdatingId === 'bulk'}
+            isLoading={isUpdatingId === 'bulk'}
+          >
+            {t('admin.appointmentsPage.bulk.apply')}
+          </Button>
+        </div>
+      )}
 
       {error && (
         <div className="rounded-xl border border-dental-error/20 bg-status-error-100 px-4 py-3 text-sm text-status-error-700">
@@ -582,25 +587,27 @@ export default function AdminAppointmentsPage() {
                         >
                           {getStatusLabel(row.status)}
                         </span>
-                        <Select
-                          selectSize="dense"
-                          fullWidth
-                          value={row.status}
-                          onChange={event =>
-                            void updateStatus(
-                              row.id,
-                              event.target.value as AppointmentStatus
-                            )
-                          }
-                          disabled={isUpdatingId === row.id}
-                          aria-label={`${t('admin.appointmentsPage.table.headers.status')}: ${resolvePatientName(row)}`}
-                        >
-                          {STATUS_OPTIONS.map(status => (
-                            <option key={status} value={status}>
-                              {getStatusLabel(status)}
-                            </option>
-                          ))}
-                        </Select>
+                        {canEdit && (
+                          <Select
+                            selectSize="dense"
+                            fullWidth
+                            value={row.status}
+                            onChange={event =>
+                              void updateStatus(
+                                row.id,
+                                event.target.value as AppointmentStatus
+                              )
+                            }
+                            disabled={isUpdatingId === row.id}
+                            aria-label={`${t('admin.appointmentsPage.table.headers.status')}: ${resolvePatientName(row)}`}
+                          >
+                            {STATUS_OPTIONS.map(status => (
+                              <option key={status} value={status}>
+                                {getStatusLabel(status)}
+                              </option>
+                            ))}
+                          </Select>
+                        )}
                       </div>
                     </td>
                     <td
@@ -651,25 +658,27 @@ export default function AdminAppointmentsPage() {
                 </span>
               }
               actions={
-                <Select
-                  selectSize="dense"
-                  fullWidth
-                  value={row.status}
-                  onChange={e =>
-                    void updateStatus(
-                      row.id,
-                      e.target.value as AppointmentStatus
-                    )
-                  }
-                  disabled={isUpdatingId === row.id}
-                  aria-label={`${t('admin.appointmentsPage.table.headers.status')}: ${resolvePatientName(row)}`}
-                >
-                  {STATUS_OPTIONS.map(status => (
-                    <option key={status} value={status}>
-                      {getStatusLabel(status)}
-                    </option>
-                  ))}
-                </Select>
+                canEdit ? (
+                  <Select
+                    selectSize="dense"
+                    fullWidth
+                    value={row.status}
+                    onChange={e =>
+                      void updateStatus(
+                        row.id,
+                        e.target.value as AppointmentStatus
+                      )
+                    }
+                    disabled={isUpdatingId === row.id}
+                    aria-label={`${t('admin.appointmentsPage.table.headers.status')}: ${resolvePatientName(row)}`}
+                  >
+                    {STATUS_OPTIONS.map(status => (
+                      <option key={status} value={status}>
+                        {getStatusLabel(status)}
+                      </option>
+                    ))}
+                  </Select>
+                ) : undefined
               }
             />
           ))

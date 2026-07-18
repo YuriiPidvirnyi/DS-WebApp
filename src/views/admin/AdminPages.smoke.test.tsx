@@ -201,6 +201,19 @@ describe('Admin pages UI smoke', () => {
   })
 
   it('runs appointments bulk status update against Supabase', async () => {
+    // Bulk-status controls are RBAC-gated on appointments:edit (Р1);
+    // a real user on this page is an admin, so mock that role.
+    useAdminAuthMock.mockReturnValue({
+      ...DEFAULT_AUTH,
+      user: {
+        id: 'admin-1',
+        email: 'admin@test.com',
+        role: 'admin',
+        name: 'Admin',
+        doctorId: null,
+      },
+      isAuthenticated: true,
+    })
     const appointmentRows = [
       {
         id: 'appt-1',

@@ -272,7 +272,12 @@
         "treatment": "Ортодонтія",
         "duration": "18 місяців"
       }
-    }
+    },
+    "beforePlaceholder": "Фото ДО — кейс «{{case}}»",
+    "afterPlaceholder": "Фото ПІСЛЯ — кейс «{{case}}»",
+    "keyboardHint": "←/→ крок 5% · Home/End — краї",
+    "sliderAria": "Повзунок порівняння: {{value}}%. Стрілки — крок 5%, Home/End — краї",
+    "selectCase": "Обрати кейс"
   },
   "labels": {
     "before": "До",
@@ -1524,7 +1529,7 @@
         "backToList": "Назад до списку"
       },
       "connection": {
-        "realtime": "Realtime",
+        "realtime": "Онлайн",
         "disconnected": "Не підключено"
       },
       "actions": {
@@ -1724,7 +1729,7 @@
         "total": "Всього",
         "pending": "Очікують",
         "approved": "Схвалені",
-        "featured": "Featured"
+        "featured": "Рекомендовані"
       },
       "filters": {
         "searchPlaceholder": "Пошук: автор, послуга, текст",
@@ -1749,7 +1754,7 @@
       "empty": "Відгуків не знайдено.",
       "card": {
         "selectAria": "Вибрати відгук від {{name}}",
-        "featured": "featured",
+        "featured": "рекомендований",
         "wouldRecommend": "Рекомендує: {{value}}",
         "yes": "так",
         "no": "ні"
@@ -1815,7 +1820,7 @@
       "empty": "За поточними фільтрами звернень не знайдено.",
       "card": {
         "selectAria": "Вибрати звернення {{name}}",
-        "unreadBadge": "unread",
+        "unreadBadge": "непрочитане",
         "markRead": "Позначити прочитаним",
         "markUnread": "Позначити непрочитаним",
         "showMessage": "Показати повідомлення",
@@ -1887,8 +1892,8 @@
       "blankChild": "Бланк (дитина)"
     },
     "serviceStatuses": {
-      "active": "active",
-      "inactive": "inactive"
+      "active": "Активна",
+      "inactive": "Неактивна"
     },
     "servicesPage": {
       "title": "Управління послугами",
@@ -1975,8 +1980,8 @@
       }
     },
     "doctorStatuses": {
-      "active": "active",
-      "inactive": "inactive"
+      "active": "Активний",
+      "inactive": "Неактивний"
     },
     "doctorsPage": {
       "title": "Управління лікарями",
@@ -2139,17 +2144,17 @@
           "summary": "Зміст",
           "actions": "Дії"
         },
-        "systemActor": "system",
+        "systemActor": "система",
         "actions": {
-          "diff": "Diff",
-          "rollback": "Rollback"
+          "diff": "Порівняти",
+          "rollback": "Відкат"
         },
         "summary": {
           "created": "Створено запис ({{count}} полів)",
           "deleted": "Видалено запис ({{count}} полів)",
           "changed": "Змінено полів: {{count}}"
         },
-        "nullValue": "null",
+        "nullValue": "—",
         "errors": {
           "supabaseUnavailable": "Supabase не налаштований.",
           "loadFailed": "Не вдалося завантажити audit logs. Перевірте, чи застосована міграція audit."
@@ -2164,8 +2169,8 @@
             "when": "Коли"
           },
           "noChanges": "Відмінностей не виявлено.",
-          "before": "BEFORE",
-          "after": "AFTER"
+          "before": "БУЛО",
+          "after": "СТАЛО"
         }
       },
       "rollback": {

@@ -25,6 +25,8 @@ import {
 } from '@/components/ui'
 import { useConfirm } from '@/hooks/useConfirm'
 import { useCSRF } from '@/hooks/useCSRF'
+import { useAdminAuth } from '@/hooks/useAdminAuth'
+import { can } from '@/lib/permissions'
 import { captureException } from '@/utils/sentry'
 import { formatCurrency, formatDateTime } from './utils'
 
@@ -158,6 +160,12 @@ export default function AdminOrdersPage() {
   const { t } = useTranslation()
   const { confirm, confirmDialog } = useConfirm()
   const { token: csrfToken, refreshToken } = useCSRF()
+  const { user } = useAdminAuth()
+  // RBAC-гейт дій (Р1): створювати може будь-який персонал, а видаляти
+  // й затверджувати — лише відповідні ролі
+  const canCreate = user ? can(user.role, 'orders:create') : false
+  const canDelete = user ? can(user.role, 'orders:delete') : false
+  const canApprove = user ? can(user.role, 'orders:approve') : false
   const [orders, setOrders] = useState<MaterialOrder[]>([])
   const [materials, setMaterials] = useState<{ id: string; name_uk: string }[]>(
     []
@@ -439,14 +447,16 @@ export default function AdminOrdersPage() {
             />
             {t('admin.ordersPage.refresh')}
           </Button>
-          <Button
-            type="button"
-            onClick={() => setCreateOpen(true)}
-            className="gap-2 bg-dental-teal hover:bg-dental-teal/90"
-          >
-            <Plus className="w-4 h-4" />
-            {t('admin.ordersPage.createOrder')}
-          </Button>
+          {canCreate && (
+            <Button
+              type="button"
+              onClick={() => setCreateOpen(true)}
+              className="gap-2 bg-dental-teal hover:bg-dental-teal/90"
+            >
+              <Plus className="w-4 h-4" />
+              {t('admin.ordersPage.createOrder')}
+            </Button>
+          )}
         </div>
       </div>
       {error && <ErrorState title={error} onRetry={() => void loadOrders()} />}
@@ -621,20 +631,22 @@ export default function AdminOrdersPage() {
                               : t('admin.ordersPage.delivery.save')}
                           </Button>
                         )}
-                      {flow.map(a => (
-                        <Button
-                          key={`${a.from}-${a.next}`}
-                          type="button"
-                          size="sm"
-                          variant={a.cls ? 'ghost' : 'outline'}
-                          disabled={busy}
-                          onClick={() => void patchStatus(order.id, a.next)}
-                          className={a.cls}
-                        >
-                          {t(a.label)}
-                        </Button>
-                      ))}
-                      {order.status === 'draft' && (
+                      {flow
+                        .filter(a => a.next !== 'approved' || canApprove)
+                        .map(a => (
+                          <Button
+                            key={`${a.from}-${a.next}`}
+                            type="button"
+                            size="sm"
+                            variant={a.cls ? 'ghost' : 'outline'}
+                            disabled={busy}
+                            onClick={() => void patchStatus(order.id, a.next)}
+                            className={a.cls}
+                          >
+                            {t(a.label)}
+                          </Button>
+                        ))}
+                      {order.status === 'draft' && canDelete && (
                         <Button
                           type="button"
                           size="sm"

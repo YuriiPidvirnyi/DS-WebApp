@@ -287,6 +287,12 @@ const uk = {
         duration: '18 місяців',
       },
     },
+    beforePlaceholder: 'Фото ДО — кейс «{{case}}»',
+    afterPlaceholder: 'Фото ПІСЛЯ — кейс «{{case}}»',
+    keyboardHint: '←/→ крок 5% · Home/End — краї',
+    sliderAria:
+      'Повзунок порівняння: {{value}}%. Стрілки — крок 5%, Home/End — краї',
+    selectCase: 'Обрати кейс',
   },
   labels: {
     before: 'До',
@@ -1629,7 +1635,7 @@ const uk = {
         backToList: 'Назад до списку',
       },
       connection: {
-        realtime: 'Realtime',
+        realtime: 'Онлайн',
         disconnected: 'Не підключено',
       },
       actions: {
@@ -1835,7 +1841,7 @@ const uk = {
         total: 'Всього',
         pending: 'Очікують',
         approved: 'Схвалені',
-        featured: 'Featured',
+        featured: 'Рекомендовані',
       },
       filters: {
         searchPlaceholder: 'Пошук: автор, послуга, текст',
@@ -1860,7 +1866,7 @@ const uk = {
       empty: 'Відгуків не знайдено.',
       card: {
         selectAria: 'Вибрати відгук від {{name}}',
-        featured: 'featured',
+        featured: 'рекомендований',
         wouldRecommend: 'Рекомендує: {{value}}',
         yes: 'так',
         no: 'ні',
@@ -1928,7 +1934,7 @@ const uk = {
       empty: 'За поточними фільтрами звернень не знайдено.',
       card: {
         selectAria: 'Вибрати звернення {{name}}',
-        unreadBadge: 'unread',
+        unreadBadge: 'непрочитане',
         markRead: 'Позначити прочитаним',
         markUnread: 'Позначити непрочитаним',
         showMessage: 'Показати повідомлення',
@@ -2002,8 +2008,8 @@ const uk = {
       blankChild: 'Бланк (дитина)',
     },
     serviceStatuses: {
-      active: 'active',
-      inactive: 'inactive',
+      active: 'Активна',
+      inactive: 'Неактивна',
     },
     servicesPage: {
       title: 'Управління послугами',
@@ -2094,8 +2100,8 @@ const uk = {
       },
     },
     doctorStatuses: {
-      active: 'active',
-      inactive: 'inactive',
+      active: 'Активний',
+      inactive: 'Неактивний',
     },
     doctorsPage: {
       title: 'Управління лікарями',
@@ -2264,17 +2270,17 @@ const uk = {
           summary: 'Зміст',
           actions: 'Дії',
         },
-        systemActor: 'system',
+        systemActor: 'система',
         actions: {
-          diff: 'Diff',
-          rollback: 'Rollback',
+          diff: 'Порівняти',
+          rollback: 'Відкат',
         },
         summary: {
           created: 'Створено запис ({{count}} полів)',
           deleted: 'Видалено запис ({{count}} полів)',
           changed: 'Змінено полів: {{count}}',
         },
-        nullValue: 'null',
+        nullValue: '—',
         errors: {
           supabaseUnavailable: 'Supabase не налаштований.',
           loadFailed:
@@ -2291,8 +2297,8 @@ const uk = {
             when: 'Коли',
           },
           noChanges: 'Відмінностей не виявлено.',
-          before: 'BEFORE',
-          after: 'AFTER',
+          before: 'БУЛО',
+          after: 'СТАЛО',
         },
       },
       rollback: {

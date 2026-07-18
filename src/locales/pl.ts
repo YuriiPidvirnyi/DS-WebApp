@@ -286,6 +286,12 @@ const pl = {
         duration: '18 miesięcy',
       },
     },
+    beforePlaceholder: 'Zdjęcie PRZED — przypadek „{{case}}”',
+    afterPlaceholder: 'Zdjęcie PO — przypadek „{{case}}”',
+    keyboardHint: '←/→ krok 5% · Home/End — krawędzie',
+    sliderAria:
+      'Suwak porównania: {{value}}%. Strzałki — krok 5%, Home/End — krawędzie',
+    selectCase: 'Wybierz przypadek',
   },
   labels: {
     before: 'Przed',
@@ -1505,7 +1511,7 @@ const pl = {
         backToList: 'Wróć do listy',
       },
       connection: {
-        realtime: 'Realtime',
+        realtime: 'Na żywo',
         disconnected: 'Brak połączenia',
       },
       actions: {
@@ -1710,7 +1716,7 @@ const pl = {
         total: 'Łącznie',
         pending: 'Oczekujące',
         approved: 'Zatwierdzone',
-        featured: 'Featured',
+        featured: 'Wyróżnione',
       },
       filters: {
         searchPlaceholder: 'Szukaj: autor, usługa, treść',
@@ -1735,7 +1741,7 @@ const pl = {
       empty: 'Nie znaleziono opinii.',
       card: {
         selectAria: 'Wybierz opinię od {{name}}',
-        featured: 'featured',
+        featured: 'wyróżniony',
         wouldRecommend: 'Poleca: {{value}}',
         yes: 'tak',
         no: 'nie',
@@ -1803,7 +1809,7 @@ const pl = {
       empty: 'Brak zgłoszeń dla bieżących filtrów.',
       card: {
         selectAria: 'Wybierz zgłoszenie {{name}}',
-        unreadBadge: 'unread',
+        unreadBadge: 'nieprzeczytane',
         markRead: 'Oznacz jako przeczytane',
         markUnread: 'Oznacz jako nieprzeczytane',
         showMessage: 'Pokaż wiadomość',
@@ -1878,8 +1884,8 @@ const pl = {
       blankChild: 'Formularz (dziecko)',
     },
     serviceStatuses: {
-      active: 'active',
-      inactive: 'inactive',
+      active: 'Aktywna',
+      inactive: 'Nieaktywna',
     },
     servicesPage: {
       title: 'Zarządzanie usługami',
@@ -1970,8 +1976,8 @@ const pl = {
       },
     },
     doctorStatuses: {
-      active: 'active',
-      inactive: 'inactive',
+      active: 'Aktywny',
+      inactive: 'Nieaktywny',
     },
     doctorsPage: {
       title: 'Zarządzanie lekarzami',
@@ -2142,15 +2148,15 @@ const pl = {
         },
         systemActor: 'system',
         actions: {
-          diff: 'Diff',
-          rollback: 'Rollback',
+          diff: 'Porównaj',
+          rollback: 'Wycofaj',
         },
         summary: {
           created: 'Utworzono rekord ({{count}} pól)',
           deleted: 'Usunięto rekord ({{count}} pól)',
           changed: 'Zmienione pola: {{count}}',
         },
-        nullValue: 'null',
+        nullValue: '—',
         errors: {
           supabaseUnavailable: 'Supabase nie jest skonfigurowany.',
           loadFailed:
@@ -2167,8 +2173,8 @@ const pl = {
             when: 'Kiedy',
           },
           noChanges: 'Nie wykryto różnic.',
-          before: 'BEFORE',
-          after: 'AFTER',
+          before: 'PRZED',
+          after: 'PO',
         },
       },
       rollback: {
