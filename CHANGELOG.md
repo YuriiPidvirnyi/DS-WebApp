@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The five `app/api/cron/*` routes, `vercel.json`'s `crons` array, and the cron auth-gate tests (`cron-notifications-auth.test.ts`, `cron-notifications.spec.ts`). `CRON_SECRET` is retained — it still secures the admin `/api/payments/*` routes.
 
+### Fixed
+
+- **`notification_events.appointment_id` made nullable** (`20260719_notification_events_nullable_appointment_id.sql`). Recall (`recall_touch_*`) and `low_stock_alert` events are not tied to an appointment, and both the producers and the original Vercel routes insert them without an `appointment_id`. The pre-existing `NOT NULL` constraint meant every such insert raised `23502` on the first real candidate — recall/low-stock notifications had never worked (masked earlier by the broken queue drain). The edge function already types `appointment_id` as `string | null` and filters nulls, so nullable is the intended contract. Verified end-to-end: a `recall_touch_1` event drained via `pg_net → process-notifications` returned HTTP 200 `processed:1`, row → `sent` + `resend_id`; a wrong bearer returned 401 with the row left `queued`.
+
 ## [3.1.0] - 2026-07-02
 
 > Promoted `develop` → `main` in 7 reviewed release slices (#337–#346), each verified in production after deploy. The four June DB migrations (`patients_deleted_at`, `db_security_perf_hardening`, `fk_covering_indexes`, `uniq_active_payment`) were found missing from the live database and applied during the release. Prod `payment_configs` global default set to `payment_mode='none'` — patient-facing payments stay dark until Monobank launch.
