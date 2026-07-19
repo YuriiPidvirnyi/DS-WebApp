@@ -348,10 +348,32 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     }
 
     if (Object.keys(updates).length > 0) {
-      const { error: updateError } = await auth
+      let updateQuery = auth
         .supabase!.from('treatment_records')
         .update(updates)
         .eq('id', id)
+      // Make a status transition atomic: only write if the row is still at the
+      // status we validated against, so two concurrent PATCHes (double-click /
+      // retry racing a legit request) can't both pass the read-then-write check
+      // and double-transition (review: TOCTOU).
+      if (body.status !== undefined && prevStatus !== null) {
+        updateQuery = updateQuery.eq('status', prevStatus)
+      }
+      const { data: updatedRows, error: updateError } =
+        await updateQuery.select('id')
+
+      // Guarded transition matched no row → status changed underneath us.
+      if (
+        !updateError &&
+        body.status !== undefined &&
+        prevStatus !== null &&
+        (!updatedRows || updatedRows.length === 0)
+      ) {
+        return NextResponse.json(
+          { success: false, error: 'Неприпустимий перехід статусу акта' },
+          { status: 409 }
+        )
+      }
 
       if (updateError) {
         captureException(

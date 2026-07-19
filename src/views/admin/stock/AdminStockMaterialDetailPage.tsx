@@ -9,7 +9,7 @@ import { useCSRF } from '@/hooks/useCSRF'
 import { useConfirm } from '@/hooks/useConfirm'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { hasPermission } from '@/lib/permissions'
-import { PACK_UNITS, UNIT_LABEL_KEYS } from '@/lib/stock-units'
+import { PACK_UNITS, unitLabel } from '@/lib/stock-units'
 import BarcodeInput from '@/components/admin/stock/BarcodeInput'
 import type { StockMaterial, MaterialWarehouseMatrix } from '@/types/stock'
 
@@ -424,7 +424,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
               >
                 {PACK_UNITS.map(u => (
                   <option key={u} value={u}>
-                    {t(UNIT_LABEL_KEYS[u])}
+                    {unitLabel(t, u)}
                   </option>
                 ))}
               </select>

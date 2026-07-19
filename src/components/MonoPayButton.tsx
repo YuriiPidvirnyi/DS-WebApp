@@ -196,15 +196,15 @@ export function MonoPayButton({
       } catch (err) {
         if (!destroyed) {
           const raw = err instanceof Error ? err.message : ''
-          // Our own sentinels localize at render; anything else (a server
-          // data.error message) is shown as-is.
-          if (raw === 'SCRIPT_LOAD_FAILED' || raw === 'INIT_FAILED') {
-            setErrorText(null)
-            setErrorCode(raw)
-          } else {
-            setErrorText(raw || null)
-            setErrorCode(raw ? null : 'INIT_FAILED')
-          }
+          // Never surface the raw init message to the user — a server
+          // validation string from monopay-init is Ukrainian-only, so showing
+          // it verbatim would reintroduce the very i18n bug this fixes. Show a
+          // localized generic (script vs. init) and pass the detail to onError
+          // for logging (review #3).
+          setErrorText(null)
+          setErrorCode(
+            raw === 'SCRIPT_LOAD_FAILED' ? 'SCRIPT_LOAD_FAILED' : 'INIT_FAILED'
+          )
           setPhase('error')
           onError?.('INIT_ERROR', raw)
         }

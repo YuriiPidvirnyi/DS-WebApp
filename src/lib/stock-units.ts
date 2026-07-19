@@ -1,11 +1,7 @@
 /**
- * Shared stock unit codes + their i18n label keys. Single source for both the
- * materials list and the material detail editor (which also uses PACK_UNITS as
- * the pack-size dropdown options and its element type).
- *
- * Keyed by the raw unit code stored on a material (Cyrillic data value),
- * resolved to a localized label at the render site via t(); callers fall back
- * to the raw code for any unit not in the map.
+ * Shared stock unit codes + their i18n label resolution. Single source for both
+ * the materials list and the material detail editor (which also uses PACK_UNITS
+ * as the pack-size dropdown options and its element type).
  */
 export const PACK_UNITS = [
   'шт',
@@ -21,7 +17,10 @@ export const PACK_UNITS = [
 
 export type PackUnit = (typeof PACK_UNITS)[number]
 
-export const UNIT_LABEL_KEYS: Record<string, string> = {
+// `satisfies` enforces that every PACK_UNIT has a label key at compile time — a
+// new unit added above without a label here fails typecheck (restores the
+// exhaustiveness the inline map used to give).
+const UNIT_LABEL_KEYS = {
   шт: 'admin.stock.materialDetailPage.unitPcs',
   г: 'admin.stock.materialDetailPage.unitGram',
   кг: 'admin.stock.materialDetailPage.unitKg',
@@ -31,4 +30,14 @@ export const UNIT_LABEL_KEYS: Record<string, string> = {
   м: 'admin.stock.materialDetailPage.unitMeter',
   пара: 'admin.stock.materialDetailPage.unitPair',
   набір: 'admin.stock.materialDetailPage.unitSet',
+} satisfies Record<PackUnit, string>
+
+/**
+ * Localized label for a unit code (raw Cyrillic data value), falling back to
+ * the raw code for any unit not in the map. Encapsulates the string lookup so
+ * callers with a free-string `code` don't need an unsafe index cast.
+ */
+export function unitLabel(t: (key: string) => string, code: string): string {
+  const key = (UNIT_LABEL_KEYS as Record<string, string>)[code]
+  return key ? t(key) : code
 }
