@@ -70,6 +70,9 @@ describe('edge _shared/email-templates ↔ src/lib parity', () => {
     ]) {
       expect(typeof edge[fn]).toBe('function')
     }
+    // passwordResetEmail is intentionally NOT ported to the edge copy (it stays
+    // in Next for the inline reset flow) — assert that contract explicitly.
+    expect(edge.passwordResetEmail).toBeUndefined()
   })
 
   it.each(locales)('bookingConfirmationEmail identical (%s)', locale => {
@@ -109,11 +112,17 @@ describe('edge _shared/email-templates ↔ src/lib parity', () => {
     )
   })
 
-  it.each([1, 2, 3] as const)('recallEmail touch %i identical (uk)', touch => {
+  // recallEmail: loop all touches × locales so recall isn't weaker-covered than
+  // the other templates (RECALL_STRINGS carries uk/en/pl copy).
+  it.each(
+    ([1, 2, 3] as const).flatMap(touch =>
+      locales.map(locale => [touch, locale] as const)
+    )
+  )('recallEmail touch %i identical (%s)', (touch, locale) => {
     expect(
-      norm(edge.recallEmail({ patientName: 'Тарас', touch }, 'uk'), EDGE_SITE)
+      norm(edge.recallEmail({ patientName: 'Тарас', touch }, locale), EDGE_SITE)
     ).toEqual(
-      norm(src.recallEmail({ patientName: 'Тарас', touch }, 'uk'), SRC_SITE)
+      norm(src.recallEmail({ patientName: 'Тарас', touch }, locale), SRC_SITE)
     )
   })
 
