@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from 'vitest'
+import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { resolve } from 'node:path'
 import * as src from '@/lib/email-templates'
 
@@ -39,6 +39,13 @@ beforeAll(async () => {
     'supabase/functions/process-notifications/_shared/email-templates.ts'
   )
   edge = await import(/* @vite-ignore */ edgePath)
+})
+
+afterAll(() => {
+  // Keep the suite self-contained: remove the Deno stub instead of relying on
+  // Vitest's per-file isolation to prevent the global from leaking.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  delete (globalThis as any).Deno
 })
 
 const bookingData = {
