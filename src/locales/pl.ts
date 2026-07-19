@@ -1480,6 +1480,7 @@ const pl = {
     },
     layout: {
       panel: 'Panel administratora',
+      patientCabinet: 'Gabinet pacjenta',
       logout: 'Wyloguj się',
       backToSite: 'Na stronę',
       systemOnline: 'System online',
@@ -1556,6 +1557,8 @@ const pl = {
         today: 'Dziś',
         upcoming: 'Nadchodzące',
         past: 'Minione',
+        dateSelectAria: 'Filtruj według daty',
+        statusSelectAria: 'Filtruj według statusu',
       },
       bulk: {
         selected: 'Wybrano: {{count}}',
@@ -1636,6 +1639,7 @@ const pl = {
         loadFailedFallback: 'Nie udało się załadować analityki.',
         chartFailed: 'Nie udało się załadować tej sekcji.',
       },
+      periodSelectAria: 'Wybierz okres',
     },
     patientManagement: {
       title: 'Zarządzanie pacjentami',
@@ -1813,6 +1817,7 @@ const pl = {
         showMessage: 'Pokaż wiadomość',
         adminNote: 'Notatka admina',
         notesPlaceholder: 'Dodaj notatkę…',
+        statusSelectAria: 'Zmień status zgłoszenia',
       },
       confirmations: {
         bulkChange: 'Zastosować masową zmianę do {{count}} zgłoszeń?',
@@ -2427,6 +2432,7 @@ const pl = {
       printAria: 'Drukuj akt',
       draftNotPrintable:
         'Szkiców nie można drukować — podpisz akt, aby go wydrukować.',
+      loadError: 'Nie udało się załadować kart leczenia',
     },
     users: {
       title: 'Zarządzanie użytkownikami',
@@ -2789,6 +2795,7 @@ const pl = {
       saveSuccess: 'Profil został zaktualizowany!',
       errors: {
         saveFailed: 'Nie udało się zapisać. Spróbuj ponownie później.',
+        invalidPhone: 'Nieprawidłowy format numeru telefonu',
       },
       personalInfo: 'Dane osobowe',
       contactInfo: 'Informacje kontaktowe',
@@ -2801,6 +2808,7 @@ const pl = {
         'Spowoduje to trwałe usunięcie konta i anulowanie wszystkich nadchodzących wizyt. Tej akcji nie można cofnąć.',
       downloading: 'Pobieranie...',
       deleting: 'Usuwanie...',
+      dateOfBirthPlaceholder: 'Wybierz datę urodzenia',
     },
     title: 'Gabinet pacjenta',
     profileTitle: 'Mój profil',

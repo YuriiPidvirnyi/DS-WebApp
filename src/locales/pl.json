@@ -1392,6 +1392,7 @@
     },
     "layout": {
       "panel": "Panel administratora",
+      "patientCabinet": "Gabinet pacjenta",
       "logout": "Wyloguj się",
       "backToSite": "Na stronę",
       "systemOnline": "System online",
@@ -1466,7 +1467,9 @@
         "allDates": "Wszystkie daty",
         "today": "Dziś",
         "upcoming": "Nadchodzące",
-        "past": "Minione"
+        "past": "Minione",
+        "dateSelectAria": "Filtruj według daty",
+        "statusSelectAria": "Filtruj według statusu"
       },
       "bulk": {
         "selected": "Wybrano: {{count}}",
@@ -1543,7 +1546,8 @@
         "loadFailed": "Nie udało się załadować analityki",
         "loadFailedFallback": "Nie udało się załadować analityki.",
         "chartFailed": "Nie udało się załadować tej sekcji."
-      }
+      },
+      "periodSelectAria": "Wybierz okres"
     },
     "patientManagement": {
       "title": "Zarządzanie pacjentami",
@@ -1717,7 +1721,8 @@
         "markUnread": "Oznacz jako nieprzeczytane",
         "showMessage": "Pokaż wiadomość",
         "adminNote": "Notatka admina",
-        "notesPlaceholder": "Dodaj notatkę…"
+        "notesPlaceholder": "Dodaj notatkę…",
+        "statusSelectAria": "Zmień status zgłoszenia"
       },
       "confirmations": {
         "bulkChange": "Zastosować masową zmianę do {{count}} zgłoszeń?",
@@ -2312,7 +2317,8 @@
       "deleteAria": "Usuń",
       "removeLineAria": "Usuń wiersz",
       "printAria": "Drukuj akt",
-      "draftNotPrintable": "Szkiców nie można drukować — podpisz akt, aby go wydrukować."
+      "draftNotPrintable": "Szkiców nie można drukować — podpisz akt, aby go wydrukować.",
+      "loadError": "Nie udało się załadować kart leczenia"
     },
     "users": {
       "title": "Zarządzanie użytkownikami",
@@ -2658,7 +2664,8 @@
       "save": "Zapisz zmiany",
       "saveSuccess": "Profil został zaktualizowany!",
       "errors": {
-        "saveFailed": "Nie udało się zapisać. Spróbuj ponownie później."
+        "saveFailed": "Nie udało się zapisać. Spróbuj ponownie później.",
+        "invalidPhone": "Nieprawidłowy format numeru telefonu"
       },
       "personalInfo": "Dane osobowe",
       "contactInfo": "Informacje kontaktowe",
@@ -2669,7 +2676,8 @@
       "deleteConfirmTitle": "Usuń konto?",
       "deleteConfirmMessage": "Spowoduje to trwałe usunięcie konta i anulowanie wszystkich nadchodzących wizyt. Tej akcji nie można cofnąć.",
       "downloading": "Pobieranie...",
-      "deleting": "Usuwanie..."
+      "deleting": "Usuwanie...",
+      "dateOfBirthPlaceholder": "Wybierz datę urodzenia"
     },
     "title": "Gabinet pacjenta",
     "profileTitle": "Mój profil",

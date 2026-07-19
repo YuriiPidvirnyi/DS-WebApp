@@ -1604,6 +1604,7 @@ const uk = {
     },
     layout: {
       panel: 'Адмін-панель',
+      patientCabinet: 'Кабінет пацієнта',
       logout: 'Вийти',
       backToSite: 'На сайт',
       systemOnline: 'Система онлайн',
@@ -1680,6 +1681,8 @@ const uk = {
         today: 'Сьогодні',
         upcoming: 'Майбутні',
         past: 'Минулі',
+        dateSelectAria: 'Фільтрувати за датою',
+        statusSelectAria: 'Фільтрувати за статусом',
       },
       bulk: {
         selected: 'Вибрано: {{count}}',
@@ -1761,6 +1764,7 @@ const uk = {
         loadFailedFallback: 'Не вдалося завантажити аналітику.',
         chartFailed: 'Цей розділ не вдалося завантажити.',
       },
+      periodSelectAria: 'Оберіть період',
     },
     patientManagement: {
       title: 'Управління пацієнтами',
@@ -1938,6 +1942,7 @@ const uk = {
         showMessage: 'Показати повідомлення',
         adminNote: 'Адмін-нотатка',
         notesPlaceholder: 'Додати нотатку…',
+        statusSelectAria: 'Змінити статус звернення',
       },
       confirmations: {
         bulkChange: 'Застосувати масову зміну до {{count}} звернень?',
@@ -2551,6 +2556,7 @@ const uk = {
       printAria: 'Друк акта',
       draftNotPrintable:
         'Чернетки не друкуються — підпишіть акт, щоб роздрукувати.',
+      loadError: 'Не вдалося завантажити акти лікування',
     },
     users: {
       title: 'Управління користувачами',
@@ -2914,6 +2920,7 @@ const uk = {
       saveSuccess: 'Профіль успішно оновлено!',
       errors: {
         saveFailed: 'Помилка збереження. Спробуйте пізніше.',
+        invalidPhone: 'Невірний формат номера телефону',
       },
       personalInfo: 'Особисті дані',
       contactInfo: 'Контактна інформація',
@@ -2926,6 +2933,7 @@ const uk = {
         'Це назавжди видалить ваш акаунт та скасує всі майбутні записи. Цю дію неможливо скасувати.',
       downloading: 'Завантаження...',
       deleting: 'Видалення...',
+      dateOfBirthPlaceholder: 'Оберіть дату народження',
     },
     title: 'Кабінет пацієнта',
     profileTitle: 'Мій профіль',

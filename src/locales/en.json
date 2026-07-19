@@ -1390,6 +1390,7 @@
     },
     "layout": {
       "panel": "Admin Panel",
+      "patientCabinet": "Patient cabinet",
       "logout": "Log Out",
       "backToSite": "Back to site",
       "systemOnline": "System online",
@@ -1464,7 +1465,9 @@
         "allDates": "All dates",
         "today": "Today",
         "upcoming": "Upcoming",
-        "past": "Past"
+        "past": "Past",
+        "dateSelectAria": "Filter by date",
+        "statusSelectAria": "Filter by status"
       },
       "bulk": {
         "selected": "Selected: {{count}}",
@@ -1541,7 +1544,8 @@
         "loadFailed": "Failed to load analytics",
         "loadFailedFallback": "Failed to load analytics.",
         "chartFailed": "This section failed to load."
-      }
+      },
+      "periodSelectAria": "Select period"
     },
     "patientManagement": {
       "title": "Patient Management",
@@ -1715,7 +1719,8 @@
         "markUnread": "Mark as unread",
         "showMessage": "Show message",
         "adminNote": "Admin note",
-        "notesPlaceholder": "Add a note…"
+        "notesPlaceholder": "Add a note…",
+        "statusSelectAria": "Change inquiry status"
       },
       "confirmations": {
         "bulkChange": "Apply bulk update to {{count}} inquiries?",
@@ -2310,7 +2315,8 @@
       "deleteAria": "Delete",
       "removeLineAria": "Remove line",
       "printAria": "Print act",
-      "draftNotPrintable": "Drafts cannot be printed — sign the act to print it."
+      "draftNotPrintable": "Drafts cannot be printed — sign the act to print it.",
+      "loadError": "Failed to load treatment records"
     },
     "users": {
       "title": "User Management",
@@ -2656,7 +2662,8 @@
       "save": "Save Changes",
       "saveSuccess": "Profile updated successfully!",
       "errors": {
-        "saveFailed": "Failed to save. Please try again later."
+        "saveFailed": "Failed to save. Please try again later.",
+        "invalidPhone": "Invalid phone number format"
       },
       "personalInfo": "Personal information",
       "contactInfo": "Contact information",
@@ -2667,7 +2674,8 @@
       "deleteConfirmTitle": "Delete account?",
       "deleteConfirmMessage": "This will permanently delete your account and cancel all upcoming appointments. This cannot be undone.",
       "downloading": "Downloading...",
-      "deleting": "Deleting..."
+      "deleting": "Deleting...",
+      "dateOfBirthPlaceholder": "Select date of birth"
     },
     "title": "Patient Cabinet",
     "profileTitle": "My Profile",

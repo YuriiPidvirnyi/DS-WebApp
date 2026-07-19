@@ -1474,6 +1474,7 @@ const en = {
     },
     layout: {
       panel: 'Admin Panel',
+      patientCabinet: 'Patient cabinet',
       logout: 'Log Out',
       backToSite: 'Back to site',
       systemOnline: 'System online',
@@ -1550,6 +1551,8 @@ const en = {
         today: 'Today',
         upcoming: 'Upcoming',
         past: 'Past',
+        dateSelectAria: 'Filter by date',
+        statusSelectAria: 'Filter by status',
       },
       bulk: {
         selected: 'Selected: {{count}}',
@@ -1631,6 +1634,7 @@ const en = {
         loadFailedFallback: 'Failed to load analytics.',
         chartFailed: 'This section failed to load.',
       },
+      periodSelectAria: 'Select period',
     },
     patientManagement: {
       title: 'Patient Management',
@@ -1808,6 +1812,7 @@ const en = {
         showMessage: 'Show message',
         adminNote: 'Admin note',
         notesPlaceholder: 'Add a note…',
+        statusSelectAria: 'Change inquiry status',
       },
       confirmations: {
         bulkChange: 'Apply bulk update to {{count}} inquiries?',
@@ -2420,6 +2425,7 @@ const en = {
       removeLineAria: 'Remove line',
       printAria: 'Print act',
       draftNotPrintable: 'Drafts cannot be printed — sign the act to print it.',
+      loadError: 'Failed to load treatment records',
     },
     users: {
       title: 'User Management',
@@ -2780,6 +2786,7 @@ const en = {
       saveSuccess: 'Profile updated successfully!',
       errors: {
         saveFailed: 'Failed to save. Please try again later.',
+        invalidPhone: 'Invalid phone number format',
       },
       personalInfo: 'Personal information',
       contactInfo: 'Contact information',
@@ -2792,6 +2799,7 @@ const en = {
         'This will permanently delete your account and cancel all upcoming appointments. This cannot be undone.',
       downloading: 'Downloading...',
       deleting: 'Deleting...',
+      dateOfBirthPlaceholder: 'Select date of birth',
     },
     title: 'Patient Cabinet',
     profileTitle: 'My Profile',
