@@ -152,9 +152,6 @@ export default tseslint.config(
       'src/views/admin/AdminIntakePrintPage.tsx',
       'src/views/admin/AdminTreatmentPrintPage.tsx',
       'src/views/promo/**',
-      // global-error замінює кореневий layout — i18n-провайдера в цій області
-      // немає, тож t() тут не працює (останній рубіж на випадок збою).
-      'app/global-error.tsx',
       '**/*.test.tsx',
     ],
     rules: {

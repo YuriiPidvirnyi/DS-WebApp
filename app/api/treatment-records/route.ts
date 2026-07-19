@@ -250,6 +250,29 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Doctor scope: when the act targets an appointment, that appointment — and
+    // its patient — must actually belong to this doctor. Without this a doctor
+    // could self-assign doctorId yet file the act against an appointment/patient
+    // they were never assigned (review #6). The self-check above only proves the
+    // doctorId isn't spoofed, not that the appointment/patient are theirs.
+    if (hasDoctorScope(auth.access!.role) && body.appointmentId) {
+      const { data: appt } = await auth
+        .supabase!.from('appointments')
+        .select('doctor_id, patient_id')
+        .eq('id', body.appointmentId.trim())
+        .maybeSingle()
+      if (
+        !appt ||
+        appt.doctor_id !== auth.access!.doctorId ||
+        (appt.patient_id && appt.patient_id !== body.patientId.trim())
+      ) {
+        return NextResponse.json(
+          { success: false, error: 'Insufficient permissions' },
+          { status: 403 }
+        )
+      }
+    }
+
     const totalCost = computeTotalCost(body.items)
     const toothNumbers = Array.isArray(body.toothNumbers)
       ? body.toothNumbers

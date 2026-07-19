@@ -504,7 +504,12 @@ export default function AdminWorkspacePage() {
                     type="button"
                     onClick={() => void openAct(a)}
                     aria-pressed={active}
-                    className={`flex items-start gap-3 rounded-xl border px-4 py-3 text-left transition-colors ${
+                    // Block switching appointments mid-save: otherwise a slow
+                    // persist() for the previous appointment can resolve after a
+                    // new one is selected and clobber its actId/actStatus, so the
+                    // next save would PATCH the wrong record (review #6).
+                    disabled={saving}
+                    className={`flex items-start gap-3 rounded-xl border px-4 py-3 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
                       active
                         ? 'border-dental-primary-400 bg-dental-primary-50 ring-1 ring-dental-primary-200'
                         : 'border-dental-secondary-200 bg-white hover:border-dental-primary-300 hover:bg-dental-secondary-50'

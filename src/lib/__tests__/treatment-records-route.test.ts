@@ -9,6 +9,7 @@ const mockTrInsertSingle = vi.fn()
 const mockTrFetchSingle = vi.fn()
 const mockRange = vi.fn() // GET list terminal
 const mockEq = vi.fn() // spy on every .eq(col, val) so tests can assert filters
+const mockApptMaybeSingle = vi.fn() // appointments ownership lookup (POST)
 
 vi.mock('@/lib/supabase/server', () => {
   // Chainable builder covering both the POST final-fetch (select→eq→single)
@@ -38,6 +39,13 @@ vi.mock('@/lib/supabase/server', () => {
         }
         if (table === 'treatment_record_items') {
           return { insert: vi.fn(async () => ({ error: null })) }
+        }
+        if (table === 'appointments') {
+          return {
+            select: vi.fn(() => ({
+              eq: vi.fn(() => ({ maybeSingle: mockApptMaybeSingle })),
+            })),
+          }
         }
         return {}
       }),
@@ -99,12 +107,21 @@ function validBody(doctorId: string) {
   }
 }
 
+function validBodyWithAppt(doctorId: string, appointmentId: string) {
+  return { ...validBody(doctorId), appointmentId }
+}
+
 describe('POST /api/treatment-records — doctor ownership', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockTrInsertSingle.mockResolvedValue({ data: { id: 'tr-1' }, error: null })
     mockTrFetchSingle.mockResolvedValue({
       data: { id: 'tr-1', doctor_id: DOCTOR_A },
+      error: null,
+    })
+    // Default: the appointment belongs to doctor A with the test patient.
+    mockApptMaybeSingle.mockResolvedValue({
+      data: { doctor_id: DOCTOR_A, patient_id: PATIENT_ID },
       error: null,
     })
   })
@@ -139,6 +156,35 @@ describe('POST /api/treatment-records — doctor ownership', () => {
     signInAs('admin', null)
     const res = await POST(makeRequest(validBody(DOCTOR_A)))
     expect(res.status).toBe(201)
+  })
+
+  it('lets a doctor file an act for their own appointment (201)', async () => {
+    signInAs('doctor', DOCTOR_A)
+    const res = await POST(makeRequest(validBodyWithAppt(DOCTOR_A, APPT_ID)))
+    expect(res.status).toBe(201)
+  })
+
+  it("rejects a doctor filing against another doctor's appointment (403)", async () => {
+    signInAs('doctor', DOCTOR_A)
+    mockApptMaybeSingle.mockResolvedValue({
+      data: { doctor_id: DOCTOR_B, patient_id: PATIENT_ID },
+      error: null,
+    })
+    const res = await POST(makeRequest(validBodyWithAppt(DOCTOR_A, APPT_ID)))
+    expect(res.status).toBe(403)
+    expect(mockTrInsertSingle).not.toHaveBeenCalled()
+  })
+
+  it('rejects a doctor swapping in a patient not on their appointment (403)', async () => {
+    signInAs('doctor', DOCTOR_A)
+    // The appointment is the doctor's, but its patient differs from patientId.
+    mockApptMaybeSingle.mockResolvedValue({
+      data: { doctor_id: DOCTOR_A, patient_id: 'someone-else' },
+      error: null,
+    })
+    const res = await POST(makeRequest(validBodyWithAppt(DOCTOR_A, APPT_ID)))
+    expect(res.status).toBe(403)
+    expect(mockTrInsertSingle).not.toHaveBeenCalled()
   })
 })
 

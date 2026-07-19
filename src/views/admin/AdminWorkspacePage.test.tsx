@@ -1,10 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 
-// t returns the key so assertions can match on i18n keys.
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (k: string) => k, i18n: { language: 'uk' } }),
-}))
+// t returns the key so assertions can match on i18n keys. t/i18n are stable
+// references (as real react-i18next returns) so the load useCallback isn't
+// invalidated every render — otherwise load() re-runs and the list flickers
+// through its loading skeleton on each re-render.
+vi.mock('react-i18next', () => {
+  const t = (k: string) => k
+  const i18n = { language: 'uk' }
+  return { useTranslation: () => ({ t, i18n }) }
+})
 
 // Mutable current user (role/doctorId varied per test).
 let mockUser: {
@@ -342,5 +347,94 @@ describe('AdminWorkspacePage (2e doctor workstation)', () => {
     // stay 1800 (not 2300) — it can't bill a line that won't be persisted.
     expect(screen.getByText(/1800 грн/)).toBeInTheDocument()
     expect(screen.queryByText(/2300 грн/)).not.toBeInTheDocument()
+  })
+
+  it('disables appointment switching while a save is in flight (review #6 race)', async () => {
+    // POST hangs → `saving` stays true so we can observe the disabled list.
+    let resolvePost: (v: unknown) => void = () => {}
+    global.fetch = vi.fn((_url: string, opts?: RequestInit) => {
+      if (opts?.method === 'POST') {
+        return new Promise(res => {
+          resolvePost = res
+        })
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({ success: true, data: [] }),
+      })
+    }) as unknown as typeof fetch
+
+    render(<AdminWorkspacePage />)
+    fireEvent.click(await screen.findByText('Іван Петренко'))
+    const svc = await screen.findByLabelText(
+      'admin.treatmentsPage.modal.service'
+    )
+    fireEvent.change(svc, { target: { value: 's1' } })
+    fireEvent.click(screen.getByText('admin.workspacePage.saveDraft'))
+
+    // Mid-save, another appointment can't be selected (closes the clobber race).
+    await waitFor(() =>
+      expect(screen.getByText('Гість Анонім').closest('button')).toBeDisabled()
+    )
+
+    // Unblock the pending POST and confirm the list re-enables afterwards.
+    resolvePost({
+      ok: true,
+      status: 201,
+      json: async () => ({ success: true, data: { id: 'act-new' } }),
+    })
+    await waitFor(() =>
+      expect(
+        screen.getByText('Гість Анонім').closest('button')
+      ).not.toBeDisabled()
+    )
+  })
+
+  it('drops a stale openAct lookup that resolves after a newer selection (openReqRef)', async () => {
+    // Appointment a1's lookup hangs; a3's resolves immediately with no act.
+    let resolveA: () => void = () => {}
+    const aResult = {
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: [
+          {
+            id: 'act-A',
+            appointment_id: 'a1',
+            diagnosis: 'A-DIAG',
+            tooth_numbers: [],
+            status: 'draft',
+            payment_status: 'unpaid',
+            treatment_record_items: [],
+          },
+        ],
+      }),
+    }
+    global.fetch = vi.fn((url: string) => {
+      if (url.includes('appointmentId=a1')) {
+        return new Promise(r => {
+          resolveA = () => r(aResult)
+        })
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({ success: true, data: [] }),
+      })
+    }) as unknown as typeof fetch
+
+    render(<AdminWorkspacePage />)
+    // Select A (lookup hangs), then quickly select B (lookup resolves now).
+    fireEvent.click(await screen.findByText('Іван Петренко'))
+    fireEvent.click(screen.getByText('Пацієнт Без Лікаря'))
+
+    const diag = (await screen.findByLabelText(
+      'admin.treatmentsPage.modal.diagnosis'
+    )) as HTMLTextAreaElement
+    // Now let A's stale lookup resolve — the monotonic token must drop it.
+    resolveA()
+    await waitFor(() => {
+      expect(diag.value).toBe('') // B's fresh draft, not A's 'A-DIAG'
+    })
+    expect(screen.queryByDisplayValue('A-DIAG')).not.toBeInTheDocument()
   })
 })

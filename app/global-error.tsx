@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import * as Sentry from '@sentry/nextjs'
 import { CONTACT_INFO } from '@/utils/constants'
 
@@ -21,7 +21,72 @@ const COLORS = {
   redBg: '#FEF2F2',
 }
 
+// global-error replaces the ROOT layout, so there is no i18n provider (nor
+// Tailwind/globals.css) in scope here — that's why the styles are inline hex.
+// We keep this page deliberately dependency-free (it must render even when the
+// app infra, i18n included, is what broke), so instead of the i18next runtime
+// we localize via a tiny self-contained dictionary keyed off the persisted
+// language. Copy is intentionally duplicated here rather than pulled from the
+// lazy-loaded locale bundles, to avoid depending on that machinery.
+type Lang = 'uk' | 'en' | 'pl'
+const COPY: Record<
+  Lang,
+  {
+    htmlTitle: string
+    title: string
+    body: string
+    codeLabel: string
+    retry: string
+    home: string
+    help: string
+  }
+> = {
+  uk: {
+    htmlTitle: 'DentalStory — помилка',
+    title: 'Щось пішло не так',
+    body: 'Виникла критична помилка. Спробуйте перезавантажити сторінку або поверніться на головну.',
+    codeLabel: 'Код',
+    retry: 'Спробувати знову',
+    home: 'На головну',
+    help: 'Потрібна допомога?',
+  },
+  en: {
+    htmlTitle: 'DentalStory — error',
+    title: 'Something went wrong',
+    body: 'A critical error occurred. Try reloading the page or return to the homepage.',
+    codeLabel: 'Code',
+    retry: 'Try again',
+    home: 'Go to homepage',
+    help: 'Need help?',
+  },
+  pl: {
+    htmlTitle: 'DentalStory — błąd',
+    title: 'Coś poszło nie tak',
+    body: 'Wystąpił błąd krytyczny. Spróbuj odświeżyć stronę lub wróć na stronę główną.',
+    codeLabel: 'Kod',
+    retry: 'Spróbuj ponownie',
+    home: 'Strona główna',
+    help: 'Potrzebujesz pomocy?',
+  },
+}
+
+// Mirror the app's persisted-language key ('i18nextLng'); client-only, so any
+// failure (SSR, privacy mode) safely falls back to the Ukrainian default.
+function readLang(): Lang {
+  try {
+    const raw = localStorage.getItem('i18nextLng')?.slice(0, 2)
+    if (raw === 'en' || raw === 'pl') return raw
+  } catch {
+    // localStorage unavailable — keep the default.
+  }
+  return 'uk'
+}
+
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
+  // SSR / first paint render the uk default (localStorage is client-only), then
+  // the effect swaps in the visitor's stored language — no hydration mismatch.
+  const [lang, setLang] = useState<Lang>('uk')
+
   useEffect(() => {
     Sentry.captureException(error, {
       tags: { errorBoundary: 'global', critical: 'true' },
@@ -29,12 +94,18 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
     })
   }, [error])
 
+  useEffect(() => {
+    setLang(readLang())
+  }, [])
+
+  const t = COPY[lang]
+
   return (
-    <html lang="uk">
+    <html lang={lang}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>DentalStory — помилка</title>
+        <title>{t.htmlTitle}</title>
       </head>
       <body
         style={{
@@ -92,7 +163,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
               margin: '0 0 12px',
             }}
           >
-            Щось пішло не так
+            {t.title}
           </h1>
           <p
             style={{
@@ -102,8 +173,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
               lineHeight: 1.6,
             }}
           >
-            Виникла критична помилка. Спробуйте перезавантажити сторінку або
-            поверніться на головну.
+            {t.body}
           </p>
 
           {error.digest && (
@@ -125,7 +195,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                   wordBreak: 'break-all',
                 }}
               >
-                Код: {error.digest}
+                {t.codeLabel}: {error.digest}
               </p>
             </div>
           )}
@@ -144,7 +214,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 cursor: 'pointer',
               }}
             >
-              Спробувати знову
+              {t.retry}
             </button>
             {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- global-error renders outside root layout, <Link> unavailable */}
             <a
@@ -162,7 +232,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 textAlign: 'center',
               }}
             >
-              На головну
+              {t.home}
             </a>
           </div>
 
@@ -176,7 +246,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             }}
           >
             <p style={{ margin: 0, fontSize: 13, color: COLORS.text }}>
-              Потрібна допомога?{' '}
+              {t.help}{' '}
               <a
                 href={`mailto:${CONTACT_INFO.email}`}
                 style={{ color: COLORS.teal, fontWeight: 600 }}
