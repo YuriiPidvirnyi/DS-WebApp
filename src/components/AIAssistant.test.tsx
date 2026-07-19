@@ -122,6 +122,16 @@ describe('AIAssistant', () => {
       fireEvent.click(screen.getByLabelText('ai.close'))
       expect(mockSetMessages).toHaveBeenCalledWith([])
     })
+
+    it('does NOT close or wipe the conversation on an outside click (Ч3)', () => {
+      // Regression guard: an accidental click outside the dialog must not
+      // dismiss it — closing is explicit (X button / Escape) only.
+      const onClose = vi.fn()
+      render(<AIAssistant onClose={onClose} />)
+      fireEvent.mouseDown(document.body)
+      expect(onClose).not.toHaveBeenCalled()
+      expect(mockSetMessages).not.toHaveBeenCalledWith([])
+    })
   })
 
   describe('message input', () => {

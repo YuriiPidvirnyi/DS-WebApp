@@ -325,9 +325,9 @@ const en = {
       "Contact us in the way that's most convenient for you or book an appointment online",
     contactInfo: 'Contact Information',
     responseTime: 'We respond within 2 hours',
-    viewOnMap: 'View on map →',
+    viewOnMap: 'View on map',
     ourLocation: 'Our Location',
-    openInGoogleMaps: 'Open in Google Maps →',
+    openInGoogleMaps: 'Open in Google Maps',
     map: {
       loadingTitle: 'Loading map',
       loadingMessage: "Fetching the clinic's interactive map.",
@@ -962,6 +962,8 @@ const en = {
     goToCase: 'Go to case',
     title: 'Accessibility',
     closePanel: 'Close accessibility panel',
+    pinNav: 'Pin navigation sidebar',
+    unpinNav: 'Unpin navigation sidebar',
   },
   accessibilityPanel: {
     regionLabel: 'Accessibility settings',
@@ -1355,28 +1357,6 @@ const en = {
       publicEndpoints: '• Public endpoints: 60 requests/minute',
       contactForm: '• Contact form: 5 requests/minute',
       booking: '• Booking: 10 requests/minute',
-    },
-  },
-  sentryExamplePage: {
-    meta: {
-      title: 'sentry-example-page',
-      description: 'Test Sentry for your Next.js app.',
-    },
-    logoAria: 'Sentry logo',
-    title: 'sentry-example-page',
-    description: {
-      prefix: 'Click the button below and view the sample error on the Sentry',
-      issuesLinkLabel: 'Issues Page',
-      middle: 'For more details about setting up Sentry,',
-      docsLinkLabel: 'read our docs',
-    },
-    actions: {
-      throwSampleError: 'Throw Sample Error',
-    },
-    status: {
-      errorSent: 'Error sent to Sentry.',
-      connectivityBlocked:
-        'It looks like network requests to Sentry are being blocked, which prevents errors from being captured. Try disabling your ad-blocker to complete the test.',
     },
   },
   admin: {
@@ -3443,6 +3423,7 @@ const en = {
       },
       notSpecified: 'not specified',
       durationHint: 'Affects booking urgency',
+      resetPain: 'Clear',
     },
   },
   routeMeta: {

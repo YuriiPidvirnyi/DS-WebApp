@@ -327,9 +327,9 @@ const uk = {
       "Зв'яжіться з нами зручним для вас способом або запишіться на прийом онлайн",
     contactInfo: 'Контактна інформація',
     responseTime: 'Відповідаємо протягом 2 годин',
-    viewOnMap: 'Переглянути на карті →',
+    viewOnMap: 'Переглянути на карті',
     ourLocation: 'Наше розташування',
-    openInGoogleMaps: 'Відкрити в Google Maps →',
+    openInGoogleMaps: 'Відкрити в Google Maps',
     map: {
       loadingTitle: 'Завантажуємо карту',
       loadingMessage: 'Підтягуємо інтерактивну карту клініки.',
@@ -619,7 +619,7 @@ const uk = {
     subtitle: 'Реальні історії людей, які довірили нам свої посмішки',
     videoReview: 'Відеовідгук',
     reviewFrom: 'Відгук від',
-    playVideo: 'Грати відео',
+    playVideo: 'Відтворити відео',
     pause: 'Пауза',
     unmute: 'Увімкнути звук',
     mute: 'Вимкнути звук',
@@ -959,6 +959,8 @@ const uk = {
     goToCase: 'Перейти до випадку',
     title: 'Доступність',
     closePanel: 'Закрити панель доступності',
+    pinNav: 'Закріпити панель навігації',
+    unpinNav: 'Відкріпити панель навігації',
   },
   accessibilityPanel: {
     regionLabel: 'Налаштування доступності',
@@ -1486,29 +1488,6 @@ const uk = {
       booking: '• Бронювання: 10 запитів/хв',
     },
   },
-  sentryExamplePage: {
-    meta: {
-      title: 'sentry-example-page',
-      description: 'Тестова сторінка Sentry для вашого Next.js застосунку.',
-    },
-    logoAria: 'Логотип Sentry',
-    title: 'sentry-example-page',
-    description: {
-      prefix:
-        'Натисніть кнопку нижче, щоб переглянути приклад помилки на сторінці Sentry',
-      issuesLinkLabel: 'Issues Page',
-      middle: 'Більше деталей про налаштування Sentry можна знайти в',
-      docsLinkLabel: 'документації',
-    },
-    actions: {
-      throwSampleError: 'Згенерувати тестову помилку',
-    },
-    status: {
-      errorSent: 'Помилку надіслано в Sentry.',
-      connectivityBlocked:
-        'Схоже, мережеві запити до Sentry блокуються, тому помилки не будуть зафіксовані. Вимкніть ad-blocker, щоб завершити тест.',
-    },
-  },
   admin: {
     roles: {
       superadmin: 'Суперадміністратор',
@@ -1660,7 +1639,7 @@ const uk = {
       confirmed: 'Підтверджено',
       completed: 'Завершено',
       cancelled: 'Скасовано',
-      no_show: "Не з'явився",
+      no_show: 'Неявка',
     },
     appointmentsPage: {
       title: 'Управління записами',
@@ -3094,7 +3073,7 @@ const uk = {
           confirmed: 'Підтверджено',
           completed: 'Завершено',
           cancelled: 'Скасовано',
-          no_show: "Не з'явився",
+          no_show: 'Неявка',
         },
       },
       treatments: {
@@ -3584,6 +3563,7 @@ const uk = {
       },
       notSpecified: 'не вказано',
       durationHint: 'Впливає на терміновість запису',
+      resetPain: 'Скинути',
     },
   },
   stock: {

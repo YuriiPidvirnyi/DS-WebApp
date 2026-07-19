@@ -325,9 +325,9 @@ const pl = {
       'Skontaktuj się z nami w wygodny dla Ciebie sposób lub umów wizytę online',
     contactInfo: 'Informacje kontaktowe',
     responseTime: 'Odpowiadamy w ciągu 2 godzin',
-    viewOnMap: 'Zobacz na mapie →',
+    viewOnMap: 'Zobacz na mapie',
     ourLocation: 'Nasza lokalizacja',
-    openInGoogleMaps: 'Otwórz w Google Maps →',
+    openInGoogleMaps: 'Otwórz w Google Maps',
     map: {
       loadingTitle: 'Ładowanie mapy',
       loadingMessage: 'Pobieramy interaktywną mapę kliniki.',
@@ -964,6 +964,8 @@ const pl = {
     goToCase: 'Przejdź do przypadku',
     title: 'Dostępność',
     closePanel: 'Zamknij panel dostępności',
+    pinNav: 'Przypnij panel nawigacji',
+    unpinNav: 'Odepnij panel nawigacji',
   },
   accessibilityPanel: {
     regionLabel: 'Ustawienia dostępności',
@@ -1360,29 +1362,6 @@ const pl = {
       publicEndpoints: '• Publiczne endpointy: 60 żądań/minutę',
       contactForm: '• Formularz kontaktowy: 5 żądań/minutę',
       booking: '• Rezerwacja: 10 żądań/minutę',
-    },
-  },
-  sentryExamplePage: {
-    meta: {
-      title: 'sentry-example-page',
-      description: 'Testowa strona Sentry dla Twojej aplikacji Next.js.',
-    },
-    logoAria: 'Logo Sentry',
-    title: 'sentry-example-page',
-    description: {
-      prefix:
-        'Kliknij przycisk poniżej, aby zobaczyć przykładowy błąd na stronie Sentry',
-      issuesLinkLabel: 'Issues Page',
-      middle: 'Więcej informacji o konfiguracji Sentry znajdziesz w',
-      docsLinkLabel: 'dokumentacji',
-    },
-    actions: {
-      throwSampleError: 'Wywołaj przykładowy błąd',
-    },
-    status: {
-      errorSent: 'Błąd został wysłany do Sentry.',
-      connectivityBlocked:
-        'Wygląda na to, że żądania sieciowe do Sentry są blokowane, więc błędy nie będą przechwytywane. Wyłącz ad-blocker, aby dokończyć test.',
     },
   },
   admin: {
@@ -2971,7 +2950,7 @@ const pl = {
           confirmed: 'Potwierdzona',
           completed: 'Zakończona',
           cancelled: 'Anulowana',
-          no_show: 'Nieobecny',
+          no_show: 'Nieobecność',
         },
       },
       treatments: {
@@ -3463,6 +3442,7 @@ const pl = {
       },
       notSpecified: 'nie podano',
       durationHint: 'Wpływa na pilność wizyty',
+      resetPain: 'Wyczyść',
     },
   },
   routeMeta: {

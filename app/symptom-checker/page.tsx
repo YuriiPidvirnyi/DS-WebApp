@@ -276,16 +276,30 @@ export default function SymptomCheckerPage() {
 
         {/* Pain Level */}
         <div className="bg-white rounded-2xl shadow-xs border border-dental-secondary-200 p-6 mb-8">
-          <h2 className="text-xl font-semibold text-dental-dark mb-6">
-            {t('ai.symptomChecker.painLevel')}:{' '}
-            {painLevel === null ? (
-              <span className="text-dental-muted italic font-normal text-base">
-                {t('ai.symptomChecker.notSpecified')}
-              </span>
-            ) : (
-              <span className="text-dental-primary-ink">{painLevel}/10</span>
+          <div className="mb-6 flex items-center justify-between gap-3">
+            <h2 className="text-xl font-semibold text-dental-dark">
+              {t('ai.symptomChecker.painLevel')}:{' '}
+              {painLevel === null ? (
+                <span className="text-dental-muted italic font-normal text-base">
+                  {t('ai.symptomChecker.notSpecified')}
+                </span>
+              ) : (
+                <span className="text-dental-primary-ink">{painLevel}/10</span>
+              )}
+            </h2>
+            {/* А4: once the slider is touched, allow returning to the explicit
+                "not specified" state (a native range cannot itself hold null). */}
+            {painLevel !== null && (
+              <button
+                type="button"
+                onClick={() => setPainLevel(null)}
+                className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg px-3 text-sm font-medium text-dental-primary-600 transition-colors hover:bg-dental-primary-50 hover:text-dental-primary-700"
+                aria-label={t('ai.symptomChecker.resetPain')}
+              >
+                {t('ai.symptomChecker.resetPain')}
+              </button>
             )}
-          </h2>
+          </div>
 
           <input
             type="range"

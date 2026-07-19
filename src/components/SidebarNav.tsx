@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -15,6 +15,7 @@ import {
   Phone,
   MessageCircle,
   Accessibility,
+  Pin,
 } from 'lucide-react'
 
 function FacebookIcon({ className }: { className?: string }) {
@@ -131,19 +132,50 @@ const sidebarFont = {
 export default function SidebarNav() {
   const { t } = useTranslation()
   const pathname = usePathname()
-  const [expanded, setExpanded] = useState(false)
+  const [hovering, setHovering] = useState(false)
+  // Pin (2b): hover expands the rail temporarily; the pin locks it open. The
+  // choice persists in localStorage so it survives navigation/reload (finding 21).
+  const [pinned, setPinned] = useState(false)
   const [activePanel, setActivePanel] = useState<ActivePanel>(null)
   const collapseTimer = useRef<ReturnType<typeof setTimeout>>(null)
+
+  // Effective open state: the pointer is over the rail OR it is pinned. Deriving
+  // it (instead of a second state) means a pending collapse timer can never
+  // shut a pinned rail.
+  const expanded = hovering || pinned
+
+  // Restore the persisted pin state once on mount. SSR renders collapsed; the
+  // pinned user re-expands here (a window-guarded initializer would risk a
+  // hydration mismatch — a one-frame expand is the safe tradeoff).
+  useEffect(() => {
+    try {
+      if (localStorage.getItem('ds_sidebar_pinned') === '1') setPinned(true)
+    } catch {
+      // localStorage may be unavailable (private mode) — pin just won't persist.
+    }
+  }, [])
 
   const closePanel = useCallback(() => setActivePanel(null), [])
 
   const expand = useCallback(() => {
     if (collapseTimer.current) clearTimeout(collapseTimer.current)
-    setExpanded(true)
+    setHovering(true)
   }, [])
 
   const collapse = useCallback(() => {
-    collapseTimer.current = setTimeout(() => setExpanded(false), 300)
+    collapseTimer.current = setTimeout(() => setHovering(false), 300)
+  }, [])
+
+  const togglePin = useCallback(() => {
+    setPinned(prev => {
+      const next = !prev
+      try {
+        localStorage.setItem('ds_sidebar_pinned', next ? '1' : '0')
+      } catch {
+        // ignore persistence failure
+      }
+      return next
+    })
   }, [])
 
   const phone = CONTACT_INFO.phoneRaw
@@ -176,11 +208,14 @@ export default function SidebarNav() {
   const itemCls = (active = false) =>
     [
       'group flex items-center rounded-xl relative',
-      'h-10 min-w-0',
+      // 44px touch target (2b: «кожна крапка — ціль 44px»)
+      'h-11 min-w-0',
       expanded ? 'px-3' : 'justify-center',
       'transition-all duration-150',
       active
-        ? 'bg-dental-primary-50 text-dental-primary-ink shadow-xs'
+        ? // Active is double-encoded (2b): brand halo + tint + the left bar,
+          // not colour alone.
+          'bg-dental-primary-50 text-dental-primary-ink shadow-xs ring-1 ring-dental-primary-200'
         : 'text-dental-dark hover:bg-dental-secondary-50 hover:text-dental-primary-ink hover:translate-x-0.5',
     ].join(' ')
 
@@ -248,11 +283,12 @@ export default function SidebarNav() {
 
   return (
     <>
-      {/* Spacer keeps 64px reserved in the flex flow */}
-      <div className="hidden lg:block w-16 shrink-0" aria-hidden="true" />
+      {/* Spacer keeps 64px reserved in the flex flow. Rail hides <1280px (2b):
+          on tablet the top contact bar + header nav do its job (in concert with М5). */}
+      <div className="hidden xl:block w-16 shrink-0" aria-hidden="true" />
 
       <aside
-        className="hidden lg:flex flex-col absolute top-0 left-0 bottom-0 bg-white border-r border-dental-secondary-100 z-40 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-200"
+        className="hidden xl:flex flex-col absolute top-0 left-0 bottom-0 bg-white border-r border-dental-secondary-100 z-40 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-200"
         style={{
           width: expanded ? 240 : 64,
           transition: 'width 250ms cubic-bezier(0.4, 0, 0.2, 1)',
@@ -296,6 +332,37 @@ export default function SidebarNav() {
             }}
           />
         </Link>
+
+        {/* ─── Pin toggle (2b) — locks the expanded rail; only tabbable/visible
+              once expanded, persisted to localStorage ─── */}
+        <button
+          type="button"
+          onClick={togglePin}
+          aria-pressed={pinned}
+          aria-label={
+            pinned
+              ? t('accessibility.unpinNav', 'Відкріпити панель навігації')
+              : t('accessibility.pinNav', 'Закріпити панель навігації')
+          }
+          title={
+            pinned
+              ? t('accessibility.unpinNav', 'Відкріпити панель навігації')
+              : t('accessibility.pinNav', 'Закріпити панель навігації')
+          }
+          tabIndex={expanded ? 0 : -1}
+          className={`absolute right-2 top-2.5 z-10 flex h-11 w-11 items-center justify-center rounded-lg transition-all duration-200 ${
+            expanded ? 'opacity-100' : 'pointer-events-none opacity-0'
+          } ${
+            pinned
+              ? 'bg-dental-primary-100 text-dental-primary-ink'
+              : 'text-dental-muted hover:bg-dental-secondary-50 hover:text-dental-primary-ink'
+          }`}
+        >
+          <Pin
+            className={`h-4.5 w-4.5 transition-transform ${pinned ? 'rotate-45' : ''}`}
+            aria-hidden="true"
+          />
+        </button>
 
         {/* ─── Scrollable content area — vertically centered ─── */}
         <div className="flex-1 flex flex-col justify-evenly py-2 min-h-0">
@@ -401,7 +468,7 @@ export default function SidebarNav() {
                   rel="noopener noreferrer"
                   className={[
                     'group flex items-center rounded-xl relative',
-                    'h-10 min-w-0',
+                    'h-11 min-w-0',
                     expanded ? 'px-3' : 'justify-center',
                     'text-dental-muted hover:text-dental-primary-ink hover:bg-dental-secondary-50 hover:translate-x-0.5',
                     'transition-all duration-150',
@@ -440,10 +507,17 @@ export default function SidebarNav() {
       {/* ─── Panel overlay (backdrop + single active panel) ─── */}
       {activePanel && (
         <>
-          {/* Backdrop — click to close */}
+          {/* Backdrop. An open conversation (chat-human / chat-ai) must NOT be
+              dismissed by an accidental outside click (Ч3) — it closes only via
+              its X button or Escape. The chooser and accessibility panels have
+              no conversation to lose, so they still close on backdrop click. */}
           <div
             className="fixed inset-0 z-40 bg-black/10 backdrop-blur-[2px] transition-opacity"
-            onClick={closePanel}
+            onClick={
+              activePanel === 'chat-human' || activePanel === 'chat-ai'
+                ? undefined
+                : closePanel
+            }
             aria-hidden="true"
           />
 

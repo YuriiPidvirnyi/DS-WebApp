@@ -313,8 +313,9 @@ const Header = memo(() => {
                 })}
               </div>
 
-              {/* Messengers */}
-              <div className="mt-3 pt-3 border-t border-dental-secondary-100 space-y-1">
+              {/* Messengers — mobile only (М5): on tablet the top contact bar
+                  is the single contact channel, so these redundant links drop. */}
+              <div className="sm:hidden mt-3 pt-3 border-t border-dental-secondary-100 space-y-1">
                 <a
                   href={`tel:${CONTACT_INFO.phoneRaw}`}
                   className="flex items-center gap-3 px-4 py-3 rounded-xl text-dental-dark hover:text-dental-primary-ink hover:bg-dental-secondary-50 transition-colors"
