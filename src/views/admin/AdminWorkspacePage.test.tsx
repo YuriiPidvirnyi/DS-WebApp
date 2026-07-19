@@ -170,6 +170,25 @@ describe('AdminWorkspacePage (2e doctor workstation)', () => {
     ).not.toBeInTheDocument()
   })
 
+  it('deselects on a failed act lookup so no duplicate act can be created (review #4)', async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+      json: async () => ({ success: false }),
+    }) as unknown as typeof fetch
+    render(<AdminWorkspacePage />)
+    fireEvent.click(await screen.findByText('Іван Петренко'))
+    // Failed lookup → error surfaced + editor falls back to the select hint
+    // instead of presenting a blank draft (which could duplicate an act).
+    await waitFor(() => expect(showError).toHaveBeenCalled())
+    expect(
+      screen.getByText('admin.workspacePage.selectHint')
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByText('admin.workspacePage.saveDraft')
+    ).not.toBeInTheDocument()
+  })
+
   // A method-aware fetch: the openAct lookup (GET) yields no existing act, POST
   // mints a new draft id, PATCH signs it. Lets us assert the real save/sign path
   // instead of the always-empty stub from beforeEach.

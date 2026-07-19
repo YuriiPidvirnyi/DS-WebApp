@@ -189,6 +189,16 @@ export default function AdminWorkspacePage() {
     void load()
   }, [load])
 
+  // The live "Йде прийом" badge derives from the wall clock, which is only
+  // re-read on render — without a periodic nudge an appointment would never
+  // flip to/from live on its own while the page sits open. Tick every minute
+  // (badge granularity is start/end of a slot, so sub-minute isn't needed).
+  const [, setClockTick] = useState(0)
+  useEffect(() => {
+    const id = setInterval(() => setClockTick(t => t + 1), 60_000)
+    return () => clearInterval(id)
+  }, [])
+
   // Fresh clock each render so the "in progress" indicator reflects the wall time.
   const now = new Date()
   const nowMin = now.getHours() * 60 + now.getMinutes()
