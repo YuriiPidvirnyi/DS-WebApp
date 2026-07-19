@@ -119,7 +119,7 @@ export default function ForgotPasswordPage() {
         <div className="bg-white shadow-soft rounded-2xl p-6 sm:p-8">
           {sent ? (
             <div className="space-y-4">
-              <div className="p-3 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm">
+              <div className="p-3 bg-status-success-100 border border-dental-success/30 rounded-xl text-status-success-700 text-sm">
                 <p className="font-semibold">
                   {tx(
                     'auth.forgotPassword.successTitle',
@@ -145,7 +145,7 @@ export default function ForgotPasswordPage() {
           ) : (
             <form onSubmit={handleSubmit}>
               {expired && !error && (
-                <div className="mb-6 p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-sm">
+                <div className="mb-6 p-3 bg-status-warning-100 border border-dental-warning/30 rounded-xl text-status-warning-700 text-sm">
                   {tx(
                     'auth.forgotPassword.expiredNotice',
                     'Термін дії посилання минув. Введіть email, щоб отримати нове.'
@@ -153,7 +153,7 @@ export default function ForgotPasswordPage() {
                 </div>
               )}
               {error && (
-                <div className="mb-6 p-3 bg-dental-error-light border border-red-200 rounded-xl text-dental-error-dark text-sm">
+                <div className="mb-6 p-3 bg-dental-error-light border border-dental-error/20 rounded-xl text-dental-error-dark text-sm">
                   {error}
                 </div>
               )}
@@ -178,7 +178,7 @@ export default function ForgotPasswordPage() {
                     )}
                     required
                     autoComplete="email"
-                    className="w-full text-sm text-dental-dark placeholder:text-dental-text-light outline-hidden bg-transparent"
+                    className="w-full text-sm text-dental-dark placeholder:text-dental-muted outline-hidden bg-transparent"
                   />
                 </div>
               </div>
@@ -186,7 +186,7 @@ export default function ForgotPasswordPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:bg-gray-400 text-white font-semibold text-sm rounded-xl transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-400"
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:bg-dental-secondary-400 text-white font-semibold text-sm rounded-xl transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-400"
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -204,7 +204,7 @@ export default function ForgotPasswordPage() {
             <p className="text-center mt-6 text-sm text-dental-muted">
               <Link
                 href="/auth/login"
-                className="font-semibold text-dental-primary-600 hover:text-dental-primary-700 transition-colors"
+                className="font-semibold text-dental-primary-ink hover:text-dental-primary-700 transition-colors"
               >
                 {tx('auth.forgotPassword.backToLogin', FALLBACK.backToLogin)}
               </Link>

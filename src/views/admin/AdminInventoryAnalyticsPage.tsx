@@ -43,14 +43,15 @@ const ResponsiveContainer = dynamic(
   { ssr: false }
 )
 
+/* Тональна шкала бренду (Ф-1): 600/500/300/900 + secondary */
 const COLORS = [
-  '#5A8A94',
-  '#D1CAC0',
-  '#2C3E42',
-  '#AECED3',
-  '#8B6F5E',
-  '#6B9CA6',
-  '#E8E0D6',
+  '#3f6f79',
+  '#7ba8b0',
+  '#aeced3',
+  '#2a3c40',
+  '#d1cac0',
+  '#c5dde1',
+  '#ebe7e1',
 ]
 
 const CATEGORY_KEYS: Record<string, string> = {
@@ -130,7 +131,7 @@ export default function AdminInventoryAnalyticsPage() {
   if (error || !data) {
     return (
       <div className="space-y-4 p-4">
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+        <div className="rounded-lg border border-dental-error/20 bg-status-error-100 px-4 py-3 text-sm text-status-error-700">
           {error || t('common.error')}
         </div>
         <Button onClick={load} variant="outline">
@@ -203,8 +204,8 @@ export default function AdminInventoryAnalyticsPage() {
           value={String(stockSummary.lowStockCount)}
           color={
             stockSummary.lowStockCount > 0
-              ? 'text-red-600 bg-red-50'
-              : 'text-green-600 bg-green-50'
+              ? 'text-status-error-700 bg-status-error-100'
+              : 'text-status-success-700 bg-status-success-100'
           }
         />
         <KPICard
@@ -217,7 +218,7 @@ export default function AdminInventoryAnalyticsPage() {
           icon={<ShoppingCart className="h-6 w-6" />}
           label={t('admin.inventory.kpi.pendingOrders')}
           value={String(stockSummary.pendingOrders)}
-          color="text-violet-600 bg-violet-50"
+          color="text-dental-primary-ink bg-dental-primary-50"
         />
       </div>
 
@@ -229,7 +230,7 @@ export default function AdminInventoryAnalyticsPage() {
             {t('admin.inventory.charts.spendingByCategory')}
           </h2>
           {pieData.length === 0 ? (
-            <p className="py-8 text-center text-dental-text-light">
+            <p className="py-8 text-center text-dental-muted">
               {t('admin.inventory.charts.noData')}
             </p>
           ) : (
@@ -271,7 +272,7 @@ export default function AdminInventoryAnalyticsPage() {
             {t('admin.inventory.charts.topConsumed')}
           </h2>
           {topConsumed.length === 0 ? (
-            <p className="py-8 text-center text-dental-text-light">
+            <p className="py-8 text-center text-dental-muted">
               {t('admin.inventory.charts.noData')}
             </p>
           ) : (
@@ -290,7 +291,7 @@ export default function AdminInventoryAnalyticsPage() {
                     tick={{ fontSize: 11 }}
                   />
                   <Tooltip />
-                  <Bar dataKey="total" fill="#5A8A94" radius={[0, 4, 4, 0]} />
+                  <Bar dataKey="total" fill="#3f6f79" radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -309,16 +310,16 @@ export default function AdminInventoryAnalyticsPage() {
           <table className="w-full text-sm">
             <thead className="bg-dental-secondary-50">
               <tr>
-                <th className="px-4 py-2 text-left text-xs font-semibold uppercase text-dental-text-light">
+                <th className="px-4 py-2 text-left text-xs font-semibold uppercase text-dental-muted">
                   {t('admin.inventory.stockColumns.material')}
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-semibold uppercase text-dental-text-light">
+                <th className="px-4 py-2 text-left text-xs font-semibold uppercase text-dental-muted">
                   {t('admin.inventory.stockColumns.category')}
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-semibold uppercase text-dental-text-light">
+                <th className="px-4 py-2 text-left text-xs font-semibold uppercase text-dental-muted">
                   {t('admin.inventory.stockColumns.stock')}
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-semibold uppercase text-dental-text-light">
+                <th className="px-4 py-2 text-left text-xs font-semibold uppercase text-dental-muted">
                   {t('admin.inventory.stockColumns.level')}
                 </th>
               </tr>
@@ -331,13 +332,13 @@ export default function AdminInventoryAnalyticsPage() {
                 return (
                   <tr
                     key={i}
-                    className={`border-t border-dental-secondary-100 ${low ? 'bg-red-50/60' : ''}`}
+                    className={`border-t border-dental-secondary-100 ${low ? 'bg-status-error-100/60' : ''}`}
                   >
                     <td className="px-4 py-2 font-medium text-dental-dark">
                       <span className="inline-flex items-center gap-1">
                         {s.name}
                         {low && (
-                          <AlertTriangle className="h-3.5 w-3.5 text-red-500" />
+                          <AlertTriangle className="h-3.5 w-3.5 text-dental-error" />
                         )}
                       </span>
                     </td>
@@ -354,10 +355,10 @@ export default function AdminInventoryAnalyticsPage() {
                         <div
                           className={`h-full rounded-full transition-all ${
                             pct < 50
-                              ? 'bg-red-500'
+                              ? 'bg-dental-error'
                               : pct < 80
-                                ? 'bg-amber-500'
-                                : 'bg-emerald-500'
+                                ? 'bg-dental-warning'
+                                : 'bg-dental-success'
                           }`}
                           style={{ width: `${pct}%` }}
                         />

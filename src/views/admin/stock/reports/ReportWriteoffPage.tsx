@@ -93,7 +93,7 @@ export default function ReportWriteoffPage() {
                 'writeoff.csv'
               )
             }
-            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-sm text-dental-text hover:bg-gray-50"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm text-dental-text hover:bg-dental-secondary-50"
           >
             <Download className="w-4 h-4" />
             CSV
@@ -102,7 +102,7 @@ export default function ReportWriteoffPage() {
       </div>
 
       {error && (
-        <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+        <div className="mb-4 rounded-lg bg-status-error-100 border border-dental-error/20 p-4 text-sm text-status-error-700">
           {error}
         </div>
       )}
@@ -116,7 +116,7 @@ export default function ReportWriteoffPage() {
           <div className="rounded-xl border bg-white overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
+                <tr className="border-b border-dental-secondary-200 bg-dental-secondary-50">
                   <th className="text-left px-4 py-3 font-medium text-dental-text">
                     Документ
                   </th>

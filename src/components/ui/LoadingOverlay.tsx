@@ -32,7 +32,7 @@ export default function LoadingOverlay({
     >
       <div className="flex flex-col items-center gap-3">
         <Spinner />
-        <p className="text-sm text-gray-700">{text}</p>
+        <p className="text-sm text-dental-text">{text}</p>
       </div>
     </div>
   )

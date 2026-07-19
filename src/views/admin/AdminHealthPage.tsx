@@ -29,18 +29,19 @@ interface RawHealthPayload {
 }
 
 const STATUS_ICON: Record<ServiceStatus, ReactElement> = {
-  ok: <CheckCircle className="h-5 w-5 text-green-500" />,
-  degraded: <MinusCircle className="h-5 w-5 text-yellow-500" />,
-  error: <XCircle className="h-5 w-5 text-red-500" />,
+  ok: <CheckCircle className="h-5 w-5 text-dental-success" />,
+  degraded: <MinusCircle className="h-5 w-5 text-dental-warning" />,
+  error: <XCircle className="h-5 w-5 text-dental-error" />,
   unknown: <MinusCircle className="h-5 w-5 text-dental-muted" />,
 }
 
 const STATUS_BADGE_CLASS: Record<ServiceStatus, string> = {
-  ok: 'bg-green-50 text-green-700 border-green-200',
-  degraded: 'bg-yellow-50 text-yellow-700 border-yellow-200',
-  error: 'bg-red-50 text-red-700 border-red-200',
+  ok: 'bg-status-success-100 text-status-success-700 border-dental-success/30',
+  degraded:
+    'bg-status-warning-100 text-status-warning-700 border-dental-warning/30',
+  error: 'bg-status-error-100 text-status-error-700 border-dental-error/20',
   unknown:
-    'bg-dental-secondary-50 text-dental-text-light border-dental-secondary-200',
+    'bg-dental-secondary-50 text-dental-muted border-dental-secondary-200',
 }
 
 const STATUS_LABEL: Record<ServiceStatus, string> = {
@@ -177,7 +178,7 @@ export default function AdminHealthPage() {
             {t('admin.health.title', 'Service Health')}
           </h1>
           {checkedAt && (
-            <p className="text-sm text-dental-text-light mt-0.5">
+            <p className="text-sm text-dental-muted mt-0.5">
               {t('admin.health.lastChecked', 'Last checked')}: {checkedAt}
             </p>
           )}
@@ -194,7 +195,7 @@ export default function AdminHealthPage() {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-xl border border-dental-error/20 bg-status-error-100 px-4 py-3 text-sm text-status-error-700">
           {error}
         </div>
       )}
@@ -202,20 +203,22 @@ export default function AdminHealthPage() {
       {!loading && services.length > 0 && (
         <div
           className={`rounded-xl border px-4 py-3 text-sm font-medium flex items-center gap-2 ${
-            allOk ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+            allOk
+              ? 'bg-status-success-100 border-dental-success/30'
+              : 'bg-status-error-100 border-dental-error/20'
           }`}
         >
           {allOk ? (
             <>
-              <CheckCircle className="h-4 w-4 text-green-500" />
-              <span className="text-green-700">
+              <CheckCircle className="h-4 w-4 text-dental-success" />
+              <span className="text-status-success-700">
                 {t('admin.health.allOk', 'All services operational')}
               </span>
             </>
           ) : (
             <>
-              <XCircle className="h-4 w-4 text-red-500" />
-              <span className="text-red-700">
+              <XCircle className="h-4 w-4 text-dental-error" />
+              <span className="text-status-error-700">
                 {t('admin.health.degraded', 'One or more services have issues')}
               </span>
             </>

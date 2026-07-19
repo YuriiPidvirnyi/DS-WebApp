@@ -271,7 +271,7 @@ export default function AuthCallbackPage() {
             <div className="space-y-4">
               <div
                 role="alert"
-                className="p-3 bg-dental-error-light border border-red-200 rounded-xl text-dental-error-dark text-sm"
+                className="p-3 bg-dental-error-light border border-dental-error/20 rounded-xl text-dental-error-dark text-sm"
               >
                 {error}
               </div>

@@ -3,7 +3,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { ChevronLeft, Loader2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useCSRF } from '@/hooks/useCSRF'
+import { useConfirm } from '@/hooks/useConfirm'
 import type {
   StockWarehousePermission,
   StockWarehouse,
@@ -36,7 +38,9 @@ const FLAG_LABELS: Record<keyof WarehousePermissionFlags, string> = {
 }
 
 export default function AdminStockPermissionsPage() {
+  const { t } = useTranslation()
   const { token: csrfToken } = useCSRF()
+  const { confirm, confirmDialog } = useConfirm()
   const [warehouses, setWarehouses] = useState<StockWarehouse[]>([])
   const [permissions, setPermissions] = useState<StockWarehousePermission[]>([])
   const [selectedWarehouse, setSelectedWarehouse] = useState<string>('')
@@ -102,7 +106,15 @@ export default function AdminStockPermissionsPage() {
   }
 
   async function removePermissions(userId: string, warehouseId: string) {
-    if (!confirm('Видалити права?')) return
+    if (
+      !(await confirm({
+        title: t('admin.stock.confirm.removePermissions.title'),
+        description: t('admin.stock.confirm.removePermissions.description'),
+        confirmLabel: t('admin.stock.confirm.removePermissions.action'),
+        severity: 'significant',
+      }))
+    )
+      return
     const res = await fetch(
       `/api/stock/permissions?userId=${userId}&warehouseId=${warehouseId}`,
       {
@@ -132,7 +144,7 @@ export default function AdminStockPermissionsPage() {
           <select
             value={selectedWarehouse}
             onChange={e => setSelectedWarehouse(e.target.value)}
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
+            className="rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
           >
             <option value="">Всі склади</option>
             {warehouses.map(wh => (
@@ -150,7 +162,7 @@ export default function AdminStockPermissionsPage() {
         )}
 
         {error && (
-          <div className="rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+          <div className="rounded-lg bg-status-error-100 border border-dental-error/20 p-4 text-sm text-status-error-700">
             {error}
           </div>
         )}
@@ -182,13 +194,13 @@ export default function AdminStockPermissionsPage() {
                     onClick={() =>
                       setEditEntry({ userId: p.user_id, flags: p.flags })
                     }
-                    className="rounded px-3 py-1.5 text-xs border hover:bg-gray-50"
+                    className="rounded px-3 py-1.5 text-xs border hover:bg-dental-secondary-50"
                   >
                     Редагувати
                   </button>
                   <button
                     onClick={() => removePermissions(p.user_id, p.warehouse_id)}
-                    className="rounded px-3 py-1.5 text-xs text-red-600 border border-red-200 hover:bg-red-50"
+                    className="rounded px-3 py-1.5 text-xs text-status-error-700 border border-dental-error/20 hover:bg-status-error-100"
                   >
                     Видалити
                   </button>
@@ -209,6 +221,8 @@ export default function AdminStockPermissionsPage() {
           onSave={savePermissions}
         />
       )}
+
+      {confirmDialog}
     </>
   )
 }

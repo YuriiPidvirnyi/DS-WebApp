@@ -126,7 +126,7 @@ function VideoCard({
         )}
 
         {/* Overlay */}
-        <div className="absolute inset-0 bg-slate-900/50" />
+        <div className="absolute inset-0 bg-dental-dark/50" />
 
         {/* Play button */}
         <button
@@ -142,9 +142,9 @@ function VideoCard({
           }
         >
           {isPlaying ? (
-            <Pause className="h-6 w-6 text-slate-900" />
+            <Pause className="h-6 w-6 text-dental-dark" />
           ) : (
-            <Play className="h-6 w-6 text-slate-900 ml-1" />
+            <Play className="h-6 w-6 text-dental-dark ml-1" />
           )}
         </button>
 
@@ -172,13 +172,16 @@ function VideoCard({
           {/* Rating */}
           <div className="flex items-center gap-1 mb-3">
             {Array.from({ length: testimonial.rating }).map((_, i) => (
-              <Star key={i} className="h-4 w-4 text-amber-400 fill-amber-400" />
+              <Star
+                key={i}
+                className="h-4 w-4 text-dental-warning fill-dental-warning"
+              />
             ))}
           </div>
 
           {/* Quote */}
           <div className="flex gap-2 mb-4">
-            <Quote className="h-5 w-5 text-teal-400 shrink-0 mt-0.5" />
+            <Quote className="h-5 w-5 text-dental-primary-400 shrink-0 mt-0.5" />
             <p className="text-white text-sm md:text-base leading-relaxed line-clamp-3">
               {t(testimonial.quoteKey)}
             </p>
@@ -219,17 +222,17 @@ export default function VideoTestimonials() {
   return (
     <section
       ref={ref}
-      className="py-24 bg-slate-900 text-white overflow-hidden"
+      className="py-24 bg-dental-dark text-white overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <AnimatedSection isVisible={isVisible} className="text-center mb-16">
-          <span className="inline-block text-sm font-semibold text-teal-400 tracking-wider uppercase mb-4">
+          <span className="inline-block text-sm font-semibold text-dental-primary-400 tracking-wider uppercase mb-4">
             {t('videoTestimonials.sectionLabel')}
           </span>
           <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
             {t('videoTestimonials.title')}
           </h2>
-          <p className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-dental-primary-300 max-w-3xl mx-auto leading-relaxed">
             {t('videoTestimonials.subtitle')}
           </p>
         </AnimatedSection>
@@ -274,7 +277,7 @@ export default function VideoTestimonials() {
                   onClick={() => setActiveIndex(index)}
                   className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                     index === activeIndex
-                      ? 'w-8 bg-teal-500'
+                      ? 'w-8 bg-dental-primary-500'
                       : 'bg-white/30 hover:bg-white/50'
                   }`}
                   aria-label={`${t('videoTestimonials.goToReview')} ${index + 1}`}
@@ -288,26 +291,34 @@ export default function VideoTestimonials() {
         <AnimatedSection isVisible={isVisible} delay={400}>
           <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 py-8 border-t border-white/10">
             <div className="text-center">
-              <p className="text-4xl font-bold text-teal-400 mb-2">5000+</p>
-              <p className="text-slate-400">
+              <p className="text-4xl font-bold text-dental-primary-400 mb-2">
+                5000+
+              </p>
+              <p className="text-dental-primary-300">
                 {t('videoTestimonials.stats.satisfiedPatients')}
               </p>
             </div>
             <div className="text-center">
-              <p className="text-4xl font-bold text-teal-400 mb-2">98%</p>
-              <p className="text-slate-400">
+              <p className="text-4xl font-bold text-dental-primary-400 mb-2">
+                98%
+              </p>
+              <p className="text-dental-primary-300">
                 {t('videoTestimonials.stats.recommendUs')}
               </p>
             </div>
             <div className="text-center">
-              <p className="text-4xl font-bold text-teal-400 mb-2">4.9</p>
-              <p className="text-slate-400">
+              <p className="text-4xl font-bold text-dental-primary-400 mb-2">
+                4.9
+              </p>
+              <p className="text-dental-primary-300">
                 {t('videoTestimonials.stats.googleRating')}
               </p>
             </div>
             <div className="text-center">
-              <p className="text-4xl font-bold text-teal-400 mb-2">10+</p>
-              <p className="text-slate-400">
+              <p className="text-4xl font-bold text-dental-primary-400 mb-2">
+                10+
+              </p>
+              <p className="text-dental-primary-300">
                 {t('videoTestimonials.stats.yearsExperience')}
               </p>
             </div>

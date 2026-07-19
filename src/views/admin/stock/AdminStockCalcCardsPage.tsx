@@ -68,12 +68,12 @@ export default function AdminStockCalcCardsPage() {
     if (!row.service_calculation_cards?.length) return null
     const card = row.service_calculation_cards[0]
     return card.is_active ? (
-      <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+      <span className="inline-flex items-center gap-1 rounded-full bg-status-success-100 px-2 py-0.5 text-xs font-medium text-status-success-700">
         <CheckCircle2 className="w-3 h-3" />
         Активна
       </span>
     ) : (
-      <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">
+      <span className="rounded-full bg-dental-secondary-100 px-2 py-0.5 text-xs font-medium text-dental-muted">
         Вимкнена
       </span>
     )
@@ -111,7 +111,7 @@ export default function AdminStockCalcCardsPage() {
               setPage(1)
             }}
             placeholder="Пошук послуги..."
-            className="w-full rounded-lg border border-gray-300 pl-9 pr-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
+            className="w-full rounded-lg border border-dental-secondary-300 pl-9 pr-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
           />
         </div>
 
@@ -123,7 +123,9 @@ export default function AdminStockCalcCardsPage() {
             </div>
           )}
           {error && (
-            <div className="p-4 text-sm text-red-700 bg-red-50">{error}</div>
+            <div className="p-4 text-sm text-status-error-700 bg-status-error-100">
+              {error}
+            </div>
           )}
           {!loading && !error && services.length === 0 && (
             <p className="text-center text-dental-text py-12">
@@ -133,7 +135,7 @@ export default function AdminStockCalcCardsPage() {
           {!loading && services.length > 0 && (
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
+                <tr className="border-b border-dental-secondary-200 bg-dental-secondary-50">
                   <th className="text-left px-4 py-3 font-medium text-dental-text">
                     Послуга
                   </th>
@@ -151,7 +153,7 @@ export default function AdminStockCalcCardsPage() {
                 {services.map(row => (
                   <tr
                     key={row.id}
-                    className="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors"
+                    className="border-b border-dental-secondary-100 last:border-0 hover:bg-dental-secondary-50 transition-colors"
                   >
                     <td className="px-4 py-3 text-dental-dark">
                       <div className="flex items-center gap-2">
@@ -177,7 +179,7 @@ export default function AdminStockCalcCardsPage() {
                               row.service_calculation_cards?.[0]?.id ?? null,
                           })
                         }
-                        className="rounded-lg border border-dental-text/20 px-3 py-1.5 text-xs font-medium text-dental-text hover:bg-gray-100 transition-colors"
+                        className="rounded-lg border border-dental-text/20 px-3 py-1.5 text-xs font-medium text-dental-text hover:bg-dental-secondary-100 transition-colors"
                       >
                         Редагувати
                       </button>
@@ -195,7 +197,7 @@ export default function AdminStockCalcCardsPage() {
             <button
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 disabled:opacity-40 hover:bg-gray-50"
+              className="px-3 py-1.5 text-sm rounded-lg border border-dental-secondary-300 disabled:opacity-40 hover:bg-dental-secondary-50"
             >
               ←
             </button>
@@ -205,7 +207,7 @@ export default function AdminStockCalcCardsPage() {
             <button
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 disabled:opacity-40 hover:bg-gray-50"
+              className="px-3 py-1.5 text-sm rounded-lg border border-dental-secondary-300 disabled:opacity-40 hover:bg-dental-secondary-50"
             >
               →
             </button>

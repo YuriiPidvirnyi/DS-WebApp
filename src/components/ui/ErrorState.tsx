@@ -19,8 +19,8 @@ export function ErrorState({
     <div
       className={`bg-white rounded-2xl p-10 text-center shadow-xs border border-dental-secondary-100 ${className ?? ''}`}
     >
-      <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-        <AlertTriangle className="w-8 h-8 text-red-500" />
+      <div className="w-16 h-16 bg-status-error-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <AlertTriangle className="w-8 h-8 text-dental-error" />
       </div>
       <h2 className="text-lg font-semibold text-dental-dark mb-2">{title}</h2>
       {description && (

@@ -285,6 +285,12 @@ const en = {
         duration: '18 months',
       },
     },
+    beforePlaceholder: 'BEFORE photo — case “{{case}}”',
+    afterPlaceholder: 'AFTER photo — case “{{case}}”',
+    keyboardHint: '←/→ step 5% · Home/End — edges',
+    sliderAria:
+      'Comparison slider: {{value}}%. Arrows — step 5%, Home/End — edges',
+    selectCase: 'Select case',
   },
   labels: {
     before: 'Before',
@@ -353,9 +359,8 @@ const en = {
       },
     },
     emergency: {
-      title: '🚨 Emergency Care',
+      title: 'Emergency Care',
       description: 'In case of acute pain or injury, contact us immediately:',
-      phone: '📞 +380 50 455 47 74',
       availability: 'We accept emergency calls 24/7',
     },
     faq: {
@@ -443,11 +448,13 @@ const en = {
         'Modern Equipment',
         'Qualified Doctors',
       ],
+      photoAlt: 'A happy Dental Story patient smiling after a visit',
     },
     features: {
       title: 'Why Patients Choose Dental Story',
       subtitle:
         'We combine professionalism, modern technologies and an individual approach to achieve the best treatment results',
+      kicker: 'Why us',
     },
     services: {
       title: 'Full Range of Services',
@@ -1302,6 +1309,11 @@ const en = {
       submit: 'Book now',
       cooldown: 'Wait {{seconds}} s',
       submittingOverlay: 'Submitting request...',
+      nextPersonal: 'Next: your details',
+      nextSummary: 'Next: confirmation',
+      panelTitle: 'Your appointment',
+      panelNote:
+        'Payment at the clinic. Rescheduling or cancelling is free up to 24 hours before the visit.',
     },
     errors: {
       cooldown: 'Too many submissions. Try again in {{seconds}} s.',
@@ -1323,7 +1335,6 @@ const en = {
       addToCalendar: 'Add to calendar',
       calendarTitle: 'Visit: {{service}}',
       calendarDescription: 'Booking #{{ref}}. Patient: {{name}}',
-      calendarLocation: 'Dental Studio',
     },
   },
   apiDocsPage: {
@@ -1432,6 +1443,12 @@ const en = {
       settings: 'Settings',
       users: 'Users',
       stock: 'Inventory v2',
+      groups: {
+        operations: 'Operations',
+        communications: 'Communications',
+        inventory: 'Inventory',
+        system: 'System',
+      },
     },
     login: {
       title: 'Admin Login',
@@ -1457,6 +1474,7 @@ const en = {
     },
     layout: {
       panel: 'Admin Panel',
+      patientCabinet: 'Patient cabinet',
       logout: 'Log Out',
       backToSite: 'Back to site',
       systemOnline: 'System online',
@@ -1533,6 +1551,8 @@ const en = {
         today: 'Today',
         upcoming: 'Upcoming',
         past: 'Past',
+        dateSelectAria: 'Filter by date',
+        statusSelectAria: 'Filter by status',
       },
       bulk: {
         selected: 'Selected: {{count}}',
@@ -1614,6 +1634,7 @@ const en = {
         loadFailedFallback: 'Failed to load analytics.',
         chartFailed: 'This section failed to load.',
       },
+      periodSelectAria: 'Select period',
     },
     patientManagement: {
       title: 'Patient Management',
@@ -1791,6 +1812,7 @@ const en = {
         showMessage: 'Show message',
         adminNote: 'Admin note',
         notesPlaceholder: 'Add a note…',
+        statusSelectAria: 'Change inquiry status',
       },
       confirmations: {
         bulkChange: 'Apply bulk update to {{count}} inquiries?',
@@ -1860,8 +1882,8 @@ const en = {
       blankChild: 'Blank (child)',
     },
     serviceStatuses: {
-      active: 'active',
-      inactive: 'inactive',
+      active: 'Active',
+      inactive: 'Inactive',
     },
     servicesPage: {
       title: 'Service Management',
@@ -1951,8 +1973,8 @@ const en = {
       },
     },
     doctorStatuses: {
-      active: 'active',
-      inactive: 'inactive',
+      active: 'Active',
+      inactive: 'Inactive',
     },
     doctorsPage: {
       title: 'Doctor Management',
@@ -2131,7 +2153,7 @@ const en = {
           deleted: 'Record deleted ({{count}} fields)',
           changed: 'Fields changed: {{count}}',
         },
-        nullValue: 'null',
+        nullValue: '—',
         errors: {
           supabaseUnavailable: 'Supabase is not configured.',
           loadFailed:
@@ -2401,6 +2423,9 @@ const en = {
       editAria: 'Edit',
       deleteAria: 'Delete',
       removeLineAria: 'Remove line',
+      printAria: 'Print act',
+      draftNotPrintable: 'Drafts cannot be printed — sign the act to print it.',
+      loadError: 'Failed to load treatment records',
     },
     users: {
       title: 'User Management',
@@ -2462,6 +2487,52 @@ const en = {
         materials: 'Add materials to inventory',
         appointment: 'Make a test booking',
         workingHours: 'Configure working hours',
+      },
+    },
+    stock: {
+      confirm: {
+        postDocument: {
+          title: 'Post this document?',
+          description:
+            'Posting updates warehouse balances from the document lines; editing becomes unavailable.',
+          action: 'Post',
+        },
+        deleteDocument: {
+          title: 'Delete this draft document?',
+          description:
+            'The draft and all of its lines will be deleted permanently.',
+          action: 'Delete',
+        },
+        archiveDirectoryItem: {
+          title: 'Archive this directory item?',
+          description:
+            'The item will disappear from pickers but remain in document history.',
+          action: 'Archive',
+        },
+        archiveWarehouse: {
+          title: 'Archive this warehouse?',
+          description:
+            'The warehouse becomes unavailable for new documents; movement history is kept.',
+          action: 'Archive',
+        },
+        deactivateMaterial: {
+          title: 'Deactivate this material?',
+          description:
+            'The material disappears from the catalog for new documents; stock and history are kept.',
+          action: 'Deactivate',
+        },
+        postAudit: {
+          title: 'Post this inventory audit?',
+          description:
+            'Stock balances will be adjusted to the counted quantities.',
+          action: 'Post',
+        },
+        removePermissions: {
+          title: 'Remove these access rights?',
+          description:
+            'The user will lose access to the stock operations granted by this entry.',
+          action: 'Remove',
+        },
       },
     },
   },
@@ -2551,7 +2622,6 @@ const en = {
       goHome: 'Go Home',
     },
     forgotPassword: {
-      expiredNotice: 'The link has expired. Enter your email to get a new one.',
       subtitle: 'Enter your email and we will send a password reset link.',
       emailLabel: 'Email',
       emailPlaceholder: 'your@email.com',
@@ -2564,6 +2634,7 @@ const en = {
         unavailable: 'Password recovery is temporarily unavailable',
         generic: 'Unable to send reset email. Please try again later.',
       },
+      expiredNotice: 'The link has expired. Enter your email to get a new one.',
     },
     resetPassword: {
       subtitle: 'Set a new password for your account.',
@@ -2582,6 +2653,17 @@ const en = {
         passwordsMismatch: 'Passwords do not match',
         passwordTooShort: 'Password must be at least 8 characters',
         generic: 'Unable to update password. Please try again.',
+      },
+    },
+    callback: {
+      loading: 'Finishing sign-in, please wait...',
+      goToLogin: 'Go to Sign In',
+      errors: {
+        invalidLink:
+          'This recovery link is incomplete or broken. Request a new one.',
+        unavailable: 'Authorization is temporarily unavailable',
+        sessionMissing: 'Could not activate session. Please sign in again.',
+        generic: 'Could not complete authorization. Please try again.',
       },
     },
     confirm: {
@@ -2606,16 +2688,10 @@ const en = {
         generic: 'The link is invalid or has expired. Request a new one.',
       },
     },
-    callback: {
-      loading: 'Finishing sign-in, please wait...',
-      goToLogin: 'Go to Sign In',
-      errors: {
-        invalidLink:
-          'This recovery link is incomplete or broken. Request a new one.',
-        unavailable: 'Authorization is temporarily unavailable',
-        sessionMissing: 'Could not activate session. Please sign in again.',
-        generic: 'Could not complete authorization. Please try again.',
-      },
+    split: {
+      welcomeBack: 'Welcome back to Dental Story',
+      welcomeNew: 'Welcome to Dental Story',
+      subtitle: 'Your visits, treatment history and documents — in one place.',
     },
   },
   cabinet: {
@@ -2710,6 +2786,7 @@ const en = {
       saveSuccess: 'Profile updated successfully!',
       errors: {
         saveFailed: 'Failed to save. Please try again later.',
+        invalidPhone: 'Invalid phone number format',
       },
       personalInfo: 'Personal information',
       contactInfo: 'Contact information',
@@ -2722,6 +2799,7 @@ const en = {
         'This will permanently delete your account and cancel all upcoming appointments. This cannot be undone.',
       downloading: 'Downloading...',
       deleting: 'Deleting...',
+      dateOfBirthPlaceholder: 'Select date of birth',
     },
     title: 'Patient Cabinet',
     profileTitle: 'My Profile',
@@ -2771,6 +2849,7 @@ const en = {
         confirmButton: 'Yes, delete my account',
         cancel: 'Cancel',
         deleting: 'Deleting...',
+        confirmWord: 'DELETE',
       },
       navLink: 'Settings',
     },
@@ -3009,7 +3088,6 @@ const en = {
     calendar: {
       title: 'Visit: {{service}}',
       description: "Booking #{{id}}. Don't forget to bring your documents!",
-      location: 'Dental Studio',
     },
     appointmentShort: 'Booking #{{id}}...',
     reminderTypes: {
@@ -3077,6 +3155,10 @@ const en = {
         'Thank you for your message! Our manager will contact you shortly. For quick contact, call: +380 68 232 38 38',
     },
     typing: 'Consultant is typing…',
+    minimizeChat: 'Minimize chat',
+    chooseChannel: 'Choose a contact channel:',
+    adminChannel: 'Message the administrator',
+    aiChannel: 'AI assistant',
   },
   pricing: {
     title: 'Transparent Pricing',
@@ -3147,6 +3229,7 @@ const en = {
     closedNow: 'Closed Now',
     opensAt: 'Opens at {{time}}',
     qualityGuarantee: 'Quality Guarantee',
+    googleReviews: '{{count}} reviews on Google',
   },
   hero: {
     badge: 'Modern Dentistry',
@@ -3358,6 +3441,8 @@ const en = {
           recommendation: 'URGENT! Call immediately for emergency appointment',
         },
       },
+      notSpecified: 'not specified',
+      durationHint: 'Affects booking urgency',
     },
   },
   routeMeta: {
@@ -3587,6 +3672,11 @@ const en = {
       docLocked: 'Document already posted',
       flagOff: 'Inventory v2 not enabled',
     },
+  },
+  confirmDialog: {
+    consequencesTitle: 'This will also remove',
+    typeToConfirm: 'To confirm, type',
+    irreversibleWarning: 'This action cannot be undone.',
   },
 } as const
 

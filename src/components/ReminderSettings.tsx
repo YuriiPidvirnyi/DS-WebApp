@@ -12,6 +12,7 @@ import {
   type ScheduledReminder,
 } from '@/services/reminders'
 import { createICSEvent, downloadICS } from '@/utils/calendar'
+import { SITE_INFO, CONTACT_INFO } from '@/utils/constants'
 import { formatDate, formatTime } from '@/utils/dateFormatter'
 import { Button } from './ui'
 import { withToast } from '@/utils/toast'
@@ -155,7 +156,7 @@ export default function ReminderSettings() {
             description: t('reminderSettings.calendar.description', {
               id: booking.id,
             }),
-            location: t('reminderSettings.calendar.location'),
+            location: `${SITE_INFO.name}, ${CONTACT_INFO.address.full}`,
             start: startLocal,
             end: endLocal,
             url: window.location.origin,
@@ -184,14 +185,14 @@ export default function ReminderSettings() {
 
   if (reminders.length === 0 && showSettings) {
     return (
-      <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+      <div className="p-4 bg-dental-secondary-50 border border-dental-secondary-200 rounded-lg">
         <div className="flex items-start gap-3">
-          <BellOff className="h-5 w-5 text-gray-500 shrink-0 mt-0.5" />
+          <BellOff className="h-5 w-5 text-dental-muted shrink-0 mt-0.5" />
           <div>
-            <h4 className="font-semibold text-gray-900">
+            <h4 className="font-semibold text-dental-dark">
               {t('reminderSettings.empty.title')}
             </h4>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-dental-muted mt-1">
               {t('reminderSettings.empty.description')}
             </p>
             <button
@@ -217,14 +218,14 @@ export default function ReminderSettings() {
           {t('reminderSettings.title')}
         </button>
       ) : (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+        <div className="bg-dental-secondary-50 border border-dental-secondary-200 rounded-lg p-4">
           <div className="flex justify-between items-center mb-3">
             <h3 className="text-lg font-semibold">
               {t('reminderSettings.title')}
             </h3>
             <button
               onClick={() => setShowSettings(false)}
-              className="text-sm text-gray-500 hover:text-gray-700"
+              className="text-sm text-dental-muted hover:text-dental-text"
             >
               {t('common.close')}
             </button>
@@ -235,7 +236,7 @@ export default function ReminderSettings() {
               ([appointmentId, reminders]) => (
                 <div
                   key={appointmentId}
-                  className="border-b border-gray-200 pb-3"
+                  className="border-b border-dental-secondary-200 pb-3"
                 >
                   <div className="flex justify-between items-start">
                     <div>
@@ -244,22 +245,22 @@ export default function ReminderSettings() {
                           id: appointmentId.substring(0, 8),
                         })}
                       </h4>
-                      <div className="text-sm text-gray-600 mt-1">
+                      <div className="text-sm text-dental-muted mt-1">
                         {reminders.map(reminder => (
                           <div
                             key={reminder.id}
                             className="flex items-center gap-2 mt-1"
                           >
-                            <span className="text-xs bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded">
+                            <span className="text-xs bg-dental-secondary-200 text-dental-text px-1.5 py-0.5 rounded">
                               {getReminderTypeLabel(reminder.type)}
                             </span>
                             <span>{formatReminderTime(reminder)}</span>
                             {reminder.sent ? (
-                              <span className="text-xs text-green-600">
+                              <span className="text-xs text-status-success-700">
                                 {t('reminderSettings.status.sent')}
                               </span>
                             ) : (
-                              <span className="text-xs text-gray-500">
+                              <span className="text-xs text-dental-muted">
                                 {t('reminderSettings.status.pending')}
                               </span>
                             )}
@@ -281,7 +282,7 @@ export default function ReminderSettings() {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="text-red-600 border-red-600 hover:bg-red-50"
+                        className="text-dental-error border-dental-error hover:bg-status-error-100"
                         onClick={() => handleDelete(reminders[0])}
                         disabled={loading}
                       >
@@ -291,7 +292,7 @@ export default function ReminderSettings() {
                   </div>
 
                   <div className="mt-2">
-                    <label className="text-sm text-gray-600 block mb-1">
+                    <label className="text-sm text-dental-muted block mb-1">
                       {t('reminderSettings.receiveLabel')}
                     </label>
                     <div className="flex gap-2">
@@ -304,7 +305,7 @@ export default function ReminderSettings() {
                           className={`px-2 py-1 text-xs rounded-full border ${
                             reminders[0].contactMethod === pref
                               ? 'bg-dental-teal text-white border-dental-teal'
-                              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                              : 'bg-white text-dental-text border-dental-secondary-300 hover:bg-dental-secondary-50'
                           }`}
                           disabled={loading}
                         >

@@ -56,6 +56,7 @@ vi.mock('lucide-react', () => ({
 }))
 
 import AIAssistant from './AIAssistant'
+import { CONTACT_INFO } from '@/utils/constants'
 
 describe('AIAssistant', () => {
   beforeEach(() => {
@@ -251,7 +252,9 @@ describe('AIAssistant', () => {
   describe('phone shortcut', () => {
     it('displays clinic phone number', () => {
       render(<AIAssistant onClose={vi.fn()} />)
-      expect(screen.getByText(/\+380 68 232 38 38/)).toBeInTheDocument()
+      expect(
+        screen.getByText(new RegExp(CONTACT_INFO.phone.replace('+', '\\+')))
+      ).toBeInTheDocument()
     })
   })
 })

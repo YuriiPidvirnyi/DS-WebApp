@@ -1,4 +1,7 @@
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://dentalstory.ua'
+// Prod email contact literals (set by hotfix #373/#374). Kept hardcoded here to
+// stay byte-parity with the Deno edge copy (which cannot import CONTACT_INFO);
+// the src↔edge parity guard enforces they match.
 const CLINIC_PHONE = '+380 68 232 38 38'
 const CLINIC_ADDRESS = 'вулиця Сумська, 10, Львів'
 
@@ -16,6 +19,11 @@ const EMAIL_STRINGS: Record<
     myCabinet: string
     changeTime: (phone: string) => string
     confirmedSubject: (date: string, time: string) => string
+    bookingNo: (ref: string) => string
+    addToCalendar: string
+    reschedule: string
+    policy24h: string
+    hoursLine: string
     reminder: string
     reminderMsg: (name: string) => string
     cantCome: (phone: string) => string
@@ -44,6 +52,12 @@ const EMAIL_STRINGS: Record<
     myCabinet: 'Мій кабінет',
     changeTime: phone => `Якщо потрібно змінити час — зателефонуйте ${phone}`,
     confirmedSubject: (date, time) => `Запис підтверджено — ${date}, ${time}`,
+    bookingNo: ref => `Запис № ${ref}`,
+    addToCalendar: 'Додати в календар',
+    reschedule: 'Перенести запис',
+    policy24h:
+      'Плани змінились? Скасування безкоштовне за 24 години до візиту — просто натисніть «Перенести запис».',
+    hoursLine: 'Пн–Пт 09:00–20:00, Сб 10:00–18:00',
     reminder: 'Нагадування про візит',
     reminderMsg: name => `${name}, нагадуємо про ваш запис.`,
     cantCome: phone =>
@@ -73,6 +87,12 @@ const EMAIL_STRINGS: Record<
     changeTime: phone => `Need to reschedule? Please call us at ${phone}`,
     confirmedSubject: (date, time) =>
       `Appointment confirmed — ${date}, ${time}`,
+    bookingNo: ref => `Booking № ${ref}`,
+    addToCalendar: 'Add to calendar',
+    reschedule: 'Reschedule',
+    policy24h:
+      'Plans changed? Cancellation is free up to 24 hours before the visit — just click "Reschedule".',
+    hoursLine: 'Mon–Fri 09:00–20:00, Sat 10:00–18:00',
     reminder: 'Appointment reminder',
     reminderMsg: name => `${name}, this is a reminder about your appointment.`,
     cantCome: phone => `Can't make it? Call ${phone} to reschedule.`,
@@ -100,6 +120,12 @@ const EMAIL_STRINGS: Record<
     myCabinet: 'Mój gabinet',
     changeTime: phone => `Chcesz zmienić termin? Zadzwoń pod numer ${phone}`,
     confirmedSubject: (date, time) => `Wizyta potwierdzona — ${date}, ${time}`,
+    bookingNo: ref => `Wizyta № ${ref}`,
+    addToCalendar: 'Dodaj do kalendarza',
+    reschedule: 'Przełóż wizytę',
+    policy24h:
+      'Plany się zmieniły? Odwołanie jest bezpłatne do 24 godzin przed wizytą — po prostu kliknij „Przełóż wizytę”.',
+    hoursLine: 'pon.–pt. 09:00–20:00, sob. 10:00–18:00',
     reminder: 'Przypomnienie o wizycie',
     reminderMsg: name => `${name}, przypominamy o Twojej wizycie.`,
     cantCome: phone =>
@@ -122,7 +148,7 @@ const EMAIL_STRINGS: Record<
 
 const COLORS = {
   primary: '#AECED3',
-  teal: '#5A8A94',
+  teal: '#3f6f79',
   navy: '#2C3E42',
   text: '#4A5E63',
   secondary: '#D1CAC0',
@@ -233,6 +259,27 @@ export type BookingConfirmationData = {
   doctorName?: string
 }
 
+/**
+ * Google Calendar template link — server-safe alternative to the client-side
+ * .ics helper; renders as a plain <a>, works in Gmail/Outlook without JS.
+ */
+function googleCalendarUrl(data: BookingConfirmationData): string {
+  const start = `${data.date.replace(/-/g, '')}T${(data.time ?? '10:00').slice(0, 5).replace(':', '')}00`
+  const endHour = String(
+    (parseInt((data.time ?? '10:00').slice(0, 2), 10) + 1) % 24
+  ).padStart(2, '0')
+  const end = `${data.date.replace(/-/g, '')}T${endHour}${(data.time ?? '10:00').slice(3, 5)}00`
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: `${data.service} — Dental Story`,
+    dates: `${start}/${end}`,
+    details: `${SITE_URL}/cabinet`,
+    location: CLINIC_ADDRESS,
+    ctz: 'Europe/Kyiv',
+  })
+  return `https://calendar.google.com/calendar/render?${params.toString()}`
+}
+
 export function bookingConfirmationEmail(
   data: BookingConfirmationData,
   locale: Locale = 'uk'
@@ -240,39 +287,60 @@ export function bookingConfirmationEmail(
   const s = EMAIL_STRINGS[locale]
   const fmtDate = formatDate(data.date, locale)
   const fmtTime = formatTime(data.time)
+  const bookingRef = (data.appointmentId ?? '').slice(0, 8).toUpperCase()
+
+  // Макет 2d: hero-стрічка з диском-підтвердженням, таблиця «ключ-значення»,
+  // номер запису, дві дії та правило 24 годин; контакти — лише з CONTACT_INFO.
+  const detailRow = (label: string, value: string, last = false) => `
+            <tr>
+              <td style="padding:12px 0;font-size:14px;color:#7a6f60;${last ? '' : 'border-bottom:1px solid #f5f3f0;'}">${label}</td>
+              <td align="right" style="padding:12px 0;font-size:14px;font-weight:700;color:${COLORS.navy};${last ? '' : 'border-bottom:1px solid #f5f3f0;'}">${value}</td>
+            </tr>`
 
   const html = baseLayout(
     `
-    <h1 style="margin:0 0 8px;font-size:22px;color:${COLORS.navy};">${s.confirmed}</h1>
-    <p style="margin:0 0 24px;font-size:15px;color:${COLORS.text};">
-      ${s.thanks(data.patientName)}
-    </p>
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${COLORS.bg};border-radius:8px;margin-bottom:24px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#e6f0f1;border-radius:12px;margin-bottom:24px;">
       <tr>
-        <td style="padding:20px 24px;">
+        <td align="center" style="padding:32px;">
+          <table role="presentation" cellpadding="0" cellspacing="0">
+            <tr>
+              <td align="center" valign="middle" width="52" height="52" style="width:52px;height:52px;border-radius:50%;background-color:${COLORS.teal};color:#ffffff;font-size:26px;line-height:52px;">&#10003;</td>
+            </tr>
+          </table>
+          <h1 style="margin:16px 0 6px;font-size:24px;color:${COLORS.navy};">${s.confirmed}</h1>
+          <p style="margin:0;font-size:14px;color:${COLORS.text};">${s.thanks(data.patientName)}</p>
+          ${bookingRef ? `<p style="margin:10px 0 0;font-size:12px;color:#7a6f60;">${s.bookingNo(bookingRef)}</p>` : ''}
+        </td>
+      </tr>
+    </table>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${COLORS.white};border:1px solid #ebe7e1;border-radius:14px;margin-bottom:24px;">
+      <tr>
+        <td style="padding:6px 20px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-            <tr>
-              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};width:120px;">${s.service}</td>
-              <td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${data.service}</td>
-            </tr>
-            <tr>
-              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">${s.date}</td>
-              <td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${fmtDate}</td>
-            </tr>
-            <tr>
-              <td style="padding:6px 0;font-size:13px;color:${COLORS.text};">${s.time}</td>
-              <td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${fmtTime}</td>
-            </tr>
-            ${data.doctorName ? `<tr><td style="padding:6px 0;font-size:13px;color:${COLORS.text};">${s.doctor}</td><td style="padding:6px 0;font-size:15px;font-weight:600;color:${COLORS.navy};">${data.doctorName}</td></tr>` : ''}
+            ${detailRow(s.service, data.service)}
+            ${detailRow(s.date, fmtDate)}
+            ${detailRow(s.time, fmtTime, !data.doctorName)}
+            ${data.doctorName ? detailRow(s.doctor, data.doctorName, true) : ''}
           </table>
         </td>
       </tr>
     </table>
-    <div style="text-align:center;margin-bottom:24px;">
-      <a href="${SITE_URL}/cabinet" class="btn">${s.myCabinet}</a>
-    </div>
-    <p style="margin:0;font-size:13px;color:#9CA3AF;text-align:center;">
-      ${s.changeTime(CLINIC_PHONE)}
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+      <tr>
+        <td align="center">
+          <a href="${googleCalendarUrl(data)}" class="btn" style="border-radius:12px;">${s.addToCalendar}</a>
+          &nbsp;&nbsp;
+          <a href="${SITE_URL}/cabinet/appointments" style="display:inline-block;padding:14px 28px;border:1px solid #c5dde1;border-radius:12px;color:#2f5962;font-weight:600;font-size:15px;background-color:${COLORS.white};">${s.reschedule}</a>
+        </td>
+      </tr>
+    </table>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${COLORS.white};border:1px solid #ebe7e1;border-radius:12px;margin-bottom:8px;">
+      <tr>
+        <td style="padding:12px 16px;font-size:13px;color:${COLORS.text};line-height:1.55;">${s.policy24h}</td>
+      </tr>
+    </table>
+    <p style="margin:12px 0 0;font-size:13px;color:#7a6f60;text-align:center;">
+      ${s.changeTime(CLINIC_PHONE)} &bull; ${s.hoursLine}
     </p>
     `,
     `${s.confirmed} ${fmtDate} ${fmtTime}`,
@@ -628,11 +696,11 @@ export function recallEmail(
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f5;margin:0;padding:0}
 .wrap{max-width:600px;margin:40px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-.header{background:#5A8A94;padding:32px 40px;color:#fff}
+.header{background:#3f6f79;padding:32px 40px;color:#fff}
 .header h1{margin:0;font-size:22px;line-height:1.3}
 .body{padding:32px 40px}
 .body p{color:#4A5E63;line-height:1.6;margin:0 0 24px}
-.btn{display:inline-block;background:#5A8A94;color:#fff!important;padding:14px 32px;border-radius:8px;font-weight:600;text-decoration:none;font-size:15px}
+.btn{display:inline-block;background:#3f6f79;color:#fff!important;padding:14px 32px;border-radius:8px;font-weight:600;text-decoration:none;font-size:15px}
 .footer{padding:24px 40px;border-top:1px solid #f0f0f0;text-align:center;color:#9ca3af;font-size:12px}
 .opt-out{display:inline-block;margin-top:8px;color:#9ca3af;font-size:11px;text-decoration:underline}
 </style></head><body>

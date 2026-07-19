@@ -12,6 +12,7 @@ import {
   ClipboardCheck,
 } from 'lucide-react'
 import Link from 'next/link'
+import { StatusBadge } from '@/components/ui'
 
 const SECTIONS = [
   {
@@ -100,7 +101,7 @@ export default function AdminStockPage() {
               className="relative flex items-start gap-4 rounded-xl border border-dental-primary/40 bg-white p-5 hover:bg-dental-primary/5 transition-colors"
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-dental-primary/20">
-                <Icon className="h-5 w-5 text-dental-primary-600" />
+                <Icon className="h-5 w-5 text-dental-primary-ink" />
               </div>
               <div>
                 <p className="font-medium text-dental-dark">{titleUk}</p>
@@ -110,19 +111,19 @@ export default function AdminStockPage() {
           ) : (
             <div
               key={href}
-              className="relative flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-5 opacity-50 cursor-not-allowed"
+              className="relative flex items-start gap-4 rounded-xl border border-dental-secondary-200 bg-white p-5 opacity-50 cursor-not-allowed"
               aria-disabled="true"
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-dental-primary/20">
-                <Icon className="h-5 w-5 text-dental-primary-600" />
+                <Icon className="h-5 w-5 text-dental-primary-ink" />
               </div>
               <div>
                 <p className="font-medium text-dental-dark">{titleUk}</p>
                 <p className="mt-0.5 text-sm text-dental-text">{descUk}</p>
               </div>
-              <span className="absolute right-3 top-3 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+              <StatusBadge tone="warning" className="absolute right-3 top-3">
                 скоро
-              </span>
+              </StatusBadge>
             </div>
           )
         )}
@@ -133,7 +134,7 @@ export default function AdminStockPage() {
         собівартість, картки розрахунку, інвентаризація.{' '}
         <Link
           href="/admin/materials"
-          className="underline hover:text-dental-primary-600"
+          className="underline hover:text-dental-primary-ink"
         >
           Склад v1
         </Link>{' '}

@@ -57,18 +57,18 @@ export function getStatusTone(status: string): string {
     case 'completed':
     case 'resolved':
     case 'active':
-      return 'bg-green-100 text-green-700'
+      return 'bg-status-success-100 text-status-success-700'
     case 'pending':
     case 'new':
     case 'in_progress':
-      return 'bg-amber-100 text-amber-700'
+      return 'bg-status-warning-100 text-status-warning-700'
     case 'rejected':
     case 'cancelled':
     case 'closed':
     case 'no_show':
     case 'inactive':
-      return 'bg-red-100 text-red-700'
+      return 'bg-status-error-100 text-status-error-700'
     default:
-      return 'bg-gray-100 text-gray-700'
+      return 'bg-status-neutral-100 text-status-neutral-700'
   }
 }

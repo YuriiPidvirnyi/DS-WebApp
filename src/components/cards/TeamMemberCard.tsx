@@ -79,7 +79,7 @@ export default function TeamMemberCard({
               sizes="96px"
             />
           ) : (
-            <span className="text-2xl font-bold text-dental-primary-600">
+            <span className="text-2xl font-bold text-dental-primary-ink">
               {initials}
             </span>
           )}
@@ -113,7 +113,7 @@ export default function TeamMemberCard({
                     className={clsx(
                       'h-4 w-4',
                       i < Math.round(rating)
-                        ? 'fill-yellow-400 text-yellow-400'
+                        ? 'fill-dental-warning text-dental-warning'
                         : 'fill-dental-secondary-200 text-dental-secondary-200'
                     )}
                   />

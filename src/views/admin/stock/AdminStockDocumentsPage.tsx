@@ -15,9 +15,9 @@ const DOC_TYPE_LABELS: Record<DocType, string> = {
 }
 
 const STATUS_STYLES: Record<DocStatus, string> = {
-  draft: 'bg-gray-100 text-gray-600',
-  posted: 'bg-green-100 text-green-700',
-  void: 'bg-red-100 text-red-600',
+  draft: 'bg-dental-secondary-100 text-dental-muted',
+  posted: 'bg-status-success-100 text-status-success-700',
+  void: 'bg-status-error-100 text-status-error-700',
 }
 
 const STATUS_LABELS: Record<DocStatus, string> = {
@@ -94,7 +94,7 @@ export default function AdminStockDocumentsPage() {
                 setFilterType(e.target.value as DocType | '')
                 setPage(1)
               }}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
+              className="rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
             >
               <option value="">Всі типи</option>
               {(Object.entries(DOC_TYPE_LABELS) as [DocType, string][]).map(
@@ -111,7 +111,7 @@ export default function AdminStockDocumentsPage() {
                 setFilterStatus(e.target.value as DocStatus | '')
                 setPage(1)
               }}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
+              className="rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
             >
               <option value="">Всі статуси</option>
               {(Object.entries(STATUS_LABELS) as [DocStatus, string][]).map(
@@ -139,7 +139,7 @@ export default function AdminStockDocumentsPage() {
         )}
 
         {error && (
-          <div className="rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+          <div className="rounded-lg bg-status-error-100 border border-dental-error/20 p-4 text-sm text-status-error-700">
             {error}
           </div>
         )}
@@ -178,14 +178,14 @@ export default function AdminStockDocumentsPage() {
                   <div className="flex items-center gap-2">
                     <Link
                       href={`/admin/stock/documents/${doc.id}`}
-                      className="rounded p-1.5 text-dental-text hover:bg-gray-100"
+                      className="rounded p-1.5 text-dental-text hover:bg-dental-secondary-100"
                       title="Відкрити"
                     >
                       <Eye className="w-4 h-4" />
                     </Link>
                     <button
                       onClick={() => copyDocument(doc.id)}
-                      className="rounded p-1.5 text-dental-text hover:bg-gray-100"
+                      className="rounded p-1.5 text-dental-text hover:bg-dental-secondary-100"
                       title="Копіювати"
                     >
                       <Copy className="w-4 h-4" />
@@ -294,7 +294,7 @@ function CreateDocumentModal({
             <select
               value={docType}
               onChange={e => setDocType(e.target.value as DocType)}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
+              className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
             >
               {DOC_TYPE_OPTIONS.map(t => (
                 <option key={t} value={t}>
@@ -303,7 +303,7 @@ function CreateDocumentModal({
               ))}
             </select>
           </div>
-          {err && <p className="text-sm text-red-600">{err}</p>}
+          {err && <p className="text-sm text-status-error-700">{err}</p>}
           <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"

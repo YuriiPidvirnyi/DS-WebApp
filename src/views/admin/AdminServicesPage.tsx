@@ -18,6 +18,7 @@ import {
   Textarea,
 } from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
+import { useConfirm, type ConfirmOptions } from '@/hooks/useConfirm'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
 import AdminModal from './components/AdminModal'
@@ -76,6 +77,7 @@ const EMPTY_FORM: ServiceFormState = {
 export default function AdminServicesPage() {
   const { t } = useTranslation()
   const { preferences } = useAdminPreferences()
+  const { confirm, confirmDialog } = useConfirm()
   const [rows, setRows] = useState<ServiceRow[]>([])
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [searchTerm, setSearchTerm] = useState('')
@@ -187,21 +189,21 @@ export default function AdminServicesPage() {
   const allSelected =
     rows.length > 0 && rows.every(row => selectedSet.has(row.id))
   const tableCellClass = preferences.compactTables ? 'px-3 py-2' : 'px-4 py-3'
-  const tableHeadClass = `${tableCellClass} text-left text-xs font-semibold uppercase text-dental-text-light`
+  const tableHeadClass = `${tableCellClass} text-left text-xs font-semibold uppercase text-dental-muted`
   const tableEmptyStateClass = `${
     preferences.compactTables ? 'px-3 py-6' : 'px-4 py-8'
-  } text-center text-dental-text-light`
+  } text-center text-dental-muted`
   const getAvailabilityLabel = useCallback(
     (status: 'active' | 'inactive') => t(`admin.serviceStatuses.${status}`),
     [t]
   )
 
   const confirmIfNeeded = useCallback(
-    (message: string) => {
+    async (opts: ConfirmOptions) => {
       if (!preferences.confirmSensitiveActions) return true
-      return window.confirm(message)
+      return confirm(opts)
     },
-    [preferences.confirmSensitiveActions]
+    [preferences.confirmSensitiveActions, confirm]
   )
 
   const toggleSelection = (id: string) => {
@@ -221,12 +223,14 @@ export default function AdminServicesPage() {
   const handleBulkStatusUpdate = async () => {
     if (selectedIds.length === 0) return
     if (
-      !confirmIfNeeded(
-        t('admin.servicesPage.confirmations.bulkStatusChange', {
+      !(await confirmIfNeeded({
+        title: t('admin.servicesPage.confirmations.bulkStatusChange', {
           count: selectedIds.length,
           status: getAvailabilityLabel(bulkStatus),
-        })
-      )
+        }),
+        severity: 'significant',
+        confirmLabel: t('common.confirm'),
+      }))
     ) {
       return
     }
@@ -271,11 +275,13 @@ export default function AdminServicesPage() {
   const toggleServiceStatus = useCallback(
     async (id: string, isActive: boolean) => {
       if (
-        !confirmIfNeeded(
-          isActive
+        !(await confirmIfNeeded({
+          title: isActive
             ? t('admin.servicesPage.confirmations.hideService')
-            : t('admin.servicesPage.confirmations.showService')
-        )
+            : t('admin.servicesPage.confirmations.showService'),
+          severity: 'significant',
+          confirmLabel: t('common.confirm'),
+        }))
       ) {
         return
       }
@@ -414,7 +420,14 @@ export default function AdminServicesPage() {
   }
 
   const deleteService = async (id: string) => {
-    if (!confirmIfNeeded(t('admin.servicesPage.confirmations.deleteService')))
+    if (
+      !(await confirmIfNeeded({
+        title: t('admin.servicesPage.confirmations.deleteService'),
+        severity: 'irreversible',
+        warning: t('confirmDialog.irreversibleWarning'),
+        confirmLabel: t('common.delete'),
+      }))
+    )
       return
     const supabase = createClient()
     if (!supabase) return
@@ -449,12 +462,13 @@ export default function AdminServicesPage() {
 
   return (
     <div className="space-y-6">
+      {confirmDialog}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-dental-dark">
             {t('admin.servicesPage.title')}
           </h1>
-          <p className="text-sm text-dental-text-light">
+          <p className="text-sm text-dental-muted">
             {t('admin.servicesPage.description')}
           </p>
         </div>
@@ -477,25 +491,29 @@ export default function AdminServicesPage() {
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">
+          <p className="text-xs text-dental-muted">
             {t('admin.servicesPage.summary.total')}
           </p>
           <p className="text-2xl font-bold text-dental-dark">{stats.total}</p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">
+          <p className="text-xs text-dental-muted">
             {t('admin.servicesPage.summary.active')}
           </p>
-          <p className="text-2xl font-bold text-green-600">{stats.active}</p>
+          <p className="text-2xl font-bold text-status-success-700">
+            {stats.active}
+          </p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">
+          <p className="text-xs text-dental-muted">
             {t('admin.servicesPage.summary.inactive')}
           </p>
-          <p className="text-2xl font-bold text-red-600">{stats.inactive}</p>
+          <p className="text-2xl font-bold text-status-error-700">
+            {stats.inactive}
+          </p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">
+          <p className="text-xs text-dental-muted">
             {t('admin.servicesPage.summary.averagePrice')}
           </p>
           <p className="text-xl font-bold text-dental-dark">
@@ -553,7 +571,7 @@ export default function AdminServicesPage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-2 rounded-xl border border-dental-secondary-200 bg-white px-4 py-3">
-        <span className="text-sm text-dental-text-light">
+        <span className="text-sm text-dental-muted">
           {t('admin.servicesPage.bulk.selected', { count: selectedIds.length })}
         </span>
         <Select
@@ -582,7 +600,7 @@ export default function AdminServicesPage() {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-xl border border-dental-error/20 bg-status-error-100 px-4 py-3 text-sm text-status-error-700">
           {error}
         </div>
       )}
@@ -654,7 +672,7 @@ export default function AdminServicesPage() {
                         {row.name_uk}
                       </p>
                       {row.name_en || row.name_pl ? (
-                        <p className="text-xs text-dental-text-light">
+                        <p className="text-xs text-dental-muted">
                           {[row.name_en, row.name_pl]
                             .filter(Boolean)
                             .join(' / ')}
@@ -684,7 +702,7 @@ export default function AdminServicesPage() {
                       </span>
                     </td>
                     <td
-                      className={`${tableCellClass} text-xs text-dental-text-light`}
+                      className={`${tableCellClass} text-xs text-dental-muted`}
                     >
                       {formatDateTime(row.updated_at)}
                     </td>
@@ -714,7 +732,7 @@ export default function AdminServicesPage() {
                           type="button"
                           onClick={() => void deleteService(row.id)}
                           disabled={isUpdatingId === row.id}
-                          className="rounded-md border border-red-200 p-1.5 text-red-600 hover:bg-red-50 disabled:opacity-60"
+                          className="rounded-md border border-dental-error/20 p-1.5 text-dental-error hover:bg-status-error-100 disabled:opacity-60"
                           aria-label={t(
                             'admin.servicesPage.actions.deleteAria'
                           )}
@@ -792,7 +810,7 @@ export default function AdminServicesPage() {
                     type="button"
                     onClick={() => void deleteService(row.id)}
                     disabled={isUpdatingId === row.id}
-                    className="rounded-md border border-red-200 p-2.5 text-red-600 hover:bg-red-50 disabled:opacity-60 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    className="rounded-md border border-dental-error/20 p-2.5 text-dental-error hover:bg-status-error-100 disabled:opacity-60 min-h-[44px] min-w-[44px] flex items-center justify-center"
                     aria-label={t('admin.servicesPage.actions.deleteAria')}
                   >
                     <Trash2 className="h-4 w-4" />

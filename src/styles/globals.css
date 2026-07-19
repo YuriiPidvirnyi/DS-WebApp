@@ -37,18 +37,48 @@
   --color-dental-info-dark: #1565c0;
   --color-dental-dark: #2c3e42;
   --color-dental-text: #4a5e63;
-  --color-dental-muted: #4f6970;
+  --color-dental-muted: #425960;
   --color-dental-text-light: #8fa3a8;
-  --color-dental-navy-brand: #1b3a4b;
-  --color-dental-accent: #4c9487;
+  --color-dental-primary-ink: #2f5962;
   --color-dental-primary-dark: #7ba8b0;
   --color-dental-primary-darker: #3f6f79;
   --color-dental-primary-light: #c5dde1;
 
   --color-dental-blue: #aeced3;
   --color-dental-teal: #3f6f79;
-  --color-dental-green: #3f6f79;
   --color-dental-navy: #2c3e42;
+
+  /*
+    Semantic status scale (Ф-3) — the single source for status chips in both
+    the patient cabinet and the admin panel. Formula: *-100 tint background,
+    *-700 ink text. Do not color statuses with raw Tailwind palettes.
+  */
+  --color-status-accent-100: #e1eff1;
+  --color-status-accent-700: #335d66;
+  --color-status-success-100: #e8f5e9;
+  --color-status-success-700: #1f6b2b;
+  /* warning-700/neutral-700 затемнені відносно макета до AA ≥4.5 на тінтах
+     (перевіряється тестом design-tokens.contrast.test.ts) */
+  --color-status-warning-100: #fff3e0;
+  --color-status-warning-700: #a85400;
+  --color-status-neutral-100: #f3f0ec;
+  --color-status-neutral-200: #f0ede8;
+  --color-status-neutral-700: #6f6556;
+  --color-status-error-100: #fdecea;
+  --color-status-error-700: #8c1d18;
+
+  /*
+    Role badge tiers (1i) — tone encodes access level (darker = higher),
+    the icon carries role identity. Керівництво: solid dark; Клінічні: teal
+    tints; Операційні: warm neutral tints.
+  */
+  --color-role-clinical-100: #cfe4e6;
+  --color-role-clinical-700: #274f57;
+  --color-role-clinical-soft-100: #eaf3f4;
+  --color-role-clinical-soft-700: #4f6970;
+  --color-role-ops-100: #ece7df;
+  --color-role-ops-200: #f1ede6;
+  --color-role-ops-700: #6b6153;
 
   --font-sans: var(--font-nunito), Nunito, system-ui, sans-serif;
   --font-heading: var(--font-nunito), Nunito, system-ui, sans-serif;
@@ -320,7 +350,7 @@
     /* Text colors */
     --dental-dark: #2c3e42;
     --dental-text: #4a5e63;
-    --dental-muted: #4f6970;
+    --dental-muted: #425960;
     --dental-text-light: #8fa3a8;
 
     /* Legacy RGB values for rgba() usage */
@@ -540,12 +570,9 @@ body.menu-open {
   overflow: hidden;
 }
 
-/* A11y contrast hardening for commonly reused text utility tokens */
+/* A11y contrast hardening: light-blue brand fill must not be used as text ink.
+   (text-dental-muted no longer needs an override — the token itself is #425960.) */
 .text-dental-primary,
 .text-dental-primary-600 {
   color: #2f5962 !important;
-}
-
-.text-dental-muted {
-  color: #425960 !important;
 }

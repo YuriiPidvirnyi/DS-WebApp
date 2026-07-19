@@ -181,7 +181,7 @@ function ConfirmInner() {
           {error && (
             <div
               role="alert"
-              className="mb-6 p-3 bg-dental-error-light border border-red-200 rounded-xl text-dental-error-dark text-sm"
+              className="mb-6 p-3 bg-dental-error-light border border-dental-error/20 rounded-xl text-dental-error-dark text-sm"
             >
               {error}
             </div>
@@ -190,7 +190,7 @@ function ConfirmInner() {
           {!linkComplete && !error ? (
             <div
               role="alert"
-              className="p-3 bg-dental-error-light border border-red-200 rounded-xl text-dental-error-dark text-sm"
+              className="p-3 bg-dental-error-light border border-dental-error/20 rounded-xl text-dental-error-dark text-sm"
             >
               {tx(
                 'auth.confirm.errors.invalidLink',
@@ -204,7 +204,7 @@ function ConfirmInner() {
                 onClick={handleConfirm}
                 disabled={loading}
                 aria-busy={loading}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:bg-gray-400 text-white font-semibold text-sm rounded-xl transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-400"
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:bg-dental-secondary-400 text-white font-semibold text-sm rounded-xl transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-400"
               >
                 {loading ? (
                   <>
@@ -231,14 +231,14 @@ function ConfirmInner() {
             {error || !linkComplete ? (
               <Link
                 href="/auth/forgot-password"
-                className="font-semibold text-dental-primary-600 hover:text-dental-primary-700 transition-colors"
+                className="font-semibold text-dental-primary-ink hover:text-dental-primary-700 transition-colors"
               >
                 {tx('auth.confirm.requestNewLink', FALLBACK.requestNewLink)}
               </Link>
             ) : (
               <Link
                 href="/auth/login"
-                className="font-semibold text-dental-primary-600 hover:text-dental-primary-700 transition-colors"
+                className="font-semibold text-dental-primary-ink hover:text-dental-primary-700 transition-colors"
               >
                 {tx('auth.confirm.backToLogin', FALLBACK.backToLogin)}
               </Link>

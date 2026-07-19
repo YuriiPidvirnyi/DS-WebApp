@@ -15,7 +15,7 @@ export function TableSkeleton({ cols, rows = 6 }: TableSkeletonProps) {
   return (
     <>
       {Array.from({ length: rows }, (_, rowIndex) => (
-        <tr key={rowIndex} className="border-b border-gray-100">
+        <tr key={rowIndex} className="border-b border-dental-secondary-100">
           {Array.from({ length: cols }, (_, colIndex) => (
             <SkeletonCell key={colIndex} />
           ))}

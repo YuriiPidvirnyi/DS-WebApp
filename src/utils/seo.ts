@@ -3,8 +3,8 @@
  * Note: sitemap and robots.txt are handled by app/sitemap.ts and app/robots.ts
  */
 import { getOpeningHoursSchemaStrings } from '@/config/clinicSchedule'
-import uk from '@/locales/uk'
 import { CONTACT_INFO } from '@/utils/constants'
+import uk from '@/locales/uk'
 
 export interface Organization {
   '@context': string

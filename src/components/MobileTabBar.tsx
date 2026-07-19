@@ -19,7 +19,7 @@ export default function MobileTabBar() {
 
   return (
     <nav
-      className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.06)]"
+      className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-dental-secondary-200 shadow-[0_-2px_10px_rgba(0,0,0,0.06)]"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       role="navigation"
       aria-label={t('accessibility.mainNavigation')}
@@ -34,8 +34,8 @@ export default function MobileTabBar() {
               className={[
                 'flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors duration-150',
                 active
-                  ? 'text-dental-primary-600'
-                  : 'text-gray-400 active:text-dental-primary-600',
+                  ? 'text-dental-primary-ink'
+                  : 'text-dental-muted active:text-dental-primary-ink',
               ].join(' ')}
             >
               <Icon className="w-5 h-5" strokeWidth={active ? 2.5 : 2} />

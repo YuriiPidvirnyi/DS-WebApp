@@ -272,7 +272,12 @@
         "treatment": "Ortodoncja",
         "duration": "18 miesięcy"
       }
-    }
+    },
+    "beforePlaceholder": "Zdjęcie PRZED — przypadek „{{case}}”",
+    "afterPlaceholder": "Zdjęcie PO — przypadek „{{case}}”",
+    "keyboardHint": "←/→ krok 5% · Home/End — krawędzie",
+    "sliderAria": "Suwak porównania: {{value}}%. Strzałki — krok 5%, Home/End — krawędzie",
+    "selectCase": "Wybierz przypadek"
   },
   "labels": {
     "before": "Przed",
@@ -338,9 +343,8 @@
       }
     },
     "emergency": {
-      "title": "🚨 Pomoc w nagłych wypadkach",
+      "title": "Pomoc w nagłych wypadkach",
       "description": "W przypadku ostrego bólu lub urazu, skontaktuj się z nami natychmiast:",
-      "phone": "📞 +380 50 455 47 74",
       "availability": "Przyjmujemy połączenia alarmowe 24/7"
     },
     "faq": {
@@ -419,11 +423,13 @@
         "Gwarancja na wszystkie usługi",
         "Nowoczesny sprzęt",
         "Wykwalifikowani lekarze"
-      ]
+      ],
+      "photoAlt": "Pacjentka Dental Story uśmiecha się po wizycie"
     },
     "features": {
       "title": "Dlaczego pacjenci wybierają Dental Story",
-      "subtitle": "Łączymy profesjonalizm, nowoczesne technologie i indywidualne podejście, aby osiągnąć najlepsze wyniki leczenia"
+      "subtitle": "Łączymy profesjonalizm, nowoczesne technologie i indywidualne podejście, aby osiągnąć najlepsze wyniki leczenia",
+      "kicker": "Atuty"
     },
     "services": {
       "title": "Pełen zakres usług",
@@ -1225,7 +1231,11 @@
       "heading": "Rezerwacja wizyty",
       "submit": "Zarezerwuj",
       "cooldown": "Poczekaj {{seconds}} s",
-      "submittingOverlay": "Wysyłamy zgłoszenie..."
+      "submittingOverlay": "Wysyłamy zgłoszenie...",
+      "nextPersonal": "Dalej: twoje dane",
+      "nextSummary": "Dalej: potwierdzenie",
+      "panelTitle": "Twoja wizyta",
+      "panelNote": "Płatność w klinice. Przełożenie lub odwołanie wizyty jest bezpłatne do 24 godzin przed wizytą."
     },
     "errors": {
       "cooldown": "Zbyt częste wysyłanie. Spróbuj ponownie za {{seconds}} s.",
@@ -1246,8 +1256,7 @@
       "createAnother": "Utwórz kolejną rezerwację",
       "addToCalendar": "Dodaj do kalendarza",
       "calendarTitle": "Wizyta: {{service}}",
-      "calendarDescription": "Rezerwacja nr {{ref}}. Pacjent: {{name}}",
-      "calendarLocation": "Dental Studio"
+      "calendarDescription": "Rezerwacja nr {{ref}}. Pacjent: {{name}}"
     }
   },
   "apiDocsPage": {
@@ -1351,7 +1360,13 @@
       "analytics": "Analityka",
       "settings": "Ustawienia",
       "users": "Użytkownicy",
-      "stock": "Magazyn v2"
+      "stock": "Magazyn v2",
+      "groups": {
+        "operations": "Operacje",
+        "communications": "Komunikacja",
+        "inventory": "Magazyn",
+        "system": "System"
+      }
     },
     "login": {
       "title": "Logowanie do panelu",
@@ -1377,6 +1392,7 @@
     },
     "layout": {
       "panel": "Panel administratora",
+      "patientCabinet": "Gabinet pacjenta",
       "logout": "Wyloguj się",
       "backToSite": "Na stronę",
       "systemOnline": "System online",
@@ -1406,7 +1422,7 @@
         "backToList": "Wróć do listy"
       },
       "connection": {
-        "realtime": "Realtime",
+        "realtime": "Na żywo",
         "disconnected": "Brak połączenia"
       },
       "actions": {
@@ -1451,7 +1467,9 @@
         "allDates": "Wszystkie daty",
         "today": "Dziś",
         "upcoming": "Nadchodzące",
-        "past": "Minione"
+        "past": "Minione",
+        "dateSelectAria": "Filtruj według daty",
+        "statusSelectAria": "Filtruj według statusu"
       },
       "bulk": {
         "selected": "Wybrano: {{count}}",
@@ -1528,7 +1546,8 @@
         "loadFailed": "Nie udało się załadować analityki",
         "loadFailedFallback": "Nie udało się załadować analityki.",
         "chartFailed": "Nie udało się załadować tej sekcji."
-      }
+      },
+      "periodSelectAria": "Wybierz okres"
     },
     "patientManagement": {
       "title": "Zarządzanie pacjentami",
@@ -1606,7 +1625,7 @@
         "total": "Łącznie",
         "pending": "Oczekujące",
         "approved": "Zatwierdzone",
-        "featured": "Featured"
+        "featured": "Wyróżnione"
       },
       "filters": {
         "searchPlaceholder": "Szukaj: autor, usługa, treść",
@@ -1631,7 +1650,7 @@
       "empty": "Nie znaleziono opinii.",
       "card": {
         "selectAria": "Wybierz opinię od {{name}}",
-        "featured": "featured",
+        "featured": "wyróżniony",
         "wouldRecommend": "Poleca: {{value}}",
         "yes": "tak",
         "no": "nie"
@@ -1697,12 +1716,13 @@
       "empty": "Brak zgłoszeń dla bieżących filtrów.",
       "card": {
         "selectAria": "Wybierz zgłoszenie {{name}}",
-        "unreadBadge": "unread",
+        "unreadBadge": "nieprzeczytane",
         "markRead": "Oznacz jako przeczytane",
         "markUnread": "Oznacz jako nieprzeczytane",
         "showMessage": "Pokaż wiadomość",
         "adminNote": "Notatka admina",
-        "notesPlaceholder": "Dodaj notatkę…"
+        "notesPlaceholder": "Dodaj notatkę…",
+        "statusSelectAria": "Zmień status zgłoszenia"
       },
       "confirmations": {
         "bulkChange": "Zastosować masową zmianę do {{count}} zgłoszeń?",
@@ -1769,8 +1789,8 @@
       "blankChild": "Formularz (dziecko)"
     },
     "serviceStatuses": {
-      "active": "active",
-      "inactive": "inactive"
+      "active": "Aktywna",
+      "inactive": "Nieaktywna"
     },
     "servicesPage": {
       "title": "Zarządzanie usługami",
@@ -1857,8 +1877,8 @@
       }
     },
     "doctorStatuses": {
-      "active": "active",
-      "inactive": "inactive"
+      "active": "Aktywny",
+      "inactive": "Nieaktywny"
     },
     "doctorsPage": {
       "title": "Zarządzanie lekarzami",
@@ -2023,15 +2043,15 @@
         },
         "systemActor": "system",
         "actions": {
-          "diff": "Diff",
-          "rollback": "Rollback"
+          "diff": "Porównaj",
+          "rollback": "Wycofaj"
         },
         "summary": {
           "created": "Utworzono rekord ({{count}} pól)",
           "deleted": "Usunięto rekord ({{count}} pól)",
           "changed": "Zmienione pola: {{count}}"
         },
-        "nullValue": "null",
+        "nullValue": "—",
         "errors": {
           "supabaseUnavailable": "Supabase nie jest skonfigurowany.",
           "loadFailed": "Nie udało się załadować logów audytu. Sprawdź, czy migracja audytu została zastosowana."
@@ -2046,8 +2066,8 @@
             "when": "Kiedy"
           },
           "noChanges": "Nie wykryto różnic.",
-          "before": "BEFORE",
-          "after": "AFTER"
+          "before": "PRZED",
+          "after": "PO"
         }
       },
       "rollback": {
@@ -2295,7 +2315,10 @@
       "deleteConfirm": "Usunąć ten akt? Tej akcji nie można cofnąć.",
       "editAria": "Edytuj",
       "deleteAria": "Usuń",
-      "removeLineAria": "Usuń wiersz"
+      "removeLineAria": "Usuń wiersz",
+      "printAria": "Drukuj akt",
+      "draftNotPrintable": "Szkiców nie można drukować — podpisz akt, aby go wydrukować.",
+      "loadError": "Nie udało się załadować kart leczenia"
     },
     "users": {
       "title": "Zarządzanie użytkownikami",
@@ -2357,6 +2380,45 @@
         "materials": "Dodaj materiały do magazynu",
         "appointment": "Wykonaj testową rezerwację",
         "workingHours": "Skonfiguruj godziny pracy"
+      }
+    },
+    "stock": {
+      "confirm": {
+        "postDocument": {
+          "title": "Zaksięgować dokument?",
+          "description": "Po zaksięgowaniu stany magazynowe zostaną zaktualizowane według pozycji dokumentu; edycja będzie niedostępna.",
+          "action": "Zaksięguj"
+        },
+        "deleteDocument": {
+          "title": "Usunąć szkic dokumentu?",
+          "description": "Szkic i wszystkie jego pozycje zostaną trwale usunięte.",
+          "action": "Usuń"
+        },
+        "archiveDirectoryItem": {
+          "title": "Zarchiwizować pozycję słownika?",
+          "description": "Pozycja zniknie z list wyboru, ale pozostanie w historii dokumentów.",
+          "action": "Archiwizuj"
+        },
+        "archiveWarehouse": {
+          "title": "Zarchiwizować magazyn?",
+          "description": "Magazyn będzie niedostępny dla nowych dokumentów; historia ruchów zostanie zachowana.",
+          "action": "Archiwizuj"
+        },
+        "deactivateMaterial": {
+          "title": "Dezaktywować materiał?",
+          "description": "Materiał zniknie z katalogu dla nowych dokumentów; stany i historia zostaną zachowane.",
+          "action": "Dezaktywuj"
+        },
+        "postAudit": {
+          "title": "Zaksięgować inwentaryzację?",
+          "description": "Stany magazynowe zostaną skorygowane zgodnie z wynikami liczenia.",
+          "action": "Zaksięguj"
+        },
+        "removePermissions": {
+          "title": "Odebrać uprawnienia?",
+          "description": "Użytkownik utraci dostęp do operacji magazynowych nadanych tym wpisem.",
+          "action": "Odbierz"
+        }
       }
     }
   },
@@ -2505,6 +2567,11 @@
         "unavailable": "Usługa jest chwilowo niedostępna",
         "generic": "Link jest nieprawidłowy lub wygasł. Poproś o nowy."
       }
+    },
+    "split": {
+      "welcomeBack": "Witaj ponownie w Dental Story",
+      "welcomeNew": "Witaj w Dental Story",
+      "subtitle": "Twoje wizyty, historia leczenia i dokumenty — w jednym miejscu."
     }
   },
   "cabinet": {
@@ -2597,7 +2664,8 @@
       "save": "Zapisz zmiany",
       "saveSuccess": "Profil został zaktualizowany!",
       "errors": {
-        "saveFailed": "Nie udało się zapisać. Spróbuj ponownie później."
+        "saveFailed": "Nie udało się zapisać. Spróbuj ponownie później.",
+        "invalidPhone": "Nieprawidłowy format numeru telefonu"
       },
       "personalInfo": "Dane osobowe",
       "contactInfo": "Informacje kontaktowe",
@@ -2608,7 +2676,8 @@
       "deleteConfirmTitle": "Usuń konto?",
       "deleteConfirmMessage": "Spowoduje to trwałe usunięcie konta i anulowanie wszystkich nadchodzących wizyt. Tej akcji nie można cofnąć.",
       "downloading": "Pobieranie...",
-      "deleting": "Usuwanie..."
+      "deleting": "Usuwanie...",
+      "dateOfBirthPlaceholder": "Wybierz datę urodzenia"
     },
     "title": "Gabinet pacjenta",
     "profileTitle": "Mój profil",
@@ -2654,7 +2723,8 @@
         "confirm": "Czy jesteś pewny? Tej akcji nie można cofnąć.",
         "confirmButton": "Tak, usuń moje konto",
         "cancel": "Anuluj",
-        "deleting": "Usuwanie..."
+        "deleting": "Usuwanie...",
+        "confirmWord": "USUŃ"
       },
       "navLink": "Ustawienia"
     },
@@ -2885,8 +2955,7 @@
     },
     "calendar": {
       "title": "Wizyta: {{service}}",
-      "description": "Rezerwacja nr {{id}}. Nie zapomnij zabrać dokumentów!",
-      "location": "Dental Studio"
+      "description": "Rezerwacja nr {{id}}. Nie zapomnij zabrać dokumentów!"
     },
     "appointmentShort": "Rezerwacja #{{id}}...",
     "reminderTypes": {
@@ -2948,7 +3017,11 @@
       "contact": "Nasze dane kontaktowe:\n• Telefon: +380 68 232 38 38\n• Email: info@dentalstory.ua\n• Adres: ul. Sumska 10, Lwów",
       "default": "Dziękujemy za wiadomość! Nasz menedżer skontaktuje się z Tobą wkrótce. Aby uzyskać szybki kontakt, zadzwoń: +380 68 232 38 38"
     },
-    "typing": "Konsultant pisze…"
+    "typing": "Konsultant pisze…",
+    "minimizeChat": "Zwiń czat",
+    "chooseChannel": "Wybierz sposób kontaktu:",
+    "adminChannel": "Napisz do administratora",
+    "aiChannel": "Asystent AI"
   },
   "pricing": {
     "title": "Przejrzyste ceny",
@@ -3016,7 +3089,8 @@
     "workingNow": "Teraz otwarte",
     "closedNow": "Teraz zamknięte",
     "opensAt": "Otwieramy o {{time}}",
-    "qualityGuarantee": "Gwarancja jakości"
+    "qualityGuarantee": "Gwarancja jakości",
+    "googleReviews": "{{count}} opinii w Google"
   },
   "hero": {
     "badge": "Nowoczesna stomatologia",
@@ -3238,7 +3312,9 @@
           "conditions": ["Ropień okołowierzchołkowy", "Ropień przyzębny"],
           "recommendation": "PILNE! Zadzwoń natychmiast po wizytę nagłą"
         }
-      }
+      },
+      "notSpecified": "nie podano",
+      "durationHint": "Wpływa na pilność wizyty"
     }
   },
   "routeMeta": {
@@ -3443,5 +3519,10 @@
       "docLocked": "Документ вже проведено",
       "flagOff": "Inventory v2 не активовано"
     }
+  },
+  "confirmDialog": {
+    "consequencesTitle": "Razem z tym znikną",
+    "typeToConfirm": "Aby potwierdzić, wpisz",
+    "irreversibleWarning": "Tej akcji nie można cofnąć."
   }
 }

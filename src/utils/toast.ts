@@ -1,4 +1,6 @@
 import toast from 'react-hot-toast'
+import { CLINIC_OPENING_HOURS } from '@/config/clinicSchedule'
+import { CONTACT_INFO } from '@/utils/constants'
 
 /**
  * Toast notification utilities with consistent messaging
@@ -242,8 +244,7 @@ export const COMMON_MESSAGES = {
   VALIDATION_ERROR: 'Перевірте правильність заповнених полів.',
   UNEXPECTED_ERROR: 'Щось пішло не так. Спробуйте ще раз пізніше.',
 
-  // Office hours reminder (keep in sync with src/config/clinicSchedule.ts)
-  OFFICE_HOURS:
-    'Ми працюємо: Пн-Пт 9:00-20:00, Сб 10:00-18:00. Неділя — вихідний.',
-  CALL_US: 'Для термінових питань телефонуйте: +380 50 455 47 74',
+  // Office hours reminder (derived from src/config/clinicSchedule.ts)
+  OFFICE_HOURS: `Ми працюємо: Пн-Пт ${CLINIC_OPENING_HOURS.weekday.open}-${CLINIC_OPENING_HOURS.weekday.close}, Сб ${CLINIC_OPENING_HOURS.saturday.open}-${CLINIC_OPENING_HOURS.saturday.close}. Неділя — вихідний.`,
+  CALL_US: `Для термінових питань телефонуйте: ${CONTACT_INFO.phone}`,
 } as const

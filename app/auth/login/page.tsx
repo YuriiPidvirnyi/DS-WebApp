@@ -6,8 +6,10 @@ import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
 import { getAdminAccess } from '@/lib/supabase/admin'
+import Image from 'next/image'
 import { Eye, EyeOff, ArrowRight, Mail, Lock } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
+import { Input } from '@/components/ui'
 import {
   trackEvent,
   CabinetEvent,
@@ -92,153 +94,171 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-180px)] px-4 py-8">
-      <div className="w-full max-w-md mx-auto">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-block">
-            <Logo variant="default" size="md" />
-          </Link>
-          <h1 className="text-dental-muted text-sm mt-2">
+    /* Макет 1j: split-екран — фото клініки повертає бренд і довіру до входу */
+    <div className="grid min-h-[calc(100vh-180px)] grid-cols-1 lg:grid-cols-[44%_1fr]">
+      <div className="relative hidden lg:block">
+        <Image
+          src="/assets/images/brand/happy-patient.jpg"
+          alt=""
+          fill
+          sizes="44vw"
+          className="object-cover"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-linear-to-b from-dental-dark/15 to-dental-dark/70"
+        />
+        <div className="absolute bottom-0 left-0 p-10">
+          <span className="inline-block rounded-lg bg-white px-3 py-2">
+            <Logo variant="default" size="sm" />
+          </span>
+          <p className="mt-4 font-heading text-2xl font-extrabold text-white">
+            {t('auth.split.welcomeBack')}
+          </p>
+          <p className="mt-2 max-w-sm text-[15px] font-light leading-relaxed text-dental-primary-100">
+            {t('auth.split.subtitle')}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-center bg-dental-secondary-50 px-4 py-10">
+        <div className="w-full max-w-md mx-auto">
+          {/* Logo (мобільний/планшет — без фотопанелі) */}
+          <div className="text-center mb-8 lg:hidden">
+            <Link href="/" className="inline-block">
+              <Logo variant="default" size="md" />
+            </Link>
+          </div>
+          <h1 className="mb-6 text-center font-heading text-3xl font-extrabold tracking-tight text-dental-dark lg:text-left">
             {t('auth.login.subtitle')}
           </h1>
-        </div>
 
-        {/* Form Card */}
-        <div className="bg-white shadow-soft rounded-2xl p-6 sm:p-8">
-          <form onSubmit={handleLogin}>
-            {passwordResetSuccess && (
-              <div className="mb-6 p-3 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm">
-                {t('auth.login.passwordResetSuccess')}
-              </div>
-            )}
+          {/* Form Card */}
+          <div className="bg-white shadow-soft rounded-2xl p-6 sm:p-8">
+            <form onSubmit={handleLogin}>
+              {passwordResetSuccess && (
+                <div className="mb-6 p-3 bg-status-success-100 border border-dental-success/30 rounded-xl text-status-success-700 text-sm">
+                  {t('auth.login.passwordResetSuccess')}
+                </div>
+              )}
 
-            {error && (
-              <div className="mb-6 p-3 bg-dental-error-light border border-red-200 rounded-xl text-dental-error-dark text-sm">
-                {error}
-                {emailNotConfirmed && (
-                  <div className="mt-2">
-                    {resendState === 'sent' ? (
-                      <span className="text-green-700">
-                        {t('auth.login.resendConfirmation.sent')}
-                      </span>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={handleResendConfirmation}
-                        disabled={resendState === 'sending'}
-                        className="font-semibold text-dental-primary-600 hover:text-dental-primary-700 underline disabled:opacity-50 focus:outline-hidden focus:ring-2 focus:ring-dental-primary-400 rounded"
-                      >
-                        {resendState === 'sending'
-                          ? t('auth.login.resendConfirmation.sending')
-                          : t('auth.login.resendConfirmation.action')}
-                      </button>
-                    )}
-                    {resendState === 'error' && (
-                      <span className="block mt-1">
-                        {t('auth.login.resendConfirmation.error')}
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
+              {error && (
+                <div className="mb-6 p-3 bg-dental-error-light border border-dental-error/20 rounded-xl text-dental-error-dark text-sm">
+                  {error}
+                  {emailNotConfirmed && (
+                    <div className="mt-2">
+                      {resendState === 'sent' ? (
+                        <span className="text-status-success-700">
+                          {t('auth.login.resendConfirmation.sent')}
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={handleResendConfirmation}
+                          disabled={resendState === 'sending'}
+                          className="font-semibold text-dental-primary-ink hover:text-dental-primary-700 underline disabled:opacity-50 focus:outline-hidden focus:ring-2 focus:ring-dental-primary-400 rounded"
+                        >
+                          {resendState === 'sending'
+                            ? t('auth.login.resendConfirmation.sending')
+                            : t('auth.login.resendConfirmation.action')}
+                        </button>
+                      )}
+                      {resendState === 'error' && (
+                        <span className="block mt-1">
+                          {t('auth.login.resendConfirmation.error')}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
 
-            {/* Email */}
-            <div className="mb-5">
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-dental-dark mb-1.5"
-              >
-                {t('auth.login.emailLabel')}
-              </label>
-              <div className="flex items-center gap-3 border border-dental-secondary-200 rounded-xl px-4 py-3 transition-colors focus-within:border-dental-primary-600 focus-within:ring-2 focus-within:ring-dental-primary-100">
-                <Mail size={18} className="text-dental-muted shrink-0" />
-                <input
+              {/* Email — спільний ui/Input (Ф1) */}
+              <div className="mb-5">
+                <Input
                   id="email"
                   type="email"
+                  label={t('auth.login.emailLabel')}
+                  icon={<Mail size={18} />}
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   placeholder={t('auth.login.emailPlaceholder')}
                   required
                   autoComplete="email"
-                  className="w-full text-sm text-dental-dark placeholder:text-dental-text-light outline-hidden bg-transparent"
+                  fullWidth
+                  className="min-h-[50px]"
                 />
               </div>
-            </div>
 
-            {/* Password */}
-            <div className="mb-5">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-dental-dark mb-1.5"
-              >
-                {t('auth.login.passwordLabel')}
-              </label>
-              <div className="flex items-center gap-3 border border-dental-secondary-200 rounded-xl px-4 py-3 transition-colors focus-within:border-dental-primary-600 focus-within:ring-2 focus-within:ring-dental-primary-100">
-                <Lock size={18} className="text-dental-muted shrink-0" />
-                <input
+              {/* Password — спільний ui/Input, показ пароля має власну ціль ≥36px */}
+              <div className="mb-5">
+                <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
+                  label={t('auth.login.passwordLabel')}
+                  icon={<Lock size={18} />}
+                  trailing={
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="flex h-9 w-9 items-center justify-center rounded-lg text-dental-muted hover:text-dental-dark transition-colors"
+                      aria-label={
+                        showPassword
+                          ? t('auth.login.hidePassword')
+                          : t('auth.login.showPassword')
+                      }
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  }
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   placeholder={t('auth.login.passwordPlaceholder')}
                   required
                   autoComplete="current-password"
-                  className="w-full text-sm text-dental-dark placeholder:text-dental-text-light outline-hidden bg-transparent"
+                  fullWidth
+                  className="min-h-[50px]"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="p-1 text-dental-muted hover:text-dental-dark transition-colors shrink-0"
-                  aria-label={
-                    showPassword
-                      ? t('auth.login.hidePassword')
-                      : t('auth.login.showPassword')
-                  }
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
               </div>
-            </div>
 
-            {/* Forgot password */}
-            <div className="flex items-center justify-end mb-6">
-              <Link
-                href="/auth/forgot-password"
-                className="text-sm font-medium text-dental-primary-600 hover:text-dental-primary-700 transition-colors"
+              {/* Forgot password */}
+              <div className="flex items-center justify-end mb-6">
+                <Link
+                  href="/auth/forgot-password"
+                  className="text-sm font-medium text-dental-primary-ink hover:text-dental-primary-700 transition-colors"
+                >
+                  {t('auth.login.forgotPassword')}
+                </Link>
+              </div>
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full min-h-13 flex items-center justify-center gap-2 py-3 px-4 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:bg-dental-secondary-400 text-white font-semibold text-sm rounded-xl transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-400"
               >
-                {t('auth.login.forgotPassword')}
+                {loading ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <>
+                    {t('auth.login.submit')}
+                    <ArrowRight size={16} />
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Sign up */}
+            <p className="text-center mt-6 text-sm text-dental-muted">
+              {t('auth.login.noAccount')}{' '}
+              <Link
+                href="/auth/sign-up"
+                className="font-semibold text-dental-primary-ink hover:text-dental-primary-700 transition-colors"
+              >
+                {t('auth.login.signUpLink')}
               </Link>
-            </div>
-
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-dental-primary-600 hover:bg-dental-primary-700 disabled:bg-gray-400 text-white font-semibold text-sm rounded-xl transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-dental-primary-400"
-            >
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <>
-                  {t('auth.login.submit')}
-                  <ArrowRight size={16} />
-                </>
-              )}
-            </button>
-          </form>
-
-          {/* Sign up */}
-          <p className="text-center mt-6 text-sm text-dental-muted">
-            {t('auth.login.noAccount')}{' '}
-            <Link
-              href="/auth/sign-up"
-              className="font-semibold text-dental-primary-600 hover:text-dental-primary-700 transition-colors"
-            >
-              {t('auth.login.signUpLink')}
-            </Link>
-          </p>
+            </p>
+          </div>
         </div>
       </div>
     </div>

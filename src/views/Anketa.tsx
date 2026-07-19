@@ -141,7 +141,7 @@ export default function Anketa() {
         {isSubmitSuccessful ? (
           <div className="rounded-2xl bg-white p-8 shadow-lg">
             <div className="flex items-start gap-3">
-              <CheckCircle className="h-6 w-6 shrink-0 text-green-600" />
+              <CheckCircle className="h-6 w-6 shrink-0 text-dental-success" />
               <div>
                 <h2 className="mb-2 text-xl font-bold text-dental-dark">
                   {t('anketa.successTitle')}
@@ -405,7 +405,7 @@ export default function Anketa() {
                   </label>
                 </div>
                 {errors.dataConsent && (
-                  <p className="text-sm text-red-600">
+                  <p className="text-sm text-status-error-700">
                     {errors.dataConsent.message}
                   </p>
                 )}

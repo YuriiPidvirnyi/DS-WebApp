@@ -189,7 +189,7 @@ export default function CalcCardEditor({
       {/* Panel */}
       <div className="w-full max-w-lg bg-white shadow-xl flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 bg-gray-50">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-dental-secondary-200 bg-dental-secondary-50">
           <div>
             <p className="text-xs text-dental-text">Картка розрахунку</p>
             <h2 className="font-semibold text-dental-dark text-sm leading-tight mt-0.5">
@@ -209,7 +209,7 @@ export default function CalcCardEditor({
             <button
               type="button"
               onClick={onClose}
-              className="rounded p-1.5 hover:bg-gray-200 transition-colors"
+              className="rounded p-1.5 hover:bg-dental-secondary-200 transition-colors"
             >
               <X className="w-4 h-4 text-dental-text" />
             </button>
@@ -238,20 +238,20 @@ export default function CalcCardEditor({
                     value={matSearch}
                     onChange={e => setMatSearch(e.target.value)}
                     placeholder="Пошук матеріалу..."
-                    className="w-full rounded-lg border border-gray-300 pl-9 pr-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
+                    className="w-full rounded-lg border border-dental-secondary-300 pl-9 pr-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
                   />
                   {searching && (
                     <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-dental-text" />
                   )}
                 </div>
                 {matResults.length > 0 && (
-                  <div className="rounded-lg border border-gray-200 bg-white shadow-xs max-h-44 overflow-y-auto">
+                  <div className="rounded-lg border border-dental-secondary-200 bg-white shadow-xs max-h-44 overflow-y-auto">
                     {matResults.map(mat => (
                       <button
                         key={mat.id}
                         type="button"
                         onClick={() => addMaterial(mat)}
-                        className="w-full flex items-center gap-3 px-4 py-2 text-sm hover:bg-gray-50 text-left"
+                        className="w-full flex items-center gap-3 px-4 py-2 text-sm hover:bg-dental-secondary-50 text-left"
                       >
                         <Plus className="w-4 h-4 shrink-0 text-dental-primary-600" />
                         <span className="font-medium text-dental-dark">
@@ -274,7 +274,7 @@ export default function CalcCardEditor({
               ) : (
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-gray-200 text-left">
+                    <tr className="border-b border-dental-secondary-200 text-left">
                       <th className="pb-2 font-medium text-dental-text">
                         Матеріал
                       </th>
@@ -295,7 +295,7 @@ export default function CalcCardEditor({
                       return (
                         <tr
                           key={item.material_id}
-                          className="border-b border-gray-100 last:border-0"
+                          className="border-b border-dental-secondary-100 last:border-0"
                         >
                           <td className="py-2 pr-2 text-dental-dark">
                             <span
@@ -320,7 +320,7 @@ export default function CalcCardEditor({
                                   Number(e.target.value)
                                 )
                               }
-                              className="w-20 rounded border border-gray-300 px-2 py-1 text-right text-sm focus:outline-hidden focus:ring-1 focus:ring-dental-primary-600"
+                              className="w-20 rounded border border-dental-secondary-300 px-2 py-1 text-right text-sm focus:outline-hidden focus:ring-1 focus:ring-dental-primary-600"
                             />
                           </td>
                           <td className="py-2 text-center">
@@ -338,7 +338,7 @@ export default function CalcCardEditor({
                             <button
                               type="button"
                               onClick={() => removeItem(item.material_id)}
-                              className="rounded p-1 text-dental-text hover:text-red-600 hover:bg-red-50"
+                              className="rounded p-1 text-dental-text hover:text-status-error-700 hover:bg-status-error-100"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -351,7 +351,7 @@ export default function CalcCardEditor({
               )}
 
               {error && (
-                <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-700">
+                <div className="rounded-lg bg-status-error-100 border border-dental-error/20 p-3 text-sm text-status-error-700">
                   {error}
                 </div>
               )}
@@ -360,11 +360,11 @@ export default function CalcCardEditor({
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-4 border-t border-gray-200 bg-gray-50 flex justify-end gap-3">
+        <div className="px-5 py-4 border-t border-dental-secondary-200 bg-dental-secondary-50 flex justify-end gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-dental-text hover:bg-gray-100 transition-colors"
+            className="rounded-lg border border-dental-secondary-300 px-4 py-2 text-sm font-medium text-dental-text hover:bg-dental-secondary-100 transition-colors"
           >
             Скасувати
           </button>

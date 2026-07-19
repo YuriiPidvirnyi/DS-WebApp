@@ -288,7 +288,7 @@ export default function CabinetLayoutClient({
           <button
             onClick={handleLogout}
             tabIndex={sidebarOpen ? 0 : -1}
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-red-600 hover:bg-red-50 transition-colors text-sm focus:outline-hidden focus:ring-2 focus:ring-red-300"
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-status-error-700 hover:bg-status-error-100 transition-colors text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-error"
           >
             <LogOut className="w-4 h-4" />
             {t('cabinet.logout')}
@@ -350,7 +350,7 @@ export default function CabinetLayoutClient({
             </Link>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-red-600 hover:bg-red-50 transition-colors text-sm focus:outline-hidden focus:ring-2 focus:ring-red-300"
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-dental-muted hover:text-status-error-700 hover:bg-status-error-100 transition-colors text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-error"
             >
               <LogOut className="w-4 h-4" />
               {t('cabinet.logout')}
@@ -381,12 +381,16 @@ export default function CabinetLayoutClient({
             </h1>
 
             <div className="flex items-center gap-3">
+              {/* CTA не зникає на мобільному — іконка 44px з aria-label (М4) */}
               <Link
                 href="/booking"
-                className="hidden sm:flex items-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-700"
+                aria-label={t('cabinet.bookAppointment')}
+                className="flex min-h-11 min-w-11 items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-3 sm:px-4 py-2 rounded-xl text-sm font-medium transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-700"
               >
                 <Plus className="w-4 h-4" />
-                {t('cabinet.bookAppointment')}
+                <span className="hidden sm:inline">
+                  {t('cabinet.bookAppointment')}
+                </span>
               </Link>
               <Link
                 href="/cabinet/profile"

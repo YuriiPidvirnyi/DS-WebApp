@@ -45,11 +45,25 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string
   helperText?: string
   fullWidth?: boolean
+  /** Провідна іконка всередині поля (макет 1j: спільний ui/Input з іконкою) */
+  icon?: React.ReactNode
+  /** Хвостовий елемент у безпечній зоні поля (наприклад, кнопка показу пароля) */
+  trailing?: React.ReactNode
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
-    { label, error, helperText, fullWidth = false, className, id, ...props },
+    {
+      label,
+      error,
+      helperText,
+      fullWidth = false,
+      icon,
+      trailing,
+      className,
+      id,
+      ...props
+    },
     ref
   ) => {
     const inputId = id || label?.toLowerCase().replace(/\s+/g, '-')
@@ -58,7 +72,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       'min-h-[44px] px-4 py-3 border rounded-2xl transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-0 text-base text-dental-dark placeholder:text-dental-muted sm:text-sm'
 
     const stateStyles = error
-      ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+      ? 'border-dental-error/70 focus:border-dental-error focus:ring-dental-error'
       : 'border-dental-secondary focus:border-dental-primary focus:ring-dental-primary'
 
     return (
@@ -69,38 +83,57 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             className="block text-sm font-medium text-dental-text mb-2"
           >
             {label}
-            {props.required && <span className="text-red-500 ml-1">*</span>}
+            {props.required && (
+              <span className="text-dental-error ml-1">*</span>
+            )}
           </label>
         )}
 
-        <input
-          ref={ref}
-          id={inputId}
-          className={clsx(
-            baseStyles,
-            stateStyles,
-            fullWidth && 'w-full',
-            className
+        <div className={clsx('relative', fullWidth && 'w-full')}>
+          {icon && (
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-dental-primary-500"
+            >
+              {icon}
+            </span>
           )}
-          aria-invalid={error ? 'true' : 'false'}
-          aria-describedby={
-            error
-              ? `${inputId}-error`
-              : helperText
-                ? `${inputId}-helper`
-                : undefined
-          }
-          autoComplete={
-            props.autoComplete ||
-            getAutoCompleteFromType(props.type, props.name)
-          }
-          {...props}
-        />
+          <input
+            ref={ref}
+            id={inputId}
+            className={clsx(
+              baseStyles,
+              stateStyles,
+              fullWidth && 'w-full',
+              icon && 'pl-11',
+              trailing && 'pr-12',
+              className
+            )}
+            aria-invalid={error ? 'true' : 'false'}
+            aria-describedby={
+              error
+                ? `${inputId}-error`
+                : helperText
+                  ? `${inputId}-helper`
+                  : undefined
+            }
+            autoComplete={
+              props.autoComplete ||
+              getAutoCompleteFromType(props.type, props.name)
+            }
+            {...props}
+          />
+          {trailing && (
+            <span className="absolute right-2 top-1/2 -translate-y-1/2">
+              {trailing}
+            </span>
+          )}
+        </div>
 
         {error && (
           <p
             id={`${inputId}-error`}
-            className="mt-2 text-sm text-red-600"
+            className="mt-2 text-sm text-status-error-700"
             role="alert"
           >
             {error}
@@ -141,7 +174,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       'min-h-[44px] px-4 py-3 border rounded-2xl transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-0 resize-vertical text-base text-dental-dark placeholder:text-dental-muted sm:text-sm'
 
     const stateStyles = error
-      ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+      ? 'border-dental-error/70 focus:border-dental-error focus:ring-dental-error'
       : 'border-dental-secondary focus:border-dental-primary focus:ring-dental-primary'
 
     return (
@@ -152,7 +185,9 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             className="block text-sm font-medium text-dental-text mb-2"
           >
             {label}
-            {props.required && <span className="text-red-500 ml-1">*</span>}
+            {props.required && (
+              <span className="text-dental-error ml-1">*</span>
+            )}
           </label>
         )}
 
@@ -179,7 +214,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         {error && (
           <p
             id={`${textareaId}-error`}
-            className="mt-2 text-sm text-red-600"
+            className="mt-2 text-sm text-status-error-700"
             role="alert"
           >
             {error}
@@ -255,7 +290,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     )
 
     const stateStyles = error
-      ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+      ? 'border-dental-error/70 focus:border-dental-error focus:ring-dental-error'
       : 'border-dental-secondary focus:border-dental-primary focus:ring-dental-primary'
 
     return (
@@ -266,7 +301,9 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             className="block text-sm font-medium text-dental-text mb-2"
           >
             {label}
-            {props.required && <span className="text-red-500 ml-1">*</span>}
+            {props.required && (
+              <span className="text-dental-error ml-1">*</span>
+            )}
           </label>
         )}
 
@@ -304,7 +341,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {error && (
           <p
             id={`${selectId}-error`}
-            className="mt-2 text-sm text-red-600"
+            className="mt-2 text-sm text-status-error-700"
             role="alert"
           >
             {error}

@@ -33,23 +33,25 @@ const PrivacyPolicy = () => {
             <ArrowLeft className="h-4 w-4 mr-2" />
             {t('privacyPolicyPage.backHome')}
           </Link>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold text-dental-dark mb-4">
             {t('privacyPolicyPage.title')}
           </h1>
-          <p className="text-gray-600">{t('privacyPolicyPage.lastUpdated')}</p>
+          <p className="text-dental-muted">
+            {t('privacyPolicyPage.lastUpdated')}
+          </p>
         </div>
 
         {/* Content */}
         <div className="prose prose-lg max-w-none">
           {sections.map(section => (
             <section key={section.id} className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-2xl font-semibold text-dental-dark mb-4">
                 {section.title}
               </h2>
               {section.paragraphs?.map((paragraph, idx) => (
                 <p
                   key={idx}
-                  className={`text-gray-700 leading-relaxed ${
+                  className={`text-dental-text leading-relaxed ${
                     idx + 1 === (section.paragraphs?.length || 0) &&
                     !section.list
                       ? ''
@@ -60,7 +62,7 @@ const PrivacyPolicy = () => {
                 </p>
               ))}
               {section.list && section.list.length > 0 && (
-                <ul className="list-disc pl-6 text-gray-700 space-y-2">
+                <ul className="list-disc pl-6 text-dental-text space-y-2">
                   {section.list.map((item, idx) => (
                     <li key={idx}>{item}</li>
                   ))}
@@ -68,23 +70,23 @@ const PrivacyPolicy = () => {
               )}
 
               {section.id === 'contact' && (
-                <div className="bg-gray-50 p-6 rounded-lg mt-4">
-                  <p className="text-gray-700 mb-2">
+                <div className="bg-dental-secondary-50 p-6 rounded-lg mt-4">
+                  <p className="text-dental-text mb-2">
                     <strong>
                       {t('privacyPolicyPage.contactCard.clinic', {
                         name: SITE_INFO.name,
                       })}
                     </strong>
                   </p>
-                  <p className="text-gray-700 mb-2">
+                  <p className="text-dental-text mb-2">
                     {t('privacyPolicyPage.contactCard.addressLabel')}:{' '}
                     {CONTACT_INFO.address.fullWithPostal}
                   </p>
-                  <p className="text-gray-700 mb-2">
+                  <p className="text-dental-text mb-2">
                     {t('privacyPolicyPage.contactCard.phoneLabel')}:{' '}
                     {CONTACT_INFO.phone}
                   </p>
-                  <p className="text-gray-700">
+                  <p className="text-dental-text">
                     {t('privacyPolicyPage.contactCard.emailLabel')}:{' '}
                     {CONTACT_INFO.privacyEmail}
                   </p>

@@ -23,7 +23,10 @@ import {
   Select,
   Textarea,
 } from '@/components/ui'
+import { useConfirm } from '@/hooks/useConfirm'
 import { useCSRF } from '@/hooks/useCSRF'
+import { useAdminAuth } from '@/hooks/useAdminAuth'
+import { can } from '@/lib/permissions'
 import { captureException } from '@/utils/sentry'
 import { formatCurrency, formatDateTime } from './utils'
 
@@ -83,11 +86,11 @@ const STATUS_I18N: Record<OrderStatus, string> = {
 }
 const ST_BADGE: Record<OrderStatus, string> = {
   draft: 'bg-dental-secondary-100 text-dental-text',
-  pending_approval: 'bg-amber-100 text-amber-800',
-  approved: 'bg-sky-100 text-sky-800',
-  ordered: 'bg-violet-100 text-violet-800',
-  delivered: 'bg-emerald-100 text-emerald-800',
-  cancelled: 'bg-red-100 text-red-800',
+  pending_approval: 'bg-status-warning-100 text-status-warning-700',
+  approved: 'bg-status-accent-100 text-status-accent-700',
+  ordered: 'bg-status-accent-100 text-status-accent-700',
+  delivered: 'bg-status-success-100 text-status-success-700',
+  cancelled: 'bg-status-neutral-200 text-status-neutral-700',
 }
 const URGENCY_I18N: Record<Urgency, string> = {
   low: 'admin.ordersPage.urgency.low',
@@ -97,9 +100,9 @@ const URGENCY_I18N: Record<Urgency, string> = {
 }
 const URG_CLR: Record<Urgency, string> = {
   low: 'text-dental-text',
-  normal: 'text-sky-700',
-  high: 'text-orange-600',
-  critical: 'text-red-600 font-semibold',
+  normal: 'text-dental-info-dark',
+  high: 'text-status-warning-700',
+  critical: 'text-status-error-700 font-semibold',
 }
 type PatchAct = {
   from: OrderStatus
@@ -112,13 +115,13 @@ const PATCH_ACTS: PatchAct[] = [
     from: 'draft',
     next: 'pending_approval',
     label: 'admin.ordersPage.actions.sendForApproval',
-    cls: 'bg-amber-600 hover:bg-amber-700 text-white border-0 focus:ring-amber-500',
+    cls: 'bg-status-warning-700 hover:brightness-95 text-white border-0 focus:ring-dental-warning',
   },
   {
     from: 'pending_approval',
     next: 'approved',
     label: 'admin.ordersPage.actions.approve',
-    cls: 'bg-sky-600 hover:bg-sky-700 text-white border-0 focus:ring-sky-500',
+    cls: 'bg-dental-primary-600 hover:bg-dental-primary-700 text-white border-0 focus:ring-dental-primary-500',
   },
   {
     from: 'pending_approval',
@@ -129,7 +132,7 @@ const PATCH_ACTS: PatchAct[] = [
     from: 'approved',
     next: 'ordered',
     label: 'admin.ordersPage.actions.markOrdered',
-    cls: 'bg-violet-600 hover:bg-violet-700 text-white border-0 focus:ring-violet-500',
+    cls: 'bg-dental-primary-600 hover:bg-dental-primary-700 text-white border-0 focus:ring-dental-primary-500',
   },
   {
     from: 'approved',
@@ -140,7 +143,7 @@ const PATCH_ACTS: PatchAct[] = [
     from: 'ordered',
     next: 'delivered',
     label: 'admin.ordersPage.actions.markDelivered',
-    cls: 'bg-emerald-600 hover:bg-emerald-700 text-white border-0 focus:ring-emerald-500',
+    cls: 'bg-dental-success-dark hover:brightness-95 text-white border-0 focus:ring-dental-success',
   },
   {
     from: 'ordered',
@@ -148,6 +151,14 @@ const PATCH_ACTS: PatchAct[] = [
     label: 'admin.ordersPage.actions.cancel',
   },
 ]
+// Transitions the API gates behind orders:approve (must match APPROVAL_STATUSES
+// in app/api/material-orders/[id]/route.ts). The UI hides these buttons for roles
+// without the permission so they never click an action the API will 403.
+const APPROVAL_STATUSES = new Set<OrderStatus>([
+  'approved',
+  'ordered',
+  'delivered',
+])
 const mname = (m: OrderItem['materials']) =>
   !m ? '—' : m.name_uk?.trim() || m.name_en?.trim() || m.name_pl?.trim() || '—'
 const grid =
@@ -155,7 +166,14 @@ const grid =
 
 export default function AdminOrdersPage() {
   const { t } = useTranslation()
+  const { confirm, confirmDialog } = useConfirm()
   const { token: csrfToken, refreshToken } = useCSRF()
+  const { user } = useAdminAuth()
+  // RBAC-гейт дій (Р1): створювати може будь-який персонал, а видаляти
+  // й затверджувати — лише відповідні ролі
+  const canCreate = user ? can(user.role, 'orders:create') : false
+  const canDelete = user ? can(user.role, 'orders:delete') : false
+  const canApprove = user ? can(user.role, 'orders:approve') : false
   const [orders, setOrders] = useState<MaterialOrder[]>([])
   const [materials, setMaterials] = useState<{ id: string; name_uk: string }[]>(
     []
@@ -307,7 +325,14 @@ export default function AdminOrdersPage() {
     }
   }
   const deleteDraft = async (id: string) => {
-    if (!window.confirm(t('admin.ordersPage.deleteConfirm'))) return
+    if (
+      !(await confirm({
+        title: t('admin.ordersPage.deleteConfirm'),
+        severity: 'irreversible',
+        confirmLabel: t('common.delete'),
+      }))
+    )
+      return
     const token = csrf()
     if (!token) return
     setPatchingId(id)
@@ -396,6 +421,7 @@ export default function AdminOrdersPage() {
   )
   return (
     <div className="space-y-6">
+      {confirmDialog}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold text-dental-navy">
           {t('admin.ordersPage.title')}
@@ -429,14 +455,16 @@ export default function AdminOrdersPage() {
             />
             {t('admin.ordersPage.refresh')}
           </Button>
-          <Button
-            type="button"
-            onClick={() => setCreateOpen(true)}
-            className="gap-2 bg-dental-teal hover:bg-dental-teal/90"
-          >
-            <Plus className="w-4 h-4" />
-            {t('admin.ordersPage.createOrder')}
-          </Button>
+          {canCreate && (
+            <Button
+              type="button"
+              onClick={() => setCreateOpen(true)}
+              className="gap-2 bg-dental-teal hover:bg-dental-teal/90"
+            >
+              <Plus className="w-4 h-4" />
+              {t('admin.ordersPage.createOrder')}
+            </Button>
+          )}
         </div>
       </div>
       {error && <ErrorState title={error} onRetry={() => void loadOrders()} />}
@@ -467,7 +495,7 @@ export default function AdminOrdersPage() {
                   onClick={() => setExpandedId(ex ? null : order.id)}
                   className="w-full text-left px-4 py-3 flex flex-wrap items-center gap-3 hover:bg-dental-primary/30"
                 >
-                  <span className="font-mono text-xs text-dental-text-light">
+                  <span className="font-mono text-xs text-dental-muted">
                     {order.id.slice(0, 8)}…
                   </span>
                   <span className="text-sm text-dental-text">
@@ -487,7 +515,7 @@ export default function AdminOrdersPage() {
                   <span className="text-sm font-semibold text-dental-navy ml-auto">
                     {formatCurrency(order.total_estimated_cost)}
                   </span>
-                  <span className="text-xs text-dental-text-light">
+                  <span className="text-xs text-dental-muted">
                     {items.length} {t('admin.ordersPage.items')}
                   </span>
                   {ex ? (
@@ -535,7 +563,7 @@ export default function AdminOrdersPage() {
                                 <div className="flex-1">
                                   <div className="h-1.5 rounded-full bg-dental-secondary-200 overflow-hidden">
                                     <div
-                                      className="h-full rounded-full bg-emerald-500 transition-all"
+                                      className="h-full rounded-full bg-dental-success transition-all"
                                       style={{ width: `${pct}%` }}
                                     />
                                   </div>
@@ -564,7 +592,7 @@ export default function AdminOrdersPage() {
                                         }))
                                       }
                                     />
-                                    <span className="text-dental-text-light">
+                                    <span className="text-dental-muted">
                                       / {req}
                                     </span>
                                   </div>
@@ -588,7 +616,7 @@ export default function AdminOrdersPage() {
                       </p>
                     )}
                     {order.approved_at && (
-                      <p className="text-xs text-dental-text-light">
+                      <p className="text-xs text-dental-muted">
                         {t('admin.ordersPage.approvedAt')}:{' '}
                         {formatDateTime(order.approved_at)}
                       </p>
@@ -603,7 +631,7 @@ export default function AdminOrdersPage() {
                             variant="outline"
                             disabled={savingDelivery}
                             onClick={() => void saveDeliveryQty(order.id)}
-                            className="gap-1 border-emerald-300 text-emerald-700"
+                            className="gap-1 border-dental-success/30 text-status-success-700"
                           >
                             <Save className="w-3.5 h-3.5" />
                             {savingDelivery
@@ -611,27 +639,31 @@ export default function AdminOrdersPage() {
                               : t('admin.ordersPage.delivery.save')}
                           </Button>
                         )}
-                      {flow.map(a => (
-                        <Button
-                          key={`${a.from}-${a.next}`}
-                          type="button"
-                          size="sm"
-                          variant={a.cls ? 'ghost' : 'outline'}
-                          disabled={busy}
-                          onClick={() => void patchStatus(order.id, a.next)}
-                          className={a.cls}
-                        >
-                          {t(a.label)}
-                        </Button>
-                      ))}
-                      {order.status === 'draft' && (
+                      {flow
+                        .filter(
+                          a => !APPROVAL_STATUSES.has(a.next) || canApprove
+                        )
+                        .map(a => (
+                          <Button
+                            key={`${a.from}-${a.next}`}
+                            type="button"
+                            size="sm"
+                            variant={a.cls ? 'ghost' : 'outline'}
+                            disabled={busy}
+                            onClick={() => void patchStatus(order.id, a.next)}
+                            className={a.cls}
+                          >
+                            {t(a.label)}
+                          </Button>
+                        ))}
+                      {order.status === 'draft' && canDelete && (
                         <Button
                           type="button"
                           size="sm"
                           variant="outline"
                           disabled={busy}
                           onClick={() => void deleteDraft(order.id)}
-                          className="text-red-600 border-red-200"
+                          className="text-status-error-700 border-dental-error/20"
                         >
                           <Trash2 className="w-4 h-4 mr-1 inline" />
                           {t('admin.ordersPage.actions.delete')}
@@ -655,7 +687,7 @@ export default function AdminOrdersPage() {
                           {t('admin.ordersPage.historyTitle')}
                         </p>
                         {!auditLogs[order.id]?.length ? (
-                          <p className="text-dental-text-light">
+                          <p className="text-dental-muted">
                             {t('admin.ordersPage.noHistory')}
                           </p>
                         ) : (
@@ -667,7 +699,7 @@ export default function AdminOrdersPage() {
                               >
                                 <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-dental-teal" />
                                 <div>
-                                  <span className="text-dental-text-light">
+                                  <span className="text-dental-muted">
                                     {formatDateTime(log.changed_at)}
                                   </span>
                                   {' — '}
@@ -795,7 +827,7 @@ export default function AdminOrdersPage() {
                           p.length <= 1 ? p : p.filter((_, j) => j !== i)
                         )
                       }
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                      className="p-2 text-dental-error hover:bg-status-error-100 rounded-lg"
                       aria-label={t('common.delete')}
                     >
                       <Trash2 className="w-4 h-4" />

@@ -3,8 +3,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { RefreshCw, StickyNote } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button, EmptyState, ErrorState, Input, Select } from '@/components/ui'
+import {
+  Button,
+  EmptyState,
+  ErrorState,
+  Input,
+  Select,
+  StatusBadge,
+} from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
+import { useConfirm, type ConfirmOptions } from '@/hooks/useConfirm'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
 import { formatDateTime, getStatusTone } from './utils'
@@ -28,6 +36,7 @@ const STATUS_OPTIONS = ['new', 'in_progress', 'resolved', 'closed']
 export default function AdminContactsPage() {
   const { t } = useTranslation()
   const { preferences } = useAdminPreferences()
+  const { confirm, confirmDialog } = useConfirm()
   const [rows, setRows] = useState<ContactRow[]>([])
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [searchTerm, setSearchTerm] = useState('')
@@ -127,18 +136,18 @@ export default function AdminContactsPage() {
   const cardPaddingClass = preferences.compactTables ? 'p-3' : 'p-4'
   const emptyStateClass = `${
     preferences.compactTables ? 'px-3 py-6' : 'px-4 py-8'
-  } text-center text-dental-text-light`
+  } text-center text-dental-muted`
   const getStatusLabel = useCallback(
     (status: string) => t(`admin.contactStatuses.${status}`),
     [t]
   )
 
   const confirmIfNeeded = useCallback(
-    (message: string) => {
+    async (opts: ConfirmOptions) => {
       if (!preferences.confirmSensitiveActions) return true
-      return window.confirm(message)
+      return confirm(opts)
     },
-    [preferences.confirmSensitiveActions]
+    [preferences.confirmSensitiveActions, confirm]
   )
 
   const toggleSelection = (id: string) => {
@@ -158,11 +167,13 @@ export default function AdminContactsPage() {
   const applyBulkChanges = async () => {
     if (selectedIds.length === 0) return
     if (
-      !confirmIfNeeded(
-        t('admin.contactsPage.confirmations.bulkChange', {
+      !(await confirmIfNeeded({
+        title: t('admin.contactsPage.confirmations.bulkChange', {
           count: selectedIds.length,
-        })
-      )
+        }),
+        severity: 'significant',
+        confirmLabel: t('common.confirm'),
+      }))
     ) {
       return
     }
@@ -215,7 +226,11 @@ export default function AdminContactsPage() {
       patch: Partial<Pick<ContactRow, 'status' | 'is_read' | 'admin_notes'>>
     ) => {
       if (
-        !confirmIfNeeded(t('admin.contactsPage.confirmations.singleUpdate'))
+        !(await confirmIfNeeded({
+          title: t('admin.contactsPage.confirmations.singleUpdate'),
+          severity: 'significant',
+          confirmLabel: t('common.confirm'),
+        }))
       ) {
         return
       }
@@ -258,12 +273,13 @@ export default function AdminContactsPage() {
 
   return (
     <div className="space-y-6">
+      {confirmDialog}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-dental-dark">
             {t('admin.contactsPage.title')}
           </h1>
-          <p className="text-sm text-dental-text-light">
+          <p className="text-sm text-dental-muted">
             {t('admin.contactsPage.description')}
           </p>
         </div>
@@ -280,28 +296,34 @@ export default function AdminContactsPage() {
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">
+          <p className="text-xs text-dental-muted">
             {t('admin.contactsPage.summary.total')}
           </p>
           <p className="text-2xl font-bold text-dental-dark">{stats.total}</p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">
+          <p className="text-xs text-dental-muted">
             {t('admin.contactsPage.summary.unread')}
           </p>
-          <p className="text-2xl font-bold text-amber-600">{stats.unread}</p>
+          <p className="text-2xl font-bold text-status-warning-700">
+            {stats.unread}
+          </p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">
+          <p className="text-xs text-dental-muted">
             {t('admin.contactsPage.summary.inProgress')}
           </p>
-          <p className="text-2xl font-bold text-blue-600">{stats.inProgress}</p>
+          <p className="text-2xl font-bold text-status-accent-700">
+            {stats.inProgress}
+          </p>
         </div>
         <div className="rounded-xl border border-dental-secondary-200 bg-white p-4">
-          <p className="text-xs text-dental-text-light">
+          <p className="text-xs text-dental-muted">
             {t('admin.contactsPage.summary.resolved')}
           </p>
-          <p className="text-2xl font-bold text-green-600">{stats.resolved}</p>
+          <p className="text-2xl font-bold text-status-success-700">
+            {stats.resolved}
+          </p>
         </div>
       </div>
 
@@ -350,7 +372,7 @@ export default function AdminContactsPage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-2 rounded-xl border border-dental-secondary-200 bg-white px-4 py-3">
-        <span className="text-sm text-dental-text-light">
+        <span className="text-sm text-dental-muted">
           {t('admin.contactsPage.bulk.selected', { count: selectedIds.length })}
         </span>
         <Button variant="outline" size="sm" onClick={toggleSelectAll}>
@@ -437,12 +459,12 @@ export default function AdminContactsPage() {
                       {getStatusLabel(row.status)}
                     </span>
                     {!row.is_read ? (
-                      <span className="inline-flex rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700">
+                      <StatusBadge tone="warning">
                         {t('admin.contactsPage.card.unreadBadge')}
-                      </span>
+                      </StatusBadge>
                     ) : null}
                   </div>
-                  <p className="mt-1 text-sm text-dental-text-light">
+                  <p className="mt-1 text-sm text-dental-muted">
                     {row.phone}
                     {row.email ? ` • ${row.email}` : ''} •{' '}
                     {formatDateTime(row.created_at)}
@@ -549,7 +571,7 @@ function InlineNotes({
   if (isEditing) {
     return (
       <div className="mt-3">
-        <label className="mb-1 block text-xs font-medium text-dental-text-light">
+        <label className="mb-1 block text-xs font-medium text-dental-muted">
           {label}
         </label>
         <textarea
@@ -576,7 +598,7 @@ function InlineNotes({
     <button
       type="button"
       onClick={() => setIsEditing(true)}
-      className="mt-3 flex w-full items-start gap-2 rounded-lg px-3 py-2 text-left text-xs text-dental-text-light transition-colors hover:bg-dental-secondary-50"
+      className="mt-3 flex w-full items-start gap-2 rounded-lg px-3 py-2 text-left text-xs text-dental-muted transition-colors hover:bg-dental-secondary-50"
     >
       <StickyNote className="mt-0.5 h-3.5 w-3.5 shrink-0" />
       {value ? (

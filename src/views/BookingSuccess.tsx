@@ -5,6 +5,7 @@ import Link from 'next/link'
 import MicroFeedback from '@/components/MicroFeedback'
 import { useEffect, useMemo, useState } from 'react'
 import { createICSEvent, downloadICS } from '@/utils/calendar'
+import { SITE_INFO, CONTACT_INFO } from '@/utils/constants'
 import { CalendarPlus, CreditCard } from 'lucide-react'
 import ReminderSettings from '@/components/ReminderSettings'
 import { useTranslation } from 'react-i18next'
@@ -124,7 +125,7 @@ export default function BookingSuccess() {
         ref,
         name: bookingDetails.name || '',
       }).trim(),
-      location: t('booking.successPage.calendarLocation'),
+      location: `${SITE_INFO.name}, ${CONTACT_INFO.address.full}`,
       start: startLocal,
       end: endLocal,
       url: window.location.href,
@@ -237,7 +238,7 @@ export default function BookingSuccess() {
           {canCreateEvent && (
             <button
               onClick={handleAddToCalendar}
-              className="px-5 py-2 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 inline-flex items-center gap-2"
+              className="px-5 py-2 rounded-lg bg-dental-primary-50 text-dental-primary-ink border border-dental-primary-200 inline-flex items-center gap-2"
               aria-label={t('booking.successPage.addToCalendar')}
             >
               <CalendarPlus className="h-5 w-5" />{' '}

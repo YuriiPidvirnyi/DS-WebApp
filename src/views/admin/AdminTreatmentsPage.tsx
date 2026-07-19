@@ -2,10 +2,22 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
-import { Edit, Package, Plus, RefreshCw, Trash2 } from 'lucide-react'
+import { Edit, Package, Plus, Printer, RefreshCw, Trash2 } from 'lucide-react'
+import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
-import { Button, ErrorState, Input, Select, Textarea } from '@/components/ui'
+import {
+  Button,
+  ErrorState,
+  Input,
+  Select,
+  StatusBadge,
+  Textarea,
+  type StatusTone,
+} from '@/components/ui'
 import { useAdminPreferences } from '@/hooks/useAdminPreferences'
+import { useAdminAuth } from '@/hooks/useAdminAuth'
+import { can } from '@/lib/permissions'
+import { useConfirm } from '@/hooks/useConfirm'
 import { useCSRF } from '@/hooks/useCSRF'
 import { createClient } from '@/lib/supabase/client'
 import { captureException } from '@/utils/sentry'
@@ -72,17 +84,17 @@ interface MatUsedLine {
   quantityUsed: string
 }
 
-const ST_CSS: Record<TreatmentStatus, string> = {
-  draft: 'bg-amber-100 text-amber-800',
-  signed: 'bg-blue-100 text-blue-800',
-  completed: 'bg-green-100 text-green-800',
+const ST_TONE: Record<TreatmentStatus, StatusTone> = {
+  draft: 'neutral',
+  signed: 'accent',
+  completed: 'success',
 }
-const PY_CSS: Record<PayStatus, string> = {
-  unpaid: 'bg-red-100 text-red-800',
-  partial: 'bg-orange-100 text-orange-800',
-  paid: 'bg-green-100 text-green-800',
-  waived: 'bg-dental-secondary-100 text-dental-text',
-  refunded: 'bg-slate-100 text-slate-700',
+const PY_TONE: Record<PayStatus, StatusTone> = {
+  unpaid: 'error',
+  partial: 'warning',
+  paid: 'success',
+  waived: 'neutral',
+  refunded: 'neutral',
 }
 const TREATMENT_STATUSES: TreatmentStatus[] = ['draft', 'signed', 'completed']
 const PAY_STATUSES: PayStatus[] = [
@@ -133,7 +145,12 @@ const emptyMatLine = (): MatUsedLine => ({ materialId: '', quantityUsed: '1' })
 export default function AdminTreatmentsPage() {
   const { t } = useTranslation()
   const { preferences } = useAdminPreferences()
+  const { user } = useAdminAuth()
+  const { confirm, confirmDialog } = useConfirm()
   const { token: csrfToken, refreshToken } = useCSRF()
+  // RBAC-гейт дій (Р1): read-only ролі бачать лише перегляд і друк
+  const canCreate = user ? can(user.role, 'treatments:create') : false
+  const canEdit = user ? can(user.role, 'treatments:edit_draft') : false
   const [rows, setRows] = useState<TreatmentRow[]>([])
   const [searchPatient, setSearchPatient] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | TreatmentStatus>(
@@ -436,7 +453,15 @@ export default function AdminTreatmentsPage() {
   }
 
   const remove = async (id: string) => {
-    if (!window.confirm(t('admin.treatmentsPage.deleteConfirm'))) return
+    if (
+      !(await confirm({
+        title: t('admin.treatmentsPage.deleteConfirm'),
+        severity: 'irreversible',
+        warning: t('confirmDialog.irreversibleWarning'),
+        confirmLabel: t('common.delete'),
+      }))
+    )
+      return
     const token = csrf()
     if (!token) return
     try {
@@ -454,7 +479,7 @@ export default function AdminTreatmentsPage() {
   }
 
   const cell = preferences.compactTables ? 'px-3 py-2' : 'px-4 py-3'
-  const head = `${cell} text-left text-xs font-semibold uppercase text-dental-text-light`
+  const head = `${cell} text-left text-xs font-semibold uppercase text-dental-muted`
   const editingRow = editId ? rows.find(x => x.id === editId) : undefined
   const TAB_H = [
     t('admin.treatmentsPage.columns.date'),
@@ -470,12 +495,13 @@ export default function AdminTreatmentsPage() {
 
   return (
     <div className="space-y-6 p-4 md:p-6">
+      {confirmDialog}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-dental-dark">
             {t('admin.treatmentsPage.title')}
           </h1>
-          <p className="text-sm text-dental-text-light">
+          <p className="text-sm text-dental-muted">
             {t('admin.treatmentsPage.subtitle')}
           </p>
         </div>
@@ -492,17 +518,19 @@ export default function AdminTreatmentsPage() {
             />
             {t('admin.treatmentsPage.refresh')}
           </Button>
-          <Button
-            type="button"
-            onClick={() => {
-              resetForm()
-              setModalOpen(true)
-            }}
-            className="gap-2 bg-dental-teal"
-          >
-            <Plus className="h-4 w-4" />
-            {t('admin.treatmentsPage.createAct')}
-          </Button>
+          {canCreate && (
+            <Button
+              type="button"
+              onClick={() => {
+                resetForm()
+                setModalOpen(true)
+              }}
+              className="gap-2 bg-dental-teal"
+            >
+              <Plus className="h-4 w-4" />
+              {t('admin.treatmentsPage.createAct')}
+            </Button>
+          )}
         </div>
       </div>
       <div className="grid gap-3 rounded-xl border border-dental-secondary-200 bg-white p-4 md:grid-cols-3">
@@ -547,7 +575,7 @@ export default function AdminTreatmentsPage() {
               <tr>
                 <td
                   colSpan={9}
-                  className="px-4 py-8 text-center text-dental-text-light"
+                  className="px-4 py-8 text-center text-dental-muted"
                 >
                   {t('admin.treatmentsPage.loading')}
                 </td>
@@ -556,16 +584,16 @@ export default function AdminTreatmentsPage() {
               <tr>
                 <td
                   colSpan={9}
-                  className="px-4 py-8 text-center text-dental-text-light"
+                  className="px-4 py-8 text-center text-dental-muted"
                 >
                   {t('admin.treatmentsPage.empty')}
                 </td>
               </tr>
             ) : (
               filtered.map(r => {
-                const sc = ST_CSS[r.status]
+                const sc = ST_TONE[r.status]
                 const sl = t(`admin.treatmentsPage.statuses.${r.status}`)
-                const pc = PY_CSS[r.payment_status]
+                const pc = PY_TONE[r.payment_status]
                 const pl = t(
                   `admin.treatmentsPage.payStatuses.${r.payment_status}`
                 )
@@ -594,37 +622,43 @@ export default function AdminTreatmentsPage() {
                       {formatCurrency(Number(r.total_cost))}
                     </td>
                     <td className={cell}>
-                      <span
-                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${pc}`}
-                      >
-                        {pl}
-                      </span>
+                      <StatusBadge tone={pc}>{pl}</StatusBadge>
                     </td>
                     <td className={cell}>
-                      <span
-                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${sc}`}
-                      >
-                        {sl}
-                      </span>
+                      <StatusBadge tone={sc}>{sl}</StatusBadge>
                     </td>
                     <td className={cell}>
                       <div className="flex gap-1">
-                        <button
-                          type="button"
-                          onClick={() => openEdit(r)}
-                          className="rounded-lg p-2 text-dental-teal hover:bg-dental-primary/40"
-                          aria-label={t('admin.treatmentsPage.editAria')}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => void remove(r.id)}
-                          className="rounded-lg p-2 text-red-600 hover:bg-red-50"
-                          aria-label={t('admin.treatmentsPage.deleteAria')}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                        {r.status !== 'draft' && (
+                          /* Друк лише для «Підписано»/«Завершено» (макет 2c) */
+                          <Link
+                            href={`/admin/treatments/${r.id}/print`}
+                            className="rounded-lg p-2 text-dental-primary-ink hover:bg-dental-primary-50"
+                            aria-label={t('admin.treatmentsPage.printAria')}
+                          >
+                            <Printer className="h-4 w-4" />
+                          </Link>
+                        )}
+                        {canEdit && (
+                          <button
+                            type="button"
+                            onClick={() => openEdit(r)}
+                            className="rounded-lg p-2 text-dental-teal hover:bg-dental-primary/40"
+                            aria-label={t('admin.treatmentsPage.editAria')}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </button>
+                        )}
+                        {canEdit && (
+                          <button
+                            type="button"
+                            onClick={() => void remove(r.id)}
+                            className="rounded-lg p-2 text-dental-error hover:bg-status-error-100"
+                            aria-label={t('admin.treatmentsPage.deleteAria')}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -651,7 +685,7 @@ export default function AdminTreatmentsPage() {
           {editId ? (
             <div className="grid gap-3 rounded-lg bg-dental-primary/20 p-3 text-sm md:grid-cols-2">
               <div>
-                <span className="text-dental-text-light">
+                <span className="text-dental-muted">
                   {t('admin.treatmentsPage.modal.patient')}:{' '}
                 </span>
                 <span className="font-medium text-dental-dark">
@@ -659,7 +693,7 @@ export default function AdminTreatmentsPage() {
                 </span>
               </div>
               <div>
-                <span className="text-dental-text-light">
+                <span className="text-dental-muted">
                   {t('admin.treatmentsPage.modal.doctor')}:{' '}
                 </span>
                 <span className="font-medium text-dental-dark">
@@ -774,7 +808,7 @@ export default function AdminTreatmentsPage() {
                   className="grid gap-2 rounded-lg border border-dental-secondary-200 p-2 md:grid-cols-12 md:items-end"
                 >
                   <label className="md:col-span-5">
-                    <span className="text-xs text-dental-text-light">
+                    <span className="text-xs text-dental-muted">
                       {t('admin.treatmentsPage.modal.service')}
                     </span>
                     <Select
@@ -793,7 +827,7 @@ export default function AdminTreatmentsPage() {
                     </Select>
                   </label>
                   <label className="md:col-span-2">
-                    <span className="text-xs text-dental-text-light">
+                    <span className="text-xs text-dental-muted">
                       {t('admin.treatmentsPage.modal.tooth')}
                     </span>
                     <Input
@@ -804,7 +838,7 @@ export default function AdminTreatmentsPage() {
                     />
                   </label>
                   <label className="md:col-span-2">
-                    <span className="text-xs text-dental-text-light">
+                    <span className="text-xs text-dental-muted">
                       {t('admin.treatmentsPage.modal.quantity')}
                     </span>
                     <Input
@@ -815,7 +849,7 @@ export default function AdminTreatmentsPage() {
                     />
                   </label>
                   <label className="md:col-span-2">
-                    <span className="text-xs text-dental-text-light">
+                    <span className="text-xs text-dental-muted">
                       {t('admin.treatmentsPage.modal.price')}
                     </span>
                     <Input
@@ -830,7 +864,7 @@ export default function AdminTreatmentsPage() {
                       onClick={() =>
                         setLines(prev => prev.filter((_, i) => i !== idx))
                       }
-                      className="rounded-lg p-2 text-red-600 hover:bg-red-50 disabled:opacity-40"
+                      className="rounded-lg p-2 text-dental-error hover:bg-status-error-100 disabled:opacity-40"
                       aria-label={t('admin.treatmentsPage.removeLineAria')}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -867,7 +901,7 @@ export default function AdminTreatmentsPage() {
                       className="grid gap-2 rounded-lg border border-dental-secondary-200 p-2 md:grid-cols-12 md:items-end"
                     >
                       <label className="md:col-span-6">
-                        <span className="text-xs text-dental-text-light">
+                        <span className="text-xs text-dental-muted">
                           {t('admin.inventory.consumption.material')}
                         </span>
                         <Select
@@ -896,7 +930,7 @@ export default function AdminTreatmentsPage() {
                         </Select>
                       </label>
                       <label className="md:col-span-3">
-                        <span className="text-xs text-dental-text-light">
+                        <span className="text-xs text-dental-muted">
                           {t('admin.inventory.consumption.quantity')}
                         </span>
                         <Input
@@ -917,7 +951,7 @@ export default function AdminTreatmentsPage() {
                       </label>
                       <div className="md:col-span-2 flex items-end">
                         {mat && (
-                          <span className="flex items-center gap-1 text-xs text-dental-text-light pb-2">
+                          <span className="flex items-center gap-1 text-xs text-dental-muted pb-2">
                             {mat.image_url ? (
                               <Image
                                 src={mat.image_url}
@@ -941,7 +975,7 @@ export default function AdminTreatmentsPage() {
                               prev.filter((_, i) => i !== idx)
                             )
                           }
-                          className="rounded-lg p-2 text-red-600 hover:bg-red-50"
+                          className="rounded-lg p-2 text-dental-error hover:bg-status-error-100"
                           aria-label={t('common.delete')}
                         >
                           <Trash2 className="h-4 w-4" />

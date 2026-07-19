@@ -3,8 +3,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { ChevronLeft, Plus, Pencil, Archive, Loader2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import type { StockWarehouse, WarehouseKind } from '@/types/stock'
 import { useCSRF } from '@/hooks/useCSRF'
+import { useConfirm } from '@/hooks/useConfirm'
 
 const KIND_LABELS: Record<WarehouseKind, string> = {
   main: 'Головний',
@@ -14,7 +16,9 @@ const KIND_LABELS: Record<WarehouseKind, string> = {
 }
 
 export default function AdminStockWarehousesPage() {
+  const { t } = useTranslation()
   const { token: csrfToken } = useCSRF()
+  const { confirm, confirmDialog } = useConfirm()
   const [warehouses, setWarehouses] = useState<StockWarehouse[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -43,7 +47,15 @@ export default function AdminStockWarehousesPage() {
   }, [load])
 
   async function archiveWarehouse(id: string) {
-    if (!confirm('Архівувати склад?')) return
+    if (
+      !(await confirm({
+        title: t('admin.stock.confirm.archiveWarehouse.title'),
+        description: t('admin.stock.confirm.archiveWarehouse.description'),
+        confirmLabel: t('admin.stock.confirm.archiveWarehouse.action'),
+        severity: 'significant',
+      }))
+    )
+      return
     const res = await fetch(`/api/stock/warehouses/${id}`, {
       method: 'PATCH',
       headers: {
@@ -96,7 +108,7 @@ export default function AdminStockWarehousesPage() {
         )}
 
         {error && (
-          <div className="rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+          <div className="rounded-lg bg-status-error-100 border border-dental-error/20 p-4 text-sm text-status-error-700">
             {error}
           </div>
         )}
@@ -125,7 +137,7 @@ export default function AdminStockWarehousesPage() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setEditTarget(wh)}
-                    className="rounded p-1.5 text-dental-text hover:bg-gray-100"
+                    className="rounded p-1.5 text-dental-text hover:bg-dental-secondary-100"
                     title="Редагувати"
                   >
                     <Pencil className="w-4 h-4" />
@@ -133,7 +145,7 @@ export default function AdminStockWarehousesPage() {
                   {!wh.is_archived && (
                     <button
                       onClick={() => archiveWarehouse(wh.id)}
-                      className="rounded p-1.5 text-amber-500 hover:bg-amber-50"
+                      className="rounded p-1.5 text-dental-warning hover:bg-status-warning-100"
                       title="Архівувати"
                     >
                       <Archive className="w-4 h-4" />
@@ -160,6 +172,8 @@ export default function AdminStockWarehousesPage() {
           }}
         />
       )}
+
+      {confirmDialog}
     </>
   )
 }
@@ -236,7 +250,7 @@ function WarehouseFormModal({
               value={nameUk}
               onChange={e => setNameUk(e.target.value)}
               required
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
+              className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
             />
           </div>
           <div>
@@ -246,7 +260,7 @@ function WarehouseFormModal({
             <select
               value={kind}
               onChange={e => setKind(e.target.value as WarehouseKind)}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
+              className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
             >
               {VALID_KINDS.map(k => (
                 <option key={k} value={k}>
@@ -263,7 +277,7 @@ function WarehouseFormModal({
               type="number"
               value={sortOrder}
               onChange={e => setSortOrder(Number(e.target.value))}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
+              className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
             />
           </div>
           <div>
@@ -274,10 +288,10 @@ function WarehouseFormModal({
               value={comment}
               onChange={e => setComment(e.target.value)}
               rows={2}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 resize-none"
+              className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 resize-none"
             />
           </div>
-          {err && <p className="text-sm text-red-600">{err}</p>}
+          {err && <p className="text-sm text-status-error-700">{err}</p>}
           <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"

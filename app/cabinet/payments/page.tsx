@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { CreditCard } from 'lucide-react'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { StatusBadge, type StatusTone } from '@/components/ui/StatusBadge'
 import { WalletCards, type WalletCard } from '@/components/cabinet/WalletCards'
 
 type PaymentStatus =
@@ -40,13 +41,13 @@ const STATUS_LABELS: Record<PaymentStatus, string> = {
   reversed: 'Повернуто',
 }
 
-const STATUS_CLASSES: Record<PaymentStatus, string> = {
-  created: 'bg-yellow-100 text-yellow-800',
-  processing: 'bg-yellow-100 text-yellow-800',
-  success: 'bg-green-100 text-green-800',
-  failure: 'bg-red-100 text-red-800',
-  expired: 'bg-red-100 text-red-800',
-  reversed: 'bg-gray-100 text-gray-600',
+const STATUS_TONES: Record<PaymentStatus, StatusTone> = {
+  created: 'warning',
+  processing: 'warning',
+  success: 'success',
+  failure: 'error',
+  expired: 'error',
+  reversed: 'neutral',
 }
 
 const MODE_LABELS: Record<PaymentMode, string> = {
@@ -108,7 +109,7 @@ export default async function PaymentsPage() {
         <EmptyState
           icon={
             <div className="w-20 h-20 bg-dental-primary-50 rounded-full flex items-center justify-center">
-              <CreditCard className="w-10 h-10 text-dental-primary-600" />
+              <CreditCard className="w-10 h-10 text-dental-primary-ink" />
             </div>
           }
           title="Немає платежів"
@@ -162,11 +163,11 @@ export default async function PaymentsPage() {
                         payment.payment_mode}
                     </td>
                     <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_CLASSES[payment.status] ?? 'bg-gray-100 text-gray-600'}`}
+                      <StatusBadge
+                        tone={STATUS_TONES[payment.status] ?? 'neutral'}
                       >
                         {STATUS_LABELS[payment.status] ?? payment.status}
-                      </span>
+                      </StatusBadge>
                     </td>
                   </tr>
                 ))}
@@ -182,11 +183,12 @@ export default async function PaymentsPage() {
                   <span className="font-medium text-dental-dark text-sm">
                     {payment.appointments?.[0]?.services?.[0]?.name_uk ?? '—'}
                   </span>
-                  <span
-                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium shrink-0 ${STATUS_CLASSES[payment.status] ?? 'bg-gray-100 text-gray-600'}`}
+                  <StatusBadge
+                    tone={STATUS_TONES[payment.status] ?? 'neutral'}
+                    className="shrink-0"
                   >
                     {STATUS_LABELS[payment.status] ?? payment.status}
-                  </span>
+                  </StatusBadge>
                 </div>
                 <div className="flex items-center justify-between text-sm text-dental-muted">
                   <span>

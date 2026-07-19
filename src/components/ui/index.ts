@@ -31,6 +31,15 @@ export type {
   SelectSize,
 } from './Input'
 
+export { StatusBadge } from './StatusBadge'
+export type { StatusBadgeProps, StatusTone } from './StatusBadge'
+
+export { RoleBadge } from './RoleBadge'
+export type { RoleBadgeProps } from './RoleBadge'
+
+export { ConfirmDialog } from './ConfirmDialog'
+export type { ConfirmDialogProps } from './ConfirmDialog'
+
 export { Spinner } from './Spinner'
 export type { SpinnerProps } from './Spinner'
 

@@ -287,6 +287,12 @@ const uk = {
         duration: '18 місяців',
       },
     },
+    beforePlaceholder: 'Фото ДО — кейс «{{case}}»',
+    afterPlaceholder: 'Фото ПІСЛЯ — кейс «{{case}}»',
+    keyboardHint: '←/→ крок 5% · Home/End — краї',
+    sliderAria:
+      'Повзунок порівняння: {{value}}%. Стрілки — крок 5%, Home/End — краї',
+    selectCase: 'Обрати кейс',
   },
   labels: {
     before: 'До',
@@ -356,9 +362,8 @@ const uk = {
       },
     },
     emergency: {
-      title: '🚨 Екстрена допомога',
+      title: 'Екстрена допомога',
       description: "У разі гострого болю або травми зв'яжіться з нами негайно:",
-      phone: '📞 +380 50 455 47 74',
       availability: 'Екстрені виклики приймаємо 24/7',
     },
     faq: {
@@ -445,11 +450,13 @@ const uk = {
         'Сучасне обладнання',
         'Кваліфіковані лікарі',
       ],
+      photoAlt: 'Пацієнтка Dental Story усміхається після візиту',
     },
     features: {
       title: 'Чому пацієнти обирають Dental Story',
       subtitle:
         'Ми поєднуємо професіоналізм, сучасні технології та індивідуальний підхід для досягнення найкращих результатів лікування',
+      kicker: 'Переваги',
     },
     services: {
       title: 'Повний спектр послуг',
@@ -1431,6 +1438,11 @@ const uk = {
       submit: 'Записатися',
       cooldown: 'Зачекайте {{seconds}} с',
       submittingOverlay: 'Надсилаємо заявку...',
+      nextPersonal: 'Далі: ваші дані',
+      nextSummary: 'Далі: підтвердження',
+      panelTitle: 'Ваш запис',
+      panelNote:
+        'Оплата в клініці. Перенести або скасувати запис можна безкоштовно за 24 години до візиту.',
     },
     errors: {
       cooldown: 'Занадто часті відправлення. Спробуйте через {{seconds}} с.',
@@ -1452,7 +1464,6 @@ const uk = {
       addToCalendar: 'Додати в календар',
       calendarTitle: 'Візит: {{service}}',
       calendarDescription: 'Запис №{{ref}}. Пацієнт: {{name}}',
-      calendarLocation: 'Dental Studio',
     },
   },
   apiDocsPage: {
@@ -1562,6 +1573,12 @@ const uk = {
       analytics: 'Аналітика',
       settings: 'Налаштування',
       users: 'Користувачі',
+      groups: {
+        operations: 'Операції',
+        communications: 'Комунікації',
+        inventory: 'Склад',
+        system: 'Система',
+      },
     },
     login: {
       title: 'Вхід в адмін-панель',
@@ -1587,6 +1604,7 @@ const uk = {
     },
     layout: {
       panel: 'Адмін-панель',
+      patientCabinet: 'Кабінет пацієнта',
       logout: 'Вийти',
       backToSite: 'На сайт',
       systemOnline: 'Система онлайн',
@@ -1616,7 +1634,7 @@ const uk = {
         backToList: 'Назад до списку',
       },
       connection: {
-        realtime: 'Realtime',
+        realtime: 'Онлайн',
         disconnected: 'Не підключено',
       },
       actions: {
@@ -1663,6 +1681,8 @@ const uk = {
         today: 'Сьогодні',
         upcoming: 'Майбутні',
         past: 'Минулі',
+        dateSelectAria: 'Фільтрувати за датою',
+        statusSelectAria: 'Фільтрувати за статусом',
       },
       bulk: {
         selected: 'Вибрано: {{count}}',
@@ -1744,6 +1764,7 @@ const uk = {
         loadFailedFallback: 'Не вдалося завантажити аналітику.',
         chartFailed: 'Цей розділ не вдалося завантажити.',
       },
+      periodSelectAria: 'Оберіть період',
     },
     patientManagement: {
       title: 'Управління пацієнтами',
@@ -1822,7 +1843,7 @@ const uk = {
         total: 'Всього',
         pending: 'Очікують',
         approved: 'Схвалені',
-        featured: 'Featured',
+        featured: 'Рекомендовані',
       },
       filters: {
         searchPlaceholder: 'Пошук: автор, послуга, текст',
@@ -1847,7 +1868,7 @@ const uk = {
       empty: 'Відгуків не знайдено.',
       card: {
         selectAria: 'Вибрати відгук від {{name}}',
-        featured: 'featured',
+        featured: 'рекомендований',
         wouldRecommend: 'Рекомендує: {{value}}',
         yes: 'так',
         no: 'ні',
@@ -1915,12 +1936,13 @@ const uk = {
       empty: 'За поточними фільтрами звернень не знайдено.',
       card: {
         selectAria: 'Вибрати звернення {{name}}',
-        unreadBadge: 'unread',
+        unreadBadge: 'непрочитане',
         markRead: 'Позначити прочитаним',
         markUnread: 'Позначити непрочитаним',
         showMessage: 'Показати повідомлення',
         adminNote: 'Адмін-нотатка',
         notesPlaceholder: 'Додати нотатку…',
+        statusSelectAria: 'Змінити статус звернення',
       },
       confirmations: {
         bulkChange: 'Застосувати масову зміну до {{count}} звернень?',
@@ -1989,8 +2011,8 @@ const uk = {
       blankChild: 'Бланк (дитина)',
     },
     serviceStatuses: {
-      active: 'active',
-      inactive: 'inactive',
+      active: 'Активна',
+      inactive: 'Неактивна',
     },
     servicesPage: {
       title: 'Управління послугами',
@@ -2081,8 +2103,8 @@ const uk = {
       },
     },
     doctorStatuses: {
-      active: 'active',
-      inactive: 'inactive',
+      active: 'Активний',
+      inactive: 'Неактивний',
     },
     doctorsPage: {
       title: 'Управління лікарями',
@@ -2251,17 +2273,17 @@ const uk = {
           summary: 'Зміст',
           actions: 'Дії',
         },
-        systemActor: 'system',
+        systemActor: 'система',
         actions: {
-          diff: 'Diff',
-          rollback: 'Rollback',
+          diff: 'Порівняти',
+          rollback: 'Відкат',
         },
         summary: {
           created: 'Створено запис ({{count}} полів)',
           deleted: 'Видалено запис ({{count}} полів)',
           changed: 'Змінено полів: {{count}}',
         },
-        nullValue: 'null',
+        nullValue: '—',
         errors: {
           supabaseUnavailable: 'Supabase не налаштований.',
           loadFailed:
@@ -2278,8 +2300,8 @@ const uk = {
             when: 'Коли',
           },
           noChanges: 'Відмінностей не виявлено.',
-          before: 'BEFORE',
-          after: 'AFTER',
+          before: 'БУЛО',
+          after: 'СТАЛО',
         },
       },
       rollback: {
@@ -2531,6 +2553,10 @@ const uk = {
       editAria: 'Редагувати',
       deleteAria: 'Видалити',
       removeLineAria: 'Прибрати рядок',
+      printAria: 'Друк акта',
+      draftNotPrintable:
+        'Чернетки не друкуються — підпишіть акт, щоб роздрукувати.',
+      loadError: 'Не вдалося завантажити акти лікування',
     },
     users: {
       title: 'Управління користувачами',
@@ -2592,6 +2618,50 @@ const uk = {
         materials: 'Додайте матеріали до складу',
         appointment: 'Зробіть тестовий запис',
         workingHours: 'Налаштуйте графік роботи',
+      },
+    },
+    stock: {
+      confirm: {
+        postDocument: {
+          title: 'Провести документ?',
+          description:
+            'Після проведення залишки на складах оновляться за позиціями документа; редагування стане недоступним.',
+          action: 'Провести',
+        },
+        deleteDocument: {
+          title: 'Видалити чернетку документа?',
+          description: 'Чернетку і всі її позиції буде видалено назавжди.',
+          action: 'Видалити',
+        },
+        archiveDirectoryItem: {
+          title: 'Архівувати запис довідника?',
+          description:
+            'Запис зникне зі списків вибору, але залишиться в історії документів.',
+          action: 'Архівувати',
+        },
+        archiveWarehouse: {
+          title: 'Архівувати склад?',
+          description:
+            'Склад стане недоступним для нових документів; історія рухів збережеться.',
+          action: 'Архівувати',
+        },
+        deactivateMaterial: {
+          title: 'Деактивувати матеріал?',
+          description:
+            'Матеріал зникне з каталогу для нових документів; залишки та історія збережуться.',
+          action: 'Деактивувати',
+        },
+        postAudit: {
+          title: 'Провести інвентаризацію?',
+          description: 'Залишки буде скориговано за результатами підрахунку.',
+          action: 'Провести',
+        },
+        removePermissions: {
+          title: 'Забрати права доступу?',
+          description:
+            'Користувач втратить доступ до складських операцій, наданих цим записом.',
+          action: 'Забрати',
+        },
       },
     },
   },
@@ -2680,8 +2750,6 @@ const uk = {
       goHome: 'На головну',
     },
     forgotPassword: {
-      expiredNotice:
-        'Термін дії посилання минув. Введіть email, щоб отримати нове.',
       subtitle:
         'Вкажіть email, і ми надішлемо посилання для відновлення доступу.',
       emailLabel: 'Email',
@@ -2695,6 +2763,8 @@ const uk = {
         unavailable: 'Відновлення пароля тимчасово недоступне',
         generic: 'Не вдалося надіслати лист. Спробуйте пізніше.',
       },
+      expiredNotice:
+        'Термін дії посилання минув. Введіть email, щоб отримати нове.',
     },
     resetPassword: {
       subtitle: 'Встановіть новий пароль для вашого акаунту.',
@@ -2714,6 +2784,17 @@ const uk = {
         passwordsMismatch: 'Паролі не співпадають',
         passwordTooShort: 'Пароль має містити мінімум 8 символів',
         generic: 'Не вдалося оновити пароль. Спробуйте ще раз.',
+      },
+    },
+    callback: {
+      loading: 'Завершуємо вхід, зачекайте...',
+      goToLogin: 'Перейти до входу',
+      errors: {
+        invalidLink:
+          'Посилання для відновлення пошкоджене або неповне. Запросіть нове.',
+        unavailable: 'Авторизація тимчасово недоступна',
+        sessionMissing: 'Сесію не вдалося активувати. Спробуйте увійти ще раз.',
+        generic: 'Не вдалося завершити авторизацію. Спробуйте ще раз.',
       },
     },
     confirm: {
@@ -2740,16 +2821,11 @@ const uk = {
           'Посилання недійсне або протерміноване. Запросіть нове посилання.',
       },
     },
-    callback: {
-      loading: 'Завершуємо вхід, зачекайте...',
-      goToLogin: 'Перейти до входу',
-      errors: {
-        invalidLink:
-          'Посилання для відновлення пошкоджене або неповне. Запросіть нове.',
-        unavailable: 'Авторизація тимчасово недоступна',
-        sessionMissing: 'Сесію не вдалося активувати. Спробуйте увійти ще раз.',
-        generic: 'Не вдалося завершити авторизацію. Спробуйте ще раз.',
-      },
+    split: {
+      welcomeBack: 'З поверненням до Dental Story',
+      welcomeNew: 'Ласкаво просимо до Dental Story',
+      subtitle:
+        'Ваші візити, історія лікування й документи — в одному кабінеті.',
     },
   },
   cabinet: {
@@ -2844,6 +2920,7 @@ const uk = {
       saveSuccess: 'Профіль успішно оновлено!',
       errors: {
         saveFailed: 'Помилка збереження. Спробуйте пізніше.',
+        invalidPhone: 'Невірний формат номера телефону',
       },
       personalInfo: 'Особисті дані',
       contactInfo: 'Контактна інформація',
@@ -2856,6 +2933,7 @@ const uk = {
         'Це назавжди видалить ваш акаунт та скасує всі майбутні записи. Цю дію неможливо скасувати.',
       downloading: 'Завантаження...',
       deleting: 'Видалення...',
+      dateOfBirthPlaceholder: 'Оберіть дату народження',
     },
     title: 'Кабінет пацієнта',
     profileTitle: 'Мій профіль',
@@ -2904,6 +2982,7 @@ const uk = {
         confirmButton: 'Так, видалити мій акаунт',
         cancel: 'Скасувати',
         deleting: 'Видалення...',
+        confirmWord: 'ВИДАЛИТИ',
       },
       navLink: 'Налаштування',
     },
@@ -3143,7 +3222,6 @@ const uk = {
     calendar: {
       title: 'Візит: {{service}}',
       description: 'Запис №{{id}}. Не забудьте взяти з собою документи!',
-      location: 'Dental Studio',
     },
     appointmentShort: 'Запис #{{id}}...',
     reminderTypes: {
@@ -3212,6 +3290,10 @@ const uk = {
         "Дякуємо за ваше повідомлення! Наш менеджер зв'яжеться з вами найближчим часом. Для швидкого зв'язку телефонуйте: +380 68 232 38 38",
     },
     typing: 'Консультант друкує…',
+    minimizeChat: 'Згорнути чат',
+    chooseChannel: "Оберіть спосіб зв'язку:",
+    adminChannel: 'Написати адміністратору',
+    aiChannel: 'AI-асистент',
   },
   pricing: {
     title: 'Прозорі ціни',
@@ -3283,6 +3365,7 @@ const uk = {
     closedNow: 'Зараз зачинено',
     opensAt: 'Відкриємося о {{time}}',
     qualityGuarantee: 'Гарантія якості',
+    googleReviews: '{{count}} відгук у Google',
   },
   hero: {
     badge: 'Сучасна стоматологія',
@@ -3499,6 +3582,8 @@ const uk = {
             'ТЕРМІНОВО! Зателефонуйте негайно для екстреного прийому',
         },
       },
+      notSpecified: 'не вказано',
+      durationHint: 'Впливає на терміновість запису',
     },
   },
   stock: {
@@ -3595,6 +3680,11 @@ const uk = {
       docLocked: 'Документ вже проведено',
       flagOff: 'Inventory v2 не активовано',
     },
+  },
+  confirmDialog: {
+    consequencesTitle: 'Разом із цим зникнуть',
+    typeToConfirm: 'Щоб підтвердити, введіть',
+    irreversibleWarning: 'Дію не можна скасувати.',
   },
 } as const
 

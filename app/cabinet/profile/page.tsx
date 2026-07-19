@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import DatePicker from '@/components/ui/DatePicker'
 import { ErrorState } from '@/components/ui/ErrorState'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { useCSRF } from '@/hooks/useCSRF'
 import {
   trackEvent,
@@ -107,6 +108,7 @@ export default function ProfilePage() {
       captureException(err instanceof Error ? err : new Error(String(err)))
       setDataRightsError(t('cabinet.error.description'))
       setDeleting(false)
+      setShowDeleteConfirm(false)
     }
   }
 
@@ -334,7 +336,7 @@ export default function ProfilePage() {
         {/* Avatar + completeness */}
         <div className="flex items-center gap-4 mb-6 pb-6 border-b border-dental-secondary-100">
           <div className="w-16 h-16 sm:w-20 sm:h-20 bg-dental-primary-50 rounded-full flex items-center justify-center shrink-0">
-            <User className="w-8 h-8 sm:w-10 sm:h-10 text-dental-primary-600" />
+            <User className="w-8 h-8 sm:w-10 sm:h-10 text-dental-primary-ink" />
           </div>
           <div className="min-w-0 flex-1">
             <h2 className="font-semibold text-dental-dark">
@@ -352,10 +354,10 @@ export default function ProfilePage() {
                   <div
                     className={`h-full rounded-full transition-all ${
                       profilePercent === 100
-                        ? 'bg-green-500'
+                        ? 'bg-dental-success'
                         : profilePercent >= 50
-                          ? 'bg-amber-400'
-                          : 'bg-red-400'
+                          ? 'bg-dental-warning'
+                          : 'bg-dental-error'
                     }`}
                     style={{ width: `${profilePercent}%` }}
                   />
@@ -374,8 +376,8 @@ export default function ProfilePage() {
             <div
               className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm ${
                 message.type === 'success'
-                  ? 'bg-green-50 border border-green-200 text-green-700'
-                  : 'bg-red-50 border border-red-200 text-red-700'
+                  ? 'bg-status-success-100 border border-dental-success/30 text-status-success-700'
+                  : 'bg-status-error-100 border border-dental-error/20 text-status-error-700'
               }`}
             >
               {message.type === 'success' ? (
@@ -492,12 +494,12 @@ export default function ProfilePage() {
                 placeholder={t('cabinet.profile.phonePlaceholder')}
                 className={`${inputClasses} ${
                   phoneError
-                    ? 'border-red-300! ring-red-200! focus:ring-red-300!'
+                    ? 'border-dental-error! ring-dental-error/30! focus:ring-dental-error!'
                     : ''
                 }`}
               />
               {phoneError && (
-                <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1">
+                <p className="text-xs text-status-error-700 mt-1.5 flex items-center gap-1">
                   <AlertTriangle className="w-3 h-3" />
                   {phoneError}
                 </p>
@@ -569,7 +571,7 @@ export default function ProfilePage() {
       <div className="bg-white rounded-2xl shadow-xs border border-dental-secondary-100 p-6">
         <div className="flex items-start gap-4">
           <div className="w-10 h-10 rounded-xl bg-dental-primary-50 flex items-center justify-center shrink-0">
-            <Download className="w-5 h-5 text-dental-primary-600" />
+            <Download className="w-5 h-5 text-dental-primary-ink" />
           </div>
           <div className="flex-1 min-w-0">
             <h2 className="text-base font-semibold text-dental-dark">
@@ -601,10 +603,10 @@ export default function ProfilePage() {
       </div>
 
       {/* Delete account */}
-      <div className="bg-white rounded-2xl shadow-xs border border-red-200 p-6">
+      <div className="bg-white rounded-2xl shadow-xs border border-dental-error/20 p-6">
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
-            <Trash2 className="w-5 h-5 text-red-500" />
+          <div className="w-10 h-10 rounded-xl bg-status-error-100 flex items-center justify-center shrink-0">
+            <Trash2 className="w-5 h-5 text-dental-error" />
           </div>
           <div className="flex-1 min-w-0">
             <h2 className="text-base font-semibold text-dental-dark">
@@ -615,60 +617,44 @@ export default function ProfilePage() {
             </p>
 
             {dataRightsError && (
-              <div className="mt-4 flex items-center gap-3 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+              <div className="mt-4 flex items-center gap-3 px-4 py-3 rounded-xl bg-status-error-100 border border-dental-error/20 text-status-error-700 text-sm">
                 <AlertTriangle className="w-4 h-4 shrink-0" />
                 {dataRightsError}
               </div>
             )}
 
-            {!showDeleteConfirm ? (
-              <button
-                type="button"
-                onClick={() => setShowDeleteConfirm(true)}
-                className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-red-50 text-red-600 border border-red-300 text-sm font-medium rounded-xl transition-colors focus:outline-hidden focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
-              >
-                <Trash2 className="w-4 h-4" />
-                {t('cabinet.profile.deleteAccount')}
-              </button>
-            ) : (
-              <div className="mt-4 space-y-3">
-                <p className="text-sm font-medium text-red-700 flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 shrink-0" />
-                  {t('cabinet.profile.deleteConfirmMessage')}
-                </p>
-                <div className="flex flex-wrap items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={handleDeleteAccount}
-                    disabled={deleting}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors focus:outline-hidden focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                  >
-                    {deleting ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        {t('cabinet.profile.deleting')}
-                      </>
-                    ) : (
-                      t('cabinet.settings.deleteSection.confirmButton')
-                    )}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowDeleteConfirm(false)
-                      setDataRightsError(null)
-                    }}
-                    disabled={deleting}
-                    className="px-4 py-2.5 text-dental-muted hover:text-dental-dark text-sm font-medium rounded-xl transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-secondary-300 focus:ring-offset-2"
-                  >
-                    {t('cabinet.settings.deleteSection.cancel')}
-                  </button>
-                </div>
-              </div>
-            )}
+            <button
+              type="button"
+              onClick={() => {
+                setDataRightsError(null)
+                setShowDeleteConfirm(true)
+              }}
+              className="mt-4 inline-flex min-h-11 items-center gap-2 px-4 py-2.5 bg-white hover:bg-status-error-100 text-status-error-700 border border-dental-error/30 text-sm font-medium rounded-xl transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-error focus:ring-offset-2"
+            >
+              <Trash2 className="w-4 h-4" />
+              {t('cabinet.profile.deleteAccount')}
+            </button>
           </div>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        severity="irreversible"
+        title={t('cabinet.profile.deleteConfirmTitle')}
+        description={t('cabinet.profile.deleteConfirmMessage')}
+        warning={t('confirmDialog.irreversibleWarning')}
+        confirmationWord={t('cabinet.settings.deleteSection.confirmWord')}
+        confirmLabel={t('cabinet.settings.deleteSection.confirmButton')}
+        cancelLabel={t('cabinet.settings.deleteSection.cancel')}
+        isLoading={deleting}
+        onConfirm={handleDeleteAccount}
+        onClose={() => {
+          if (deleting) return
+          setDataRightsError(null)
+          setShowDeleteConfirm(false)
+        }}
+      />
     </div>
   )
 }

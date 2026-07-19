@@ -201,6 +201,19 @@ describe('Admin pages UI smoke', () => {
   })
 
   it('runs appointments bulk status update against Supabase', async () => {
+    // Bulk-status controls are RBAC-gated on appointments:edit (Р1);
+    // a real user on this page is an admin, so mock that role.
+    useAdminAuthMock.mockReturnValue({
+      ...DEFAULT_AUTH,
+      user: {
+        id: 'admin-1',
+        email: 'admin@test.com',
+        role: 'admin',
+        name: 'Admin',
+        doctorId: null,
+      },
+      isAuthenticated: true,
+    })
     const appointmentRows = [
       {
         id: 'appt-1',
@@ -250,6 +263,54 @@ describe('Admin pages UI smoke', () => {
     )
 
     await waitFor(() => expect(updateIn).toHaveBeenCalledWith('id', ['appt-1']))
+  })
+
+  it('hides appointments bulk-status control from roles without appointments:edit (Р1)', async () => {
+    // billing_manager holds appointments:view_all but NOT appointments:edit
+    useAdminAuthMock.mockReturnValue({
+      ...DEFAULT_AUTH,
+      user: {
+        id: 'billing-1',
+        email: 'billing@test.com',
+        role: 'billing_manager',
+        name: 'Billing',
+        doctorId: null,
+      },
+      isAuthenticated: true,
+    })
+    const appointmentRows = [
+      {
+        id: 'appt-1',
+        patient_name: 'Петро Тестовий',
+        guest_name: null,
+        guest_phone: '+380000000001',
+        guest_email: 'petro@test.com',
+        appointment_date: '2026-03-25',
+        appointment_time: '10:30:00',
+        status: 'pending' as const,
+        source: 'manual',
+        created_at: '2026-03-21T10:00:00.000Z',
+        notes: null,
+        services: { name_uk: 'Консультація' },
+        doctors: { first_name: 'Іван', last_name: 'Петров' },
+      },
+    ]
+    const queryBuilder = createListBuilder(appointmentRows)
+    createClientMock.mockReturnValue({
+      from: (table: string) => {
+        if (table !== 'appointments')
+          throw new Error(`Unexpected table ${table}`)
+        return { select: vi.fn(() => queryBuilder), update: vi.fn() }
+      },
+    } as unknown as ReturnType<typeof createClient>)
+
+    render(<AdminAppointmentsPage />)
+    await screen.findAllByText('Петро Тестовий')
+    expect(
+      screen.queryByRole('button', {
+        name: t('admin.appointmentsPage.bulk.apply'),
+      })
+    ).toBeNull()
   })
 
   it('runs reviews bulk moderation against Supabase', async () => {

@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import * as Sentry from '@sentry/nextjs'
+import { CONTACT_INFO } from '@/utils/constants'
 
 interface GlobalErrorProps {
   error: Error & { digest?: string }
@@ -12,8 +13,8 @@ const COLORS = {
   bg: '#F8F9FA',
   navy: '#2C3E42',
   text: '#4A5E63',
-  teal: '#5A8A94',
-  tealHover: '#4A7A84',
+  teal: '#3f6f79',
+  tealHover: '#335d66',
   white: '#FFFFFF',
   border: '#E5E7EB',
   red: '#EF4444',
@@ -177,10 +178,10 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             <p style={{ margin: 0, fontSize: 13, color: COLORS.text }}>
               Потрібна допомога?{' '}
               <a
-                href="mailto:support@dentalstory.ua"
+                href={`mailto:${CONTACT_INFO.email}`}
                 style={{ color: COLORS.teal, fontWeight: 600 }}
               >
-                support@dentalstory.ua
+                {CONTACT_INFO.email}
               </a>
             </p>
           </div>

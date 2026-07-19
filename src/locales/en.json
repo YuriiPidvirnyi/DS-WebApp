@@ -272,7 +272,12 @@
         "treatment": "Orthodontics",
         "duration": "18 months"
       }
-    }
+    },
+    "beforePlaceholder": "BEFORE photo — case “{{case}}”",
+    "afterPlaceholder": "AFTER photo — case “{{case}}”",
+    "keyboardHint": "←/→ step 5% · Home/End — edges",
+    "sliderAria": "Comparison slider: {{value}}%. Arrows — step 5%, Home/End — edges",
+    "selectCase": "Select case"
   },
   "labels": {
     "before": "Before",
@@ -338,9 +343,8 @@
       }
     },
     "emergency": {
-      "title": "🚨 Emergency Care",
+      "title": "Emergency Care",
       "description": "In case of acute pain or injury, contact us immediately:",
-      "phone": "📞 +380 50 455 47 74",
       "availability": "We accept emergency calls 24/7"
     },
     "faq": {
@@ -419,11 +423,13 @@
         "Warranty on All Services",
         "Modern Equipment",
         "Qualified Doctors"
-      ]
+      ],
+      "photoAlt": "A happy Dental Story patient smiling after a visit"
     },
     "features": {
       "title": "Why Patients Choose Dental Story",
-      "subtitle": "We combine professionalism, modern technologies and an individual approach to achieve the best treatment results"
+      "subtitle": "We combine professionalism, modern technologies and an individual approach to achieve the best treatment results",
+      "kicker": "Why us"
     },
     "services": {
       "title": "Full Range of Services",
@@ -1223,7 +1229,11 @@
       "heading": "Book an appointment",
       "submit": "Book now",
       "cooldown": "Wait {{seconds}} s",
-      "submittingOverlay": "Submitting request..."
+      "submittingOverlay": "Submitting request...",
+      "nextPersonal": "Next: your details",
+      "nextSummary": "Next: confirmation",
+      "panelTitle": "Your appointment",
+      "panelNote": "Payment at the clinic. Rescheduling or cancelling is free up to 24 hours before the visit."
     },
     "errors": {
       "cooldown": "Too many submissions. Try again in {{seconds}} s.",
@@ -1244,8 +1254,7 @@
       "createAnother": "Create another booking",
       "addToCalendar": "Add to calendar",
       "calendarTitle": "Visit: {{service}}",
-      "calendarDescription": "Booking #{{ref}}. Patient: {{name}}",
-      "calendarLocation": "Dental Studio"
+      "calendarDescription": "Booking #{{ref}}. Patient: {{name}}"
     }
   },
   "apiDocsPage": {
@@ -1349,7 +1358,13 @@
       "analytics": "Analytics",
       "settings": "Settings",
       "users": "Users",
-      "stock": "Inventory v2"
+      "stock": "Inventory v2",
+      "groups": {
+        "operations": "Operations",
+        "communications": "Communications",
+        "inventory": "Inventory",
+        "system": "System"
+      }
     },
     "login": {
       "title": "Admin Login",
@@ -1375,6 +1390,7 @@
     },
     "layout": {
       "panel": "Admin Panel",
+      "patientCabinet": "Patient cabinet",
       "logout": "Log Out",
       "backToSite": "Back to site",
       "systemOnline": "System online",
@@ -1449,7 +1465,9 @@
         "allDates": "All dates",
         "today": "Today",
         "upcoming": "Upcoming",
-        "past": "Past"
+        "past": "Past",
+        "dateSelectAria": "Filter by date",
+        "statusSelectAria": "Filter by status"
       },
       "bulk": {
         "selected": "Selected: {{count}}",
@@ -1526,7 +1544,8 @@
         "loadFailed": "Failed to load analytics",
         "loadFailedFallback": "Failed to load analytics.",
         "chartFailed": "This section failed to load."
-      }
+      },
+      "periodSelectAria": "Select period"
     },
     "patientManagement": {
       "title": "Patient Management",
@@ -1700,7 +1719,8 @@
         "markUnread": "Mark as unread",
         "showMessage": "Show message",
         "adminNote": "Admin note",
-        "notesPlaceholder": "Add a note…"
+        "notesPlaceholder": "Add a note…",
+        "statusSelectAria": "Change inquiry status"
       },
       "confirmations": {
         "bulkChange": "Apply bulk update to {{count}} inquiries?",
@@ -1767,8 +1787,8 @@
       "blankChild": "Blank (child)"
     },
     "serviceStatuses": {
-      "active": "active",
-      "inactive": "inactive"
+      "active": "Active",
+      "inactive": "Inactive"
     },
     "servicesPage": {
       "title": "Service Management",
@@ -1855,8 +1875,8 @@
       }
     },
     "doctorStatuses": {
-      "active": "active",
-      "inactive": "inactive"
+      "active": "Active",
+      "inactive": "Inactive"
     },
     "doctorsPage": {
       "title": "Doctor Management",
@@ -2029,7 +2049,7 @@
           "deleted": "Record deleted ({{count}} fields)",
           "changed": "Fields changed: {{count}}"
         },
-        "nullValue": "null",
+        "nullValue": "—",
         "errors": {
           "supabaseUnavailable": "Supabase is not configured.",
           "loadFailed": "Failed to load audit logs. Verify that the audit migration is applied."
@@ -2293,7 +2313,10 @@
       "deleteConfirm": "Delete this record? This action cannot be undone.",
       "editAria": "Edit",
       "deleteAria": "Delete",
-      "removeLineAria": "Remove line"
+      "removeLineAria": "Remove line",
+      "printAria": "Print act",
+      "draftNotPrintable": "Drafts cannot be printed — sign the act to print it.",
+      "loadError": "Failed to load treatment records"
     },
     "users": {
       "title": "User Management",
@@ -2355,6 +2378,45 @@
         "materials": "Add materials to inventory",
         "appointment": "Make a test booking",
         "workingHours": "Configure working hours"
+      }
+    },
+    "stock": {
+      "confirm": {
+        "postDocument": {
+          "title": "Post this document?",
+          "description": "Posting updates warehouse balances from the document lines; editing becomes unavailable.",
+          "action": "Post"
+        },
+        "deleteDocument": {
+          "title": "Delete this draft document?",
+          "description": "The draft and all of its lines will be deleted permanently.",
+          "action": "Delete"
+        },
+        "archiveDirectoryItem": {
+          "title": "Archive this directory item?",
+          "description": "The item will disappear from pickers but remain in document history.",
+          "action": "Archive"
+        },
+        "archiveWarehouse": {
+          "title": "Archive this warehouse?",
+          "description": "The warehouse becomes unavailable for new documents; movement history is kept.",
+          "action": "Archive"
+        },
+        "deactivateMaterial": {
+          "title": "Deactivate this material?",
+          "description": "The material disappears from the catalog for new documents; stock and history are kept.",
+          "action": "Deactivate"
+        },
+        "postAudit": {
+          "title": "Post this inventory audit?",
+          "description": "Stock balances will be adjusted to the counted quantities.",
+          "action": "Post"
+        },
+        "removePermissions": {
+          "title": "Remove these access rights?",
+          "description": "The user will lose access to the stock operations granted by this entry.",
+          "action": "Remove"
+        }
       }
     }
   },
@@ -2503,6 +2565,11 @@
         "unavailable": "The service is temporarily unavailable",
         "generic": "The link is invalid or has expired. Request a new one."
       }
+    },
+    "split": {
+      "welcomeBack": "Welcome back to Dental Story",
+      "welcomeNew": "Welcome to Dental Story",
+      "subtitle": "Your visits, treatment history and documents — in one place."
     }
   },
   "cabinet": {
@@ -2595,7 +2662,8 @@
       "save": "Save Changes",
       "saveSuccess": "Profile updated successfully!",
       "errors": {
-        "saveFailed": "Failed to save. Please try again later."
+        "saveFailed": "Failed to save. Please try again later.",
+        "invalidPhone": "Invalid phone number format"
       },
       "personalInfo": "Personal information",
       "contactInfo": "Contact information",
@@ -2606,7 +2674,8 @@
       "deleteConfirmTitle": "Delete account?",
       "deleteConfirmMessage": "This will permanently delete your account and cancel all upcoming appointments. This cannot be undone.",
       "downloading": "Downloading...",
-      "deleting": "Deleting..."
+      "deleting": "Deleting...",
+      "dateOfBirthPlaceholder": "Select date of birth"
     },
     "title": "Patient Cabinet",
     "profileTitle": "My Profile",
@@ -2652,7 +2721,8 @@
         "confirm": "Are you sure? This action cannot be undone.",
         "confirmButton": "Yes, delete my account",
         "cancel": "Cancel",
-        "deleting": "Deleting..."
+        "deleting": "Deleting...",
+        "confirmWord": "DELETE"
       },
       "navLink": "Settings"
     },
@@ -2883,8 +2953,7 @@
     },
     "calendar": {
       "title": "Visit: {{service}}",
-      "description": "Booking #{{id}}. Don't forget to bring your documents!",
-      "location": "Dental Studio"
+      "description": "Booking #{{id}}. Don't forget to bring your documents!"
     },
     "appointmentShort": "Booking #{{id}}...",
     "reminderTypes": {
@@ -2946,7 +3015,11 @@
       "contact": "Our contacts:\n• Phone: +380 68 232 38 38\n• Email: info@dentalstory.ua\n• Address: Sumska St., 10, Lviv",
       "default": "Thank you for your message! Our manager will contact you shortly. For quick contact, call: +380 68 232 38 38"
     },
-    "typing": "Consultant is typing…"
+    "typing": "Consultant is typing…",
+    "minimizeChat": "Minimize chat",
+    "chooseChannel": "Choose a contact channel:",
+    "adminChannel": "Message the administrator",
+    "aiChannel": "AI assistant"
   },
   "pricing": {
     "title": "Transparent Pricing",
@@ -3014,7 +3087,8 @@
     "workingNow": "Open Now",
     "closedNow": "Closed Now",
     "opensAt": "Opens at {{time}}",
-    "qualityGuarantee": "Quality Guarantee"
+    "qualityGuarantee": "Quality Guarantee",
+    "googleReviews": "{{count}} reviews on Google"
   },
   "hero": {
     "badge": "Modern Dentistry",
@@ -3220,7 +3294,9 @@
           "conditions": ["Periapical abscess", "Periodontal abscess"],
           "recommendation": "URGENT! Call immediately for emergency appointment"
         }
-      }
+      },
+      "notSpecified": "not specified",
+      "durationHint": "Affects booking urgency"
     }
   },
   "routeMeta": {
@@ -3425,5 +3501,10 @@
       "docLocked": "Document already posted",
       "flagOff": "Inventory v2 not enabled"
     }
+  },
+  "confirmDialog": {
+    "consequencesTitle": "This will also remove",
+    "typeToConfirm": "To confirm, type",
+    "irreversibleWarning": "This action cannot be undone."
   }
 }

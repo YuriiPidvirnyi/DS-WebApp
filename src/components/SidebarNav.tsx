@@ -159,7 +159,7 @@ export default function SidebarNav() {
   /* ── Section label (visible only expanded) ── */
   const sectionLabel = (text: string) => (
     <span
-      className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold whitespace-nowrap overflow-hidden transition-all duration-200"
+      className="text-[10px] uppercase tracking-wider text-dental-muted font-semibold whitespace-nowrap overflow-hidden transition-all duration-200"
       style={{
         ...sidebarFont,
         opacity: expanded ? 1 : 0,
@@ -180,8 +180,8 @@ export default function SidebarNav() {
       expanded ? 'px-3' : 'justify-center',
       'transition-all duration-150',
       active
-        ? 'bg-dental-primary-50 text-dental-primary-600 shadow-xs'
-        : 'text-dental-dark hover:bg-gray-50 hover:text-dental-primary-600 hover:translate-x-0.5',
+        ? 'bg-dental-primary-50 text-dental-primary-ink shadow-xs'
+        : 'text-dental-dark hover:bg-dental-secondary-50 hover:text-dental-primary-ink hover:translate-x-0.5',
     ].join(' ')
 
   /* ── Messenger items ── */
@@ -252,7 +252,7 @@ export default function SidebarNav() {
       <div className="hidden lg:block w-16 shrink-0" aria-hidden="true" />
 
       <aside
-        className="hidden lg:flex flex-col absolute top-0 left-0 bottom-0 bg-white border-r border-gray-100 z-40 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-200"
+        className="hidden lg:flex flex-col absolute top-0 left-0 bottom-0 bg-white border-r border-dental-secondary-100 z-40 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-200"
         style={{
           width: expanded ? 240 : 64,
           transition: 'width 250ms cubic-bezier(0.4, 0, 0.2, 1)',
@@ -269,7 +269,7 @@ export default function SidebarNav() {
         <Link
           href="/"
           aria-label={t('accessibility.homeLink')}
-          className="relative flex items-center justify-center h-16 border-b border-gray-100 shrink-0"
+          className="relative flex items-center justify-center h-16 border-b border-dental-secondary-100 shrink-0"
         >
           {/* Tooth icon — visible when collapsed */}
           <Image
@@ -327,7 +327,7 @@ export default function SidebarNav() {
           </nav>
 
           {/* ─── Зв'язок — subtle background tint to distinguish ─── */}
-          <div className="mx-1 mt-1.5 mb-1 rounded-xl bg-gray-50/70 px-1 py-1">
+          <div className="mx-1 mt-1.5 mb-1 rounded-xl bg-dental-secondary-50/70 px-1 py-1">
             <div className="flex flex-col gap-0.5">
               {sectionLabel(t('navigation.contact_us', "Зв'язок"))}
               {messengerItems.map(item =>
@@ -387,7 +387,7 @@ export default function SidebarNav() {
             </div>
           </div>
 
-          <div className="mx-3 my-0.5 border-t border-gray-100" />
+          <div className="mx-3 my-0.5 border-t border-dental-secondary-100" />
 
           {/* ─── Social links (vertical) ─── */}
           <div className="flex flex-col gap-0.5 px-2">
@@ -403,7 +403,7 @@ export default function SidebarNav() {
                     'group flex items-center rounded-xl relative',
                     'h-10 min-w-0',
                     expanded ? 'px-3' : 'justify-center',
-                    'text-gray-400 hover:text-dental-primary-600 hover:bg-gray-50 hover:translate-x-0.5',
+                    'text-dental-muted hover:text-dental-primary-ink hover:bg-dental-secondary-50 hover:translate-x-0.5',
                     'transition-all duration-150',
                   ].join(' ')}
                   title={!expanded ? label : undefined}
@@ -424,7 +424,7 @@ export default function SidebarNav() {
         {/* ─── Copyright ─── */}
         <div className="px-3 pb-3 pt-2 overflow-hidden shrink-0">
           <p
-            className="text-[10px] text-gray-400 text-center whitespace-nowrap overflow-hidden transition-all duration-200"
+            className="text-[10px] text-dental-muted text-center whitespace-nowrap overflow-hidden transition-all duration-200"
             style={{
               ...sidebarFont,
               opacity: expanded ? 1 : 0,
@@ -453,7 +453,7 @@ export default function SidebarNav() {
             {activePanel === 'chat-choose' && (
               <div className="bg-white rounded-2xl shadow-2xl border border-dental-secondary-200 w-72 overflow-hidden">
                 {/* Header — unified with accessibility panel */}
-                <div className="flex items-center justify-between px-5 py-4 border-b border-dental-secondary-200 bg-[#ddeef1] rounded-t-2xl">
+                <div className="flex items-center justify-between px-5 py-4 border-b border-dental-secondary-200 bg-dental-primary-100 rounded-t-2xl">
                   <h3
                     className="text-base font-semibold text-dental-dark"
                     style={sidebarFont}
@@ -485,7 +485,7 @@ export default function SidebarNav() {
                     className="text-sm text-dental-text mb-4"
                     style={sidebarFont}
                   >
-                    Оберіть спосіб зв&apos;язку:
+                    {t('chat.chooseChannel')}
                   </p>
                   <div className="flex flex-col gap-2">
                     <button
@@ -506,7 +506,7 @@ export default function SidebarNav() {
                           d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
                         />
                       </svg>
-                      Написати адміністратору
+                      {t('chat.adminChannel')}
                     </button>
                     <button
                       onClick={() => setActivePanel('chat-ai')}
@@ -526,7 +526,7 @@ export default function SidebarNav() {
                           d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456Z"
                         />
                       </svg>
-                      AI-асистент
+                      {t('chat.aiChannel')}
                     </button>
                   </div>
                 </div>

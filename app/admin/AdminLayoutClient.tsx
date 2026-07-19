@@ -35,77 +35,97 @@ import UserSidebarCard from '@/components/ui/UserSidebarCard'
 import { AdminAuthProvider } from '@/contexts/AdminAuthContext'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { useDrawerA11y } from '@/hooks/useDrawerA11y'
-import {
-  canAccessNavItem,
-  ROLE_BADGE_CLASSES,
-  type AdminRole,
-} from '@/lib/permissions'
+import { canAccessNavItem } from '@/lib/permissions'
+import { RoleBadge } from '@/components/ui'
 import { isInventoryV2EnabledClient } from '@/lib/feature-flags'
+
+type NavGroup = 'operations' | 'communications' | 'inventory' | 'system'
 
 interface NavItem {
   nameKey: string
   href: string
   icon: React.ReactNode
+  group: NavGroup
 }
+
+/* Порядок груп меню (макет 1c, знахідка 12) */
+const NAV_GROUPS: NavGroup[] = [
+  'operations',
+  'communications',
+  'inventory',
+  'system',
+]
 
 const ALL_NAV_ITEMS: NavItem[] = [
   {
     nameKey: 'admin.sidebar.dashboard',
+    group: 'operations',
     href: '/admin',
     icon: <LayoutDashboard className="w-5 h-5" />,
   },
   {
     nameKey: 'admin.sidebar.appointments',
+    group: 'operations',
     href: '/admin/appointments',
     icon: <Calendar className="w-5 h-5" />,
   },
   {
     nameKey: 'admin.sidebar.patients',
+    group: 'operations',
     href: '/admin/patients',
     icon: <Users className="w-5 h-5" />,
   },
   {
     nameKey: 'admin.sidebar.doctors',
+    group: 'operations',
     href: '/admin/doctors',
     icon: <User className="w-5 h-5" />,
   },
   {
     nameKey: 'admin.sidebar.services',
+    group: 'operations',
     href: '/admin/services',
     icon: <Stethoscope className="w-5 h-5" />,
   },
   {
     nameKey: 'admin.sidebar.reviews',
+    group: 'communications',
     href: '/admin/reviews',
     icon: <Star className="w-5 h-5" />,
   },
   {
     nameKey: 'admin.sidebar.contacts',
+    group: 'communications',
     href: '/admin/contacts',
     icon: <Phone className="w-5 h-5" />,
   },
   {
     nameKey: 'admin.sidebar.intake',
+    group: 'operations',
     href: '/admin/intake',
     icon: <ClipboardCheck className="w-5 h-5" />,
   },
   {
     nameKey: 'admin.sidebar.chat',
+    group: 'communications',
     href: '/admin/chat',
     icon: <MessageSquare className="w-5 h-5" />,
   },
   {
     nameKey: 'admin.sidebar.treatments',
+    group: 'operations',
     href: '/admin/treatments',
     icon: <ClipboardList className="w-5 h-5" />,
   },
   {
     nameKey: 'admin.sidebar.materials',
+    group: 'inventory',
     href: '/admin/materials',
     icon: <Package className="w-5 h-5" />,
   },
   {
     nameKey: 'admin.sidebar.orders',
+    group: 'inventory',
     href: '/admin/orders',
     icon: <ShoppingCart className="w-5 h-5" />,
   },
@@ -113,48 +133,43 @@ const ALL_NAV_ITEMS: NavItem[] = [
     ? [
         {
           nameKey: 'admin.sidebar.stock',
+          group: 'inventory',
           href: '/admin/stock',
           icon: <Boxes className="w-5 h-5" />,
-        },
+        } satisfies NavItem,
       ]
     : []),
   {
     nameKey: 'admin.sidebar.analytics',
+    group: 'system',
     href: '/admin/analytics',
     icon: <BarChart3 className="w-5 h-5" />,
   },
   {
     nameKey: 'admin.sidebar.dataQuality',
+    group: 'system',
     href: '/admin/data-quality',
     icon: <DatabaseZap className="w-5 h-5" />,
   },
   {
     nameKey: 'admin.sidebar.health',
+    group: 'system',
     href: '/admin/health',
     icon: <Activity className="w-5 h-5" />,
   },
   {
     nameKey: 'admin.sidebar.settings',
+    group: 'system',
     href: '/admin/settings',
     icon: <Settings className="w-5 h-5" />,
   },
   {
     nameKey: 'admin.sidebar.users',
+    group: 'system',
     href: '/admin/users',
     icon: <ShieldCheck className="w-5 h-5" />,
   },
 ]
-
-function RoleBadge({ role }: { role: AdminRole }) {
-  const { t } = useTranslation()
-  return (
-    <span
-      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${ROLE_BADGE_CLASSES[role]}`}
-    >
-      {t(`admin.roles.${role}`)}
-    </span>
-  )
-}
 
 const footerLinkBase =
   'flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors focus:outline-hidden focus:ring-2'
@@ -269,17 +284,30 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
           : 'flex-1 px-3 py-4 space-y-1 overflow-y-auto'
       }
     >
-      {navigation.map(item => (
-        <SidebarNavItem
-          key={item.nameKey}
-          href={item.href}
-          icon={item.icon}
-          label={t(item.nameKey)}
-          active={isActive(item.href)}
-          onClick={onItemClick}
-          tabIndex={mobile ? (sidebarOpen ? 0 : -1) : undefined}
-        />
-      ))}
+      {NAV_GROUPS.map(group => {
+        const items = navigation.filter(item => item.group === group)
+        if (items.length === 0) return null
+        return (
+          <div key={group} className="not-first:mt-4">
+            <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-dental-secondary-500">
+              {t(`admin.sidebar.groups.${group}`)}
+            </p>
+            <div className="space-y-1">
+              {items.map(item => (
+                <SidebarNavItem
+                  key={item.nameKey}
+                  href={item.href}
+                  icon={item.icon}
+                  label={t(item.nameKey)}
+                  active={isActive(item.href)}
+                  onClick={onItemClick}
+                  tabIndex={mobile ? (sidebarOpen ? 0 : -1) : undefined}
+                />
+              ))}
+            </div>
+          </div>
+        )
+      })}
     </nav>
   )
 
@@ -310,7 +338,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       <button
         onClick={handleLogout}
         tabIndex={mobile ? (sidebarOpen ? 0 : -1) : undefined}
-        className={`w-full ${footerLinkBase} text-dental-muted hover:text-red-600 hover:bg-red-50 focus:ring-red-300`}
+        className={`w-full ${footerLinkBase} text-dental-muted hover:text-status-error-700 hover:bg-status-error-100 focus:ring-dental-error`}
       >
         <LogOut className="w-4 h-4" />
         {t('admin.layout.logout')}

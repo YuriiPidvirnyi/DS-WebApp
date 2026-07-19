@@ -3,7 +3,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { ChevronLeft, Plus, Pencil, Archive, Loader2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useCSRF } from '@/hooks/useCSRF'
+import { useConfirm } from '@/hooks/useConfirm'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { hasPermission } from '@/lib/permissions'
 
@@ -18,7 +20,9 @@ interface DirectoryItem {
 }
 
 export default function AdminStockDirectoriesPage() {
+  const { t } = useTranslation()
   const { token: csrfToken } = useCSRF()
+  const { confirm, confirmDialog } = useConfirm()
   const { user } = useAdminAuth()
   const [tab, setTab] = useState<Tab>('suppliers')
   const [items, setItems] = useState<DirectoryItem[]>([])
@@ -59,7 +63,15 @@ export default function AdminStockDirectoriesPage() {
   }, [load])
 
   async function archiveItem(id: string) {
-    if (!confirm('Архівувати?')) return
+    if (
+      !(await confirm({
+        title: t('admin.stock.confirm.archiveDirectoryItem.title'),
+        description: t('admin.stock.confirm.archiveDirectoryItem.description'),
+        confirmLabel: t('admin.stock.confirm.archiveDirectoryItem.action'),
+        severity: 'significant',
+      }))
+    )
+      return
     const res = await fetch(`${apiPath}/${id}`, {
       method: 'PATCH',
       headers: {
@@ -93,7 +105,7 @@ export default function AdminStockDirectoriesPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-6 border-b border-gray-200">
+        <div className="flex gap-1 mb-6 border-b border-dental-secondary-200">
           {(Object.entries(TAB_LABELS) as [Tab, string][]).map(
             ([key, label]) => (
               <button
@@ -143,7 +155,7 @@ export default function AdminStockDirectoriesPage() {
         )}
 
         {error && (
-          <div className="rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+          <div className="rounded-lg bg-status-error-100 border border-dental-error/20 p-4 text-sm text-status-error-700">
             {error}
           </div>
         )}
@@ -164,7 +176,7 @@ export default function AdminStockDirectoriesPage() {
                     {displayName(item)}
                   </p>
                   {item.is_archived && (
-                    <p className="text-xs text-amber-600">Архів</p>
+                    <p className="text-xs text-status-warning-700">Архів</p>
                   )}
                   {tab === 'suppliers' && !!item.email && (
                     <p className="text-xs text-dental-text">
@@ -184,7 +196,7 @@ export default function AdminStockDirectoriesPage() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setEditItem(item)}
-                      className="rounded p-1.5 text-dental-text hover:bg-gray-100"
+                      className="rounded p-1.5 text-dental-text hover:bg-dental-secondary-100"
                       title="Редагувати"
                     >
                       <Pencil className="w-4 h-4" />
@@ -192,7 +204,7 @@ export default function AdminStockDirectoriesPage() {
                     {!item.is_archived && (
                       <button
                         onClick={() => archiveItem(item.id)}
-                        className="rounded p-1.5 text-amber-500 hover:bg-amber-50"
+                        className="rounded p-1.5 text-dental-warning hover:bg-status-warning-100"
                         title="Архівувати"
                       >
                         <Archive className="w-4 h-4" />
@@ -223,6 +235,8 @@ export default function AdminStockDirectoriesPage() {
           }}
         />
       )}
+
+      {confirmDialog}
     </>
   )
 }
@@ -299,7 +313,7 @@ function DirectoryItemModal({
               value={nameUk}
               onChange={e => setNameUk(e.target.value)}
               required
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
+              className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
             />
           </div>
 
@@ -315,7 +329,7 @@ function DirectoryItemModal({
                   onChange={e =>
                     setExtra(p => ({ ...p, email: e.target.value }))
                   }
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
+                  className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
                 />
               </div>
               <div>
@@ -327,7 +341,7 @@ function DirectoryItemModal({
                   onChange={e =>
                     setExtra(p => ({ ...p, phone: e.target.value }))
                   }
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
+                  className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
                 />
               </div>
               <div>
@@ -340,7 +354,7 @@ function DirectoryItemModal({
                     setExtra(p => ({ ...p, edrpou: e.target.value }))
                   }
                   maxLength={10}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
+                  className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
                 />
               </div>
             </>
@@ -356,12 +370,12 @@ function DirectoryItemModal({
                 onChange={e =>
                   setExtra(p => ({ ...p, country: e.target.value }))
                 }
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
+                className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
               />
             </div>
           )}
 
-          {err && <p className="text-sm text-red-600">{err}</p>}
+          {err && <p className="text-sm text-status-error-700">{err}</p>}
 
           <div className="flex justify-end gap-3 pt-2">
             <button

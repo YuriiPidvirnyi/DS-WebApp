@@ -2,17 +2,10 @@
 
 import { useEffect, useState, useRef, useMemo } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useTranslation } from 'react-i18next'
-import {
-  ArrowRight,
-  Play,
-  Shield,
-  Award,
-  Users,
-  Star,
-  Phone,
-} from 'lucide-react'
-import { UKRAINE_CONFIG } from '@/utils/constants'
+import { ArrowRight, Star, CheckCircle, Calendar } from 'lucide-react'
+import { UKRAINE_CONFIG, SITE_INFO } from '@/utils/constants'
 import { CLINIC_OPENING_HOURS } from '@/config/clinicSchedule'
 import {
   trackEvent,
@@ -72,40 +65,6 @@ function useCounter(end: number, duration: number = 2000) {
   return { count, ref }
 }
 
-const StatCard = memo(function StatCard({
-  counterRef,
-  count,
-  suffix,
-  label,
-  icon,
-}: {
-  counterRef: React.RefObject<HTMLDivElement | null>
-  count: number
-  suffix: string
-  label: string
-  icon: React.ReactNode
-}) {
-  return (
-    <div
-      ref={counterRef}
-      className="group p-5 sm:p-6 lg:p-8 rounded-3xl border border-dental-secondary-200 bg-white hover:bg-dental-primary-50 hover:border-dental-primary-300 transition-all duration-300 cursor-default"
-    >
-      <div className="mb-6">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-dental-primary-100 group-hover:bg-dental-primary-200 transition-colors">
-          {icon}
-        </div>
-      </div>
-      <div className="mb-2">
-        <p className="text-4xl lg:text-5xl font-bold text-dental-dark">
-          {count.toLocaleString()}
-          {suffix}
-        </p>
-      </div>
-      <p className="text-dental-muted text-base font-medium">{label}</p>
-    </div>
-  )
-})
-
 interface HeroSectionProps {
   heroCTAVariant?: string | null
 }
@@ -114,10 +73,6 @@ function HeroSection({ heroCTAVariant }: HeroSectionProps) {
   const { t } = useTranslation()
   const [mounted, setMounted] = useState(false)
   const { count: patientsCount, ref: patientsRef } = useCounter(5000, 2500)
-  const { count: satisfactionCount, ref: satisfactionRef } = useCounter(
-    98,
-    2000
-  )
   const { count: yearsCount, ref: yearsRef } = useCounter(6, 1500)
 
   const [now, setNow] = useState<Date | null>(null)
@@ -161,8 +116,13 @@ function HeroSection({ heroCTAVariant }: HeroSectionProps) {
   }, [now])
 
   return (
+    /*
+      Макет 1a: герой в один екран — текст + фото на підкладці чистого
+      бренд-кольору #AECED3 (Б2, 05); один головний CTA (07); перевірна
+      статистика замість абстрактної (17).
+    */
     <section
-      className="relative min-h-[95vh] flex items-center overflow-hidden bg-white"
+      className="relative overflow-hidden bg-white"
       suppressHydrationWarning
     >
       {/* Subtle background pattern */}
@@ -171,9 +131,8 @@ function HeroSection({ heroCTAVariant }: HeroSectionProps) {
         suppressHydrationWarning
       ></div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
-        {/* Top section: Headlines & CTA */}
-        <div className="max-w-5xl mx-auto mb-20">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-18 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-16 items-center">
           {/* Main headline with badge */}
           <div
             className="transition-all duration-700"
@@ -221,7 +180,7 @@ function HeroSection({ heroCTAVariant }: HeroSectionProps) {
 
             {/* Large headline */}
             <h1
-              className="text-5xl md:text-6xl lg:text-7xl font-bold text-dental-dark leading-[1.05] mb-8 text-balance tracking-tight"
+              className="text-4xl md:text-5xl lg:text-6xl font-bold text-dental-dark leading-[1.06] mb-6 text-balance tracking-tight"
               suppressHydrationWarning
             >
               {t('home.hero.title')}
@@ -229,14 +188,14 @@ function HeroSection({ heroCTAVariant }: HeroSectionProps) {
 
             {/* Description text */}
             <p
-              className="text-lg md:text-xl text-dental-text leading-relaxed mb-10 max-w-2xl font-light"
+              className="text-lg md:text-xl text-dental-text leading-relaxed mb-9 max-w-lg font-light"
               suppressHydrationWarning
             >
               {t('home.hero.description')}
             </p>
 
-            {/* CTA buttons */}
-            <div className="flex flex-col sm:flex-row flex-wrap gap-4 min-w-0">
+            {/* Один головний CTA + текстовий вторинний (знахідка 07) */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 min-w-0">
               <Link
                 href="/booking"
                 onClick={() =>
@@ -250,102 +209,102 @@ function HeroSection({ heroCTAVariant }: HeroSectionProps) {
                     }
                   )
                 }
-                className="group inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-8 py-3.5 rounded-full font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-dental-primary-600/30 hover:-translate-y-0.5"
+                className="group inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-dental-primary-600/30 hover:-translate-y-0.5"
               >
-                <Phone className="h-5 w-5" />
+                <Calendar className="h-5 w-5" />
                 {heroCTAVariant === 'variant-b'
                   ? t('hero.bookConsultationB')
                   : heroCTAVariant === 'variant-c'
                     ? t('hero.bookConsultationC')
                     : t('hero.bookConsultation')}
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
                 href="/services"
-                className="group inline-flex items-center justify-center gap-2 bg-transparent hover:bg-dental-primary-50 text-dental-primary-700 px-8 py-3.5 rounded-full font-semibold border-2 border-dental-primary-300 transition-all duration-300 hover:border-dental-primary-600"
+                className="group inline-flex items-center gap-1.5 px-2 py-4 font-semibold text-dental-primary-700 hover:text-dental-primary-600 transition-colors"
               >
-                <Play className="h-5 w-5" />
                 {t('hero.ourServices')}
+                <ArrowRight className="h-4.5 w-4.5 transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
-          </div>
-        </div>
 
-        {/* Stats section - Enhanced design */}
-        <div
-          className="transition-all duration-700 delay-150"
-          style={{
-            transform: mounted ? 'translateY(0)' : 'translateY(1.5rem)',
-          }}
-        >
-          {/* Stats grid - responsive layout */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
-            <StatCard
-              counterRef={patientsRef}
-              count={patientsCount}
-              suffix="+"
-              label={t('stats.patients')}
-              icon={<Users className="h-7 w-7 text-dental-primary-600" />}
-            />
-            <StatCard
-              counterRef={satisfactionRef}
-              count={satisfactionCount}
-              suffix="%"
-              label={t('stats.satisfiedPatients')}
-              icon={
-                <Star className="h-7 w-7 text-dental-primary-600 fill-dental-primary-600" />
-              }
-            />
-            <StatCard
-              counterRef={yearsRef}
-              count={yearsCount}
-              suffix="+"
-              label={t('stats.yearsExperience')}
-              icon={<Award className="h-7 w-7 text-dental-primary-600" />}
-            />
-
-            {/* CTA Card - Highlighted */}
-            <Link
-              href="/booking"
-              className="group p-5 sm:p-6 lg:p-8 rounded-3xl bg-dental-primary-600 hover:bg-dental-primary-700 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
-            >
-              <div>
-                <div className="mb-6">
-                  <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors">
-                    <Phone className="h-7 w-7 text-white" />
-                  </div>
-                </div>
-                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-1 leading-tight hyphens-auto wrap-anywhere">
-                  {t('stats.freeConsultationShort')}
+            {/* Компактна стрічка статистики (знахідка 17: перевірна цифра) */}
+            <div className="mt-8 pt-7 border-t border-dental-primary-100 flex flex-wrap items-center gap-x-9 gap-y-4">
+              <div ref={patientsRef}>
+                <p className="font-heading text-3xl font-extrabold text-dental-dark">
+                  {patientsCount.toLocaleString()}+
                 </p>
-                <p className="text-white/90 text-sm sm:text-base font-medium flex items-center gap-2 wrap-anywhere">
-                  {t('stats.forNewPatients')}
-                  <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
+                <p className="text-sm text-dental-muted mt-0.5">
+                  {t('stats.patients')}
                 </p>
               </div>
-            </Link>
+              <div
+                className="hidden sm:block w-px h-10 bg-dental-primary-100"
+                aria-hidden="true"
+              />
+              <div>
+                <p className="font-heading text-3xl font-extrabold text-dental-dark inline-flex items-center gap-1.5">
+                  {SITE_INFO.rating}
+                  <Star
+                    className="h-4.5 w-4.5 text-dental-primary-500 fill-dental-primary-500"
+                    aria-hidden="true"
+                  />
+                </p>
+                <p className="text-sm text-dental-muted mt-0.5">
+                  {t('stats.googleReviews', { count: SITE_INFO.reviewCount })}
+                </p>
+              </div>
+              <div
+                className="hidden sm:block w-px h-10 bg-dental-primary-100"
+                aria-hidden="true"
+              />
+              <div ref={yearsRef}>
+                <p className="font-heading text-3xl font-extrabold text-dental-dark">
+                  {yearsCount}+
+                </p>
+                <p className="text-sm text-dental-muted mt-0.5">
+                  {t('stats.yearsExperience')}
+                </p>
+              </div>
+            </div>
           </div>
 
-          {/* Trust indicators - Compact */}
-          <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 lg:gap-8 pt-4 border-t border-dental-secondary-100 transition-all duration-700 delay-300">
-            <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-dental-primary-500" />
-              <span className="text-sm font-medium text-dental-text">
-                {t('stats.qualityGuarantee')}
-              </span>
+          {/* Фото на підкладці чистого бренд-кольору (Б2, 05) */}
+          <div
+            className="relative transition-all duration-700 delay-150"
+            style={{
+              transform: mounted ? 'translateY(0)' : 'translateY(1.5rem)',
+            }}
+          >
+            <div className="relative h-72 sm:h-96 lg:h-[560px] rounded-xl bg-dental-primary overflow-hidden">
+              <Image
+                src="/assets/images/brand/happy-patient.jpg"
+                alt={t('home.hero.photoAlt')}
+                fill
+                priority
+                sizes="(min-width: 1024px) 45vw, 100vw"
+                className="object-cover"
+              />
             </div>
-            <div className="flex items-center gap-2">
-              <Award className="h-5 w-5 text-dental-primary-500" />
-              <span className="text-sm font-medium text-dental-text">
-                {t('features.experiencedDoctors.title')}
+            {/* Плаваюча картка «Безкоштовна консультація» */}
+            <Link
+              href="/booking"
+              className="absolute -bottom-4 left-4 sm:left-0 lg:-left-8 flex items-center gap-3.5 bg-white rounded-md shadow-soft-lg px-5 py-4 hover:shadow-soft-xl transition-shadow"
+            >
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-dental-success-light">
+                <CheckCircle
+                  className="h-5.5 w-5.5 text-dental-success-dark"
+                  aria-hidden="true"
+                />
               </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Star className="h-5 w-5 text-dental-primary-500" />
-              <span className="text-sm font-medium text-dental-text">
-                {t('features.modernEquipment.title')}
+              <span>
+                <span className="block font-semibold text-dental-dark">
+                  {t('stats.freeConsultationShort')}
+                </span>
+                <span className="block text-sm text-dental-muted">
+                  {t('stats.forNewPatients')}
+                </span>
               </span>
-            </div>
+            </Link>
           </div>
         </div>
       </div>

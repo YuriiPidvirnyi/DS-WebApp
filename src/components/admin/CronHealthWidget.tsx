@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { AlertTriangle, CheckCircle, Clock, XCircle } from 'lucide-react'
+import { StatusBadge } from '@/components/ui'
 import { captureException } from '@/utils/sentry'
 
 interface CronRunSummary {
@@ -31,36 +32,40 @@ function relativeTime(iso: string | null): string {
   return `${Math.floor(hours / 24)}d ago`
 }
 
-function StatusBadge({ status }: { status: CronRunSummary['last_status'] }) {
+function CronStatusBadge({
+  status,
+}: {
+  status: CronRunSummary['last_status']
+}) {
   if (!status) {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">
+      <StatusBadge tone="neutral">
         <Clock className="h-3 w-3" />
         Never
-      </span>
+      </StatusBadge>
     )
   }
   if (status === 'ok') {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+      <StatusBadge tone="success">
         <CheckCircle className="h-3 w-3" />
         OK
-      </span>
+      </StatusBadge>
     )
   }
   if (status === 'error') {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
+      <StatusBadge tone="error">
         <XCircle className="h-3 w-3" />
         Error
-      </span>
+      </StatusBadge>
     )
   }
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-yellow-100 px-2 py-0.5 text-yellow-700 text-xs font-medium">
+    <StatusBadge tone="warning">
       <AlertTriangle className="h-3 w-3" />
       Running
-    </span>
+    </StatusBadge>
   )
 }
 
@@ -109,7 +114,7 @@ export default function CronHealthWidget() {
       <h2 className="text-lg font-semibold text-dental-dark">Cron Jobs</h2>
 
       {error ? (
-        <p className="mt-3 text-sm text-red-600">{error}</p>
+        <p className="mt-3 text-sm text-status-error-700">{error}</p>
       ) : (
         <div className="mt-3 overflow-x-auto">
           <table className="w-full text-sm">
@@ -134,14 +139,14 @@ export default function CronHealthWidget() {
                         {relativeTime(row.last_started_at)}
                       </td>
                       <td className="px-3 py-2.5">
-                        <StatusBadge status={row.last_status} />
+                        <CronStatusBadge status={row.last_status} />
                       </td>
                       <td className="px-3 py-2.5 text-xs">
                         {row.last_processed ?? '—'}
                       </td>
                       <td className="px-3 py-2.5 text-xs">
                         {row.errors_24h > 0 ? (
-                          <span className="font-semibold text-red-600">
+                          <span className="font-semibold text-status-error-700">
                             {row.errors_24h}
                           </span>
                         ) : (

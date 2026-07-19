@@ -56,12 +56,15 @@ describe('Auth pages smoke', () => {
 
     render(<LoginPage />)
 
-    fireEvent.change(screen.getByLabelText(t('auth.login.emailLabel')), {
+    fireEvent.change(screen.getByLabelText(t('auth.login.emailLabel') + '*'), {
       target: { value: 'test@example.com' },
     })
-    fireEvent.change(screen.getByLabelText(t('auth.login.passwordLabel')), {
-      target: { value: 'Secret123!' },
-    })
+    fireEvent.change(
+      screen.getByLabelText(t('auth.login.passwordLabel') + '*'),
+      {
+        target: { value: 'Secret123!' },
+      }
+    )
     fireEvent.click(
       screen.getByRole('button', { name: t('auth.login.submit') })
     )
@@ -123,16 +126,16 @@ describe('Auth pages smoke', () => {
 
     render(<SignUpPage />)
 
-    fireEvent.change(screen.getByLabelText(t('auth.signUp.firstName')), {
+    fireEvent.change(screen.getByLabelText(t('auth.signUp.firstName') + '*'), {
       target: { value: 'Іван' },
     })
-    fireEvent.change(screen.getByLabelText(t('auth.signUp.lastName')), {
+    fireEvent.change(screen.getByLabelText(t('auth.signUp.lastName') + '*'), {
       target: { value: 'Тест' },
     })
     fireEvent.change(screen.getByLabelText(t('auth.signUp.phone')), {
       target: { value: '671234567' },
     })
-    fireEvent.change(screen.getByLabelText(t('auth.signUp.emailLabel')), {
+    fireEvent.change(screen.getByLabelText(t('auth.signUp.emailLabel') + '*'), {
       target: { value: 'patient@example.com' },
     })
     fireEvent.change(screen.getByLabelText(t('auth.signUp.passwordLabel')), {

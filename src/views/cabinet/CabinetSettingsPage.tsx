@@ -7,6 +7,7 @@ import { Download, Trash2, AlertTriangle, Shield } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useCSRF } from '@/hooks/useCSRF'
 import { captureException } from '@/utils/sentry'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 
 export default function CabinetSettingsPage() {
   const { t } = useTranslation()
@@ -46,6 +47,7 @@ export default function CabinetSettingsPage() {
       captureException(err instanceof Error ? err : new Error(String(err)))
       setDeleteError(t('cabinet.error.description'))
       setDeleting(false)
+      setShowDeleteConfirm(false)
     }
   }
 
@@ -64,7 +66,7 @@ export default function CabinetSettingsPage() {
       <div className="bg-white rounded-2xl shadow-xs border border-dental-secondary-100 p-6">
         <div className="flex items-start gap-4">
           <div className="w-10 h-10 rounded-xl bg-dental-primary-50 flex items-center justify-center shrink-0">
-            <Shield className="w-5 h-5 text-dental-primary-600" />
+            <Shield className="w-5 h-5 text-dental-primary-ink" />
           </div>
           <div className="flex-1 min-w-0">
             <h2 className="text-base font-semibold text-dental-dark">
@@ -86,10 +88,10 @@ export default function CabinetSettingsPage() {
       </div>
 
       {/* Delete account section */}
-      <div className="bg-white rounded-2xl shadow-xs border border-red-200 p-6">
+      <div className="bg-white rounded-2xl shadow-xs border border-dental-error/20 p-6">
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
-            <Trash2 className="w-5 h-5 text-red-500" />
+          <div className="w-10 h-10 rounded-xl bg-status-error-100 flex items-center justify-center shrink-0">
+            <Trash2 className="w-5 h-5 text-dental-error" />
           </div>
           <div className="flex-1 min-w-0">
             <h2 className="text-base font-semibold text-dental-dark">
@@ -100,60 +102,44 @@ export default function CabinetSettingsPage() {
             </p>
 
             {deleteError && (
-              <div className="mt-4 flex items-center gap-3 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+              <div className="mt-4 flex items-center gap-3 px-4 py-3 rounded-xl bg-status-error-100 border border-dental-error/20 text-status-error-700 text-sm">
                 <AlertTriangle className="w-4 h-4 shrink-0" />
                 {deleteError}
               </div>
             )}
 
-            {!showDeleteConfirm ? (
-              <button
-                type="button"
-                onClick={() => setShowDeleteConfirm(true)}
-                className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-red-50 text-red-600 border border-red-300 text-sm font-medium rounded-xl transition-colors focus:outline-hidden focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
-              >
-                <Trash2 className="w-4 h-4" />
-                {t('cabinet.settings.deleteSection.button')}
-              </button>
-            ) : (
-              <div className="mt-4 space-y-3">
-                <p className="text-sm font-medium text-red-700 flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 shrink-0" />
-                  {t('cabinet.settings.deleteSection.confirm')}
-                </p>
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={handleDeleteAccount}
-                    disabled={deleting}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors focus:outline-hidden focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                  >
-                    {deleting ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        {t('cabinet.settings.deleteSection.deleting')}
-                      </>
-                    ) : (
-                      t('cabinet.settings.deleteSection.confirmButton')
-                    )}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowDeleteConfirm(false)
-                      setDeleteError(null)
-                    }}
-                    disabled={deleting}
-                    className="px-4 py-2.5 text-dental-muted hover:text-dental-dark text-sm font-medium rounded-xl transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-secondary-300 focus:ring-offset-2"
-                  >
-                    {t('cabinet.settings.deleteSection.cancel')}
-                  </button>
-                </div>
-              </div>
-            )}
+            <button
+              type="button"
+              onClick={() => {
+                setDeleteError(null)
+                setShowDeleteConfirm(true)
+              }}
+              className="mt-4 inline-flex min-h-11 items-center gap-2 px-4 py-2.5 bg-white hover:bg-status-error-100 text-status-error-700 border border-dental-error/30 text-sm font-medium rounded-xl transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-error focus:ring-offset-2"
+            >
+              <Trash2 className="w-4 h-4" />
+              {t('cabinet.settings.deleteSection.button')}
+            </button>
           </div>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        severity="irreversible"
+        title={t('cabinet.settings.deleteSection.title')}
+        description={t('cabinet.settings.deleteSection.description')}
+        warning={t('confirmDialog.irreversibleWarning')}
+        confirmationWord={t('cabinet.settings.deleteSection.confirmWord')}
+        confirmLabel={t('cabinet.settings.deleteSection.confirmButton')}
+        cancelLabel={t('cabinet.settings.deleteSection.cancel')}
+        isLoading={deleting}
+        onConfirm={handleDeleteAccount}
+        onClose={() => {
+          if (deleting) return
+          setDeleteError(null)
+          setShowDeleteConfirm(false)
+        }}
+      />
     </div>
   )
 }

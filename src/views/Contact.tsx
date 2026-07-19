@@ -6,7 +6,7 @@ import ContactForm from '@/components/ContactForm'
 import GoogleMap from '@/components/GoogleMap'
 import CallbackRequest from '@/components/CallbackRequest'
 import FAQ from '@/components/FAQ'
-import { CONTACT_INFO } from '@/utils/constants'
+import { CONTACT_INFO, SITE_INFO } from '@/utils/constants'
 import { Card } from '@/components/ui'
 
 const Contact = () => {
@@ -96,7 +96,7 @@ const Contact = () => {
                       {CONTACT_INFO.address.district}
                     </p>
                     <a
-                      href="https://maps.app.goo.gl/gprGw94tfAJH7xFSA"
+                      href={SITE_INFO.googleMaps}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm text-white/80 hover:text-white hover:underline"
@@ -148,7 +148,9 @@ const Contact = () => {
                     href={`tel:${CONTACT_INFO.emergencyPhoneRaw}`}
                     className="hover:underline"
                   >
-                    {t('contact.emergency.phone')}
+                    {/* Показуємо те саме джерело, що й у tel:, щоб текст і ціль
+                        дзвінка не розходились per-environment */}
+                    {CONTACT_INFO.emergencyPhone}
                   </a>
                 </p>
                 <p className="text-dental-error-dark text-sm">
@@ -185,7 +187,7 @@ const Contact = () => {
               </div>
               <div className="p-4 bg-white border-t border-dental-secondary-200">
                 <a
-                  href="https://maps.app.goo.gl/gprGw94tfAJH7xFSA"
+                  href={SITE_INFO.googleMaps}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center text-dental-primary hover:text-dental-primary-600 font-medium text-sm"

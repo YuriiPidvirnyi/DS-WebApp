@@ -29,8 +29,8 @@ export default function CabinetError({ error, reset }: ErrorProps) {
     <div className="flex items-center justify-center p-4 min-h-[60vh]">
       <div className="max-w-md w-full">
         <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center">
-            <AlertCircle className="w-8 h-8 text-red-500" />
+          <div className="w-16 h-16 bg-status-error-100 rounded-full flex items-center justify-center">
+            <AlertCircle className="w-8 h-8 text-dental-error" />
           </div>
         </div>
 
@@ -54,13 +54,13 @@ export default function CabinetError({ error, reset }: ErrorProps) {
         </div>
 
         {process.env.NODE_ENV !== 'production' && (
-          <div className="mb-6 p-4 bg-amber-50 rounded-xl border border-amber-200">
-            <p className="text-sm font-semibold text-amber-700 mb-2">
+          <div className="mb-6 p-4 bg-status-warning-100 rounded-xl border border-dental-warning/30">
+            <p className="text-sm font-semibold text-status-warning-700 mb-2">
               {t('cabinet.error.devDetails', {
                 defaultValue: 'Деталі помилки (розробка):',
               })}
             </p>
-            <pre className="text-xs text-dental-dark bg-white p-3 rounded-lg overflow-auto max-h-32 border border-amber-100 font-mono">
+            <pre className="text-xs text-dental-dark bg-white p-3 rounded-lg overflow-auto max-h-32 border border-dental-warning/30 font-mono">
               {error.message}
             </pre>
           </div>
@@ -78,7 +78,7 @@ export default function CabinetError({ error, reset }: ErrorProps) {
           </button>
           <Link
             href="/cabinet"
-            className="w-full inline-flex items-center justify-center gap-2 bg-white hover:bg-dental-secondary-50 text-dental-primary-600 px-6 py-3 rounded-xl font-medium border border-dental-secondary-200 transition-colors"
+            className="w-full inline-flex items-center justify-center gap-2 bg-white hover:bg-dental-secondary-50 text-dental-primary-ink px-6 py-3 rounded-xl font-medium border border-dental-secondary-200 transition-colors"
           >
             <Home className="w-4 h-4" />
             {t('cabinet.error.goHome', {

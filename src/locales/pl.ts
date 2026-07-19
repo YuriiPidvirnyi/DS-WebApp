@@ -286,6 +286,12 @@ const pl = {
         duration: '18 miesięcy',
       },
     },
+    beforePlaceholder: 'Zdjęcie PRZED — przypadek „{{case}}”',
+    afterPlaceholder: 'Zdjęcie PO — przypadek „{{case}}”',
+    keyboardHint: '←/→ krok 5% · Home/End — krawędzie',
+    sliderAria:
+      'Suwak porównania: {{value}}%. Strzałki — krok 5%, Home/End — krawędzie',
+    selectCase: 'Wybierz przypadek',
   },
   labels: {
     before: 'Przed',
@@ -354,10 +360,9 @@ const pl = {
       },
     },
     emergency: {
-      title: '🚨 Pomoc w nagłych wypadkach',
+      title: 'Pomoc w nagłych wypadkach',
       description:
         'W przypadku ostrego bólu lub urazu, skontaktuj się z nami natychmiast:',
-      phone: '📞 +380 50 455 47 74',
       availability: 'Przyjmujemy połączenia alarmowe 24/7',
     },
     faq: {
@@ -444,11 +449,13 @@ const pl = {
         'Nowoczesny sprzęt',
         'Wykwalifikowani lekarze',
       ],
+      photoAlt: 'Pacjentka Dental Story uśmiecha się po wizycie',
     },
     features: {
       title: 'Dlaczego pacjenci wybierają Dental Story',
       subtitle:
         'Łączymy profesjonalizm, nowoczesne technologie i indywidualne podejście, aby osiągnąć najlepsze wyniki leczenia',
+      kicker: 'Atuty',
     },
     services: {
       title: 'Pełen zakres usług',
@@ -1306,6 +1313,11 @@ const pl = {
       submit: 'Zarezerwuj',
       cooldown: 'Poczekaj {{seconds}} s',
       submittingOverlay: 'Wysyłamy zgłoszenie...',
+      nextPersonal: 'Dalej: twoje dane',
+      nextSummary: 'Dalej: potwierdzenie',
+      panelTitle: 'Twoja wizyta',
+      panelNote:
+        'Płatność w klinice. Przełożenie lub odwołanie wizyty jest bezpłatne do 24 godzin przed wizytą.',
     },
     errors: {
       cooldown: 'Zbyt częste wysyłanie. Spróbuj ponownie za {{seconds}} s.',
@@ -1328,7 +1340,6 @@ const pl = {
       addToCalendar: 'Dodaj do kalendarza',
       calendarTitle: 'Wizyta: {{service}}',
       calendarDescription: 'Rezerwacja nr {{ref}}. Pacjent: {{name}}',
-      calendarLocation: 'Dental Studio',
     },
   },
   apiDocsPage: {
@@ -1438,6 +1449,12 @@ const pl = {
       settings: 'Ustawienia',
       users: 'Użytkownicy',
       stock: 'Magazyn v2',
+      groups: {
+        operations: 'Operacje',
+        communications: 'Komunikacja',
+        inventory: 'Magazyn',
+        system: 'System',
+      },
     },
     login: {
       title: 'Logowanie do panelu',
@@ -1463,6 +1480,7 @@ const pl = {
     },
     layout: {
       panel: 'Panel administratora',
+      patientCabinet: 'Gabinet pacjenta',
       logout: 'Wyloguj się',
       backToSite: 'Na stronę',
       systemOnline: 'System online',
@@ -1492,7 +1510,7 @@ const pl = {
         backToList: 'Wróć do listy',
       },
       connection: {
-        realtime: 'Realtime',
+        realtime: 'Na żywo',
         disconnected: 'Brak połączenia',
       },
       actions: {
@@ -1539,6 +1557,8 @@ const pl = {
         today: 'Dziś',
         upcoming: 'Nadchodzące',
         past: 'Minione',
+        dateSelectAria: 'Filtruj według daty',
+        statusSelectAria: 'Filtruj według statusu',
       },
       bulk: {
         selected: 'Wybrano: {{count}}',
@@ -1619,6 +1639,7 @@ const pl = {
         loadFailedFallback: 'Nie udało się załadować analityki.',
         chartFailed: 'Nie udało się załadować tej sekcji.',
       },
+      periodSelectAria: 'Wybierz okres',
     },
     patientManagement: {
       title: 'Zarządzanie pacjentami',
@@ -1697,7 +1718,7 @@ const pl = {
         total: 'Łącznie',
         pending: 'Oczekujące',
         approved: 'Zatwierdzone',
-        featured: 'Featured',
+        featured: 'Wyróżnione',
       },
       filters: {
         searchPlaceholder: 'Szukaj: autor, usługa, treść',
@@ -1722,7 +1743,7 @@ const pl = {
       empty: 'Nie znaleziono opinii.',
       card: {
         selectAria: 'Wybierz opinię od {{name}}',
-        featured: 'featured',
+        featured: 'wyróżniony',
         wouldRecommend: 'Poleca: {{value}}',
         yes: 'tak',
         no: 'nie',
@@ -1790,12 +1811,13 @@ const pl = {
       empty: 'Brak zgłoszeń dla bieżących filtrów.',
       card: {
         selectAria: 'Wybierz zgłoszenie {{name}}',
-        unreadBadge: 'unread',
+        unreadBadge: 'nieprzeczytane',
         markRead: 'Oznacz jako przeczytane',
         markUnread: 'Oznacz jako nieprzeczytane',
         showMessage: 'Pokaż wiadomość',
         adminNote: 'Notatka admina',
         notesPlaceholder: 'Dodaj notatkę…',
+        statusSelectAria: 'Zmień status zgłoszenia',
       },
       confirmations: {
         bulkChange: 'Zastosować masową zmianę do {{count}} zgłoszeń?',
@@ -1865,8 +1887,8 @@ const pl = {
       blankChild: 'Formularz (dziecko)',
     },
     serviceStatuses: {
-      active: 'active',
-      inactive: 'inactive',
+      active: 'Aktywna',
+      inactive: 'Nieaktywna',
     },
     servicesPage: {
       title: 'Zarządzanie usługami',
@@ -1957,8 +1979,8 @@ const pl = {
       },
     },
     doctorStatuses: {
-      active: 'active',
-      inactive: 'inactive',
+      active: 'Aktywny',
+      inactive: 'Nieaktywny',
     },
     doctorsPage: {
       title: 'Zarządzanie lekarzami',
@@ -2129,15 +2151,15 @@ const pl = {
         },
         systemActor: 'system',
         actions: {
-          diff: 'Diff',
-          rollback: 'Rollback',
+          diff: 'Porównaj',
+          rollback: 'Wycofaj',
         },
         summary: {
           created: 'Utworzono rekord ({{count}} pól)',
           deleted: 'Usunięto rekord ({{count}} pól)',
           changed: 'Zmienione pola: {{count}}',
         },
-        nullValue: 'null',
+        nullValue: '—',
         errors: {
           supabaseUnavailable: 'Supabase nie jest skonfigurowany.',
           loadFailed:
@@ -2154,8 +2176,8 @@ const pl = {
             when: 'Kiedy',
           },
           noChanges: 'Nie wykryto różnic.',
-          before: 'BEFORE',
-          after: 'AFTER',
+          before: 'PRZED',
+          after: 'PO',
         },
       },
       rollback: {
@@ -2407,6 +2429,10 @@ const pl = {
       editAria: 'Edytuj',
       deleteAria: 'Usuń',
       removeLineAria: 'Usuń wiersz',
+      printAria: 'Drukuj akt',
+      draftNotPrintable:
+        'Szkiców nie można drukować — podpisz akt, aby go wydrukować.',
+      loadError: 'Nie udało się załadować kart leczenia',
     },
     users: {
       title: 'Zarządzanie użytkownikami',
@@ -2468,6 +2494,52 @@ const pl = {
         materials: 'Dodaj materiały do magazynu',
         appointment: 'Wykonaj testową rezerwację',
         workingHours: 'Skonfiguruj godziny pracy',
+      },
+    },
+    stock: {
+      confirm: {
+        postDocument: {
+          title: 'Zaksięgować dokument?',
+          description:
+            'Po zaksięgowaniu stany magazynowe zostaną zaktualizowane według pozycji dokumentu; edycja będzie niedostępna.',
+          action: 'Zaksięguj',
+        },
+        deleteDocument: {
+          title: 'Usunąć szkic dokumentu?',
+          description:
+            'Szkic i wszystkie jego pozycje zostaną trwale usunięte.',
+          action: 'Usuń',
+        },
+        archiveDirectoryItem: {
+          title: 'Zarchiwizować pozycję słownika?',
+          description:
+            'Pozycja zniknie z list wyboru, ale pozostanie w historii dokumentów.',
+          action: 'Archiwizuj',
+        },
+        archiveWarehouse: {
+          title: 'Zarchiwizować magazyn?',
+          description:
+            'Magazyn będzie niedostępny dla nowych dokumentów; historia ruchów zostanie zachowana.',
+          action: 'Archiwizuj',
+        },
+        deactivateMaterial: {
+          title: 'Dezaktywować materiał?',
+          description:
+            'Materiał zniknie z katalogu dla nowych dokumentów; stany i historia zostaną zachowane.',
+          action: 'Dezaktywuj',
+        },
+        postAudit: {
+          title: 'Zaksięgować inwentaryzację?',
+          description:
+            'Stany magazynowe zostaną skorygowane zgodnie z wynikami liczenia.',
+          action: 'Zaksięguj',
+        },
+        removePermissions: {
+          title: 'Odebrać uprawnienia?',
+          description:
+            'Użytkownik utraci dostęp do operacji magazynowych nadanych tym wpisem.',
+          action: 'Odbierz',
+        },
       },
     },
   },
@@ -2557,7 +2629,6 @@ const pl = {
       goHome: 'Na stronę główną',
     },
     forgotPassword: {
-      expiredNotice: 'Link wygasł. Podaj adres e-mail, aby otrzymać nowy.',
       subtitle: 'Podaj email, a wyślemy link do zresetowania hasła.',
       emailLabel: 'Email',
       emailPlaceholder: 'twoj@email.com',
@@ -2570,6 +2641,7 @@ const pl = {
         unavailable: 'Odzyskiwanie hasła jest tymczasowo niedostępne',
         generic: 'Nie udało się wysłać emaila. Spróbuj ponownie później.',
       },
+      expiredNotice: 'Link wygasł. Podaj adres e-mail, aby otrzymać nowy.',
     },
     resetPassword: {
       subtitle: 'Ustaw nowe hasło dla swojego konta.',
@@ -2589,6 +2661,17 @@ const pl = {
         passwordsMismatch: 'Hasła nie są zgodne',
         passwordTooShort: 'Hasło musi zawierać co najmniej 8 znaków',
         generic: 'Nie udało się zaktualizować hasła. Spróbuj ponownie.',
+      },
+    },
+    callback: {
+      loading: 'Kończymy logowanie, proszę czekać...',
+      goToLogin: 'Przejdź do logowania',
+      errors: {
+        invalidLink:
+          'Link odzyskiwania jest niekompletny lub uszkodzony. Poproś o nowy.',
+        unavailable: 'Autoryzacja jest tymczasowo niedostępna',
+        sessionMissing: 'Nie udało się aktywować sesji. Zaloguj się ponownie.',
+        generic: 'Nie udało się zakończyć autoryzacji. Spróbuj ponownie.',
       },
     },
     confirm: {
@@ -2613,16 +2696,11 @@ const pl = {
         generic: 'Link jest nieprawidłowy lub wygasł. Poproś o nowy.',
       },
     },
-    callback: {
-      loading: 'Kończymy logowanie, proszę czekać...',
-      goToLogin: 'Przejdź do logowania',
-      errors: {
-        invalidLink:
-          'Link odzyskiwania jest niekompletny lub uszkodzony. Poproś o nowy.',
-        unavailable: 'Autoryzacja jest tymczasowo niedostępna',
-        sessionMissing: 'Nie udało się aktywować sesji. Zaloguj się ponownie.',
-        generic: 'Nie udało się zakończyć autoryzacji. Spróbuj ponownie.',
-      },
+    split: {
+      welcomeBack: 'Witaj ponownie w Dental Story',
+      welcomeNew: 'Witaj w Dental Story',
+      subtitle:
+        'Twoje wizyty, historia leczenia i dokumenty — w jednym miejscu.',
     },
   },
   cabinet: {
@@ -2717,6 +2795,7 @@ const pl = {
       saveSuccess: 'Profil został zaktualizowany!',
       errors: {
         saveFailed: 'Nie udało się zapisać. Spróbuj ponownie później.',
+        invalidPhone: 'Nieprawidłowy format numeru telefonu',
       },
       personalInfo: 'Dane osobowe',
       contactInfo: 'Informacje kontaktowe',
@@ -2729,6 +2808,7 @@ const pl = {
         'Spowoduje to trwałe usunięcie konta i anulowanie wszystkich nadchodzących wizyt. Tej akcji nie można cofnąć.',
       downloading: 'Pobieranie...',
       deleting: 'Usuwanie...',
+      dateOfBirthPlaceholder: 'Wybierz datę urodzenia',
     },
     title: 'Gabinet pacjenta',
     profileTitle: 'Mój profil',
@@ -2778,6 +2858,7 @@ const pl = {
         confirmButton: 'Tak, usuń moje konto',
         cancel: 'Anuluj',
         deleting: 'Usuwanie...',
+        confirmWord: 'USUŃ',
       },
       navLink: 'Ustawienia',
     },
@@ -3016,7 +3097,6 @@ const pl = {
     calendar: {
       title: 'Wizyta: {{service}}',
       description: 'Rezerwacja nr {{id}}. Nie zapomnij zabrać dokumentów!',
-      location: 'Dental Studio',
     },
     appointmentShort: 'Rezerwacja #{{id}}...',
     reminderTypes: {
@@ -3085,6 +3165,10 @@ const pl = {
         'Dziękujemy za wiadomość! Nasz menedżer skontaktuje się z Tobą wkrótce. Aby uzyskać szybki kontakt, zadzwoń: +380 68 232 38 38',
     },
     typing: 'Konsultant pisze…',
+    minimizeChat: 'Zwiń czat',
+    chooseChannel: 'Wybierz sposób kontaktu:',
+    adminChannel: 'Napisz do administratora',
+    aiChannel: 'Asystent AI',
   },
   pricing: {
     title: 'Przejrzyste ceny',
@@ -3154,6 +3238,7 @@ const pl = {
     closedNow: 'Teraz zamknięte',
     opensAt: 'Otwieramy o {{time}}',
     qualityGuarantee: 'Gwarancja jakości',
+    googleReviews: '{{count}} opinii w Google',
   },
   hero: {
     badge: 'Nowoczesna stomatologia',
@@ -3376,6 +3461,8 @@ const pl = {
           recommendation: 'PILNE! Zadzwoń natychmiast po wizytę nagłą',
         },
       },
+      notSpecified: 'nie podano',
+      durationHint: 'Wpływa na pilność wizyty',
     },
   },
   routeMeta: {
@@ -3605,6 +3692,11 @@ const pl = {
       docLocked: 'Документ вже проведено',
       flagOff: 'Inventory v2 не активовано',
     },
+  },
+  confirmDialog: {
+    consequencesTitle: 'Razem z tym znikną',
+    typeToConfirm: 'Aby potwierdzić, wpisz',
+    irreversibleWarning: 'Tej akcji nie można cofnąć.',
   },
 } as const
 

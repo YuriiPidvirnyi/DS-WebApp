@@ -164,8 +164,8 @@ const ActionCart = forwardRef<ActionCartHandle, Props>(function ActionCart(
   if (totalItems === 0) return null
 
   return (
-    <div className="fixed right-0 top-20 bottom-0 w-80 flex flex-col bg-white border-l border-gray-200 shadow-xl z-30">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gray-50">
+    <div className="fixed right-0 top-20 bottom-0 w-80 flex flex-col bg-white border-l border-dental-secondary-200 shadow-xl z-30">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-dental-secondary-200 bg-dental-secondary-50">
         <h3 className="font-semibold text-dental-dark text-sm">Кошик дій</h3>
         <span className="rounded-full bg-dental-primary-600 text-white text-xs font-medium px-2 py-0.5">
           {totalItems}
@@ -179,11 +179,11 @@ const ActionCart = forwardRef<ActionCartHandle, Props>(function ActionCart(
           const isOpen = open === type
 
           return (
-            <div key={type} className="border-b border-gray-100">
+            <div key={type} className="border-b border-dental-secondary-100">
               <button
                 type="button"
                 onClick={() => setOpen(isOpen ? null : type)}
-                className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors"
+                className="w-full flex items-center justify-between px-4 py-3 hover:bg-dental-secondary-50 transition-colors"
               >
                 <span className="text-sm font-medium text-dental-dark">
                   {DRAWER_LABELS[type]} ({items.length})
@@ -201,7 +201,7 @@ const ActionCart = forwardRef<ActionCartHandle, Props>(function ActionCart(
                     <select
                       value={toWarehouse}
                       onChange={e => setToWarehouse(e.target.value)}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
+                      className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
                     >
                       <option value="">— склад призначення —</option>
                       {warehouses.map(w => (
@@ -232,7 +232,7 @@ const ActionCart = forwardRef<ActionCartHandle, Props>(function ActionCart(
                             Number(e.target.value)
                           )
                         }
-                        className="w-16 rounded border border-gray-300 px-2 py-1 text-sm text-right focus:outline-hidden focus:ring-1 focus:ring-dental-primary-600"
+                        className="w-16 rounded border border-dental-secondary-300 px-2 py-1 text-sm text-right focus:outline-hidden focus:ring-1 focus:ring-dental-primary-600"
                       />
                       <span className="text-xs text-dental-text w-8">
                         {balance.material.unit}
@@ -243,12 +243,14 @@ const ActionCart = forwardRef<ActionCartHandle, Props>(function ActionCart(
                           removeFromCart(type, balance.material_id)
                         }
                       >
-                        <X className="w-3.5 h-3.5 text-dental-text hover:text-red-500" />
+                        <X className="w-3.5 h-3.5 text-dental-text hover:text-dental-error" />
                       </button>
                     </div>
                   ))}
 
-                  {error && <p className="text-xs text-red-600">{error}</p>}
+                  {error && (
+                    <p className="text-xs text-status-error-700">{error}</p>
+                  )}
 
                   <button
                     type="button"

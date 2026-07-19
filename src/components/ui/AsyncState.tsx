@@ -20,7 +20,7 @@ interface AsyncStateProps {
 
 const variantStyles: Record<AsyncStateVariant, string> = {
   loading: 'border-dental-secondary-200 bg-white text-dental-text',
-  error: 'border-red-200 bg-red-50 text-red-700',
+  error: 'border-dental-error/20 bg-status-error-100 text-status-error-700',
   empty: 'border-dental-secondary-200 bg-white text-dental-text',
 }
 

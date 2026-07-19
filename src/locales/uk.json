@@ -272,7 +272,12 @@
         "treatment": "Ортодонтія",
         "duration": "18 місяців"
       }
-    }
+    },
+    "beforePlaceholder": "Фото ДО — кейс «{{case}}»",
+    "afterPlaceholder": "Фото ПІСЛЯ — кейс «{{case}}»",
+    "keyboardHint": "←/→ крок 5% · Home/End — краї",
+    "sliderAria": "Повзунок порівняння: {{value}}%. Стрілки — крок 5%, Home/End — краї",
+    "selectCase": "Обрати кейс"
   },
   "labels": {
     "before": "До",
@@ -338,9 +343,8 @@
       }
     },
     "emergency": {
-      "title": "🚨 Екстрена допомога",
+      "title": "Екстрена допомога",
       "description": "У разі гострого болю або травми зв'яжіться з нами негайно:",
-      "phone": "📞 +380 50 455 47 74",
       "availability": "Екстрені виклики приймаємо 24/7"
     },
     "faq": {
@@ -419,11 +423,13 @@
         "Гарантія якості на всі роботи",
         "Сучасне обладнання",
         "Кваліфіковані лікарі"
-      ]
+      ],
+      "photoAlt": "Пацієнтка Dental Story усміхається після візиту"
     },
     "features": {
       "title": "Чому пацієнти обирають Dental Story",
-      "subtitle": "Ми поєднуємо професіоналізм, сучасні технології та індивідуальний підхід для досягнення найкращих результатів лікування"
+      "subtitle": "Ми поєднуємо професіоналізм, сучасні технології та індивідуальний підхід для досягнення найкращих результатів лікування",
+      "kicker": "Переваги"
     },
     "services": {
       "title": "Повний спектр послуг",
@@ -1331,7 +1337,11 @@
       "heading": "Запис на прийом",
       "submit": "Записатися",
       "cooldown": "Зачекайте {{seconds}} с",
-      "submittingOverlay": "Надсилаємо заявку..."
+      "submittingOverlay": "Надсилаємо заявку...",
+      "nextPersonal": "Далі: ваші дані",
+      "nextSummary": "Далі: підтвердження",
+      "panelTitle": "Ваш запис",
+      "panelNote": "Оплата в клініці. Перенести або скасувати запис можна безкоштовно за 24 години до візиту."
     },
     "errors": {
       "cooldown": "Занадто часті відправлення. Спробуйте через {{seconds}} с.",
@@ -1352,8 +1362,7 @@
       "createAnother": "Створити ще один запис",
       "addToCalendar": "Додати в календар",
       "calendarTitle": "Візит: {{service}}",
-      "calendarDescription": "Запис №{{ref}}. Пацієнт: {{name}}",
-      "calendarLocation": "Dental Studio"
+      "calendarDescription": "Запис №{{ref}}. Пацієнт: {{name}}"
     }
   },
   "apiDocsPage": {
@@ -1457,7 +1466,13 @@
       "stock": "Склад v2",
       "analytics": "Аналітика",
       "settings": "Налаштування",
-      "users": "Користувачі"
+      "users": "Користувачі",
+      "groups": {
+        "operations": "Операції",
+        "communications": "Комунікації",
+        "inventory": "Склад",
+        "system": "Система"
+      }
     },
     "login": {
       "title": "Вхід в адмін-панель",
@@ -1483,6 +1498,7 @@
     },
     "layout": {
       "panel": "Адмін-панель",
+      "patientCabinet": "Кабінет пацієнта",
       "logout": "Вийти",
       "backToSite": "На сайт",
       "systemOnline": "Система онлайн",
@@ -1512,7 +1528,7 @@
         "backToList": "Назад до списку"
       },
       "connection": {
-        "realtime": "Realtime",
+        "realtime": "Онлайн",
         "disconnected": "Не підключено"
       },
       "actions": {
@@ -1557,7 +1573,9 @@
         "allDates": "Всі дати",
         "today": "Сьогодні",
         "upcoming": "Майбутні",
-        "past": "Минулі"
+        "past": "Минулі",
+        "dateSelectAria": "Фільтрувати за датою",
+        "statusSelectAria": "Фільтрувати за статусом"
       },
       "bulk": {
         "selected": "Вибрано: {{count}}",
@@ -1634,7 +1652,8 @@
         "loadFailed": "Не вдалося завантажити аналітику",
         "loadFailedFallback": "Не вдалося завантажити аналітику.",
         "chartFailed": "Цей розділ не вдалося завантажити."
-      }
+      },
+      "periodSelectAria": "Оберіть період"
     },
     "patientManagement": {
       "title": "Управління пацієнтами",
@@ -1712,7 +1731,7 @@
         "total": "Всього",
         "pending": "Очікують",
         "approved": "Схвалені",
-        "featured": "Featured"
+        "featured": "Рекомендовані"
       },
       "filters": {
         "searchPlaceholder": "Пошук: автор, послуга, текст",
@@ -1737,7 +1756,7 @@
       "empty": "Відгуків не знайдено.",
       "card": {
         "selectAria": "Вибрати відгук від {{name}}",
-        "featured": "featured",
+        "featured": "рекомендований",
         "wouldRecommend": "Рекомендує: {{value}}",
         "yes": "так",
         "no": "ні"
@@ -1803,12 +1822,13 @@
       "empty": "За поточними фільтрами звернень не знайдено.",
       "card": {
         "selectAria": "Вибрати звернення {{name}}",
-        "unreadBadge": "unread",
+        "unreadBadge": "непрочитане",
         "markRead": "Позначити прочитаним",
         "markUnread": "Позначити непрочитаним",
         "showMessage": "Показати повідомлення",
         "adminNote": "Адмін-нотатка",
-        "notesPlaceholder": "Додати нотатку…"
+        "notesPlaceholder": "Додати нотатку…",
+        "statusSelectAria": "Змінити статус звернення"
       },
       "confirmations": {
         "bulkChange": "Застосувати масову зміну до {{count}} звернень?",
@@ -1875,8 +1895,8 @@
       "blankChild": "Бланк (дитина)"
     },
     "serviceStatuses": {
-      "active": "active",
-      "inactive": "inactive"
+      "active": "Активна",
+      "inactive": "Неактивна"
     },
     "servicesPage": {
       "title": "Управління послугами",
@@ -1963,8 +1983,8 @@
       }
     },
     "doctorStatuses": {
-      "active": "active",
-      "inactive": "inactive"
+      "active": "Активний",
+      "inactive": "Неактивний"
     },
     "doctorsPage": {
       "title": "Управління лікарями",
@@ -2127,17 +2147,17 @@
           "summary": "Зміст",
           "actions": "Дії"
         },
-        "systemActor": "system",
+        "systemActor": "система",
         "actions": {
-          "diff": "Diff",
-          "rollback": "Rollback"
+          "diff": "Порівняти",
+          "rollback": "Відкат"
         },
         "summary": {
           "created": "Створено запис ({{count}} полів)",
           "deleted": "Видалено запис ({{count}} полів)",
           "changed": "Змінено полів: {{count}}"
         },
-        "nullValue": "null",
+        "nullValue": "—",
         "errors": {
           "supabaseUnavailable": "Supabase не налаштований.",
           "loadFailed": "Не вдалося завантажити audit logs. Перевірте, чи застосована міграція audit."
@@ -2152,8 +2172,8 @@
             "when": "Коли"
           },
           "noChanges": "Відмінностей не виявлено.",
-          "before": "BEFORE",
-          "after": "AFTER"
+          "before": "БУЛО",
+          "after": "СТАЛО"
         }
       },
       "rollback": {
@@ -2401,7 +2421,10 @@
       "deleteConfirm": "Видалити цей акт? Дію не скасувати.",
       "editAria": "Редагувати",
       "deleteAria": "Видалити",
-      "removeLineAria": "Прибрати рядок"
+      "removeLineAria": "Прибрати рядок",
+      "printAria": "Друк акта",
+      "draftNotPrintable": "Чернетки не друкуються — підпишіть акт, щоб роздрукувати.",
+      "loadError": "Не вдалося завантажити акти лікування"
     },
     "users": {
       "title": "Управління користувачами",
@@ -2463,6 +2486,45 @@
         "materials": "Додайте матеріали до складу",
         "appointment": "Зробіть тестовий запис",
         "workingHours": "Налаштуйте графік роботи"
+      }
+    },
+    "stock": {
+      "confirm": {
+        "postDocument": {
+          "title": "Провести документ?",
+          "description": "Після проведення залишки на складах оновляться за позиціями документа; редагування стане недоступним.",
+          "action": "Провести"
+        },
+        "deleteDocument": {
+          "title": "Видалити чернетку документа?",
+          "description": "Чернетку і всі її позиції буде видалено назавжди.",
+          "action": "Видалити"
+        },
+        "archiveDirectoryItem": {
+          "title": "Архівувати запис довідника?",
+          "description": "Запис зникне зі списків вибору, але залишиться в історії документів.",
+          "action": "Архівувати"
+        },
+        "archiveWarehouse": {
+          "title": "Архівувати склад?",
+          "description": "Склад стане недоступним для нових документів; історія рухів збережеться.",
+          "action": "Архівувати"
+        },
+        "deactivateMaterial": {
+          "title": "Деактивувати матеріал?",
+          "description": "Матеріал зникне з каталогу для нових документів; залишки та історія збережуться.",
+          "action": "Деактивувати"
+        },
+        "postAudit": {
+          "title": "Провести інвентаризацію?",
+          "description": "Залишки буде скориговано за результатами підрахунку.",
+          "action": "Провести"
+        },
+        "removePermissions": {
+          "title": "Забрати права доступу?",
+          "description": "Користувач втратить доступ до складських операцій, наданих цим записом.",
+          "action": "Забрати"
+        }
       }
     }
   },
@@ -2611,6 +2673,11 @@
         "unavailable": "Сервіс тимчасово недоступний",
         "generic": "Посилання недійсне або протерміноване. Запросіть нове посилання."
       }
+    },
+    "split": {
+      "welcomeBack": "З поверненням до Dental Story",
+      "welcomeNew": "Ласкаво просимо до Dental Story",
+      "subtitle": "Ваші візити, історія лікування й документи — в одному кабінеті."
     }
   },
   "cabinet": {
@@ -2703,7 +2770,8 @@
       "save": "Зберегти зміни",
       "saveSuccess": "Профіль успішно оновлено!",
       "errors": {
-        "saveFailed": "Помилка збереження. Спробуйте пізніше."
+        "saveFailed": "Помилка збереження. Спробуйте пізніше.",
+        "invalidPhone": "Невірний формат номера телефону"
       },
       "personalInfo": "Особисті дані",
       "contactInfo": "Контактна інформація",
@@ -2714,7 +2782,8 @@
       "deleteConfirmTitle": "Видалити акаунт?",
       "deleteConfirmMessage": "Це назавжди видалить ваш акаунт та скасує всі майбутні записи. Цю дію неможливо скасувати.",
       "downloading": "Завантаження...",
-      "deleting": "Видалення..."
+      "deleting": "Видалення...",
+      "dateOfBirthPlaceholder": "Оберіть дату народження"
     },
     "title": "Кабінет пацієнта",
     "profileTitle": "Мій профіль",
@@ -2760,7 +2829,8 @@
         "confirm": "Ви впевнені? Це незворотна дія.",
         "confirmButton": "Так, видалити мій акаунт",
         "cancel": "Скасувати",
-        "deleting": "Видалення..."
+        "deleting": "Видалення...",
+        "confirmWord": "ВИДАЛИТИ"
       },
       "navLink": "Налаштування"
     },
@@ -2991,8 +3061,7 @@
     },
     "calendar": {
       "title": "Візит: {{service}}",
-      "description": "Запис №{{id}}. Не забудьте взяти з собою документи!",
-      "location": "Dental Studio"
+      "description": "Запис №{{id}}. Не забудьте взяти з собою документи!"
     },
     "appointmentShort": "Запис #{{id}}...",
     "reminderTypes": {
@@ -3054,7 +3123,11 @@
       "contact": "Наші контакти:\n• Телефон: +380 68 232 38 38\n• Email: info@dentalstory.ua\n• Адреса: вулиця Сумська, 10, Львів",
       "default": "Дякуємо за ваше повідомлення! Наш менеджер зв'яжеться з вами найближчим часом. Для швидкого зв'язку телефонуйте: +380 68 232 38 38"
     },
-    "typing": "Консультант друкує…"
+    "typing": "Консультант друкує…",
+    "minimizeChat": "Згорнути чат",
+    "chooseChannel": "Оберіть спосіб зв'язку:",
+    "adminChannel": "Написати адміністратору",
+    "aiChannel": "AI-асистент"
   },
   "pricing": {
     "title": "Прозорі ціни",
@@ -3122,7 +3195,8 @@
     "workingNow": "Працюємо зараз",
     "closedNow": "Зараз зачинено",
     "opensAt": "Відкриємося о {{time}}",
-    "qualityGuarantee": "Гарантія якості"
+    "qualityGuarantee": "Гарантія якості",
+    "googleReviews": "{{count}} відгук у Google"
   },
   "hero": {
     "badge": "Сучасна стоматологія",
@@ -3332,7 +3406,9 @@
           "conditions": ["Периапікальний абсцес", "Пародонтальний абсцес"],
           "recommendation": "ТЕРМІНОВО! Зателефонуйте негайно для екстреного прийому"
         }
-      }
+      },
+      "notSpecified": "не вказано",
+      "durationHint": "Впливає на терміновість запису"
     }
   },
   "stock": {
@@ -3429,5 +3505,10 @@
       "docLocked": "Документ вже проведено",
       "flagOff": "Inventory v2 не активовано"
     }
+  },
+  "confirmDialog": {
+    "consequencesTitle": "Разом із цим зникнуть",
+    "typeToConfirm": "Щоб підтвердити, введіть",
+    "irreversibleWarning": "Дію не можна скасувати."
   }
 }

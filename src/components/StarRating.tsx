@@ -37,7 +37,9 @@ export default function StarRating({
           <Star
             className={cn(
               'transition-colors',
-              s <= value ? 'text-yellow-500 fill-yellow-400' : 'text-gray-300'
+              s <= value
+                ? 'text-dental-warning fill-dental-warning'
+                : 'text-dental-secondary-300'
             )}
             style={{ width: size, height: size }}
           />

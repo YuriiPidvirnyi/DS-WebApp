@@ -64,7 +64,7 @@ export default function ReviewCard({
                 {name}
               </span>
               {isFeatured && (
-                <span className="ml-2 inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800">
+                <span className="ml-2 inline-flex items-center rounded-full bg-status-warning-100 px-2 py-0.5 text-xs font-medium text-status-warning-700">
                   ★
                 </span>
               )}
@@ -87,7 +87,7 @@ export default function ReviewCard({
                 className={clsx(
                   'h-4 w-4',
                   i < rating
-                    ? 'fill-yellow-400 text-yellow-400'
+                    ? 'fill-dental-warning text-dental-warning'
                     : 'fill-dental-secondary-200 text-dental-secondary-200'
                 )}
               />

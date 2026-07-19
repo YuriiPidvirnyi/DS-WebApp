@@ -118,14 +118,14 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
       </h2>
 
       {isSubmitSuccessful && (
-        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+        <div className="mb-6 p-4 bg-status-success-100 border border-dental-success/30 rounded-lg">
           <div className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
+            <CheckCircle className="h-5 w-5 text-dental-success shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-semibold text-green-900 mb-1">
+              <h4 className="font-semibold text-status-success-700 mb-1">
                 {t('contact.form.successTitle')}
               </h4>
-              <p className="text-sm text-green-700">
+              <p className="text-sm text-status-success-700">
                 {t('contact.form.successDescription')}
               </p>
             </div>
@@ -226,26 +226,28 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
           />
         </div>
 
-        <div className="flex items-start mb-6">
-          <div className="flex items-center h-5">
-            <input
-              id="consent"
-              type="checkbox"
-              required
-              className="w-4 h-4 border border-dental-secondary-300 rounded bg-dental-secondary-50 focus:ring-3 focus:ring-dental-primary-300"
-              disabled={isSubmitting}
-              {...register('consent')}
-            />
-          </div>
-          <label
-            htmlFor="consent"
-            className="ml-2 text-sm font-medium text-dental-dark"
-          >
-            {t('contact.form.fields.consentLabel')} *
-          </label>
-        </div>
+        {/* Повнорядковий label згоди — тач-ціль ≥44px (знахідки 04, Ф4) */}
+        <label
+          htmlFor="consent"
+          className="mb-6 flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border border-dental-secondary-200 px-4 py-2.5 transition-colors hover:bg-dental-primary-50 has-checked:border-dental-primary-400 has-checked:bg-dental-primary-50"
+        >
+          <input
+            id="consent"
+            type="checkbox"
+            required
+            className="h-5 w-5 shrink-0 accent-dental-primary-600"
+            disabled={isSubmitting}
+            {...register('consent')}
+          />
+          <span className="text-sm font-medium text-dental-dark">
+            {t('contact.form.fields.consentLabel')}{' '}
+            <span className="text-dental-error">*</span>
+          </span>
+        </label>
         {errors.consent && (
-          <p className="text-sm text-red-600 mt-1">{errors.consent.message}</p>
+          <p className="text-sm text-status-error-700 mt-1">
+            {errors.consent.message}
+          </p>
         )}
 
         <Turnstile ref={turnstileRef} className="mb-4" />

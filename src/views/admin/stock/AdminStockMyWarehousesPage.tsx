@@ -109,7 +109,7 @@ export default function AdminStockMyWarehousesPage() {
               setWarehouseId(e.target.value)
               setPage(1)
             }}
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
+            className="rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
           >
             {warehouses.map(w => (
               <option key={w.id} value={w.id}>
@@ -127,7 +127,7 @@ export default function AdminStockMyWarehousesPage() {
                 setCategoryId(null)
                 setPage(1)
               }}
-              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${!categoryId ? 'bg-dental-primary/20 text-dental-primary-600 font-medium' : 'text-dental-text hover:bg-gray-100'}`}
+              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${!categoryId ? 'bg-dental-primary/20 text-dental-primary-600 font-medium' : 'text-dental-text hover:bg-dental-secondary-100'}`}
             >
               Всі
             </button>
@@ -138,7 +138,7 @@ export default function AdminStockMyWarehousesPage() {
                   setCategoryId(cat.id)
                   setPage(1)
                 }}
-                className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${categoryId === cat.id ? 'bg-dental-primary/20 text-dental-primary-600 font-medium' : 'text-dental-text hover:bg-gray-100'}`}
+                className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${categoryId === cat.id ? 'bg-dental-primary/20 text-dental-primary-600 font-medium' : 'text-dental-text hover:bg-dental-secondary-100'}`}
               >
                 {cat.name_uk}
               </button>
@@ -159,7 +159,7 @@ export default function AdminStockMyWarehousesPage() {
                     setPage(1)
                   }}
                   placeholder="Пошук..."
-                  className="w-full rounded-lg border border-gray-300 pl-9 pr-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
+                  className="w-full rounded-lg border border-dental-secondary-300 pl-9 pr-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
                 />
               </div>
               <label className="flex items-center gap-2 text-sm text-dental-text cursor-pointer whitespace-nowrap">
@@ -172,7 +172,7 @@ export default function AdminStockMyWarehousesPage() {
                   }}
                   className="rounded"
                 />
-                <AlertTriangle className="w-4 h-4 text-amber-500" />
+                <AlertTriangle className="w-4 h-4 text-dental-warning" />
                 Критичні
               </label>
             </div>
@@ -184,7 +184,7 @@ export default function AdminStockMyWarehousesPage() {
             )}
 
             {error && (
-              <div className="rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+              <div className="rounded-lg bg-status-error-100 border border-dental-error/20 p-4 text-sm text-status-error-700">
                 {error}
               </div>
             )}
@@ -214,7 +214,7 @@ export default function AdminStockMyWarehousesPage() {
                 <button
                   onClick={() => setPage(p => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 disabled:opacity-40 hover:bg-gray-50"
+                  className="px-3 py-1.5 text-sm rounded-lg border border-dental-secondary-300 disabled:opacity-40 hover:bg-dental-secondary-50"
                 >
                   ←
                 </button>
@@ -224,7 +224,7 @@ export default function AdminStockMyWarehousesPage() {
                 <button
                   onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 disabled:opacity-40 hover:bg-gray-50"
+                  className="px-3 py-1.5 text-sm rounded-lg border border-dental-secondary-300 disabled:opacity-40 hover:bg-dental-secondary-50"
                 >
                   →
                 </button>

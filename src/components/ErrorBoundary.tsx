@@ -169,36 +169,36 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
         >
           <div className="max-w-lg">
             <AlertCircle
-              className="h-16 w-16 text-red-500 mx-auto mb-4"
+              className="h-16 w-16 text-dental-error mx-auto mb-4"
               aria-hidden="true"
             />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl font-bold text-dental-dark mb-2">
               {i18n.t('errors.page.title')}
             </h1>
-            <p className="text-gray-600 mb-6">
+            <p className="text-dental-muted mb-6">
               {i18n.t('errors.page.description')}
             </p>
 
             {process.env.NODE_ENV !== 'production' && (
               <div className="mb-4 text-left">
-                <details className="border border-gray-300 rounded-md p-4">
-                  <summary className="cursor-pointer text-sm text-gray-700 font-medium">
+                <details className="border border-dental-secondary-300 rounded-md p-4">
+                  <summary className="cursor-pointer text-sm text-dental-text font-medium">
                     {i18n.t('errors.page.technicalInfo')}
                   </summary>
                   <div className="mt-4">
-                    <h3 className="text-sm font-bold text-red-600">
+                    <h3 className="text-sm font-bold text-status-error-700">
                       {i18n.t('errors.page.errorLabel')}
                     </h3>
-                    <pre className="text-xs bg-red-50 p-3 rounded-md text-red-800 overflow-auto max-h-32 mt-2">
+                    <pre className="text-xs bg-status-error-100 p-3 rounded-md text-status-error-700 overflow-auto max-h-32 mt-2">
                       {error?.toString()}
                     </pre>
 
                     {errorInfo && (
                       <>
-                        <h3 className="text-sm font-bold text-gray-700 mt-4">
+                        <h3 className="text-sm font-bold text-dental-text mt-4">
                           {i18n.t('errors.page.componentStackLabel')}
                         </h3>
-                        <pre className="text-xs bg-gray-100 p-3 rounded-md text-gray-800 overflow-auto max-h-64 mt-2">
+                        <pre className="text-xs bg-dental-secondary-100 p-3 rounded-md text-dental-text overflow-auto max-h-64 mt-2">
                           {errorInfo.componentStack}
                         </pre>
                       </>

@@ -125,8 +125,9 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
             isVisible={featuresVisible}
             className="text-center mb-16"
           >
-            <span className="inline-block text-sm font-semibold text-dental-primary-600 tracking-wider uppercase mb-4">
-              {t('home.features.title')}
+            {/* Кікер не дублює H2 (знахідка 06) */}
+            <span className="inline-block text-sm font-semibold text-dental-primary-ink tracking-wider uppercase mb-4">
+              {t('home.features.kicker')}
             </span>
             <h2
               id="features-heading"
@@ -180,7 +181,7 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
             isVisible={servicesVisible}
             className="text-center mb-16"
           >
-            <span className="inline-block text-sm font-semibold text-dental-primary-600 tracking-wider uppercase mb-4">
+            <span className="inline-block text-sm font-semibold text-dental-primary-ink tracking-wider uppercase mb-4">
               {t('navigation.services')}
             </span>
             <h2
@@ -220,7 +221,7 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
                       width={1200}
                       height={800}
                     />
-                    <div className="absolute inset-0 bg-slate-900/40" />
+                    <div className="absolute inset-0 bg-dental-dark/40" />
                     <div className="absolute bottom-4 left-6 right-6">
                       <h3 className="text-2xl font-bold text-white mb-1">
                         {service.title}
@@ -234,7 +235,7 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
                     <CardFooter className="mt-4 pt-4">
                       <Link
                         href="/services"
-                        className="inline-flex items-center text-dental-primary-600 hover:text-dental-primary-700 font-semibold group/link"
+                        className="inline-flex items-center text-dental-primary-ink hover:text-dental-primary-700 font-semibold group/link"
                       >
                         {t('buttons.learnMore')}
                         <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/link:translate-x-1" />
@@ -277,7 +278,7 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
             isVisible={pricingVisible}
             className="text-center mb-16"
           >
-            <span className="inline-block text-sm font-semibold text-dental-primary-600 tracking-wider uppercase mb-4">
+            <span className="inline-block text-sm font-semibold text-dental-primary-ink tracking-wider uppercase mb-4">
               {t('pricing.title')}
             </span>
             <h2

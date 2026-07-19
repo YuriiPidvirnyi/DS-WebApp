@@ -51,3 +51,35 @@ test.describe('Public UI: selects & language', () => {
     })
   })
 })
+
+/**
+ * A11y-гард (Фаза 1, гард №4): тач-цілі ≥44px — чекбокс згоди/першого візиту
+ * та бургер меню (знахідки 04 · Ч4 · М3).
+ */
+test.describe('A11y: тач-цілі ≥44px', () => {
+  test('booking: label чекбокса «перший візит» має висоту ≥44px', async ({
+    page,
+  }) => {
+    await page.goto('/booking')
+    const label = page.locator('label[for="isFirstVisit"]')
+    await expect(label).toBeVisible({ timeout: 25_000 })
+    const box = await label.boundingBox()
+    expect(box).not.toBeNull()
+    expect(box!.height).toBeGreaterThanOrEqual(44)
+  })
+
+  test('mobile: бургер-кнопка меню має ціль ≥44×44px', async ({ browser }) => {
+    const context = await browser.newContext({
+      viewport: { width: 390, height: 844 },
+    })
+    const page = await context.newPage()
+    await page.goto('/')
+    const burger = page.getByRole('button', { name: /меню|menu/i }).first()
+    await expect(burger).toBeVisible({ timeout: 20_000 })
+    const box = await burger.boundingBox()
+    expect(box).not.toBeNull()
+    expect(box!.width).toBeGreaterThanOrEqual(44)
+    expect(box!.height).toBeGreaterThanOrEqual(44)
+    await context.close()
+  })
+})
