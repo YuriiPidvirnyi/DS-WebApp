@@ -102,12 +102,10 @@ describe('AdminWorkspacePage (2e doctor workstation)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockUser = { ...doctor }
-    global.fetch = vi
-      .fn()
-      .mockResolvedValue({
-        ok: true,
-        json: async () => ({ success: true, data: [] }),
-      })
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ success: true, data: [] }),
+    })
   })
 
   it('renders the title', () => {
