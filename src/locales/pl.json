@@ -2913,7 +2913,9 @@
       "signConfirmDesc": "Akt dla pacjenta {{patient}} zostanie podpisany. Po podpisaniu nie można go edytować jako szkic.",
       "draftSaved": "Szkic zapisany",
       "actSigned": "Akt podpisany",
-      "needServices": "Dodaj co najmniej jedną usługę, aby podpisać akt."
+      "needServices": "Dodaj co najmniej jedną usługę, aby podpisać akt.",
+      "allAppointmentsNotice": "Pokazano wizyty wszystkich lekarzy na dziś.",
+      "noDoctorError": "Wizyta nie ma przypisanego lekarza — nie można utworzyć aktu."
     },
     "emailTemplatesPage": {
       "tabs": {

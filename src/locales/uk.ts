@@ -3175,6 +3175,8 @@ const uk = {
       draftSaved: 'Чернетку збережено',
       actSigned: 'Акт підписано',
       needServices: 'Додайте хоча б одну послугу, щоб підписати акт.',
+      allAppointmentsNotice: 'Показано записи всіх лікарів на сьогодні.',
+      noDoctorError: 'Запис не привʼязаний до лікаря — акт неможливо створити.',
     },
     emailTemplatesPage: {
       tabs: {

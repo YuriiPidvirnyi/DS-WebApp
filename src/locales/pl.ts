@@ -3056,6 +3056,9 @@ const pl = {
       draftSaved: 'Szkic zapisany',
       actSigned: 'Akt podpisany',
       needServices: 'Dodaj co najmniej jedną usługę, aby podpisać akt.',
+      allAppointmentsNotice: 'Pokazano wizyty wszystkich lekarzy na dziś.',
+      noDoctorError:
+        'Wizyta nie ma przypisanego lekarza — nie można utworzyć aktu.',
     },
     emailTemplatesPage: {
       tabs: {

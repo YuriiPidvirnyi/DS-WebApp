@@ -2911,7 +2911,9 @@
       "signConfirmDesc": "The act for {{patient}} will be signed. Once signed, it can no longer be edited as a draft.",
       "draftSaved": "Draft saved",
       "actSigned": "Act signed",
-      "needServices": "Add at least one service to sign the act."
+      "needServices": "Add at least one service to sign the act.",
+      "allAppointmentsNotice": "Showing all doctors' appointments today.",
+      "noDoctorError": "This appointment has no assigned doctor — the act cannot be created."
     },
     "emailTemplatesPage": {
       "tabs": {

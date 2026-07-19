@@ -3048,6 +3048,9 @@ const en = {
       draftSaved: 'Draft saved',
       actSigned: 'Act signed',
       needServices: 'Add at least one service to sign the act.',
+      allAppointmentsNotice: "Showing all doctors' appointments today.",
+      noDoctorError:
+        'This appointment has no assigned doctor — the act cannot be created.',
     },
     emailTemplatesPage: {
       tabs: {

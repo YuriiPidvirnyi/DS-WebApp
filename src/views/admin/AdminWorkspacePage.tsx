@@ -301,13 +301,21 @@ export default function AdminWorkspacePage() {
       }
       try {
         if (!actId) {
+          // The act must be attributed to a doctor. Normally the appointment
+          // carries one; if it doesn't and the viewer isn't a doctor, bail with
+          // a clear message rather than POSTing an empty doctor_id (review #4).
+          const doctorId = selected.doctor_id ?? user?.doctorId ?? ''
+          if (!doctorId) {
+            showError(t('admin.workspacePage.noDoctorError'))
+            return null
+          }
           const res = await fetch('/api/treatment-records', {
             method: 'POST',
             headers,
             body: JSON.stringify({
               appointmentId: selected.id,
               patientId: selected.patient_id,
-              doctorId: selected.doctor_id ?? user?.doctorId ?? '',
+              doctorId,
               toothNumbers: parseTeeth(teethStr),
               diagnosis: diagnosis.trim() || null,
               items,
@@ -421,7 +429,11 @@ export default function AdminWorkspacePage() {
             {t('admin.workspacePage.title')}
           </h1>
           <p className="mt-1 text-sm text-dental-muted">
-            {t('admin.appointmentsPage.doctorScopeNotice')}
+            {/* Only doctors are scoped to their own day; a non-doctor admin sees
+                every doctor's appointments, so don't mislead them (review #1). */}
+            {isDoctor
+              ? t('admin.appointmentsPage.doctorScopeNotice')
+              : t('admin.workspacePage.allAppointmentsNotice')}
           </p>
         </div>
         <div className="text-sm font-medium text-dental-muted">
