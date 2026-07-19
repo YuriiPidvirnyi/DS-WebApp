@@ -40,7 +40,7 @@ These five items are non-negotiable. Each one either protects revenue we are alr
 
 **Problem.** A treated patient who is not actively recalled returns at ~30 %. With a recall system, that climbs to 70–80 %. We have appointment data and email — we have everything we need except the scheduler.
 
-**Solution.** Extend the cron worker (`/api/cron/reminders`) to also run nightly: for each patient whose last visit was 5.5 months ago and who has no upcoming appointment, queue a recall message. Three-touch sequence: T-0 ("time for your checkup"), T+14 ("we have these slots open"), T+30 ("call us — we miss you"). Patient can opt out per visit.
+**Solution.** _(Shipped: `run_recall_job()` producer on Supabase `pg_cron`, daily 18:10 UTC.)_ Nightly, for each patient whose last visit was ~5.5 months ago and who has no upcoming appointment, queue a recall message. Three-touch sequence: T-0 ("time for your checkup"), T+14 ("we have these slots open"), T+30 ("call us — we miss you"). Patient can opt out per visit.
 
 **Success metric.** Recall conversion (recall sent → appointment booked within 45 days) ≥ 35 %. Active patient base growth ≥ 8 % MoM in months 2–6.
 

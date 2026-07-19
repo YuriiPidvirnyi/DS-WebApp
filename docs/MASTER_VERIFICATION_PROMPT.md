@@ -19,18 +19,19 @@ Use this document as a **copy-paste runbook** for an AI agent or human QA lead w
 - Define **three environments**: local dev (`npm run dev`), production build (`npm run build && npm run start`), and **staging/preview** (Vercel preview deployments on `vercel.app`).
 - List **required env vars** from `.env.example` and mark which are missing per environment:
 
-  | Variable                           | Required for                       | Fallback behaviour if missing                  |
-  | ---------------------------------- | ---------------------------------- | ---------------------------------------------- |
-  | `NEXT_PUBLIC_SUPABASE_URL`         | auth, all DB                       | Client guard skips init; app runs without auth |
-  | `NEXT_PUBLIC_SUPABASE_ANON_KEY`    | auth, all DB                       | Same as above                                  |
-  | `SUPABASE_SERVICE_ROLE_KEY`        | cron routes, server-side admin ops | Cron returns "not configured"                  |
-  | `UPSTASH_REDIS_REST_URL` / `TOKEN` | cache                              | Falls back to direct Supabase (no cache)       |
-  | `RESEND_API_KEY`                   | transactional email                | Email sending silently skipped                 |
-  | `CRON_SECRET`                      | cron auth                          | **Returns 500** — routes refuse to run         |
-  | `ADMIN_NOTIFICATION_EMAIL`         | admin alerts                       | Low-stock alert skipped                        |
-  | `CLINICARDS_API_KEY`               | slot fetching                      | Uses fallback static slots                     |
-  | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`   | CAPTCHA on forms                   | Turnstile widget hidden, backend skip          |
-  | `SENTRY_DSN` / `SENTRY_AUTH_TOKEN` | error tracking                     | Sentry disabled                                |
+  | Variable                           | Required for                       | Fallback behaviour if missing                   |
+  | ---------------------------------- | ---------------------------------- | ----------------------------------------------- |
+  | `NEXT_PUBLIC_SUPABASE_URL`         | auth, all DB                       | Client guard skips init; app runs without auth  |
+  | `NEXT_PUBLIC_SUPABASE_ANON_KEY`    | auth, all DB                       | Same as above                                   |
+  | `SUPABASE_SERVICE_ROLE_KEY`        | cron routes, server-side admin ops | Cron returns "not configured"                   |
+  | `UPSTASH_REDIS_REST_URL` / `TOKEN` | cache                              | Falls back to direct Supabase (no cache)        |
+  | `RESEND_API_KEY`                   | transactional email                | Email sending silently skipped                  |
+  | `CRON_SECRET`                      | `/api/payments/*` admin auth       | **Returns 500** — payment routes refuse to run  |
+  | `NOTIFY_FN_SECRET` (edge fn)       | notifications edge-fn auth         | Drain returns 401 — queue stalls (no data loss) |
+  | `ADMIN_NOTIFICATION_EMAIL`         | admin alerts                       | Low-stock alert skipped                         |
+  | `CLINICARDS_API_KEY`               | slot fetching                      | Uses fallback static slots                      |
+  | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`   | CAPTCHA on forms                   | Turnstile widget hidden, backend skip           |
+  | `SENTRY_DSN` / `SENTRY_AUTH_TOKEN` | error tracking                     | Sentry disabled                                 |
 
   For any missing secret, explicitly scope tests as "skipped / mocked only" and say what cannot be verified.
 
@@ -116,7 +117,7 @@ For each test: verify **both** UI hiding (nav item absent) and **server rejectio
 - **Material orders** (`/admin/orders`): draft → pending_approval → approved → ordered → delivered; urgency levels (low/normal/high/critical); role permissions for approvals (senior_assistant+); on delivery: inventory auto-updated.
 - **Treatment materials used:** consumption decrements inventory correctly — verify with before/after quantities.
 - **Live chat admin** (`/admin/chat`): sessions, unread counts, realtime delivery via Supabase Realtime, assignment if any.
-- **Notification/email queue (conceptual):** booking creates expected `notification_events`; cron routes require `CRON_SECRET`; processor marks sent/failed; Resend failures surfaced.
+- **Notification/email queue (conceptual):** booking creates expected `notification_events`; the `process-notifications` edge fn (invoked by `pg_cron`) marks sent/failed; Resend failures surfaced.
 - **Admin export** (`/api/admin/export`): CSV download with auth check.
 
 ### 5) Backend & API verification (server truth)
@@ -157,10 +158,9 @@ For each test: verify **both** UI hiding (nav item absent) and **server rejectio
 | `/api/admin/audit-logs`                      | GET                | admin auth              | — (GET)          | Y          |
 | `/api/admin/users`                           | GET, POST          | admin auth              | Y (POST)         | Y          |
 | `/api/admin/users/[id]`                      | PATCH, DELETE      | admin auth              | Y                | Y          |
-| `/api/cron/notifications`                    | GET                | Bearer CRON_SECRET      | —                | —          |
-| `/api/cron/reminders`                        | GET                | Bearer CRON_SECRET      | —                | —          |
-| `/api/cron/low-stock-alerts`                 | GET                | Bearer CRON_SECRET      | —                | —          |
 | `/api/e2e/auth-links`                        | GET, POST          | dev-only guard          | —                | —          |
+
+_(The `/api/cron/*` routes were removed — scheduled jobs now run on Supabase `pg_cron`; see 5c.)_
 
 #### 5b) Verification checks per route
 
@@ -174,15 +174,18 @@ For each test: verify **both** UI hiding (nav item absent) and **server rejectio
 - **OpenAPI** `/api-docs`: matches implemented routes or flag drift.
 - **E2E test route** (`/api/e2e/auth-links`): **must return 404 in production** (guarded by `NODE_ENV !== 'production'`).
 
-#### 5c) Cron jobs
+#### 5c) Scheduled jobs (Supabase `pg_cron` — not HTTP routes)
 
-| Cron                         | Schedule      | Description                                               |
-| ---------------------------- | ------------- | --------------------------------------------------------- |
-| `/api/cron/notifications`    | `*/5 * * * *` | Process queued notification_events, send via Resend       |
-| `/api/cron/reminders`        | `0 18 * * *`  | Schedule appointment reminders for next day at 09:00 Kyiv |
-| `/api/cron/low-stock-alerts` | `0 8 * * 1-5` | Check materials stock, alert admin if below min           |
+| `cron.job.jobname`       | Schedule (UTC) | Description                                                     |
+| ------------------------ | -------------- | --------------------------------------------------------------- |
+| `ds-drain-notifications` | `*/5 * * * *`  | `pg_net` → `process-notifications` edge fn; send queued emails  |
+| `ds-reminders`           | `0 18 * * *`   | `run_reminders_job()` — reminders for tomorrow (deliver 07:00Z) |
+| `ds-recall`              | `10 18 * * *`  | `run_recall_job()` — 3-touch recall                             |
+| `ds-low-stock`           | `0 8 * * 1-5`  | `run_low_stock_job()` — alert admin if below min                |
+| `ds-stock-metrics`       | `55 21 * * *`  | `run_stock_metrics_job()` — snapshot daily metrics              |
 
-All require `Authorization: Bearer $CRON_SECRET`. If `CRON_SECRET` is unset → **500** (not silently open).
+- The **edge fn** requires `Authorization: Bearer $NOTIFY_FN_SECRET` (== Vault `process_notifications_invoke_secret`); wrong/absent bearer → **401**, queue stays intact.
+- **Producers** are `SECURITY DEFINER` plpgsql; verify via `cron_runs`, `cron.job_run_details`, `net._http_response`, and Resend logs. `CRON_SECRET` no longer gates any scheduled job (only `/api/payments/*`).
 
 ### 6) Non-functional verification
 
@@ -248,25 +251,27 @@ stateDiagram-v2
   note right of signed: Visible to patient
 ```
 
-#### Cron reminder flow
+#### Cron reminder flow (Supabase `pg_cron`)
 
 ```mermaid
 sequenceDiagram
-  participant Vercel as Vercel Cron
-  participant Reminders as /api/cron/reminders
+  participant Cron as pg_cron
+  participant Reminders as run_reminders_job()
   participant DB as Supabase
-  participant Notifications as /api/cron/notifications
+  participant Net as pg_net
+  participant Fn as process-notifications (edge fn)
   participant Resend
-  Note over Vercel: Daily 18:00 UTC (20:00 Kyiv)
-  Vercel->>Reminders: GET (Bearer CRON_SECRET)
+  Note over Cron: Daily 18:00 UTC (ds-reminders)
+  Cron->>Reminders: SELECT run_reminders_job()
   Reminders->>DB: Find tomorrow's appointments with email
   Reminders->>DB: Check existing reminders (dedup)
   Reminders->>DB: Insert notification_events (scheduled_at = 07:00 UTC)
-  Note over Vercel: Next day, */5 min
-  Vercel->>Notifications: GET (Bearer CRON_SECRET)
-  Notifications->>DB: Fetch queued events where scheduled_at <= now
-  Notifications->>Resend: Send reminder email
-  Notifications->>DB: Mark sent
+  Note over Cron: Next day, */5 min (ds-drain-notifications)
+  Cron->>Net: net.http_post (Bearer NOTIFY_FN_SECRET from Vault)
+  Net->>Fn: POST /functions/v1/process-notifications
+  Fn->>DB: Atomic-claim queued events where scheduled_at <= now
+  Fn->>Resend: Send reminder email
+  Fn->>DB: Mark sent (+ cron_runs row)
 ```
 
 Document any step where your test **did not** observe the expected side effect.
@@ -287,7 +292,7 @@ Produce:
 - Did you test **at least one complete journey** for: anonymous visitor, new signup, returning patient, each admin role you have?
 - Did you verify **server-side enforcement** (not only UI hiding) for protected actions?
 - Did you run **automated** lint/typecheck/unit/e2e/a11y where applicable and paste summarized results?
-- Did you verify CRON_SECRET hardening (500 when unset, not silently open)?
+- Did you verify `CRON_SECRET` hardening on `/api/payments/*` (500 when unset, not silently open) and the notifications edge fn's `NOTIFY_FN_SECRET` gate (401 on wrong/absent bearer)?
 - Did you check ErrorBoundary resilience in analytics page?
 - Did you verify `<Image />` is used everywhere (no bare `<img>` tags)?
 - Did you verify all RBAC roles in the permission matrix?
@@ -383,9 +388,6 @@ Derived from `app/**/page.tsx`. Use for checklist coverage and for keeping [scri
 | `GET /api/admin/audit-logs`                        | GET                | admin       | Audit logs                   |
 | `GET,POST /api/admin/users`                        | GET, POST          | admin       | User management              |
 | `PATCH,DELETE /api/admin/users/[id]`               | PATCH, DELETE      | admin       | Single user                  |
-| `GET /api/cron/notifications`                      | GET                | CRON_SECRET | Process email queue          |
-| `GET /api/cron/reminders`                          | GET                | CRON_SECRET | Schedule reminders           |
-| `GET /api/cron/low-stock-alerts`                   | GET                | CRON_SECRET | Stock level alerts           |
 | `GET,POST /api/e2e/auth-links`                     | GET, POST          | dev-only    | E2E test helper              |
 
 ---

@@ -121,7 +121,7 @@ BookingForm (src/components/BookingForm.tsx)
                 └── Queue `new_booking_admin` notification
                          │
                          ▼
-               Cron: /api/cron/notifications → Resend email
+       pg_cron (*/5) → process-notifications edge fn → Resend email
 ```
 
 ### Email notifications
@@ -129,27 +129,28 @@ BookingForm (src/components/BookingForm.tsx)
 ```
 Booking/Cancellation → Insert notification_events (status: queued)
                                     │
-Cron (every 5 min) ─── GET /api/cron/notifications
-                                    │
+pg_cron (*/5) → pg_net.http_post ── process-notifications edge fn (Deno)
+                                    │   (Bearer NOTIFY_FN_SECRET, verify_jwt=false)
                          ┌──────────▼──────────┐
                          │  Pick queued events  │
                          │  where scheduled_at  │
                          │    <= now()          │
+                         │  (atomic claim)      │
                          └──────────┬──────────┘
                                     │
                          ┌──────────▼──────────┐
-                         │   Resend API         │
+                         │   Resend REST API    │
                          │   (HTML templates    │
-                         │    from email-        │
+                         │    from _shared/email-│
                          │    templates.ts)      │
                          └──────────┬──────────┘
                                     │
-                         Update status: sent/failed
+                         Update status: sent/failed  +  cron_runs row
 
-Cron (daily 18:00 UTC) ─── GET /api/cron/reminders
+pg_cron (daily 18:00 UTC) ─── run_reminders_job()  [plpgsql producer]
                                     │
                          Insert appointment_reminder events
-                         for tomorrow, scheduled_at = 09:00 Kyiv
+                         for tomorrow, deliver 07:00 UTC
 ```
 
 ### Live chat
@@ -198,7 +199,7 @@ Patient (LiveChat.tsx)          Admin (AdminChatPage)
 **Build:** `next build` (output: standalone)  
 **Environment:** Node.js 20, managed by Vercel  
 **CDN:** Vercel Edge Network (global)  
-**Cron:** Vercel Cron (`vercel.json` schedule)
+**Scheduled jobs:** Supabase `pg_cron` + `process-notifications` edge fn (migrated off Vercel Cron)
 
 ### Environment separation
 
