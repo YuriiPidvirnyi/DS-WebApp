@@ -169,7 +169,7 @@ function baseLayout(
           <tr>
             <td align="center" style="padding:8px 0 24px;">
               <a href="${SITE_URL}" style="display:inline-block;background-color:${COLORS.teal};border-radius:12px;padding:18px 28px;">
-                <img src="${SITE_URL}/assets/images/logo/logo-email-white.png" width="180" height="87" alt="DentalStory" style="display:block;border:0;width:180px;height:87px;" />
+                <img src="${SITE_URL}/assets/images/logo/logo-email-white.png" width="180" height="87" alt="DentalStory" style="display:block;border:0;width:180px;height:87px;color:#ffffff;font-size:20px;font-weight:700;" />
               </a>
             </td>
           </tr>
