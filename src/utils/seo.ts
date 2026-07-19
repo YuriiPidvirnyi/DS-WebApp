@@ -4,6 +4,7 @@
  */
 import { getOpeningHoursSchemaStrings } from '@/config/clinicSchedule'
 import uk from '@/locales/uk'
+import { CONTACT_INFO } from '@/utils/constants'
 
 export interface Organization {
   '@context': string
@@ -70,20 +71,23 @@ export function generateOrganizationSchema(): MedicalBusiness {
     name: uk.common.brandName,
     url: 'https://dentalstory.ua',
     logo: 'https://dentalstory.ua/logo.png',
-    telephone: '+380XXXXXXXXX',
-    email: 'info@dentalstory.ua',
+    // Single source of truth for clinic contact data — see CONTACT_INFO in
+    // src/utils/constants.ts. Do NOT re-hardcode phone/address/geo/socials here;
+    // that drift is exactly what shipped placeholder Kyiv data to prod before.
+    telephone: CONTACT_INFO.phone,
+    email: CONTACT_INFO.email,
     address: {
       '@type': 'PostalAddress',
-      streetAddress: 'вул. Прикладна, 1',
-      addressLocality: 'Київ',
-      addressRegion: 'Київська область',
-      postalCode: '01001',
+      streetAddress: CONTACT_INFO.address.street,
+      addressLocality: CONTACT_INFO.address.city,
+      addressRegion: CONTACT_INFO.address.district,
+      postalCode: CONTACT_INFO.address.postalCode,
       addressCountry: 'UA',
     },
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: 50.4501,
-      longitude: 30.5234,
+      latitude: CONTACT_INFO.coordinates.lat,
+      longitude: CONTACT_INFO.coordinates.lng,
     },
     openingHours: getOpeningHoursSchemaStrings(),
     priceRange: '₴₴',
@@ -96,9 +100,9 @@ export function generateOrganizationSchema(): MedicalBusiness {
     ],
     acceptedPaymentMethod: ['Cash', 'CreditCard', 'BankTransfer'],
     sameAs: [
-      'https://www.facebook.com/dentalstory',
-      'https://www.instagram.com/dentalstory',
-      'https://www.linkedin.com/company/dentalstory',
+      CONTACT_INFO.social.facebook,
+      CONTACT_INFO.social.instagram,
+      CONTACT_INFO.social.telegram,
     ],
   }
 }
