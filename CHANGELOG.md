@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - The five `app/api/cron/*` routes, `vercel.json`'s `crons` array, and the cron auth-gate tests (`cron-notifications-auth.test.ts`, `cron-notifications.spec.ts`). `CRON_SECRET` is retained — it still secures the admin `/api/payments/*` routes.
+- Dead `20260419_cron_runs.sql` migration (never applied; malformed generated-column syntax; superseded by `20260718_cron_runs_and_producers.sql`). It would have failed/conflicted on a fresh `supabase db push`.
 
 ### Fixed
 

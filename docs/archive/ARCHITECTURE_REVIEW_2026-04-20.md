@@ -62,7 +62,7 @@
 - 8-role RBAC consolidated — [src/lib/permissions.ts:18-27](../src/lib/permissions.ts)
 - RLS doctor-scope rewrite — [supabase/migrations/20260417_fix_doctor_scope_rls_v2.sql:23-131](../supabase/migrations/20260417_fix_doctor_scope_rls_v2.sql)
 - Cron idempotency v1 (claim pattern, stuck-row recycler) — [app/api/cron/notifications/route.ts](../app/api/cron/notifications/route.ts) + [supabase/migrations/20260418_notification_events_processing_status.sql](../supabase/migrations/20260418_notification_events_processing_status.sql)
-- `cron_runs` observability table — [supabase/migrations/20260419_cron_runs.sql](../supabase/migrations/20260419_cron_runs.sql) + `/admin/health`, `/admin/data-quality`, `CronHealthWidget`
+- `cron_runs` observability table — [supabase/migrations/20260718_cron_runs_and_producers.sql](../supabase/migrations/20260718_cron_runs_and_producers.sql) (the original `20260419_cron_runs.sql` was never applied and was superseded during the Supabase pg_cron migration) + `/admin/health`, `/admin/data-quality`, `CronHealthWidget`
 - AI token budget table & daily guard — [supabase/migrations/20260420_ai_usage.sql](../supabase/migrations/20260420_ai_usage.sql), [src/lib/ai-usage.ts](../src/lib/ai-usage.ts)
 - Monobank payment pipeline — [supabase/migrations/20260419_payment_system.sql](../supabase/migrations/20260419_payment_system.sql), `app/api/payments/{create,monobank-webhook,status/[invoiceId]}/route.ts`
 - i18n parity & completeness tests — [src/test/i18n-parity.test.ts](../src/test/i18n-parity.test.ts), [src/test/i18n-completeness.test.ts](../src/test/i18n-completeness.test.ts)
