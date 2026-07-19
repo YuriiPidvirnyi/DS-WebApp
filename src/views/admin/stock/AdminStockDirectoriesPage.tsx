@@ -52,11 +52,15 @@ export default function AdminStockDirectoriesPage() {
       if (!json.success) throw new Error(json.error)
       setItems(json.data)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка завантаження')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.directoriesPage.loadError')
+      )
     } finally {
       setLoading(false)
     }
-  }, [showArchived, apiPath])
+  }, [showArchived, apiPath, t])
 
   useEffect(() => {
     load()
@@ -84,9 +88,9 @@ export default function AdminStockDirectoriesPage() {
   }
 
   const TAB_LABELS: Record<Tab, string> = {
-    suppliers: 'Постачальники',
-    brands: 'Бренди',
-    categories: 'Категорії',
+    suppliers: t('admin.stock.directoriesPage.tabSuppliers'),
+    brands: t('admin.stock.directoriesPage.tabBrands'),
+    categories: t('admin.stock.directoriesPage.tabCategories'),
   }
 
   return (
@@ -100,7 +104,7 @@ export default function AdminStockDirectoriesPage() {
             <ChevronLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-            Довідники
+            {t('admin.stock.directoriesPage.title')}
           </h1>
         </div>
 
@@ -135,7 +139,7 @@ export default function AdminStockDirectoriesPage() {
               onChange={e => setShowArchived(e.target.checked)}
               className="rounded"
             />
-            Показати архівні
+            {t('admin.stock.directoriesPage.showArchived')}
           </label>
           {canEdit && (
             <button
@@ -143,7 +147,7 @@ export default function AdminStockDirectoriesPage() {
               className="inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-dental-dark transition-colors"
             >
               <Plus className="w-4 h-4" />
-              Додати
+              {t('admin.stock.directoriesPage.add')}
             </button>
           )}
         </div>
@@ -161,7 +165,9 @@ export default function AdminStockDirectoriesPage() {
         )}
 
         {!loading && !error && items.length === 0 && (
-          <p className="text-center text-dental-text py-12">Записів немає</p>
+          <p className="text-center text-dental-text py-12">
+            {t('admin.stock.directoriesPage.emptyState')}
+          </p>
         )}
 
         {!loading && items.length > 0 && (
@@ -176,7 +182,9 @@ export default function AdminStockDirectoriesPage() {
                     {displayName(item)}
                   </p>
                   {item.is_archived && (
-                    <p className="text-xs text-status-warning-700">Архів</p>
+                    <p className="text-xs text-status-warning-700">
+                      {t('admin.stock.directoriesPage.archivedBadge')}
+                    </p>
                   )}
                   {tab === 'suppliers' && !!item.email && (
                     <p className="text-xs text-dental-text">
@@ -189,7 +197,9 @@ export default function AdminStockDirectoriesPage() {
                     </p>
                   )}
                   {tab === 'categories' && !!item.parent_id && (
-                    <p className="text-xs text-dental-text">Підкатегорія</p>
+                    <p className="text-xs text-dental-text">
+                      {t('admin.stock.directoriesPage.subcategory')}
+                    </p>
                   )}
                 </div>
                 {canEdit && (
@@ -197,7 +207,7 @@ export default function AdminStockDirectoriesPage() {
                     <button
                       onClick={() => setEditItem(item)}
                       className="rounded p-1.5 text-dental-text hover:bg-dental-secondary-100"
-                      title="Редагувати"
+                      title={t('admin.stock.directoriesPage.editAction')}
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
@@ -205,7 +215,7 @@ export default function AdminStockDirectoriesPage() {
                       <button
                         onClick={() => archiveItem(item.id)}
                         className="rounded p-1.5 text-dental-warning hover:bg-status-warning-100"
-                        title="Архівувати"
+                        title={t('admin.stock.directoriesPage.archiveAction')}
                       >
                         <Archive className="w-4 h-4" />
                       </button>
@@ -258,6 +268,7 @@ function DirectoryItemModal({
   onClose,
   onSaved,
 }: ModalProps) {
+  const { t } = useTranslation()
   const [nameUk, setNameUk] = useState(
     item ? (item.name_uk ?? item.name ?? '') : ''
   )
@@ -270,7 +281,7 @@ function DirectoryItemModal({
     const key = tab === 'suppliers' ? 'name' : 'nameUk'
     const trimmed = nameUk.trim()
     if (!trimmed) {
-      setErr("Назва обов'язкова")
+      setErr(t('admin.stock.directoriesPage.nameRequired'))
       return
     }
     setSaving(true)
@@ -290,15 +301,19 @@ function DirectoryItemModal({
       if (!json.success) throw new Error(json.error)
       onSaved()
     } catch (e) {
-      setErr(e instanceof Error ? e.message : 'Помилка збереження')
+      setErr(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.directoriesPage.saveError')
+      )
     } finally {
       setSaving(false)
     }
   }
 
   const title = item
-    ? `Редагувати ${tab === 'suppliers' ? 'постачальника' : tab === 'brands' ? 'бренд' : 'категорію'}`
-    : `Новий ${tab === 'suppliers' ? 'постачальник' : tab === 'brands' ? 'бренд' : 'категорія'}`
+    ? `${t('admin.stock.directoriesPage.editTitlePrefix')} ${tab === 'suppliers' ? t('admin.stock.directoriesPage.supplierAccusative') : tab === 'brands' ? t('admin.stock.directoriesPage.brandNoun') : t('admin.stock.directoriesPage.categoryAccusative')}`
+    : `${t('admin.stock.directoriesPage.newTitlePrefix')} ${tab === 'suppliers' ? t('admin.stock.directoriesPage.supplierNominative') : tab === 'brands' ? t('admin.stock.directoriesPage.brandNoun') : t('admin.stock.directoriesPage.categoryNominative')}`
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
@@ -307,7 +322,7 @@ function DirectoryItemModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-dental-dark mb-1">
-              Назва
+              {t('admin.stock.directoriesPage.nameLabel')}
             </label>
             <input
               value={nameUk}
@@ -334,7 +349,7 @@ function DirectoryItemModal({
               </div>
               <div>
                 <label className="block text-sm font-medium text-dental-dark mb-1">
-                  Телефон
+                  {t('admin.stock.directoriesPage.phoneLabel')}
                 </label>
                 <input
                   value={extra.phone ?? (item?.phone as string) ?? ''}
@@ -346,7 +361,7 @@ function DirectoryItemModal({
               </div>
               <div>
                 <label className="block text-sm font-medium text-dental-dark mb-1">
-                  ЄДРПОУ
+                  {t('admin.stock.directoriesPage.edrpouLabel')}
                 </label>
                 <input
                   value={extra.edrpou ?? (item?.edrpou as string) ?? ''}
@@ -363,7 +378,7 @@ function DirectoryItemModal({
           {tab === 'brands' && (
             <div>
               <label className="block text-sm font-medium text-dental-dark mb-1">
-                Країна
+                {t('admin.stock.directoriesPage.countryLabel')}
               </label>
               <input
                 value={extra.country ?? (item?.country as string) ?? ''}
@@ -383,7 +398,7 @@ function DirectoryItemModal({
               onClick={onClose}
               className="px-4 py-2 text-sm text-dental-text hover:text-dental-dark"
             >
-              Скасувати
+              {t('admin.stock.directoriesPage.cancel')}
             </button>
             <button
               type="submit"
@@ -391,7 +406,7 @@ function DirectoryItemModal({
               className="inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-dental-dark disabled:opacity-60 transition-colors"
             >
               {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-              Зберегти
+              {t('admin.stock.directoriesPage.save')}
             </button>
           </div>
         </form>

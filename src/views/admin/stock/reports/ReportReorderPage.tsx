@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useTranslation } from 'react-i18next'
 import { ChevronLeft, Loader2, Download } from 'lucide-react'
 import { exportCsv } from '@/utils/stock-export'
 
@@ -19,6 +20,7 @@ interface ReorderRow {
 }
 
 export default function ReportReorderPage() {
+  const { t } = useTranslation()
   const [rows, setRows] = useState<ReorderRow[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -32,7 +34,11 @@ export default function ReportReorderPage() {
       if (!json.success) throw new Error(json.error)
       setRows(json.data ?? [])
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка завантаження')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.reports.reorder.loadError')
+      )
     } finally {
       setLoading(false)
     }
@@ -48,14 +54,13 @@ export default function ReportReorderPage() {
           <ChevronLeft className="w-5 h-5" />
         </Link>
         <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-          Замовлення з критичним залишком
+          {t('admin.stock.reports.reorder.title')}
         </h1>
       </div>
 
       <div className="mb-4 flex items-center gap-3 rounded-xl border bg-white p-4">
         <p className="text-sm text-dental-text flex-1">
-          Матеріали, де поточний залишок нижче критичного ліміту. Пропонована
-          кількість замовлення = дефолтне або ліміт × 2.
+          {t('admin.stock.reports.reorder.description')}
         </p>
         <button
           type="button"
@@ -64,7 +69,7 @@ export default function ReportReorderPage() {
           className="inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-dental-dark disabled:opacity-60 transition-colors"
         >
           {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-          Побудувати
+          {t('admin.stock.reports.reorder.build')}
         </button>
         {rows.length > 0 && (
           <button
@@ -95,22 +100,22 @@ export default function ReportReorderPage() {
             <thead>
               <tr className="border-b border-dental-secondary-200 bg-dental-secondary-50">
                 <th className="text-left px-4 py-3 font-medium text-dental-text">
-                  Матеріал
+                  {t('admin.stock.reports.reorder.colMaterial')}
                 </th>
                 <th className="text-left px-4 py-3 font-medium text-dental-text hidden md:table-cell">
-                  Постачальник
+                  {t('admin.stock.reports.reorder.colSupplier')}
                 </th>
                 <th className="text-left px-4 py-3 font-medium text-dental-text hidden md:table-cell">
-                  Склад
+                  {t('admin.stock.reports.reorder.colWarehouse')}
                 </th>
                 <th className="text-right px-4 py-3 font-medium text-dental-text w-24">
-                  Залишок
+                  {t('admin.stock.reports.reorder.colStock')}
                 </th>
                 <th className="text-right px-4 py-3 font-medium text-dental-text w-24">
-                  Ліміт
+                  {t('admin.stock.reports.reorder.colLimit')}
                 </th>
                 <th className="text-right px-4 py-3 font-medium text-dental-text w-32 text-dental-primary-600">
-                  Замовити
+                  {t('admin.stock.reports.reorder.colOrder')}
                 </th>
               </tr>
             </thead>
@@ -150,7 +155,7 @@ export default function ReportReorderPage() {
 
       {!loading && rows.length === 0 && (
         <p className="text-center text-dental-text py-12">
-          Натисніть «Побудувати» для перевірки критичних залишків
+          {t('admin.stock.reports.reorder.emptyState')}
         </p>
       )}
     </div>

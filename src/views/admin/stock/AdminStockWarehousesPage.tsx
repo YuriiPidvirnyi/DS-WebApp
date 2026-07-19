@@ -8,11 +8,11 @@ import type { StockWarehouse, WarehouseKind } from '@/types/stock'
 import { useCSRF } from '@/hooks/useCSRF'
 import { useConfirm } from '@/hooks/useConfirm'
 
-const KIND_LABELS: Record<WarehouseKind, string> = {
-  main: 'Головний',
-  cabinet: 'Кабінет',
-  doctor: 'Лікар',
-  other: 'Інший',
+const KIND_LABEL_KEYS: Record<WarehouseKind, string> = {
+  main: 'admin.stock.warehousesPage.kindMain',
+  cabinet: 'admin.stock.warehousesPage.kindCabinet',
+  doctor: 'admin.stock.warehousesPage.kindDoctor',
+  other: 'admin.stock.warehousesPage.kindOther',
 }
 
 export default function AdminStockWarehousesPage() {
@@ -36,11 +36,15 @@ export default function AdminStockWarehousesPage() {
       if (!json.success) throw new Error(json.error)
       setWarehouses(json.data)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка завантаження')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.warehousesPage.loadError')
+      )
     } finally {
       setLoading(false)
     }
-  }, [showArchived])
+  }, [showArchived, t])
 
   useEffect(() => {
     load()
@@ -78,7 +82,7 @@ export default function AdminStockWarehousesPage() {
             <ChevronLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-            Склади
+            {t('admin.stock.warehousesPage.title')}
           </h1>
         </div>
 
@@ -90,14 +94,14 @@ export default function AdminStockWarehousesPage() {
               onChange={e => setShowArchived(e.target.checked)}
               className="rounded"
             />
-            Показати архівні
+            {t('admin.stock.warehousesPage.showArchived')}
           </label>
           <button
             onClick={() => setCreating(true)}
             className="inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-dental-dark transition-colors"
           >
             <Plus className="w-4 h-4" />
-            Додати склад
+            {t('admin.stock.warehousesPage.addWarehouse')}
           </button>
         </div>
 
@@ -114,7 +118,9 @@ export default function AdminStockWarehousesPage() {
         )}
 
         {!loading && !error && warehouses.length === 0 && (
-          <p className="text-center text-dental-text py-12">Склади відсутні</p>
+          <p className="text-center text-dental-text py-12">
+            {t('admin.stock.warehousesPage.emptyState')}
+          </p>
         )}
 
         {!loading && warehouses.length > 0 && (
@@ -128,9 +134,11 @@ export default function AdminStockWarehousesPage() {
                   <div>
                     <p className="font-medium text-dental-dark">{wh.name_uk}</p>
                     <p className="text-xs text-dental-text">
-                      {KIND_LABELS[wh.kind]}
-                      {wh.is_main && ' · Головний'}
-                      {wh.is_archived && ' · Архів'}
+                      {t(KIND_LABEL_KEYS[wh.kind])}
+                      {wh.is_main &&
+                        ` ${t('admin.stock.warehousesPage.mainTag')}`}
+                      {wh.is_archived &&
+                        ` ${t('admin.stock.warehousesPage.archivedTag')}`}
                     </p>
                   </div>
                 </div>
@@ -138,7 +146,7 @@ export default function AdminStockWarehousesPage() {
                   <button
                     onClick={() => setEditTarget(wh)}
                     className="rounded p-1.5 text-dental-text hover:bg-dental-secondary-100"
-                    title="Редагувати"
+                    title={t('admin.stock.warehousesPage.editTitle')}
                   >
                     <Pencil className="w-4 h-4" />
                   </button>
@@ -146,7 +154,7 @@ export default function AdminStockWarehousesPage() {
                     <button
                       onClick={() => archiveWarehouse(wh.id)}
                       className="rounded p-1.5 text-dental-warning hover:bg-status-warning-100"
-                      title="Архівувати"
+                      title={t('admin.stock.warehousesPage.archiveTitle')}
                     >
                       <Archive className="w-4 h-4" />
                     </button>
@@ -191,6 +199,7 @@ function WarehouseFormModal({
   onClose,
   onSaved,
 }: WarehouseFormModalProps) {
+  const { t } = useTranslation()
   const { token: csrfToken } = useCSRF()
   const [nameUk, setNameUk] = useState(warehouse?.name_uk ?? '')
   const [kind, setKind] = useState<WarehouseKind>(warehouse?.kind ?? 'cabinet')
@@ -202,7 +211,7 @@ function WarehouseFormModal({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!nameUk.trim()) {
-      setErr("Назва обов'язкова")
+      setErr(t('admin.stock.warehousesPage.nameRequired'))
       return
     }
     setSaving(true)
@@ -229,7 +238,11 @@ function WarehouseFormModal({
       if (!json.success) throw new Error(json.error)
       onSaved()
     } catch (e) {
-      setErr(e instanceof Error ? e.message : 'Помилка збереження')
+      setErr(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.warehousesPage.saveError')
+      )
     } finally {
       setSaving(false)
     }
@@ -239,12 +252,14 @@ function WarehouseFormModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <div className="w-full max-w-md rounded-2xl bg-white shadow-xl p-6">
         <h2 className="text-lg font-semibold text-dental-dark mb-4">
-          {warehouse ? 'Редагувати склад' : 'Новий склад'}
+          {warehouse
+            ? t('admin.stock.warehousesPage.editWarehouse')
+            : t('admin.stock.warehousesPage.newWarehouse')}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-dental-dark mb-1">
-              Назва (УКР)
+              {t('admin.stock.warehousesPage.nameUkLabel')}
             </label>
             <input
               value={nameUk}
@@ -255,7 +270,7 @@ function WarehouseFormModal({
           </div>
           <div>
             <label className="block text-sm font-medium text-dental-dark mb-1">
-              Тип
+              {t('admin.stock.warehousesPage.typeLabel')}
             </label>
             <select
               value={kind}
@@ -264,14 +279,14 @@ function WarehouseFormModal({
             >
               {VALID_KINDS.map(k => (
                 <option key={k} value={k}>
-                  {KIND_LABELS[k]}
+                  {t(KIND_LABEL_KEYS[k])}
                 </option>
               ))}
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-dental-dark mb-1">
-              Порядок сортування
+              {t('admin.stock.warehousesPage.sortOrderLabel')}
             </label>
             <input
               type="number"
@@ -282,7 +297,7 @@ function WarehouseFormModal({
           </div>
           <div>
             <label className="block text-sm font-medium text-dental-dark mb-1">
-              Коментар
+              {t('admin.stock.warehousesPage.commentLabel')}
             </label>
             <textarea
               value={comment}
@@ -298,7 +313,7 @@ function WarehouseFormModal({
               onClick={onClose}
               className="px-4 py-2 text-sm text-dental-text hover:text-dental-dark"
             >
-              Скасувати
+              {t('admin.stock.warehousesPage.cancel')}
             </button>
             <button
               type="submit"
@@ -306,7 +321,7 @@ function WarehouseFormModal({
               className="inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-dental-dark disabled:opacity-60 transition-colors"
             >
               {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-              Зберегти
+              {t('admin.stock.warehousesPage.save')}
             </button>
           </div>
         </form>

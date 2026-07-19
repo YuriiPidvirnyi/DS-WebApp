@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ChevronLeft, Loader2, Download } from 'lucide-react'
 import { PeriodFilter } from '@/components/admin/stock/ReportFilterBar'
 import { exportCsv } from '@/utils/stock-export'
+import { useTranslation } from 'react-i18next'
 
 interface ServiceCostRow {
   service: string
@@ -26,6 +27,7 @@ function defaultPeriod() {
 }
 
 export default function ReportServiceCostPage() {
+  const { t } = useTranslation()
   const p = defaultPeriod()
   const [from, setFrom] = useState(p.from)
   const [to, setTo] = useState(p.to)
@@ -43,11 +45,15 @@ export default function ReportServiceCostPage() {
       if (!json.success) throw new Error(json.error)
       setRows(json.data ?? [])
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка завантаження')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.reports.serviceCost.loadError')
+      )
     } finally {
       setLoading(false)
     }
-  }, [from, to])
+  }, [from, to, t])
 
   const totalMargin = rows.reduce((s, r) => s + r.total_margin, 0)
 
@@ -61,14 +67,12 @@ export default function ReportServiceCostPage() {
           <ChevronLeft className="w-5 h-5" />
         </Link>
         <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-          Собівартість послуг
+          {t('admin.stock.reports.serviceCost.title')}
         </h1>
       </div>
 
       <div className="mb-2 rounded-lg border border-dental-warning/30 bg-status-warning-100 px-4 py-2 text-xs text-status-warning-700">
-        Матеріали, введені як відкриті залишки (вартість = 0), не враховуються у
-        розрахунку маржі. Перші 30–60 днів роботи з системою цифри будуть
-        неповними.
+        {t('admin.stock.reports.serviceCost.openingBalanceNote')}
       </div>
 
       <div className="mt-3 mb-4 flex flex-wrap items-end gap-3 rounded-xl border bg-white p-4">
@@ -85,7 +89,7 @@ export default function ReportServiceCostPage() {
           className="ml-auto inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-dental-dark disabled:opacity-60 transition-colors"
         >
           {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-          Побудувати
+          {t('admin.stock.reports.serviceCost.build')}
         </button>
         {rows.length > 0 && (
           <button
@@ -113,32 +117,36 @@ export default function ReportServiceCostPage() {
       {rows.length > 0 && (
         <>
           <div className="mb-3 text-sm text-dental-text">
-            Загальна маржа: <strong>{totalMargin.toFixed(2)} грн</strong>
+            {t('admin.stock.reports.serviceCost.totalMarginLabel')}{' '}
+            <strong>
+              {totalMargin.toFixed(2)}{' '}
+              {t('admin.stock.reports.serviceCost.currencyUah')}
+            </strong>
           </div>
           <div className="rounded-xl border bg-white overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-dental-secondary-200 bg-dental-secondary-50">
                   <th className="text-left px-4 py-3 font-medium text-dental-text">
-                    Послуга
+                    {t('admin.stock.reports.serviceCost.colService')}
                   </th>
                   <th className="text-left px-4 py-3 font-medium text-dental-text w-24">
-                    Місяць
+                    {t('admin.stock.reports.serviceCost.colMonth')}
                   </th>
                   <th className="text-right px-4 py-3 font-medium text-dental-text w-16">
-                    К-сть
+                    {t('admin.stock.reports.serviceCost.colQty')}
                   </th>
                   <th className="text-right px-4 py-3 font-medium text-dental-text w-28 hidden md:table-cell">
-                    Ср. ціна
+                    {t('admin.stock.reports.serviceCost.colAvgPrice')}
                   </th>
                   <th className="text-right px-4 py-3 font-medium text-dental-text w-28 hidden md:table-cell">
-                    Ср. матеріали
+                    {t('admin.stock.reports.serviceCost.colAvgMaterials')}
                   </th>
                   <th className="text-right px-4 py-3 font-medium text-dental-text w-28">
-                    Ср. маржа
+                    {t('admin.stock.reports.serviceCost.colAvgMargin')}
                   </th>
                   <th className="text-right px-4 py-3 font-medium text-dental-text w-32 text-dental-primary-600">
-                    Маржа разом
+                    {t('admin.stock.reports.serviceCost.colTotalMargin')}
                   </th>
                 </tr>
               </thead>
@@ -184,7 +192,7 @@ export default function ReportServiceCostPage() {
 
       {!loading && rows.length === 0 && (
         <p className="text-center text-dental-text py-12">
-          Оберіть період та натисніть «Побудувати»
+          {t('admin.stock.reports.serviceCost.emptyState')}
         </p>
       )}
     </div>

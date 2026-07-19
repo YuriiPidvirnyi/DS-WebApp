@@ -7,6 +7,7 @@ import {
   ArrowLeftRight,
   MinusCircle,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import type { MaterialBalance, WarehouseKind } from '@/types/stock'
 
 interface Props {
@@ -32,6 +33,7 @@ export default function MaterialCard({
   onTransfer,
   onRequisition,
 }: Props) {
+  const { t } = useTranslation()
   const {
     material,
     warehouse,
@@ -69,7 +71,9 @@ export default function MaterialCard({
       {/* Quantities */}
       <div className="flex items-end gap-4">
         <div>
-          <p className="text-xs text-dental-text mb-0.5">Залишок</p>
+          <p className="text-xs text-dental-text mb-0.5">
+            {t('admin.stock.materialCard.inStock')}
+          </p>
           <p
             className={`text-2xl font-semibold tabular-nums ${qtyColour(qty, critical, warehouse?.kind ?? 'other')}`}
           >
@@ -79,7 +83,9 @@ export default function MaterialCard({
         </div>
         {critical != null && (
           <div className="mb-1">
-            <p className="text-xs text-dental-text">Мін: {critical}</p>
+            <p className="text-xs text-dental-text">
+              {t('admin.stock.materialCard.minLevel', { critical })}
+            </p>
           </div>
         )}
       </div>
@@ -89,29 +95,29 @@ export default function MaterialCard({
         <button
           type="button"
           onClick={() => onWriteoff?.(balance)}
-          title="Списати"
+          title={t('admin.stock.materialCard.writeoff')}
           className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg border border-dental-text/20 px-2 py-1.5 text-xs font-medium text-dental-text hover:bg-dental-secondary-50 transition-colors"
         >
           <MinusCircle className="w-3.5 h-3.5" />
-          Списати
+          {t('admin.stock.materialCard.writeoff')}
         </button>
         <button
           type="button"
           onClick={() => onTransfer?.(balance)}
-          title="Перемістити"
+          title={t('admin.stock.materialCard.transfer')}
           className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg border border-dental-text/20 px-2 py-1.5 text-xs font-medium text-dental-text hover:bg-dental-secondary-50 transition-colors"
         >
           <ArrowLeftRight className="w-3.5 h-3.5" />
-          Перемістити
+          {t('admin.stock.materialCard.transfer')}
         </button>
         <button
           type="button"
           onClick={() => onRequisition?.(balance)}
-          title="Заявка"
+          title={t('admin.stock.materialCard.requisition')}
           className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg border border-dental-text/20 px-2 py-1.5 text-xs font-medium text-dental-text hover:bg-dental-secondary-50 transition-colors"
         >
           <ShoppingCart className="w-3.5 h-3.5" />
-          Заявка
+          {t('admin.stock.materialCard.requisition')}
         </button>
       </div>
     </div>

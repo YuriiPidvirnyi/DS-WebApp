@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
+
 interface PeriodFilterProps {
   from: string
   to: string
@@ -13,16 +15,21 @@ export function PeriodFilter({
   onFromChange,
   onToChange,
 }: PeriodFilterProps) {
+  const { t } = useTranslation()
   return (
     <div className="flex items-center gap-2 flex-wrap">
-      <label className="text-sm text-dental-text">Від</label>
+      <label className="text-sm text-dental-text">
+        {t('admin.stock.reports.filterBar.from')}
+      </label>
       <input
         type="date"
         value={from}
         onChange={e => onFromChange(e.target.value)}
         className="rounded-lg border border-dental-secondary-300 px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
       />
-      <label className="text-sm text-dental-text">До</label>
+      <label className="text-sm text-dental-text">
+        {t('admin.stock.reports.filterBar.to')}
+      </label>
       <input
         type="date"
         value={to}

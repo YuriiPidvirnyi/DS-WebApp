@@ -4,19 +4,19 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ChevronLeft, Loader2, CheckCircle2 } from 'lucide-react'
 import { useCSRF } from '@/hooks/useCSRF'
+import { useTranslation } from 'react-i18next'
 import type { ClinicSettings, WriteoffMode } from '@/types/stock'
 
-const WRITEOFF_MODE_LABELS: Record<WriteoffMode, string> = {
-  none: 'Без автосписання',
-  draft_hybrid: 'Автосписання-чернетка (рекомендовано)',
-  auto: 'Повністю автоматичне',
+const WRITEOFF_MODE_LABEL_KEYS: Record<WriteoffMode, string> = {
+  none: 'admin.stock.settingsPage.writeoffModeNoneLabel',
+  draft_hybrid: 'admin.stock.settingsPage.writeoffModeDraftHybridLabel',
+  auto: 'admin.stock.settingsPage.writeoffModeAutoLabel',
 }
 
-const WRITEOFF_MODE_HINTS: Record<WriteoffMode, string> = {
-  none: 'Матеріали не списуються автоматично при завершенні прийому.',
-  draft_hybrid:
-    'При завершенні прийому автоматично створюється чернетка списання за картками розрахунку. Персонал може редагувати та проводити вручну.',
-  auto: 'Чернетка створюється та одразу проводиться. Рекомендується лише після стабілізації карток розрахунку (>90 днів).',
+const WRITEOFF_MODE_HINT_KEYS: Record<WriteoffMode, string> = {
+  none: 'admin.stock.settingsPage.writeoffModeNoneHint',
+  draft_hybrid: 'admin.stock.settingsPage.writeoffModeDraftHybridHint',
+  auto: 'admin.stock.settingsPage.writeoffModeAutoHint',
 }
 
 interface SettingRow {
@@ -39,6 +39,7 @@ function parseSettings(rows: SettingRow[]): ClinicSettings {
 }
 
 export default function AdminStockSettingsPage() {
+  const { t } = useTranslation()
   const { token: csrfToken } = useCSRF()
   const [settings, setSettings] = useState<ClinicSettings | null>(null)
   const [loading, setLoading] = useState(false)
@@ -53,9 +54,9 @@ export default function AdminStockSettingsPage() {
       .then((j: { success: boolean; data?: SettingRow[] }) => {
         if (j.success && j.data) setSettings(parseSettings(j.data))
       })
-      .catch(() => setError('Не вдалося завантажити налаштування'))
+      .catch(() => setError(t('admin.stock.settingsPage.loadError')))
       .finally(() => setLoading(false))
-  }, [])
+  }, [t])
 
   async function handleSave() {
     if (!settings) return
@@ -80,7 +81,9 @@ export default function AdminStockSettingsPage() {
       setSaved(true)
       setTimeout(() => setSaved(false), 2500)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка збереження')
+      setError(
+        e instanceof Error ? e.message : t('admin.stock.settingsPage.saveError')
+      )
     } finally {
       setSaving(false)
     }
@@ -105,7 +108,7 @@ export default function AdminStockSettingsPage() {
           <ChevronLeft className="w-5 h-5" />
         </Link>
         <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-          Налаштування складу
+          {t('admin.stock.settingsPage.title')}
         </h1>
       </div>
 
@@ -120,7 +123,7 @@ export default function AdminStockSettingsPage() {
           {/* Writeoff mode */}
           <div className="rounded-xl border bg-white p-5">
             <h2 className="font-semibold text-dental-dark mb-3">
-              Тип автосписання матеріалів
+              {t('admin.stock.settingsPage.writeoffModeHeading')}
             </h2>
             <div className="space-y-3">
               {(['none', 'draft_hybrid', 'auto'] as WriteoffMode[]).map(
@@ -143,10 +146,10 @@ export default function AdminStockSettingsPage() {
                     />
                     <div>
                       <p className="text-sm font-medium text-dental-dark">
-                        {WRITEOFF_MODE_LABELS[mode]}
+                        {t(WRITEOFF_MODE_LABEL_KEYS[mode])}
                       </p>
                       <p className="text-xs text-dental-text mt-0.5">
-                        {WRITEOFF_MODE_HINTS[mode]}
+                        {t(WRITEOFF_MODE_HINT_KEYS[mode])}
                       </p>
                     </div>
                   </label>
@@ -158,17 +161,16 @@ export default function AdminStockSettingsPage() {
           {/* Toggles */}
           <div className="rounded-xl border bg-white p-5 space-y-4">
             <h2 className="font-semibold text-dental-dark">
-              Додаткові параметри
+              {t('admin.stock.settingsPage.additionalParamsHeading')}
             </h2>
 
             <label className="flex items-center justify-between cursor-pointer">
               <div>
                 <p className="text-sm font-medium text-dental-dark">
-                  Дозволити негативний залишок
+                  {t('admin.stock.settingsPage.allowNegativeBalanceLabel')}
                 </p>
                 <p className="text-xs text-dental-text mt-0.5">
-                  Рекомендується ввімкнути на перші 30–60 днів після запуску для
-                  поступового введення залишків.
+                  {t('admin.stock.settingsPage.allowNegativeBalanceHint')}
                 </p>
               </div>
               <input
@@ -184,11 +186,10 @@ export default function AdminStockSettingsPage() {
             <label className="flex items-center justify-between cursor-pointer">
               <div>
                 <p className="text-sm font-medium text-dental-dark">
-                  Використовувати права доступу
+                  {t('admin.stock.settingsPage.enforcePermissionsLabel')}
                 </p>
                 <p className="text-xs text-dental-text mt-0.5">
-                  Якщо вимкнено — всі співробітники мають повний доступ до всіх
-                  складів.
+                  {t('admin.stock.settingsPage.enforcePermissionsHint')}
                 </p>
               </div>
               <input
@@ -204,11 +205,10 @@ export default function AdminStockSettingsPage() {
             <label className="flex items-center justify-between cursor-pointer">
               <div>
                 <p className="text-sm font-medium text-dental-dark">
-                  Показувати «Моя інвентаризація»
+                  {t('admin.stock.settingsPage.showMyInventoryLabel')}
                 </p>
                 <p className="text-xs text-dental-text mt-0.5">
-                  Персональна перевірка залишків per-warehouse для кожного
-                  співробітника.
+                  {t('admin.stock.settingsPage.showMyInventoryHint')}
                 </p>
               </div>
               <input
@@ -235,7 +235,9 @@ export default function AdminStockSettingsPage() {
             >
               {saving && <Loader2 className="w-4 h-4 animate-spin" />}
               {saved && <CheckCircle2 className="w-4 h-4" />}
-              {saved ? 'Збережено' : 'Зберегти'}
+              {saved
+                ? t('admin.stock.settingsPage.saved')
+                : t('admin.stock.settingsPage.save')}
             </button>
           </div>
         </div>

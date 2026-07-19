@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { X, Plus, Trash2, Loader2, Search, CheckCircle2 } from 'lucide-react'
 import { useCSRF } from '@/hooks/useCSRF'
+import { useTranslation } from 'react-i18next'
 
 interface Material {
   id: string
@@ -40,6 +41,7 @@ export default function CalcCardEditor({
   onClose,
   onSaved,
 }: Props) {
+  const { t } = useTranslation()
   const { token: csrfToken } = useCSRF()
   const [items, setItems] = useState<CardItem[]>([])
   const [isActive, setIsActive] = useState(true)
@@ -171,7 +173,11 @@ export default function CalcCardEditor({
         onClose()
       }, 800)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка збереження')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.calcCardEditor.saveError')
+      )
     } finally {
       setSaving(false)
     }
@@ -191,7 +197,9 @@ export default function CalcCardEditor({
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-dental-secondary-200 bg-dental-secondary-50">
           <div>
-            <p className="text-xs text-dental-text">Картка розрахунку</p>
+            <p className="text-xs text-dental-text">
+              {t('admin.stock.calcCardEditor.title')}
+            </p>
             <h2 className="font-semibold text-dental-dark text-sm leading-tight mt-0.5">
               {serviceName}
             </h2>
@@ -204,7 +212,7 @@ export default function CalcCardEditor({
                 onChange={e => setIsActive(e.target.checked)}
                 className="rounded"
               />
-              Активна
+              {t('admin.stock.calcCardEditor.active')}
             </label>
             <button
               type="button"
@@ -229,7 +237,7 @@ export default function CalcCardEditor({
               {/* Search */}
               <div className="space-y-1">
                 <label className="text-xs font-medium text-dental-text">
-                  Додати матеріал
+                  {t('admin.stock.calcCardEditor.addMaterial')}
                 </label>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dental-text" />
@@ -237,7 +245,9 @@ export default function CalcCardEditor({
                     type="text"
                     value={matSearch}
                     onChange={e => setMatSearch(e.target.value)}
-                    placeholder="Пошук матеріалу..."
+                    placeholder={t(
+                      'admin.stock.calcCardEditor.searchPlaceholder'
+                    )}
                     className="w-full rounded-lg border border-dental-secondary-300 pl-9 pr-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
                   />
                   {searching && (
@@ -269,20 +279,20 @@ export default function CalcCardEditor({
               {/* Items table */}
               {items.length === 0 ? (
                 <p className="text-center text-dental-text text-sm py-8">
-                  Позицій немає — додайте матеріали вище
+                  {t('admin.stock.calcCardEditor.emptyState')}
                 </p>
               ) : (
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-dental-secondary-200 text-left">
                       <th className="pb-2 font-medium text-dental-text">
-                        Матеріал
+                        {t('admin.stock.calcCardEditor.materialColumn')}
                       </th>
                       <th className="pb-2 font-medium text-dental-text w-24 text-right">
-                        К-сть
+                        {t('admin.stock.calcCardEditor.quantityColumn')}
                       </th>
                       <th className="pb-2 font-medium text-dental-text w-20 text-center text-xs">
-                        Заміна
+                        {t('admin.stock.calcCardEditor.replacementColumn')}
                       </th>
                       <th className="w-8" />
                     </tr>
@@ -330,7 +340,9 @@ export default function CalcCardEditor({
                               onChange={() =>
                                 toggleReplaceable(item.material_id)
                               }
-                              title="Дозволити заміну"
+                              title={t(
+                                'admin.stock.calcCardEditor.allowReplacement'
+                              )}
                               className="rounded"
                             />
                           </td>
@@ -366,7 +378,7 @@ export default function CalcCardEditor({
             onClick={onClose}
             className="rounded-lg border border-dental-secondary-300 px-4 py-2 text-sm font-medium text-dental-text hover:bg-dental-secondary-100 transition-colors"
           >
-            Скасувати
+            {t('admin.stock.calcCardEditor.cancel')}
           </button>
           <button
             type="button"
@@ -376,7 +388,9 @@ export default function CalcCardEditor({
           >
             {saving && <Loader2 className="w-4 h-4 animate-spin" />}
             {saved && <CheckCircle2 className="w-4 h-4" />}
-            {saved ? 'Збережено' : 'Зберегти'}
+            {saved
+              ? t('admin.stock.calcCardEditor.saved')
+              : t('admin.stock.calcCardEditor.save')}
           </button>
         </div>
       </div>

@@ -148,10 +148,6 @@ export default tseslint.config(
   {
     files: ['src/**/*.tsx', 'app/**/*.tsx'],
     ignores: [
-      // Легасі до Ф-2 (Фаза 2): складський модуль ще не інтернаціоналізовано.
-      'src/views/admin/stock/**',
-      'src/components/admin/stock/**',
-      'src/views/admin/AdminStockPage.tsx',
       // Друковані/промо-документи навмисно україномовні (клінічні папери).
       'src/views/admin/AdminIntakePrintPage.tsx',
       'src/views/admin/AdminTreatmentPrintPage.tsx',

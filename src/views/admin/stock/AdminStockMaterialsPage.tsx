@@ -11,6 +11,7 @@ import {
   Package,
   ChevronRight,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { hasPermission } from '@/lib/permissions'
 import type { StockMaterial } from '@/types/stock'
@@ -23,6 +24,7 @@ interface Category {
 }
 
 export default function AdminStockMaterialsPage() {
+  const { t } = useTranslation()
   const { user } = useAdminAuth()
   const canEdit = user ? hasPermission(user.role, 'inventory:edit') : false
 
@@ -51,11 +53,15 @@ export default function AdminStockMaterialsPage() {
       setMaterials(json.data)
       setTotal(json.meta.total)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка завантаження')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.materialsPage.loadError')
+      )
     } finally {
       setLoading(false)
     }
-  }, [search, categoryId, showInactive, page])
+  }, [search, categoryId, showInactive, page, t])
 
   useEffect(() => {
     load()
@@ -84,7 +90,7 @@ export default function AdminStockMaterialsPage() {
             <ChevronLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-            Матеріали
+            {t('admin.stock.materialsPage.heading')}
           </h1>
         </div>
         {canEdit && (
@@ -93,7 +99,7 @@ export default function AdminStockMaterialsPage() {
             className="inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-dental-dark transition-colors"
           >
             <Plus className="w-4 h-4" />
-            Додати матеріал
+            {t('admin.stock.materialsPage.addMaterial')}
           </Link>
         )}
       </div>
@@ -108,7 +114,7 @@ export default function AdminStockMaterialsPage() {
             }}
             className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${!categoryId ? 'bg-dental-primary/20 text-dental-primary-600 font-medium' : 'text-dental-text hover:bg-dental-secondary-100'}`}
           >
-            Всі категорії
+            {t('admin.stock.materialsPage.allCategories')}
           </button>
           {topCategories.map(cat => (
             <button
@@ -137,7 +143,7 @@ export default function AdminStockMaterialsPage() {
                   setSearch(e.target.value)
                   setPage(1)
                 }}
-                placeholder="Пошук за назвою..."
+                placeholder={t('admin.stock.materialsPage.searchPlaceholder')}
                 className="w-full rounded-lg border border-dental-secondary-300 pl-9 pr-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
               />
             </div>
@@ -151,7 +157,7 @@ export default function AdminStockMaterialsPage() {
                 }}
                 className="rounded"
               />
-              Неактивні
+              {t('admin.stock.materialsPage.inactiveFilter')}
             </label>
           </div>
 
@@ -169,7 +175,7 @@ export default function AdminStockMaterialsPage() {
 
           {!loading && !error && materials.length === 0 && (
             <p className="text-center text-dental-text py-12">
-              Матеріалів не знайдено
+              {t('admin.stock.materialsPage.noMaterials')}
             </p>
           )}
 
@@ -200,10 +206,16 @@ export default function AdminStockMaterialsPage() {
                     </p>
                     <p className="text-xs text-dental-text">
                       {mat.unit}
-                      {mat.article_code && ` · Арт: ${mat.article_code}`}
+                      {mat.article_code &&
+                        t('admin.stock.materialsPage.articleTag', {
+                          code: mat.article_code,
+                        })}
                       {mat.barcodes?.length > 0 &&
-                        ` · Штрихкод: ${mat.barcodes[0]}`}
-                      {!mat.is_active && ' · Неактивний'}
+                        t('admin.stock.materialsPage.barcodeTag', {
+                          code: mat.barcodes[0],
+                        })}
+                      {!mat.is_active &&
+                        t('admin.stock.materialsPage.inactiveTag')}
                     </p>
                   </div>
                   <ChevronRight className="w-4 h-4 text-dental-text shrink-0" />

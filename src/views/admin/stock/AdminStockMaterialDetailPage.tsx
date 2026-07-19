@@ -34,6 +34,18 @@ const PACK_UNITS = [
   'набір',
 ] as const
 
+const PACK_UNIT_LABEL_KEYS: Record<(typeof PACK_UNITS)[number], string> = {
+  шт: 'admin.stock.materialDetailPage.unitPcs',
+  г: 'admin.stock.materialDetailPage.unitGram',
+  кг: 'admin.stock.materialDetailPage.unitKg',
+  мл: 'admin.stock.materialDetailPage.unitMl',
+  л: 'admin.stock.materialDetailPage.unitLiter',
+  см: 'admin.stock.materialDetailPage.unitCm',
+  м: 'admin.stock.materialDetailPage.unitMeter',
+  пара: 'admin.stock.materialDetailPage.unitPair',
+  набір: 'admin.stock.materialDetailPage.unitSet',
+}
+
 export default function AdminStockMaterialDetailPage({ materialId }: Props) {
   const router = useRouter()
   const { t } = useTranslation()
@@ -116,9 +128,9 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
         setDescriptionUk(mat.description_uk ?? '')
         if (mx.success) setMatrix(mx.data)
       })
-      .catch(() => setError('Помилка завантаження'))
+      .catch(() => setError(t('admin.stock.materialDetailPage.loadError')))
       .finally(() => setLoading(false))
-  }, [materialId, isNew])
+  }, [materialId, isNew, t])
 
   function addBarcode() {
     const code = barcodeInput.trim()
@@ -133,7 +145,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!nameUk.trim()) {
-      setError("Назва обов'язкова")
+      setError(t('admin.stock.materialDetailPage.nameRequired'))
       return
     }
     setSaving(true)
@@ -171,7 +183,11 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
         setMaterial(json.data)
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка збереження')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.materialDetailPage.saveError')
+      )
     } finally {
       setSaving(false)
     }
@@ -235,7 +251,10 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
             <ChevronLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-            {isNew ? 'Новий матеріал' : (material?.name_uk ?? 'Матеріал')}
+            {isNew
+              ? t('admin.stock.materialDetailPage.headingNew')
+              : (material?.name_uk ??
+                t('admin.stock.materialDetailPage.headingFallback'))}
           </h1>
         </div>
         {!isNew && canEdit && material && !material.is_active && (
@@ -244,7 +263,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
             className="inline-flex items-center gap-2 rounded-lg border border-dental-warning/30 bg-status-warning-100 px-4 py-2 text-sm font-medium text-status-warning-700 hover:bg-dental-warning/20"
           >
             <Archive className="w-4 h-4" />
-            Деактивувати
+            {t('admin.stock.materialDetailPage.deactivate')}
           </button>
         )}
       </div>
@@ -258,10 +277,12 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic info */}
         <section className="rounded-xl border bg-white p-5 space-y-4">
-          <h2 className="font-medium text-dental-dark">Основна інформація</h2>
+          <h2 className="font-medium text-dental-dark">
+            {t('admin.stock.materialDetailPage.basicInfoHeading')}
+          </h2>
           <div>
             <label className="block text-sm font-medium text-dental-dark mb-1">
-              Назва (UA)*
+              {t('admin.stock.materialDetailPage.nameUkLabel')}
             </label>
             <input
               value={nameUk}
@@ -274,7 +295,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-dental-dark mb-1">
-                Назва (EN)
+                {t('admin.stock.materialDetailPage.nameEnLabel')}
               </label>
               <input
                 value={nameEn}
@@ -285,7 +306,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
             </div>
             <div>
               <label className="block text-sm font-medium text-dental-dark mb-1">
-                Одиниця виміру
+                {t('admin.stock.materialDetailPage.unitLabel')}
               </label>
               <input
                 value={unit}
@@ -297,7 +318,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
           </div>
           <div>
             <label className="block text-sm font-medium text-dental-dark mb-1">
-              Опис
+              {t('admin.stock.materialDetailPage.descriptionLabel')}
             </label>
             <textarea
               value={descriptionUk}
@@ -311,11 +332,13 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
 
         {/* Directories */}
         <section className="rounded-xl border bg-white p-5 space-y-4">
-          <h2 className="font-medium text-dental-dark">Довідники</h2>
+          <h2 className="font-medium text-dental-dark">
+            {t('admin.stock.materialDetailPage.directoriesHeading')}
+          </h2>
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-dental-dark mb-1">
-                Бренд
+                {t('admin.stock.materialDetailPage.brandLabel')}
               </label>
               <select
                 value={brandId}
@@ -323,7 +346,9 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                 disabled={!canEdit}
                 className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-dental-secondary-50"
               >
-                <option value="">— не вказано —</option>
+                <option value="">
+                  {t('admin.stock.materialDetailPage.notSpecified')}
+                </option>
                 {brands.map(b => (
                   <option key={b.id} value={b.id}>
                     {b.name_uk ?? b.name}
@@ -333,7 +358,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
             </div>
             <div>
               <label className="block text-sm font-medium text-dental-dark mb-1">
-                Категорія
+                {t('admin.stock.materialDetailPage.categoryLabel')}
               </label>
               <select
                 value={categoryId}
@@ -341,7 +366,9 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                 disabled={!canEdit}
                 className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-dental-secondary-50"
               >
-                <option value="">— не вказано —</option>
+                <option value="">
+                  {t('admin.stock.materialDetailPage.notSpecified')}
+                </option>
                 {categories.map(c => (
                   <option key={c.id} value={c.id}>
                     {c.name_uk ?? c.name}
@@ -351,7 +378,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
             </div>
             <div>
               <label className="block text-sm font-medium text-dental-dark mb-1">
-                Постачальник
+                {t('admin.stock.materialDetailPage.supplierLabel')}
               </label>
               <select
                 value={supplierId}
@@ -359,7 +386,9 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
                 disabled={!canEdit}
                 className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-dental-secondary-50"
               >
-                <option value="">— не вказано —</option>
+                <option value="">
+                  {t('admin.stock.materialDetailPage.notSpecified')}
+                </option>
                 {suppliers.map(s => (
                   <option key={s.id} value={s.id}>
                     {s.name_uk ?? s.name}
@@ -372,23 +401,27 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
 
         {/* Pack / Unit */}
         <section className="rounded-xl border bg-white p-5 space-y-4">
-          <h2 className="font-medium text-dental-dark">Упаковка</h2>
+          <h2 className="font-medium text-dental-dark">
+            {t('admin.stock.materialDetailPage.packagingHeading')}
+          </h2>
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-dental-dark mb-1">
-                Формат упаковки
+                {t('admin.stock.materialDetailPage.packFormatLabel')}
               </label>
               <input
                 value={packFormatLabel}
                 onChange={e => setPackFormatLabel(e.target.value)}
                 disabled={!canEdit}
-                placeholder="Банка, Флакон, Упаковка..."
+                placeholder={t(
+                  'admin.stock.materialDetailPage.packFormatPlaceholder'
+                )}
                 className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 disabled:bg-dental-secondary-50"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-dental-dark mb-1">
-                К-сть в упаковці
+                {t('admin.stock.materialDetailPage.packQtyLabel')}
               </label>
               <input
                 type="number"
@@ -402,7 +435,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
             </div>
             <div>
               <label className="block text-sm font-medium text-dental-dark mb-1">
-                Одиниця в уп.
+                {t('admin.stock.materialDetailPage.packUnitLabel')}
               </label>
               <select
                 value={packSizeUnit}
@@ -414,7 +447,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
               >
                 {PACK_UNITS.map(u => (
                   <option key={u} value={u}>
-                    {u}
+                    {t(PACK_UNIT_LABEL_KEYS[u])}
                   </option>
                 ))}
               </select>
@@ -424,10 +457,12 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
 
         {/* Barcode / Article */}
         <section className="rounded-xl border bg-white p-5 space-y-4">
-          <h2 className="font-medium text-dental-dark">Штрихкоди та артикул</h2>
+          <h2 className="font-medium text-dental-dark">
+            {t('admin.stock.materialDetailPage.barcodesHeading')}
+          </h2>
           <div>
             <label className="block text-sm font-medium text-dental-dark mb-1">
-              Артикул
+              {t('admin.stock.materialDetailPage.articleLabel')}
             </label>
             <input
               value={articleCode}
@@ -439,7 +474,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
           {canEdit && (
             <div>
               <label className="block text-sm font-medium text-dental-dark mb-1">
-                Додати штрихкод
+                {t('admin.stock.materialDetailPage.addBarcodeLabel')}
               </label>
               <div className="flex gap-2">
                 <BarcodeInput
@@ -484,26 +519,26 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
         {!isNew && matrix.length > 0 && (
           <section className="rounded-xl border bg-white p-5">
             <h2 className="font-medium text-dental-dark mb-4">
-              Матриця складів
+              {t('admin.stock.materialDetailPage.warehouseMatrixHeading')}
             </h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-dental-secondary-200">
                     <th className="text-left py-2 font-medium text-dental-text">
-                      Склад
+                      {t('admin.stock.materialDetailPage.colWarehouse')}
                     </th>
                     <th className="text-right py-2 font-medium text-dental-text">
-                      Залишок
+                      {t('admin.stock.materialDetailPage.colBalance')}
                     </th>
                     <th className="text-right py-2 font-medium text-dental-text">
-                      Критичний
+                      {t('admin.stock.materialDetailPage.colCritical')}
                     </th>
                     <th className="text-right py-2 font-medium text-dental-text">
-                      Замовлення
+                      {t('admin.stock.materialDetailPage.colReorder')}
                     </th>
                     <th className="text-center py-2 font-medium text-dental-text">
-                      Видно
+                      {t('admin.stock.materialDetailPage.colVisible')}
                     </th>
                   </tr>
                 </thead>
@@ -588,7 +623,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
               href="/admin/stock/materials"
               className="px-4 py-2 text-sm text-dental-text hover:text-dental-dark"
             >
-              Скасувати
+              {t('admin.stock.materialDetailPage.cancel')}
             </Link>
             <button
               type="submit"
@@ -597,7 +632,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
             >
               {saving && <Loader2 className="w-4 h-4 animate-spin" />}
               <Save className="w-4 h-4" />
-              Зберегти
+              {t('admin.stock.materialDetailPage.save')}
             </button>
           </div>
         )}

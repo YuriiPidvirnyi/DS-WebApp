@@ -9,41 +9,43 @@ import {
   Trash2,
   TrendingUp,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 const REPORTS = [
   {
     href: '/admin/stock/reports/balances',
     icon: Package,
-    title: 'Залишки',
-    desc: 'Поточні залишки по матеріалах та складах зі статусом і середньою вартістю.',
+    titleKey: 'admin.stock.reports.hub.balancesTitle',
+    descKey: 'admin.stock.reports.hub.balancesDesc',
   },
   {
     href: '/admin/stock/reports/history',
     icon: History,
-    title: 'Історія товару',
-    desc: 'Рух конкретного матеріалу на складі: надходження, списання, коригування.',
+    titleKey: 'admin.stock.reports.hub.historyTitle',
+    descKey: 'admin.stock.reports.hub.historyDesc',
   },
   {
     href: '/admin/stock/reports/reorder',
     icon: AlertTriangle,
-    title: 'Замовлення з критичним залишком',
-    desc: 'Матеріали нижче критичного ліміту з пропонованою кількістю для замовлення.',
+    titleKey: 'admin.stock.reports.hub.reorderTitle',
+    descKey: 'admin.stock.reports.hub.reorderDesc',
   },
   {
     href: '/admin/stock/reports/writeoff',
     icon: Trash2,
-    title: 'Списання',
-    desc: 'Деталізований журнал списань за обраний період.',
+    titleKey: 'admin.stock.reports.hub.writeoffTitle',
+    descKey: 'admin.stock.reports.hub.writeoffDesc',
   },
   {
     href: '/admin/stock/reports/service-cost',
     icon: TrendingUp,
-    title: 'Собівартість послуг',
-    desc: 'Середня ціна, собівартість матеріалів та маржа по послугах з розбивкою по місяцях.',
+    titleKey: 'admin.stock.reports.hub.serviceCostTitle',
+    descKey: 'admin.stock.reports.hub.serviceCostDesc',
   },
 ]
 
 export default function AdminStockReportsHubPage() {
+  const { t } = useTranslation()
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-8 flex items-center gap-3">
@@ -54,7 +56,7 @@ export default function AdminStockReportsHubPage() {
           <ChevronLeft className="w-5 h-5" />
         </Link>
         <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-          Звіти по складу
+          {t('admin.stock.reports.hub.title')}
         </h1>
       </div>
 
@@ -70,10 +72,10 @@ export default function AdminStockReportsHubPage() {
             </div>
             <div>
               <p className="font-medium text-dental-dark group-hover:text-dental-primary-600 transition-colors">
-                {r.title}
+                {t(r.titleKey)}
               </p>
               <p className="mt-1 text-sm text-dental-text leading-relaxed">
-                {r.desc}
+                {t(r.descKey)}
               </p>
             </div>
           </Link>

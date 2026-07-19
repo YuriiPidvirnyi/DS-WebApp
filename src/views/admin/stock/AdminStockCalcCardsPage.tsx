@@ -9,6 +9,7 @@ import {
   Loader2,
   CheckCircle2,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import CalcCardEditor from '@/components/admin/stock/CalcCardEditor'
 
 interface ServiceRow {
@@ -23,6 +24,7 @@ interface ServiceRow {
 }
 
 export default function AdminStockCalcCardsPage() {
+  const { t } = useTranslation()
   const [services, setServices] = useState<ServiceRow[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -52,11 +54,15 @@ export default function AdminStockCalcCardsPage() {
       setServices(json.data)
       setTotal(json.meta.total)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка завантаження')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.calcCardsPage.loadError')
+      )
     } finally {
       setLoading(false)
     }
-  }, [search, page])
+  }, [search, page, t])
 
   useEffect(() => {
     load()
@@ -70,11 +76,11 @@ export default function AdminStockCalcCardsPage() {
     return card.is_active ? (
       <span className="inline-flex items-center gap-1 rounded-full bg-status-success-100 px-2 py-0.5 text-xs font-medium text-status-success-700">
         <CheckCircle2 className="w-3 h-3" />
-        Активна
+        {t('admin.stock.calcCardsPage.statusActive')}
       </span>
     ) : (
       <span className="rounded-full bg-dental-secondary-100 px-2 py-0.5 text-xs font-medium text-dental-muted">
-        Вимкнена
+        {t('admin.stock.calcCardsPage.statusDisabled')}
       </span>
     )
   }
@@ -92,11 +98,11 @@ export default function AdminStockCalcCardsPage() {
               <ChevronLeft className="w-5 h-5" />
             </Link>
             <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-              Картки розрахунку
+              {t('admin.stock.calcCardsPage.title')}
             </h1>
           </div>
           <p className="text-xs text-dental-text hidden sm:block">
-            Норми витрат матеріалів на послугу
+            {t('admin.stock.calcCardsPage.subtitle')}
           </p>
         </div>
 
@@ -110,7 +116,7 @@ export default function AdminStockCalcCardsPage() {
               setSearch(e.target.value)
               setPage(1)
             }}
-            placeholder="Пошук послуги..."
+            placeholder={t('admin.stock.calcCardsPage.searchPlaceholder')}
             className="w-full rounded-lg border border-dental-secondary-300 pl-9 pr-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
           />
         </div>
@@ -129,7 +135,7 @@ export default function AdminStockCalcCardsPage() {
           )}
           {!loading && !error && services.length === 0 && (
             <p className="text-center text-dental-text py-12">
-              Послуг не знайдено
+              {t('admin.stock.calcCardsPage.noServices')}
             </p>
           )}
           {!loading && services.length > 0 && (
@@ -137,13 +143,13 @@ export default function AdminStockCalcCardsPage() {
               <thead>
                 <tr className="border-b border-dental-secondary-200 bg-dental-secondary-50">
                   <th className="text-left px-4 py-3 font-medium text-dental-text">
-                    Послуга
+                    {t('admin.stock.calcCardsPage.colService')}
                   </th>
                   <th className="text-left px-4 py-3 font-medium text-dental-text hidden sm:table-cell">
-                    Категорія
+                    {t('admin.stock.calcCardsPage.colCategory')}
                   </th>
                   <th className="text-right px-4 py-3 font-medium text-dental-text w-20 hidden sm:table-cell">
-                    Ціна
+                    {t('admin.stock.calcCardsPage.colPrice')}
                   </th>
                   <th className="px-4 py-3 w-28" />
                   <th className="px-4 py-3 w-28" />
@@ -181,7 +187,7 @@ export default function AdminStockCalcCardsPage() {
                         }
                         className="rounded-lg border border-dental-text/20 px-3 py-1.5 text-xs font-medium text-dental-text hover:bg-dental-secondary-100 transition-colors"
                       >
-                        Редагувати
+                        {t('admin.stock.calcCardsPage.edit')}
                       </button>
                     </td>
                   </tr>

@@ -133,7 +133,7 @@ CSS-first; there is no `tailwind.config.js`):
 **Design-system guards (CI-enforced)**:
 
 1. ESLint bans raw Tailwind palette colors (`bg-blue-600`, `text-slate-500`, arbitrary hex in `className`, …) in `src/` and `app/` — use `dental-*` / `status-*` / `role-*` tokens only (`eslint.config.js`).
-2. ESLint bans hardcoded Cyrillic literals in JSX outside i18n (legacy stock-module/print files are temporarily exempt until Ф-2).
+2. ESLint bans hardcoded Cyrillic literals in JSX outside i18n. The stock module is fully internationalized (Ф-2) and enforced; print/promo documents (intentionally Ukrainian clinical papers) and a few remaining legacy pages stay exempt.
 3. `src/styles/design-tokens.contrast.test.ts` asserts WCAG AA (≥4.5:1) for every ink-on-tint token pair — darkening-proof.
 4. Touch-target smoke checks (≥44px) live in `e2e/ui-form-controls.smoke.spec.ts`.
 
