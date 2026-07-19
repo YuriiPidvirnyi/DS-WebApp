@@ -8,8 +8,8 @@
 // Everything else (the 6 queue templates + shared helpers) is byte-identical.
 
 const SITE_URL = Deno.env.get('SITE_URL') ?? 'https://dentalstory.ua'
-const CLINIC_PHONE = '+38 (044) 123-45-67'
-const CLINIC_ADDRESS = 'м. Київ, вул. Стоматологічна, 1'
+const CLINIC_PHONE = '+380 68 232 38 38'
+const CLINIC_ADDRESS = 'вулиця Сумська, 10, Львів'
 
 type Locale = 'uk' | 'en' | 'pl'
 
@@ -155,6 +155,8 @@ function baseLayout(
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="color-scheme" content="light" />
+  <meta name="supported-color-schemes" content="light" />
   <title>DentalStory</title>
   <!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->
   <style>
@@ -171,11 +173,12 @@ function baseLayout(
     <tr>
       <td align="center" style="padding:32px 16px;">
         <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
-          <!-- Header -->
+          <!-- Header — white logo on a solid teal chip: the chip isn't
+               inverted in dark mode, so the logo stays legible everywhere -->
           <tr>
-            <td align="center" style="padding:24px 0;">
-              <a href="${SITE_URL}" style="font-size:28px;font-weight:700;color:${COLORS.navy};letter-spacing:-0.5px;">
-                Dental<span style="color:${COLORS.teal};">Story</span>
+            <td align="center" style="padding:8px 0 24px;">
+              <a href="${SITE_URL}" style="display:inline-block;background-color:${COLORS.teal};border-radius:12px;padding:18px 28px;">
+                <img src="${SITE_URL}/assets/images/logo/logo-email-white.png" width="180" height="87" alt="DentalStory" style="display:block;border:0;width:180px;height:87px;" />
               </a>
             </td>
           </tr>
