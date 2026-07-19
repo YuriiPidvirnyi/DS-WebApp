@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Plus, Trash2, Info } from 'lucide-react'
 import {
@@ -14,7 +14,7 @@ import {
   type StatusTone,
 } from '@/components/ui'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
-import { can } from '@/lib/permissions'
+import { can, hasDoctorScope } from '@/lib/permissions'
 import { useConfirm } from '@/hooks/useConfirm'
 import { useCSRF } from '@/hooks/useCSRF'
 import { createClient } from '@/lib/supabase/client'
@@ -115,7 +115,7 @@ export default function AdminWorkspacePage() {
   const { confirm, confirmDialog } = useConfirm()
   const { token: csrfToken, refreshToken } = useCSRF()
 
-  const isDoctor = user?.role === 'doctor'
+  const isDoctor = user ? hasDoctorScope(user.role) : false
   const canSign = user ? can(user.role, 'treatments:sign') : false
   const canCreate = user ? can(user.role, 'treatments:create') : false
 
@@ -134,6 +134,9 @@ export default function AdminWorkspacePage() {
   const [lines, setLines] = useState<FormLine[]>([emptyLine()])
   const [actLoading, setActLoading] = useState(false)
   const [saving, setSaving] = useState(false)
+  // Monotonic token so a slow openAct() lookup can't overwrite a newer
+  // selection ("latest request wins") — see review #2.
+  const openReqRef = useRef(0)
 
   const csrf = useCallback(
     () =>
@@ -201,6 +204,7 @@ export default function AdminWorkspacePage() {
   // Load (or reset to a fresh draft for) the act tied to the selected appointment.
   const openAct = useCallback(
     async (appt: Appt) => {
+      const reqId = ++openReqRef.current
       setSelectedId(appt.id)
       // Guest bookings have no patient record — an act cannot be attached.
       if (!appt.patient_id) {
@@ -218,6 +222,11 @@ export default function AdminWorkspacePage() {
         const res = await fetch(
           `/api/treatment-records?patientId=${encodeURIComponent(appt.patient_id)}`
         )
+        // A newer selection superseded this one while we awaited — drop it (#2).
+        if (openReqRef.current !== reqId) return
+        // A failed lookup must NOT silently present a blank draft — that risks a
+        // duplicate act on save if an act actually exists (#4).
+        if (!res.ok) throw new Error(`lookup failed (${res.status})`)
         const json = (await res.json()) as {
           success?: boolean
           data?: Array<{
@@ -262,21 +271,32 @@ export default function AdminWorkspacePage() {
           setLines([emptyLine()])
         }
       } catch (e) {
-        captureException(e instanceof Error ? e : new Error(String(e)))
-        showError(t('common.error'))
+        // Ignore errors from a superseded request; only surface the current one.
+        if (openReqRef.current === reqId) {
+          captureException(e instanceof Error ? e : new Error(String(e)))
+          showError(t('common.error'))
+          // Couldn't determine the act state — deselect so the doctor can't
+          // accidentally create a duplicate over an existing act (#4).
+          setSelectedId(null)
+        }
       } finally {
-        setActLoading(false)
+        if (openReqRef.current === reqId) setActLoading(false)
       }
     },
     [t]
   )
 
+  // Mirror what actually gets persisted/billed: linesToPayload clamps qty to
+  // >=1, and the server's computeTotalCost drops any item with a negative price.
+  // Clamp the displayed total the same way so it can't diverge (review #3).
   const total = useMemo(
     () =>
-      lines.reduce(
-        (s, l) => s + (parseInt(l.quantity, 10) || 1) * (Number(l.price) || 0),
-        0
-      ),
+      lines.reduce((s, l) => {
+        const price = Number(l.price) || 0
+        if (price < 0) return s
+        const qty = Math.max(1, parseInt(l.quantity, 10) || 1)
+        return s + qty * price
+      }, 0),
     [lines]
   )
 
@@ -329,6 +349,10 @@ export default function AdminWorkspacePage() {
           if (!res.ok || !json.success || !json.data)
             throw new Error(json.error || 'create failed')
           const id = json.data.id
+          // Record the new act id immediately so a failed sign PATCH (below)
+          // becomes an update-retry, not a second POST that duplicates the act
+          // (review #1).
+          setActId(id)
           // POST always lands as 'draft'; sign it with a follow-up PATCH.
           if (nextStatus && nextStatus !== 'draft') {
             const r2 = await fetch(`/api/treatment-records/${id}`, {
@@ -343,7 +367,6 @@ export default function AdminWorkspacePage() {
             if (!r2.ok || !j2.success)
               throw new Error(j2.error || 'sign failed')
           }
-          setActId(id)
           return id
         }
         // Existing act — PATCH the editable fields (+ status when signing).

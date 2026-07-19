@@ -164,4 +164,109 @@ describe('AdminWorkspacePage (2e doctor workstation)', () => {
       screen.queryByText('admin.workspacePage.saveDraft')
     ).not.toBeInTheDocument()
   })
+
+  // A method-aware fetch: the openAct lookup (GET) yields no existing act, POST
+  // mints a new draft id, PATCH signs it. Lets us assert the real save/sign path
+  // instead of the always-empty stub from beforeEach.
+  function methodAwareFetch() {
+    return vi.fn((_url: string, opts?: RequestInit) => {
+      const method = opts?.method ?? 'GET'
+      if (method === 'POST')
+        return Promise.resolve({
+          ok: true,
+          status: 201,
+          json: async () => ({ success: true, data: { id: 'act-new' } }),
+        })
+      if (method === 'PATCH')
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ success: true }),
+        })
+      // GET openAct lookup — patient has no prior act for this appointment.
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({ success: true, data: [] }),
+      })
+    })
+  }
+
+  // Open a fresh act editor for the patient booking and pick service s1
+  // (price 1800). Returns the fetch mock for call assertions.
+  async function openActAndPickService() {
+    const fetchMock = methodAwareFetch()
+    global.fetch = fetchMock as unknown as typeof fetch
+    render(<AdminWorkspacePage />)
+    fireEvent.click(await screen.findByText('Іван Петренко'))
+    const svc = await screen.findByLabelText(
+      'admin.treatmentsPage.modal.service'
+    )
+    fireEvent.change(svc, { target: { value: 's1' } })
+    return fetchMock
+  }
+
+  it('POSTs a new draft act with the patient/doctor/items payload on Save draft', async () => {
+    const fetchMock = await openActAndPickService()
+    fireEvent.click(screen.getByText('admin.workspacePage.saveDraft'))
+
+    await waitFor(() => expect(showSuccess).toHaveBeenCalled())
+    const post = fetchMock.mock.calls.find(
+      ([u, o]) => u === '/api/treatment-records' && o?.method === 'POST'
+    )
+    expect(post).toBeTruthy()
+    const body = JSON.parse((post![1] as RequestInit).body as string)
+    expect(body.patientId).toBe('p1')
+    expect(body.doctorId).toBe('d1')
+    expect(body.items).toHaveLength(1)
+    expect(body.items[0].serviceId).toBe('s1')
+    expect(body.items[0].priceAtTime).toBe(1800)
+    // No status transition on a draft save → no follow-up PATCH.
+    expect(fetchMock.mock.calls.some(([, o]) => o?.method === 'PATCH')).toBe(
+      false
+    )
+  })
+
+  it('POSTs then PATCHes status=signed when the sign is confirmed', async () => {
+    const fetchMock = await openActAndPickService()
+    fireEvent.click(screen.getByText('admin.workspacePage.signAct'))
+
+    await waitFor(() =>
+      expect(
+        fetchMock.mock.calls.some(
+          ([u, o]) =>
+            typeof u === 'string' &&
+            u.startsWith('/api/treatment-records/') &&
+            o?.method === 'PATCH'
+        )
+      ).toBe(true)
+    )
+    expect(mockConfirm).toHaveBeenCalled()
+    const patch = fetchMock.mock.calls.find(
+      ([u, o]) =>
+        typeof u === 'string' &&
+        u.startsWith('/api/treatment-records/') &&
+        o?.method === 'PATCH'
+    )!
+    // actId was set right after the POST (review #1) → PATCH targets the new id.
+    expect(patch[0]).toBe('/api/treatment-records/act-new')
+    expect(JSON.parse((patch[1] as RequestInit).body as string).status).toBe(
+      'signed'
+    )
+  })
+
+  it('clamps the displayed total to what gets billed (drop price<0, floor qty≥1)', async () => {
+    await openActAndPickService()
+    // service s1 → price 1800, qty 1 → total mirrors the billed 1800
+    expect(await screen.findByText(/1800 грн/)).toBeInTheDocument()
+
+    // A negative price is dropped from the total (never billed as a credit).
+    const price = screen.getByLabelText('admin.treatmentsPage.modal.price')
+    fireEvent.change(price, { target: { value: '-5' } })
+    expect(screen.getByText(/(^|\s)0 грн/)).toBeInTheDocument()
+
+    // qty below 1 is floored to 1 (matches linesToPayload), not zeroed.
+    fireEvent.change(price, { target: { value: '1800' } })
+    const qty = screen.getByLabelText('admin.treatmentsPage.modal.quantity')
+    fireEvent.change(qty, { target: { value: '0' } })
+    expect(screen.getByText(/1800 грн/)).toBeInTheDocument()
+  })
 })

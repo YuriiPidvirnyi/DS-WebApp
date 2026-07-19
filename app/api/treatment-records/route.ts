@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminAccess } from '@/lib/supabase/admin'
-import { hasPermission, hasAnyPermission } from '@/lib/permissions'
+import {
+  hasPermission,
+  hasAnyPermission,
+  hasDoctorScope,
+} from '@/lib/permissions'
 import {
   checkRateLimit,
   rateLimitResponse,
@@ -224,6 +228,19 @@ export async function POST(request: NextRequest) {
             'Очікується patientId, doctorId та items (масив позицій з serviceId та priceAtTime)',
         },
         { status: 400 }
+      )
+    }
+
+    // Doctor scope: a doctor may only file acts attributed to themselves —
+    // mirrors the ownership check already enforced on PATCH/DELETE so a doctor
+    // can't POST an act under another doctor's id (review #2).
+    if (
+      hasDoctorScope(auth.access!.role) &&
+      body.doctorId.trim() !== auth.access!.doctorId
+    ) {
+      return NextResponse.json(
+        { success: false, error: 'Insufficient permissions' },
+        { status: 403 }
       )
     }
 
