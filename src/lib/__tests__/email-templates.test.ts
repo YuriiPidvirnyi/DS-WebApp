@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import {
   bookingConfirmationEmail,
   appointmentReminderEmail,
@@ -129,5 +131,21 @@ describe('brand header + clinic contacts (placeholder-drift regression guard)', 
     // when a client blocks images, the alt text must stay white + bold so it
     // reads on the solid teal chip instead of defaulting to invisible dark text
     expect(html).toContain('color:#ffffff;font-size:20px;font-weight:700;')
+  })
+
+  // The Supabase Dashboard "Confirm sign up" template is a third, hand-pasted
+  // copy of the brand header + contacts (no runtime drift guard covers it).
+  // This grep-level check fails CI if it drifts back to placeholder Kyiv data.
+  it('the confirm-signup Dashboard template carries the real Lviv contacts + logo', () => {
+    const doc = readFileSync(
+      resolve(process.cwd(), 'docs/email-templates/confirm-signup.html'),
+      'utf8'
+    )
+    expect(doc).toContain('+380 68 232 38 38')
+    expect(doc).toContain('Львів')
+    expect(doc).toContain('logo-email-white.png')
+    expect(doc).not.toContain('(044)')
+    expect(doc).not.toContain('Стоматологічна')
+    expect(doc).not.toContain('Хрещатик')
   })
 })
