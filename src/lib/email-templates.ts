@@ -1,8 +1,9 @@
-import { CONTACT_INFO } from '@/utils/constants'
-
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://dentalstory.ua'
-const CLINIC_PHONE = CONTACT_INFO.phone
-const CLINIC_ADDRESS = CONTACT_INFO.address.full
+// Prod email contact literals (set by hotfix #373/#374). Kept hardcoded here to
+// stay byte-parity with the Deno edge copy (which cannot import CONTACT_INFO);
+// the src↔edge parity guard enforces they match.
+const CLINIC_PHONE = '+380 68 232 38 38'
+const CLINIC_ADDRESS = 'вулиця Сумська, 10, Львів'
 
 type Locale = 'uk' | 'en' | 'pl'
 
@@ -171,6 +172,8 @@ function baseLayout(
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="color-scheme" content="light" />
+  <meta name="supported-color-schemes" content="light" />
   <title>DentalStory</title>
   <!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->
   <style>
@@ -187,11 +190,12 @@ function baseLayout(
     <tr>
       <td align="center" style="padding:32px 16px;">
         <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
-          <!-- Header -->
+          <!-- Header — white logo on a solid teal chip: the chip isn't
+               inverted in dark mode, so the logo stays legible everywhere -->
           <tr>
-            <td align="center" style="padding:24px 0;">
-              <a href="${SITE_URL}" style="font-size:28px;font-weight:700;color:${COLORS.navy};letter-spacing:-0.5px;">
-                Dental<span style="color:${COLORS.teal};">Story</span>
+            <td align="center" style="padding:8px 0 24px;">
+              <a href="${SITE_URL}" style="display:inline-block;background-color:${COLORS.teal};border-radius:12px;padding:18px 28px;">
+                <img src="${SITE_URL}/assets/images/logo/logo-email-white.png" width="180" height="87" alt="DentalStory" style="display:block;border:0;width:180px;height:87px;color:#ffffff;font-size:20px;font-weight:700;" />
               </a>
             </td>
           </tr>

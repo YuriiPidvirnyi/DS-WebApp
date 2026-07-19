@@ -3154,15 +3154,15 @@ const pl = {
     },
     responses: {
       booking:
-        'Aby umówić wizytę, przejdź na stronę rezerwacji lub zadzwoń pod numer +38 068 232 38 38. Godziny pracy: pon.–pt. 09:00–20:00, sob. 10:00–18:00.',
+        'Aby umówić wizytę, przejdź na stronę rezerwacji lub zadzwoń pod numer +380 68 232 38 38. Pracujemy codziennie od 9:00 do 20:00.',
       prices:
         'Ceny usług znajdziesz na stronie "Usługi". Bezpłatna konsultacja dla nowych pacjentów!',
       hours:
         'Nasze godziny otwarcia:\n• Pn-Pt: 9:00 - 20:00\n• Sob: 10:00 - 18:00\n• Niedz: Zamknięte',
       contact:
-        'Nasze kontakty:\n• Telefon: +38 068 232 38 38\n• Email: info@dentalstory.ua\n• Adres: ul. Sumska 10, Lwów',
+        'Nasze dane kontaktowe:\n• Telefon: +380 68 232 38 38\n• Email: info@dentalstory.ua\n• Adres: ul. Sumska 10, Lwów',
       default:
-        'Dziękujemy za wiadomość! Nasz menedżer skontaktuje się z Tobą wkrótce. W pilnych sprawach zadzwoń: +38 068 232 38 38',
+        'Dziękujemy za wiadomość! Nasz menedżer skontaktuje się z Tobą wkrótce. Aby uzyskać szybki kontakt, zadzwoń: +380 68 232 38 38',
     },
     typing: 'Konsultant pisze…',
     minimizeChat: 'Zwiń czat',

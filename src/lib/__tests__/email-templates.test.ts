@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import {
   bookingConfirmationEmail,
   appointmentReminderEmail,
@@ -6,6 +8,7 @@ import {
   newBookingAdminEmail,
   recallEmail,
   reviewRequestEmail,
+  passwordResetEmail,
 } from '@/lib/email-templates'
 
 const bookingData = {
@@ -88,5 +91,61 @@ describe('reviewRequestEmail', () => {
     const email = reviewRequestEmail({ patientName: 'Тарас' }, 'uk')
     expect(email.html.toLowerCase()).not.toContain('подарунок')
     expect(email.html.toLowerCase()).not.toContain('curaprox')
+  })
+})
+
+describe('brand header + clinic contacts (placeholder-drift regression guard)', () => {
+  // Every email that renders through baseLayout — the transactional set plus the
+  // custom Resend recovery email (#367) — must show the real Lviv contacts, not
+  // the fake Kyiv placeholders that once shipped to prod.
+  const baseLayoutEmails = [
+    bookingConfirmationEmail(bookingData, 'uk').html,
+    appointmentReminderEmail(bookingData, 'uk').html,
+    passwordResetEmail(
+      {
+        patientName: 'Тарас',
+        resetUrl:
+          'https://dentalstory.ua/auth/confirm?token_hash=x&type=recovery',
+      },
+      'uk'
+    ).html,
+  ]
+
+  it('shows the real Lviv phone + address, never the old Kyiv placeholders', () => {
+    for (const html of baseLayoutEmails) {
+      expect(html).toContain('+380 68 232 38 38')
+      expect(html).toContain('Львів')
+      expect(html).toContain('Сумська')
+      // exact placeholders that leaked to prod before — must never reappear
+      expect(html).not.toContain('(044)')
+      expect(html).not.toContain('Стоматологічна')
+      expect(html).not.toContain('Хрещатик')
+      expect(html).not.toMatch(/123[ -]?45[ -]?67/)
+    }
+  })
+
+  it('renders the white logo with a legible alt-text fallback on the teal chip', () => {
+    const html = bookingConfirmationEmail(bookingData, 'uk').html
+    expect(html).toContain('logo-email-white.png')
+    expect(html).toContain('alt="DentalStory"')
+    // when a client blocks images, the alt text must stay white + bold so it
+    // reads on the solid teal chip instead of defaulting to invisible dark text
+    expect(html).toContain('color:#ffffff;font-size:20px;font-weight:700;')
+  })
+
+  // The Supabase Dashboard "Confirm sign up" template is a third, hand-pasted
+  // copy of the brand header + contacts (no runtime drift guard covers it).
+  // This grep-level check fails CI if it drifts back to placeholder Kyiv data.
+  it('the confirm-signup Dashboard template carries the real Lviv contacts + logo', () => {
+    const doc = readFileSync(
+      resolve(process.cwd(), 'docs/email-templates/confirm-signup.html'),
+      'utf8'
+    )
+    expect(doc).toContain('+380 68 232 38 38')
+    expect(doc).toContain('Львів')
+    expect(doc).toContain('logo-email-white.png')
+    expect(doc).not.toContain('(044)')
+    expect(doc).not.toContain('Стоматологічна')
+    expect(doc).not.toContain('Хрещатик')
   })
 })

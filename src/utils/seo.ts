@@ -71,6 +71,9 @@ export function generateOrganizationSchema(): MedicalBusiness {
     name: uk.common.brandName,
     url: 'https://dentalstory.ua',
     logo: 'https://dentalstory.ua/logo.png',
+    // Single source of truth for clinic contact data — see CONTACT_INFO in
+    // src/utils/constants.ts. Do NOT re-hardcode phone/address/geo/socials here;
+    // that drift is exactly what shipped placeholder Kyiv data to prod before.
     telephone: CONTACT_INFO.phone,
     email: CONTACT_INFO.email,
     address: {
@@ -96,7 +99,11 @@ export function generateOrganizationSchema(): MedicalBusiness {
       'Implantology',
     ],
     acceptedPaymentMethod: ['Cash', 'CreditCard', 'BankTransfer'],
-    sameAs: [CONTACT_INFO.social.facebook, CONTACT_INFO.social.instagram],
+    sameAs: [
+      CONTACT_INFO.social.facebook,
+      CONTACT_INFO.social.instagram,
+      CONTACT_INFO.social.telegram,
+    ],
   }
 }
 
