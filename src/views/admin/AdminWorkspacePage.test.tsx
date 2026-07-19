@@ -71,6 +71,19 @@ const APPTS = [
     status: 'pending',
     services: { name_uk: 'Консультація' },
   },
+  {
+    // Patient booking with no assigned doctor — used for the noDoctorError path.
+    id: 'a3',
+    patient_id: 'p3',
+    doctor_id: null,
+    patient_name: 'Пацієнт Без Лікаря',
+    guest_name: null,
+    appointment_date: '2026-07-19',
+    appointment_time: '13:00:00',
+    duration_minutes: 30,
+    status: 'confirmed',
+    services: { name_uk: 'Огляд' },
+  },
 ]
 const SERVICES = [{ id: 's1', name_uk: 'Професійна гігієна', price_uah: 1800 }]
 
@@ -187,6 +200,30 @@ describe('AdminWorkspacePage (2e doctor workstation)', () => {
     expect(
       screen.queryByText('admin.workspacePage.saveDraft')
     ).not.toBeInTheDocument()
+  })
+
+  it('bails with a clear error instead of POSTing an empty doctorId (review #4)', async () => {
+    // Non-doctor admin opens a patient booking that has no assigned doctor.
+    mockUser = { ...admin }
+    render(<AdminWorkspacePage />)
+    fireEvent.click(await screen.findByText('Пацієнт Без Лікаря'))
+    await waitFor(() =>
+      expect(
+        screen.getByText('admin.workspacePage.saveDraft')
+      ).toBeInTheDocument()
+    )
+    fireEvent.click(screen.getByText('admin.workspacePage.saveDraft'))
+    // Surfaces noDoctorError and never POSTs an act with an empty doctor_id.
+    await waitFor(() =>
+      expect(showError).toHaveBeenCalledWith(
+        'admin.workspacePage.noDoctorError'
+      )
+    )
+    expect(
+      (
+        global.fetch as unknown as { mock: { calls: [string, RequestInit?][] } }
+      ).mock.calls.some(([, o]) => o?.method === 'POST')
+    ).toBe(false)
   })
 
   // A method-aware fetch: the openAct lookup (GET) yields no existing act, POST
