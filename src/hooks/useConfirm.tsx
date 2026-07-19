@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, useCallback, useRef, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import {
   ConfirmDialog,
   type ConfirmDialogProps,
@@ -44,6 +44,15 @@ export function useConfirm() {
     resolveRef.current?.(confirmed)
     resolveRef.current = null
     setOptions(null)
+  }, [])
+
+  // If the host unmounts with a dialog still open, resolve the pending promise
+  // as "cancelled" so the awaiting caller doesn't hang forever.
+  useEffect(() => {
+    return () => {
+      resolveRef.current?.(false)
+      resolveRef.current = null
+    }
   }, [])
 
   const confirmDialog: ReactNode = options ? (

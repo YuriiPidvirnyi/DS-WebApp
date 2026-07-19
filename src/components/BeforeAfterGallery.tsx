@@ -61,6 +61,7 @@ function CasePhoto({
       <img
         src={src}
         alt={label}
+        loading="lazy"
         className="absolute inset-0 h-full w-full object-cover"
         draggable={false}
       />
@@ -101,6 +102,9 @@ function ComparisonSlider({
   const moveTo = useCallback((clientX: number) => {
     if (!containerRef.current) return
     const rect = containerRef.current.getBoundingClientRect()
+    // Layout race (e.g. dragging during an entrance transition) can yield a
+    // zero-width rect → NaN position; bail so aria-valuenow/width stay valid.
+    if (!rect.width) return
     const pct = ((clientX - rect.left) / rect.width) * 100
     setPosition(Math.min(Math.max(pct, 0), 100))
   }, [])
@@ -124,10 +128,14 @@ function ComparisonSlider({
   useEffect(() => {
     if (!isDragging) return
     const onMove = (e: MouseEvent) => moveTo(e.clientX)
-    const onTouch = (e: TouchEvent) => moveTo(e.touches[0].clientX)
+    const onTouch = (e: TouchEvent) => {
+      // Non-passive so we can stop the drag from scrolling the page on touch.
+      e.preventDefault()
+      moveTo(e.touches[0].clientX)
+    }
     const onEnd = () => setIsDragging(false)
     window.addEventListener('mousemove', onMove)
-    window.addEventListener('touchmove', onTouch)
+    window.addEventListener('touchmove', onTouch, { passive: false })
     window.addEventListener('mouseup', onEnd)
     window.addEventListener('touchend', onEnd)
     return () => {
@@ -181,7 +189,7 @@ function ComparisonSlider({
           onKeyDown={onKeyDown}
           onMouseDown={() => setIsDragging(true)}
           onTouchStart={() => setIsDragging(true)}
-          className="pointer-events-auto absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize items-center justify-center rounded-full bg-white shadow-[0_6px_18px_rgba(20,28,30,0.3)] focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2"
+          className="pointer-events-auto absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize touch-none items-center justify-center rounded-full bg-white shadow-[0_6px_18px_rgba(20,28,30,0.3)] focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500 focus:ring-offset-2"
         >
           <ChevronsLeftRight className="h-5.5 w-5.5 text-dental-primary-600" />
         </button>
