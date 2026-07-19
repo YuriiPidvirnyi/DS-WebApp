@@ -152,21 +152,12 @@ export default tseslint.config(
       'src/views/admin/AdminIntakePrintPage.tsx',
       'src/views/admin/AdminTreatmentPrintPage.tsx',
       'src/views/promo/**',
-      // Легасі-сторінки, заплановані на Ф-2.
+      // Серверний компонент — i18next-хук недоступний; потребує окремого
+      // серверного підходу до i18n (STATUS_LABELS/MODE_LABELS + заголовки).
       'app/cabinet/payments/page.tsx',
-      'app/booking/payment-result/page.tsx',
-      'app/auth/reset-password/page.tsx',
-      'app/auth/confirm/page.tsx',
-      'app/auth/callback/page.tsx',
-      'app/auth/forgot-password/page.tsx',
+      // global-error замінює кореневий layout — i18n-провайдера в цій області
+      // немає, тож t() тут не працює (останній рубіж на випадок збою).
       'app/global-error.tsx',
-      'app/cabinet/error.tsx',
-      'src/views/About.tsx',
-      'src/components/cabinet/WalletCards.tsx',
-      'src/components/MonoPayButton.tsx',
-      'src/components/AccessibilityPanel.tsx',
-      'src/views/admin/AdminEmailTemplatesPage.tsx',
-      'src/views/admin/AdminMaterialsPage.tsx',
       '**/*.test.tsx',
     ],
     rules: {

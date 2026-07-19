@@ -573,6 +573,11 @@ const pl = {
         },
       },
     },
+    experience: {
+      one: '{{years}} rok doświadczenia',
+      few: '{{years}} lata doświadczenia',
+      many: '{{years}} lat doświadczenia',
+    },
   },
   testimonials: {
     title: 'Opinie naszych pacjentów',
@@ -2257,6 +2262,14 @@ const pl = {
         active: 'Aktywny',
         inactive: 'Nieaktywny',
       },
+      units: {
+        шт: 'szt.',
+        мл: 'ml',
+        г: 'g',
+        упак: 'opak.',
+        пара: 'para',
+        набір: 'zestaw',
+      },
     },
     ordersPage: {
       title: 'Zamowienia materialow',
@@ -3043,6 +3056,15 @@ const pl = {
       draftSaved: 'Szkic zapisany',
       actSigned: 'Akt podpisany',
       needServices: 'Dodaj co najmniej jedną usługę, aby podpisać akt.',
+    },
+    emailTemplatesPage: {
+      tabs: {
+        confirmation: 'Potwierdzenie rezerwacji',
+        reminder: 'Przypomnienie',
+        cancellation: 'Anulowanie',
+        admin: 'Nowa rezerwacja (admin)',
+      },
+      subjectLabel: 'Temat',
     },
   },
   auth: {
@@ -4200,6 +4222,35 @@ const pl = {
     consequencesTitle: 'Razem z tym znikną',
     typeToConfirm: 'Aby potwierdzić, wpisz',
     irreversibleWarning: 'Tej akcji nie można cofnąć.',
+  },
+  payments: {
+    result: {
+      checkingStatus: 'Sprawdzanie statusu płatności...',
+      pleaseWait: 'Proszę czekać',
+      successTitle: 'Płatność została pomyślnie odebrana!',
+      successDescription: 'Dziękujemy! Twoja wizyta została potwierdzona.',
+      viewPayments: 'Zobacz płatności',
+      failedTitle: 'Płatność nie została zakończona',
+      failedDescription:
+        'Nie udało się przetworzyć płatności. Spróbuj ponownie lub skontaktuj się z nami.',
+      tryAgain: 'Spróbuj ponownie',
+      contactUs: 'Skontaktuj się z nami',
+      timeoutTitle: 'Przetwarzanie płatności...',
+      timeoutDescription:
+        'Może to potrwać kilka minut. Twoja płatność pojawi się w gabinecie po przetworzeniu przez bank.',
+      goToCabinet: 'Przejdź do gabinetu',
+    },
+    monoButton: {
+      successMessage: 'Płatność zakończona pomyślnie',
+      paymentError: 'Błąd płatności',
+      loading: 'Ładowanie...',
+      processing: 'Przetwarzanie...',
+    },
+  },
+  walletCards: {
+    title: 'Zapisane karty',
+    deleteError: 'Nie udało się usunąć karty',
+    deleteAria: 'Usuń kartę',
   },
 } as const
 

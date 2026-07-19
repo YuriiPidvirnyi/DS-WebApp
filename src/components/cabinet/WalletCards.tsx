@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { CreditCard, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export interface WalletCard {
   id: string
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export function WalletCards({ initialCards }: Props) {
+  const { t } = useTranslation()
   const [cards, setCards] = useState<WalletCard[]>(initialCards)
   const [deleting, setDeleting] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -30,12 +32,12 @@ export function WalletCards({ initialCards }: Props) {
       )
       if (!res.ok) {
         const data = (await res.json()) as { error?: string }
-        setError(data.error ?? 'Не вдалося видалити картку')
+        setError(data.error ?? t('walletCards.deleteError'))
         return
       }
       setCards(prev => prev.filter(c => c.card_token !== cardToken))
     } catch {
-      setError('Не вдалося видалити картку')
+      setError(t('walletCards.deleteError'))
     } finally {
       setDeleting(null)
     }
@@ -46,7 +48,7 @@ export function WalletCards({ initialCards }: Props) {
   return (
     <section className="mb-8">
       <h2 className="text-lg font-semibold text-dental-dark mb-3">
-        Збережені картки
+        {t('walletCards.title')}
       </h2>
       <div className="bg-white rounded-2xl shadow-xs border border-dental-secondary-100 divide-y divide-dental-secondary-100">
         {cards.map(card => (
@@ -65,7 +67,7 @@ export function WalletCards({ initialCards }: Props) {
             <button
               onClick={() => handleDelete(card.card_token)}
               disabled={deleting === card.card_token}
-              aria-label="Видалити картку"
+              aria-label={t('walletCards.deleteAria')}
               className="shrink-0 p-2 rounded-lg text-dental-muted hover:text-status-error-700 hover:bg-status-error-100 disabled:opacity-40 transition-colors"
             >
               <Trash2 className="w-4 h-4" />

@@ -572,6 +572,11 @@ const uk = {
         },
       },
     },
+    experience: {
+      one: '{{years}} рік досвіду',
+      few: '{{years}} роки досвіду',
+      many: '{{years}} років досвіду',
+    },
   },
   testimonials: {
     title: 'Відгуки наших пацієнтів',
@@ -2381,6 +2386,14 @@ const uk = {
         active: 'Активний',
         inactive: 'Неактивний',
       },
+      units: {
+        шт: 'шт',
+        мл: 'мл',
+        г: 'г',
+        упак: 'упак',
+        пара: 'пара',
+        набір: 'набір',
+      },
     },
     ordersPage: {
       title: 'Замовлення матеріалів',
@@ -3162,6 +3175,15 @@ const uk = {
       draftSaved: 'Чернетку збережено',
       actSigned: 'Акт підписано',
       needServices: 'Додайте хоча б одну послугу, щоб підписати акт.',
+    },
+    emailTemplatesPage: {
+      tabs: {
+        confirmation: 'Підтвердження бронювання',
+        reminder: 'Нагадування',
+        cancellation: 'Скасування',
+        admin: 'Нове бронювання (адмін)',
+      },
+      subjectLabel: 'Тема',
     },
   },
   auth: {
@@ -4185,6 +4207,35 @@ const uk = {
     consequencesTitle: 'Разом із цим зникнуть',
     typeToConfirm: 'Щоб підтвердити, введіть',
     irreversibleWarning: 'Дію не можна скасувати.',
+  },
+  payments: {
+    result: {
+      checkingStatus: 'Перевіряємо статус оплати...',
+      pleaseWait: 'Зачекайте, будь ласка',
+      successTitle: 'Оплату успішно отримано!',
+      successDescription: 'Дякуємо! Ваш запис підтверджено.',
+      viewPayments: 'Переглянути платежі',
+      failedTitle: 'Оплату не завершено',
+      failedDescription:
+        "Платіж не вдалося обробити. Спробуйте ще раз або зв'яжіться з нами.",
+      tryAgain: 'Спробувати ще раз',
+      contactUs: "Зв'язатися з нами",
+      timeoutTitle: 'Обробляємо платіж...',
+      timeoutDescription:
+        'Це може зайняти кілька хвилин. Ваш платіж буде відображено в кабінеті після обробки банком.',
+      goToCabinet: 'Перейти до кабінету',
+    },
+    monoButton: {
+      successMessage: 'Оплату успішно здійснено',
+      paymentError: 'Помилка оплати',
+      loading: 'Завантаження...',
+      processing: 'Обробка...',
+    },
+  },
+  walletCards: {
+    title: 'Збережені картки',
+    deleteError: 'Не вдалося видалити картку',
+    deleteAria: 'Видалити картку',
   },
 } as const
 

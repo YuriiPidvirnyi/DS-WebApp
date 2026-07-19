@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Mail } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import {
   bookingConfirmationEmail,
   appointmentReminderEmail,
@@ -27,13 +28,6 @@ interface Tab {
   id: TabId
   label: string
 }
-
-const TABS: Tab[] = [
-  { id: 'confirmation', label: 'Підтвердження бронювання' },
-  { id: 'reminder', label: 'Нагадування' },
-  { id: 'cancellation', label: 'Скасування' },
-  { id: 'admin', label: 'Нове бронювання (адмін)' },
-]
 
 function getTemplateForTab(tabId: TabId): { subject: string; html: string } {
   switch (tabId) {
@@ -77,7 +71,21 @@ function getTemplateForTab(tabId: TabId): { subject: string; html: string } {
 }
 
 export default function AdminEmailTemplatesPage() {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState<TabId>('confirmation')
+
+  const TABS: Tab[] = [
+    {
+      id: 'confirmation',
+      label: t('admin.emailTemplatesPage.tabs.confirmation'),
+    },
+    { id: 'reminder', label: t('admin.emailTemplatesPage.tabs.reminder') },
+    {
+      id: 'cancellation',
+      label: t('admin.emailTemplatesPage.tabs.cancellation'),
+    },
+    { id: 'admin', label: t('admin.emailTemplatesPage.tabs.admin') },
+  ]
 
   const { subject, html } = getTemplateForTab(activeTab)
 
@@ -113,7 +121,9 @@ export default function AdminEmailTemplatesPage() {
       </div>
 
       <div className="space-y-3">
-        <p className="text-sm font-medium text-dental-text">Тема: {subject}</p>
+        <p className="text-sm font-medium text-dental-text">
+          {t('admin.emailTemplatesPage.subjectLabel')}: {subject}
+        </p>
         <iframe
           srcDoc={html}
           className="w-full border border-dental-secondary-200 rounded-xl"

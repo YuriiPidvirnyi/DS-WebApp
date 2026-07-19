@@ -572,6 +572,11 @@ const en = {
         },
       },
     },
+    experience: {
+      one: '{{years}} year of experience',
+      few: '{{years}} years of experience',
+      many: '{{years}} years of experience',
+    },
   },
   testimonials: {
     title: 'Patient Reviews',
@@ -2252,6 +2257,14 @@ const en = {
         active: 'Active',
         inactive: 'Inactive',
       },
+      units: {
+        шт: 'pcs',
+        мл: 'ml',
+        г: 'g',
+        упак: 'pack',
+        пара: 'pair',
+        набір: 'set',
+      },
     },
     ordersPage: {
       title: 'Material Orders',
@@ -3035,6 +3048,15 @@ const en = {
       draftSaved: 'Draft saved',
       actSigned: 'Act signed',
       needServices: 'Add at least one service to sign the act.',
+    },
+    emailTemplatesPage: {
+      tabs: {
+        confirmation: 'Booking confirmation',
+        reminder: 'Reminder',
+        cancellation: 'Cancellation',
+        admin: 'New booking (admin)',
+      },
+      subjectLabel: 'Subject',
     },
   },
   auth: {
@@ -4179,6 +4201,35 @@ const en = {
     consequencesTitle: 'This will also remove',
     typeToConfirm: 'To confirm, type',
     irreversibleWarning: 'This action cannot be undone.',
+  },
+  payments: {
+    result: {
+      checkingStatus: 'Checking payment status...',
+      pleaseWait: 'Please wait',
+      successTitle: 'Payment received successfully!',
+      successDescription: 'Thank you! Your appointment is confirmed.',
+      viewPayments: 'View payments',
+      failedTitle: 'Payment not completed',
+      failedDescription:
+        'The payment could not be processed. Please try again or contact us.',
+      tryAgain: 'Try again',
+      contactUs: 'Contact us',
+      timeoutTitle: 'Processing payment...',
+      timeoutDescription:
+        'This may take a few minutes. Your payment will appear in your cabinet once processed by the bank.',
+      goToCabinet: 'Go to cabinet',
+    },
+    monoButton: {
+      successMessage: 'Payment completed successfully',
+      paymentError: 'Payment error',
+      loading: 'Loading...',
+      processing: 'Processing...',
+    },
+  },
+  walletCards: {
+    title: 'Saved cards',
+    deleteError: 'Failed to delete card',
+    deleteAria: 'Delete card',
   },
 } as const
 

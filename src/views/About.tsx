@@ -8,17 +8,17 @@ import { getDoctors, type Doctor } from '@/services/doctors'
 import AnimatedCard from '@/components/ui/AnimatedCard'
 import { Card, CardMedia } from '@/components/ui'
 
-function experienceLabel(years: number): string {
-  const mod10 = years % 10
-  const mod100 = years % 100
-  if (mod100 >= 11 && mod100 <= 19) return `${years} років досвіду`
-  if (mod10 === 1) return `${years} рік досвіду`
-  if (mod10 >= 2 && mod10 <= 4) return `${years} роки досвіду`
-  return `${years} років досвіду`
-}
-
 const About = () => {
   const { t } = useTranslation()
+  const experienceLabel = (years: number): string => {
+    const mod10 = years % 10
+    const mod100 = years % 100
+    if (mod100 >= 11 && mod100 <= 19)
+      return t('about.experience.many', { years })
+    if (mod10 === 1) return t('about.experience.one', { years })
+    if (mod10 >= 2 && mod10 <= 4) return t('about.experience.few', { years })
+    return t('about.experience.many', { years })
+  }
   const [doctors, setDoctors] = useState<Doctor[]>([])
   const [doctorsLoading, setDoctorsLoading] = useState(true)
 
