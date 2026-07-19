@@ -263,7 +263,7 @@ const Header = memo(() => {
         {/* Телефон і години не зникають на телефоні (знахідка М1) */}
         <a
           href={`tel:${CONTACT_INFO.phoneRaw}`}
-          className="sm:hidden flex min-h-10 items-center justify-center gap-4 bg-dental-primary-50 border-y border-dental-primary-100 text-[13px]"
+          className="sm:hidden flex min-h-11 items-center justify-center gap-4 bg-dental-primary-50 border-y border-dental-primary-100 text-[13px]"
         >
           <span className="flex items-center gap-1.5 font-semibold text-dental-primary-ink">
             <Phone className="h-3.5 w-3.5" aria-hidden="true" />

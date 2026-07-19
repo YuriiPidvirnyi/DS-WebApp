@@ -1,5 +1,6 @@
 'use client'
 
+import { useRef, type KeyboardEvent } from 'react'
 import { type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import clsx from 'clsx'
@@ -37,6 +38,46 @@ export default function BookingStepService({
   } = form
 
   const selectedTime = watch('time')
+  const slotRefs = useRef<Array<HTMLButtonElement | null>>([])
+
+  const selectSlot = (slot: string) =>
+    setValue('time', slot, { shouldValidate: true, shouldDirty: true })
+
+  // WAI-ARIA radiogroup keyboard pattern: arrows move focus AND selection
+  // (with wrap), Home/End jump to the ends. Combined with the roving tabindex
+  // below, the group is a single Tab stop.
+  const onSlotKeyDown = (
+    e: KeyboardEvent<HTMLButtonElement>,
+    index: number
+  ) => {
+    let next: number
+    switch (e.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        next = (index + 1) % slots.length
+        break
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        next = (index - 1 + slots.length) % slots.length
+        break
+      case 'Home':
+        next = 0
+        break
+      case 'End':
+        next = slots.length - 1
+        break
+      default:
+        return
+    }
+    e.preventDefault()
+    selectSlot(slots[next])
+    slotRefs.current[next]?.focus()
+  }
+
+  // Roving tabindex: the checked slot is the tab stop; if none is picked yet,
+  // the first slot is, so keyboard users always enter the group in one Tab.
+  const selectedIndex = slots.indexOf(selectedTime)
+  const activeIndex = selectedIndex === -1 ? 0 : selectedIndex
 
   return (
     <>
@@ -87,22 +128,24 @@ export default function BookingStepService({
           <div
             role="radiogroup"
             aria-labelledby="time-label"
+            aria-invalid={errors.time ? true : undefined}
+            aria-describedby={errors.time ? 'time-error' : undefined}
             className="flex flex-wrap gap-2"
           >
-            {slots.map(slot => {
+            {slots.map((slot, index) => {
               const selected = selectedTime === slot
               return (
                 <button
                   key={slot}
+                  ref={el => {
+                    slotRefs.current[index] = el
+                  }}
                   type="button"
                   role="radio"
                   aria-checked={selected}
-                  onClick={() =>
-                    setValue('time', slot, {
-                      shouldValidate: true,
-                      shouldDirty: true,
-                    })
-                  }
+                  tabIndex={index === activeIndex ? 0 : -1}
+                  onClick={() => selectSlot(slot)}
+                  onKeyDown={e => onSlotKeyDown(e, index)}
                   className={clsx(
                     'min-h-11 rounded-full px-4.5 text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-offset-1 focus:ring-dental-primary-300',
                     selected
@@ -117,7 +160,11 @@ export default function BookingStepService({
           </div>
         )}
         {errors.time?.message && (
-          <p className="mt-2 text-sm text-dental-error" role="alert">
+          <p
+            id="time-error"
+            className="mt-2 text-sm text-dental-error"
+            role="alert"
+          >
             {errors.time.message}
           </p>
         )}

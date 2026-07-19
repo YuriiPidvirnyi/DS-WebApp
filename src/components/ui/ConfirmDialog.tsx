@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, useEffect, useId, useState } from 'react'
+import { ReactNode, useEffect, useId, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AlertTriangle, OctagonAlert } from 'lucide-react'
 import { useFocusTrap } from '@/hooks/useFocusTrap'
@@ -53,6 +53,7 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   const { t } = useTranslation()
   const containerRef = useFocusTrap<HTMLDivElement>(open, onClose)
+  const inputRef = useRef<HTMLInputElement>(null)
   const [typed, setTyped] = useState('')
   const titleId = useId()
   const descriptionId = useId()
@@ -61,6 +62,18 @@ export function ConfirmDialog({
   useEffect(() => {
     if (open) setTyped('')
   }, [open])
+
+  // Move initial focus into the dialog on open. useFocusTrap only traps Tab and
+  // restores focus on close — it does NOT set initial focus, so without this
+  // focus stays stranded on the trigger behind the modal. Focus the typing input
+  // when required; otherwise the dialog container itself (APG alertdialog pattern
+  // — the first Tab then lands on the least-destructive Cancel action).
+  useEffect(() => {
+    if (!open) return
+    const needsTyping = severity === 'irreversible' && !!confirmationWord
+    if (needsTyping) inputRef.current?.focus()
+    else containerRef.current?.focus()
+  }, [open, severity, confirmationWord, containerRef])
 
   if (!open) return null
 
@@ -83,7 +96,8 @@ export function ConfirmDialog({
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={description ? descriptionId : undefined}
-        className="w-full max-w-md overflow-hidden rounded-md bg-white shadow-2xl"
+        tabIndex={-1}
+        className="w-full max-w-md overflow-hidden rounded-md bg-white shadow-2xl focus:outline-hidden"
       >
         <div className="p-7 pb-5">
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-status-error-100">
@@ -107,7 +121,7 @@ export function ConfirmDialog({
 
           {consequences && consequences.length > 0 && (
             <div className="mt-4 rounded-xl border border-dental-secondary-200 bg-dental-secondary-50 px-4 py-3.5">
-              <p className="mb-2 text-xs font-semibold tracking-wider text-dental-secondary-500 uppercase">
+              <p className="mb-2 text-xs font-semibold tracking-wider text-dental-muted uppercase">
                 {t('confirmDialog.consequencesTitle')}
               </p>
               <ul className="space-y-1.5 text-sm text-dental-text">
@@ -146,6 +160,7 @@ export function ConfirmDialog({
                 <strong className="text-dental-dark">{confirmationWord}</strong>
               </label>
               <input
+                ref={inputRef}
                 id={`${titleId}-confirm-input`}
                 type="text"
                 value={typed}

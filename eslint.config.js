@@ -124,13 +124,13 @@ export default tseslint.config(
         'error',
         {
           selector:
-            'Literal[value=/(^|[\\s:\'"`(!])(bg|text|border|ring|from|to|via|fill|stroke|divide|outline|decoration|accent|caret|placeholder)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-[0-9]/]',
+            'Literal[value=/(^|[\\s:\'"`(!])(bg|text|border-[trblxyse]|border|ring-offset|ring|shadow|from|to|via|fill|stroke|divide|outline|decoration|accent|caret|placeholder)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-[0-9]/]',
           message:
             'Сирі Tailwind-кольори заборонені (Ф-1): використовуйте токени dental-* / status-* / role-* з globals.css.',
         },
         {
           selector:
-            'TemplateElement[value.raw=/(^|[\\s:\'"`(!])(bg|text|border|ring|from|to|via|fill|stroke|divide|outline|decoration|accent|caret|placeholder)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-[0-9]/]',
+            'TemplateElement[value.raw=/(^|[\\s:\'"`(!])(bg|text|border-[trblxyse]|border|ring-offset|ring|shadow|from|to|via|fill|stroke|divide|outline|decoration|accent|caret|placeholder)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-[0-9]/]',
           message:
             'Сирі Tailwind-кольори заборонені (Ф-1): використовуйте токени dental-* / status-* / role-* з globals.css.',
         },
@@ -180,13 +180,13 @@ export default tseslint.config(
         'error',
         {
           selector:
-            'Literal[value=/(^|[\\s:\'"`(!])(bg|text|border|ring|from|to|via|fill|stroke|divide|outline|decoration|accent|caret|placeholder)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-[0-9]/]',
+            'Literal[value=/(^|[\\s:\'"`(!])(bg|text|border-[trblxyse]|border|ring-offset|ring|shadow|from|to|via|fill|stroke|divide|outline|decoration|accent|caret|placeholder)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-[0-9]/]',
           message:
             'Сирі Tailwind-кольори заборонені (Ф-1): використовуйте токени dental-* / status-* / role-* з globals.css.',
         },
         {
           selector:
-            'TemplateElement[value.raw=/(^|[\\s:\'"`(!])(bg|text|border|ring|from|to|via|fill|stroke|divide|outline|decoration|accent|caret|placeholder)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-[0-9]/]',
+            'TemplateElement[value.raw=/(^|[\\s:\'"`(!])(bg|text|border-[trblxyse]|border|ring-offset|ring|shadow|from|to|via|fill|stroke|divide|outline|decoration|accent|caret|placeholder)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-[0-9]/]',
           message:
             'Сирі Tailwind-кольори заборонені (Ф-1): використовуйте токени dental-* / status-* / role-* з globals.css.',
         },
@@ -200,6 +200,14 @@ export default tseslint.config(
           selector: 'JSXText[value=/[А-Яа-яЄєІіЇїҐґ]/]',
           message:
             'Захардкоджений текст у JSX заборонено (Ф-2): винесіть рядок у словник i18n і використовуйте t().',
+        },
+        {
+          // JSXText не покриває значення атрибутів — placeholder/title/alt/aria-*
+          // теж рендеряться користувачу й мають іти через t().
+          selector:
+            'JSXAttribute[name.name=/^(placeholder|title|alt|aria-label|aria-description|aria-placeholder|aria-valuetext|aria-roledescription)$/] > Literal[value=/[А-Яа-яЄєІіЇїҐґ]/]',
+          message:
+            'Захардкоджений кириличний текст в атрибуті JSX заборонено (Ф-2): винесіть рядок у словник i18n і використовуйте t().',
         },
       ],
     },

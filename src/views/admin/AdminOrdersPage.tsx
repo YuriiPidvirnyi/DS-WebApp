@@ -151,6 +151,14 @@ const PATCH_ACTS: PatchAct[] = [
     label: 'admin.ordersPage.actions.cancel',
   },
 ]
+// Transitions the API gates behind orders:approve (must match APPROVAL_STATUSES
+// in app/api/material-orders/[id]/route.ts). The UI hides these buttons for roles
+// without the permission so they never click an action the API will 403.
+const APPROVAL_STATUSES = new Set<OrderStatus>([
+  'approved',
+  'ordered',
+  'delivered',
+])
 const mname = (m: OrderItem['materials']) =>
   !m ? '—' : m.name_uk?.trim() || m.name_en?.trim() || m.name_pl?.trim() || '—'
 const grid =
@@ -632,7 +640,9 @@ export default function AdminOrdersPage() {
                           </Button>
                         )}
                       {flow
-                        .filter(a => a.next !== 'approved' || canApprove)
+                        .filter(
+                          a => !APPROVAL_STATUSES.has(a.next) || canApprove
+                        )
                         .map(a => (
                           <Button
                             key={`${a.from}-${a.next}`}
