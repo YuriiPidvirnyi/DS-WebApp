@@ -20,23 +20,23 @@ Anything marked **🟥 BLOCKER** must ship before the public launch. **🟧 HIGH
 
 ### 1.1 What is actually shipped and solid
 
-| Area                                                                                                           | Status                                                | Evidence                                                                           |
-| -------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| Public site (Home, About, Services, Gallery, Reviews, Contact, Privacy, Terms)                                 | ✅ Complete                                           | `src/views/`, all routed in `app/`                                                 |
-| Multi-step booking flow + Turnstile + CSRF                                                                     | ✅ Complete                                           | `src/components/booking/`, `useBookingForm.ts`, `app/api/appointments/`            |
-| Patient cabinet shell (appointments, profile, treatments, history, reviews)                                    | ✅ Structurally complete                              | `app/cabinet/**`                                                                   |
-| 14-page admin panel + 10-role RBAC (reduced to 8 after `20260409_remove_senior_assistant_and_staff_roles.sql`) | ✅ Complete                                           | `app/admin/**`, `src/lib/permissions.ts`, 23 migrations                            |
-| Treatment records / materials / material orders workflows                                                      | ✅ Complete                                           | `app/api/treatment-records/`, `app/api/materials/`, `app/api/material-orders/`     |
-| Live chat (patient ↔ admin) over Supabase Realtime                                                             | ✅ Complete                                           | `useAdminChat`, `useLiveChat`, RLS migration `20260408_chat_role_based_access.sql` |
-| AI symptom checker + AI chat (Vercel AI SDK v6)                                                                | ✅ Wired, but ungoverned (no cost cap)                | `app/api/ai/`, `app/symptom-checker/`                                              |
-| i18n in uk / en / pl, ~3000 keys per locale, lazy-loaded                                                       | ✅ Complete, no key drift                             | `src/locales/{uk,en,pl}.json`, `app/i18n-provider.tsx`                             |
-| Auth: Supabase SSR (patients) + admin auth via Supabase + RLS                                                  | ✅ Hardened (no longer "demo client-side only")       | `src/lib/supabase/`, `AdminAuthContext`                                            |
-| Security: CSP with nonce, HSTS, X-Frame-Options, Permissions-Policy, rate limit, Turnstile, DOMPurify, CSRF    | ✅ Complete                                           | `proxy.ts` (Next.js 16 `middleware.ts` is renamed to `proxy.ts`)                   |
-| Cron jobs: notifications (5 min), reminders (daily 18:00), low-stock (weekday 08:00)                           | ✅ Wired in `vercel.json`                             | `app/api/cron/`, `vercel.json`                                                     |
-| Sentry (client+server+edge) with `/monitoring` tunnel and Vercel Cron auto-monitors                            | ✅ Complete                                           | `instrumentation.ts`, `sentry.*.config.ts`, `next.config.ts`                       |
-| PWA via @ducanh2912/next-pwa with multi-strategy Workbox cache                                                 | ✅ Complete                                           | `next.config.ts`                                                                   |
-| RLS fix for doctor patient scope (originally flagged during RBAC audit; superseded by v2)                      | ✅ Hardened in `20260417_fix_doctor_scope_rls_v2.sql` | `supabase/migrations/20260417_fix_doctor_scope_rls_v2.sql` (v1 superseded)         |
-| Audit log table for admin actions                                                                              | ✅ Migration shipped                                  | `supabase/migrations/20260321_admin_audit_and_restore.sql`                         |
+| Area                                                                                                                       | Status                                                  | Evidence                                                                               |
+| -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Public site (Home, About, Services, Gallery, Reviews, Contact, Privacy, Terms)                                             | ✅ Complete                                             | `src/views/`, all routed in `app/`                                                     |
+| Multi-step booking flow + Turnstile + CSRF                                                                                 | ✅ Complete                                             | `src/components/booking/`, `useBookingForm.ts`, `app/api/appointments/`                |
+| Patient cabinet shell (appointments, profile, treatments, history, reviews)                                                | ✅ Structurally complete                                | `app/cabinet/**`                                                                       |
+| 14-page admin panel + 10-role RBAC (reduced to 8 after `20260409_remove_senior_assistant_and_staff_roles.sql`)             | ✅ Complete                                             | `app/admin/**`, `src/lib/permissions.ts`, 23 migrations                                |
+| Treatment records / materials / material orders workflows                                                                  | ✅ Complete                                             | `app/api/treatment-records/`, `app/api/materials/`, `app/api/material-orders/`         |
+| Live chat (patient ↔ admin) over Supabase Realtime                                                                         | ✅ Complete                                             | `useAdminChat`, `useLiveChat`, RLS migration `20260408_chat_role_based_access.sql`     |
+| AI symptom checker + AI chat (Vercel AI SDK v6)                                                                            | ✅ Wired, but ungoverned (no cost cap)                  | `app/api/ai/`, `app/symptom-checker/`                                                  |
+| i18n in uk / en / pl, ~3000 keys per locale, lazy-loaded                                                                   | ✅ Complete, no key drift                               | `src/locales/{uk,en,pl}.json`, `app/i18n-provider.tsx`                                 |
+| Auth: Supabase SSR (patients) + admin auth via Supabase + RLS                                                              | ✅ Hardened (no longer "demo client-side only")         | `src/lib/supabase/`, `AdminAuthContext`                                                |
+| Security: CSP with nonce, HSTS, X-Frame-Options, Permissions-Policy, rate limit, Turnstile, DOMPurify, CSRF                | ✅ Complete                                             | `proxy.ts` (Next.js 16 `middleware.ts` is renamed to `proxy.ts`)                       |
+| Scheduled jobs: notifications (5 min), reminders (18:00), recall (18:10), low-stock (weekday 08:00), stock-metrics (21:55) | ✅ Supabase `pg_cron` + `process-notifications` edge fn | `supabase/migrations/20260718_cron_*.sql`, `supabase/functions/process-notifications/` |
+| Sentry (client+server+edge) with `/monitoring` tunnel                                                                      | ✅ Complete                                             | `instrumentation.ts`, `sentry.*.config.ts`, `next.config.ts`                           |
+| PWA via @ducanh2912/next-pwa with multi-strategy Workbox cache                                                             | ✅ Complete                                             | `next.config.ts`                                                                       |
+| RLS fix for doctor patient scope (originally flagged during RBAC audit; superseded by v2)                                  | ✅ Hardened in `20260417_fix_doctor_scope_rls_v2.sql`   | `supabase/migrations/20260417_fix_doctor_scope_rls_v2.sql` (v1 superseded)             |
+| Audit log table for admin actions                                                                                          | ✅ Migration shipped                                    | `supabase/migrations/20260321_admin_audit_and_restore.sql`                             |
 
 ### 1.2 What is partially built or unverified
 
@@ -348,12 +348,12 @@ Every phase ends in a tagged release: `v3.1.0`, `v3.2.0`, `v3.3.0`, `v3.4.0`. Re
 
 ### A6. ✅ Add 4 missing E2E suites (shipped 2026-04-19)
 
-| File                             | Asserts                                                                         |
-| -------------------------------- | ------------------------------------------------------------------------------- |
-| `e2e/booking-flow.spec.ts`       | Page renders, step nav works, validation fires                                  |
-| `e2e/cabinet-flows.spec.ts`      | Auth gate on all cabinet routes; live-env suite skipped without E2E credentials |
-| `e2e/admin-rbac.spec.ts`         | Unauthenticated → /admin/login; per-role access from `permissions.ts` matrix    |
-| `e2e/cron-notifications.spec.ts` | 401 on missing/wrong token; valid CRON_SECRET returns success shape             |
+| File                                                                            | Asserts                                                                         |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `e2e/booking-flow.spec.ts`                                                      | Page renders, step nav works, validation fires                                  |
+| `e2e/cabinet-flows.spec.ts`                                                     | Auth gate on all cabinet routes; live-env suite skipped without E2E credentials |
+| `e2e/admin-rbac.spec.ts`                                                        | Unauthenticated → /admin/login; per-role access from `permissions.ts` matrix    |
+| _(cron auth-gate test removed — scheduled jobs migrated to Supabase `pg_cron`)_ | see `docs/RUNBOOKS.md` §4                                                       |
 
 Wired into `preview-validate.yml` (advisory `continue-on-error` until stable) and `ci.yml` `e2e-feature-suites` job.
 

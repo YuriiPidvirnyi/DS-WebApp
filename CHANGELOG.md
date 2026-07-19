@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 > Next targets: v3.2.0 (after PITR enabled) → v3.3.0 (after legal review + LCP verified = public launch).
 
+### Changed
+
+- **Scheduled jobs migrated from Vercel Cron → Supabase-native `pg_cron`.** All five jobs (notifications drain, reminders, recall, low-stock, stock-metrics) now run inside Supabase. The queue drain is the only network sender: a new `process-notifications` **edge function** (Deno, Resend REST API), invoked every 5 min by `pg_cron` → `pg_net.http_post` and gated by a Vault-stored bearer (`NOTIFY_FN_SECRET` == Vault `process_notifications_invoke_secret`). The other four are `SECURITY DEFINER` plpgsql producers (`run_reminders_job`/`run_recall_job`/`run_low_stock_job`/`run_stock_metrics_job`). Migrations: `20260718_cron_runs_and_producers.sql` (table + producers) and `20260718_cron_schedules.sql` (the `cron.schedule` calls). This removes the fragile Vercel-cron + shared-static-secret path that had been returning **401 on every run** (booking confirmations never sent).
+
+### Removed
+
+- The five `app/api/cron/*` routes, `vercel.json`'s `crons` array, and the cron auth-gate tests (`cron-notifications-auth.test.ts`, `cron-notifications.spec.ts`). `CRON_SECRET` is retained — it still secures the admin `/api/payments/*` routes.
+- Dead `20260419_cron_runs.sql` migration (never applied; malformed generated-column syntax; superseded by `20260718_cron_runs_and_producers.sql`). It would have failed/conflicted on a fresh `supabase db push`.
+
+### Fixed
+
+- **`notification_events.appointment_id` made nullable** (`20260719_notification_events_nullable_appointment_id.sql`). Recall (`recall_touch_*`) and `low_stock_alert` events are not tied to an appointment, and both the producers and the original Vercel routes insert them without an `appointment_id`. The pre-existing `NOT NULL` constraint meant every such insert raised `23502` on the first real candidate — recall/low-stock notifications had never worked (masked earlier by the broken queue drain). The edge function already types `appointment_id` as `string | null` and filters nulls, so nullable is the intended contract. Verified end-to-end: a `recall_touch_1` event drained via `pg_net → process-notifications` returned HTTP 200 `processed:1`, row → `sent` + `resend_id`; a wrong bearer returned 401 with the row left `queued`.
+
 ## [3.1.0] - 2026-07-02
 
 > Promoted `develop` → `main` in 7 reviewed release slices (#337–#346), each verified in production after deploy. The four June DB migrations (`patients_deleted_at`, `db_security_perf_hardening`, `fk_covering_indexes`, `uniq_active_payment`) were found missing from the live database and applied during the release. Prod `payment_configs` global default set to `payment_mode='none'` — patient-facing payments stay dark until Monobank launch.

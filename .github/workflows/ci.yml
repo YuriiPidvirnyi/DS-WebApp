@@ -72,8 +72,9 @@ jobs:
   # turbopack root or not. The same build works locally and on Vercel. Full
   # investigation: PR #359. Related runner-image issue class:
   # actions/runner-images#12273 #12322 #13770.
-  # The cron auth-gate coverage moved to Vitest
-  # (src/lib/__tests__/cron-notifications-auth.test.ts) and remains blocking.
+  # Scheduled jobs (notifications/reminders/recall/low-stock/stock-metrics)
+  # migrated off Vercel Cron to Supabase pg_cron + the process-notifications
+  # edge fn, so the cron auth-gate route/tests were removed with this cutover.
   # Flip continue-on-error back to false once a run of this job is green again.
   e2e-browser:
     name: E2E browser suites (non-blocking — runner infra broken, see PR #359)

@@ -17,7 +17,15 @@ export interface CronRunSummary {
   errors_24h: number
 }
 
-const KNOWN_CRONS = ['low-stock-alerts', 'notifications', 'reminders']
+// Names written to cron_runs by the Supabase pg_cron producers + the
+// process-notifications edge fn (see supabase/migrations/20260718_cron_*.sql).
+const KNOWN_CRONS = [
+  'low-stock-alerts',
+  'notifications',
+  'recall',
+  'reminders',
+  'stock-metrics',
+]
 
 /**
  * GET /api/admin/cron-health

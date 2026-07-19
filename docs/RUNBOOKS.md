@@ -37,7 +37,7 @@ All of the following must be green before cutting DNS:
 | Test booking email received (patient + admin)  | Manual test                     | ☐    |
 | Turnstile prod key active                      | Vercel env                      | ☐    |
 | Sentry test error confirmed                    | Sentry dashboard                | ☐    |
-| All 3 cron jobs respond 200 with `CRON_SECRET` | Manual curl                     | ☐    |
+| 5 `pg_cron` jobs registered & active           | `SELECT * FROM cron.job;`       | ☐    |
 | `a11y:audit` passes on prod URL                | `npm run a11y:audit`            | ☐    |
 | Lighthouse PWA score ≥ 90                      | Chrome DevTools                 | ☐    |
 
@@ -191,44 +191,78 @@ Use preview URLs to validate UI changes before merging.
 
 ## 4. Cron Job Failures
 
+> **Architecture note:** scheduled jobs run on **Supabase `pg_cron`**, not Vercel Cron.
+> `vercel.json` has no `crons`. The only network sender is the **`process-notifications`
+> edge function** (`pg_net.http_post`, gated by a Vault bearer); the other four are
+> pure-DB plpgsql producers. Source: `supabase/migrations/20260718_cron_runs_and_producers.sql`
+>
+> - `20260718_cron_schedules.sql`; edge fn under `supabase/functions/process-notifications/`.
+
 ### 4.1 Cron Inventory
 
-| Route                     | Schedule                     | Purpose                          |
-| ------------------------- | ---------------------------- | -------------------------------- |
-| `/api/cron/notifications` | Every 5 min                  | Sends queued emails              |
-| `/api/cron/reminders`     | Daily 15:00 UTC (18:00 Kyiv) | Queues 24h appointment reminders |
-| `/api/cron/low-stock`     | Daily 08:00 UTC              | Alerts on low material stock     |
-| `/api/cron/recall`        | Weekly Monday 08:00 UTC      | Sends 6-month recall messages    |
+| pg_cron job (`cron.job.jobname`) | Schedule (UTC) | Purpose                                                                |
+| -------------------------------- | -------------- | ---------------------------------------------------------------------- |
+| `ds-drain-notifications`         | `*/5 * * * *`  | Invoke `process-notifications` edge fn → send queued emails via Resend |
+| `ds-reminders`                   | `0 18 * * *`   | Queue 24h appointment reminders (deliver 07:00 UTC)                    |
+| `ds-recall`                      | `10 18 * * *`  | 3-touch recall producer                                                |
+| `ds-low-stock`                   | `0 8 * * 1-5`  | Alert on low material stock (weekdays)                                 |
+| `ds-stock-metrics`               | `55 21 * * *`  | Snapshot daily stock metrics                                           |
 
-All runs are recorded in the `cron_runs` table and visible at `/admin/analytics` → Cron Health.
+All producer/edge runs are recorded in the `cron_runs` table and visible at `/admin/analytics` → Cron Health.
 
 ### 4.2 Diagnosing a Failed Cron
 
 ```sql
--- Most recent run per cron name
+-- 1) Are the 5 jobs registered & active?
+SELECT jobid, jobname, schedule, active FROM cron.job ORDER BY jobname;
+
+-- 2) Most recent producer/edge run per name (status/processed/error)
 SELECT name, status, started_at, finished_at, processed, error
-FROM cron_runs
-ORDER BY started_at DESC
-LIMIT 20;
+FROM cron_runs ORDER BY started_at DESC LIMIT 20;
+
+-- 3) Did pg_cron dispatch the job? (enqueue only — NOT the HTTP outcome)
+SELECT jobid, status, return_message, start_time
+FROM cron.job_run_details ORDER BY start_time DESC LIMIT 20;
+
+-- 4) HTTP outcome of the notifications drain (pg_net is fire-and-forget)
+SELECT id, status_code, content, created
+FROM net._http_response ORDER BY created DESC LIMIT 10;
 ```
+
+Edge-function logs: Supabase Dashboard → Edge Functions → `process-notifications` → Logs
+(or MCP `get_logs` with `service=edge-function`).
 
 ### 4.3 Manual Cron Trigger
 
-```bash
-curl -X POST https://dentalstory.ua/api/cron/notifications \
-  -H "Authorization: Bearer $CRON_SECRET"
+```sql
+-- Producers: run directly (SECURITY DEFINER, safe; dedup makes re-runs no-ops)
+SELECT public.run_reminders_job();
+SELECT public.run_recall_job();
+SELECT public.run_low_stock_job();
+SELECT public.run_stock_metrics_job();
 ```
 
-Replace the path for other crons. Expect `{"success":true}` with HTTP 200.
+```bash
+# Sender (drain the queue): invoke the edge fn with the Vault bearer.
+# $NOTIFY_FN_SECRET must equal the Vault secret 'process_notifications_invoke_secret'.
+curl -X POST "https://<project-ref>.supabase.co/functions/v1/process-notifications" \
+  -H "Authorization: Bearer $NOTIFY_FN_SECRET" \
+  -H "Content-Type: application/json" -d '{}'
+```
+
+Expect `{"success":true,"processed":N}` with HTTP 200. A wrong/absent bearer returns 401.
 
 ### 4.4 Common Failure Modes
 
-| Symptom                               | Likely cause                        | Fix                                                    |
-| ------------------------------------- | ----------------------------------- | ------------------------------------------------------ |
-| `error: "supabase unavailable"`       | Missing `SUPABASE_SERVICE_ROLE_KEY` | Set env var in Vercel                                  |
-| `error: "resend unavailable"`         | Missing or invalid `RESEND_API_KEY` | Update key in Vercel + Resend dashboard                |
-| `status: "running"` stuck for > 5 min | Cron timed out                      | Check Vercel function logs; increase timeout if needed |
-| Cron not firing at all                | Vercel Cron not configured          | Verify `vercel.json` cron section and Vercel Dashboard |
+| Symptom                                              | Likely cause                                                     | Fix                                                                         |
+| ---------------------------------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Edge fn returns 401, queue stalls (no data loss)     | `NOTIFY_FN_SECRET` ≠ Vault `process_notifications_invoke_secret` | Re-align the two secrets (dashboard fn secret + `vault.update_secret`)      |
+| `net._http_response` empty / no rows                 | `ds-drain-notifications` not registered, or `pg_net` down        | Re-apply `20260718_cron_schedules.sql`; check `cron.job.active`             |
+| Events stuck `queued`, edge logs show Resend err     | Missing/invalid `RESEND_API_KEY` (edge-fn secret)                | Update the `process-notifications` function secret + Resend dashboard       |
+| `cron_runs` row `error: supabase unavailable`        | Service role unavailable to edge fn                              | `SUPABASE_SERVICE_ROLE_KEY` is auto-injected — check function status/deploy |
+| Low-stock error `admin_notification_email … not set` | Vault secret missing                                             | `SELECT vault.create_secret('<email>','admin_notification_email')`          |
+| `status: "running"` stuck > 5 min                    | Producer errored mid-run                                         | Inspect `cron_runs.error`; re-run the producer manually (4.3)               |
+| No jobs firing at all                                | `pg_cron` schedules not applied                                  | `SELECT * FROM cron.job;` — if empty, apply `20260718_cron_schedules.sql`   |
 
 ---
 
@@ -331,7 +365,7 @@ If `status = 'failed'` with `last_error`:
 
 - `resend_unavailable`: check `RESEND_API_KEY`.
 - `recipient_not_found`: the appointment row was deleted.
-- Network error: transient; trigger `/api/cron/notifications` manually.
+- Network error: transient; drain the queue manually (§4.3 — invoke the `process-notifications` edge fn).
 
 ### 6.4 Email Lands in Spam
 
@@ -434,4 +468,4 @@ The model identifier (`openai/gpt-4o-mini`) is centralized in `src/lib/ai.ts` (`
 
 ### 9.3 vercel.ts migration (not done — rationale)
 
-The `@vercel/config` package (v0.2.1, import path `@vercel/config/v1`) is real and stable. However, the current `vercel.json` is purely static (4 crons + 1 region) with no dynamic config needs. Migrating to `vercel.ts` would add a build-time package dependency for zero practical benefit at this time. Revisit if dynamic config generation (e.g., environment-conditional cron schedules or per-environment regions) is needed in future.
+The `@vercel/config` package (v0.2.1, import path `@vercel/config/v1`) is real and stable. However, the current `vercel.json` is purely static (just `$schema` + 1 region; scheduling moved to Supabase `pg_cron`) with no dynamic config needs. Migrating to `vercel.ts` would add a build-time package dependency for zero practical benefit at this time. Revisit if dynamic config generation (e.g., per-environment regions) is needed in future.

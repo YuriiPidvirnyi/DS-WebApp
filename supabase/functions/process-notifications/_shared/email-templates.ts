@@ -1,6 +1,15 @@
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://dentalstory.ua'
-const CLINIC_PHONE = '+380 68 232 38 38'
-const CLINIC_ADDRESS = 'вулиця Сумська, 10, Львів'
+// Deno port of `src/lib/email-templates.ts` — KEEP IN SYNC with that file.
+//
+// This is the SAME code as the Next.js copy, with two intentional differences:
+//   1. `SITE_URL` reads `Deno.env.get('SITE_URL')` instead of process.env.
+//   2. `passwordResetEmail` / `PASSWORD_RESET_STRINGS` / `escapeHtml` are NOT
+//      ported — that template is sent inline from the Next.js app
+//      (`app/api/auth/recover`) and never flows through the notification queue.
+// Everything else (the 6 queue templates + shared helpers) is byte-identical.
+
+const SITE_URL = Deno.env.get('SITE_URL') ?? 'https://dentalstory.ua'
+const CLINIC_PHONE = '+38 (044) 123-45-67'
+const CLINIC_ADDRESS = 'м. Київ, вул. Стоматологічна, 1'
 
 type Locale = 'uk' | 'en' | 'pl'
 
@@ -146,8 +155,6 @@ function baseLayout(
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="color-scheme" content="light" />
-  <meta name="supported-color-schemes" content="light" />
   <title>DentalStory</title>
   <!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->
   <style>
@@ -164,12 +171,11 @@ function baseLayout(
     <tr>
       <td align="center" style="padding:32px 16px;">
         <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
-          <!-- Header — white logo on a solid teal chip: the chip isn't
-               inverted in dark mode, so the logo stays legible everywhere -->
+          <!-- Header -->
           <tr>
-            <td align="center" style="padding:8px 0 24px;">
-              <a href="${SITE_URL}" style="display:inline-block;background-color:${COLORS.teal};border-radius:12px;padding:18px 28px;">
-                <img src="${SITE_URL}/assets/images/logo/logo-email-white.png" width="180" height="87" alt="DentalStory" style="display:block;border:0;width:180px;height:87px;" />
+            <td align="center" style="padding:24px 0;">
+              <a href="${SITE_URL}" style="font-size:28px;font-weight:700;color:${COLORS.navy};letter-spacing:-0.5px;">
+                Dental<span style="color:${COLORS.teal};">Story</span>
               </a>
             </td>
           </tr>
@@ -730,94 +736,6 @@ export function reviewRequestEmail(
 
   const html = baseLayout(content, body, locale)
   const text = `${s.heading}\n\n${body}\n\n${s.cta}: ${reviewUrl}\n\n${problem}\n\n${s.optOut}: ${SITE_URL}/cabinet/profile#notifications`
-
-  return { subject: s.subject, html, text }
-}
-
-// ── Password reset (custom recovery email, bypasses Supabase's /verify) ──────
-
-export interface PasswordResetData {
-  patientName?: string
-  resetUrl: string
-}
-
-const PASSWORD_RESET_STRINGS: Record<
-  Locale,
-  {
-    subject: string
-    heading: string
-    greeting: (name?: string) => string
-    body: string
-    cta: string
-    note: string
-    ignore: string
-  }
-> = {
-  uk: {
-    subject: 'Відновлення пароля — DentalStory',
-    heading: 'Відновлення пароля',
-    greeting: name => (name ? `Вітаємо, ${name}!` : 'Вітаємо!'),
-    body: 'Ви надіслали запит на відновлення пароля до вашого акаунту DentalStory. Натисніть кнопку нижче, щоб встановити новий пароль.',
-    cta: 'Встановити новий пароль',
-    note: 'Посилання одноразове й діє обмежений час — скористайтесь ним найближчим часом.',
-    ignore:
-      'Якщо ви не надсилали цей запит, просто проігноруйте цей лист — ваш пароль залишиться без змін.',
-  },
-  en: {
-    subject: 'Password reset — DentalStory',
-    heading: 'Password reset',
-    greeting: name => (name ? `Hello, ${name}!` : 'Hello!'),
-    body: 'You requested a password reset for your DentalStory account. Click the button below to set a new password.',
-    cta: 'Set a new password',
-    note: 'The link is single-use and valid for a limited time — please use it soon.',
-    ignore:
-      "If you didn't request this, simply ignore this email — your password will stay unchanged.",
-  },
-  pl: {
-    subject: 'Resetowanie hasła — DentalStory',
-    heading: 'Resetowanie hasła',
-    greeting: name => (name ? `Witaj, ${name}!` : 'Witaj!'),
-    body: 'Poprosiłeś(-aś) o zresetowanie hasła do konta DentalStory. Kliknij przycisk poniżej, aby ustawić nowe hasło.',
-    cta: 'Ustaw nowe hasło',
-    note: 'Link jest jednorazowy i ważny przez ograniczony czas — użyj go wkrótce.',
-    ignore:
-      'Jeśli to nie Ty wysłałeś(-aś) tę prośbę, po prostu zignoruj tę wiadomość — hasło pozostanie bez zmian.',
-  },
-}
-
-// patientName comes from mutable user metadata (first_name). It's only ever
-// echoed back into the recipient's own inbox, but this is a security-sensitive
-// auth email, so escape it before interpolating into HTML rather than trusting
-// the source. Plain-text output keeps the raw value.
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-}
-
-export function passwordResetEmail(
-  data: PasswordResetData,
-  locale: Locale = 'uk'
-): { subject: string; html: string; text: string } {
-  const s = PASSWORD_RESET_STRINGS[locale]
-  const greeting = s.greeting(data.patientName)
-  const htmlGreeting = escapeHtml(greeting)
-
-  const content = `
-    <h1 style="margin:0 0 16px;font-size:24px;color:${COLORS.navy};">${s.heading}</h1>
-    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:${COLORS.text};">${htmlGreeting}</p>
-    <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:${COLORS.text};">${s.body}</p>
-    <div style="text-align:center;margin:8px 0 24px;">
-      <a href="${data.resetUrl}" class="btn" style="display:inline-block;padding:14px 32px;background-color:${COLORS.teal};color:#ffffff;border-radius:8px;font-weight:600;font-size:15px;text-decoration:none;">${s.cta}</a>
-    </div>
-    <p style="margin:0 0 8px;font-size:13px;line-height:1.6;color:${COLORS.text};">${s.note}</p>
-    <p style="margin:0;font-size:13px;line-height:1.6;color:#9CA3AF;">${s.ignore}</p>`
-
-  const html = baseLayout(content, s.body, locale)
-  const text = `${s.heading}\n\n${greeting}\n\n${s.body}\n\n${s.cta}: ${data.resetUrl}\n\n${s.note}\n\n${s.ignore}`
 
   return { subject: s.subject, html, text }
 }
