@@ -218,9 +218,10 @@ export default function AdminWorkspacePage() {
       }
       setActLoading(true)
       try {
-        // No ?appointmentId= filter exists — fetch the patient's acts and match.
+        // Fetch only this appointment's act (server-side appointmentId filter),
+        // not the patient's whole treatment history.
         const res = await fetch(
-          `/api/treatment-records?patientId=${encodeURIComponent(appt.patient_id)}`
+          `/api/treatment-records?appointmentId=${encodeURIComponent(appt.id)}`
         )
         // A newer selection superseded this one while we awaited — drop it (#2).
         if (openReqRef.current !== reqId) return

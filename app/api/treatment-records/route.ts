@@ -140,6 +140,12 @@ export async function GET(request: NextRequest) {
     const patientId = searchParams.get('patientId')
     if (patientId) query = query.eq('patient_id', patientId)
 
+    // Narrow to a single appointment's act(s) — lets the workspace fetch just
+    // the record it needs instead of a patient's whole history then filtering
+    // client-side.
+    const appointmentId = searchParams.get('appointmentId')
+    if (appointmentId) query = query.eq('appointment_id', appointmentId)
+
     const status = searchParams.get('status')
     if (status) query = query.eq('status', status)
 

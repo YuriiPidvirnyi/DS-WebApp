@@ -150,6 +150,11 @@ describe('AdminWorkspacePage (2e doctor workstation)', () => {
     )
     // doctor has treatments:sign → sign button present
     expect(screen.getByText('admin.workspacePage.signAct')).toBeInTheDocument()
+    // openAct looks up just this appointment's act (server-side appointmentId
+    // filter), not the patient's whole history.
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.stringContaining('/api/treatment-records?appointmentId=a1')
+    )
   })
 
   it('shows the guest-no-act notice for a guest booking (no patient record)', async () => {
