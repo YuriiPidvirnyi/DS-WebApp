@@ -897,8 +897,8 @@
     "appointmentDesc": "Choose a convenient time for your clinic visit",
     "copyright": "© {{year}} Dental Story. All rights reserved.",
     "workingHours": {
-      "weekdays": "Mon-Fri: 9:00-20:00",
-      "saturday": "Sat: 10:00-18:00",
+      "weekdays": "Mon-Fri: {{open}}-{{close}}",
+      "saturday": "Sat: {{open}}-{{close}}",
       "sunday": "Sun: Closed"
     },
     "socialMedia": "Social Media"

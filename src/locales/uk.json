@@ -897,8 +897,8 @@
     "appointmentDesc": "Оберіть зручний час для візиту до нашої клініки",
     "copyright": "© {{year}} Dental Story. Усі права захищені.",
     "workingHours": {
-      "weekdays": "Пн-Пт: 9:00-20:00",
-      "saturday": "Сб: 10:00-18:00",
+      "weekdays": "Пн-Пт: {{open}}-{{close}}",
+      "saturday": "Сб: {{open}}-{{close}}",
       "sunday": "Нд: вихідний"
     },
     "socialMedia": "Соціальні мережі"

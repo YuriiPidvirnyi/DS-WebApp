@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { Phone, Mail, MapPin, Calendar, Clock } from 'lucide-react'
 import { CONTACT_INFO } from '@/utils/constants'
+import { CLINIC_OPENING_HOURS } from '@/config/clinicSchedule'
 import Logo from '@/components/ui/Logo'
 
 const MAPS_EMBED_URL = `https://www.google.com/maps?q=${CONTACT_INFO.coordinates.lat},${CONTACT_INFO.coordinates.lng}&t=k&z=17&ie=UTF8&iwloc=&output=embed`
@@ -78,8 +79,17 @@ const Footer = memo(() => {
               <div className="flex items-center gap-2.5 text-white/60 text-sm">
                 <Clock className="w-4 h-4 text-dental-primary-400 shrink-0" />
                 <span>
-                  {t('footer.workingHours.weekdays')} ·{' '}
-                  {t('footer.workingHours.saturday')}
+                  {/* Times from the single source (CLINIC_OPENING_HOURS); the
+                      day labels stay localized (CLINIC_OPEN). */}
+                  {t('footer.workingHours.weekdays', {
+                    open: CLINIC_OPENING_HOURS.weekday.open,
+                    close: CLINIC_OPENING_HOURS.weekday.close,
+                  })}{' '}
+                  ·{' '}
+                  {t('footer.workingHours.saturday', {
+                    open: CLINIC_OPENING_HOURS.saturday.open,
+                    close: CLINIC_OPENING_HOURS.saturday.close,
+                  })}
                 </span>
               </div>
             </div>
