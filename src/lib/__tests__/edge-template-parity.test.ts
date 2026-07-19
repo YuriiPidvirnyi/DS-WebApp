@@ -15,7 +15,7 @@ import * as src from '@/lib/email-templates'
 // The Deno copy is imported via a runtime-resolved (non-literal) specifier so
 // `tsc --noEmit` does not pull the un-typed `Deno.env` module into the program.
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let edge: any
 
 const SRC_SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://dentalstory.ua'
@@ -31,6 +31,7 @@ function norm(e: Rendered, site: string): Rendered {
 }
 
 beforeAll(async () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ;(globalThis as any).Deno = { env: { get: () => undefined } }
   // vitest runs from the repo root, so resolve the edge copy from cwd.
   const edgePath = resolve(
@@ -83,7 +84,10 @@ describe('edge _shared/email-templates ↔ src/lib parity', () => {
     ).toEqual(norm(src.appointmentCancellationEmail(data, locale), SRC_SITE))
   })
 
-  it('newBookingAdminEmail identical', () => {
+  // newBookingAdminEmail takes an optional locale (default 'uk'); loop all
+  // locales like the others so drift in en/pl is caught even if admin emails
+  // are localized in future.
+  it.each(locales)('newBookingAdminEmail identical (%s)', locale => {
     const data = {
       patientName: 'Тарас',
       phone: '+380671234567',
@@ -93,8 +97,8 @@ describe('edge _shared/email-templates ↔ src/lib parity', () => {
       time: '10:30:00',
       appointmentId: 'appt-1',
     }
-    expect(norm(edge.newBookingAdminEmail(data), EDGE_SITE)).toEqual(
-      norm(src.newBookingAdminEmail(data), SRC_SITE)
+    expect(norm(edge.newBookingAdminEmail(data, locale), EDGE_SITE)).toEqual(
+      norm(src.newBookingAdminEmail(data, locale), SRC_SITE)
     )
   })
 
