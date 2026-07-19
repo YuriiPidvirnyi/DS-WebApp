@@ -301,7 +301,7 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
             {/* Phone shortcut */}
             <div className="mt-2 flex items-center justify-center gap-2 text-xs text-dental-muted">
               <Phone className="w-3 h-3" />
-              <span>{t('ai.callUs')}: +380 67 123 45 67</span>
+              <span>{t('ai.callUs')}: +380 68 232 38 38</span>
             </div>
           </form>
         </div>

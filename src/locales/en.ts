@@ -3066,15 +3066,15 @@ const en = {
     },
     responses: {
       booking:
-        'To book an appointment, go to the booking page or call us at +380 44 123 45 67. We are open every day from 9:00 to 20:00.',
+        'To book an appointment, go to the booking page or call us at +380 68 232 38 38. We are open every day from 9:00 to 20:00.',
       prices:
         'You can check service prices on the "Services" page. Free consultation for new patients!',
       hours:
         'Our hours:\n• Mon-Fri: 9:00 - 20:00\n• Sat: 10:00 - 18:00\n• Sun: Closed',
       contact:
-        'Our contacts:\n• Phone: +380 44 123 45 67\n• Email: info@dentalstory.ua\n• Address: 1 Khreshchatyk St., Kyiv',
+        'Our contacts:\n• Phone: +380 68 232 38 38\n• Email: info@dentalstory.ua\n• Address: Sumska St., 10, Lviv',
       default:
-        'Thank you for your message! Our manager will contact you shortly. For quick contact, call: +380 44 123 45 67',
+        'Thank you for your message! Our manager will contact you shortly. For quick contact, call: +380 68 232 38 38',
     },
     typing: 'Consultant is typing…',
   },

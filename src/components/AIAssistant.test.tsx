@@ -251,7 +251,7 @@ describe('AIAssistant', () => {
   describe('phone shortcut', () => {
     it('displays clinic phone number', () => {
       render(<AIAssistant onClose={vi.fn()} />)
-      expect(screen.getByText(/\+380 67 123 45 67/)).toBeInTheDocument()
+      expect(screen.getByText(/\+380 68 232 38 38/)).toBeInTheDocument()
     })
   })
 })
