@@ -152,9 +152,6 @@ export default tseslint.config(
       'src/views/admin/AdminIntakePrintPage.tsx',
       'src/views/admin/AdminTreatmentPrintPage.tsx',
       'src/views/promo/**',
-      // Серверний компонент — i18next-хук недоступний; потребує окремого
-      // серверного підходу до i18n (STATUS_LABELS/MODE_LABELS + заголовки).
-      'app/cabinet/payments/page.tsx',
       // global-error замінює кореневий layout — i18n-провайдера в цій області
       // немає, тож t() тут не працює (останній рубіж на випадок збою).
       'app/global-error.tsx',

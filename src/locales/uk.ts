@@ -3581,15 +3581,31 @@ const uk = {
     },
     payments: {
       title: 'Платежі',
-      comingSoon: 'Скоро',
-      description: 'Онлайн оплата послуг клініки вже у розробці.',
-      feature1Title: 'Рахунки',
-      feature1Desc: 'Перегляд виставлених рахунків',
-      feature2Title: 'Оплата',
-      feature2Desc: 'Зручна онлайн-оплата',
-      feature3Title: 'Нагадування',
-      feature3Desc: 'Сповіщення про платежі',
-      meanwhile: 'Наразі оплата здійснюється у клініці.',
+      empty: {
+        title: 'Немає платежів',
+        description:
+          'Тут відображатимуться ваші онлайн-платежі за послуги клініки.',
+        action: 'Записатися на прийом',
+      },
+      columns: {
+        date: 'Дата',
+        service: 'Послуга',
+        amount: 'Сума',
+        type: 'Тип',
+        status: 'Статус',
+      },
+      statuses: {
+        created: 'Очікує',
+        processing: 'Очікує',
+        success: 'Оплачено',
+        failure: 'Не завершено',
+        expired: 'Не завершено',
+        reversed: 'Повернуто',
+      },
+      modes: {
+        full: 'Повна оплата',
+        deposit: 'Завдаток',
+      },
     },
   },
   patientDashboard: {

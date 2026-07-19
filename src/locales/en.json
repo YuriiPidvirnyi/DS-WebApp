@@ -3300,15 +3300,30 @@
     },
     "payments": {
       "title": "Payments",
-      "comingSoon": "Coming soon",
-      "description": "Online payment for clinic services is coming soon.",
-      "feature1Title": "Invoices",
-      "feature1Desc": "View your invoices",
-      "feature2Title": "Payment",
-      "feature2Desc": "Convenient online payment",
-      "feature3Title": "Reminders",
-      "feature3Desc": "Payment notifications",
-      "meanwhile": "Currently, payment is made at the clinic."
+      "empty": {
+        "title": "No payments",
+        "description": "Your online payments for clinic services will appear here.",
+        "action": "Book Appointment"
+      },
+      "columns": {
+        "date": "Date",
+        "service": "Service",
+        "amount": "Amount",
+        "type": "Type",
+        "status": "Status"
+      },
+      "statuses": {
+        "created": "Pending",
+        "processing": "Pending",
+        "success": "Paid",
+        "failure": "Not completed",
+        "expired": "Not completed",
+        "reversed": "Refunded"
+      },
+      "modes": {
+        "full": "Full payment",
+        "deposit": "Deposit"
+      }
     }
   },
   "patientDashboard": {

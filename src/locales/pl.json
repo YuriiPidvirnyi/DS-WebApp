@@ -3302,15 +3302,30 @@
     },
     "payments": {
       "title": "Płatności",
-      "comingSoon": "Wkrótce",
-      "description": "Płatności online za usługi kliniczne są w trakcie realizacji.",
-      "feature1Title": "Faktury",
-      "feature1Desc": "Przeglądaj swoje faktury",
-      "feature2Title": "Płatność",
-      "feature2Desc": "Wygodna płatność online",
-      "feature3Title": "Przypomnienia",
-      "feature3Desc": "Powiadomienia o płatnościach",
-      "meanwhile": "Obecnie płatności dokonuje się w klinice."
+      "empty": {
+        "title": "Brak płatności",
+        "description": "Tutaj pojawią się Twoje płatności online za usługi kliniki.",
+        "action": "Umów wizytę"
+      },
+      "columns": {
+        "date": "Data",
+        "service": "Usługa",
+        "amount": "Kwota",
+        "type": "Typ",
+        "status": "Status"
+      },
+      "statuses": {
+        "created": "Oczekuje",
+        "processing": "Oczekuje",
+        "success": "Opłacono",
+        "failure": "Niezakończone",
+        "expired": "Niezakończone",
+        "reversed": "Zwrócono"
+      },
+      "modes": {
+        "full": "Pełna płatność",
+        "deposit": "Zaliczka"
+      }
     }
   },
   "patientDashboard": {
