@@ -42,6 +42,9 @@ interface MenuItem {
   onClick?: () => void
   external?: boolean
   color: string
+  // М5: contact channels are shown only <640px. On tablet the top contact bar
+  // is the single channel, so the FAB keeps just chat + accessibility.
+  mobileOnly?: boolean
 }
 
 /* ── Component ── */
@@ -72,6 +75,7 @@ export default function RadialMenu({
         label: t('radialMenu.actions.phone'),
         href: `tel:${phone}`,
         color: 'bg-dental-primary-600 text-white',
+        mobileOnly: true,
       },
       {
         id: 'whatsapp',
@@ -80,6 +84,7 @@ export default function RadialMenu({
         href: whatsapp,
         external: true,
         color: 'bg-[#25D366] text-white',
+        mobileOnly: true,
       },
       {
         id: 'viber',
@@ -88,6 +93,7 @@ export default function RadialMenu({
         href: viber,
         external: true,
         color: 'bg-[#7360F2] text-white',
+        mobileOnly: true,
       },
       {
         id: 'telegram',
@@ -96,6 +102,7 @@ export default function RadialMenu({
         href: telegram,
         external: true,
         color: 'bg-[#26A5E4] text-white',
+        mobileOnly: true,
       },
       {
         id: 'chat',
@@ -173,6 +180,9 @@ export default function RadialMenu({
             'flex items-center gap-3 pl-3.5 pr-4 h-11 rounded-full shadow-lg',
             'transition-all duration-200 ease-out',
             'hover:shadow-xl active:scale-[0.96]',
+            // М5: contact channels collapse away at ≥640px (tablet+), leaving
+            // only chat + accessibility in the floating menu.
+            item.mobileOnly ? 'sm:hidden' : '',
             item.color,
             isOpen
               ? 'pointer-events-auto opacity-100 translate-y-0'

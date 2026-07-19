@@ -261,6 +261,20 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       )
     }
 
+    // Finalizing an act (draft → signed/completed) requires treatments:sign,
+    // not just edit_draft. The UI gates the Sign button on this permission, but
+    // enforce it server-side too so a role with only edit_draft (e.g. assistant)
+    // cannot PATCH a status transition directly and bypass the gate.
+    if (
+      (body.status === 'signed' || body.status === 'completed') &&
+      !hasPermission(auth.access!.role, 'treatments:sign')
+    ) {
+      return NextResponse.json(
+        { success: false, error: 'Insufficient permissions' },
+        { status: 403 }
+      )
+    }
+
     // Capture prev status for writeoff hook comparison (needs body first)
     let prevStatus: string | null = null
     if (isV2On() && body.status === 'completed') {

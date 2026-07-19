@@ -115,20 +115,9 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
     }
   }
 
-  // Close on click outside
-  useEffect(() => {
-    if (!isOpen) return
-    const handler = (e: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
-        handleClose()
-      }
-    }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
-  }, [isOpen, handleClose, containerRef])
+  // Ч3: no click-outside dismissal — an accidental click outside must not close
+  // and wipe the conversation. The chat closes only via its X button or Escape
+  // (handled by useFocusTrap above).
 
   // When controlled externally (onClose provided), don't show trigger button
   const isControlled = !!onClose

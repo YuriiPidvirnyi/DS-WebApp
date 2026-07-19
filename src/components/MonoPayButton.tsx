@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { Loader2, CheckCircle2, XCircle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 const MONOPAY_SCRIPT_URL =
   'https://pay.monobank.ua/mono-pay-button/v1/mono-pay-button.js'
@@ -100,6 +101,7 @@ export function MonoPayButton({
   onError,
   className,
 }: MonoPayButtonProps) {
+  const { t } = useTranslation()
   const containerRef = useRef<HTMLDivElement>(null)
   const invoiceIdRef = useRef<string | null>(null)
 
@@ -216,7 +218,7 @@ export function MonoPayButton({
         className={`flex items-center gap-2 text-status-success-700 font-medium ${className ?? ''}`}
       >
         <CheckCircle2 className="w-5 h-5 shrink-0" />
-        <span>Оплату успішно здійснено</span>
+        <span>{t('payments.monoButton.successMessage')}</span>
       </div>
     )
   }
@@ -226,7 +228,7 @@ export function MonoPayButton({
       <div className={`space-y-2 ${className ?? ''}`}>
         <div className="flex items-center gap-2 text-status-error-700 font-medium">
           <XCircle className="w-5 h-5 shrink-0" />
-          <span>{errorMsg ?? 'Помилка оплати'}</span>
+          <span>{errorMsg ?? t('payments.monoButton.paymentError')}</span>
         </div>
       </div>
     )
@@ -242,7 +244,9 @@ export function MonoPayButton({
         <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-lg">
           <Loader2 className="w-5 h-5 animate-spin text-dental-primary-600" />
           <span className="ml-2 text-sm text-dental-text">
-            {phase === 'loading' ? 'Завантаження...' : 'Обробка...'}
+            {phase === 'loading'
+              ? t('payments.monoButton.loading')
+              : t('payments.monoButton.processing')}
           </span>
         </div>
       )}

@@ -12,29 +12,29 @@ import type {
   WarehousePermissionFlags,
 } from '@/types/stock'
 
-const FLAG_LABELS: Record<keyof WarehousePermissionFlags, string> = {
-  manage_warehouses: 'Управління складами',
-  edit_brands: 'Редагування брендів',
-  edit_products: 'Редагування товарів',
-  edit_categories: 'Редагування категорій',
-  edit_suppliers: 'Редагування постачальників',
-  manage_permissions: 'Управління правами',
-  manage_calc_cards: 'Управління картами обліку',
-  manage_settings: 'Налаштування модуля',
-  view_other_balances: 'Перегляд чужих залишків',
-  base_access: 'Базовий доступ',
-  view_incoming: 'Перегляд приходів',
-  edit_incoming: 'Редагування приходів',
-  view_return: 'Перегляд повернень',
-  edit_return: 'Редагування повернень',
-  view_transfer: 'Перегляд переміщень',
-  edit_transfer: 'Редагування переміщень',
-  view_writeoff: 'Перегляд списань',
-  create_writeoff: 'Створення списань',
-  unpost_writeoff: 'Скасування списань',
-  delete_draft_writeoff: 'Видалення чернеток списань',
-  view_audit: 'Перегляд інвентаризацій',
-  post_audit: 'Проведення інвентаризацій',
+const FLAG_LABEL_KEYS: Record<keyof WarehousePermissionFlags, string> = {
+  manage_warehouses: 'admin.stock.permissionsPage.flagManageWarehouses',
+  edit_brands: 'admin.stock.permissionsPage.flagEditBrands',
+  edit_products: 'admin.stock.permissionsPage.flagEditProducts',
+  edit_categories: 'admin.stock.permissionsPage.flagEditCategories',
+  edit_suppliers: 'admin.stock.permissionsPage.flagEditSuppliers',
+  manage_permissions: 'admin.stock.permissionsPage.flagManagePermissions',
+  manage_calc_cards: 'admin.stock.permissionsPage.flagManageCalcCards',
+  manage_settings: 'admin.stock.permissionsPage.flagManageSettings',
+  view_other_balances: 'admin.stock.permissionsPage.flagViewOtherBalances',
+  base_access: 'admin.stock.permissionsPage.flagBaseAccess',
+  view_incoming: 'admin.stock.permissionsPage.flagViewIncoming',
+  edit_incoming: 'admin.stock.permissionsPage.flagEditIncoming',
+  view_return: 'admin.stock.permissionsPage.flagViewReturn',
+  edit_return: 'admin.stock.permissionsPage.flagEditReturn',
+  view_transfer: 'admin.stock.permissionsPage.flagViewTransfer',
+  edit_transfer: 'admin.stock.permissionsPage.flagEditTransfer',
+  view_writeoff: 'admin.stock.permissionsPage.flagViewWriteoff',
+  create_writeoff: 'admin.stock.permissionsPage.flagCreateWriteoff',
+  unpost_writeoff: 'admin.stock.permissionsPage.flagUnpostWriteoff',
+  delete_draft_writeoff: 'admin.stock.permissionsPage.flagDeleteDraftWriteoff',
+  view_audit: 'admin.stock.permissionsPage.flagViewAudit',
+  post_audit: 'admin.stock.permissionsPage.flagPostAudit',
 }
 
 export default function AdminStockPermissionsPage() {
@@ -68,11 +68,11 @@ export default function AdminStockPermissionsPage() {
       if (whJson.success) setWarehouses(whJson.data)
       if (permJson.success) setPermissions(permJson.data)
     } catch {
-      setError('Помилка завантаження')
+      setError(t('admin.stock.permissionsPage.errorLoad'))
     } finally {
       setLoading(false)
     }
-  }, [selectedWarehouse])
+  }, [selectedWarehouse, t])
 
   useEffect(() => {
     load()
@@ -99,7 +99,11 @@ export default function AdminStockPermissionsPage() {
       setEditEntry(null)
       load()
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка збереження')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.permissionsPage.errorSave')
+      )
     } finally {
       setSaving(false)
     }
@@ -136,7 +140,7 @@ export default function AdminStockPermissionsPage() {
             <ChevronLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-            Права доступу до складів
+            {t('admin.stock.permissionsPage.title')}
           </h1>
         </div>
 
@@ -146,7 +150,9 @@ export default function AdminStockPermissionsPage() {
             onChange={e => setSelectedWarehouse(e.target.value)}
             className="rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
           >
-            <option value="">Всі склади</option>
+            <option value="">
+              {t('admin.stock.permissionsPage.allWarehouses')}
+            </option>
             {warehouses.map(wh => (
               <option key={wh.id} value={wh.id}>
                 {wh.name_uk}
@@ -169,7 +175,7 @@ export default function AdminStockPermissionsPage() {
 
         {!loading && permissions.length === 0 && (
           <p className="text-center text-dental-text py-12">
-            Права не встановлено
+            {t('admin.stock.permissionsPage.noPermissions')}
           </p>
         )}
 
@@ -185,8 +191,13 @@ export default function AdminStockPermissionsPage() {
                     {p.user_id}
                   </p>
                   <p className="text-xs text-dental-text">
-                    Склад: {p.warehouse_id} ·{' '}
-                    {Object.values(p.flags).filter(Boolean).length} прав активно
+                    {t(
+                      'admin.stock.permissionsPage.warehousePermissionsSummary',
+                      {
+                        warehouseId: p.warehouse_id,
+                        count: Object.values(p.flags).filter(Boolean).length,
+                      }
+                    )}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -196,13 +207,13 @@ export default function AdminStockPermissionsPage() {
                     }
                     className="rounded px-3 py-1.5 text-xs border hover:bg-dental-secondary-50"
                   >
-                    Редагувати
+                    {t('admin.stock.permissionsPage.edit')}
                   </button>
                   <button
                     onClick={() => removePermissions(p.user_id, p.warehouse_id)}
                     className="rounded px-3 py-1.5 text-xs text-status-error-700 border border-dental-error/20 hover:bg-status-error-100"
                   >
-                    Видалити
+                    {t('admin.stock.permissionsPage.delete')}
                   </button>
                 </div>
               </div>
@@ -248,6 +259,7 @@ function FlagsModal({
   onClose,
   onSave,
 }: FlagsModalProps) {
+  const { t } = useTranslation()
   const [localFlags, setLocalFlags] = useState<WarehousePermissionFlags>({
     ...flags,
   })
@@ -260,15 +272,15 @@ function FlagsModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl p-6 max-h-[80vh] overflow-y-auto">
         <h2 className="text-lg font-semibold text-dental-dark mb-4">
-          Права доступу
+          {t('admin.stock.permissionsPage.modalTitle')}
         </h2>
         <div className="space-y-2 mb-6">
           {(
-            Object.entries(FLAG_LABELS) as [
+            Object.entries(FLAG_LABEL_KEYS) as [
               keyof WarehousePermissionFlags,
               string,
             ][]
-          ).map(([key, label]) => (
+          ).map(([key, labelKey]) => (
             <label key={key} className="flex items-center gap-3 cursor-pointer">
               <input
                 type="checkbox"
@@ -276,7 +288,7 @@ function FlagsModal({
                 onChange={() => toggle(key)}
                 className="rounded"
               />
-              <span className="text-sm text-dental-dark">{label}</span>
+              <span className="text-sm text-dental-dark">{t(labelKey)}</span>
             </label>
           ))}
         </div>
@@ -285,7 +297,7 @@ function FlagsModal({
             onClick={onClose}
             className="px-4 py-2 text-sm text-dental-text hover:text-dental-dark"
           >
-            Скасувати
+            {t('admin.stock.permissionsPage.cancel')}
           </button>
           <button
             onClick={() => onSave(userId, warehouseId, localFlags)}
@@ -293,7 +305,7 @@ function FlagsModal({
             className="inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-dental-dark disabled:opacity-60 transition-colors"
           >
             {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-            Зберегти
+            {t('admin.stock.permissionsPage.save')}
           </button>
         </div>
       </div>

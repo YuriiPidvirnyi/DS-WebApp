@@ -38,11 +38,15 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
       if (!json.success) throw new Error(json.error)
       setAudit(json.data)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка завантаження')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.auditEditorPage.errorLoad')
+      )
     } finally {
       setLoading(false)
     }
-  }, [auditId])
+  }, [auditId, t])
 
   useEffect(() => {
     load()
@@ -82,7 +86,11 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
       setTimeout(() => setSaved(false), 2500)
       load()
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка збереження')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.auditEditorPage.errorSave')
+      )
     } finally {
       setSavingItems(false)
     }
@@ -101,7 +109,11 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
       setPendingUpdates(new Map())
       load()
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка автозаповнення')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.auditEditorPage.errorAutofill')
+      )
     } finally {
       setAutofilling(false)
     }
@@ -129,7 +141,11 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
       if (!json.success) throw new Error(json.error)
       load()
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка проведення')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.auditEditorPage.errorPost')
+      )
     } finally {
       setPosting(false)
     }
@@ -179,7 +195,8 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
           </Link>
           <div>
             <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-              {audit?.audit_number ?? 'Інвентаризація'}
+              {audit?.audit_number ??
+                t('admin.stock.auditEditorPage.titleFallback')}
             </h1>
             {audit && (
               <p className="text-xs text-dental-text mt-0.5">
@@ -192,7 +209,9 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
                         : 'bg-dental-secondary-100 text-dental-muted'
                     }`}
                   >
-                    {audit.status === 'posted' ? 'Проведено' : 'Анульовано'}
+                    {audit.status === 'posted'
+                      ? t('admin.stock.auditEditorPage.statusPosted')
+                      : t('admin.stock.auditEditorPage.statusVoid')}
                   </span>
                 )}
               </p>
@@ -213,7 +232,7 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
               ) : (
                 <RefreshCw className="w-4 h-4" />
               )}
-              Заповнити автоматично
+              {t('admin.stock.auditEditorPage.autofill')}
             </button>
 
             {hasPending && (
@@ -225,7 +244,9 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
               >
                 {savingItems && <Loader2 className="w-4 h-4 animate-spin" />}
                 {saved && <CheckCircle2 className="w-4 h-4" />}
-                {saved ? 'Збережено' : 'Зберегти'}
+                {saved
+                  ? t('admin.stock.auditEditorPage.saved')
+                  : t('admin.stock.auditEditorPage.save')}
               </button>
             )}
 
@@ -234,10 +255,14 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
               onClick={handlePost}
               disabled={posting || hasPending}
               className="inline-flex items-center gap-2 rounded-lg bg-dental-success-dark px-4 py-2 text-sm font-medium text-white hover:brightness-95 disabled:opacity-60 transition-colors"
-              title={hasPending ? 'Спочатку збережіть зміни' : undefined}
+              title={
+                hasPending
+                  ? t('admin.stock.auditEditorPage.saveFirstTooltip')
+                  : undefined
+              }
             >
               {posting && <Loader2 className="w-4 h-4 animate-spin" />}
-              Провести
+              {t('admin.stock.auditEditorPage.post')}
             </button>
           </div>
         )}
@@ -259,26 +284,26 @@ export default function AdminStockAuditEditorPage({ auditId }: Props) {
         <div className="rounded-xl border bg-white overflow-hidden">
           {audit.items.length === 0 ? (
             <p className="text-center text-dental-text py-12">
-              Позицій немає — поверніться і ініціалізуйте знову
+              {t('admin.stock.auditEditorPage.noItems')}
             </p>
           ) : (
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-dental-secondary-200 bg-dental-secondary-50">
                   <th className="text-left px-4 py-3 font-medium text-dental-text">
-                    Матеріал
+                    {t('admin.stock.auditEditorPage.columnMaterial')}
                   </th>
                   <th className="text-left px-4 py-3 font-medium text-dental-text hidden sm:table-cell">
-                    Склад
+                    {t('admin.stock.auditEditorPage.columnWarehouse')}
                   </th>
                   <th className="text-right px-4 py-3 font-medium text-dental-text w-28">
-                    Залишок
+                    {t('admin.stock.auditEditorPage.columnBalance')}
                   </th>
                   <th className="text-right px-4 py-3 font-medium text-dental-text w-32">
-                    Фактично
+                    {t('admin.stock.auditEditorPage.columnActual')}
                   </th>
                   <th className="text-right px-4 py-3 font-medium text-dental-text w-24">
-                    Різниця
+                    {t('admin.stock.auditEditorPage.columnDifference')}
                   </th>
                 </tr>
               </thead>

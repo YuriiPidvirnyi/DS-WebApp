@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { CheckCircle, XCircle, Loader2, Clock } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { CONTACT_INFO } from '@/utils/constants'
 
 type PaymentStatus =
@@ -113,59 +114,64 @@ export default function PaymentResultPage() {
 }
 
 function PollingView() {
+  const { t } = useTranslation()
   return (
     <>
       <Loader2 className="w-16 h-16 text-dental-primary-600 animate-spin mx-auto mb-6" />
       <h1 className="text-xl font-semibold text-dental-dark mb-2">
-        Перевіряємо статус оплати...
+        {t('payments.result.checkingStatus')}
       </h1>
-      <p className="text-dental-muted text-sm">Зачекайте, будь ласка</p>
+      <p className="text-dental-muted text-sm">
+        {t('payments.result.pleaseWait')}
+      </p>
     </>
   )
 }
 
 function SuccessView() {
+  const { t } = useTranslation()
   return (
     <>
       <CheckCircle className="w-16 h-16 text-dental-success mx-auto mb-6" />
       <h1 className="text-xl font-semibold text-dental-dark mb-2">
-        Оплату успішно отримано!
+        {t('payments.result.successTitle')}
       </h1>
       <p className="text-dental-muted text-sm mb-8">
-        Дякуємо! Ваш запис підтверджено.
+        {t('payments.result.successDescription')}
       </p>
       <Link
         href="/cabinet/payments"
         className="inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white font-medium rounded-xl px-6 py-3 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
       >
-        Переглянути платежі
+        {t('payments.result.viewPayments')}
       </Link>
     </>
   )
 }
 
 function FailedView() {
+  const { t } = useTranslation()
   return (
     <>
       <XCircle className="w-16 h-16 text-dental-error mx-auto mb-6" />
       <h1 className="text-xl font-semibold text-dental-dark mb-2">
-        Оплату не завершено
+        {t('payments.result.failedTitle')}
       </h1>
       <p className="text-dental-muted text-sm mb-8">
-        Платіж не вдалося обробити. Спробуйте ще раз або зв&apos;яжіться з нами.
+        {t('payments.result.failedDescription')}
       </p>
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <Link
           href="/booking"
           className="inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white font-medium rounded-xl px-6 py-3 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
         >
-          Спробувати ще раз
+          {t('payments.result.tryAgain')}
         </Link>
         <a
           href={`tel:${CONTACT_INFO.phoneRaw}`}
           className="inline-flex items-center justify-center gap-2 border border-dental-primary-600 text-dental-primary-600 hover:bg-dental-primary-50 font-medium rounded-xl px-6 py-3 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
         >
-          Зв&apos;язатися з нами
+          {t('payments.result.contactUs')}
         </a>
       </div>
     </>
@@ -173,21 +179,21 @@ function FailedView() {
 }
 
 function TimeoutView() {
+  const { t } = useTranslation()
   return (
     <>
       <Clock className="w-16 h-16 text-dental-warning mx-auto mb-6" />
       <h1 className="text-xl font-semibold text-dental-dark mb-2">
-        Обробляємо платіж...
+        {t('payments.result.timeoutTitle')}
       </h1>
       <p className="text-dental-muted text-sm mb-8">
-        Це може зайняти кілька хвилин. Ваш платіж буде відображено в кабінеті
-        після обробки банком.
+        {t('payments.result.timeoutDescription')}
       </p>
       <Link
         href="/cabinet/payments"
         className="inline-flex items-center justify-center gap-2 bg-dental-primary-600 hover:bg-dental-primary-700 text-white font-medium rounded-xl px-6 py-3 transition-colors focus:outline-hidden focus:ring-2 focus:ring-dental-primary-500"
       >
-        Перейти до кабінету
+        {t('payments.result.goToCabinet')}
       </Link>
     </>
   )

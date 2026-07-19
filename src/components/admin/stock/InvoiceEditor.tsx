@@ -31,11 +31,11 @@ interface Props {
 }
 
 const DOC_TYPE_LABELS: Record<DocType, string> = {
-  incoming: 'Прихідна',
-  writeoff: 'Списання',
-  transfer: 'Переміщення',
-  return: 'Повернення',
-  adjustment: 'Коректування',
+  incoming: 'admin.stock.invoiceEditor.docTypeIncoming',
+  writeoff: 'admin.stock.invoiceEditor.docTypeWriteoff',
+  transfer: 'admin.stock.invoiceEditor.docTypeTransfer',
+  return: 'admin.stock.invoiceEditor.docTypeReturn',
+  adjustment: 'admin.stock.invoiceEditor.docTypeAdjustment',
 }
 
 export default function InvoiceEditor({
@@ -167,7 +167,11 @@ export default function InvoiceEditor({
       setPosted(true)
       onPosted?.()
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка проведення')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.invoiceEditor.postingError')
+      )
     } finally {
       setPosting(false)
     }
@@ -194,7 +198,11 @@ export default function InvoiceEditor({
       if (!json.success) throw new Error(json.error)
       onDeleted?.()
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка видалення')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.invoiceEditor.deletionError')
+      )
     } finally {
       setDeleting(false)
     }
@@ -217,7 +225,10 @@ export default function InvoiceEditor({
       <div className="rounded-xl border bg-white p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-semibold text-dental-dark">
-            {DOC_TYPE_LABELS[doc.doc_type as DocType] ?? doc.doc_type} &nbsp;
+            {DOC_TYPE_LABELS[doc.doc_type as DocType]
+              ? t(DOC_TYPE_LABELS[doc.doc_type as DocType])
+              : doc.doc_type}{' '}
+            &nbsp;
             <span className="font-mono text-sm text-dental-text">
               {doc.doc_number ?? doc.id.slice(0, 8)}
             </span>
@@ -225,7 +236,7 @@ export default function InvoiceEditor({
           {posted && (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-status-success-100 px-3 py-1 text-sm font-medium text-status-success-700">
               <CheckCircle2 className="w-4 h-4" />
-              Проведено
+              {t('admin.stock.invoiceEditor.posted')}
             </span>
           )}
         </div>
@@ -233,7 +244,9 @@ export default function InvoiceEditor({
         <div className="grid grid-cols-2 gap-4 text-sm">
           {needsSupplier && (
             <div>
-              <p className="text-dental-text mb-1">Постачальник</p>
+              <p className="text-dental-text mb-1">
+                {t('admin.stock.invoiceEditor.supplier')}
+              </p>
               <p className="font-medium text-dental-dark">
                 {suppliers.find(s => s.id === doc.supplier_id)?.name ??
                   doc.supplier_id ??
@@ -243,7 +256,9 @@ export default function InvoiceEditor({
           )}
           {needsFrom && doc.warehouse_from_id && (
             <div>
-              <p className="text-dental-text mb-1">З складу</p>
+              <p className="text-dental-text mb-1">
+                {t('admin.stock.invoiceEditor.fromWarehouse')}
+              </p>
               <p className="font-medium text-dental-dark">
                 {warehouses.find(w => w.id === doc.warehouse_from_id)
                   ?.name_uk ?? doc.warehouse_from_id}
@@ -252,7 +267,9 @@ export default function InvoiceEditor({
           )}
           {needsTo && doc.warehouse_to_id && (
             <div>
-              <p className="text-dental-text mb-1">На склад</p>
+              <p className="text-dental-text mb-1">
+                {t('admin.stock.invoiceEditor.toWarehouse')}
+              </p>
               <p className="font-medium text-dental-dark">
                 {warehouses.find(w => w.id === doc.warehouse_to_id)?.name_uk ??
                   doc.warehouse_to_id}
@@ -273,7 +290,9 @@ export default function InvoiceEditor({
                   type="text"
                   value={matSearch}
                   onChange={e => setMatSearch(e.target.value)}
-                  placeholder="Пошук матеріалу..."
+                  placeholder={t(
+                    'admin.stock.invoiceEditor.searchMaterialPlaceholder'
+                  )}
                   className="w-full rounded-lg border border-dental-secondary-300 pl-9 pr-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
                 />
                 {searching && (
@@ -284,7 +303,7 @@ export default function InvoiceEditor({
                 value=""
                 onChange={() => {}}
                 onScanned={handleBarcodeScanned}
-                placeholder="Штрихкод..."
+                placeholder={t('admin.stock.invoiceEditor.barcodePlaceholder')}
                 className="w-48"
               />
             </div>
@@ -310,22 +329,24 @@ export default function InvoiceEditor({
         )}
 
         {items.length === 0 ? (
-          <p className="text-center text-dental-text py-12">Позицій немає</p>
+          <p className="text-center text-dental-text py-12">
+            {t('admin.stock.invoiceEditor.noItems')}
+          </p>
         ) : (
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-dental-secondary-200 bg-dental-secondary-50">
                 <th className="text-left px-4 py-3 font-medium text-dental-text">
-                  Матеріал
+                  {t('admin.stock.invoiceEditor.material')}
                 </th>
                 <th className="text-right px-4 py-3 font-medium text-dental-text w-28">
-                  К-сть
+                  {t('admin.stock.invoiceEditor.quantity')}
                 </th>
                 <th className="text-right px-4 py-3 font-medium text-dental-text w-28">
-                  Ціна
+                  {t('admin.stock.invoiceEditor.price')}
                 </th>
                 <th className="text-right px-4 py-3 font-medium text-dental-text w-28">
-                  Сума
+                  {t('admin.stock.invoiceEditor.amount')}
                 </th>
                 {isDraft && <th className="w-10" />}
               </tr>
@@ -382,7 +403,7 @@ export default function InvoiceEditor({
                     colSpan={isDraft ? 3 : 2}
                     className="px-4 py-3 text-sm font-medium text-dental-dark"
                   >
-                    Разом
+                    {t('admin.stock.invoiceEditor.total')}
                   </td>
                   <td className="px-4 py-3 text-right font-semibold text-dental-dark font-mono">
                     {doc.total_amount.toFixed(2)}
@@ -410,7 +431,7 @@ export default function InvoiceEditor({
             className="inline-flex items-center gap-2 rounded-lg border border-dental-error/20 px-4 py-2 text-sm font-medium text-status-error-700 hover:bg-status-error-100 disabled:opacity-60"
           >
             {deleting && <Loader2 className="w-4 h-4 animate-spin" />}
-            Видалити чернетку
+            {t('admin.stock.invoiceEditor.deleteDraft')}
           </button>
           <button
             type="button"
@@ -419,7 +440,7 @@ export default function InvoiceEditor({
             className="inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-6 py-2 text-sm font-medium text-white hover:bg-dental-dark disabled:opacity-60 transition-colors"
           >
             {posting && <Loader2 className="w-4 h-4 animate-spin" />}
-            Провести
+            {t('admin.stock.invoiceEditor.post')}
           </button>
         </div>
       )}

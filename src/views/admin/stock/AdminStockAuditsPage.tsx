@@ -11,13 +11,14 @@ import {
   CheckCircle2,
   Clock,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useCSRF } from '@/hooks/useCSRF'
 import type { InventoryAudit, AuditStatus } from '@/types/stock'
 
 const STATUS_LABELS: Record<AuditStatus, string> = {
-  draft: 'Чернетка',
-  posted: 'Проведено',
-  void: 'Анульовано',
+  draft: 'admin.stock.auditsPage.statusDraft',
+  posted: 'admin.stock.auditsPage.statusPosted',
+  void: 'admin.stock.auditsPage.statusVoid',
 }
 
 const STATUS_CLASSES: Record<AuditStatus, string> = {
@@ -27,6 +28,7 @@ const STATUS_CLASSES: Record<AuditStatus, string> = {
 }
 
 export default function AdminStockAuditsPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const { token: csrfToken } = useCSRF()
   const [audits, setAudits] = useState<InventoryAudit[]>([])
@@ -48,11 +50,13 @@ export default function AdminStockAuditsPage() {
       setAudits(json.data)
       setTotal(json.meta.total)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка завантаження')
+      setError(
+        e instanceof Error ? e.message : t('admin.stock.auditsPage.errorLoad')
+      )
     } finally {
       setLoading(false)
     }
-  }, [page])
+  }, [page, t])
 
   useEffect(() => {
     load()
@@ -69,7 +73,9 @@ export default function AdminStockAuditsPage() {
       if (!json.success) throw new Error(json.error)
       load()
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка видалення')
+      setError(
+        e instanceof Error ? e.message : t('admin.stock.auditsPage.errorDelete')
+      )
     } finally {
       setDeleting(null)
     }
@@ -89,7 +95,7 @@ export default function AdminStockAuditsPage() {
             <ChevronLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-            Інвентаризація
+            {t('admin.stock.auditsPage.title')}
           </h1>
         </div>
         <button
@@ -98,7 +104,7 @@ export default function AdminStockAuditsPage() {
           className="inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-dental-dark transition-colors"
         >
           <Plus className="w-4 h-4" />
-          Новий акт
+          {t('admin.stock.auditsPage.newAudit')}
         </button>
       </div>
 
@@ -117,13 +123,15 @@ export default function AdminStockAuditsPage() {
         {!loading && !error && audits.length === 0 && (
           <div className="flex flex-col items-center py-16 gap-3">
             <ClipboardCheck className="w-10 h-10 text-dental-text/40" />
-            <p className="text-dental-text text-sm">Інвентаризацій ще немає</p>
+            <p className="text-dental-text text-sm">
+              {t('admin.stock.auditsPage.emptyState')}
+            </p>
             <button
               type="button"
               onClick={() => router.push('/admin/stock/audits/new')}
               className="text-sm text-dental-primary-600 hover:underline"
             >
-              Створити перший акт →
+              {t('admin.stock.auditsPage.createFirst')}
             </button>
           </div>
         )}
@@ -133,13 +141,13 @@ export default function AdminStockAuditsPage() {
             <thead>
               <tr className="border-b border-dental-secondary-200 bg-dental-secondary-50">
                 <th className="text-left px-4 py-3 font-medium text-dental-text">
-                  Номер
+                  {t('admin.stock.auditsPage.columnNumber')}
                 </th>
                 <th className="text-left px-4 py-3 font-medium text-dental-text hidden sm:table-cell">
-                  Дата
+                  {t('admin.stock.auditsPage.columnDate')}
                 </th>
                 <th className="px-4 py-3 font-medium text-dental-text">
-                  Статус
+                  {t('admin.stock.auditsPage.columnStatus')}
                 </th>
                 <th className="px-4 py-3" />
               </tr>
@@ -174,7 +182,7 @@ export default function AdminStockAuditsPage() {
                         STATUS_CLASSES[audit.status]
                       }`}
                     >
-                      {STATUS_LABELS[audit.status]}
+                      {t(STATUS_LABELS[audit.status])}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right flex items-center justify-end gap-2">
@@ -182,7 +190,9 @@ export default function AdminStockAuditsPage() {
                       href={`/admin/stock/audits/${audit.id}`}
                       className="rounded-lg border border-dental-text/20 px-3 py-1.5 text-xs font-medium text-dental-text hover:bg-dental-secondary-100 transition-colors"
                     >
-                      {audit.status === 'draft' ? 'Редагувати' : 'Переглянути'}
+                      {audit.status === 'draft'
+                        ? t('admin.stock.auditsPage.edit')
+                        : t('admin.stock.auditsPage.view')}
                     </Link>
                     {audit.status === 'draft' && (
                       <button
@@ -194,7 +204,7 @@ export default function AdminStockAuditsPage() {
                         {deleting === audit.id ? (
                           <Loader2 className="w-3 h-3 animate-spin" />
                         ) : (
-                          'Видалити'
+                          t('admin.stock.auditsPage.delete')
                         )}
                       </button>
                     )}

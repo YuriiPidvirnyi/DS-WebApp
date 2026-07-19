@@ -1,72 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { CreditCard } from 'lucide-react'
-import { EmptyState } from '@/components/ui/EmptyState'
-import { StatusBadge, type StatusTone } from '@/components/ui/StatusBadge'
-import { WalletCards, type WalletCard } from '@/components/cabinet/WalletCards'
+import CabinetPaymentsPage, {
+  type Payment,
+} from '@/views/cabinet/CabinetPaymentsPage'
+import { type WalletCard } from '@/components/cabinet/WalletCards'
 
-type PaymentStatus =
-  | 'created'
-  | 'processing'
-  | 'success'
-  | 'failure'
-  | 'expired'
-  | 'reversed'
-type PaymentMode = 'full' | 'deposit'
-
-interface Payment {
-  id: string
-  invoice_id: string | null
-  amount_kopecks: number
-  payment_mode: PaymentMode
-  status: PaymentStatus
-  created_at: string
-  paid_at: string | null
-  // Supabase returns arrays for relations even when foreign-key is singular
-  appointments:
-    | {
-        appointment_date: string
-        appointment_time: string
-        services: { name_uk: string }[] | null
-      }[]
-    | null
-}
-
-const STATUS_LABELS: Record<PaymentStatus, string> = {
-  created: 'Очікує',
-  processing: 'Очікує',
-  success: 'Оплачено',
-  failure: 'Не завершено',
-  expired: 'Не завершено',
-  reversed: 'Повернуто',
-}
-
-const STATUS_TONES: Record<PaymentStatus, StatusTone> = {
-  created: 'warning',
-  processing: 'warning',
-  success: 'success',
-  failure: 'error',
-  expired: 'error',
-  reversed: 'neutral',
-}
-
-const MODE_LABELS: Record<PaymentMode, string> = {
-  full: 'Повна оплата',
-  deposit: 'Завдаток',
-}
-
-function formatDate(dateStr: string): string {
-  try {
-    return new Date(dateStr).toLocaleDateString('uk-UA', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    })
-  } catch {
-    return dateStr
-  }
-}
-
+// Server component: auth + data fetch only. All presentation (and its copy)
+// lives in the CabinetPaymentsPage client view so it goes through i18n — the
+// page itself carries no user-facing strings (Ф-2).
 export default async function PaymentsPage() {
   const supabase = await createClient()
 
@@ -99,116 +40,5 @@ export default async function PaymentsPage() {
   const list = (payments ?? []) as unknown as Payment[]
   const cards = (walletCards ?? []) as WalletCard[]
 
-  return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold text-dental-dark mb-6">Платежі</h1>
-
-      <WalletCards initialCards={cards} />
-
-      {list.length === 0 ? (
-        <EmptyState
-          icon={
-            <div className="w-20 h-20 bg-dental-primary-50 rounded-full flex items-center justify-center">
-              <CreditCard className="w-10 h-10 text-dental-primary-ink" />
-            </div>
-          }
-          title="Немає платежів"
-          description="Тут відображатимуться ваші онлайн-платежі за послуги клініки."
-          action={{ href: '/booking', label: 'Записатися на прийом' }}
-        />
-      ) : (
-        <div className="bg-white rounded-2xl shadow-xs border border-dental-secondary-100 overflow-hidden">
-          {/* Desktop table */}
-          <div className="hidden sm:block overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-dental-secondary-100 bg-dental-primary-50">
-                  <th className="text-left px-6 py-3 font-semibold text-dental-dark">
-                    Дата
-                  </th>
-                  <th className="text-left px-6 py-3 font-semibold text-dental-dark">
-                    Послуга
-                  </th>
-                  <th className="text-left px-6 py-3 font-semibold text-dental-dark">
-                    Сума
-                  </th>
-                  <th className="text-left px-6 py-3 font-semibold text-dental-dark">
-                    Тип
-                  </th>
-                  <th className="text-left px-6 py-3 font-semibold text-dental-dark">
-                    Статус
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-dental-secondary-100">
-                {list.map(payment => (
-                  <tr
-                    key={payment.id}
-                    className="hover:bg-dental-primary-50 transition-colors"
-                  >
-                    <td className="px-6 py-4 text-dental-text whitespace-nowrap">
-                      {formatDate(
-                        payment.appointments?.[0]?.appointment_date ??
-                          payment.created_at
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-dental-text">
-                      {payment.appointments?.[0]?.services?.[0]?.name_uk ?? '—'}
-                    </td>
-                    <td className="px-6 py-4 text-dental-dark font-medium whitespace-nowrap">
-                      {(payment.amount_kopecks / 100).toFixed(2)} грн
-                    </td>
-                    <td className="px-6 py-4 text-dental-text whitespace-nowrap">
-                      {MODE_LABELS[payment.payment_mode] ??
-                        payment.payment_mode}
-                    </td>
-                    <td className="px-6 py-4">
-                      <StatusBadge
-                        tone={STATUS_TONES[payment.status] ?? 'neutral'}
-                      >
-                        {STATUS_LABELS[payment.status] ?? payment.status}
-                      </StatusBadge>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Mobile card list */}
-          <ul className="sm:hidden divide-y divide-dental-secondary-100">
-            {list.map(payment => (
-              <li key={payment.id} className="px-4 py-4 space-y-1.5">
-                <div className="flex items-start justify-between gap-2">
-                  <span className="font-medium text-dental-dark text-sm">
-                    {payment.appointments?.[0]?.services?.[0]?.name_uk ?? '—'}
-                  </span>
-                  <StatusBadge
-                    tone={STATUS_TONES[payment.status] ?? 'neutral'}
-                    className="shrink-0"
-                  >
-                    {STATUS_LABELS[payment.status] ?? payment.status}
-                  </StatusBadge>
-                </div>
-                <div className="flex items-center justify-between text-sm text-dental-muted">
-                  <span>
-                    {formatDate(
-                      payment.appointments?.[0]?.appointment_date ??
-                        payment.created_at
-                    )}
-                  </span>
-                  <span className="font-medium text-dental-dark">
-                    {(payment.amount_kopecks / 100).toFixed(2)} грн
-                  </span>
-                </div>
-                <p className="text-xs text-dental-muted">
-                  {MODE_LABELS[payment.payment_mode] ?? payment.payment_mode}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  )
+  return <CabinetPaymentsPage payments={list} cards={cards} />
 }

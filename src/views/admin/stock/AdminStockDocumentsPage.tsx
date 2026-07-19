@@ -3,15 +3,16 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { ChevronLeft, Plus, Eye, Copy, Loader2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useCSRF } from '@/hooks/useCSRF'
 import type { StockDocument, DocType, DocStatus } from '@/types/stock'
 
 const DOC_TYPE_LABELS: Record<DocType, string> = {
-  incoming: 'Прихід',
-  writeoff: 'Списання',
-  return: 'Повернення',
-  transfer: 'Переміщення',
-  adjustment: 'Коригування',
+  incoming: 'admin.stock.documentsPage.docTypeIncoming',
+  writeoff: 'admin.stock.documentsPage.docTypeWriteoff',
+  return: 'admin.stock.documentsPage.docTypeReturn',
+  transfer: 'admin.stock.documentsPage.docTypeTransfer',
+  adjustment: 'admin.stock.documentsPage.docTypeAdjustment',
 }
 
 const STATUS_STYLES: Record<DocStatus, string> = {
@@ -21,12 +22,13 @@ const STATUS_STYLES: Record<DocStatus, string> = {
 }
 
 const STATUS_LABELS: Record<DocStatus, string> = {
-  draft: 'Чернетка',
-  posted: 'Проведено',
-  void: 'Анульовано',
+  draft: 'admin.stock.documentsPage.statusDraft',
+  posted: 'admin.stock.documentsPage.statusPosted',
+  void: 'admin.stock.documentsPage.statusVoid',
 }
 
 export default function AdminStockDocumentsPage() {
+  const { t } = useTranslation()
   const { token: csrfToken } = useCSRF()
   const [docs, setDocs] = useState<StockDocument[]>([])
   const [total, setTotal] = useState(0)
@@ -50,11 +52,15 @@ export default function AdminStockDocumentsPage() {
       setDocs(json.data)
       setTotal(json.meta.total)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка завантаження')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.documentsPage.loadError')
+      )
     } finally {
       setLoading(false)
     }
-  }, [page, filterType, filterStatus])
+  }, [page, filterType, filterStatus, t])
 
   useEffect(() => {
     load()
@@ -82,7 +88,7 @@ export default function AdminStockDocumentsPage() {
             <ChevronLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-            Документи
+            {t('admin.stock.documentsPage.title')}
           </h1>
         </div>
 
@@ -96,11 +102,13 @@ export default function AdminStockDocumentsPage() {
               }}
               className="rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
             >
-              <option value="">Всі типи</option>
+              <option value="">
+                {t('admin.stock.documentsPage.filterAllTypes')}
+              </option>
               {(Object.entries(DOC_TYPE_LABELS) as [DocType, string][]).map(
                 ([k, v]) => (
                   <option key={k} value={k}>
-                    {v}
+                    {t(v)}
                   </option>
                 )
               )}
@@ -113,11 +121,13 @@ export default function AdminStockDocumentsPage() {
               }}
               className="rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
             >
-              <option value="">Всі статуси</option>
+              <option value="">
+                {t('admin.stock.documentsPage.filterAllStatuses')}
+              </option>
               {(Object.entries(STATUS_LABELS) as [DocStatus, string][]).map(
                 ([k, v]) => (
                   <option key={k} value={k}>
-                    {v}
+                    {t(v)}
                   </option>
                 )
               )}
@@ -128,7 +138,7 @@ export default function AdminStockDocumentsPage() {
             className="inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-dental-dark transition-colors"
           >
             <Plus className="w-4 h-4" />
-            Новий документ
+            {t('admin.stock.documentsPage.newDocument')}
           </button>
         </div>
 
@@ -146,7 +156,7 @@ export default function AdminStockDocumentsPage() {
 
         {!loading && !error && docs.length === 0 && (
           <p className="text-center text-dental-text py-12">
-            Документи відсутні
+            {t('admin.stock.documentsPage.emptyState')}
           </p>
         )}
 
@@ -162,16 +172,16 @@ export default function AdminStockDocumentsPage() {
                     <span
                       className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_STYLES[doc.status]}`}
                     >
-                      {STATUS_LABELS[doc.status]}
+                      {t(STATUS_LABELS[doc.status])}
                     </span>
                     <div>
                       <p className="font-medium text-dental-dark">
-                        {DOC_TYPE_LABELS[doc.doc_type]} № {doc.doc_number}
+                        {t(DOC_TYPE_LABELS[doc.doc_type])} № {doc.doc_number}
                       </p>
                       <p className="text-xs text-dental-text">
                         {new Date(doc.doc_date).toLocaleDateString('uk-UA')}
                         {doc.total_amount > 0 &&
-                          ` · ${doc.total_amount.toFixed(2)} грн`}
+                          ` · ${doc.total_amount.toFixed(2)} ${t('admin.stock.documentsPage.currencyHryvnia')}`}
                       </p>
                     </div>
                   </div>
@@ -179,14 +189,14 @@ export default function AdminStockDocumentsPage() {
                     <Link
                       href={`/admin/stock/documents/${doc.id}`}
                       className="rounded p-1.5 text-dental-text hover:bg-dental-secondary-100"
-                      title="Відкрити"
+                      title={t('admin.stock.documentsPage.openAction')}
                     >
                       <Eye className="w-4 h-4" />
                     </Link>
                     <button
                       onClick={() => copyDocument(doc.id)}
                       className="rounded p-1.5 text-dental-text hover:bg-dental-secondary-100"
-                      title="Копіювати"
+                      title={t('admin.stock.documentsPage.copyAction')}
                     >
                       <Copy className="w-4 h-4" />
                     </button>
@@ -202,7 +212,7 @@ export default function AdminStockDocumentsPage() {
                   onClick={() => setPage(p => p - 1)}
                   className="rounded-lg border px-3 py-1.5 text-sm disabled:opacity-40"
                 >
-                  Попередня
+                  {t('admin.stock.documentsPage.paginationPrev')}
                 </button>
                 <span className="text-sm text-dental-text">
                   {page} / {totalPages}
@@ -212,7 +222,7 @@ export default function AdminStockDocumentsPage() {
                   onClick={() => setPage(p => p + 1)}
                   className="rounded-lg border px-3 py-1.5 text-sm disabled:opacity-40"
                 >
-                  Наступна
+                  {t('admin.stock.documentsPage.paginationNext')}
                 </button>
               </div>
             )}
@@ -253,6 +263,7 @@ function CreateDocumentModal({
   onCreated,
   csrfToken,
 }: CreateDocumentModalProps) {
+  const { t } = useTranslation()
   const [docType, setDocType] = useState<DocType>('incoming')
   const [saving, setSaving] = useState(false)
   const [err, setErr] = useState<string | null>(null)
@@ -274,7 +285,11 @@ function CreateDocumentModal({
       if (!json.success) throw new Error(json.error)
       onCreated(json.data.id)
     } catch (e) {
-      setErr(e instanceof Error ? e.message : 'Помилка створення')
+      setErr(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.documentsPage.createError')
+      )
     } finally {
       setSaving(false)
     }
@@ -284,21 +299,21 @@ function CreateDocumentModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <div className="w-full max-w-sm rounded-2xl bg-white shadow-xl p-6">
         <h2 className="text-lg font-semibold text-dental-dark mb-4">
-          Новий документ
+          {t('admin.stock.documentsPage.newDocument')}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-dental-dark mb-1">
-              Тип документа
+              {t('admin.stock.documentsPage.documentTypeLabel')}
             </label>
             <select
               value={docType}
               onChange={e => setDocType(e.target.value as DocType)}
               className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
             >
-              {DOC_TYPE_OPTIONS.map(t => (
-                <option key={t} value={t}>
-                  {DOC_TYPE_LABELS[t]}
+              {DOC_TYPE_OPTIONS.map(dt => (
+                <option key={dt} value={dt}>
+                  {t(DOC_TYPE_LABELS[dt])}
                 </option>
               ))}
             </select>
@@ -310,7 +325,7 @@ function CreateDocumentModal({
               onClick={onClose}
               className="px-4 py-2 text-sm text-dental-text hover:text-dental-dark"
             >
-              Скасувати
+              {t('admin.stock.documentsPage.cancel')}
             </button>
             <button
               type="submit"
@@ -318,7 +333,7 @@ function CreateDocumentModal({
               className="inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-dental-dark disabled:opacity-60 transition-colors"
             >
               {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-              Створити
+              {t('admin.stock.documentsPage.create')}
             </button>
           </div>
         </form>

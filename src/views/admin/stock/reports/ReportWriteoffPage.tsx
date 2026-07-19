@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import { ChevronLeft, Loader2, Download } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { PeriodFilter } from '@/components/admin/stock/ReportFilterBar'
 import { exportCsv } from '@/utils/stock-export'
 
@@ -29,6 +30,7 @@ function defaultPeriod() {
 }
 
 export default function ReportWriteoffPage() {
+  const { t } = useTranslation()
   const p = defaultPeriod()
   const [from, setFrom] = useState(p.from)
   const [to, setTo] = useState(p.to)
@@ -46,11 +48,15 @@ export default function ReportWriteoffPage() {
       if (!json.success) throw new Error(json.error)
       setRows(json.data ?? [])
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка завантаження')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.reports.writeoff.loadError')
+      )
     } finally {
       setLoading(false)
     }
-  }, [from, to])
+  }, [from, to, t])
 
   const totalAmount = rows.reduce((s, r) => s + r.line_total, 0)
 
@@ -64,7 +70,7 @@ export default function ReportWriteoffPage() {
           <ChevronLeft className="w-5 h-5" />
         </Link>
         <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-          Звіт по списанню
+          {t('admin.stock.reports.writeoff.title')}
         </h1>
       </div>
 
@@ -82,7 +88,7 @@ export default function ReportWriteoffPage() {
           className="ml-auto inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-dental-dark disabled:opacity-60 transition-colors"
         >
           {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-          Побудувати
+          {t('admin.stock.reports.writeoff.build')}
         </button>
         {rows.length > 0 && (
           <button
@@ -110,33 +116,38 @@ export default function ReportWriteoffPage() {
       {rows.length > 0 && (
         <>
           <div className="mb-3 text-sm text-dental-text">
-            Рядків: <strong>{rows.length}</strong> · Сума:{' '}
-            <strong>{totalAmount.toFixed(2)} грн</strong>
+            {t('admin.stock.reports.writeoff.rowsLabel')}{' '}
+            <strong>{rows.length}</strong>{' '}
+            {t('admin.stock.reports.writeoff.sumLabel')}{' '}
+            <strong>
+              {totalAmount.toFixed(2)}{' '}
+              {t('admin.stock.reports.writeoff.currencyUah')}
+            </strong>
           </div>
           <div className="rounded-xl border bg-white overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-dental-secondary-200 bg-dental-secondary-50">
                   <th className="text-left px-4 py-3 font-medium text-dental-text">
-                    Документ
+                    {t('admin.stock.reports.writeoff.colDocument')}
                   </th>
                   <th className="text-left px-4 py-3 font-medium text-dental-text hidden sm:table-cell">
-                    Дата
+                    {t('admin.stock.reports.writeoff.colDate')}
                   </th>
                   <th className="text-left px-4 py-3 font-medium text-dental-text hidden md:table-cell">
-                    Склад
+                    {t('admin.stock.reports.writeoff.colWarehouse')}
                   </th>
                   <th className="text-left px-4 py-3 font-medium text-dental-text">
-                    Матеріал
+                    {t('admin.stock.reports.writeoff.colMaterial')}
                   </th>
                   <th className="text-left px-4 py-3 font-medium text-dental-text hidden lg:table-cell">
-                    Послуга
+                    {t('admin.stock.reports.writeoff.colService')}
                   </th>
                   <th className="text-right px-4 py-3 font-medium text-dental-text w-20">
-                    К-сть
+                    {t('admin.stock.reports.writeoff.colQty')}
                   </th>
                   <th className="text-right px-4 py-3 font-medium text-dental-text w-28">
-                    Сума
+                    {t('admin.stock.reports.writeoff.colSum')}
                   </th>
                 </tr>
               </thead>
@@ -177,7 +188,7 @@ export default function ReportWriteoffPage() {
 
       {!loading && rows.length === 0 && (
         <p className="text-center text-dental-text py-12">
-          Оберіть період та натисніть «Побудувати»
+          {t('admin.stock.reports.writeoff.emptyState')}
         </p>
       )}
     </div>

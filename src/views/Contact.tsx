@@ -1,6 +1,6 @@
 'use client'
 
-import { Phone, Mail, MapPin, Clock } from 'lucide-react'
+import { Phone, Mail, MapPin, Clock, ArrowRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import ContactForm from '@/components/ContactForm'
 import GoogleMap from '@/components/GoogleMap'
@@ -99,10 +99,12 @@ const Contact = () => {
                       href={SITE_INFO.googleMaps}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-white/80 hover:text-white hover:underline"
+                      className="inline-flex items-center gap-1 text-sm text-white/80 hover:text-white hover:underline"
                       aria-label={t('contact.viewOnMap')}
                     >
                       {t('contact.viewOnMap')}
+                      {/* Icon lives in the component; the dictionary carries text only (Л4) */}
+                      <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                     </a>
                   </div>
                 </div>

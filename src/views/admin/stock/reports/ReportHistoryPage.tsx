@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import Link from 'next/link'
 import { ChevronLeft, Loader2, Download } from 'lucide-react'
 import { PeriodFilter } from '@/components/admin/stock/ReportFilterBar'
@@ -33,6 +34,7 @@ function defaultPeriod() {
 }
 
 export default function ReportHistoryPage() {
+  const { t } = useTranslation()
   const p = defaultPeriod()
   const [from, setFrom] = useState(p.from)
   const [to, setTo] = useState(p.to)
@@ -59,7 +61,7 @@ export default function ReportHistoryPage() {
 
   const run = useCallback(async () => {
     if (!materialId || !warehouseId) {
-      setError('Оберіть матеріал та склад')
+      setError(t('admin.stock.reports.history.selectMaterialWarehouse'))
       return
     }
     setLoading(true)
@@ -71,11 +73,15 @@ export default function ReportHistoryPage() {
       if (!json.success) throw new Error(json.error)
       setRows(json.data ?? [])
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка завантаження')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.reports.history.loadError')
+      )
     } finally {
       setLoading(false)
     }
-  }, [materialId, warehouseId, from, to])
+  }, [materialId, warehouseId, from, to, t])
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -87,7 +93,7 @@ export default function ReportHistoryPage() {
           <ChevronLeft className="w-5 h-5" />
         </Link>
         <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-          Історія товару
+          {t('admin.stock.reports.history.title')}
         </h1>
       </div>
 
@@ -103,7 +109,9 @@ export default function ReportHistoryPage() {
           onChange={e => setMaterialId(e.target.value)}
           className="rounded-lg border border-dental-secondary-200 px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 bg-white rounded-xl"
         >
-          <option value="">— Матеріал —</option>
+          <option value="">
+            {t('admin.stock.reports.history.materialOption')}
+          </option>
           {materials.map(m => (
             <option key={m.id} value={m.id}>
               {m.name_uk}
@@ -115,7 +123,9 @@ export default function ReportHistoryPage() {
           onChange={e => setWarehouseId(e.target.value)}
           className="rounded-lg border border-dental-secondary-200 px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 bg-white rounded-xl"
         >
-          <option value="">— Склад —</option>
+          <option value="">
+            {t('admin.stock.reports.history.warehouseOption')}
+          </option>
           {warehouses.map(w => (
             <option key={w.id} value={w.id}>
               {w.name_uk}
@@ -129,7 +139,7 @@ export default function ReportHistoryPage() {
           className="ml-auto inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-dental-dark disabled:opacity-60 transition-colors"
         >
           {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-          Побудувати
+          {t('admin.stock.reports.history.build')}
         </button>
         {rows.length > 0 && (
           <button
@@ -160,25 +170,25 @@ export default function ReportHistoryPage() {
             <thead>
               <tr className="border-b border-dental-secondary-200 bg-dental-secondary-50">
                 <th className="text-left px-4 py-3 font-medium text-dental-text">
-                  Дата
+                  {t('admin.stock.reports.history.colDate')}
                 </th>
                 <th className="text-left px-4 py-3 font-medium text-dental-text">
-                  Тип
+                  {t('admin.stock.reports.history.colType')}
                 </th>
                 <th className="text-left px-4 py-3 font-medium text-dental-text">
-                  Документ
+                  {t('admin.stock.reports.history.colDocument')}
                 </th>
                 <th className="text-right px-4 py-3 font-medium text-dental-text w-24">
-                  Δ К-сть
+                  {t('admin.stock.reports.history.colQtyDelta')}
                 </th>
                 <th className="text-right px-4 py-3 font-medium text-dental-text w-24">
-                  Ціна
+                  {t('admin.stock.reports.history.colPrice')}
                 </th>
                 <th className="text-right px-4 py-3 font-medium text-dental-text w-28">
-                  Залишок
+                  {t('admin.stock.reports.history.colBalance')}
                 </th>
                 <th className="text-left px-4 py-3 font-medium text-dental-text hidden md:table-cell">
-                  Хто
+                  {t('admin.stock.reports.history.colActor')}
                 </th>
               </tr>
             </thead>
@@ -218,7 +228,7 @@ export default function ReportHistoryPage() {
       )}
       {!loading && rows.length === 0 && (
         <p className="text-center text-dental-text py-12">
-          Оберіть матеріал, склад та натисніть «Побудувати»
+          {t('admin.stock.reports.history.emptyPrompt')}
         </p>
       )}
     </div>

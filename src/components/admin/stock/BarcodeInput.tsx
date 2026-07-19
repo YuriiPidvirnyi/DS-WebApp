@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ScanLine, X } from 'lucide-react'
 
 interface Props {
@@ -15,9 +16,10 @@ export default function BarcodeInput({
   value,
   onChange,
   onScanned,
-  placeholder = 'Штрихкод або артикул...',
+  placeholder,
   className = '',
 }: Props) {
+  const { t } = useTranslation()
   const inputRef = useRef<HTMLInputElement>(null)
   const bufferRef = useRef<string>('')
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -67,13 +69,13 @@ export default function BarcodeInput({
         type="text"
         value={value}
         onChange={e => onChange(e.target.value)}
-        placeholder={placeholder}
+        placeholder={placeholder ?? t('admin.stock.barcodeInput.placeholder')}
         className={`w-full rounded-lg border border-dental-secondary-300 px-3 py-2 pr-16 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 ${scanning ? 'border-dental-primary-600 bg-dental-primary/5' : ''} ${className}`}
       />
       <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
         {scanning && (
           <span className="text-xs text-dental-primary-600 animate-pulse">
-            скан
+            {t('admin.stock.barcodeInput.scanning')}
           </span>
         )}
         <ScanLine className="w-4 h-4 text-dental-text" />

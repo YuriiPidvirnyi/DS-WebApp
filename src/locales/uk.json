@@ -310,9 +310,9 @@
     "description": "Зв'яжіться з нами зручним для вас способом або запишіться на прийом онлайн",
     "contactInfo": "Контактна інформація",
     "responseTime": "Відповідаємо протягом 2 годин",
-    "viewOnMap": "Переглянути на карті →",
+    "viewOnMap": "Переглянути на карті",
     "ourLocation": "Наше розташування",
-    "openInGoogleMaps": "Відкрити в Google Maps →",
+    "openInGoogleMaps": "Відкрити в Google Maps",
     "map": {
       "loadingTitle": "Завантажуємо карту",
       "loadingMessage": "Підтягуємо інтерактивну карту клініки.",
@@ -535,6 +535,11 @@
           "name": "Ультразвукове чищення"
         }
       }
+    },
+    "experience": {
+      "one": "{{years}} рік досвіду",
+      "few": "{{years}} роки досвіду",
+      "many": "{{years}} років досвіду"
     }
   },
   "testimonials": {
@@ -580,7 +585,7 @@
     "subtitle": "Реальні історії людей, які довірили нам свої посмішки",
     "videoReview": "Відеовідгук",
     "reviewFrom": "Відгук від",
-    "playVideo": "Грати відео",
+    "playVideo": "Відтворити відео",
     "pause": "Пауза",
     "unmute": "Увімкнути звук",
     "mute": "Вимкнути звук",
@@ -897,8 +902,8 @@
     "appointmentDesc": "Оберіть зручний час для візиту до нашої клініки",
     "copyright": "© {{year}} Dental Story. Усі права захищені.",
     "workingHours": {
-      "weekdays": "Пн-Пт: 9:00-20:00",
-      "saturday": "Сб: 10:00-18:00",
+      "weekdays": "Пн-Пт: {{open}}-{{close}}",
+      "saturday": "Сб: {{open}}-{{close}}",
       "sunday": "Нд: вихідний"
     },
     "socialMedia": "Соціальні мережі"
@@ -916,7 +921,9 @@
     "nextCase": "Наступний випадок",
     "goToCase": "Перейти до випадку",
     "title": "Доступність",
-    "closePanel": "Закрити панель доступності"
+    "closePanel": "Закрити панель доступності",
+    "pinNav": "Закріпити панель навігації",
+    "unpinNav": "Відкріпити панель навігації"
   },
   "accessibilityPanel": {
     "regionLabel": "Налаштування доступності",
@@ -1383,27 +1390,6 @@
       "booking": "• Бронювання: 10 запитів/хв"
     }
   },
-  "sentryExamplePage": {
-    "meta": {
-      "title": "sentry-example-page",
-      "description": "Тестова сторінка Sentry для вашого Next.js застосунку."
-    },
-    "logoAria": "Логотип Sentry",
-    "title": "sentry-example-page",
-    "description": {
-      "prefix": "Натисніть кнопку нижче, щоб переглянути приклад помилки на сторінці Sentry",
-      "issuesLinkLabel": "Issues Page",
-      "middle": "Більше деталей про налаштування Sentry можна знайти в",
-      "docsLinkLabel": "документації"
-    },
-    "actions": {
-      "throwSampleError": "Згенерувати тестову помилку"
-    },
-    "status": {
-      "errorSent": "Помилку надіслано в Sentry.",
-      "connectivityBlocked": "Схоже, мережеві запити до Sentry блокуються, тому помилки не будуть зафіксовані. Вимкніть ad-blocker, щоб завершити тест."
-    }
-  },
   "admin": {
     "roles": {
       "superadmin": "Суперадміністратор",
@@ -1472,7 +1458,8 @@
         "communications": "Комунікації",
         "inventory": "Склад",
         "system": "Система"
-      }
+      },
+      "workspace": "Робоче місце"
     },
     "login": {
       "title": "Вхід в адмін-панель",
@@ -1554,7 +1541,7 @@
       "confirmed": "Підтверджено",
       "completed": "Завершено",
       "cancelled": "Скасовано",
-      "no_show": "Не з'явився"
+      "no_show": "Неявка"
     },
     "appointmentsPage": {
       "title": "Управління записами",
@@ -2269,6 +2256,14 @@
       "statusLabels": {
         "active": "Активний",
         "inactive": "Неактивний"
+      },
+      "units": {
+        "шт": "шт",
+        "мл": "мл",
+        "г": "г",
+        "упак": "упак",
+        "пара": "пара",
+        "набір": "набір"
       }
     },
     "ordersPage": {
@@ -2525,7 +2520,517 @@
           "description": "Користувач втратить доступ до складських операцій, наданих цим записом.",
           "action": "Забрати"
         }
+      },
+      "page": {
+        "heading": "Склад v2",
+        "subtitle": "Управління складом, матеріалами та витратами. Всі 8 фаз реалізовані.",
+        "documentsTitle": "Накладні",
+        "documentsDesc": "Прихідні, списання, переміщення, повернення, коректування",
+        "warehousesTitle": "Склади",
+        "warehousesDesc": "Головний склад, кабінети, склади лікарів",
+        "directoriesTitle": "Довідники",
+        "directoriesDesc": "Постачальники, бренди, категорії матеріалів",
+        "materialsTitle": "Матеріали",
+        "materialsDesc": "Картка товару, штрихкоди, упаковки, матриця складів",
+        "myWarehousesTitle": "Мої склади",
+        "myWarehousesDesc": "Щоденна робота: залишки, списання, переміщення, заявки",
+        "calcCardsTitle": "Картки розрахунку",
+        "calcCardsDesc": "Норми витрат матеріалів на послугу, заміна товару",
+        "auditsTitle": "Інвентаризація",
+        "auditsDesc": "Акти перерахунку залишків, коригуючі документи",
+        "settingsTitle": "Налаштування",
+        "settingsDesc": "Режим списання, дозволи, додаткові параметри",
+        "reportsTitle": "Звіти",
+        "reportsDesc": "Залишки, собівартість, оборот, критичний залишок",
+        "comingSoonBadge": "скоро",
+        "footerHeading": "Всі 8 фаз завершено",
+        "footerPhases": "— Звіти, метрики, залишки, собівартість, картки розрахунку, інвентаризація.",
+        "stockV1Link": "Склад v1",
+        "footerNote": "продовжує працювати паралельно."
+      },
+      "materialsPage": {
+        "loadError": "Помилка завантаження",
+        "heading": "Матеріали",
+        "addMaterial": "Додати матеріал",
+        "allCategories": "Всі категорії",
+        "searchPlaceholder": "Пошук за назвою...",
+        "inactiveFilter": "Неактивні",
+        "noMaterials": "Матеріалів не знайдено",
+        "articleTag": " · Арт: {{code}}",
+        "barcodeTag": " · Штрихкод: {{code}}",
+        "inactiveTag": " · Неактивний"
+      },
+      "materialDetailPage": {
+        "unitPcs": "шт",
+        "unitGram": "г",
+        "unitKg": "кг",
+        "unitMl": "мл",
+        "unitLiter": "л",
+        "unitCm": "см",
+        "unitMeter": "м",
+        "unitPair": "пара",
+        "unitSet": "набір",
+        "loadError": "Помилка завантаження",
+        "nameRequired": "Назва обов'язкова",
+        "saveError": "Помилка збереження",
+        "headingNew": "Новий матеріал",
+        "headingFallback": "Матеріал",
+        "deactivate": "Деактивувати",
+        "basicInfoHeading": "Основна інформація",
+        "nameUkLabel": "Назва (UA)*",
+        "nameEnLabel": "Назва (EN)",
+        "unitLabel": "Одиниця виміру",
+        "descriptionLabel": "Опис",
+        "directoriesHeading": "Довідники",
+        "brandLabel": "Бренд",
+        "notSpecified": "— не вказано —",
+        "categoryLabel": "Категорія",
+        "supplierLabel": "Постачальник",
+        "packagingHeading": "Упаковка",
+        "packFormatLabel": "Формат упаковки",
+        "packFormatPlaceholder": "Банка, Флакон, Упаковка...",
+        "packQtyLabel": "К-сть в упаковці",
+        "packUnitLabel": "Одиниця в уп.",
+        "barcodesHeading": "Штрихкоди та артикул",
+        "articleLabel": "Артикул",
+        "addBarcodeLabel": "Додати штрихкод",
+        "warehouseMatrixHeading": "Матриця складів",
+        "colWarehouse": "Склад",
+        "colBalance": "Залишок",
+        "colCritical": "Критичний",
+        "colReorder": "Замовлення",
+        "colVisible": "Видно",
+        "cancel": "Скасувати",
+        "save": "Зберегти"
+      },
+      "documentsPage": {
+        "docTypeIncoming": "Прихід",
+        "docTypeWriteoff": "Списання",
+        "docTypeReturn": "Повернення",
+        "docTypeTransfer": "Переміщення",
+        "docTypeAdjustment": "Коригування",
+        "statusDraft": "Чернетка",
+        "statusPosted": "Проведено",
+        "statusVoid": "Анульовано",
+        "loadError": "Помилка завантаження",
+        "title": "Документи",
+        "filterAllTypes": "Всі типи",
+        "filterAllStatuses": "Всі статуси",
+        "newDocument": "Новий документ",
+        "emptyState": "Документи відсутні",
+        "currencyHryvnia": "грн",
+        "openAction": "Відкрити",
+        "copyAction": "Копіювати",
+        "paginationPrev": "Попередня",
+        "paginationNext": "Наступна",
+        "documentTypeLabel": "Тип документа",
+        "createError": "Помилка створення",
+        "cancel": "Скасувати",
+        "create": "Створити"
+      },
+      "documentDetailPage": {
+        "docTypeIncoming": "Прихідна",
+        "docTypeWriteoff": "Списання",
+        "docTypeReturn": "Повернення",
+        "docTypeTransfer": "Переміщення",
+        "docTypeAdjustment": "Коригування",
+        "statusDraft": "Чернетка",
+        "statusPosted": "Проведено",
+        "statusVoid": "Анульовано",
+        "loadError": "Помилка завантаження",
+        "postError": "Помилка проведення",
+        "unpostError": "Помилка скасування",
+        "deleteError": "Помилка видалення",
+        "backToList": "Назад до списку",
+        "delete": "Видалити",
+        "post": "Провести",
+        "reversePosting": "Скасувати проведення",
+        "documentDetails": "Деталі документа",
+        "date": "Дата",
+        "amount": "Сума",
+        "currencyHryvnia": "грн",
+        "comment": "Коментар",
+        "itemsCount": "Позиції",
+        "noItems": "Немає позицій",
+        "columnMaterial": "Матеріал",
+        "columnQty": "К-сть",
+        "columnPrice": "Ціна",
+        "columnTotal": "Сума",
+        "reason": "Причина",
+        "reasonPlaceholder": "Мінімум 3 символи...",
+        "cancel": "Відмінити",
+        "confirm": "Підтвердити"
+      },
+      "directoriesPage": {
+        "loadError": "Помилка завантаження",
+        "tabSuppliers": "Постачальники",
+        "tabBrands": "Бренди",
+        "tabCategories": "Категорії",
+        "title": "Довідники",
+        "showArchived": "Показати архівні",
+        "add": "Додати",
+        "emptyState": "Записів немає",
+        "archivedBadge": "Архів",
+        "subcategory": "Підкатегорія",
+        "editAction": "Редагувати",
+        "archiveAction": "Архівувати",
+        "nameRequired": "Назва обов'язкова",
+        "saveError": "Помилка збереження",
+        "editTitlePrefix": "Редагувати",
+        "supplierAccusative": "постачальника",
+        "brandNoun": "бренд",
+        "categoryAccusative": "категорію",
+        "newTitlePrefix": "Новий",
+        "supplierNominative": "постачальник",
+        "categoryNominative": "категорія",
+        "nameLabel": "Назва",
+        "phoneLabel": "Телефон",
+        "edrpouLabel": "ЄДРПОУ",
+        "countryLabel": "Країна",
+        "cancel": "Скасувати",
+        "save": "Зберегти"
+      },
+      "warehousesPage": {
+        "kindMain": "Головний",
+        "kindCabinet": "Кабінет",
+        "kindDoctor": "Лікар",
+        "kindOther": "Інший",
+        "loadError": "Помилка завантаження",
+        "title": "Склади",
+        "showArchived": "Показати архівні",
+        "addWarehouse": "Додати склад",
+        "emptyState": "Склади відсутні",
+        "mainTag": "· Головний",
+        "archivedTag": "· Архів",
+        "editTitle": "Редагувати",
+        "archiveTitle": "Архівувати",
+        "nameRequired": "Назва обов'язкова",
+        "saveError": "Помилка збереження",
+        "editWarehouse": "Редагувати склад",
+        "newWarehouse": "Новий склад",
+        "nameUkLabel": "Назва (УКР)",
+        "typeLabel": "Тип",
+        "sortOrderLabel": "Порядок сортування",
+        "commentLabel": "Коментар",
+        "cancel": "Скасувати",
+        "save": "Зберегти"
+      },
+      "myWarehousesPage": {
+        "loadError": "Помилка завантаження",
+        "title": "Мої склади",
+        "filterAll": "Всі",
+        "searchPlaceholder": "Пошук...",
+        "criticalFilter": "Критичні",
+        "emptyState": "Нічого не знайдено"
+      },
+      "settingsPage": {
+        "writeoffModeNoneLabel": "Без автосписання",
+        "writeoffModeDraftHybridLabel": "Автосписання-чернетка (рекомендовано)",
+        "writeoffModeAutoLabel": "Повністю автоматичне",
+        "writeoffModeNoneHint": "Матеріали не списуються автоматично при завершенні прийому.",
+        "writeoffModeDraftHybridHint": "При завершенні прийому автоматично створюється чернетка списання за картками розрахунку. Персонал може редагувати та проводити вручну.",
+        "writeoffModeAutoHint": "Чернетка створюється та одразу проводиться. Рекомендується лише після стабілізації карток розрахунку (>90 днів).",
+        "loadError": "Не вдалося завантажити налаштування",
+        "saveError": "Помилка збереження",
+        "title": "Налаштування складу",
+        "writeoffModeHeading": "Тип автосписання матеріалів",
+        "additionalParamsHeading": "Додаткові параметри",
+        "allowNegativeBalanceLabel": "Дозволити негативний залишок",
+        "allowNegativeBalanceHint": "Рекомендується ввімкнути на перші 30–60 днів після запуску для поступового введення залишків.",
+        "enforcePermissionsLabel": "Використовувати права доступу",
+        "enforcePermissionsHint": "Якщо вимкнено — всі співробітники мають повний доступ до всіх складів.",
+        "showMyInventoryLabel": "Показувати «Моя інвентаризація»",
+        "showMyInventoryHint": "Персональна перевірка залишків per-warehouse для кожного співробітника.",
+        "saved": "Збережено",
+        "save": "Зберегти"
+      },
+      "permissionsPage": {
+        "flagManageWarehouses": "Управління складами",
+        "flagEditBrands": "Редагування брендів",
+        "flagEditProducts": "Редагування товарів",
+        "flagEditCategories": "Редагування категорій",
+        "flagEditSuppliers": "Редагування постачальників",
+        "flagManagePermissions": "Управління правами",
+        "flagManageCalcCards": "Управління картами обліку",
+        "flagManageSettings": "Налаштування модуля",
+        "flagViewOtherBalances": "Перегляд чужих залишків",
+        "flagBaseAccess": "Базовий доступ",
+        "flagViewIncoming": "Перегляд приходів",
+        "flagEditIncoming": "Редагування приходів",
+        "flagViewReturn": "Перегляд повернень",
+        "flagEditReturn": "Редагування повернень",
+        "flagViewTransfer": "Перегляд переміщень",
+        "flagEditTransfer": "Редагування переміщень",
+        "flagViewWriteoff": "Перегляд списань",
+        "flagCreateWriteoff": "Створення списань",
+        "flagUnpostWriteoff": "Скасування списань",
+        "flagDeleteDraftWriteoff": "Видалення чернеток списань",
+        "flagViewAudit": "Перегляд інвентаризацій",
+        "flagPostAudit": "Проведення інвентаризацій",
+        "errorLoad": "Помилка завантаження",
+        "errorSave": "Помилка збереження",
+        "title": "Права доступу до складів",
+        "allWarehouses": "Всі склади",
+        "noPermissions": "Права не встановлено",
+        "warehousePermissionsSummary": "Склад: {{warehouseId}} · {{count}} прав активно",
+        "edit": "Редагувати",
+        "delete": "Видалити",
+        "modalTitle": "Права доступу",
+        "cancel": "Скасувати",
+        "save": "Зберегти"
+      },
+      "auditsPage": {
+        "statusDraft": "Чернетка",
+        "statusPosted": "Проведено",
+        "statusVoid": "Анульовано",
+        "errorLoad": "Помилка завантаження",
+        "errorDelete": "Помилка видалення",
+        "title": "Інвентаризація",
+        "newAudit": "Новий акт",
+        "emptyState": "Інвентаризацій ще немає",
+        "createFirst": "Створити перший акт →",
+        "columnNumber": "Номер",
+        "columnDate": "Дата",
+        "columnStatus": "Статус",
+        "edit": "Редагувати",
+        "view": "Переглянути",
+        "delete": "Видалити"
+      },
+      "auditEditorPage": {
+        "errorLoad": "Помилка завантаження",
+        "errorSave": "Помилка збереження",
+        "errorAutofill": "Помилка автозаповнення",
+        "errorPost": "Помилка проведення",
+        "titleFallback": "Інвентаризація",
+        "statusPosted": "Проведено",
+        "statusVoid": "Анульовано",
+        "autofill": "Заповнити автоматично",
+        "saved": "Збережено",
+        "save": "Зберегти",
+        "saveFirstTooltip": "Спочатку збережіть зміни",
+        "post": "Провести",
+        "noItems": "Позицій немає — поверніться і ініціалізуйте знову",
+        "columnMaterial": "Матеріал",
+        "columnWarehouse": "Склад",
+        "columnBalance": "Залишок",
+        "columnActual": "Фактично",
+        "columnDifference": "Різниця"
+      },
+      "auditNewPage": {
+        "errorSelectWarehouse": "Оберіть хоча б один склад",
+        "errorCreate": "Помилка створення",
+        "title": "Новий акт інвентаризації",
+        "auditDate": "Дата інвентаризації",
+        "warehouses": "Склади",
+        "noWarehouses": "Складів не знайдено",
+        "categories": "Категорії",
+        "categoriesHint": "(необов'язково — всі категорії якщо не обрано)",
+        "brands": "Бренди",
+        "brandsHint": "(необов'язково)",
+        "comment": "Коментар",
+        "commentPlaceholder": "Необов'язково...",
+        "cancel": "Скасувати",
+        "create": "Створити"
+      },
+      "calcCardsPage": {
+        "loadError": "Помилка завантаження",
+        "statusActive": "Активна",
+        "statusDisabled": "Вимкнена",
+        "title": "Картки розрахунку",
+        "subtitle": "Норми витрат матеріалів на послугу",
+        "searchPlaceholder": "Пошук послуги...",
+        "noServices": "Послуг не знайдено",
+        "colService": "Послуга",
+        "colCategory": "Категорія",
+        "colPrice": "Ціна",
+        "edit": "Редагувати"
+      },
+      "reports": {
+        "hub": {
+          "balancesTitle": "Залишки",
+          "balancesDesc": "Поточні залишки по матеріалах та складах зі статусом і середньою вартістю.",
+          "historyTitle": "Історія товару",
+          "historyDesc": "Рух конкретного матеріалу на складі: надходження, списання, коригування.",
+          "reorderTitle": "Замовлення з критичним залишком",
+          "reorderDesc": "Матеріали нижче критичного ліміту з пропонованою кількістю для замовлення.",
+          "writeoffTitle": "Списання",
+          "writeoffDesc": "Деталізований журнал списань за обраний період.",
+          "serviceCostTitle": "Собівартість послуг",
+          "serviceCostDesc": "Середня ціна, собівартість матеріалів та маржа по послугах з розбивкою по місяцях.",
+          "title": "Звіти по складу"
+        },
+        "balances": {
+          "loadError": "Помилка завантаження",
+          "title": "Залишки",
+          "balanceStateLabel": "Залишки",
+          "optionAll": "Всі",
+          "criticalOnly": "Лише критичні",
+          "build": "Побудувати",
+          "colMaterial": "Матеріал",
+          "colCategory": "Категорія",
+          "colWarehouse": "Склад",
+          "colQty": "К-сть",
+          "colLimit": "Ліміт",
+          "colAvgPrice": "Ср. ціна",
+          "colStatus": "Статус",
+          "statusCritical": "Критично",
+          "statusZero": "Нуль",
+          "emptyPrompt": "Натисніть «Побудувати» для отримання звіту"
+        },
+        "history": {
+          "selectMaterialWarehouse": "Оберіть матеріал та склад",
+          "loadError": "Помилка завантаження",
+          "title": "Історія товару",
+          "materialOption": "— Матеріал —",
+          "warehouseOption": "— Склад —",
+          "build": "Побудувати",
+          "colDate": "Дата",
+          "colType": "Тип",
+          "colDocument": "Документ",
+          "colQtyDelta": "Δ К-сть",
+          "colPrice": "Ціна",
+          "colBalance": "Залишок",
+          "colActor": "Хто",
+          "emptyPrompt": "Оберіть матеріал, склад та натисніть «Побудувати»"
+        },
+        "reorder": {
+          "loadError": "Помилка завантаження",
+          "title": "Замовлення з критичним залишком",
+          "description": "Матеріали, де поточний залишок нижче критичного ліміту. Пропонована кількість замовлення = дефолтне або ліміт × 2.",
+          "build": "Побудувати",
+          "colMaterial": "Матеріал",
+          "colSupplier": "Постачальник",
+          "colWarehouse": "Склад",
+          "colStock": "Залишок",
+          "colLimit": "Ліміт",
+          "colOrder": "Замовити",
+          "emptyState": "Натисніть «Побудувати» для перевірки критичних залишків"
+        },
+        "serviceCost": {
+          "loadError": "Помилка завантаження",
+          "title": "Собівартість послуг",
+          "openingBalanceNote": "Матеріали, введені як відкриті залишки (вартість = 0), не враховуються у розрахунку маржі. Перші 30–60 днів роботи з системою цифри будуть неповними.",
+          "build": "Побудувати",
+          "totalMarginLabel": "Загальна маржа:",
+          "currencyUah": "грн",
+          "colService": "Послуга",
+          "colMonth": "Місяць",
+          "colQty": "К-сть",
+          "colAvgPrice": "Ср. ціна",
+          "colAvgMaterials": "Ср. матеріали",
+          "colAvgMargin": "Ср. маржа",
+          "colTotalMargin": "Маржа разом",
+          "emptyState": "Оберіть період та натисніть «Побудувати»"
+        },
+        "writeoff": {
+          "loadError": "Помилка завантаження",
+          "title": "Звіт по списанню",
+          "build": "Побудувати",
+          "rowsLabel": "Рядків:",
+          "sumLabel": "· Сума:",
+          "currencyUah": "грн",
+          "colDocument": "Документ",
+          "colDate": "Дата",
+          "colWarehouse": "Склад",
+          "colMaterial": "Матеріал",
+          "colService": "Послуга",
+          "colQty": "К-сть",
+          "colSum": "Сума",
+          "emptyState": "Оберіть період та натисніть «Побудувати»"
+        },
+        "filterBar": {
+          "from": "Від",
+          "to": "До"
+        }
+      },
+      "actionCart": {
+        "writeoff": "Списання",
+        "transfer": "Переміщення",
+        "requisition": "Заявка",
+        "postingError": "Помилка проведення",
+        "title": "Кошик дій",
+        "destinationWarehousePlaceholder": "— склад призначення —",
+        "post": "Провести"
+      },
+      "barcodeInput": {
+        "placeholder": "Штрихкод або артикул...",
+        "scanning": "скан"
+      },
+      "calcCardEditor": {
+        "saveError": "Помилка збереження",
+        "title": "Картка розрахунку",
+        "active": "Активна",
+        "addMaterial": "Додати матеріал",
+        "searchPlaceholder": "Пошук матеріалу...",
+        "emptyState": "Позицій немає — додайте матеріали вище",
+        "materialColumn": "Матеріал",
+        "quantityColumn": "К-сть",
+        "replacementColumn": "Заміна",
+        "allowReplacement": "Дозволити заміну",
+        "cancel": "Скасувати",
+        "saved": "Збережено",
+        "save": "Зберегти"
+      },
+      "invoiceEditor": {
+        "docTypeIncoming": "Прихідна",
+        "docTypeWriteoff": "Списання",
+        "docTypeTransfer": "Переміщення",
+        "docTypeReturn": "Повернення",
+        "docTypeAdjustment": "Коректування",
+        "postingError": "Помилка проведення",
+        "deletionError": "Помилка видалення",
+        "posted": "Проведено",
+        "supplier": "Постачальник",
+        "fromWarehouse": "З складу",
+        "toWarehouse": "На склад",
+        "searchMaterialPlaceholder": "Пошук матеріалу...",
+        "barcodePlaceholder": "Штрихкод...",
+        "noItems": "Позицій немає",
+        "material": "Матеріал",
+        "quantity": "К-сть",
+        "price": "Ціна",
+        "amount": "Сума",
+        "total": "Разом",
+        "deleteDraft": "Видалити чернетку",
+        "post": "Провести"
+      },
+      "materialCard": {
+        "inStock": "Залишок",
+        "minLevel": "Мін: {{critical}}",
+        "writeoff": "Списати",
+        "transfer": "Перемістити",
+        "requisition": "Заявка"
       }
+    },
+    "workspacePage": {
+      "title": "Мої записи на сьогодні",
+      "roleNotice": "Роль «Лікар» бачить лише свій розклад і свої акти — межа з RBAC-матриці, продубльована в UI.",
+      "emptyToday": "На сьогодні у вас немає записів.",
+      "selectHint": "Оберіть запис зі списку, щоб відкрити акт робіт.",
+      "guestNoAct": "Гостьовий запис без картки пацієнта — акт недоступний.",
+      "actTitle": "Акт робіт",
+      "actSubtitle": "Пацієнт, лікар і візит підставлені з поточного прийому — акт створено одним кліком зі списку.",
+      "liveNow": "Йде прийом",
+      "minutesShort": "хв",
+      "total": "Разом",
+      "saveDraft": "Зберегти чернетку",
+      "signAct": "Підписати акт",
+      "signConfirmTitle": "Підписати акт робіт?",
+      "signConfirmDesc": "Акт для пацієнта {{patient}} буде підписано. Після підписання його вже не редагувати як чернетку.",
+      "draftSaved": "Чернетку збережено",
+      "actSigned": "Акт підписано",
+      "needServices": "Додайте хоча б одну послугу, щоб підписати акт.",
+      "allAppointmentsNotice": "Показано записи всіх лікарів на сьогодні.",
+      "noDoctorError": "Запис не привʼязаний до лікаря — акт неможливо створити."
+    },
+    "emailTemplatesPage": {
+      "tabs": {
+        "confirmation": "Підтвердження бронювання",
+        "reminder": "Нагадування",
+        "cancellation": "Скасування",
+        "admin": "Нове бронювання (адмін)"
+      },
+      "subjectLabel": "Тема"
     }
   },
   "auth": {
@@ -2903,15 +3408,30 @@
     },
     "payments": {
       "title": "Платежі",
-      "comingSoon": "Скоро",
-      "description": "Онлайн оплата послуг клініки вже у розробці.",
-      "feature1Title": "Рахунки",
-      "feature1Desc": "Перегляд виставлених рахунків",
-      "feature2Title": "Оплата",
-      "feature2Desc": "Зручна онлайн-оплата",
-      "feature3Title": "Нагадування",
-      "feature3Desc": "Сповіщення про платежі",
-      "meanwhile": "Наразі оплата здійснюється у клініці."
+      "empty": {
+        "title": "Немає платежів",
+        "description": "Тут відображатимуться ваші онлайн-платежі за послуги клініки.",
+        "action": "Записатися на прийом"
+      },
+      "columns": {
+        "date": "Дата",
+        "service": "Послуга",
+        "amount": "Сума",
+        "type": "Тип",
+        "status": "Статус"
+      },
+      "statuses": {
+        "created": "Очікує",
+        "processing": "Очікує",
+        "success": "Оплачено",
+        "failure": "Не завершено",
+        "expired": "Не завершено",
+        "reversed": "Повернуто"
+      },
+      "modes": {
+        "full": "Повна оплата",
+        "deposit": "Завдаток"
+      }
     }
   },
   "patientDashboard": {
@@ -2939,7 +3459,7 @@
           "confirmed": "Підтверджено",
           "completed": "Завершено",
           "cancelled": "Скасовано",
-          "no_show": "Не з'явився"
+          "no_show": "Неявка"
         }
       },
       "treatments": {
@@ -3408,7 +3928,8 @@
         }
       },
       "notSpecified": "не вказано",
-      "durationHint": "Впливає на терміновість запису"
+      "durationHint": "Впливає на терміновість запису",
+      "resetPain": "Скинути"
     }
   },
   "stock": {
@@ -3510,5 +4031,32 @@
     "consequencesTitle": "Разом із цим зникнуть",
     "typeToConfirm": "Щоб підтвердити, введіть",
     "irreversibleWarning": "Дію не можна скасувати."
+  },
+  "payments": {
+    "result": {
+      "checkingStatus": "Перевіряємо статус оплати...",
+      "pleaseWait": "Зачекайте, будь ласка",
+      "successTitle": "Оплату успішно отримано!",
+      "successDescription": "Дякуємо! Ваш запис підтверджено.",
+      "viewPayments": "Переглянути платежі",
+      "failedTitle": "Оплату не завершено",
+      "failedDescription": "Платіж не вдалося обробити. Спробуйте ще раз або зв'яжіться з нами.",
+      "tryAgain": "Спробувати ще раз",
+      "contactUs": "Зв'язатися з нами",
+      "timeoutTitle": "Обробляємо платіж...",
+      "timeoutDescription": "Це може зайняти кілька хвилин. Ваш платіж буде відображено в кабінеті після обробки банком.",
+      "goToCabinet": "Перейти до кабінету"
+    },
+    "monoButton": {
+      "successMessage": "Оплату успішно здійснено",
+      "paymentError": "Помилка оплати",
+      "loading": "Завантаження...",
+      "processing": "Обробка..."
+    }
+  },
+  "walletCards": {
+    "title": "Збережені картки",
+    "deleteError": "Не вдалося видалити картку",
+    "deleteAria": "Видалити картку"
   }
 }

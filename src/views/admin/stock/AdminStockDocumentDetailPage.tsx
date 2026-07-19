@@ -10,11 +10,11 @@ import { useConfirm } from '@/hooks/useConfirm'
 import type { StockDocumentWithItems, DocType, DocStatus } from '@/types/stock'
 
 const DOC_TYPE_LABELS: Record<DocType, string> = {
-  incoming: 'Прихідна',
-  writeoff: 'Списання',
-  return: 'Повернення',
-  transfer: 'Переміщення',
-  adjustment: 'Коригування',
+  incoming: 'admin.stock.documentDetailPage.docTypeIncoming',
+  writeoff: 'admin.stock.documentDetailPage.docTypeWriteoff',
+  return: 'admin.stock.documentDetailPage.docTypeReturn',
+  transfer: 'admin.stock.documentDetailPage.docTypeTransfer',
+  adjustment: 'admin.stock.documentDetailPage.docTypeAdjustment',
 }
 
 const STATUS_STYLES: Record<DocStatus, string> = {
@@ -24,9 +24,9 @@ const STATUS_STYLES: Record<DocStatus, string> = {
 }
 
 const STATUS_LABELS: Record<DocStatus, string> = {
-  draft: 'Чернетка',
-  posted: 'Проведено',
-  void: 'Анульовано',
+  draft: 'admin.stock.documentDetailPage.statusDraft',
+  posted: 'admin.stock.documentDetailPage.statusPosted',
+  void: 'admin.stock.documentDetailPage.statusVoid',
 }
 
 export default function AdminStockDocumentDetailPage() {
@@ -50,9 +50,9 @@ export default function AdminStockDocumentDetailPage() {
         if (json.success) setDoc(json.data)
         else setError(json.error)
       })
-      .catch(() => setError('Помилка завантаження'))
+      .catch(() => setError(t('admin.stock.documentDetailPage.loadError')))
       .finally(() => setLoading(false))
-  }, [id])
+  }, [id, t])
 
   async function postDocument() {
     if (
@@ -74,7 +74,11 @@ export default function AdminStockDocumentDetailPage() {
       if (!json.success) throw new Error(json.error)
       setDoc(prev => (prev ? { ...prev, status: 'posted' } : prev))
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка проведення')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.documentDetailPage.postError')
+      )
     } finally {
       setActionLoading(false)
     }
@@ -97,7 +101,11 @@ export default function AdminStockDocumentDetailPage() {
       setDoc(prev => (prev ? { ...prev, status: 'draft' } : prev))
       setShowUnpostModal(false)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка скасування')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.documentDetailPage.unpostError')
+      )
     } finally {
       setActionLoading(false)
     }
@@ -123,7 +131,11 @@ export default function AdminStockDocumentDetailPage() {
       if (!json.success) throw new Error(json.error)
       router.push('/admin/stock/documents')
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка видалення')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.documentDetailPage.deleteError')
+      )
       setActionLoading(false)
     }
   }
@@ -144,7 +156,7 @@ export default function AdminStockDocumentDetailPage() {
           href="/admin/stock/documents"
           className="mt-4 inline-block text-dental-primary-600 underline"
         >
-          Назад до списку
+          {t('admin.stock.documentDetailPage.backToList')}
         </Link>
       </div>
     )
@@ -168,12 +180,12 @@ export default function AdminStockDocumentDetailPage() {
             </Link>
             <div>
               <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-                {DOC_TYPE_LABELS[doc.doc_type]} № {doc.doc_number}
+                {t(DOC_TYPE_LABELS[doc.doc_type])} № {doc.doc_number}
               </h1>
               <span
                 className={`inline-flex mt-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_STYLES[doc.status]}`}
               >
-                {STATUS_LABELS[doc.status]}
+                {t(STATUS_LABELS[doc.status])}
               </span>
             </div>
           </div>
@@ -186,7 +198,7 @@ export default function AdminStockDocumentDetailPage() {
                   className="inline-flex items-center gap-1.5 rounded-lg border border-dental-error/20 px-3 py-2 text-sm text-status-error-700 hover:bg-status-error-100 disabled:opacity-60 transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
-                  Видалити
+                  {t('admin.stock.documentDetailPage.delete')}
                 </button>
                 <button
                   onClick={postDocument}
@@ -198,7 +210,7 @@ export default function AdminStockDocumentDetailPage() {
                   ) : (
                     <Send className="w-4 h-4" />
                   )}
-                  Провести
+                  {t('admin.stock.documentDetailPage.post')}
                 </button>
               </>
             )}
@@ -209,7 +221,7 @@ export default function AdminStockDocumentDetailPage() {
                 className="inline-flex items-center gap-2 rounded-lg border border-dental-warning/30 px-3 py-2 text-sm text-status-warning-700 hover:bg-status-warning-100 disabled:opacity-60 transition-colors"
               >
                 <Undo2 className="w-4 h-4" />
-                Скасувати проведення
+                {t('admin.stock.documentDetailPage.reversePosting')}
               </button>
             )}
           </div>
@@ -223,24 +235,31 @@ export default function AdminStockDocumentDetailPage() {
 
         <div className="rounded-xl border bg-white p-5 mb-4">
           <h2 className="text-sm font-semibold text-dental-dark mb-3">
-            Деталі документа
+            {t('admin.stock.documentDetailPage.documentDetails')}
           </h2>
           <dl className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
             <div>
-              <dt className="text-dental-text">Дата</dt>
+              <dt className="text-dental-text">
+                {t('admin.stock.documentDetailPage.date')}
+              </dt>
               <dd className="font-medium text-dental-dark">
                 {new Date(doc.doc_date).toLocaleDateString('uk-UA')}
               </dd>
             </div>
             <div>
-              <dt className="text-dental-text">Сума</dt>
+              <dt className="text-dental-text">
+                {t('admin.stock.documentDetailPage.amount')}
+              </dt>
               <dd className="font-medium text-dental-dark">
-                {doc.total_amount.toFixed(2)} грн
+                {doc.total_amount.toFixed(2)}{' '}
+                {t('admin.stock.documentDetailPage.currencyHryvnia')}
               </dd>
             </div>
             {doc.comment && (
               <div className="col-span-2">
-                <dt className="text-dental-text">Коментар</dt>
+                <dt className="text-dental-text">
+                  {t('admin.stock.documentDetailPage.comment')}
+                </dt>
                 <dd className="font-medium text-dental-dark">{doc.comment}</dd>
               </div>
             )}
@@ -249,20 +268,29 @@ export default function AdminStockDocumentDetailPage() {
 
         <div className="rounded-xl border bg-white p-5">
           <h2 className="text-sm font-semibold text-dental-dark mb-3">
-            Позиції ({doc.items.length})
+            {t('admin.stock.documentDetailPage.itemsCount')} ({doc.items.length}
+            )
           </h2>
           {doc.items.length === 0 ? (
             <p className="text-sm text-dental-text text-center py-6">
-              Немає позицій
+              {t('admin.stock.documentDetailPage.noItems')}
             </p>
           ) : (
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b text-left text-dental-text">
-                  <th className="pb-2 font-medium">Матеріал</th>
-                  <th className="pb-2 font-medium text-right">К-сть</th>
-                  <th className="pb-2 font-medium text-right">Ціна</th>
-                  <th className="pb-2 font-medium text-right">Сума</th>
+                  <th className="pb-2 font-medium">
+                    {t('admin.stock.documentDetailPage.columnMaterial')}
+                  </th>
+                  <th className="pb-2 font-medium text-right">
+                    {t('admin.stock.documentDetailPage.columnQty')}
+                  </th>
+                  <th className="pb-2 font-medium text-right">
+                    {t('admin.stock.documentDetailPage.columnPrice')}
+                  </th>
+                  <th className="pb-2 font-medium text-right">
+                    {t('admin.stock.documentDetailPage.columnTotal')}
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y">
@@ -288,18 +316,20 @@ export default function AdminStockDocumentDetailPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="w-full max-w-sm rounded-2xl bg-white shadow-xl p-6">
             <h2 className="text-lg font-semibold text-dental-dark mb-4">
-              Скасувати проведення
+              {t('admin.stock.documentDetailPage.reversePosting')}
             </h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-dental-dark mb-1">
-                  Причина
+                  {t('admin.stock.documentDetailPage.reason')}
                 </label>
                 <textarea
                   value={unpostReason}
                   onChange={e => setUnpostReason(e.target.value)}
                   rows={3}
-                  placeholder="Мінімум 3 символи..."
+                  placeholder={t(
+                    'admin.stock.documentDetailPage.reasonPlaceholder'
+                  )}
                   className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 resize-none"
                 />
               </div>
@@ -308,7 +338,7 @@ export default function AdminStockDocumentDetailPage() {
                   onClick={() => setShowUnpostModal(false)}
                   className="px-4 py-2 text-sm text-dental-text hover:text-dental-dark"
                 >
-                  Відмінити
+                  {t('admin.stock.documentDetailPage.cancel')}
                 </button>
                 <button
                   onClick={unpostDocument}
@@ -318,7 +348,7 @@ export default function AdminStockDocumentDetailPage() {
                   {actionLoading && (
                     <Loader2 className="w-4 h-4 animate-spin" />
                   )}
-                  Підтвердити
+                  {t('admin.stock.documentDetailPage.confirm')}
                 </button>
               </div>
             </div>

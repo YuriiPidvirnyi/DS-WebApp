@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import {
   LayoutDashboard,
   Calendar,
+  CalendarClock,
   Users,
   User,
   Stethoscope,
@@ -62,6 +63,12 @@ const ALL_NAV_ITEMS: NavItem[] = [
     group: 'operations',
     href: '/admin',
     icon: <LayoutDashboard className="w-5 h-5" />,
+  },
+  {
+    nameKey: 'admin.sidebar.workspace',
+    group: 'operations',
+    href: '/admin/workspace',
+    icon: <CalendarClock className="w-5 h-5" />,
   },
   {
     nameKey: 'admin.sidebar.appointments',

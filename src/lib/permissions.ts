@@ -261,6 +261,9 @@ export function hasDoctorScope(role: AdminRole): boolean {
 // A nav item may require ANY ONE of the listed permissions (OR logic).
 export const ROLE_NAV_PERMISSIONS: Record<string, Permission | Permission[]> = {
   '/admin': 'dashboard:view',
+  // Doctor workstation (2e): day of appointments + act, for those who create acts
+  // (superadmin / admin / doctor). Doctors see only their own day (RBAC + RLS).
+  '/admin/workspace': 'treatments:create',
   // Doctors have view_own; all others have view_all — either grants access
   '/admin/appointments': ['appointments:view_all', 'appointments:view_own'],
   '/admin/patients': 'patients:view',

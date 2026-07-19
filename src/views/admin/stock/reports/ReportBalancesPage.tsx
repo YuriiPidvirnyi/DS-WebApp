@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import { ChevronLeft, Loader2, Download } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { SelectFilter } from '@/components/admin/stock/ReportFilterBar'
 import { exportCsv } from '@/utils/stock-export'
 
@@ -27,6 +28,7 @@ const STATUS_CLASSES: Record<string, string> = {
 }
 
 export default function ReportBalancesPage() {
+  const { t } = useTranslation()
   const [rows, setRows] = useState<BalanceRow[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -44,11 +46,15 @@ export default function ReportBalancesPage() {
       if (!json.success) throw new Error(json.error)
       setRows(json.data ?? [])
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка завантаження')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.reports.balances.loadError')
+      )
     } finally {
       setLoading(false)
     }
-  }, [balanceState, criticalOnly])
+  }, [balanceState, criticalOnly, t])
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -60,18 +66,21 @@ export default function ReportBalancesPage() {
           <ChevronLeft className="w-5 h-5" />
         </Link>
         <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-          Залишки
+          {t('admin.stock.reports.balances.title')}
         </h1>
       </div>
 
       {/* Filters */}
       <div className="mb-4 flex flex-wrap items-end gap-3 rounded-xl border bg-white p-4">
         <SelectFilter
-          label="Залишки"
+          label={t('admin.stock.reports.balances.balanceStateLabel')}
           value={balanceState}
           onChange={setBalanceState}
           options={[
-            { value: 'all', label: 'Всі' },
+            {
+              value: 'all',
+              label: t('admin.stock.reports.balances.optionAll'),
+            },
             { value: 'positive', label: '> 0' },
             { value: 'negative', label: '< 0' },
             { value: 'zero', label: '= 0' },
@@ -84,7 +93,7 @@ export default function ReportBalancesPage() {
             onChange={e => setCriticalOnly(e.target.checked)}
             className="rounded"
           />
-          Лише критичні
+          {t('admin.stock.reports.balances.criticalOnly')}
         </label>
         <button
           type="button"
@@ -93,7 +102,7 @@ export default function ReportBalancesPage() {
           className="ml-auto inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-dental-dark disabled:opacity-60 transition-colors"
         >
           {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-          Побудувати
+          {t('admin.stock.reports.balances.build')}
         </button>
         {rows.length > 0 && (
           <button
@@ -124,25 +133,25 @@ export default function ReportBalancesPage() {
             <thead>
               <tr className="border-b border-dental-secondary-200 bg-dental-secondary-50">
                 <th className="text-left px-4 py-3 font-medium text-dental-text">
-                  Матеріал
+                  {t('admin.stock.reports.balances.colMaterial')}
                 </th>
                 <th className="text-left px-4 py-3 font-medium text-dental-text hidden md:table-cell">
-                  Категорія
+                  {t('admin.stock.reports.balances.colCategory')}
                 </th>
                 <th className="text-left px-4 py-3 font-medium text-dental-text hidden lg:table-cell">
-                  Склад
+                  {t('admin.stock.reports.balances.colWarehouse')}
                 </th>
                 <th className="text-right px-4 py-3 font-medium text-dental-text w-28">
-                  К-сть
+                  {t('admin.stock.reports.balances.colQty')}
                 </th>
                 <th className="text-right px-4 py-3 font-medium text-dental-text w-28 hidden md:table-cell">
-                  Ліміт
+                  {t('admin.stock.reports.balances.colLimit')}
                 </th>
                 <th className="text-right px-4 py-3 font-medium text-dental-text w-28 hidden lg:table-cell">
-                  Ср. ціна
+                  {t('admin.stock.reports.balances.colAvgPrice')}
                 </th>
                 <th className="text-center px-4 py-3 font-medium text-dental-text w-24">
-                  Статус
+                  {t('admin.stock.reports.balances.colStatus')}
                 </th>
               </tr>
             </thead>
@@ -183,8 +192,8 @@ export default function ReportBalancesPage() {
                     {row.status === 'ok'
                       ? 'OK'
                       : row.status === 'critical'
-                        ? 'Критично'
-                        : 'Нуль'}
+                        ? t('admin.stock.reports.balances.statusCritical')
+                        : t('admin.stock.reports.balances.statusZero')}
                   </td>
                 </tr>
               ))}
@@ -195,7 +204,7 @@ export default function ReportBalancesPage() {
 
       {!loading && rows.length === 0 && (
         <p className="text-center text-dental-text py-12">
-          Натисніть «Побудувати» для отримання звіту
+          {t('admin.stock.reports.balances.emptyPrompt')}
         </p>
       )}
     </div>

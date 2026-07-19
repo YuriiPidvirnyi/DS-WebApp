@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronLeft, Loader2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useCSRF } from '@/hooks/useCSRF'
 import type { StockWarehouse } from '@/types/stock'
 
@@ -18,6 +19,7 @@ interface BrandRow {
 }
 
 export default function AdminStockAuditNewPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const { token: csrfToken } = useCSRF()
 
@@ -74,7 +76,7 @@ export default function AdminStockAuditNewPage() {
 
   async function handleCreate() {
     if (selectedWarehouses.size === 0) {
-      setError('Оберіть хоча б один склад')
+      setError(t('admin.stock.auditNewPage.errorSelectWarehouse'))
       return
     }
     setSaving(true)
@@ -106,7 +108,11 @@ export default function AdminStockAuditNewPage() {
 
       router.push(`/admin/stock/audits/${json.data.id}`)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка створення')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.auditNewPage.errorCreate')
+      )
     } finally {
       setSaving(false)
     }
@@ -123,7 +129,7 @@ export default function AdminStockAuditNewPage() {
           <ChevronLeft className="w-5 h-5" />
         </Link>
         <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-          Новий акт інвентаризації
+          {t('admin.stock.auditNewPage.title')}
         </h1>
       </div>
 
@@ -136,7 +142,7 @@ export default function AdminStockAuditNewPage() {
           {/* Date */}
           <div className="rounded-xl border bg-white p-5">
             <label className="block text-sm font-medium text-dental-dark mb-1">
-              Дата інвентаризації
+              {t('admin.stock.auditNewPage.auditDate')}
             </label>
             <input
               type="date"
@@ -149,10 +155,13 @@ export default function AdminStockAuditNewPage() {
           {/* Warehouses */}
           <div className="rounded-xl border bg-white p-5">
             <h2 className="font-semibold text-dental-dark mb-3">
-              Склади <span className="text-dental-error">*</span>
+              {t('admin.stock.auditNewPage.warehouses')}{' '}
+              <span className="text-dental-error">*</span>
             </h2>
             {warehouses.length === 0 ? (
-              <p className="text-sm text-dental-text">Складів не знайдено</p>
+              <p className="text-sm text-dental-text">
+                {t('admin.stock.auditNewPage.noWarehouses')}
+              </p>
             ) : (
               <div className="space-y-2">
                 {warehouses.map(wh => (
@@ -184,9 +193,9 @@ export default function AdminStockAuditNewPage() {
           {categories.length > 0 && (
             <div className="rounded-xl border bg-white p-5">
               <h2 className="font-semibold text-dental-dark mb-1">
-                Категорії{' '}
+                {t('admin.stock.auditNewPage.categories')}{' '}
                 <span className="text-xs text-dental-text font-normal">
-                  (необов'язково — всі категорії якщо не обрано)
+                  {t('admin.stock.auditNewPage.categoriesHint')}
                 </span>
               </h2>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -220,9 +229,9 @@ export default function AdminStockAuditNewPage() {
           {brands.length > 0 && (
             <div className="rounded-xl border bg-white p-5">
               <h2 className="font-semibold text-dental-dark mb-1">
-                Бренди{' '}
+                {t('admin.stock.auditNewPage.brands')}{' '}
                 <span className="text-xs text-dental-text font-normal">
-                  (необов'язково)
+                  {t('admin.stock.auditNewPage.brandsHint')}
                 </span>
               </h2>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -253,13 +262,13 @@ export default function AdminStockAuditNewPage() {
           {/* Comment */}
           <div className="rounded-xl border bg-white p-5">
             <label className="block text-sm font-medium text-dental-dark mb-1">
-              Коментар
+              {t('admin.stock.auditNewPage.comment')}
             </label>
             <textarea
               value={comment}
               onChange={e => setComment(e.target.value)}
               rows={3}
-              placeholder="Необов'язково..."
+              placeholder={t('admin.stock.auditNewPage.commentPlaceholder')}
               className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600 resize-none"
             />
           </div>
@@ -275,7 +284,7 @@ export default function AdminStockAuditNewPage() {
               href="/admin/stock/audits"
               className="rounded-lg border border-dental-secondary-300 px-4 py-2 text-sm font-medium text-dental-text hover:bg-dental-secondary-100 transition-colors"
             >
-              Скасувати
+              {t('admin.stock.auditNewPage.cancel')}
             </Link>
             <button
               type="button"
@@ -284,7 +293,7 @@ export default function AdminStockAuditNewPage() {
               className="inline-flex items-center gap-2 rounded-lg bg-dental-primary-600 px-6 py-2 text-sm font-medium text-white hover:bg-dental-dark disabled:opacity-60 transition-colors"
             >
               {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-              Створити
+              {t('admin.stock.auditNewPage.create')}
             </button>
           </div>
         </div>

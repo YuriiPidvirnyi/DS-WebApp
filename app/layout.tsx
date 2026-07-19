@@ -195,8 +195,9 @@ export default async function RootLayout({
                 <CookieConsent />
               </main>
             </div>
-            {/* Floating chat/messenger buttons — mobile only (desktop uses SidebarNav) */}
-            <div className="lg:hidden">
+            {/* Floating chat/messenger buttons — shown below xl, where the
+                SidebarNav rail is hidden (2b/М5). The rail takes over at ≥1280px. */}
+            <div className="xl:hidden">
               <ClientFloatingButtons />
             </div>
           </ClientProviders>

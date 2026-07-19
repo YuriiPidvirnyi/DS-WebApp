@@ -148,29 +148,10 @@ export default tseslint.config(
   {
     files: ['src/**/*.tsx', 'app/**/*.tsx'],
     ignores: [
-      // Легасі до Ф-2 (Фаза 2): складський модуль ще не інтернаціоналізовано.
-      'src/views/admin/stock/**',
-      'src/components/admin/stock/**',
-      'src/views/admin/AdminStockPage.tsx',
       // Друковані/промо-документи навмисно україномовні (клінічні папери).
       'src/views/admin/AdminIntakePrintPage.tsx',
       'src/views/admin/AdminTreatmentPrintPage.tsx',
       'src/views/promo/**',
-      // Легасі-сторінки, заплановані на Ф-2.
-      'app/cabinet/payments/page.tsx',
-      'app/booking/payment-result/page.tsx',
-      'app/auth/reset-password/page.tsx',
-      'app/auth/confirm/page.tsx',
-      'app/auth/callback/page.tsx',
-      'app/auth/forgot-password/page.tsx',
-      'app/global-error.tsx',
-      'app/cabinet/error.tsx',
-      'src/views/About.tsx',
-      'src/components/cabinet/WalletCards.tsx',
-      'src/components/MonoPayButton.tsx',
-      'src/components/AccessibilityPanel.tsx',
-      'src/views/admin/AdminEmailTemplatesPage.tsx',
-      'src/views/admin/AdminMaterialsPage.tsx',
       '**/*.test.tsx',
     ],
     rules: {

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import Link from 'next/link'
 import { ChevronLeft, Search, AlertTriangle, Loader2 } from 'lucide-react'
 import MaterialCard from '@/components/admin/stock/MaterialCard'
@@ -19,6 +20,7 @@ interface Category {
 }
 
 export default function AdminStockMyWarehousesPage() {
+  const { t } = useTranslation()
   const { token: csrfToken } = useCSRF()
   const cartRef = useRef<ActionCartHandle>(null)
 
@@ -69,11 +71,15 @@ export default function AdminStockMyWarehousesPage() {
       setBalances(json.data)
       setTotal(json.meta.total)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка завантаження')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.myWarehousesPage.loadError')
+      )
     } finally {
       setLoading(false)
     }
-  }, [warehouseId, search, categoryId, criticalOnly, page])
+  }, [warehouseId, search, categoryId, criticalOnly, page, t])
 
   useEffect(() => {
     loadBalances()
@@ -98,7 +104,7 @@ export default function AdminStockMyWarehousesPage() {
               <ChevronLeft className="w-5 h-5" />
             </Link>
             <h1 className="text-2xl font-semibold text-dental-dark font-nunito">
-              Мої склади
+              {t('admin.stock.myWarehousesPage.title')}
             </h1>
           </div>
 
@@ -129,7 +135,7 @@ export default function AdminStockMyWarehousesPage() {
               }}
               className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${!categoryId ? 'bg-dental-primary/20 text-dental-primary-600 font-medium' : 'text-dental-text hover:bg-dental-secondary-100'}`}
             >
-              Всі
+              {t('admin.stock.myWarehousesPage.filterAll')}
             </button>
             {topCategories.map(cat => (
               <button
@@ -158,7 +164,9 @@ export default function AdminStockMyWarehousesPage() {
                     setSearch(e.target.value)
                     setPage(1)
                   }}
-                  placeholder="Пошук..."
+                  placeholder={t(
+                    'admin.stock.myWarehousesPage.searchPlaceholder'
+                  )}
                   className="w-full rounded-lg border border-dental-secondary-300 pl-9 pr-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
                 />
               </div>
@@ -173,7 +181,7 @@ export default function AdminStockMyWarehousesPage() {
                   className="rounded"
                 />
                 <AlertTriangle className="w-4 h-4 text-dental-warning" />
-                Критичні
+                {t('admin.stock.myWarehousesPage.criticalFilter')}
               </label>
             </div>
 
@@ -191,7 +199,7 @@ export default function AdminStockMyWarehousesPage() {
 
             {!loading && !error && balances.length === 0 && (
               <p className="text-center text-dental-text py-12">
-                Нічого не знайдено
+                {t('admin.stock.myWarehousesPage.emptyState')}
               </p>
             )}
 

@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminAccess } from '@/lib/supabase/admin'
-import { hasPermission, hasAnyPermission } from '@/lib/permissions'
+import {
+  hasPermission,
+  hasAnyPermission,
+  hasDoctorScope,
+} from '@/lib/permissions'
 import {
   checkRateLimit,
   rateLimitResponse,
@@ -136,6 +140,12 @@ export async function GET(request: NextRequest) {
     const patientId = searchParams.get('patientId')
     if (patientId) query = query.eq('patient_id', patientId)
 
+    // Narrow to a single appointment's act(s) — lets the workspace fetch just
+    // the record it needs instead of a patient's whole history then filtering
+    // client-side.
+    const appointmentId = searchParams.get('appointmentId')
+    if (appointmentId) query = query.eq('appointment_id', appointmentId)
+
     const status = searchParams.get('status')
     if (status) query = query.eq('status', status)
 
@@ -225,6 +235,42 @@ export async function POST(request: NextRequest) {
         },
         { status: 400 }
       )
+    }
+
+    // Doctor scope: a doctor may only file acts attributed to themselves —
+    // mirrors the ownership check already enforced on PATCH/DELETE so a doctor
+    // can't POST an act under another doctor's id (review #2).
+    if (
+      hasDoctorScope(auth.access!.role) &&
+      body.doctorId.trim() !== auth.access!.doctorId
+    ) {
+      return NextResponse.json(
+        { success: false, error: 'Insufficient permissions' },
+        { status: 403 }
+      )
+    }
+
+    // Doctor scope: when the act targets an appointment, that appointment — and
+    // its patient — must actually belong to this doctor. Without this a doctor
+    // could self-assign doctorId yet file the act against an appointment/patient
+    // they were never assigned (review #6). The self-check above only proves the
+    // doctorId isn't spoofed, not that the appointment/patient are theirs.
+    if (hasDoctorScope(auth.access!.role) && body.appointmentId) {
+      const { data: appt } = await auth
+        .supabase!.from('appointments')
+        .select('doctor_id, patient_id')
+        .eq('id', body.appointmentId.trim())
+        .maybeSingle()
+      if (
+        !appt ||
+        appt.doctor_id !== auth.access!.doctorId ||
+        (appt.patient_id && appt.patient_id !== body.patientId.trim())
+      ) {
+        return NextResponse.json(
+          { success: false, error: 'Insufficient permissions' },
+          { status: 403 }
+        )
+      }
     }
 
     const totalCost = computeTotalCost(body.items)

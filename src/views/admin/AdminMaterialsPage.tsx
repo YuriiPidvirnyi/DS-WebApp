@@ -203,7 +203,7 @@ export default function AdminMaterialsPage() {
           >
             {UNITS.map(u => (
               <option key={u} value={u}>
-                {u}
+                {unitLab(u)}
               </option>
             ))}
           </Select>
@@ -378,6 +378,11 @@ export default function AdminMaterialsPage() {
 
   const catLab = (x: string) => {
     const key = `admin.materialsPage.categories.${x}`
+    const translated = t(key)
+    return translated !== key ? translated : x
+  }
+  const unitLab = (x: string) => {
+    const key = `admin.materialsPage.units.${x}`
     const translated = t(key)
     return translated !== key ? translated : x
   }
@@ -573,7 +578,9 @@ export default function AdminMaterialsPage() {
                     <td className={`${c} text-dental-text`}>
                       {catLab(r.category)}
                     </td>
-                    <td className={`${c} text-dental-text`}>{r.unit}</td>
+                    <td className={`${c} text-dental-text`}>
+                      {unitLab(r.unit)}
+                    </td>
                     <td className={`${c} text-dental-text`}>{r.sku || '—'}</td>
                     <td className={c}>
                       <input

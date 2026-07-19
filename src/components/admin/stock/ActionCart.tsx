@@ -1,6 +1,7 @@
 'use client'
 
 import { forwardRef, useImperativeHandle, useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { X, Loader2, ChevronDown, ChevronUp, CheckCircle2 } from 'lucide-react'
 import type { MaterialBalance } from '@/types/stock'
 
@@ -22,15 +23,16 @@ interface Props {
 }
 
 const DRAWER_LABELS: Record<DrawerType, string> = {
-  writeoff: 'Списання',
-  transfer: 'Переміщення',
-  requisition: 'Заявка',
+  writeoff: 'admin.stock.actionCart.writeoff',
+  transfer: 'admin.stock.actionCart.transfer',
+  requisition: 'admin.stock.actionCart.requisition',
 }
 
 const ActionCart = forwardRef<ActionCartHandle, Props>(function ActionCart(
   { warehouseId, csrfToken, onDocPosted },
   ref
 ) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState<DrawerType | null>(null)
   const [writeoffItems, setWriteoffItems] = useState<CartItem[]>([])
   const [transferItems, setTransferItems] = useState<CartItem[]>([])
@@ -153,7 +155,11 @@ const ActionCart = forwardRef<ActionCartHandle, Props>(function ActionCart(
       setOpen(null)
       onDocPosted?.(type)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Помилка проведення')
+      setError(
+        e instanceof Error
+          ? e.message
+          : t('admin.stock.actionCart.postingError')
+      )
     } finally {
       setPosting(false)
     }
@@ -166,7 +172,9 @@ const ActionCart = forwardRef<ActionCartHandle, Props>(function ActionCart(
   return (
     <div className="fixed right-0 top-20 bottom-0 w-80 flex flex-col bg-white border-l border-dental-secondary-200 shadow-xl z-30">
       <div className="flex items-center justify-between px-4 py-3 border-b border-dental-secondary-200 bg-dental-secondary-50">
-        <h3 className="font-semibold text-dental-dark text-sm">Кошик дій</h3>
+        <h3 className="font-semibold text-dental-dark text-sm">
+          {t('admin.stock.actionCart.title')}
+        </h3>
         <span className="rounded-full bg-dental-primary-600 text-white text-xs font-medium px-2 py-0.5">
           {totalItems}
         </span>
@@ -186,7 +194,7 @@ const ActionCart = forwardRef<ActionCartHandle, Props>(function ActionCart(
                 className="w-full flex items-center justify-between px-4 py-3 hover:bg-dental-secondary-50 transition-colors"
               >
                 <span className="text-sm font-medium text-dental-dark">
-                  {DRAWER_LABELS[type]} ({items.length})
+                  {t(DRAWER_LABELS[type])} ({items.length})
                 </span>
                 {isOpen ? (
                   <ChevronUp className="w-4 h-4 text-dental-text" />
@@ -203,7 +211,11 @@ const ActionCart = forwardRef<ActionCartHandle, Props>(function ActionCart(
                       onChange={e => setToWarehouse(e.target.value)}
                       className="w-full rounded-lg border border-dental-secondary-300 px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-dental-primary-600"
                     >
-                      <option value="">— склад призначення —</option>
+                      <option value="">
+                        {t(
+                          'admin.stock.actionCart.destinationWarehousePlaceholder'
+                        )}
+                      </option>
                       {warehouses.map(w => (
                         <option key={w.id} value={w.id}>
                           {w.name_uk}
@@ -263,7 +275,7 @@ const ActionCart = forwardRef<ActionCartHandle, Props>(function ActionCart(
                     ) : (
                       <CheckCircle2 className="w-4 h-4" />
                     )}
-                    Провести {DRAWER_LABELS[type]}
+                    {t('admin.stock.actionCart.post')} {t(DRAWER_LABELS[type])}
                   </button>
                 </div>
               )}
