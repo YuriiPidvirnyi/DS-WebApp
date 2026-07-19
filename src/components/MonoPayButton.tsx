@@ -108,7 +108,13 @@ export function MonoPayButton({
   const invoiceIdRef = useRef<string | null>(null)
 
   const [phase, setPhase] = useState<Phase>('loading')
-  const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  // Error display is split so localization happens at render, not inside the
+  // effect/callbacks: errorText is a literal SDK/server message shown as-is;
+  // errorCode is one of our sentinels, mapped to a t() key when rendered. This
+  // keeps `t` out of the init-effect deps so a language switch can't destroy +
+  // re-init an in-flight payment (review #3).
+  const [errorText, setErrorText] = useState<string | null>(null)
+  const [errorCode, setErrorCode] = useState<string | null>(null)
 
   const handleSuccess = useCallback(() => {
     setPhase('success')
@@ -118,10 +124,11 @@ export function MonoPayButton({
   const handleError = useCallback(
     (err: { errorCode: string; errorMsg: string }) => {
       setPhase('error')
-      setErrorMsg(err.errorMsg || t('payments.monoButton.paymentError'))
+      setErrorText(err.errorMsg || null)
+      setErrorCode(err.errorMsg ? null : 'PAYMENT_ERROR')
       onError?.(err.errorCode, err.errorMsg)
     },
-    [onError, t]
+    [onError]
   )
 
   useEffect(() => {
@@ -189,16 +196,17 @@ export function MonoPayButton({
       } catch (err) {
         if (!destroyed) {
           const raw = err instanceof Error ? err.message : ''
-          // Localize our own known failure codes; pass any server-provided
-          // message (data.error) through as-is.
-          const KNOWN: Record<string, string> = {
-            SCRIPT_LOAD_FAILED: t('payments.monoButton.scriptError'),
-            INIT_FAILED: t('payments.monoButton.initError'),
+          // Our own sentinels localize at render; anything else (a server
+          // data.error message) is shown as-is.
+          if (raw === 'SCRIPT_LOAD_FAILED' || raw === 'INIT_FAILED') {
+            setErrorText(null)
+            setErrorCode(raw)
+          } else {
+            setErrorText(raw || null)
+            setErrorCode(raw ? null : 'INIT_FAILED')
           }
-          const msg = KNOWN[raw] || raw || t('payments.monoButton.initError')
           setPhase('error')
-          setErrorMsg(msg)
-          onError?.('INIT_ERROR', msg)
+          onError?.('INIT_ERROR', raw)
         }
       }
     }
@@ -218,7 +226,6 @@ export function MonoPayButton({
     handleSuccess,
     handleError,
     onError,
-    t,
   ])
 
   if (phase === 'success') {
@@ -233,11 +240,19 @@ export function MonoPayButton({
   }
 
   if (phase === 'error') {
+    const ERROR_KEYS: Record<string, string> = {
+      PAYMENT_ERROR: 'payments.monoButton.paymentError',
+      SCRIPT_LOAD_FAILED: 'payments.monoButton.scriptError',
+      INIT_FAILED: 'payments.monoButton.initError',
+    }
+    const display =
+      errorText ??
+      t(ERROR_KEYS[errorCode ?? 'PAYMENT_ERROR'] ?? ERROR_KEYS.PAYMENT_ERROR)
     return (
       <div className={`space-y-2 ${className ?? ''}`}>
         <div className="flex items-center gap-2 text-status-error-700 font-medium">
           <XCircle className="w-5 h-5 shrink-0" />
-          <span>{errorMsg ?? t('payments.monoButton.paymentError')}</span>
+          <span>{display}</span>
         </div>
       </div>
     )
