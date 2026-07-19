@@ -297,12 +297,14 @@ export default function AdminWorkspacePage() {
     [t]
   )
 
-  // Mirror what actually gets persisted/billed: linesToPayload clamps qty to
-  // >=1, and the server's computeTotalCost drops any item with a negative price.
-  // Clamp the displayed total the same way so it can't diverge (review #3).
+  // Mirror what actually gets persisted/billed: linesToPayload only keeps lines
+  // with a service picked, clamps qty to >=1, and the server's computeTotalCost
+  // drops any item with a negative price. Apply the same three rules to the
+  // displayed total so it can't diverge from the billed amount (review #3/#5).
   const total = useMemo(
     () =>
       lines.reduce((s, l) => {
+        if (!l.serviceId) return s
         const price = Number(l.price) || 0
         if (price < 0) return s
         const qty = Math.max(1, parseInt(l.quantity, 10) || 1)

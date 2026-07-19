@@ -1,33 +1,49 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NextRequest } from 'next/server'
 
-// Terminal mocks for the two treatment_records chains the POST handler uses:
-// insert(...).select('id').single()  and  select(FULL).eq('id').single().
+// Terminal mocks for the treatment_records chains the handlers use:
+//  POST: insert(...).select('id').single()  and  select(FULL).eq('id').single()
+//  GET:  select(LIST,{count}).eq(...).eq(...).order(...).range(...)
 const mockGetUser = vi.fn()
 const mockTrInsertSingle = vi.fn()
 const mockTrFetchSingle = vi.fn()
+const mockRange = vi.fn() // GET list terminal
+const mockEq = vi.fn() // spy on every .eq(col, val) so tests can assert filters
 
-vi.mock('@/lib/supabase/server', () => ({
-  createClient: vi.fn(async () => ({
-    auth: { getUser: mockGetUser },
-    from: vi.fn((table: string) => {
-      if (table === 'treatment_records') {
-        return {
-          insert: vi.fn(() => ({
-            select: vi.fn(() => ({ single: mockTrInsertSingle })),
-          })),
-          select: vi.fn(() => ({
-            eq: vi.fn(() => ({ single: mockTrFetchSingle })),
-          })),
+vi.mock('@/lib/supabase/server', () => {
+  // Chainable builder covering both the POST final-fetch (select→eq→single)
+  // and the GET list (select→eq→eq→order→range).
+  const builder = () => {
+    const qb: Record<string, unknown> = {}
+    qb.eq = (col: string, val: unknown) => {
+      mockEq(col, val)
+      return qb
+    }
+    qb.order = () => qb
+    qb.range = (...a: unknown[]) => mockRange(...a)
+    qb.single = () => mockTrFetchSingle()
+    return qb
+  }
+  return {
+    createClient: vi.fn(async () => ({
+      auth: { getUser: mockGetUser },
+      from: vi.fn((table: string) => {
+        if (table === 'treatment_records') {
+          return {
+            insert: vi.fn(() => ({
+              select: vi.fn(() => ({ single: mockTrInsertSingle })),
+            })),
+            select: vi.fn(() => builder()),
+          }
         }
-      }
-      if (table === 'treatment_record_items') {
-        return { insert: vi.fn(async () => ({ error: null })) }
-      }
-      return {}
-    }),
-  })),
-}))
+        if (table === 'treatment_record_items') {
+          return { insert: vi.fn(async () => ({ error: null })) }
+        }
+        return {}
+      }),
+    })),
+  }
+})
 
 const mockGetAdminAccess = vi.fn()
 vi.mock('@/lib/supabase/admin', () => ({
@@ -45,9 +61,10 @@ vi.mock('@/lib/api-security', () => ({
 
 vi.mock('@/utils/sentry', () => ({ captureException: vi.fn() }))
 
-import { POST } from '../../../app/api/treatment-records/route'
+import { GET, POST } from '../../../app/api/treatment-records/route'
 
 const PATIENT_ID = '5d2e7b1a-9f60-4c1e-b1de-2f2f4b7e8a11'
+const APPT_ID = 'eeeeeeee-0000-4000-8000-000000000005'
 const SERVICE_ID = '7c9e6679-7425-40de-944b-e07fc1f90ae7'
 const DOCTOR_A = 'aaaaaaaa-0000-4000-8000-000000000001'
 const DOCTOR_B = 'bbbbbbbb-0000-4000-8000-000000000002'
@@ -122,5 +139,38 @@ describe('POST /api/treatment-records — doctor ownership', () => {
     signInAs('admin', null)
     const res = await POST(makeRequest(validBody(DOCTOR_A)))
     expect(res.status).toBe(201)
+  })
+})
+
+describe('GET /api/treatment-records — appointmentId filter', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockRange.mockResolvedValue({ data: [], error: null, count: 0 })
+  })
+
+  it('narrows the query by appointment_id and keeps doctor scope', async () => {
+    signInAs('doctor', DOCTOR_A)
+    const req = new NextRequest(
+      `http://localhost:3000/api/treatment-records?appointmentId=${APPT_ID}`,
+      { method: 'GET' }
+    )
+    const res = await GET(req)
+    expect(res.status).toBe(200)
+    // The new filter is applied server-side (locks in the perf fix that
+    // replaced a fetch-the-whole-history-then-filter-client-side pattern)...
+    expect(mockEq).toHaveBeenCalledWith('appointment_id', APPT_ID)
+    // ...additively, on top of the doctor-scope filter (defense-in-depth).
+    expect(mockEq).toHaveBeenCalledWith('doctor_id', DOCTOR_A)
+  })
+
+  it('does not apply the appointment filter when the param is absent', async () => {
+    signInAs('doctor', DOCTOR_A)
+    const req = new NextRequest('http://localhost:3000/api/treatment-records', {
+      method: 'GET',
+    })
+    const res = await GET(req)
+    expect(res.status).toBe(200)
+    expect(mockEq).not.toHaveBeenCalledWith('appointment_id', expect.anything())
+    expect(mockEq).toHaveBeenCalledWith('doctor_id', DOCTOR_A)
   })
 })

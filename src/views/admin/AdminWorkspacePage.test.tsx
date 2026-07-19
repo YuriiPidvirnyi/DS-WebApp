@@ -330,4 +330,17 @@ describe('AdminWorkspacePage (2e doctor workstation)', () => {
     fireEvent.change(qty, { target: { value: '0' } })
     expect(screen.getByText(/1800 грн/)).toBeInTheDocument()
   })
+
+  it('excludes a priced line with no service picked from the total (review #5)', async () => {
+    await openActAndPickService() // line 0: service s1 (1800), qty 1
+    expect(await screen.findByText(/1800 грн/)).toBeInTheDocument()
+    // Add a second line and type a price into it WITHOUT picking a service.
+    fireEvent.click(screen.getByText('admin.treatmentsPage.modal.addLine'))
+    const prices = screen.getAllByLabelText('admin.treatmentsPage.modal.price')
+    fireEvent.change(prices[1], { target: { value: '500' } })
+    // linesToPayload drops the serviceless line, so the displayed total must
+    // stay 1800 (not 2300) — it can't bill a line that won't be persisted.
+    expect(screen.getByText(/1800 грн/)).toBeInTheDocument()
+    expect(screen.queryByText(/2300 грн/)).not.toBeInTheDocument()
+  })
 })
