@@ -61,7 +61,9 @@ function loadMonoPayScript(): Promise<void> {
     script.onload = () => resolve()
     script.onerror = () => {
       scriptPromise = null
-      reject(new Error('Не вдалося завантажити MonoPay'))
+      // Sentinel code — the component maps it to a localized message (no t()
+      // available at module scope).
+      reject(new Error('SCRIPT_LOAD_FAILED'))
     }
     document.head.appendChild(script)
   })
@@ -116,10 +118,10 @@ export function MonoPayButton({
   const handleError = useCallback(
     (err: { errorCode: string; errorMsg: string }) => {
       setPhase('error')
-      setErrorMsg(err.errorMsg || 'Помилка оплати')
+      setErrorMsg(err.errorMsg || t('payments.monoButton.paymentError'))
       onError?.(err.errorCode, err.errorMsg)
     },
-    [onError]
+    [onError, t]
   )
 
   useEffect(() => {
@@ -140,7 +142,7 @@ export function MonoPayButton({
 
         if (!res.ok) {
           const data = (await res.json()) as { error?: string }
-          throw new Error(data.error ?? 'Помилка ініціалізації платежу')
+          throw new Error(data.error ?? 'INIT_FAILED')
         }
 
         const { data } = (await res.json()) as {
@@ -186,8 +188,14 @@ export function MonoPayButton({
         })
       } catch (err) {
         if (!destroyed) {
-          const msg =
-            err instanceof Error ? err.message : 'Помилка ініціалізації'
+          const raw = err instanceof Error ? err.message : ''
+          // Localize our own known failure codes; pass any server-provided
+          // message (data.error) through as-is.
+          const KNOWN: Record<string, string> = {
+            SCRIPT_LOAD_FAILED: t('payments.monoButton.scriptError'),
+            INIT_FAILED: t('payments.monoButton.initError'),
+          }
+          const msg = KNOWN[raw] || raw || t('payments.monoButton.initError')
           setPhase('error')
           setErrorMsg(msg)
           onError?.('INIT_ERROR', msg)
@@ -210,6 +218,7 @@ export function MonoPayButton({
     handleSuccess,
     handleError,
     onError,
+    t,
   ])
 
   if (phase === 'success') {

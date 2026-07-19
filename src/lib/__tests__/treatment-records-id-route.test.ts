@@ -9,6 +9,7 @@ const mockGetUser = vi.fn()
 const mockOwnerMaybeSingle = vi.fn()
 const mockFullMaybeSingle = vi.fn()
 const mockUpdateEq = vi.fn(async () => ({ error: null }))
+const mockDeleteEq = vi.fn(async () => ({ error: null }))
 
 vi.mock('@/lib/supabase/server', () => ({
   createClient: vi.fn(async () => ({
@@ -25,6 +26,7 @@ vi.mock('@/lib/supabase/server', () => ({
             })),
           })),
           update: vi.fn(() => ({ eq: mockUpdateEq })),
+          delete: vi.fn(() => ({ eq: mockDeleteEq })),
         }
       }
       return {}
@@ -55,7 +57,7 @@ vi.mock('@/lib/stock-helpers', () => ({
 
 vi.mock('@/utils/sentry', () => ({ captureException: vi.fn() }))
 
-import { PATCH } from '../../../app/api/treatment-records/[id]/route'
+import { PATCH, DELETE } from '../../../app/api/treatment-records/[id]/route'
 
 const DOCTOR_A = 'aaaaaaaa-0000-4000-8000-000000000001'
 const DOCTOR_B = 'bbbbbbbb-0000-4000-8000-000000000002'
@@ -73,6 +75,13 @@ function makeRequest(body: Record<string, unknown>) {
       },
       body: JSON.stringify(body),
     }
+  )
+}
+
+function delRequest() {
+  return new NextRequest(
+    `http://localhost:3000/api/treatment-records/${REC_ID}`,
+    { method: 'DELETE', headers: { 'x-csrf-token': 'a'.repeat(32) } }
   )
 }
 
@@ -133,5 +142,87 @@ describe('PATCH /api/treatment-records/[id] — sign gate & ownership', () => {
     const res = await PATCH(makeRequest({ status: 'signed' }), params)
     expect(res.status).toBe(200)
     expect(mockUpdateEq).toHaveBeenCalled()
+  })
+})
+
+describe('PATCH /api/treatment-records/[id] — status state machine', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockUpdateEq.mockResolvedValue({ error: null })
+    mockOwnerMaybeSingle.mockResolvedValue({
+      data: { doctor_id: DOCTOR_A },
+      error: null,
+    })
+  })
+
+  it('rejects skipping a step: draft → completed (409)', async () => {
+    signInAs('doctor', DOCTOR_A) // has treatments:sign
+    mockFullMaybeSingle.mockResolvedValue({
+      data: { id: REC_ID, doctor_id: DOCTOR_A, status: 'draft' },
+      error: null,
+    })
+    const res = await PATCH(makeRequest({ status: 'completed' }), params)
+    expect(res.status).toBe(409)
+    expect(mockUpdateEq).not.toHaveBeenCalled()
+  })
+
+  it('rejects reversing: completed → draft (409)', async () => {
+    signInAs('doctor', DOCTOR_A)
+    mockFullMaybeSingle.mockResolvedValue({
+      data: { id: REC_ID, doctor_id: DOCTOR_A, status: 'completed' },
+      error: null,
+    })
+    const res = await PATCH(makeRequest({ status: 'draft' }), params)
+    expect(res.status).toBe(409)
+    expect(mockUpdateEq).not.toHaveBeenCalled()
+  })
+
+  it('rejects an unknown status (400)', async () => {
+    signInAs('doctor', DOCTOR_A)
+    const res = await PATCH(makeRequest({ status: 'archived' }), params)
+    expect(res.status).toBe(400)
+    expect(mockUpdateEq).not.toHaveBeenCalled()
+  })
+
+  it('allows the valid step draft → signed (200)', async () => {
+    signInAs('doctor', DOCTOR_A)
+    mockFullMaybeSingle.mockResolvedValue({
+      data: { id: REC_ID, doctor_id: DOCTOR_A, status: 'draft' },
+      error: null,
+    })
+    const res = await PATCH(makeRequest({ status: 'signed' }), params)
+    expect(res.status).toBe(200)
+    expect(mockUpdateEq).toHaveBeenCalled()
+  })
+})
+
+describe('DELETE /api/treatment-records/[id] — ownership', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockDeleteEq.mockResolvedValue({ error: null })
+    mockOwnerMaybeSingle.mockResolvedValue({
+      data: { doctor_id: DOCTOR_A },
+      error: null,
+    })
+  })
+
+  it('rejects unauthenticated requests', async () => {
+    signInAs(null)
+    const res = await DELETE(delRequest(), params)
+    expect(res.status).toBe(401)
+  })
+
+  it("blocks a doctor deleting another doctor's act (403)", async () => {
+    signInAs('doctor', DOCTOR_B) // record belongs to doctor A
+    const res = await DELETE(delRequest(), params)
+    expect(res.status).toBe(403)
+    expect(mockDeleteEq).not.toHaveBeenCalled()
+  })
+
+  it('lets a doctor delete their own act (200)', async () => {
+    signInAs('doctor', DOCTOR_A)
+    const res = await DELETE(delRequest(), params)
+    expect(res.status).toBe(200)
+    expect(mockDeleteEq).toHaveBeenCalled()
   })
 })

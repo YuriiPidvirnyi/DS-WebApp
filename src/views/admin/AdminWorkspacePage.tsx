@@ -156,6 +156,15 @@ export default function AdminWorkspacePage() {
     }
     setLoading(true)
     setError(null)
+    // A doctor with no linked doctorId can't be scoped app-side; don't fall back
+    // to fetching (and RLS-filtering) every doctor's day — show empty instead
+    // of relying on RLS alone for the scoping this screen promises (review #9).
+    if (isDoctor && !user?.doctorId) {
+      setAppts([])
+      setServices([])
+      setLoading(false)
+      return
+    }
     try {
       const today = new Date().toISOString().slice(0, 10)
       let q = sb

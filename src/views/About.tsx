@@ -9,8 +9,18 @@ import AnimatedCard from '@/components/ui/AnimatedCard'
 import { Card, CardMedia } from '@/components/ui'
 
 const About = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const experienceLabel = (years: number): string => {
+    // English is a simple singular/plural split; the mod10/mod100 buckets below
+    // are the Slavic (uk/pl) CLDR rule and give wrong English grammar for counts
+    // like 21/31 ("21 year of experience"), so branch English out (review #5).
+    // (i18next-native count plurals aren't usable here: uk/pl need _few/_many
+    // keys English lacks, which would break the locale-parity guard.)
+    if (i18n.language.startsWith('en')) {
+      return years === 1
+        ? t('about.experience.one', { years })
+        : t('about.experience.many', { years })
+    }
     const mod10 = years % 10
     const mod100 = years % 100
     if (mod100 >= 11 && mod100 <= 19)

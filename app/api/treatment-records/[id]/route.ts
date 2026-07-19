@@ -275,15 +275,42 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       )
     }
 
-    // Capture prev status for writeoff hook comparison (needs body first)
+    // Fetch the current status once when a status change is requested — used
+    // both to enforce the state machine and (for V2) as the writeoff-hook
+    // prevStatus.
     let prevStatus: string | null = null
-    if (isV2On() && body.status === 'completed') {
-      const { data: prev } = await auth
+    if (body.status !== undefined) {
+      const VALID_STATUSES = ['draft', 'signed', 'completed']
+      if (!VALID_STATUSES.includes(body.status as string)) {
+        return NextResponse.json(
+          { success: false, error: 'Невідомий статус акта' },
+          { status: 400 }
+        )
+      }
+      const { data: cur } = await auth
         .supabase!.from('treatment_records')
         .select('status')
         .eq('id', id)
         .maybeSingle()
-      prevStatus = prev?.status ?? null
+      prevStatus = (cur?.status as string | undefined) ?? null
+      // State machine: draft → signed → completed only. No skipping a step
+      // (draft → completed) and no reversal (signed/completed → draft). Same →
+      // same is allowed (idempotent). Enforced server-side so a direct API call
+      // can't corrupt the act lifecycle regardless of the UI.
+      const ALLOWED_TRANSITIONS: Record<string, string[]> = {
+        draft: ['draft', 'signed'],
+        signed: ['signed', 'completed'],
+        completed: ['completed'],
+      }
+      if (
+        prevStatus &&
+        !ALLOWED_TRANSITIONS[prevStatus]?.includes(body.status as string)
+      ) {
+        return NextResponse.json(
+          { success: false, error: 'Неприпустимий перехід статусу акта' },
+          { status: 409 }
+        )
+      }
     }
 
     const updates: Record<string, unknown> = {}
