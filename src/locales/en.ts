@@ -1429,6 +1429,7 @@ const en = {
         inventory: 'Inventory',
         system: 'System',
       },
+      workspace: 'Doctor workspace',
     },
     login: {
       title: 'Admin Login',
@@ -3011,6 +3012,29 @@ const en = {
         transfer: 'Transfer',
         requisition: 'Request',
       },
+    },
+    workspacePage: {
+      title: 'My appointments today',
+      roleNotice:
+        'The Doctor role sees only their own schedule and acts — the RBAC boundary, mirrored in the UI.',
+      emptyToday: 'You have no appointments today.',
+      selectHint: 'Select an appointment to open its treatment act.',
+      guestNoAct:
+        'Guest booking without a patient record — the act is unavailable.',
+      actTitle: 'Treatment act',
+      actSubtitle:
+        'Patient, doctor and visit are prefilled from the appointment — the act is created in one click from the list.',
+      liveNow: 'In progress',
+      minutesShort: 'min',
+      total: 'Total',
+      saveDraft: 'Save draft',
+      signAct: 'Sign act',
+      signConfirmTitle: 'Sign the treatment act?',
+      signConfirmDesc:
+        'The act for {{patient}} will be signed. Once signed, it can no longer be edited as a draft.',
+      draftSaved: 'Draft saved',
+      actSigned: 'Act signed',
+      needServices: 'Add at least one service to sign the act.',
     },
   },
   auth: {

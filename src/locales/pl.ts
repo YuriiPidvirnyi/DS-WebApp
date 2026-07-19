@@ -1434,6 +1434,7 @@ const pl = {
         inventory: 'Magazyn',
         system: 'System',
       },
+      workspace: 'Stanowisko lekarza',
     },
     login: {
       title: 'Logowanie do panelu',
@@ -3020,6 +3021,28 @@ const pl = {
         transfer: 'Przesuń',
         requisition: 'Zapotrzebowanie',
       },
+    },
+    workspacePage: {
+      title: 'Moje wizyty na dziś',
+      roleNotice:
+        'Rola «Lekarz» widzi tylko swój grafik i swoje akty — granica z macierzy RBAC, odzwierciedlona w UI.',
+      emptyToday: 'Nie masz dzisiaj żadnych wizyt.',
+      selectHint: 'Wybierz wizytę, aby otworzyć akt zabiegowy.',
+      guestNoAct: 'Rezerwacja gościa bez karty pacjenta — akt niedostępny.',
+      actTitle: 'Akt zabiegowy',
+      actSubtitle:
+        'Pacjent, lekarz i wizyta są wypełnione z bieżącej wizyty — akt tworzony jednym kliknięciem z listy.',
+      liveNow: 'W trakcie',
+      minutesShort: 'min',
+      total: 'Razem',
+      saveDraft: 'Zapisz szkic',
+      signAct: 'Podpisz akt',
+      signConfirmTitle: 'Podpisać akt zabiegowy?',
+      signConfirmDesc:
+        'Akt dla pacjenta {{patient}} zostanie podpisany. Po podpisaniu nie można go edytować jako szkic.',
+      draftSaved: 'Szkic zapisany',
+      actSigned: 'Akt podpisany',
+      needServices: 'Dodaj co najmniej jedną usługę, aby podpisać akt.',
     },
   },
   auth: {
