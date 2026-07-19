@@ -17,7 +17,8 @@ DentalStory WebApp exposes 25 Next.js App Router API routes under `/api/`. All r
 - **CSRF:** Mutation endpoints require `x-csrf-token` header (32+ chars, generated client-side via `sessionStorage`)
 - **Rate limiting:** Per-IP via Upstash Redis. Edge middleware: 60 req/min. Per-route limits vary (e.g., feedback: 20 req/min)
 - **Auth:** Supabase session cookies. Admin routes check `admin_users` table membership
-- **Cron:** `/api/cron/*` routes require `Authorization: Bearer <CRON_SECRET>`
+- **Payments:** admin `/api/payments/*` routes require `Authorization: Bearer <CRON_SECRET>`
+- **Scheduled jobs:** run on Supabase `pg_cron` (no HTTP API) — see [Scheduled Jobs](#scheduled-jobs-supabase-pg_cron--no-http-api)
 
 ---
 
@@ -255,23 +256,23 @@ Delete treatment record.
 
 ---
 
-## Cron Endpoints
+## Scheduled Jobs (Supabase `pg_cron` — no HTTP API)
 
-Secured by `Authorization: Bearer <CRON_SECRET>`. Designed for Vercel Cron.
+Scheduled work migrated off Vercel Cron / `/api/cron/*` routes to Supabase-native
+scheduling. There are **no cron HTTP endpoints** anymore. See
+[RUNBOOKS §4](./RUNBOOKS.md#4-cron-job-failures) for operations.
 
-### GET /api/cron/notifications
+- **Sender:** the `process-notifications` **edge function** (Deno) drains
+  `notification_events` (`status='queued'`, `scheduled_at <= now()`) and sends via the
+  Resend REST API. Invoked every 5 min by `pg_cron` → `pg_net.http_post`, gated by
+  `Authorization: Bearer <NOTIFY_FN_SECRET>` (== Vault `process_notifications_invoke_secret`);
+  `verify_jwt=false`. Not part of the Next.js API surface.
+- **Producers** (`pg_cron` → plpgsql, no HTTP): `run_reminders_job` (daily 18:00 UTC,
+  reminders delivered 07:00 UTC), `run_recall_job` (18:10 UTC), `run_low_stock_job`
+  (weekdays 08:00 UTC), `run_stock_metrics_job` (21:55 UTC).
 
-Process queued notification events. Picks up `status = 'queued'` rows where `scheduled_at <= now()`, sends via Resend, updates status.
-
-- **Schedule:** Every 5 minutes
-- **Config:** `maxDuration = 30`
-
-### GET /api/cron/reminders
-
-Schedule appointment reminder notifications for tomorrow. Inserts `appointment_reminder` events with `scheduled_at` set to 09:00 Kyiv time.
-
-- **Schedule:** Daily at 18:00 UTC
-- **Config:** `maxDuration = 15`
+> `CRON_SECRET` no longer gates any scheduled job — it now only secures the admin
+> **payment** routes (`/api/payments/*`).
 
 ---
 

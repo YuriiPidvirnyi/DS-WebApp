@@ -1,7 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-import * as Sentry from '@sentry/nextjs'
-import { sendEmail, isEmailConfigured } from '@/lib/email'
+// Supabase Edge Function: process-notifications
+//
+// Drains the `notification_events` queue and sends emails via Resend. This is a
+// 1:1 port of the retired Vercel route `app/api/cron/notifications/route.ts`.
+// Invoked every 5 minutes by pg_cron (see supabase/migrations/*_cron_schedules.sql)
+// via net.http_post with an `Authorization: Bearer <NOTIFY_FN_SECRET>` header.
+//
+// Deployed with verify_jwt=false — the auth gate below is the shared-secret check.
+import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2'
+import { sendEmail, isEmailConfigured } from './_shared/email.ts'
 import {
   bookingConfirmationEmail,
   appointmentReminderEmail,
@@ -9,30 +15,17 @@ import {
   newBookingAdminEmail,
   recallEmail,
   reviewRequestEmail,
-} from '@/lib/email-templates'
-import { captureException } from '@/utils/sentry'
-import { logger } from '@/utils/logger'
+} from './_shared/email-templates.ts'
 
-export const runtime = 'nodejs'
-export const dynamic = 'force-dynamic'
-export const maxDuration = 30
-
-const CRON_SECRET = process.env.CRON_SECRET ?? ''
-const ADMIN_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL ?? ''
+const INVOKE_SECRET = Deno.env.get('NOTIFY_FN_SECRET') ?? ''
+const ADMIN_EMAIL = Deno.env.get('ADMIN_NOTIFICATION_EMAIL') ?? ''
 const BATCH_SIZE = 20
 const MAX_ATTEMPTS = 3
 // Rows stuck in 'processing' longer than this are re-queued (guards crashed workers)
 const STUCK_TIMEOUT_MS = 10 * 60 * 1000
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// deno-lint-ignore no-explicit-any
 type ServiceClient = SupabaseClient<any, 'public', any>
-
-function getServiceClient(): ServiceClient | null {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !key) return null
-  return createClient(url, key)
-}
 
 type NotificationRow = {
   id: string
@@ -58,6 +51,13 @@ type AppointmentData = {
     | null
 }
 
+function json(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  })
+}
+
 function resolveServiceName(services: AppointmentData['services']): string {
   if (!services) return '—'
   if (Array.isArray(services)) return services[0]?.name_uk ?? '—'
@@ -71,6 +71,45 @@ function resolveDoctorName(
   const doc = Array.isArray(doctors) ? doctors[0] : doctors
   if (!doc) return undefined
   return `${doc.first_name} ${doc.last_name}`.trim() || undefined
+}
+
+async function startCronRun(
+  supabase: ServiceClient,
+  name: string
+): Promise<string | null> {
+  try {
+    const { data } = await supabase
+      .from('cron_runs')
+      .insert({ name, status: 'running' })
+      .select('id')
+      .single()
+    return (data as { id: string } | null)?.id ?? null
+  } catch {
+    return null
+  }
+}
+
+async function finishCronRun(
+  supabase: ServiceClient,
+  runId: string | null,
+  status: 'ok' | 'error',
+  processed: number,
+  error?: string
+): Promise<void> {
+  if (!runId) return
+  try {
+    await supabase
+      .from('cron_runs')
+      .update({
+        status,
+        finished_at: new Date().toISOString(),
+        processed,
+        ...(error ? { error } : {}),
+      })
+      .eq('id', runId)
+  } catch {
+    // non-blocking — cron_runs is observability only
+  }
 }
 
 async function processLowStockAlert(
@@ -318,16 +357,10 @@ async function processEvent(
       })
       .eq('id', event.id)
 
-    logger.info('[cron/notifications] delivered', {
+    console.log('[process-notifications] delivered', {
       id: event.id,
       type: event.type,
       resendId: result.id,
-    })
-    Sentry.addBreadcrumb({
-      category: 'email',
-      message: 'delivered',
-      level: 'info',
-      data: { id: event.id, type: event.type, resendId: result.id },
     })
   } else {
     const newAttempts = event.attempts + 1
@@ -343,81 +376,31 @@ async function processEvent(
   }
 }
 
-/**
- * GET /api/cron/notifications
- * Called by Vercel Cron every 5 minutes.
- * Processes queued notification_events and sends emails via Resend.
- *
- * Idempotency: rows are claimed (status → 'processing') before being sent so a
- * concurrent re-fire cannot double-send. Stuck 'processing' rows older than
- * STUCK_TIMEOUT_MS are recycled back to 'queued' at the start of each run.
- */
-async function startCronRun(
-  supabase: ServiceClient,
-  name: string
-): Promise<string | null> {
-  try {
-    const { data } = await supabase
-      .from('cron_runs')
-      .insert({ name, status: 'running' })
-      .select('id')
-      .single()
-    return (data as { id: string } | null)?.id ?? null
-  } catch {
-    return null
-  }
-}
-
-async function finishCronRun(
-  supabase: ServiceClient,
-  runId: string | null,
-  status: 'ok' | 'error',
-  processed: number,
-  error?: string
-): Promise<void> {
-  if (!runId) return
-  try {
-    await supabase
-      .from('cron_runs')
-      .update({
-        status,
-        finished_at: new Date().toISOString(),
-        processed,
-        ...(error ? { error } : {}),
-      })
-      .eq('id', runId)
-  } catch {
-    // non-blocking — cron_runs is observability only
-  }
-}
-
-export async function GET(request: NextRequest) {
+Deno.serve(async (request: Request) => {
   // Auth gate: missing config and wrong credentials both return 401.
-  // Callers should not be able to distinguish "unconfigured" from "wrong token".
   const authHeader = request.headers.get('authorization')
-  if (!CRON_SECRET || authHeader !== `Bearer ${CRON_SECRET}`) {
-    return NextResponse.json(
-      { success: false, error: 'Unauthorized' },
-      { status: 401 }
-    )
+  if (!INVOKE_SECRET || authHeader !== `Bearer ${INVOKE_SECRET}`) {
+    return json({ success: false, error: 'Unauthorized' }, 401)
   }
 
   if (!isEmailConfigured()) {
-    return NextResponse.json({
+    return json({
       success: true,
       message: 'Email not configured — skipping',
       processed: 0,
     })
   }
 
-  const supabase = getServiceClient()
-  if (!supabase) {
-    return NextResponse.json({
+  const url = Deno.env.get('SUPABASE_URL')
+  const key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+  if (!url || !key) {
+    return json({
       success: true,
       message: 'Supabase service role not configured — skipping',
       processed: 0,
     })
   }
+  const supabase = createClient(url, key)
 
   const runId = await startCronRun(supabase, 'notifications')
 
@@ -440,17 +423,14 @@ export async function GET(request: NextRequest) {
     .limit(BATCH_SIZE)
 
   if (selectError) {
-    captureException(new Error('[cron/notifications] Query error'), {
-      supabaseError: selectError,
-    })
-    return NextResponse.json(
-      { success: false, error: 'Failed to query events' },
-      { status: 500 }
-    )
+    console.error('[process-notifications] Query error', selectError)
+    await finishCronRun(supabase, runId, 'error', 0, selectError.message)
+    return json({ success: false, error: 'Failed to query events' }, 500)
   }
 
   if (!candidates?.length) {
-    return NextResponse.json({
+    await finishCronRun(supabase, runId, 'ok', 0)
+    return json({
       success: true,
       message: 'No queued notifications',
       processed: 0,
@@ -459,9 +439,8 @@ export async function GET(request: NextRequest) {
 
   const candidateIds = candidates.map(r => r.id as string)
 
-  // Step 2: Claim rows atomically — the .eq('status', 'queued') guard means
-  // a concurrent cron that selected the same IDs will update 0 rows for any
-  // already claimed here.
+  // Step 2: Claim rows atomically — the .eq('status','queued') guard means a
+  // concurrent run that selected the same IDs updates 0 rows for any already claimed.
   const { data: events, error: claimError } = await supabase
     .from('notification_events')
     .update({
@@ -475,17 +454,14 @@ export async function GET(request: NextRequest) {
     )
 
   if (claimError) {
-    captureException(new Error('[cron/notifications] Claim error'), {
-      supabaseError: claimError,
-    })
-    return NextResponse.json(
-      { success: false, error: 'Failed to claim events' },
-      { status: 500 }
-    )
+    console.error('[process-notifications] Claim error', claimError)
+    await finishCronRun(supabase, runId, 'error', 0, claimError.message)
+    return json({ success: false, error: 'Failed to claim events' }, 500)
   }
 
   if (!events?.length) {
-    return NextResponse.json({
+    await finishCronRun(supabase, runId, 'ok', 0)
+    return json({
       success: true,
       message: 'No notifications claimed (concurrent run took them)',
       processed: 0,
@@ -533,11 +509,7 @@ export async function GET(request: NextRequest) {
       processed++
     } catch (err) {
       failed++
-      captureException(
-        err instanceof Error
-          ? err
-          : new Error(`[cron/notifications] Failed to process ${event.id}`)
-      )
+      console.error('[process-notifications] Failed to process', event.id, err)
       // Reset claimed row so it can be retried next run
       await supabase
         .from('notification_events')
@@ -549,10 +521,10 @@ export async function GET(request: NextRequest) {
 
   await finishCronRun(supabase, runId, 'ok', processed)
 
-  return NextResponse.json({
+  return json({
     success: true,
     processed,
     failed,
     total: events.length,
   })
-}
+})

@@ -45,7 +45,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### CI (GitHub Actions)
 
-- **`ci.yml`** (push/PR to `main`/`develop`): `lint-and-typecheck` (ESLint + `tsc` + Prettier), `test` (Vitest with coverage), `e2e-ui-smoke`, and `e2e-feature-suites` (booking, cabinet, admin RBAC, cron — mocked Supabase). The production build job was removed — Vercel's GitHub integration is the authoritative build gate.
+- **`ci.yml`** (push/PR to `main`/`develop`): `lint-and-typecheck` (ESLint + `tsc` + Prettier), `test` (Vitest with coverage), `e2e-ui-smoke`, and `e2e-feature-suites` (booking, cabinet, admin RBAC — mocked Supabase). The production build job was removed — Vercel's GitHub integration is the authoritative build gate.
 - **a11y audit**: runs against the Vercel deployment URL in `preview-validate.yml` (on `deployment_status`) and on a weekly schedule in `weekly-a11y.yml` (opens a GitHub issue on violations) — not per-PR.
 - **Security audit**: `npm audit --audit-level=moderate` runs weekly in `security-audit.yml` (not per-PR). Other workflows: `schema-validate.yml` (migration naming + dangerous DDL), `secret-scan.yml` (gitleaks), `auto-merge-dependabot.yml`.
 
@@ -176,14 +176,30 @@ CSS-first; there is no `tailwind.config.js`):
 #### Notifications & Email
 
 - Queue: `notification_events` table in Supabase (type, appointment_id, recipient_email, status, scheduled_at)
-- Processor: `/api/cron/notifications` — Vercel Cron (every 5 min), picks up `queued` events where `scheduled_at <= now()`, sends via Resend
-- Reminder scheduler: `/api/cron/reminders` — Vercel Cron (daily 18:00 UTC), inserts `appointment_reminder` events for tomorrow's appointments, scheduled for 09:00 Kyiv time
+- Processor: **Supabase Edge Function** `process-notifications` (Deno), drained every 5 min by `pg_cron` → `pg_net.http_post`; picks up `queued` events where `scheduled_at <= now()`, atomic-claims them, sends via the Resend REST API. Auth = `Authorization: Bearer <NOTIFY_FN_SECRET>` (matches the Vault secret `process_notifications_invoke_secret`); `verify_jwt=false`. See "Scheduled jobs" below.
+- Reminder scheduler: `run_reminders_job()` plpgsql producer via `pg_cron` (daily 18:00 UTC), inserts `appointment_reminder` events for tomorrow's appointments, delivered 07:00 UTC
 - Templates: `src/lib/email-templates.ts` — branded HTML emails (booking confirmation, reminder, cancellation, admin alert)
 - Client: `src/lib/email.ts` — Resend wrapper with graceful fallback when not configured
 - On booking: queues `booking_confirmation` (patient) + `new_booking_admin` (admin)
 - On cancellation: queues `appointment_cancellation` (patient)
 - On completion: queues `review_request` (patient, +2h, one per appointment ever) — post-visit Google review ask via `/r/google?src=email`
 - Reminders: auto-scheduled 24h before appointment (deferred via `scheduled_at`)
+
+#### Scheduled jobs (Supabase-native — migrated off Vercel Cron)
+
+All five scheduled jobs run on **`pg_cron`** inside Supabase (not Vercel Cron). Migrations: `20260718_cron_runs_and_producers.sql` (observability table `cron_runs` + producer functions, schedules nothing) and `20260718_cron_schedules.sql` (the five `cron.schedule(...)` calls — the switch).
+
+| pg_cron job              | Cadence (UTC) | Does what                                                                                   |
+| ------------------------ | ------------- | ------------------------------------------------------------------------------------------- |
+| `ds-drain-notifications` | `*/5 * * * *` | `pg_net.http_post` → `process-notifications` edge fn (the only sender; calls Resend)        |
+| `ds-reminders`           | `0 18 * * *`  | `run_reminders_job()` — queues tomorrow's `appointment_reminder` events (deliver 07:00 UTC) |
+| `ds-recall`              | `10 18 * * *` | `run_recall_job()` — 3-touch recall producer                                                |
+| `ds-low-stock`           | `0 8 * * 1-5` | `run_low_stock_job()` — weekday low-stock admin alert (recipient from Vault)                |
+| `ds-stock-metrics`       | `55 21 * * *` | `run_stock_metrics_job()` — wraps `snapshot_stock_metrics_daily()` for yesterday + today    |
+
+- **Producers** are `SECURITY DEFINER` plpgsql, pure DB work, no HTTP/secret. **Only the sender** touches the network, gated by a Vault-stored bearer.
+- **Secrets:** Vault holds `process_notifications_invoke_secret` (== edge-fn `NOTIFY_FN_SECRET`) and `admin_notification_email`. The edge fn also needs `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `ADMIN_NOTIFICATION_EMAIL`, `SITE_URL` set as function secrets (dashboard/CLI — not settable via `deploy_edge_function`).
+- **Observability:** every run writes `public.cron_runs` (status/processed/error/duration). The drain's HTTP outcome is in `net._http_response` + edge `get_logs`, **not** `cron.job_run_details` (pg_net is fire-and-forget). Edge-fn/producer source lives under `supabase/functions/process-notifications/` (keep `_shared/email-templates.ts` in sync with `src/lib/email-templates.ts`).
 
 #### Welcome-pack promo campaign
 
@@ -230,23 +246,23 @@ CSS-first; there is no `tailwind.config.js`):
 
 ### Environment Variables
 
-| Variable                           | Required     | Description                                                                                                   |
-| ---------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SITE_URL`             | No           | Site URL (default: `https://dentalstory.com.ua`)                                                              |
-| `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`  | No           | GA4 measurement ID                                                                                            |
-| `NEXT_PUBLIC_GOOGLE_PLACE_ID`      | No           | GBP Place ID — powers the tracked write-review redirect `/r/google?src=…` (falls back to the Maps share link) |
-| `NEXT_PUBLIC_SUPABASE_URL`         | For auth     | Supabase project URL                                                                                          |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY`    | For auth     | Supabase anon key                                                                                             |
-| `UPSTASH_REDIS_REST_URL`           | For cache    | Upstash Redis URL                                                                                             |
-| `UPSTASH_REDIS_REST_TOKEN`         | For cache    | Upstash Redis token                                                                                           |
-| `SENTRY_AUTH_TOKEN`                | No           | For source map upload (skipped if missing)                                                                    |
-| `RESEND_API_KEY`                   | For email    | Resend API key                                                                                                |
-| `RESEND_FROM_EMAIL`                | No           | Sender address (default: `DentalStory <noreply@dentalstory.com.ua>`)                                          |
-| `ADMIN_NOTIFICATION_EMAIL`         | No           | Email for admin booking alerts                                                                                |
-| `CRON_SECRET`                      | For cron     | Bearer token for `/api/cron/*` routes                                                                         |
-| `SUPABASE_SERVICE_ROLE_KEY`        | For cron     | Service role key for server-side Supabase calls                                                               |
-| `MONOBANK_TOKEN`                   | For payments | Monobank acquiring token (test: api.monobank.ua, prod: web.monobank.ua)                                       |
-| `NEXT_PUBLIC_INVENTORY_V2_ENABLED` | No           | Set `true` to expose `/admin/stock` shell (off by default; enable per-env in Vercel)                          |
+| Variable                           | Required     | Description                                                                                                                                                                       |
+| ---------------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL`             | No           | Site URL (default: `https://dentalstory.com.ua`)                                                                                                                                  |
+| `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`  | No           | GA4 measurement ID                                                                                                                                                                |
+| `NEXT_PUBLIC_GOOGLE_PLACE_ID`      | No           | GBP Place ID — powers the tracked write-review redirect `/r/google?src=…` (falls back to the Maps share link)                                                                     |
+| `NEXT_PUBLIC_SUPABASE_URL`         | For auth     | Supabase project URL                                                                                                                                                              |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`    | For auth     | Supabase anon key                                                                                                                                                                 |
+| `UPSTASH_REDIS_REST_URL`           | For cache    | Upstash Redis URL                                                                                                                                                                 |
+| `UPSTASH_REDIS_REST_TOKEN`         | For cache    | Upstash Redis token                                                                                                                                                               |
+| `SENTRY_AUTH_TOKEN`                | No           | For source map upload (skipped if missing)                                                                                                                                        |
+| `RESEND_API_KEY`                   | For email    | Resend API key                                                                                                                                                                    |
+| `RESEND_FROM_EMAIL`                | No           | Sender address (default: `DentalStory <noreply@dentalstory.com.ua>`)                                                                                                              |
+| `ADMIN_NOTIFICATION_EMAIL`         | No           | Email for admin booking alerts                                                                                                                                                    |
+| `CRON_SECRET`                      | For payments | Admin bearer for `/api/payments/*` routes (analytics/finalize/invalidate/refund). No longer used by any cron — scheduled jobs moved to Supabase `pg_cron` (see "Scheduled jobs"). |
+| `SUPABASE_SERVICE_ROLE_KEY`        | Server-side  | Service role key for server-side Supabase calls (also auto-injected into the `process-notifications` edge fn)                                                                     |
+| `MONOBANK_TOKEN`                   | For payments | Monobank acquiring token (test: api.monobank.ua, prod: web.monobank.ua)                                                                                                           |
+| `NEXT_PUBLIC_INVENTORY_V2_ENABLED` | No           | Set `true` to expose `/admin/stock` shell (off by default; enable per-env in Vercel)                                                                                              |
 
 ### Inventory v2 — posting primitive contract
 
@@ -270,7 +286,7 @@ Feature flag: `NEXT_PUBLIC_INVENTORY_V2_ENABLED=true` enables `/admin/stock`. Se
 
 #### Stock cron
 
-- `/api/cron/stock-metrics` — daily at 21:55 UTC (23:55 Kyiv). Calls `snapshot_stock_metrics_daily()` for yesterday + today. Registered in `vercel.json`.
+- `ds-stock-metrics` — `pg_cron` daily at 21:55 UTC (23:55 Kyiv). `run_stock_metrics_job()` calls `snapshot_stock_metrics_daily()` for yesterday + today. Scheduled in `20260718_cron_schedules.sql` (migrated off Vercel Cron — see "Scheduled jobs").
 
 ---
 
