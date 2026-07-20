@@ -1430,6 +1430,8 @@ const pl = {
       materials: 'Materiały',
       orders: 'Zamówienia',
       analytics: 'Analityka',
+      dataQuality: 'Jakość danych',
+      health: 'Stan systemu',
       settings: 'Ustawienia',
       users: 'Użytkownicy',
       stock: 'Magazyn v2',
