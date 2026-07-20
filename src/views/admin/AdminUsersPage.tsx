@@ -362,7 +362,7 @@ export default function AdminUsersPage() {
                   </tr>
                 )
               })}
-              {users.length === 0 && (
+              {users.length === 0 && !error && (
                 <tr>
                   <td
                     colSpan={canManage ? 5 : 4}

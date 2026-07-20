@@ -199,11 +199,11 @@ export default function AdminAnalyticsPage() {
         </div>
       )}
 
-      {isLoading || !model ? (
+      {isLoading ? (
         <div className="rounded-xl border border-dental-secondary-200 bg-white px-4 py-8 text-center text-dental-muted">
           {t('admin.analyticsPage.loading')}
         </div>
-      ) : (
+      ) : model ? (
         <>
           <ErrorBoundary fallback={<ChartErrorFallback />}>
             <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
@@ -362,7 +362,7 @@ export default function AdminAnalyticsPage() {
           <CronHealthWidget />
           <AiUsageWidget />
         </>
-      )}
+      ) : null}
     </div>
   )
 }

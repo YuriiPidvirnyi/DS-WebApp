@@ -28,9 +28,9 @@ if (dsn) {
 
     // Only report from production domains
     allowUrls: [
-      'dentalstory.com.ua',
-      'www.dentalstory.com.ua',
-      'staging.dentalstory.com.ua',
+      'dentalstory.ua',
+      'www.dentalstory.ua',
+      'staging.dentalstory.ua',
     ],
 
     beforeSend(event) {

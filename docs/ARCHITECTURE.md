@@ -203,10 +203,10 @@ Patient (LiveChat.tsx)          Admin (AdminChatPage)
 
 ### Environment separation
 
-| Environment | Supabase project       | Redis        | Sentry                      | Domain               |
-| ----------- | ---------------------- | ------------ | --------------------------- | -------------------- |
-| Production  | `exgpwtyrkkhwqqdgqbkz` | Upstash prod | `sentry-dentalstory-webapp` | `dentalstory.com.ua` |
-| Development | Same (with anon key)   | Optional     | Optional                    | `localhost:3000`     |
+| Environment | Supabase project       | Redis        | Sentry                      | Domain           |
+| ----------- | ---------------------- | ------------ | --------------------------- | ---------------- |
+| Production  | `exgpwtyrkkhwqqdgqbkz` | Upstash prod | `sentry-dentalstory-webapp` | `dentalstory.ua` |
+| Development | Same (with anon key)   | Optional     | Optional                    | `localhost:3000` |
 
 ### Graceful degradation
 

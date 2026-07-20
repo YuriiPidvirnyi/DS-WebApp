@@ -9,7 +9,7 @@ DentalStory WebApp exposes 25 Next.js App Router API routes under `/api/`. All r
 { "success": false, "error": "..." }
 ```
 
-**Base URL:** `http://localhost:3000` (dev) / `https://dentalstory.com.ua` (prod)  
+**Base URL:** `http://localhost:3000` (dev) / `https://dentalstory.ua` (prod)  
 **OpenAPI spec:** `public/openapi.json` (viewable at `/api-docs`)
 
 ### Common security
