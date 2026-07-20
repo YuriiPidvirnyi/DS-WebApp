@@ -1425,6 +1425,8 @@ const en = {
       materials: 'Materials',
       orders: 'Orders',
       analytics: 'Analytics',
+      dataQuality: 'Data quality',
+      health: 'System health',
       settings: 'Settings',
       users: 'Users',
       stock: 'Inventory v2',

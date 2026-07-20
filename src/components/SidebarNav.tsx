@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import dynamic from 'next/dynamic'
+import { CONTACT_INFO } from '@/utils/constants'
 import {
   Home,
   Stethoscope,
@@ -49,20 +50,6 @@ function InstagramIcon({ className }: { className?: string }) {
     </svg>
   )
 }
-
-function XIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-    </svg>
-  )
-}
-import { CONTACT_INFO } from '@/utils/constants'
 
 /* ── Dynamic panel imports ── */
 
@@ -253,21 +240,19 @@ export default function SidebarNav() {
 
   /* ── Social items ── */
 
+  // The clinic's real social channels only, Instagram-first (its primary
+  // visual channel). Twitter/X was a placeholder (x.com) with no real account
+  // behind it, so it's dropped rather than shown as a dead link.
   const socialItems = [
-    {
-      href: CONTACT_INFO.social.facebook,
-      label: 'Facebook',
-      icon: <FacebookIcon className="w-5 h-5 shrink-0" />,
-    },
     {
       href: CONTACT_INFO.social.instagram,
       label: 'Instagram',
       icon: <InstagramIcon className="w-5 h-5 shrink-0" />,
     },
     {
-      href: CONTACT_INFO.social.twitter,
-      label: 'Twitter / X',
-      icon: <XIcon className="w-5 h-5 shrink-0" />,
+      href: CONTACT_INFO.social.facebook,
+      label: 'Facebook',
+      icon: <FacebookIcon className="w-5 h-5 shrink-0" />,
     },
     {
       href: CONTACT_INFO.social.tiktok,

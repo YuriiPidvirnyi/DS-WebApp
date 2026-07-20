@@ -30,6 +30,7 @@
     "seed:preprod:wipe": "SEED_WIPE=1 npx tsx scripts/seed/preprod/index.ts",
     "seed:rbac": "node scripts/seed-rbac-test-users.mjs",
     "link-env": "node scripts/link-env.mjs",
+    "gen:placeholders": "node scripts/gen-placeholder-images.mjs",
     "prepare": "husky"
   },
   "dependencies": {

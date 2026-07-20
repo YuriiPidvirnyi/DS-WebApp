@@ -100,9 +100,10 @@ export function generateOrganizationSchema(): MedicalBusiness {
     ],
     acceptedPaymentMethod: ['Cash', 'CreditCard', 'BankTransfer'],
     sameAs: [
-      CONTACT_INFO.social.facebook,
       CONTACT_INFO.social.instagram,
+      CONTACT_INFO.social.facebook,
       CONTACT_INFO.social.telegram,
+      CONTACT_INFO.social.tiktok,
     ],
   }
 }

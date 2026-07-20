@@ -1555,6 +1555,8 @@ const uk = {
       orders: 'Замовлення',
       stock: 'Склад v2',
       analytics: 'Аналітика',
+      dataQuality: 'Якість даних',
+      health: 'Стан системи',
       settings: 'Налаштування',
       users: 'Користувачі',
       groups: {
