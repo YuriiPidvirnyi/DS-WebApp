@@ -5,6 +5,7 @@ import { CreditCard } from 'lucide-react'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { StatusBadge, type StatusTone } from '@/components/ui/StatusBadge'
 import { WalletCards, type WalletCard } from '@/components/cabinet/WalletCards'
+import { localizedServiceName } from '@/utils/serviceName'
 
 export type PaymentStatus =
   | 'created'
@@ -28,7 +29,13 @@ export interface Payment {
     | {
         appointment_date: string
         appointment_time: string
-        services: { name_uk: string }[] | null
+        services:
+          | {
+              name_uk: string
+              name_en?: string | null
+              name_pl?: string | null
+            }[]
+          | null
       }[]
     | null
 }
@@ -71,7 +78,7 @@ export default function CabinetPaymentsPage({
   const modeLabel = (m: PaymentMode) =>
     t(`cabinet.payments.modes.${m}`, { defaultValue: m })
   const serviceName = (p: Payment) =>
-    p.appointments?.[0]?.services?.[0]?.name_uk ?? '—'
+    localizedServiceName(p.appointments?.[0]?.services?.[0], i18n.language)
 
   return (
     <div className="max-w-4xl mx-auto">
