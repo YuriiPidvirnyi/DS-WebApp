@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
+import { localizedServiceName } from '@/utils/serviceName'
 
 interface PatientRow {
   id: string
@@ -36,7 +37,11 @@ interface AppointmentRow {
   price_uah: number | null
   created_at: string
   doctor: { first_name: string; last_name: string } | null
-  service: { name_uk: string; name_en: string | null } | null
+  service: {
+    name_uk: string
+    name_en: string | null
+    name_pl: string | null
+  } | null
 }
 
 const STATUS_CONFIG: Record<
@@ -100,7 +105,7 @@ export default function PatientDashboard({ patientId }: { patientId: string }) {
         supabase
           .from('appointments')
           .select(
-            'id, appointment_date, appointment_time, duration_minutes, status, notes, price_uah, created_at, doctor:doctors(first_name, last_name), service:services(name_uk, name_en)'
+            'id, appointment_date, appointment_time, duration_minutes, status, notes, price_uah, created_at, doctor:doctors(first_name, last_name), service:services(name_uk, name_en, name_pl)'
           )
           .eq('patient_id', patientId)
           .order('appointment_date', { ascending: false })
@@ -168,10 +173,8 @@ export default function PatientDashboard({ patientId }: { patientId: string }) {
     },
   ] as const
 
-  const getServiceName = (svc: AppointmentRow['service']) => {
-    if (!svc) return '—'
-    return i18n.language === 'en' && svc.name_en ? svc.name_en : svc.name_uk
-  }
+  const getServiceName = (svc: AppointmentRow['service']) =>
+    localizedServiceName(svc, i18n.language)
 
   return (
     <div className="min-h-screen bg-dental-secondary-50">

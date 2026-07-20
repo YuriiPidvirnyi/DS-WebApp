@@ -13,6 +13,11 @@ import {
   csrfErrorResponse,
 } from '@/lib/api-security'
 import { parsePagination, paginationMeta } from '@/lib/pagination'
+import {
+  computeTotalCost,
+  isItemInput,
+  type ItemInput,
+} from '@/lib/treatment-cost'
 import { captureException } from '@/utils/sentry'
 
 export const runtime = 'nodejs'
@@ -24,13 +29,6 @@ const LIST_SELECT =
 const CREATED_SELECT =
   'id, appointment_id, patient_id, doctor_id, tooth_numbers, diagnosis, notes, status, total_cost, payment_status, created_at, patients(first_name,last_name), doctors(first_name,last_name), treatment_record_items(service_id, tooth_number, quantity, price_at_time, services(name_uk))'
 
-type ItemInput = {
-  serviceId: string
-  toothNumber?: string | null
-  quantity?: number
-  priceAtTime: number | string
-}
-
 type CreateBody = {
   appointmentId?: string | null
   patientId: string
@@ -41,17 +39,6 @@ type CreateBody = {
   items: ItemInput[]
 }
 
-function isItemInput(x: unknown): x is ItemInput {
-  if (!x || typeof x !== 'object') return false
-  const o = x as Record<string, unknown>
-  return (
-    typeof o.serviceId === 'string' &&
-    o.serviceId.length > 0 &&
-    o.priceAtTime !== undefined &&
-    (typeof o.priceAtTime === 'number' || typeof o.priceAtTime === 'string')
-  )
-}
-
 function isCreateBody(body: unknown): body is CreateBody {
   if (!body || typeof body !== 'object') return false
   const o = body as Record<string, unknown>
@@ -59,16 +46,6 @@ function isCreateBody(body: unknown): body is CreateBody {
     return false
   if (!Array.isArray(o.items)) return false
   return o.items.every(isItemInput)
-}
-
-function computeTotalCost(items: ItemInput[]): number {
-  return items.reduce((sum, item) => {
-    const qty = item.quantity ?? 1
-    const price = Number(item.priceAtTime)
-    if (!Number.isFinite(price) || price < 0) return sum
-    if (!Number.isFinite(qty) || qty <= 0) return sum
-    return sum + qty * price
-  }, 0)
 }
 
 async function requireAdmin() {
