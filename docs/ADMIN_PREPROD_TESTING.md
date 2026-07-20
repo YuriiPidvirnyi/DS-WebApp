@@ -15,7 +15,7 @@ Covers seeding, accounts for all roles, data clearing, access matrix, and real t
 2. Node.js 22+ and `npm ci --legacy-peer-deps` already run.
 3. For git worktrees: run `npm run link-env` first to symlink `.env.local`.
 
-> The seed system refuses to run against the production URL. If `NEXT_PUBLIC_SUPABASE_URL` matches `dentalstory.com.ua`, it aborts.
+> The seed system refuses to run against the production URL. If `NEXT_PUBLIC_SUPABASE_URL` matches `dentalstory.ua`, it aborts.
 
 ---
 

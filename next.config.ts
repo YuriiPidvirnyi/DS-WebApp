@@ -101,10 +101,6 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'dentalstory.com.ua',
-      },
-      {
-        protocol: 'https',
         hostname: 'dentalstory.ua',
       },
       {

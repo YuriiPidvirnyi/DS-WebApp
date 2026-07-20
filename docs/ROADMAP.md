@@ -177,7 +177,7 @@ Three invariants:
 
 **A. Vercel side**
 
-1. Create a _Preprod_ environment in Vercel project settings, bound to `develop` branch. Give it its own `NEXT_PUBLIC_*`, `SUPABASE_*`, `RESEND_API_KEY`, `CLINICARDS_API_KEY`, `CRON_SECRET` — distinct from production. Use a `noreply+preprod@dentalstory.com.ua` sender address so preprod emails are obviously marked.
+1. Create a _Preprod_ environment in Vercel project settings, bound to `develop` branch. Give it its own `NEXT_PUBLIC_*`, `SUPABASE_*`, `RESEND_API_KEY`, `CLINICARDS_API_KEY`, `CRON_SECRET` — distinct from production. Use a `noreply+preprod@dentalstory.ua` sender address so preprod emails are obviously marked.
 2. Production environment stays bound to `main`.
 3. Preview environment (ephemeral per-PR) keeps default settings — used for feature spot-checks, **never** for email-delivery or billing tests.
 4. Enable Vercel's GitHub check so PRs show Preview status + Preprod/Production as appropriate.
@@ -629,7 +629,7 @@ These can't be answered from the code; the owner has to choose:
 
 1. **Payments:** in-clinic only (recommended for v3) or wire a PSP now? If yes — which PSP?
 2. **Multi-clinic:** is this software ever going to host more than one clinic? If "maybe in 2 years", design choices stay simple. If "yes, in 6 months", multi-tenancy needs to enter the schema before more migrations land.
-3. **`dentalstory.ua` vs `dentalstory.com.ua`:** which is canonical? Memory and code disagree. 301 the loser to the winner.
+3. **Canonical domain:** resolved — `dentalstory.ua` is canonical. `dentalstory.com.ua` and `www.dentalstory.com.ua` 301-redirect to it (`next.config.ts`); all site URLs, SEO/sitemap, email senders and Sentry `allowUrls` use `dentalstory.ua`.
 4. **Storybook:** keep + invest, or delete?
 5. **External a11y audit budget:** ~€800–€2000 for a one-shot WCAG 2.1 AA audit. Worth it before launch?
 6. **Supabase tier:** are we on a paid plan with PITR? If not, upgrade before launch.

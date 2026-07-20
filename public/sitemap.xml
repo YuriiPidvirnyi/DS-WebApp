@@ -3,66 +3,66 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://dentalstory.com.ua/</loc>
+    <loc>https://dentalstory.ua/</loc>
     <lastmod>2026-02-20T18:37:32.822Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1</priority>
-    <xhtml:link rel="alternate" hreflang="uk" href="https://dentalstory.com.ua/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://dentalstory.ua/" />
   </url>
   <url>
-    <loc>https://dentalstory.com.ua/services</loc>
+    <loc>https://dentalstory.ua/services</loc>
     <lastmod>2026-02-20T18:37:32.822Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="uk" href="https://dentalstory.com.ua/services" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://dentalstory.ua/services" />
   </url>
   <url>
-    <loc>https://dentalstory.com.ua/about</loc>
+    <loc>https://dentalstory.ua/about</loc>
     <lastmod>2026-02-20T18:37:32.822Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="uk" href="https://dentalstory.com.ua/about" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://dentalstory.ua/about" />
   </url>
   <url>
-    <loc>https://dentalstory.com.ua/gallery</loc>
+    <loc>https://dentalstory.ua/gallery</loc>
     <lastmod>2026-02-20T18:37:32.822Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <xhtml:link rel="alternate" hreflang="uk" href="https://dentalstory.com.ua/gallery" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://dentalstory.ua/gallery" />
   </url>
   <url>
-    <loc>https://dentalstory.com.ua/contact</loc>
+    <loc>https://dentalstory.ua/contact</loc>
     <lastmod>2026-02-20T18:37:32.822Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="uk" href="https://dentalstory.com.ua/contact" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://dentalstory.ua/contact" />
   </url>
   <url>
-    <loc>https://dentalstory.com.ua/booking</loc>
+    <loc>https://dentalstory.ua/booking</loc>
     <lastmod>2026-02-20T18:37:32.822Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="uk" href="https://dentalstory.com.ua/booking" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://dentalstory.ua/booking" />
   </url>
   <url>
-    <loc>https://dentalstory.com.ua/reviews</loc>
+    <loc>https://dentalstory.ua/reviews</loc>
     <lastmod>2026-02-20T18:37:32.822Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <xhtml:link rel="alternate" hreflang="uk" href="https://dentalstory.com.ua/reviews" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://dentalstory.ua/reviews" />
   </url>
   <url>
-    <loc>https://dentalstory.com.ua/privacy-policy</loc>
+    <loc>https://dentalstory.ua/privacy-policy</loc>
     <lastmod>2026-02-20T18:37:32.822Z</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
-    <xhtml:link rel="alternate" hreflang="uk" href="https://dentalstory.com.ua/privacy-policy" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://dentalstory.ua/privacy-policy" />
   </url>
   <url>
-    <loc>https://dentalstory.com.ua/terms-of-service</loc>
+    <loc>https://dentalstory.ua/terms-of-service</loc>
     <lastmod>2026-02-20T18:37:32.822Z</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
-    <xhtml:link rel="alternate" hreflang="uk" href="https://dentalstory.com.ua/terms-of-service" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://dentalstory.ua/terms-of-service" />
   </url>
 </urlset>
