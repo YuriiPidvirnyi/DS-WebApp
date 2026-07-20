@@ -297,7 +297,7 @@ function CreateDocumentModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-sm rounded-2xl bg-white shadow-xl p-6">
+      <div className="w-full max-w-sm max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-xl p-6">
         <h2 className="text-lg font-semibold text-dental-dark mb-4">
           {t('admin.stock.documentsPage.newDocument')}
         </h2>
