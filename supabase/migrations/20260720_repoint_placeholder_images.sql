@@ -19,6 +19,21 @@
 -- still points at the dead host. A real, uploaded photo is never clobbered, and
 -- re-running the migration is a no-op. The service/doctor keys (localized name,
 -- surname) are stable identifiers already present in the data.
+--
+-- Coupling / drift
+-- ----------------
+-- The name_en / last_name literals below mirror the seed rows in
+-- scripts/003_seed_data.sql (verified: all 15 service names + 4 surnames line
+-- up). The link is by-value, not enforced — if a seed name is renamed without
+-- updating this file, that row simply stops being repointed (fails open/quiet,
+-- never errors). src/test/placeholder-images.test.ts pins that every path here
+-- maps to a real file under public/, but not the name coupling itself.
+--
+-- Surname caveat: doctors are matched by last_name alone, which is not a stable
+-- identifier in general. A future real hire sharing a surname with a demo doctor
+-- who has not uploaded a photo yet (photo_url NULL) would be assigned the demo
+-- avatar on this migration's first run in that environment. Low impact (a
+-- placeholder image, overwritten the moment a real photo is set), but noted.
 
 -- ── Services: bind each catalogue entry to its branded placeholder by name ────
 do $$

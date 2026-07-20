@@ -1,9 +1,12 @@
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
-const ROOT = fileURLToPath(new URL('../public', import.meta.url))
-mkdirSync(`${ROOT}/services`, { recursive: true })
-mkdirSync(`${ROOT}/doctors`, { recursive: true })
+// Round every decimal in the generated markup to 2 dp. The coordinate math
+// (scaled bezier paths) otherwise bakes float noise like 12.899999999999999
+// into the committed SVGs; integers (viewBox, font-size) have no decimal point
+// and pass through untouched. Keeps checked-in artifacts clean and diffable.
+const round2 = svg =>
+  svg.replace(/-?\d+\.\d+/g, m => `${Math.round(parseFloat(m) * 100) / 100}`)
 
 // Brand palette (globals.css @theme)
 const PRIMARY = '#AECED3'
@@ -100,15 +103,15 @@ function wordmark(w, h) {
 // (the service name is rendered by the app next to it, in the active locale).
 // Differentiation comes from the per-category glyph; brand identity from the
 // Latin wordmark.
-function serviceSvg(_title, kind, i) {
+function serviceSvg(kind, i) {
   const W = 800,
     H = 600
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Dental Story service placeholder">
+  return round2(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Dental Story service placeholder">
 ${backdrop(W, H, i)}
 ${tooth(W / 2, H * 0.45, 2.15, i)}
 ${glyph(kind, W / 2, H * 0.45, 2.15)}
 ${wordmark(W, H)}
-</svg>`
+</svg>`)
 }
 
 function doctorSvg(name, i) {
@@ -123,7 +126,7 @@ function doctorSvg(name, i) {
   // Initials are the doctor's own (language-neutral); no localized caption is
   // baked in. Avatar is centered so a circular crop (e.g. the About cards)
   // frames it cleanly.
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Dental Story doctor placeholder">
+  return round2(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Dental Story doctor placeholder">
 ${backdrop(W, H, 'd' + i)}
 <g transform="translate(${W / 2},${H * 0.47})">
   <circle r="150" fill="#ffffff" opacity="0.16"/>
@@ -133,26 +136,29 @@ ${backdrop(W, H, 'd' + i)}
   <text y="12" text-anchor="middle" font-family="Nunito, Verdana, sans-serif" font-size="80" font-weight="800" fill="#ffffff" opacity="0.92">${initials}</text>
 </g>
 ${wordmark(W, H)}
-</svg>`
+</svg>`)
 }
 
+// [slug, glyphKind]. No localized title here — the image bakes in no text; the
+// app renders the service name beside it in the active locale.
 const SERVICES = [
-  ['consultation', 'Консультація', 'search'],
-  ['cleaning', 'Професійна чистка', 'sparkle'],
-  ['cavity-1surface', 'Лікування карієсу', 'fill'],
-  ['cavity-2plus', 'Карієс 2+ поверхні', 'fill2'],
-  ['pulpitis', 'Лікування пульпіту', 'root'],
-  ['extraction-simple', 'Видалення (просте)', 'arrow'],
-  ['extraction-complex', 'Видалення (складне)', 'arrow+'],
-  ['crown-metalceramic', 'Металокерамічна коронка', 'crown'],
-  ['crown-zirconia', 'Цирконієва коронка', 'crown+'],
-  ['veneer', 'Вінір керамічний', 'shine'],
-  ['implant-mis', 'Імплантація (MIS)', 'screw'],
-  ['implant-straumann', 'Імплантація (Straumann)', 'screw+'],
-  ['braces-metal', 'Брекети (металеві)', 'braces'],
-  ['braces-ceramic', 'Брекети (керамічні)', 'braces+'],
-  ['aligners', 'Елайнери', 'aligner'],
+  ['consultation', 'search'],
+  ['cleaning', 'sparkle'],
+  ['cavity-1surface', 'fill'],
+  ['cavity-2plus', 'fill2'],
+  ['pulpitis', 'root'],
+  ['extraction-simple', 'arrow'],
+  ['extraction-complex', 'arrow+'],
+  ['crown-metalceramic', 'crown'],
+  ['crown-zirconia', 'crown+'],
+  ['veneer', 'shine'],
+  ['implant-mis', 'screw'],
+  ['implant-straumann', 'screw+'],
+  ['braces-metal', 'braces'],
+  ['braces-ceramic', 'braces+'],
+  ['aligners', 'aligner'],
 ]
+// [slug, fullName]. The name drives the initials avatar (language-neutral).
 const DOCTORS = [
   ['andrii-melnyk', 'Андрій Мельник'],
   ['dmytro-bondarenko', 'Дмитро Бондаренко'],
@@ -160,15 +166,36 @@ const DOCTORS = [
   ['olena-kovalenko', 'Олена Коваленко'],
 ]
 
-SERVICES.forEach(([slug, title, kind], i) => {
-  writeFileSync(
-    `${ROOT}/services/${slug}.svg`,
-    serviceSvg(title, kind, i) + '\n'
-  )
-})
-DOCTORS.forEach(([slug, name], i) => {
-  writeFileSync(`${ROOT}/doctors/${slug}.svg`, doctorSvg(name, i) + '\n')
-})
-console.log(
-  `Generated ${SERVICES.length} service + ${DOCTORS.length} doctor SVGs`
-)
+function generateAll() {
+  // Resolved here (not at module top level) so importing this file — e.g. from
+  // the drift test — never evaluates import.meta.url, which isn't a file:// URL
+  // under bundlers like Vite/vitest and would throw.
+  const ROOT = fileURLToPath(new URL('../public', import.meta.url))
+  mkdirSync(`${ROOT}/services`, { recursive: true })
+  mkdirSync(`${ROOT}/doctors`, { recursive: true })
+  SERVICES.forEach(([slug, kind], i) => {
+    writeFileSync(`${ROOT}/services/${slug}.svg`, serviceSvg(kind, i) + '\n')
+  })
+  DOCTORS.forEach(([slug, name], i) => {
+    writeFileSync(`${ROOT}/doctors/${slug}.svg`, doctorSvg(name, i) + '\n')
+  })
+  return { services: SERVICES.length, doctors: DOCTORS.length }
+}
+
+// Exported so the drift/existence test can regenerate in-memory and compare
+// against the committed files without triggering any writes.
+export { SERVICES, DOCTORS, serviceSvg, doctorSvg }
+
+// Write files only when run directly (npm run gen:placeholders), never on import.
+// Guarded: fileURLToPath throws on the non-file import.meta.url a bundler hands
+// us, so a failure here just means "not the entrypoint".
+let isMain = false
+try {
+  isMain = process.argv[1] === fileURLToPath(import.meta.url)
+} catch {
+  isMain = false
+}
+if (isMain) {
+  const n = generateAll()
+  console.log(`Generated ${n.services} service + ${n.doctors} doctor SVGs`)
+}
