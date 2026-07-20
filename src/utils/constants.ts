@@ -19,7 +19,6 @@ const ENV_TT =
 const ENV_WA =
   process.env.NEXT_PUBLIC_WHATSAPP_URL ||
   `https://wa.me/${(process.env.NEXT_PUBLIC_PHONE_NUMBER || '+380682323838').replace(/\D/g, '')}`
-const ENV_TW = process.env.NEXT_PUBLIC_TWITTER_URL || 'https://x.com'
 
 export const CONTACT_INFO = {
   phone: ENV_PHONE,
@@ -52,7 +51,6 @@ export const CONTACT_INFO = {
     telegram: ENV_TG,
     tiktok: ENV_TT,
     whatsapp: ENV_WA,
-    twitter: ENV_TW,
     viber: ENV_PHONE,
   },
 }

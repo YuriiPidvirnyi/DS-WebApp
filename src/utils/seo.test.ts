@@ -34,11 +34,14 @@ describe('generateOrganizationSchema — clinic contact fields', () => {
     expect(org.sameAs).toContain(CONTACT_INFO.social.facebook)
     expect(org.sameAs).toContain(CONTACT_INFO.social.instagram)
     expect(org.sameAs).toContain(CONTACT_INFO.social.telegram)
+    expect(org.sameAs).toContain(CONTACT_INFO.social.tiktok)
     expect(org.sameAs.some(url => url.toLowerCase().includes('lviv'))).toBe(
       true
     )
     // the old generic placeholder handles must be gone
     expect(org.sameAs).not.toContain('https://www.facebook.com/dentalstory')
     expect(org.sameAs).not.toContain('https://www.instagram.com/dentalstory')
+    // no dead Twitter/X placeholder in the social graph
+    expect(org.sameAs).not.toContain('https://x.com')
   })
 })
