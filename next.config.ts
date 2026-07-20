@@ -103,6 +103,14 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'dentalstory.ua',
       },
+      // Legacy host: some doctors.photo_url / services.image_url rows in the DB
+      // still point at dentalstory.com.ua (which 301-redirects to dentalstory.ua).
+      // Keep it allowlisted so next/image doesn't 400 those live images. Remove
+      // only after those DB image URLs are migrated to dentalstory.ua.
+      {
+        protocol: 'https',
+        hostname: 'dentalstory.com.ua',
+      },
       {
         protocol: 'https',
         hostname: 'fonts.gstatic.com',
