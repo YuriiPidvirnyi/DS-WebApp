@@ -61,7 +61,9 @@ function loadMonoPayScript(): Promise<void> {
     script.onload = () => resolve()
     script.onerror = () => {
       scriptPromise = null
-      reject(new Error('Не вдалося завантажити MonoPay'))
+      // Sentinel code — the component maps it to a localized message (no t()
+      // available at module scope).
+      reject(new Error('SCRIPT_LOAD_FAILED'))
     }
     document.head.appendChild(script)
   })
@@ -106,7 +108,13 @@ export function MonoPayButton({
   const invoiceIdRef = useRef<string | null>(null)
 
   const [phase, setPhase] = useState<Phase>('loading')
-  const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  // Error display is split so localization happens at render, not inside the
+  // effect/callbacks: errorText is a literal SDK/server message shown as-is;
+  // errorCode is one of our sentinels, mapped to a t() key when rendered. This
+  // keeps `t` out of the init-effect deps so a language switch can't destroy +
+  // re-init an in-flight payment (review #3).
+  const [errorText, setErrorText] = useState<string | null>(null)
+  const [errorCode, setErrorCode] = useState<string | null>(null)
 
   const handleSuccess = useCallback(() => {
     setPhase('success')
@@ -116,7 +124,8 @@ export function MonoPayButton({
   const handleError = useCallback(
     (err: { errorCode: string; errorMsg: string }) => {
       setPhase('error')
-      setErrorMsg(err.errorMsg || 'Помилка оплати')
+      setErrorText(err.errorMsg || null)
+      setErrorCode(err.errorMsg ? null : 'PAYMENT_ERROR')
       onError?.(err.errorCode, err.errorMsg)
     },
     [onError]
@@ -140,7 +149,7 @@ export function MonoPayButton({
 
         if (!res.ok) {
           const data = (await res.json()) as { error?: string }
-          throw new Error(data.error ?? 'Помилка ініціалізації платежу')
+          throw new Error(data.error ?? 'INIT_FAILED')
         }
 
         const { data } = (await res.json()) as {
@@ -186,11 +195,18 @@ export function MonoPayButton({
         })
       } catch (err) {
         if (!destroyed) {
-          const msg =
-            err instanceof Error ? err.message : 'Помилка ініціалізації'
+          const raw = err instanceof Error ? err.message : ''
+          // Never surface the raw init message to the user — a server
+          // validation string from monopay-init is Ukrainian-only, so showing
+          // it verbatim would reintroduce the very i18n bug this fixes. Show a
+          // localized generic (script vs. init) and pass the detail to onError
+          // for logging (review #3).
+          setErrorText(null)
+          setErrorCode(
+            raw === 'SCRIPT_LOAD_FAILED' ? 'SCRIPT_LOAD_FAILED' : 'INIT_FAILED'
+          )
           setPhase('error')
-          setErrorMsg(msg)
-          onError?.('INIT_ERROR', msg)
+          onError?.('INIT_ERROR', raw)
         }
       }
     }
@@ -224,11 +240,19 @@ export function MonoPayButton({
   }
 
   if (phase === 'error') {
+    const ERROR_KEYS: Record<string, string> = {
+      PAYMENT_ERROR: 'payments.monoButton.paymentError',
+      SCRIPT_LOAD_FAILED: 'payments.monoButton.scriptError',
+      INIT_FAILED: 'payments.monoButton.initError',
+    }
+    const display =
+      errorText ??
+      t(ERROR_KEYS[errorCode ?? 'PAYMENT_ERROR'] ?? ERROR_KEYS.PAYMENT_ERROR)
     return (
       <div className={`space-y-2 ${className ?? ''}`}>
         <div className="flex items-center gap-2 text-status-error-700 font-medium">
           <XCircle className="w-5 h-5 shrink-0" />
-          <span>{errorMsg ?? t('payments.monoButton.paymentError')}</span>
+          <span>{display}</span>
         </div>
       </div>
     )

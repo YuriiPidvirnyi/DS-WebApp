@@ -275,15 +275,42 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       )
     }
 
-    // Capture prev status for writeoff hook comparison (needs body first)
+    // Fetch the current status once when a status change is requested — used
+    // both to enforce the state machine and (for V2) as the writeoff-hook
+    // prevStatus.
     let prevStatus: string | null = null
-    if (isV2On() && body.status === 'completed') {
-      const { data: prev } = await auth
+    if (body.status !== undefined) {
+      const VALID_STATUSES = ['draft', 'signed', 'completed']
+      if (!VALID_STATUSES.includes(body.status as string)) {
+        return NextResponse.json(
+          { success: false, error: 'Невідомий статус акта' },
+          { status: 400 }
+        )
+      }
+      const { data: cur } = await auth
         .supabase!.from('treatment_records')
         .select('status')
         .eq('id', id)
         .maybeSingle()
-      prevStatus = prev?.status ?? null
+      prevStatus = (cur?.status as string | undefined) ?? null
+      // State machine: draft → signed → completed only. No skipping a step
+      // (draft → completed) and no reversal (signed/completed → draft). Same →
+      // same is allowed (idempotent). Enforced server-side so a direct API call
+      // can't corrupt the act lifecycle regardless of the UI.
+      const ALLOWED_TRANSITIONS: Record<string, string[]> = {
+        draft: ['draft', 'signed'],
+        signed: ['signed', 'completed'],
+        completed: ['completed'],
+      }
+      if (
+        prevStatus &&
+        !ALLOWED_TRANSITIONS[prevStatus]?.includes(body.status as string)
+      ) {
+        return NextResponse.json(
+          { success: false, error: 'Неприпустимий перехід статусу акта' },
+          { status: 409 }
+        )
+      }
     }
 
     const updates: Record<string, unknown> = {}
@@ -321,10 +348,32 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     }
 
     if (Object.keys(updates).length > 0) {
-      const { error: updateError } = await auth
+      let updateQuery = auth
         .supabase!.from('treatment_records')
         .update(updates)
         .eq('id', id)
+      // Make a status transition atomic: only write if the row is still at the
+      // status we validated against, so two concurrent PATCHes (double-click /
+      // retry racing a legit request) can't both pass the read-then-write check
+      // and double-transition (review: TOCTOU).
+      if (body.status !== undefined && prevStatus !== null) {
+        updateQuery = updateQuery.eq('status', prevStatus)
+      }
+      const { data: updatedRows, error: updateError } =
+        await updateQuery.select('id')
+
+      // Guarded transition matched no row → status changed underneath us.
+      if (
+        !updateError &&
+        body.status !== undefined &&
+        prevStatus !== null &&
+        (!updatedRows || updatedRows.length === 0)
+      ) {
+        return NextResponse.json(
+          { success: false, error: 'Неприпустимий перехід статусу акта' },
+          { status: 409 }
+        )
+      }
 
       if (updateError) {
         captureException(
