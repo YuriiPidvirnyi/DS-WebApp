@@ -83,14 +83,17 @@ function wordmark(w, h) {
   </g>`
 }
 
-function serviceSvg(title, kind, i) {
+// Language-neutral on purpose: no localized text is baked into the image
+// (the service name is rendered by the app next to it, in the active locale).
+// Differentiation comes from the per-category glyph; brand identity from the
+// Latin wordmark.
+function serviceSvg(_title, kind, i) {
   const W = 800,
     H = 600
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${title}">
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Dental Story service placeholder">
 ${backdrop(W, H, i)}
-${tooth(W / 2, H * 0.42, 1.9, i)}
-${glyph(kind, W / 2, H * 0.42, 1.9)}
-<text x="${W / 2}" y="${H - 116}" text-anchor="middle" font-family="Nunito, Verdana, sans-serif" font-size="34" font-weight="800" fill="#ffffff">${title}</text>
+${tooth(W / 2, H * 0.45, 2.15, i)}
+${glyph(kind, W / 2, H * 0.45, 2.15)}
 ${wordmark(W, H)}
 </svg>`
 }
@@ -104,17 +107,18 @@ function doctorSvg(name, i) {
     .join('')
     .slice(0, 2)
     .toUpperCase()
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${name}">
+  // Initials are the doctor's own (language-neutral); no localized caption is
+  // baked in. Avatar is centered so a circular crop (e.g. the About cards)
+  // frames it cleanly.
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Dental Story doctor placeholder">
 ${backdrop(W, H, 'd' + i)}
-<g transform="translate(${W / 2},${H * 0.4})">
-  <circle r="128" fill="#ffffff" opacity="0.16"/>
-  <circle r="96" cy="-6" fill="url(#toothd${i})"/>
-  <circle cy="-30" r="42" fill="${INK}" opacity="0.55"/>
-  <path d="M -66 66 a 66 60 0 0 1 132 0 Z" fill="${INK}" opacity="0.55"/>
-  <text y="8" text-anchor="middle" font-family="Nunito, Verdana, sans-serif" font-size="66" font-weight="800" fill="#ffffff" opacity="0.9">${initials}</text>
+<g transform="translate(${W / 2},${H * 0.47})">
+  <circle r="150" fill="#ffffff" opacity="0.16"/>
+  <circle r="112" cy="-6" fill="url(#toothd${i})"/>
+  <circle cy="-34" r="48" fill="${INK}" opacity="0.55"/>
+  <path d="M -76 78 a 76 68 0 0 1 152 0 Z" fill="${INK}" opacity="0.55"/>
+  <text y="12" text-anchor="middle" font-family="Nunito, Verdana, sans-serif" font-size="80" font-weight="800" fill="#ffffff" opacity="0.92">${initials}</text>
 </g>
-<text x="${W / 2}" y="${H - 132}" text-anchor="middle" font-family="Nunito, Verdana, sans-serif" font-size="34" font-weight="800" fill="#ffffff">${name}</text>
-<text x="${W / 2}" y="${H - 96}" text-anchor="middle" font-family="Rubik, Verdana, sans-serif" font-size="22" fill="#ffffff" opacity="0.8">Фото незабаром</text>
 ${wordmark(W, H)}
 </svg>`
 }
@@ -144,10 +148,13 @@ const DOCTORS = [
 ]
 
 SERVICES.forEach(([slug, title, kind], i) => {
-  writeFileSync(`${ROOT}/services/${slug}.svg`, serviceSvg(title, kind, i))
+  writeFileSync(
+    `${ROOT}/services/${slug}.svg`,
+    serviceSvg(title, kind, i) + '\n'
+  )
 })
 DOCTORS.forEach(([slug, name], i) => {
-  writeFileSync(`${ROOT}/doctors/${slug}.svg`, doctorSvg(name, i))
+  writeFileSync(`${ROOT}/doctors/${slug}.svg`, doctorSvg(name, i) + '\n')
 })
 console.log(
   `Generated ${SERVICES.length} service + ${DOCTORS.length} doctor SVGs`
