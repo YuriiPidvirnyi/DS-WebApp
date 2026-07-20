@@ -47,6 +47,14 @@ function tooth(cx, cy, s, id) {
 
 // small category glyph drawn over the tooth (kept minimal + consistent)
 function glyph(kind, cx, cy, s) {
+  // A trailing "+" marks the enhanced member of a paired service (e.g.
+  // extraction complex, zirconia crown, Straumann implant, ceramic braces):
+  // reuse the base glyph + a small diamond accent so the pair isn't two
+  // pixel-identical placeholders.
+  if (kind.endsWith('+')) {
+    const mark = `<path d="M ${cx + 20 * s} ${cy - 18 * s} l ${5 * s} ${6 * s} l ${-5 * s} ${6 * s} l ${-5 * s} ${-6 * s} Z" fill="${TEAL}"/>`
+    return glyph(kind.slice(0, -1), cx, cy, s) + mark
+  }
   const st = `stroke="${TEAL}" stroke-width="${3.2 * s}" fill="none" stroke-linecap="round" stroke-linejoin="round"`
   const stf = `fill="${TEAL}"`
   switch (kind) {
@@ -130,14 +138,14 @@ const SERVICES = [
   ['cavity-2plus', 'Карієс 2+ поверхні', 'fill2'],
   ['pulpitis', 'Лікування пульпіту', 'root'],
   ['extraction-simple', 'Видалення (просте)', 'arrow'],
-  ['extraction-complex', 'Видалення (складне)', 'arrow'],
+  ['extraction-complex', 'Видалення (складне)', 'arrow+'],
   ['crown-metalceramic', 'Металокерамічна коронка', 'crown'],
-  ['crown-zirconia', 'Цирконієва коронка', 'crown'],
+  ['crown-zirconia', 'Цирконієва коронка', 'crown+'],
   ['veneer', 'Вінір керамічний', 'shine'],
   ['implant-mis', 'Імплантація (MIS)', 'screw'],
-  ['implant-straumann', 'Імплантація (Straumann)', 'screw'],
+  ['implant-straumann', 'Імплантація (Straumann)', 'screw+'],
   ['braces-metal', 'Брекети (металеві)', 'braces'],
-  ['braces-ceramic', 'Брекети (керамічні)', 'braces'],
+  ['braces-ceramic', 'Брекети (керамічні)', 'braces+'],
   ['aligners', 'Елайнери', 'aligner'],
 ]
 const DOCTORS = [

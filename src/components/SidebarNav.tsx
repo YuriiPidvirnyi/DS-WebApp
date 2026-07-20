@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import dynamic from 'next/dynamic'
+import { CONTACT_INFO } from '@/utils/constants'
 import {
   Home,
   Stethoscope,
@@ -49,8 +50,6 @@ function InstagramIcon({ className }: { className?: string }) {
     </svg>
   )
 }
-
-import { CONTACT_INFO } from '@/utils/constants'
 
 /* ── Dynamic panel imports ── */
 
