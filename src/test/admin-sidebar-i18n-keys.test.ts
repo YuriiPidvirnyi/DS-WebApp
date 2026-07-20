@@ -20,6 +20,9 @@ const SHELLS = [
 
 function collectNameKeys(src: string): string[] {
   // matches:  nameKey: 'a.b.c'   and   nameKey: "a.b.c"
+  // Blind spot: only STATIC string literals are collected. If a nav item ever
+  // computes its nameKey dynamically (a variable/template/ternary), this guard
+  // silently skips it — all nameKeys are literals today, keep them that way.
   return [...src.matchAll(/nameKey:\s*['"]([\w.]+)['"]/g)].map(m => m[1])
 }
 

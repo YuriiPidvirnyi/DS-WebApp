@@ -14,6 +14,11 @@ const SECONDARY = '#D1CAC0'
 
 // ── shared building blocks ────────────────────────────────────────────────
 // A calm brand gradient + soft blobs, one identical treatment everywhere.
+// Note: the gradient/def ids below (`bg${id}`, `tooth${id}`) are only unique
+// WITHIN one file. That is safe because every SVG is consumed as a standalone
+// document (<img> / next/image). If these are ever inlined into the DOM (e.g.
+// an icon sprite via dangerouslySetInnerHTML), namespace the ids first — else
+// cross-file id collisions would pick the wrong gradient.
 function backdrop(w, h, id) {
   return `
   <defs>
