@@ -41,7 +41,7 @@ export default function AnimatedCard({
   return (
     <div
       className={clsx(
-        'rounded-2xl',
+        'rounded-lg',
         CARD_VARIANT_CLASSES[variant],
         hoverClasses[hoverEffect] || '',
         className

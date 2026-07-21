@@ -69,7 +69,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const inputId = id || label?.toLowerCase().replace(/\s+/g, '-')
 
     const baseStyles =
-      'min-h-[44px] px-4 py-3 border rounded-2xl transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-0 text-base text-dental-dark placeholder:text-dental-muted sm:text-sm'
+      'min-h-[44px] px-4 py-3 border rounded-lg transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-0 text-base text-dental-dark placeholder:text-dental-muted sm:text-sm'
 
     const stateStyles = error
       ? 'border-dental-error/70 focus:border-dental-error focus:ring-dental-error'
@@ -171,7 +171,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     const textareaId = id || label?.toLowerCase().replace(/\s+/g, '-')
 
     const baseStyles =
-      'min-h-[44px] px-4 py-3 border rounded-2xl transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-0 resize-vertical text-base text-dental-dark placeholder:text-dental-muted sm:text-sm'
+      'min-h-[44px] px-4 py-3 border rounded-lg transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-0 resize-vertical text-base text-dental-dark placeholder:text-dental-muted sm:text-sm'
 
     const stateStyles = error
       ? 'border-dental-error/70 focus:border-dental-error focus:ring-dental-error'
@@ -242,15 +242,15 @@ export type SelectSize = 'default' | 'compact' | 'dense'
 const SELECT_SIZE_STYLES: Record<SelectSize, { field: string; icon: string }> =
   {
     default: {
-      field: 'px-4 py-3 pr-11 min-h-[44px] rounded-2xl text-base sm:text-sm',
+      field: 'px-4 py-3 pr-11 min-h-[44px] rounded-lg text-base sm:text-sm',
       icon: 'right-3.5 h-5 w-5',
     },
     compact: {
-      field: 'px-3 py-2 pr-10 min-h-10 rounded-xl text-sm',
+      field: 'px-3 py-2 pr-10 min-h-10 rounded-md text-sm',
       icon: 'right-3 h-4 w-4',
     },
     dense: {
-      field: 'px-2 py-1.5 pr-8 min-h-9 rounded-lg text-xs',
+      field: 'px-2 py-1.5 pr-8 min-h-9 rounded-md text-xs',
       icon: 'right-2 h-3.5 w-3.5',
     },
   }

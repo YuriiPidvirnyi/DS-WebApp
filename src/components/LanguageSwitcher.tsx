@@ -175,8 +175,8 @@ export default function LanguageSwitcher({
         } ${
           showNativeName
             ? isOpen
-              ? 'rounded-t-2xl border-dental-primary-400 border-b-transparent bg-white shadow-xs'
-              : 'rounded-2xl hover:bg-dental-secondary-50'
+              ? 'rounded-t-lg border-dental-primary-400 border-b-transparent bg-white shadow-xs'
+              : 'rounded-lg hover:bg-dental-secondary-50'
             : // Compact mode (topbar «UA ˅» button): handoff canon verbatim —
               // radius 8px, no flag, stable look in both states (no white
               // morph that would swallow the light text on the dark bar).
@@ -205,7 +205,7 @@ export default function LanguageSwitcher({
         <div
           className={`absolute right-0 top-full z-50 origin-top-right bg-white py-1 shadow-xl ${
             showNativeName
-              ? 'mt-0 w-56 rounded-b-2xl border border-dental-primary-400 border-t-0'
+              ? 'mt-0 w-56 rounded-b-lg border border-dental-primary-400 border-t-0'
               : // Compact mode: handoff canon — control radius (12px), warm
                 // #d1cac0 border, panel fitted to content (no dead air).
                 'mt-1.5 w-fit min-w-0 rounded-[12px] border border-dental-secondary'
