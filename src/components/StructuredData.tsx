@@ -129,8 +129,11 @@ export const StructuredData = ({
     ],
     address: {
       '@type': 'PostalAddress',
-      streetAddress: CONTACT_INFO.address.full,
+      // street (not .full) — .full already embeds city+region, which
+      // duplicated addressLocality; now consistent with the other blocks
+      streetAddress: CONTACT_INFO.address.street,
       addressLocality: CONTACT_INFO.address.city,
+      addressRegion: CONTACT_INFO.address.district,
       postalCode: CONTACT_INFO.address.postalCode,
       addressCountry: 'UA',
     },

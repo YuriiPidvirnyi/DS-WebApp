@@ -33,8 +33,20 @@ describe('StructuredData JSON-LD', () => {
     const { container } = render(<StructuredData type="medicalClinic" />)
     const parsed = JSON.parse(
       container.querySelector('script[type="application/ld+json"]')!.innerHTML
-    ) as { geo?: { latitude?: string; longitude?: string } }
+    ) as {
+      geo?: { latitude?: string; longitude?: string }
+      aggregateRating?: unknown
+      address?: { streetAddress?: string; addressLocality?: string }
+    }
     expect(parsed.geo?.latitude).toBeTruthy()
     expect(parsed.geo?.longitude).toBeTruthy()
+    // Навмисна відсутність: дубльована review-розмітка в кількох блоках
+    // однієї сутності ризикує спам-евристиками Google (rating живе лише
+    // в localBusiness).
+    expect(parsed.aggregateRating).toBeUndefined()
+    // Місто не має дублюватись усередині streetAddress (жило в .full).
+    expect(parsed.address?.streetAddress).not.toContain(
+      parsed.address?.addressLocality ?? ''
+    )
   })
 })
