@@ -180,7 +180,7 @@ export default function LanguageSwitcher({
             : // Compact mode (topbar «UA ˅» button): handoff canon verbatim —
               // radius 8px, no flag, stable look in both states (no white
               // morph that would swallow the light text on the dark bar).
-              'rounded-[8px]'
+              'rounded'
         }`}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
@@ -208,7 +208,7 @@ export default function LanguageSwitcher({
               ? 'mt-0 w-56 rounded-b-lg border border-dental-primary-400 border-t-0'
               : // Compact mode: handoff canon — control radius (12px), warm
                 // #d1cac0 border, panel fitted to content (no dead air).
-                'mt-1.5 w-fit min-w-0 rounded-[12px] border border-dental-secondary'
+                'mt-1.5 w-fit min-w-0 rounded-md border border-dental-secondary'
           }`}
           role="listbox"
           aria-label={
@@ -227,7 +227,7 @@ export default function LanguageSwitcher({
                 <button
                   key={lang.code}
                   onClick={() => handleLanguageChange(lang.code)}
-                  className={`w-full flex min-h-[44px] items-center gap-2.5 whitespace-nowrap px-3.5 py-2 text-left text-sm transition-colors duration-150 first:rounded-t-[11px] last:rounded-b-[11px] ${
+                  className={`w-full flex min-h-[44px] items-center gap-2.5 whitespace-nowrap px-3.5 py-2 text-left text-sm transition-colors duration-150 first:rounded-t-md last:rounded-b-md ${
                     active
                       ? 'bg-dental-primary-50 font-medium text-dental-primary-700'
                       : 'text-dental-dark hover:bg-dental-primary-50/60 hover:text-dental-primary-700'
