@@ -1,33 +1,48 @@
 {
   "team": [
     {
-      "src": "/assets/images/team/dr-olena-ivanova.webp",
-      "fallback": "/assets/images/team/dr-olena-ivanova.jpg",
-      "alt": "Др. Олена Іванова - головний лікар та стоматолог-терапевт",
-      "title": "Др. Олена Іванова",
-      "position": "Головний лікар",
-      "width": 800,
-      "height": 800,
+      "src": "/assets/images/team/volodya-therapist.jpg",
+      "alt": "Володимир — стоматолог-терапевт клініки Dental Story",
+      "title": "Володимир",
+      "position": "Стоматолог-терапевт",
+      "width": 1023,
+      "height": 1280,
       "loading": "lazy"
     },
     {
-      "src": "/assets/images/team/dr-mykola-petrenko.webp",
-      "fallback": "/assets/images/team/dr-mykola-petrenko.jpg",
-      "alt": "Др. Микола Петренко - стоматолог-хірург та імплантолог",
-      "title": "Др. Микола Петренко",
+      "src": "/assets/images/team/stepan-therapist.jpg",
+      "alt": "Степан — стоматолог-терапевт клініки Dental Story",
+      "title": "Степан",
+      "position": "Стоматолог-терапевт",
+      "width": 853,
+      "height": 1280,
+      "loading": "lazy"
+    },
+    {
+      "src": "/assets/images/team/pavlo-surgeon.jpg",
+      "alt": "Павло — стоматолог-хірург клініки Dental Story",
+      "title": "Павло",
       "position": "Стоматолог-хірург",
-      "width": 800,
-      "height": 800,
+      "width": 852,
+      "height": 1280,
       "loading": "lazy"
     },
     {
-      "src": "/assets/images/team/dr-maria-kovalenko.webp",
-      "fallback": "/assets/images/team/dr-maria-kovalenko.jpg",
-      "alt": "Др. Марія Коваленко - стоматолог-ортодонт",
-      "title": "Др. Марія Коваленко",
+      "src": "/assets/images/team/marta-orthopedist.jpg",
+      "alt": "Марта — стоматолог-ортопед клініки Dental Story",
+      "title": "Марта (ортопед)",
+      "position": "Стоматолог-ортопед",
+      "width": 852,
+      "height": 1280,
+      "loading": "lazy"
+    },
+    {
+      "src": "/assets/images/team/marta-orthodontist.jpg",
+      "alt": "Марта — стоматолог-ортодонт клініки Dental Story",
+      "title": "Марта (ортодонт)",
       "position": "Стоматолог-ортодонт",
-      "width": 800,
-      "height": 800,
+      "width": 1024,
+      "height": 1280,
       "loading": "lazy"
     }
   ],

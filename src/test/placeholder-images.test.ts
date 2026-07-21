@@ -69,34 +69,52 @@ describe('branded placeholder SVGs — doctors', () => {
 })
 
 /**
- * The repoint migration matches rows by literal name_en / last_name, coupled
+ * The repoint migrations match rows by literal name_en / last_name, coupled
  * by-value (not FK-enforced) to scripts/003_seed_data.sql. If a seed row is
- * renamed without updating the migration, the migration silently stops
- * repointing that row ("fails open", per its own comment). This turns that
- * silent drift into a loud CI failure.
+ * renamed without updating a migration, that migration silently stops
+ * repointing the row ("fails open", per its own comment). This turns that
+ * silent drift into a loud CI failure — for BOTH repoint migrations (SVG
+ * placeholders and the real-photo upgrade).
  */
-describe('repoint migration ↔ seed coupling', () => {
+const REPOINT_MIGRATIONS: Array<{ file: string; expectedKeys: number }> = [
+  { file: '20260720_repoint_placeholder_images.sql', expectedKeys: 19 },
+  { file: '20260721_services_real_photos.sql', expectedKeys: 5 },
+]
+
+describe('repoint migrations ↔ seed coupling', () => {
   const seedSql = readFileSync(
     resolve(process.cwd(), 'scripts/003_seed_data.sql'),
     'utf8'
   )
-  // Each match key is the literal preceding an SVG path in the migration's
-  // VALUES lists: a service name_en or a doctor last_name.
-  const keys = [
-    ...migrationSql.matchAll(
-      /\(\s*'([^']+)'\s*,\s*'\/(?:services|doctors)\/[^']+\.svg'\s*\)/g
-    ),
-  ].map(m => m[1])
 
-  it('extracts every coupling key from the migration (15 services + 4 doctors)', () => {
-    expect(keys).toHaveLength(19)
-  })
+  for (const { file, expectedKeys } of REPOINT_MIGRATIONS) {
+    const sql = readFileSync(
+      resolve(process.cwd(), 'supabase/migrations', file),
+      'utf8'
+    )
+    // Each match key is the literal preceding an asset path in the migration's
+    // VALUES lists: a service name_en or a doctor last_name. Asset paths are
+    // either /services|doctors/*.svg placeholders or /assets/images/** photos.
+    const rows = [
+      ...sql.matchAll(
+        /\(\s*'([^']+)'\s*,\s*'(\/(?:services|doctors|assets)\/[^']+)'\s*\)/g
+      ),
+    ].map(m => ({ key: m[1], asset: m[2] }))
 
-  for (const key of keys) {
-    it(`seed still defines the match key "${key}"`, () => {
-      // Quoted so a partial rename (e.g. "Metal Braces" -> "Metal Braces (upper)")
-      // still trips the guard rather than passing on a substring match.
-      expect(seedSql).toContain(`'${key}'`)
+    it(`${file}: extracts every coupling key`, () => {
+      expect(rows).toHaveLength(expectedKeys)
     })
+
+    for (const { key, asset } of rows) {
+      it(`${file}: seed still defines the match key "${key}"`, () => {
+        // Quoted so a partial rename (e.g. "Metal Braces" -> "Metal Braces
+        // (upper)") still trips the guard rather than passing on a substring.
+        expect(seedSql).toContain(`'${key}'`)
+      })
+
+      it(`${file}: referenced asset ${asset} exists under public/`, () => {
+        expect(existsSync(resolve(PUBLIC, `.${asset}`))).toBe(true)
+      })
+    }
   }
 })
