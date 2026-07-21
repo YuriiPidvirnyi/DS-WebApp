@@ -193,6 +193,23 @@
   }
 }
 
+/* М'які динамічні якорі (owner request): на сторінках, що оголошують
+   snap-sections (хук useSectionSnap), скрол «підтягується» до початку
+   найближчої секції лише коли зупинився поруч (proximity — без агресивного
+   перехоплення). Правило цілиться в #main-content, а не в html: у layout.tsx
+   вікно не скролиться (h-screen overflow-hidden) — реальний скрол-контейнер
+   лише <main>. Секції-якорі несуть snap-start + snap-screen: мінімальна
+   висота = рівно висота скролпорта (вʼюпорт мінус хедер, який живе ПОЗА
+   скролером; --site-header-h виставляє useSectionSnap), тож знап показує
+   одну секцію на весь екран без обрізаного хвоста наступної. Вища за екран
+   секція просто росте (min-height, не height) — нічого не кліпається. */
+html.snap-sections #main-content {
+  scroll-snap-type: y proximity;
+}
+html.snap-sections .snap-screen {
+  min-height: calc(100dvh - var(--site-header-h, 0px));
+}
+
 @layer utilities {
   /* Modern animations for hero section */
   @keyframes float {

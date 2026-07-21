@@ -150,7 +150,7 @@ function ComparisonSlider({
   return (
     <div
       ref={containerRef}
-      className="relative aspect-4/3 w-full overflow-hidden rounded-xl bg-dental-secondary-200 shadow-soft-lg select-none"
+      className="relative aspect-3/2 w-full overflow-hidden rounded-xl bg-dental-secondary-200 shadow-soft-lg select-none"
     >
       {/* Фото ПІСЛЯ — на всю ширину знизу */}
       <div className="absolute inset-0">
@@ -206,13 +206,16 @@ export default function BeforeAfterGallery() {
   const caseName = t(currentCase.treatmentKey)
 
   return (
-    <section ref={ref} className="bg-white py-24">
+    <section
+      ref={ref}
+      className="snap-start snap-screen flex flex-col justify-center bg-white py-12"
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <AnimatedSection isVisible={isVisible} className="mb-16 text-center">
+        <AnimatedSection isVisible={isVisible} className="mb-10 text-center">
           <span className="mb-4 inline-block text-sm font-semibold uppercase tracking-wider text-dental-primary-ink">
             {t('caseStudies.results')}
           </span>
-          <h2 className="mb-6 text-4xl font-bold leading-tight text-dental-dark lg:text-5xl">
+          <h2 className="mb-4 text-4xl font-bold leading-tight text-dental-dark lg:text-5xl">
             {t('caseStudies.beforeAfter')}
           </h2>
           <p className="mx-auto max-w-3xl text-xl leading-relaxed text-dental-muted">
