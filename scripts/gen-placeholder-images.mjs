@@ -114,6 +114,20 @@ ${wordmark(W, H)}
 </svg>`)
 }
 
+// Wide (16:9) category tile for the Home services section — same visual
+// system as the per-service placeholders, sized for CardMedia aspect-video so
+// nothing gets crop-mangled. Language-neutral like the rest.
+function categorySvg(kind, i) {
+  const W = 800,
+    H = 450
+  return round2(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Dental Story service category">
+${backdrop(W, H, 'c' + i)}
+${tooth(W / 2, H * 0.46, 1.7, 'c' + i)}
+${glyph(kind, W / 2, H * 0.46, 1.7)}
+${wordmark(W, H)}
+</svg>`)
+}
+
 function doctorSvg(name, i) {
   const W = 600,
     H = 720
@@ -158,6 +172,15 @@ const SERVICES = [
   ['braces-ceramic', 'braces+'],
   ['aligners', 'aligner'],
 ]
+// [slug, glyphKind] — wide 16:9 tiles for the Home category cards. Glyphs
+// mirror each category's flagship procedure (fill=therapy, screw=surgery/
+// implants, crown=orthopedics, braces=orthodontics).
+const CATEGORIES = [
+  ['category-therapy', 'fill'],
+  ['category-surgery', 'screw'],
+  ['category-orthopedics', 'crown'],
+  ['category-orthodontics', 'braces'],
+]
 // [slug, fullName]. The name drives the initials avatar (language-neutral).
 const DOCTORS = [
   ['andrii-melnyk', 'Андрій Мельник'],
@@ -176,15 +199,21 @@ function generateAll() {
   SERVICES.forEach(([slug, kind], i) => {
     writeFileSync(`${ROOT}/services/${slug}.svg`, serviceSvg(kind, i) + '\n')
   })
+  CATEGORIES.forEach(([slug, kind], i) => {
+    writeFileSync(`${ROOT}/services/${slug}.svg`, categorySvg(kind, i) + '\n')
+  })
   DOCTORS.forEach(([slug, name], i) => {
     writeFileSync(`${ROOT}/doctors/${slug}.svg`, doctorSvg(name, i) + '\n')
   })
-  return { services: SERVICES.length, doctors: DOCTORS.length }
+  return {
+    services: SERVICES.length + CATEGORIES.length,
+    doctors: DOCTORS.length,
+  }
 }
 
 // Exported so the drift/existence test can regenerate in-memory and compare
 // against the committed files without triggering any writes.
-export { SERVICES, DOCTORS, serviceSvg, doctorSvg }
+export { SERVICES, CATEGORIES, DOCTORS, serviceSvg, categorySvg, doctorSvg }
 
 // Write files only when run directly (npm run gen:placeholders), never on import.
 // Guarded: fileURLToPath throws on the non-file import.meta.url a bundler hands

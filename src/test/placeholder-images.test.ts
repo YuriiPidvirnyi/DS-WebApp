@@ -3,8 +3,10 @@ import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import {
   SERVICES,
+  CATEGORIES,
   DOCTORS,
   serviceSvg,
+  categorySvg,
   doctorSvg,
 } from '../../scripts/gen-placeholder-images.mjs'
 
@@ -45,6 +47,32 @@ describe('branded placeholder SVGs — services', () => {
 
     it(`${rel} is referenced by the repoint migration`, () => {
       expect(migrationSql).toContain(rel)
+    })
+  })
+})
+
+describe('branded placeholder SVGs — home category tiles', () => {
+  // Consumed by images.json services[] (the Home «Повний спектр послуг» grid),
+  // not by any DB migration — so only existence + drift are pinned here.
+  const imagesJson = readFileSync(
+    resolve(process.cwd(), 'src/content/images.json'),
+    'utf8'
+  )
+
+  CATEGORIES.forEach(([slug, kind], i) => {
+    const rel = `/services/${slug}.svg`
+    const abs = resolve(PUBLIC, `services/${slug}.svg`)
+
+    it(`${rel} exists on disk`, () => {
+      expect(existsSync(abs)).toBe(true)
+    })
+
+    it(`${rel} matches generator output (no manual drift)`, () => {
+      expect(readFileSync(abs, 'utf8')).toBe(categorySvg(kind, i) + '\n')
+    })
+
+    it(`${rel} is referenced by images.json`, () => {
+      expect(imagesJson).toContain(rel)
     })
   })
 })

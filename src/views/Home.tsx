@@ -209,6 +209,10 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
                   isVisible={servicesVisible}
                   className="overflow-hidden group"
                 >
+                  {/* Branded category tile (calm gradient + glyph, no text baked
+                      in). The title lives in the card body — not white-on-image,
+                      which both fought the WCAG rule for Brand Blue and forced
+                      ugly dark overlays over mismatched photo crops. */}
                   <CardMedia aspectRatio="video" className="relative">
                     <LazyImage
                       src={svc?.src || bg}
@@ -218,17 +222,14 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
                         t('home.services.imageAlt', { title: service.title })
                       }
                       className="absolute inset-0 w-full h-full transition-transform duration-500 group-hover:scale-105"
-                      width={1200}
-                      height={800}
+                      width={svc?.width ?? 800}
+                      height={svc?.height ?? 450}
                     />
-                    <div className="absolute inset-0 bg-dental-dark/40" />
-                    <div className="absolute bottom-4 left-6 right-6">
-                      <h3 className="text-2xl font-bold text-white mb-1">
-                        {service.title}
-                      </h3>
-                    </div>
                   </CardMedia>
                   <div className="p-6">
+                    <h3 className="text-2xl font-bold text-dental-dark mb-2">
+                      {service.title}
+                    </h3>
                     <p className="text-dental-muted mb-4 leading-relaxed">
                       {service.description}
                     </p>
