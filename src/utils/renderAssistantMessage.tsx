@@ -34,28 +34,47 @@ export function renderAssistantMessage(text: string): ReactNode {
   const lines = text.split('\n')
   const blocks: ReactNode[] = []
   let listItems: ReactNode[] = []
+  let listOrdered = false
   let key = 0
 
   const flushList = () => {
     if (!listItems.length) return
+    const cls = 'space-y-1 pl-4 marker:text-dental-primary-600'
     blocks.push(
-      <ul
-        key={`ul-${key++}`}
-        className="list-disc space-y-1 pl-4 marker:text-dental-primary-600"
-      >
-        {listItems}
-      </ul>
+      listOrdered ? (
+        <ol key={`ol-${key++}`} className={`list-decimal ${cls}`}>
+          {listItems}
+        </ol>
+      ) : (
+        <ul key={`ul-${key++}`} className={`list-disc ${cls}`}>
+          {listItems}
+        </ul>
+      )
     )
     listItems = []
+  }
+
+  const pushItem = (content: string, ordered: boolean) => {
+    // Зміна типу списку (- → 1.) закриває попередній блок.
+    if (listItems.length && listOrdered !== ordered) flushList()
+    listOrdered = ordered
+    listItems.push(
+      <li key={`li-${key++}`}>{inlineNodes(content, `li${key}`)}</li>
+    )
   }
 
   for (const raw of lines) {
     const line = raw.trimEnd()
     const bullet = line.match(/^\s*(?:[-*•]|—)\s+(.*)$/)
     if (bullet) {
-      listItems.push(
-        <li key={`li-${key++}`}>{inlineNodes(bullet[1], `li${key}`)}</li>
-      )
+      pushItem(bullet[1], false)
+      continue
+    }
+    // Нумеровані списки LLM видає навіть коли просиш без розмітки —
+    // саме той сценарій, для якого існує цей захисний шар.
+    const numbered = line.match(/^\s*\d+[.)]\s+(.*)$/)
+    if (numbered) {
+      pushItem(numbered[1], true)
       continue
     }
     flushList()

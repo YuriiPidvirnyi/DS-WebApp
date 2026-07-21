@@ -237,6 +237,31 @@ describe('AIAssistant', () => {
       // Welcome screen should NOT be shown since messages array is non-empty
       expect(screen.queryByText('ai.welcome')).not.toBeInTheDocument()
     })
+
+    // Гілки рендера не можна міняти місцями: markdown-парсер існує ЛИШЕ для
+    // відповідей моделі, а текст користувача мусить лишатись буквальним.
+    it('assistant markdown is formatted, user markdown stays literal', () => {
+      mockMessages = [
+        {
+          id: '1',
+          role: 'user',
+          parts: [{ type: 'text', text: '### мій **текст**' }],
+        },
+        {
+          id: '2',
+          role: 'assistant',
+          parts: [{ type: 'text', text: '### Ціни:\n- **Чистка**: 1500 грн' }],
+        },
+      ]
+      render(<AIAssistant onClose={vi.fn()} />)
+      // Користувач: рядок показано як є, з усіма символами.
+      expect(screen.getByText('### мій **текст**')).toBeInTheDocument()
+      // Асистент: розмітка перетворена — заголовок, список, strong.
+      expect(screen.getByText('Ціни:').className).toContain('font-semibold')
+      const strong = screen.getByText('Чистка')
+      expect(strong.tagName).toBe('STRONG')
+      expect(strong.closest('li')).not.toBeNull()
+    })
   })
 
   describe('loading state', () => {

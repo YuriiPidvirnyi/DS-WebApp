@@ -50,6 +50,28 @@ describe('renderAssistantMessage', () => {
     expect(container.querySelectorAll('li')).toHaveLength(2)
   })
 
+  it('нумерований список (1. / 2)) стає <ol> без сирих номерів у тексті', () => {
+    const { container } = render(
+      <>
+        {renderAssistantMessage(
+          'Кроки запису:\n1. Оберіть послугу\n2) Виберіть час'
+        )}
+      </>
+    )
+    const ol = container.querySelector('ol')
+    expect(ol).not.toBeNull()
+    expect(ol!.querySelectorAll('li')).toHaveLength(2)
+    expect(ol!.textContent).toBe('Оберіть послугуВиберіть час')
+  })
+
+  it('зміна типу списку (- → 1.) закриває попередній блок', () => {
+    const { container } = render(
+      <>{renderAssistantMessage('- пункт\n1. крок')}</>
+    )
+    expect(container.querySelectorAll('ul')).toHaveLength(1)
+    expect(container.querySelectorAll('ol')).toHaveLength(1)
+  })
+
   it('звичайний текст без розмітки проходить без змін', () => {
     const { container } = render(
       <>{renderAssistantMessage('Добрий день! Чим можу допомогти?')}</>

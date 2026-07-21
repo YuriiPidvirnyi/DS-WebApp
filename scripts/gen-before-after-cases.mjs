@@ -74,8 +74,11 @@ function toothPath(cx, top, w, h, rot = 0, dy = 0) {
 }
 
 function star4(cx, cy, r, fill = SPARKLE, opacity = 0.9) {
+  // round2 на КОЖНІЙ координаті: без нього в закомічені SVG текло
+  // float-сміття типу 433.32000000000005 (зловив авто-рев'ю PR #384).
   const s = r * 0.28
-  return `<path d="M ${cx} ${cy - r} Q ${cx + s} ${cy - s} ${cx + r} ${cy} Q ${cx + s} ${cy + s} ${cx} ${cy + r} Q ${cx - s} ${cy + s} ${cx - r} ${cy} Q ${cx - s} ${cy - s} ${cx} ${cy - r} Z" fill="${fill}" opacity="${opacity}"/>`
+  const p = n => round2(n)
+  return `<path d="M ${p(cx)} ${p(cy - r)} Q ${p(cx + s)} ${p(cy - s)} ${p(cx + r)} ${p(cy)} Q ${p(cx + s)} ${p(cy + s)} ${p(cx)} ${p(cy + r)} Q ${p(cx - s)} ${p(cy + s)} ${p(cx - r)} ${p(cy)} Q ${p(cx - s)} ${p(cy - s)} ${p(cx)} ${p(cy - r)} Z" fill="${fill}" opacity="${opacity}"/>`
 }
 
 /**
@@ -135,7 +138,19 @@ function teethRow(phase, mods = {}) {
     }
     parts.push('</g>')
     if (m.sparkle) {
-      parts.push(star4(round2(cx + w * 0.3), gumline + 64, 26, SPARKLE, 0.95))
+      // sparkle: true → дефолт; або {r, dx, dy} — «після» різних кейсів
+      // навмисно відрізняються конфігурацією іскор (авто-рев'ю впіймало
+      // побайтово однакові after-файли у кейсів зі спільною геометрією).
+      const sp = m.sparkle === true ? {} : m.sparkle
+      parts.push(
+        star4(
+          round2(cx + w * 0.3 + (sp.dx ?? 0)),
+          round2(gumline + 64 + (sp.dy ?? 0)),
+          sp.r ?? 26,
+          SPARKLE,
+          0.95
+        )
+      )
     }
   }
   return parts.join('\n    ')
@@ -159,11 +174,14 @@ const CASE_MODS = {
       4: { dy: -8, h: 198 },
       5: { dy: 6 },
     },
-    after: { 2: { sparkle: true } },
+    after: {
+      1: { sparkle: { r: 20, dy: -12 } },
+      4: { sparkle: { r: 26, dy: 26 } },
+    },
   },
   implant: {
     before: { 3: { missing: true }, 2: { rot: 3 }, 4: { rot: -3 } },
-    after: { 3: { sparkle: true } },
+    after: { 3: { sparkle: { r: 30 } } },
   },
   braces: {
     before: {
@@ -180,15 +198,15 @@ const CASE_MODS = {
     before: Object.fromEntries(
       Array.from({ length: 6 }, (_, i) => [i, { fill: TOOTH_YELLOW }])
     ),
-    after: { 1: { sparkle: true }, 4: { sparkle: true } },
+    after: { 1: { sparkle: { r: 24 } }, 4: { sparkle: { r: 24 } } },
   },
   restoration: {
     before: { 2: { chip: true, crack: true } },
-    after: { 2: { sparkle: true } },
+    after: { 2: { sparkle: { r: 18, dx: -34, dy: 42 } } },
   },
   crown: {
     before: { 3: { fill: TOOTH_DAMAGED, crack: true, h: 210, dy: 6 } },
-    after: { 3: { sparkle: true } },
+    after: { 3: { sparkle: { r: 24, dx: -38, dy: -8 } } },
   },
   hygiene: {
     before: {
@@ -198,7 +216,10 @@ const CASE_MODS = {
       4: { tartar: true },
       5: { tartar: true },
     },
-    after: { 2: { sparkle: true } },
+    after: {
+      0: { sparkle: { r: 18, dy: -22 } },
+      5: { sparkle: { r: 18, dy: -22 } },
+    },
   },
 }
 
