@@ -21,29 +21,28 @@ interface BeforeAfterCase {
   durationKey: string
 }
 
-const cases: BeforeAfterCase[] = [
-  {
-    id: '1',
-    titleKey: 'caseStudies.cases.1.title',
-    descriptionKey: 'caseStudies.cases.1.description',
-    treatmentKey: 'caseStudies.cases.1.treatment',
-    durationKey: 'caseStudies.cases.1.duration',
-  },
-  {
-    id: '2',
-    titleKey: 'caseStudies.cases.2.title',
-    descriptionKey: 'caseStudies.cases.2.description',
-    treatmentKey: 'caseStudies.cases.2.treatment',
-    durationKey: 'caseStudies.cases.2.duration',
-  },
-  {
-    id: '3',
-    titleKey: 'caseStudies.cases.3.title',
-    descriptionKey: 'caseStudies.cases.3.description',
-    treatmentKey: 'caseStudies.cases.3.treatment',
-    durationKey: 'caseStudies.cases.3.duration',
-  },
-]
+// Seven cases mirroring the clinic's flagship services (veneers, implants,
+// braces, whitening, composite restoration, zirconia crowns, hygiene).
+// Photo files are expected at public/assets/images/before-after/case-<id>-
+// {before,after}.jpg — set beforeImage/afterImage once real (or properly
+// licensed open-source) photos land; until then the branded slot renders.
+// Keys are built from the id, so the static-literal i18n guard can't see
+// them — before-after-cases-i18n.test.ts iterates this exported array and
+// asserts every key resolves in uk/en/pl instead.
+// eslint-disable-next-line react-refresh/only-export-components -- data export consumed by the i18n test
+export const beforeAfterCases: BeforeAfterCase[] = Array.from(
+  { length: 7 },
+  (_, i) => {
+    const id = String(i + 1)
+    return {
+      id,
+      titleKey: `caseStudies.cases.${id}.title`,
+      descriptionKey: `caseStudies.cases.${id}.description`,
+      treatmentKey: `caseStudies.cases.${id}.treatment`,
+      durationKey: `caseStudies.cases.${id}.duration`,
+    }
+  }
+)
 
 /** Слот під реальне клінічне фото; поки фото немає — брендовий плейсхолдер. */
 function CasePhoto({
@@ -203,7 +202,7 @@ export default function BeforeAfterGallery() {
   const [activeCase, setActiveCase] = useState(0)
   const { ref, isVisible } = useScrollAnimation()
 
-  const currentCase = cases[activeCase]
+  const currentCase = beforeAfterCases[activeCase]
   const caseName = t(currentCase.treatmentKey)
 
   return (
@@ -261,7 +260,7 @@ export default function BeforeAfterGallery() {
 
             {/* Список кейсів — активний у бренд-рамці (як вибрані стани анкети) */}
             <div className="flex flex-col gap-3.5">
-              {cases.map((c, index) => {
+              {beforeAfterCases.map((c, index) => {
                 const active = index === activeCase
                 return (
                   <button
