@@ -500,6 +500,7 @@ const en = {
       paragraph2:
         'We are proud that over the years we have helped thousands of patients restore their dental health and beautiful smiles. Our philosophy is based on the principles of trust, professionalism, and an individual approach to each patient.',
       mission: 'Your Smile — Our Mission',
+      photoAlt: 'Dental Story waiting area — logo wall and book shelf',
     },
     values: {
       title: 'Our Values',

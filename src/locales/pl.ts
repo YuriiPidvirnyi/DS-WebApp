@@ -502,6 +502,8 @@ const pl = {
       paragraph2:
         'Jesteśmy dumni, że przez lata pracy pomogliśmy tysiącom pacjentów przywrócić zdrowie zębów i piękny uśmiech. Nasza filozofia opiera się na zasadach zaufania, profesjonalizmu i indywidualnego podejścia do każdego pacjenta.',
       mission: 'Twój uśmiech — nasza misja',
+      photoAlt:
+        'Poczekalnia Dental Story — logo na ścianie i półka z książkami',
     },
     values: {
       title: 'Nasze wartości',

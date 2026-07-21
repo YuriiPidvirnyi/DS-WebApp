@@ -7,6 +7,7 @@ import images from '@/content/images.json'
 import { getDoctors, type Doctor } from '@/services/doctors'
 import { experienceLabel } from '@/utils/experienceLabel'
 import AnimatedCard from '@/components/ui/AnimatedCard'
+import LazyImage from '@/components/ui/LazyImage'
 import { Card, CardMedia } from '@/components/ui'
 
 const About = () => {
@@ -124,14 +125,16 @@ const About = () => {
               {t('about.story.paragraph2')}
             </p>
           </div>
-          <Card
-            variant="brand"
-            padding="lg"
-            className="flex items-center justify-center"
-          >
-            <div className="text-center">
-              <div className="text-6xl mb-4">🦷</div>
-              <h3 className="text-2xl font-semibold text-dental-dark mb-2">
+          <Card variant="elevated" padding="none" className="overflow-hidden">
+            <CardMedia aspectRatio="wide" className="relative">
+              <LazyImage
+                src="/assets/images/clinic/waiting-room.jpg"
+                alt={t('about.story.photoAlt')}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </CardMedia>
+            <div className="p-6 text-center">
+              <h3 className="text-2xl font-semibold text-dental-dark mb-1">
                 {t('common.brandName')}
               </h3>
               <p className="text-dental-text">{t('about.story.mission')}</p>
