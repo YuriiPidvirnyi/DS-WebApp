@@ -47,6 +47,11 @@ const About = () => {
     team?: TeamPhoto[]
     equipment?: EquipmentPhoto[]
   }
+  // Keyed by images.json team[].title and looked up by doctor.fullName below.
+  // Today NOTHING matches by design: the DB still carries seeded demo names,
+  // so every card falls through to doctor.photo / fallbackPhoto. The roster-
+  // rename migration (blocked on the owner supplying real full names) will
+  // align the two and add a coupling test — until then this map is dormant.
   const teamPhotos: Record<
     string,
     { src?: string; fallback?: string; alt?: string }
