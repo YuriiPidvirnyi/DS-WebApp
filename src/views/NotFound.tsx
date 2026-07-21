@@ -24,6 +24,7 @@ const NotFound = () => {
         </p>
 
         {/* Brand tooth mark — emoji iconography is banned by the design canon */}
+        {/* eslint-disable-next-line @next/next/no-img-element -- static decorative vector; next/image can't optimize inline SVG */}
         <img
           src="/favicon.svg"
           alt=""

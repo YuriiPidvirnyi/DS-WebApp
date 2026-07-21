@@ -229,6 +229,10 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       width={svc?.width ?? 800}
                       height={svc?.height ?? 450}
+                      // Фото тепер великі (до 1500px) — без sizes next/image
+                      // добирав би srcset від intrinsic-ширини, а не від
+                      // фактичної чверті ряду.
+                      sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
                     />
                   </CardMedia>
                   <div className="p-5">
