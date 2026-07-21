@@ -127,8 +127,8 @@ export default async function RootLayout({
           rating={reviewStats.rating}
           reviewCount={reviewStats.reviewCount}
         />
-        {/* Спеціалізована розмітка Dentist/MedicalClinic — компонент її
-            підтримував, але ніде не рендерив (витягнуто з PR #340). */}
+        {/* Specialized Dentist/MedicalClinic markup — the component supported
+            it but nothing rendered it (extracted from PR #340) */}
         <StructuredData type="medicalClinic" />
 
         {/* GA4 Consent Mode — must run before gtag loads so analytics_storage
