@@ -260,7 +260,7 @@ const pl = {
     results: 'Wyniki',
     beforeAfter: 'Przed i po leczeniu',
     description:
-      'Prawdziwe wyniki naszych pacjentów. Przeciągnij suwak, aby porównać.',
+      'Poglądowe przykłady typowych efektów leczenia — prawdziwe zdjęcia kliniczne dodamy za zgodą pacjentów. Przeciągnij suwak, aby porównać.',
     duration: 'Czas trwania leczenia',
     procedureType: 'Rodzaj zabiegu',
     afterTreatment: 'Po leczeniu',
@@ -310,8 +310,8 @@ const pl = {
         duration: '1 wizyta',
       },
     },
-    beforePlaceholder: 'Zdjęcie PRZED — przypadek „{{case}}”',
-    afterPlaceholder: 'Zdjęcie PO — przypadek „{{case}}”',
+    beforePlaceholder: 'Ilustracja PRZED — przypadek „{{case}}”',
+    afterPlaceholder: 'Ilustracja PO — przypadek „{{case}}”',
     keyboardHint: '←/→ krok 5% · Home/End — krawędzie',
     sliderAria:
       'Suwak porównania: {{value}}%. Strzałki — krok 5%, Home/End — krawędzie',

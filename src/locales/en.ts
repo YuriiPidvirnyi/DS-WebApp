@@ -258,7 +258,8 @@ const en = {
   caseStudies: {
     results: 'Results',
     beforeAfter: 'Before and After Treatment',
-    description: 'Real results from our patients. Drag the slider to compare.',
+    description:
+      'Illustrative examples of typical treatment outcomes — real clinical photos will follow with patient consent. Drag the slider to compare.',
     duration: 'Treatment Duration',
     procedureType: 'Procedure Type',
     afterTreatment: 'After Treatment',
@@ -309,8 +310,8 @@ const en = {
         duration: '1 visit',
       },
     },
-    beforePlaceholder: 'BEFORE photo — case “{{case}}”',
-    afterPlaceholder: 'AFTER photo — case “{{case}}”',
+    beforePlaceholder: 'BEFORE illustration — case “{{case}}”',
+    afterPlaceholder: 'AFTER illustration — case “{{case}}”',
     keyboardHint: '←/→ step 5% · Home/End — edges',
     sliderAria:
       'Comparison slider: {{value}}%. Arrows — step 5%, Home/End — edges',
