@@ -3,7 +3,9 @@ import { CONTACT_INFO, SITE_INFO } from '@/utils/constants'
 import uk from '@/locales/uk'
 
 interface StructuredDataProps {
-  type?: 'organization' | 'localBusiness' | 'medicalClinic' | 'service'
+  // 'service' used to sit in this union with no switch case behind it —
+  // it silently rendered the Organization schema; dropped as dead API
+  type?: 'organization' | 'localBusiness' | 'medicalClinic'
   data?: Record<string, unknown>
   rating?: number
   reviewCount?: number
@@ -127,10 +129,21 @@ export const StructuredData = ({
     ],
     address: {
       '@type': 'PostalAddress',
-      streetAddress: CONTACT_INFO.address.full,
+      // street (not .full) — .full already embeds city+region, which
+      // duplicated addressLocality; now consistent with the other blocks
+      streetAddress: CONTACT_INFO.address.street,
       addressLocality: CONTACT_INFO.address.city,
+      addressRegion: CONTACT_INFO.address.district,
       postalCode: CONTACT_INFO.address.postalCode,
       addressCountry: 'UA',
+    },
+    // geo kept consistent with the organization/localBusiness blocks; no
+    // aggregateRating here on purpose — duplicating review markup across
+    // entity blocks risks Google's review-snippet spam heuristics.
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: String(CONTACT_INFO.coordinates.lat),
+      longitude: String(CONTACT_INFO.coordinates.lng),
     },
     telephone: CONTACT_INFO.phone,
     email: CONTACT_INFO.email,
