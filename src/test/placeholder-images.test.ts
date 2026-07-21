@@ -99,6 +99,26 @@ describe('branded placeholder SVGs — home category tiles', () => {
   })
 })
 
+describe('images.json — every referenced asset exists on disk', () => {
+  // The team[] entries are staged data (dormant until the roster-rename
+  // migration) — a typo'd filename would otherwise survive until that lands.
+  const imagesData = JSON.parse(
+    readFileSync(resolve(process.cwd(), 'src/content/images.json'), 'utf8')
+  ) as Record<string, Array<{ src?: string; fallback?: string }>>
+
+  for (const [section, entries] of Object.entries(imagesData)) {
+    for (const entry of entries) {
+      for (const key of ['src', 'fallback'] as const) {
+        const rel = entry[key]
+        if (!rel) continue
+        it(`${section}: ${rel} exists under public/`, () => {
+          expect(existsSync(resolve(PUBLIC, `.${rel}`))).toBe(true)
+        })
+      }
+    }
+  }
+})
+
 describe('branded placeholder SVGs — doctors', () => {
   DOCTORS.forEach(([slug, name], i) => {
     const rel = `/doctors/${slug}.svg`

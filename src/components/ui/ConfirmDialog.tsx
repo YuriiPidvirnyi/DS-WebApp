@@ -97,7 +97,7 @@ export function ConfirmDialog({
         aria-labelledby={titleId}
         aria-describedby={description ? descriptionId : undefined}
         tabIndex={-1}
-        className="w-full max-w-md overflow-hidden rounded-[18px] bg-white shadow-2xl focus:outline-hidden"
+        className="w-full max-w-md overflow-hidden rounded-dialog bg-white shadow-2xl focus:outline-hidden"
       >
         <div className="p-7 pb-5">
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-md bg-status-error-100">
