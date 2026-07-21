@@ -8,11 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { CONTACT_INFO } from '@/utils/constants'
 
 type PaymentStatus =
-  | 'created'
-  | 'processing'
-  | 'success'
-  | 'failure'
-  | 'expired'
+  'created' | 'processing' | 'success' | 'failure' | 'expired'
 
 type PollState =
   | { phase: 'polling' }

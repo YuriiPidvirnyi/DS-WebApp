@@ -121,8 +121,7 @@ export async function PATCH(
   // Body may contain top-level audit field updates (comment, auditDate)
   // OR itemUpdates: Array<{ itemId, qtyActual }>
   const itemUpdates = body.itemUpdates as
-    | Array<{ itemId: string; qtyActual: number | null }>
-    | undefined
+    Array<{ itemId: string; qtyActual: number | null }> | undefined
 
   if (itemUpdates && itemUpdates.length > 0) {
     for (const upd of itemUpdates) {

@@ -28,8 +28,7 @@ interface Appointment {
   appointment_time: string
   status: string
   doctors:
-    | { first_name: string; last_name: string; specialization: string }[]
-    | null
+    { first_name: string; last_name: string; specialization: string }[] | null
   services: { name_uk: string; price_uah: number }[] | null
 }
 

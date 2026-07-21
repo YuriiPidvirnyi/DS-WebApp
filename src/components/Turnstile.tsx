@@ -37,8 +37,7 @@ const Turnstile = forwardRef<TurnstileRef, TurnstileProps>(function Turnstile(
   const [token, setToken] = useState<string>('')
   const widgetIdRef = useRef<string | null>(null)
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY as
-    | string
-    | undefined
+    string | undefined
 
   // Expose methods for parents
   useImperativeHandle(ref, () => ({

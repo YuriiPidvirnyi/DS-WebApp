@@ -23,11 +23,7 @@ import {
 } from './utils'
 
 type AppointmentStatus =
-  | 'pending'
-  | 'confirmed'
-  | 'completed'
-  | 'cancelled'
-  | 'no_show'
+  'pending' | 'confirmed' | 'completed' | 'cancelled' | 'no_show'
 
 interface AppointmentRow {
   id: string

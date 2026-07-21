@@ -8,12 +8,7 @@ import { WalletCards, type WalletCard } from '@/components/cabinet/WalletCards'
 import { localizedServiceName } from '@/utils/serviceName'
 
 export type PaymentStatus =
-  | 'created'
-  | 'processing'
-  | 'success'
-  | 'failure'
-  | 'expired'
-  | 'reversed'
+  'created' | 'processing' | 'success' | 'failure' | 'expired' | 'reversed'
 export type PaymentMode = 'full' | 'deposit'
 
 export interface Payment {

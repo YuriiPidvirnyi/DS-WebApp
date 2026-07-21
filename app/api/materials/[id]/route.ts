@@ -271,9 +271,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   }
 
   const inv = refreshed.material_inventory as
-    | { current_quantity: number | string }[]
-    | null
-    | undefined
+    { current_quantity: number | string }[] | null | undefined
   const { material_inventory: _m, ...rest } = refreshed as Record<
     string,
     unknown

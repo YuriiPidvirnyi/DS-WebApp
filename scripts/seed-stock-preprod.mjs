@@ -189,9 +189,7 @@ async function seedBrands() {
 
 async function seedSuppliers() {
   if (!(await tableExists('material_suppliers'))) {
-    log(
-      '⏭  material_suppliers not found — skipping (Phase 2 migration needed)'
-    )
+    log('⏭  material_suppliers not found — skipping (Phase 2 migration needed)')
     return
   }
 

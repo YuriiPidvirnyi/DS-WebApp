@@ -314,9 +314,7 @@ export function useBookingForm() {
 
     // If the service requires online payment, create a Monobank invoice and redirect
     const paymentConfig = response?.data?.paymentConfig as
-      | { mode: string; amountKopecks: number }
-      | null
-      | undefined
+      { mode: string; amountKopecks: number } | null | undefined
 
     if (paymentConfig && paymentConfig.amountKopecks > 0) {
       try {

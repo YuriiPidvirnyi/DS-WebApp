@@ -613,9 +613,7 @@ export default function AdminSettingsPage() {
                   onChange={event =>
                     updatePreferences({
                       defaultAnalyticsPeriod: Number(event.target.value) as
-                        | 7
-                        | 30
-                        | 90,
+                        7 | 30 | 90,
                     })
                   }
                   aria-label={t(

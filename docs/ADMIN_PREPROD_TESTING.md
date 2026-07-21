@@ -130,11 +130,11 @@ Password: **`PatientTest!2026`**
 | Page                  | superadmin | admin | receptionist |  doctor   | assistant | billing | inventory | analyst |
 | --------------------- | :--------: | :---: | :----------: | :-------: | :-------: | :-----: | :-------: | :-----: |
 | `/admin` (dashboard)  |     ✅     |  ✅   |      ✅      |    ✅     |    ✅     |   ✅    |    ✅     |   ✅    |
-| `/admin/appointments` |     ✅     |  ✅   |      ✅      |  👁 own   |    ✅     |   👁    |    🔒     |   👁    |
-| `/admin/patients`     |     ✅     |  ✅   |      ✅      |    👁     |    👁     |   👁    |    🔒     |   👁    |
-| `/admin/treatments`   |     ✅     |  ✅   |      👁      |  👁 own   | 👁 draft  |   👁    |    🔒     |   👁    |
-| `/admin/materials`    |     ✅     |  ✅   |      🔒      |    👁     |    👁     |   👁    |    ✅     |   👁    |
-| `/admin/orders`       |     ✅     |  ✅   |      🔒      | ✅ create | ✅ create |   👁    | ✅ create |   👁    |
+| `/admin/appointments` |     ✅     |  ✅   |      ✅      |   👁 own   |    ✅     |    👁    |    🔒     |    👁    |
+| `/admin/patients`     |     ✅     |  ✅   |      ✅      |     👁     |     👁     |    👁    |    🔒     |    👁    |
+| `/admin/treatments`   |     ✅     |  ✅   |      👁       |   👁 own   |  👁 draft  |    👁    |    🔒     |    👁    |
+| `/admin/materials`    |     ✅     |  ✅   |      🔒      |     👁     |     👁     |    👁    |    ✅     |    👁    |
+| `/admin/orders`       |     ✅     |  ✅   |      🔒      | ✅ create | ✅ create |    👁    | ✅ create |    👁    |
 | `/admin/analytics`    |     ✅     |  ✅   |      🔒      |    🔒     |    🔒     |   ✅    |    🔒     |   ✅    |
 | `/admin/data-quality` |     ✅     |  ✅   |      🔒      |    🔒     |    🔒     |   ✅    |    🔒     |   ✅    |
 | `/admin/chat`         |     ✅     |  ✅   |      ✅      |    ✅     |    ✅     |   ✅    |    ✅     |   ✅    |

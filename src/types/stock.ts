@@ -1,9 +1,5 @@
 export type DocType =
-  | 'incoming'
-  | 'writeoff'
-  | 'return'
-  | 'transfer'
-  | 'adjustment'
+  'incoming' | 'writeoff' | 'return' | 'transfer' | 'adjustment'
 export type DocStatus = 'draft' | 'posted' | 'void'
 export type WarehouseKind = 'main' | 'cabinet' | 'doctor' | 'other'
 

@@ -24,11 +24,7 @@ import { showError, showSuccess } from '@/utils/toast'
 import { formatCurrency, getJoinedFieldValue } from './utils'
 
 type ApptStatus =
-  | 'pending'
-  | 'confirmed'
-  | 'completed'
-  | 'cancelled'
-  | 'no_show'
+  'pending' | 'confirmed' | 'completed' | 'cancelled' | 'no_show'
 type ActStatus = 'draft' | 'signed' | 'completed'
 type PayStatus = 'unpaid' | 'partial' | 'paid' | 'waived' | 'refunded'
 

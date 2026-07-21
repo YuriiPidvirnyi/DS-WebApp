@@ -18,8 +18,7 @@ export type SendEmailParams = {
 }
 
 export type SendResult =
-  | { success: true; id: string }
-  | { success: false; error: string }
+  { success: true; id: string } | { success: false; error: string }
 
 export function isEmailConfigured(): boolean {
   return !!RESEND_API_KEY

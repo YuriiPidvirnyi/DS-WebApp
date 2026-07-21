@@ -81,9 +81,7 @@ export default function ForgotPasswordPage() {
     // en-US would silently fall through to the Ukrainian email.
     const base = (i18n.language || 'uk').split('-')[0].toLowerCase()
     const locale = (['uk', 'en', 'pl'].includes(base) ? base : 'uk') as
-      | 'uk'
-      | 'en'
-      | 'pl'
+      'uk' | 'en' | 'pl'
 
     try {
       const res = await requestPasswordReset(email.trim(), locale)
