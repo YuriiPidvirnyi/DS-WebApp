@@ -138,10 +138,11 @@ const About = () => {
                 // Just below the text hero — often in the initial viewport and a
                 // likely LCP candidate, so load eagerly (maps to next/image priority).
                 loading="eager"
-                // Match the CardMedia "wide" (3:2) box so next/image builds its
-                // srcset off the real display canvas, not the 800×600 default.
+                // The file's real dimensions (1280×876) — passed so next/image
+                // builds its srcset off the true canvas, not the 800×600
+                // default. object-cover absorbs the small gap to the 3:2 box.
                 width={1280}
-                height={853}
+                height={876}
                 className="absolute inset-0 w-full h-full object-cover"
               />
             </CardMedia>

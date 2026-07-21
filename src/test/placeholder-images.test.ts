@@ -32,6 +32,28 @@ const migrationSql = readFileSync(
   'utf8'
 )
 
+/**
+ * Browsers refuse to render an SVG that isn't well-formed XML — a duplicate
+ * attribute once shipped every crown card as a broken "image unavailable"
+ * slot. Parse every committed placeholder with DOMParser and fail loudly.
+ */
+describe('branded placeholder SVGs — well-formed XML', () => {
+  const all = [
+    ...SERVICES.map(([slug]) => `services/${slug}.svg`),
+    ...CATEGORIES.map(([slug]) => `services/${slug}.svg`),
+    ...DOCTORS.map(([slug]) => `doctors/${slug}.svg`),
+  ]
+  for (const rel of all) {
+    it(`${rel} parses as XML`, () => {
+      const doc = new DOMParser().parseFromString(
+        readFileSync(resolve(PUBLIC, rel), 'utf8'),
+        'image/svg+xml'
+      )
+      expect(doc.querySelector('parsererror')?.textContent ?? null).toBeNull()
+    })
+  }
+})
+
 describe('branded placeholder SVGs — services', () => {
   SERVICES.forEach(([slug, kind], i) => {
     const rel = `/services/${slug}.svg`

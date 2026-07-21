@@ -77,7 +77,10 @@ function glyph(kind, cx, cy, s) {
     case 'arrow':
       return `<g ${st}><path d="M ${cx} ${cy - 18 * s} v ${30 * s}"/><path d="M ${cx - 9 * s} ${cy + 2 * s} l ${9 * s} ${11 * s} l ${9 * s} ${-11 * s}"/></g>`
     case 'crown':
-      return `<path d="M ${cx - 20 * s} ${cy + 12 * s} l ${-3 * s} ${-26 * s} l ${12 * s} ${11 * s} l ${11 * s} ${-16 * s} l ${11 * s} ${16 * s} l ${12 * s} ${-11 * s} l ${-3 * s} ${26 * s} Z" ${st} fill="${TEAL}" fill-opacity="0.18"/>`
+      // Note: does NOT reuse `st` — that string carries fill="none", and a
+      // second fill attribute makes the SVG invalid XML (browsers refuse to
+      // render the whole file; this exact bug shipped broken crown cards).
+      return `<path d="M ${cx - 20 * s} ${cy + 12 * s} l ${-3 * s} ${-26 * s} l ${12 * s} ${11 * s} l ${11 * s} ${-16 * s} l ${11 * s} ${16 * s} l ${12 * s} ${-11 * s} l ${-3 * s} ${26 * s} Z" stroke="${TEAL}" stroke-width="${3.2 * s}" stroke-linecap="round" stroke-linejoin="round" fill="${TEAL}" fill-opacity="0.18"/>`
     case 'shine':
       return `<g ${st}><path d="M ${cx - 3 * s} ${cy - 18 * s} q ${-14 * s} ${18 * s} 0 ${36 * s}"/><path d="M ${cx + 9 * s} ${cy - 12 * s} q ${-9 * s} ${12 * s} 0 ${24 * s}"/></g>`
     case 'screw':
