@@ -86,4 +86,31 @@ describe('renderAssistantMessage', () => {
     )
     expect(container.textContent).toBe('Наберіть +380682323838 для запису')
   })
+
+  it('*курсив* стає <em>, без зірочок у тексті', () => {
+    const { container } = render(
+      <>{renderAssistantMessage('Це *важлива* примітка')}</>
+    )
+    const em = container.querySelector('em')
+    expect(em?.textContent).toBe('важлива')
+    expect(container.textContent).toBe('Це важлива примітка')
+  })
+
+  it('неспарений ** не просочується в текст', () => {
+    const { container } = render(
+      <>{renderAssistantMessage('Ціна: **1500 грн** плюс знижка **')}</>
+    )
+    expect(container.textContent).not.toContain('*')
+    expect(container.textContent).toContain('плюс знижка')
+  })
+
+  it('порожній і пробільний вхід дають порожній контейнер без падіння', () => {
+    for (const input of ['', '   ', '\n\n']) {
+      const { container, unmount } = render(
+        <>{renderAssistantMessage(input)}</>
+      )
+      expect(container.textContent).toBe('')
+      unmount()
+    }
+  })
 })

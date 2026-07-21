@@ -3,28 +3,44 @@ import type { ReactNode } from 'react'
 /**
  * Захисний рендерер відповіді AI-асистента: LLM попри інструкцію може
  * повернути Markdown, а бабл показував його буквально («### Терапія:»,
- * «**Пломбування**») — власник упіймав це на /contact. Промпт тепер
- * забороняє розмітку (route.ts, правило 7), а цей рендерер страхує:
- * підтримує мінімальний підсенс Markdown у бренд-типографіці й прибирає
- * решту службових символів. Без dangerouslySetInnerHTML — тільки React-вузли.
+ * «**Пломбування**») — власник упіймав це на /contact. Системний промпт
+ * у route.ts тепер забороняє розмітку, а цей рендерер страхує: підтримує
+ * мінімальний підсенс Markdown у бренд-типографіці й прибирає решту
+ * службових символів. Без dangerouslySetInnerHTML — тільки React-вузли.
  */
 
-/** Інлайни одного рядка: **жирний** → <strong>, `код` → текст без бектіків. */
+/**
+ * Інлайни одного рядка: **жирний** → <strong>, *курсив* → <em>,
+ * `код` → текст без бектіків; неспарені маркери зачищаються — просочені
+ * «**» і є багом, заради якого цей шар існує.
+ */
 function inlineNodes(text: string, keyBase: string): ReactNode[] {
   const nodes: ReactNode[] = []
+  const pushPlain = (chunk: string, keySuffix: string) => {
+    // У «плоскому» сегменті: курсив → <em>, потім зачистка бектіків і
+    // неспарених зірочок (незакритий ** від моделі — текст зберігається).
+    const italicParts = chunk.split(/\*([^*]+)\*/g)
+    italicParts.forEach((part, j) => {
+      const cleaned = part.replace(/`([^`]+)`/g, '$1').replace(/\*+/g, '')
+      if (!cleaned) return
+      if (j % 2 === 1) {
+        nodes.push(<em key={`${keyBase}-${keySuffix}-i${j}`}>{cleaned}</em>)
+      } else {
+        nodes.push(cleaned)
+      }
+    })
+  }
   // Розбиття по **...**: непарні індекси — вміст жирних сегментів.
   const parts = text.split(/\*\*([^*]+)\*\*/g)
   parts.forEach((part, i) => {
-    const cleaned = part.replace(/`([^`]+)`/g, '$1')
-    if (!cleaned) return
     if (i % 2 === 1) {
       nodes.push(
         <strong key={`${keyBase}-b${i}`} className="font-semibold">
-          {cleaned}
+          {part.replace(/`([^`]+)`/g, '$1')}
         </strong>
       )
-    } else {
-      nodes.push(cleaned)
+    } else if (part) {
+      pushPlain(part, String(i))
     }
   })
   return nodes
