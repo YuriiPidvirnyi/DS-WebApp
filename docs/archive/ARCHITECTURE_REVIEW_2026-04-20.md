@@ -1567,20 +1567,20 @@ We adopt the 8-category ISO/IEC 25010-ish slice, tuned for a clinical-SaaS conte
 
 #### 17.2.4 Security (patient surface)
 
-| Area             | Target                                                                                       |
+| Area | Target |
 | ---------------- | -------------------------------------------------------------------------------------------- | -------------------------------------- |
-| HTTPS-only       | enforced; HSTS preload                                                                       | ✅ today (proxy.ts)                    |
-| CSP              | enforced, nonce per request, no `unsafe-eval` in prod                                        | ✅ today (proxy.ts) — verify prod flag |
-| CSRF             | token on all public POST                                                                     | ✅ today                               |
-| Bot protection   | Turnstile on contact, booking, review, newsletter, feedback; Vercel BotID as edge pre-filter | partial (B6)                           |
-| Rate limit       | Upstash token bucket on all public POSTs, IP-scoped                                          | partial (B6)                           |
-| XSS prevention   | DOMPurify on user-rendered HTML, TS strictness on React                                      | ✅ today                               |
-| PII at rest      | Supabase at-rest encryption (AES-256)                                                        | verified                               |
-| PII in transit   | TLS 1.3                                                                                      | Vercel default                         |
-| Webhook signing  | Monobank signature verified, replay rejected                                                 | after A′-1                             |
-| Session lifetime | auth token 1 h, refresh 30 days; revoke on delete                                            | after A′-5                             |
-| 2FA / passkeys   | optional v3.4, default v4                                                                    | design gap today                       |
-| Penetration test | external test before launch                                                                  | scheduled                              |
+| HTTPS-only | enforced; HSTS preload | ✅ today (proxy.ts) |
+| CSP | enforced, nonce per request, no `unsafe-eval` in prod | ✅ today (proxy.ts) — verify prod flag |
+| CSRF | token on all public POST | ✅ today |
+| Bot protection | Turnstile on contact, booking, review, newsletter, feedback; Vercel BotID as edge pre-filter | partial (B6) |
+| Rate limit | Upstash token bucket on all public POSTs, IP-scoped | partial (B6) |
+| XSS prevention | DOMPurify on user-rendered HTML, TS strictness on React | ✅ today |
+| PII at rest | Supabase at-rest encryption (AES-256) | verified |
+| PII in transit | TLS 1.3 | Vercel default |
+| Webhook signing | Monobank signature verified, replay rejected | after A′-1 |
+| Session lifetime | auth token 1 h, refresh 30 days; revoke on delete | after A′-5 |
+| 2FA / passkeys | optional v3.4, default v4 | design gap today |
+| Penetration test | external test before launch | scheduled |
 
 #### 17.2.5 Privacy & compliance
 

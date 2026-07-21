@@ -30,10 +30,7 @@ const mockA11y = {
   reducedMotion: false,
   toggleReducedMotion: vi.fn(),
   colorBlindnessMode: 'normal' as
-    | 'normal'
-    | 'protanopia'
-    | 'deuteranopia'
-    | 'tritanopia',
+    'normal' | 'protanopia' | 'deuteranopia' | 'tritanopia',
   setColorBlindnessMode: vi.fn(),
 }
 

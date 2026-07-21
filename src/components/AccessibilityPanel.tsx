@@ -244,10 +244,7 @@ export function AccessibilityPanel({
                 onChange={val =>
                   setColorBlindnessMode(
                     val as
-                      | 'normal'
-                      | 'protanopia'
-                      | 'deuteranopia'
-                      | 'tritanopia'
+                      'normal' | 'protanopia' | 'deuteranopia' | 'tritanopia'
                   )
                 }
                 options={[

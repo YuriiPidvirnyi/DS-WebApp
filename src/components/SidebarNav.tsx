@@ -103,11 +103,7 @@ const NAV_ITEMS = [
 /* ── Types ── */
 
 type ActivePanel =
-  | null
-  | 'chat-choose'
-  | 'chat-human'
-  | 'chat-ai'
-  | 'accessibility'
+  null | 'chat-choose' | 'chat-human' | 'chat-ai' | 'accessibility'
 
 /* ── Font style — system sans-serif for crisp, non-rounded look ── */
 const sidebarFont = {

@@ -131,9 +131,7 @@ export async function GET(request: NextRequest) {
 
   const rows = (data ?? []).map(row => {
     const inv = row.material_inventory as
-      | { current_quantity: number | string }[]
-      | null
-      | undefined
+      { current_quantity: number | string }[] | null | undefined
     const { material_inventory: _m, ...rest } = row as Record<string, unknown>
     return {
       ...rest,

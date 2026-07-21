@@ -39,8 +39,7 @@ export default function GoogleMap({
   const iframeTitle = title || t('contact.map.iframeTitle')
   const mapRef = useRef<HTMLDivElement>(null)
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as
-    | string
-    | undefined
+    string | undefined
   const [loadStatus, setLoadStatus] = useState<'loading' | 'ready' | 'error'>(
     apiKey ? 'loading' : 'ready'
   )

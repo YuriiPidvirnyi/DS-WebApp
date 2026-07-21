@@ -11,11 +11,7 @@ import type { SeededMaterial } from './07_materials.ts'
 import type { SeededAdminUser } from './03_admin_users.ts'
 
 type OrderStatus =
-  | 'draft'
-  | 'pending_approval'
-  | 'approved'
-  | 'ordered'
-  | 'delivered'
+  'draft' | 'pending_approval' | 'approved' | 'ordered' | 'delivered'
 type OrderUrgency = 'low' | 'normal' | 'high' | 'critical'
 
 export async function seedMaterialOrders(

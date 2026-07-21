@@ -24,8 +24,7 @@ export type SendEmailParams = {
 }
 
 export type SendResult =
-  | { success: true; id: string }
-  | { success: false; error: string }
+  { success: true; id: string } | { success: false; error: string }
 
 export async function sendEmail(params: SendEmailParams): Promise<SendResult> {
   const resend = getResend()
