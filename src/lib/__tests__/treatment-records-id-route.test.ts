@@ -8,7 +8,9 @@ import { NextRequest } from 'next/server'
 const mockGetUser = vi.fn()
 const mockOwnerMaybeSingle = vi.fn()
 const mockFullMaybeSingle = vi.fn()
-const mockUpdateEq = vi.fn(async () => ({ error: null }))
+// update(...).eq('id')[.eq('status', prev)].select('id') → {data, error}
+const mockUpdateSelect = vi.fn()
+const mockDeleteEq = vi.fn(async () => ({ error: null }))
 
 vi.mock('@/lib/supabase/server', () => ({
   createClient: vi.fn(async () => ({
@@ -24,7 +26,13 @@ vi.mock('@/lib/supabase/server', () => ({
                   : mockFullMaybeSingle,
             })),
           })),
-          update: vi.fn(() => ({ eq: mockUpdateEq })),
+          update: vi.fn(() => {
+            const uq: Record<string, unknown> = {}
+            uq.eq = vi.fn(() => uq)
+            uq.select = mockUpdateSelect
+            return uq
+          }),
+          delete: vi.fn(() => ({ eq: mockDeleteEq })),
         }
       }
       return {}
@@ -55,7 +63,7 @@ vi.mock('@/lib/stock-helpers', () => ({
 
 vi.mock('@/utils/sentry', () => ({ captureException: vi.fn() }))
 
-import { PATCH } from '../../../app/api/treatment-records/[id]/route'
+import { PATCH, DELETE } from '../../../app/api/treatment-records/[id]/route'
 
 const DOCTOR_A = 'aaaaaaaa-0000-4000-8000-000000000001'
 const DOCTOR_B = 'bbbbbbbb-0000-4000-8000-000000000002'
@@ -76,6 +84,13 @@ function makeRequest(body: Record<string, unknown>) {
   )
 }
 
+function delRequest() {
+  return new NextRequest(
+    `http://localhost:3000/api/treatment-records/${REC_ID}`,
+    { method: 'DELETE', headers: { 'x-csrf-token': 'a'.repeat(32) } }
+  )
+}
+
 const params = { params: Promise.resolve({ id: REC_ID }) }
 
 function signInAs(role: string | null, doctorId: string | null = null) {
@@ -91,7 +106,7 @@ function signInAs(role: string | null, doctorId: string | null = null) {
 describe('PATCH /api/treatment-records/[id] — sign gate & ownership', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockUpdateEq.mockResolvedValue({ error: null })
+    mockUpdateSelect.mockResolvedValue({ data: [{ id: REC_ID }], error: null })
     mockOwnerMaybeSingle.mockResolvedValue({
       data: { doctor_id: DOCTOR_A },
       error: null,
@@ -114,7 +129,7 @@ describe('PATCH /api/treatment-records/[id] — sign gate & ownership', () => {
     const res = await PATCH(makeRequest({ status: 'signed' }), params)
     expect(res.status).toBe(403)
     // Blocked before any write.
-    expect(mockUpdateEq).not.toHaveBeenCalled()
+    expect(mockUpdateSelect).not.toHaveBeenCalled()
   })
 
   it("blocks a doctor from editing another doctor's act (ownership)", async () => {
@@ -125,13 +140,118 @@ describe('PATCH /api/treatment-records/[id] — sign gate & ownership', () => {
     })
     const res = await PATCH(makeRequest({ status: 'signed' }), params)
     expect(res.status).toBe(403)
-    expect(mockUpdateEq).not.toHaveBeenCalled()
+    expect(mockUpdateSelect).not.toHaveBeenCalled()
   })
 
   it('lets a doctor sign their own act (200)', async () => {
     signInAs('doctor', DOCTOR_A)
     const res = await PATCH(makeRequest({ status: 'signed' }), params)
     expect(res.status).toBe(200)
-    expect(mockUpdateEq).toHaveBeenCalled()
+    expect(mockUpdateSelect).toHaveBeenCalled()
+  })
+})
+
+describe('PATCH /api/treatment-records/[id] — status state machine', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockUpdateSelect.mockResolvedValue({ data: [{ id: REC_ID }], error: null })
+    mockOwnerMaybeSingle.mockResolvedValue({
+      data: { doctor_id: DOCTOR_A },
+      error: null,
+    })
+  })
+
+  it('rejects skipping a step: draft → completed (409)', async () => {
+    signInAs('doctor', DOCTOR_A) // has treatments:sign
+    mockFullMaybeSingle.mockResolvedValue({
+      data: { id: REC_ID, doctor_id: DOCTOR_A, status: 'draft' },
+      error: null,
+    })
+    const res = await PATCH(makeRequest({ status: 'completed' }), params)
+    expect(res.status).toBe(409)
+    expect(mockUpdateSelect).not.toHaveBeenCalled()
+  })
+
+  it('rejects reversing: completed → draft (409)', async () => {
+    signInAs('doctor', DOCTOR_A)
+    mockFullMaybeSingle.mockResolvedValue({
+      data: { id: REC_ID, doctor_id: DOCTOR_A, status: 'completed' },
+      error: null,
+    })
+    const res = await PATCH(makeRequest({ status: 'draft' }), params)
+    expect(res.status).toBe(409)
+    expect(mockUpdateSelect).not.toHaveBeenCalled()
+  })
+
+  it('rejects an unknown status (400)', async () => {
+    signInAs('doctor', DOCTOR_A)
+    const res = await PATCH(makeRequest({ status: 'archived' }), params)
+    expect(res.status).toBe(400)
+    expect(mockUpdateSelect).not.toHaveBeenCalled()
+  })
+
+  it('allows the valid step draft → signed (200)', async () => {
+    signInAs('doctor', DOCTOR_A)
+    mockFullMaybeSingle.mockResolvedValue({
+      data: { id: REC_ID, doctor_id: DOCTOR_A, status: 'draft' },
+      error: null,
+    })
+    const res = await PATCH(makeRequest({ status: 'signed' }), params)
+    expect(res.status).toBe(200)
+    expect(mockUpdateSelect).toHaveBeenCalled()
+  })
+
+  it('allows the idempotent same-status write signed → signed (200)', async () => {
+    signInAs('doctor', DOCTOR_A)
+    mockFullMaybeSingle.mockResolvedValue({
+      data: { id: REC_ID, doctor_id: DOCTOR_A, status: 'signed' },
+      error: null,
+    })
+    const res = await PATCH(makeRequest({ status: 'signed' }), params)
+    expect(res.status).toBe(200)
+  })
+
+  it('409s when a concurrent transition changed the status underneath (TOCTOU)', async () => {
+    signInAs('doctor', DOCTOR_A)
+    mockFullMaybeSingle.mockResolvedValue({
+      data: { id: REC_ID, doctor_id: DOCTOR_A, status: 'draft' },
+      error: null,
+    })
+    // draft → signed passes the read check, but the guarded update matches no
+    // row because someone else already advanced the status.
+    mockUpdateSelect.mockResolvedValue({ data: [], error: null })
+    const res = await PATCH(makeRequest({ status: 'signed' }), params)
+    expect(res.status).toBe(409)
+  })
+})
+
+describe('DELETE /api/treatment-records/[id] — ownership', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockDeleteEq.mockResolvedValue({ error: null })
+    mockOwnerMaybeSingle.mockResolvedValue({
+      data: { doctor_id: DOCTOR_A },
+      error: null,
+    })
+  })
+
+  it('rejects unauthenticated requests', async () => {
+    signInAs(null)
+    const res = await DELETE(delRequest(), params)
+    expect(res.status).toBe(401)
+  })
+
+  it("blocks a doctor deleting another doctor's act (403)", async () => {
+    signInAs('doctor', DOCTOR_B) // record belongs to doctor A
+    const res = await DELETE(delRequest(), params)
+    expect(res.status).toBe(403)
+    expect(mockDeleteEq).not.toHaveBeenCalled()
+  })
+
+  it('lets a doctor delete their own act (200)', async () => {
+    signInAs('doctor', DOCTOR_A)
+    const res = await DELETE(delRequest(), params)
+    expect(res.status).toBe(200)
+    expect(mockDeleteEq).toHaveBeenCalled()
   })
 })

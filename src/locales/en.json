@@ -247,7 +247,7 @@
   "caseStudies": {
     "results": "Results",
     "beforeAfter": "Before and After Treatment",
-    "description": "Real results from our patients. Drag the slider to compare.",
+    "description": "Illustrative examples of typical treatment outcomes — real clinical photos will follow with patient consent. Drag the slider to compare.",
     "duration": "Treatment Duration",
     "procedureType": "Procedure Type",
     "afterTreatment": "After Treatment",
@@ -271,10 +271,34 @@
         "description": "Orthodontic treatment with braces",
         "treatment": "Orthodontics",
         "duration": "18 months"
+      },
+      "4": {
+        "title": "Teeth Whitening",
+        "description": "In-office whitening several shades brighter",
+        "treatment": "Whitening",
+        "duration": "1 visit"
+      },
+      "5": {
+        "title": "Composite Restoration",
+        "description": "Rebuilding tooth shape with composite resin",
+        "treatment": "Restoration",
+        "duration": "1–2 visits"
+      },
+      "6": {
+        "title": "Zirconia Crowns",
+        "description": "Replacing damaged teeth with metal-free crowns",
+        "treatment": "Crowns",
+        "duration": "2 weeks"
+      },
+      "7": {
+        "title": "Professional Cleaning",
+        "description": "Plaque and tartar removal: ultrasonic + Air Flow",
+        "treatment": "Hygiene",
+        "duration": "1 visit"
       }
     },
-    "beforePlaceholder": "BEFORE photo — case “{{case}}”",
-    "afterPlaceholder": "AFTER photo — case “{{case}}”",
+    "beforePlaceholder": "BEFORE illustration — case “{{case}}”",
+    "afterPlaceholder": "AFTER illustration — case “{{case}}”",
     "keyboardHint": "←/→ step 5% · Home/End — edges",
     "sliderAria": "Comparison slider: {{value}}%. Arrows — step 5%, Home/End — edges",
     "selectCase": "Select case"
@@ -469,7 +493,8 @@
       "tagline": "Your Smile — Our Mission",
       "paragraph1": "Dental Story clinic was founded in 2020 with the goal of providing quality dental care using the most advanced technologies. Our team brings together experienced doctors who continuously improve their skills and stay up to date with the latest trends in dentistry.",
       "paragraph2": "We are proud that over the years we have helped thousands of patients restore their dental health and beautiful smiles. Our philosophy is based on the principles of trust, professionalism, and an individual approach to each patient.",
-      "mission": "Your Smile — Our Mission"
+      "mission": "Your Smile — Our Mission",
+      "photoAlt": "Dental Story waiting area — logo wall and book shelf"
     },
     "values": {
       "title": "Our Values",
@@ -1342,6 +1367,8 @@
       "materials": "Materials",
       "orders": "Orders",
       "analytics": "Analytics",
+      "dataQuality": "Data quality",
+      "health": "System health",
       "settings": "Settings",
       "users": "Users",
       "stock": "Inventory v2",
@@ -3928,101 +3955,6 @@
       "tagline": "Сучасна стоматологія у Львові"
     }
   },
-  "stock": {
-    "title": "Inventory",
-    "nav": {
-      "documents": "Documents",
-      "warehouses": "Warehouses",
-      "balances": "Balances",
-      "reports": "Reports",
-      "settings": "Settings",
-      "permissions": "Permissions",
-      "suppliers": "Suppliers",
-      "brands": "Brands",
-      "categories": "Categories",
-      "calcCards": "Calc Cards",
-      "audits": "Inventory Audits"
-    },
-    "docType": {
-      "incoming": "Receipt",
-      "writeoff": "Write-off",
-      "return": "Return",
-      "transfer": "Transfer",
-      "adjustment": "Adjustment"
-    },
-    "docStatus": {
-      "draft": "Draft",
-      "posted": "Posted",
-      "void": "Void"
-    },
-    "warehouseKind": {
-      "main": "Main",
-      "cabinet": "Cabinet",
-      "doctor": "Doctor",
-      "other": "Other"
-    },
-    "document": {
-      "number": "Number",
-      "date": "Date",
-      "warehouse": "Warehouse",
-      "warehouseFrom": "From warehouse",
-      "warehouseTo": "To warehouse",
-      "supplier": "Supplier",
-      "responsible": "Responsible",
-      "comment": "Comment",
-      "total": "Total",
-      "items": "Items",
-      "createDraft": "Create draft",
-      "post": "Post",
-      "unpost": "Unpost",
-      "copy": "Copy",
-      "unpostReason": "Unpost reason",
-      "noItems": "No items",
-      "addItem": "Add item",
-      "emptyDocuments": "No documents"
-    },
-    "warehouse": {
-      "name": "Name",
-      "kind": "Type",
-      "responsible": "Responsible",
-      "doctor": "Doctor",
-      "sortOrder": "Sort order",
-      "comment": "Comment",
-      "archived": "Archived",
-      "createWarehouse": "Add warehouse",
-      "editWarehouse": "Edit warehouse",
-      "archiveWarehouse": "Archive warehouse",
-      "emptyWarehouses": "No warehouses"
-    },
-    "settings": {
-      "allowNegativeBalance": "Allow negative balance",
-      "writeoffMode": "Write-off mode",
-      "writeoffModeNone": "Disabled",
-      "writeoffModeDraftHybrid": "Auto-draft",
-      "writeoffModeAuto": "Automatic",
-      "autoApBillOnIncoming": "Auto-bill on receipt",
-      "defaultExpenseCategory": "Default expense category",
-      "enforceStockPermissions": "Enforce stock permissions",
-      "showMyInventory": "Show my inventory"
-    },
-    "balance": {
-      "material": "Material",
-      "warehouse": "Warehouse",
-      "quantity": "Quantity",
-      "unit": "Unit",
-      "criticalLevel": "Critical level",
-      "reorderQty": "Reorder qty",
-      "lowStock": "Low stock"
-    },
-    "errors": {
-      "loadFailed": "Load failed",
-      "saveFailed": "Save failed",
-      "postFailed": "Post failed",
-      "negativeBalance": "Insufficient balance",
-      "docLocked": "Document already posted",
-      "flagOff": "Inventory v2 not enabled"
-    }
-  },
   "confirmDialog": {
     "consequencesTitle": "This will also remove",
     "typeToConfirm": "To confirm, type",
@@ -4047,7 +3979,9 @@
       "successMessage": "Payment completed successfully",
       "paymentError": "Payment error",
       "loading": "Loading...",
-      "processing": "Processing..."
+      "processing": "Processing...",
+      "initError": "Payment initialization error",
+      "scriptError": "Failed to load the payment module"
     }
   },
   "walletCards": {

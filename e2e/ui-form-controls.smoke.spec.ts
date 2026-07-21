@@ -83,3 +83,45 @@ test.describe('A11y: тач-цілі ≥44px', () => {
     await context.close()
   })
 })
+
+test.describe('Home/About: м’які якорі секцій (snap-screen)', () => {
+  test('секції = один скролпорт, снап на #main-content, клас знімається', async ({
+    page,
+  }) => {
+    await page.goto('/')
+    // Хук вмикає клас після маунта.
+    await expect(page.locator('html')).toHaveClass(/snap-sections/, {
+      timeout: 20_000,
+    })
+
+    const data = await page.evaluate(() => {
+      const main = document.getElementById('main-content')!
+      return {
+        snapType: getComputedStyle(main).scrollSnapType,
+        port: main.clientHeight,
+        headerVar: getComputedStyle(document.documentElement)
+          .getPropertyValue('--site-header-h')
+          .trim(),
+        sections: [...document.querySelectorAll('.snap-start')].map(
+          el => (el as HTMLElement).offsetHeight
+        ),
+      }
+    })
+    // Вікно в цьому лейауті не скролиться — правило мусить сидіти на <main>.
+    expect(data.snapType).toContain('y')
+    // Хук опублікував фактичну висоту хедера (не порожньо і не 0px-фолбек).
+    expect(data.headerVar).toMatch(/^\d+(\.\d+)?px$/)
+    expect(parseFloat(data.headerVar)).toBeGreaterThan(0)
+    // Кожен якір — мінімум один повний екран (рівно один, коли контент влазить).
+    expect(data.sections.length).toBeGreaterThanOrEqual(5)
+    for (const h of data.sections) {
+      expect(h).toBeGreaterThanOrEqual(data.port - 1)
+    }
+
+    // Вихід зі сторінки прибирає снап (кабінет/адмінка не зачеплені).
+    await page.goto('/contact')
+    await expect(page.locator('html')).not.toHaveClass(/snap-sections/, {
+      timeout: 20_000,
+    })
+  })
+})

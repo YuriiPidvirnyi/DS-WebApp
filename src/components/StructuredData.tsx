@@ -40,9 +40,10 @@ export const StructuredData = ({
       longitude: String(CONTACT_INFO.coordinates.lng),
     },
     sameAs: [
-      CONTACT_INFO.social.facebook,
       CONTACT_INFO.social.instagram,
+      CONTACT_INFO.social.facebook,
       CONTACT_INFO.social.telegram,
+      CONTACT_INFO.social.tiktok,
     ],
   })
 

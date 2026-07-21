@@ -11,5 +11,5 @@
   <text x="600" y="280" font-family="Arial, sans-serif" font-size="32" text-anchor="middle" fill="white">Сучасна стоматологічна клініка у Києві</text>
   <circle cx="600" cy="400" r="100" fill="white" fill-opacity="0.2"/>
   <path d="M560 400 L600 340 L640 400 L600 460 Z" fill="white" fill-opacity="0.8"/>
-  <text x="600" y="550" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" fill="white">dentalstory.com.ua</text>
+  <text x="600" y="550" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" fill="white">dentalstory.ua</text>
 </svg>

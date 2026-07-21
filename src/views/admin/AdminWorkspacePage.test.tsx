@@ -437,4 +437,59 @@ describe('AdminWorkspacePage (2e doctor workstation)', () => {
     })
     expect(screen.queryByDisplayValue('A-DIAG')).not.toBeInTheDocument()
   })
+
+  it('does not re-POST after a failed sign-PATCH — retry updates (review #1)', async () => {
+    let patchShouldFail = true
+    const fetchMock = vi.fn((_url: string, opts?: RequestInit) => {
+      const method = opts?.method ?? 'GET'
+      if (method === 'POST')
+        return Promise.resolve({
+          ok: true,
+          status: 201,
+          json: async () => ({ success: true, data: { id: 'act-new' } }),
+        })
+      if (method === 'PATCH')
+        return patchShouldFail
+          ? Promise.resolve({
+              ok: false,
+              json: async () => ({ success: false, error: 'sign failed' }),
+            })
+          : Promise.resolve({ ok: true, json: async () => ({ success: true }) })
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({ success: true, data: [] }),
+      })
+    })
+    global.fetch = fetchMock as unknown as typeof fetch
+
+    render(<AdminWorkspacePage />)
+    fireEvent.click(await screen.findByText('Іван Петренко'))
+    const svc = await screen.findByLabelText(
+      'admin.treatmentsPage.modal.service'
+    )
+    fireEvent.change(svc, { target: { value: 's1' } })
+
+    // First sign: POST succeeds, sign-PATCH fails → error surfaced.
+    fireEvent.click(screen.getByText('admin.workspacePage.signAct'))
+    await waitFor(() => expect(showError).toHaveBeenCalled())
+    const posts = () =>
+      fetchMock.mock.calls.filter(([, o]) => o?.method === 'POST').length
+    expect(posts()).toBe(1)
+
+    // Retry: actId was set right after the POST, so this PATCHes the existing
+    // act instead of creating a second one — still exactly one POST.
+    patchShouldFail = false
+    fireEvent.click(screen.getByText('admin.workspacePage.signAct'))
+    await waitFor(() =>
+      expect(
+        fetchMock.mock.calls.filter(
+          ([u, o]) =>
+            typeof u === 'string' &&
+            u.startsWith('/api/treatment-records/') &&
+            o?.method === 'PATCH'
+        ).length
+      ).toBeGreaterThanOrEqual(2)
+    )
+    expect(posts()).toBe(1)
+  })
 })

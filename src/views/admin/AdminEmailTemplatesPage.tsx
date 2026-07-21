@@ -97,7 +97,7 @@ export default function AdminEmailTemplatesPage() {
             <Mail className="h-6 w-6 text-dental-teal" />
             Email Templates
           </h1>
-          <p className="text-sm text-dental-text-light">
+          <p className="text-sm text-dental-muted">
             Live preview of transactional email templates with sample data
           </p>
         </div>

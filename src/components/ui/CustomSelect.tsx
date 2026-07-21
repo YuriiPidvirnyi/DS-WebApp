@@ -107,8 +107,8 @@ export function CustomSelect({
             ? 'border-dental-error/70 focus-visible:ring-dental-error'
             : 'border-dental-secondary-200 hover:border-dental-primary-400',
           isOpen
-            ? 'rounded-t-2xl border-dental-primary-400 border-b-transparent shadow-md'
-            : 'rounded-2xl'
+            ? 'rounded-t-lg border-dental-primary-400 border-b-transparent shadow-md'
+            : 'rounded-lg'
         )}
       >
         <span
@@ -133,7 +133,7 @@ export function CustomSelect({
           role="listbox"
           aria-label={ariaLabel ?? label}
           className={clsx(
-            'absolute left-0 right-0 z-50 bg-white border border-dental-primary-400 border-t-0 rounded-b-2xl shadow-xl',
+            'absolute left-0 right-0 z-50 bg-white border border-dental-primary-400 border-t-0 rounded-b-lg shadow-xl',
             'max-h-[min(16rem,60vh)] overflow-y-auto overscroll-contain py-1'
           )}
         >

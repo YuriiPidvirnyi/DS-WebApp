@@ -2,6 +2,17 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Communicating with the owner
+
+- **Always include clickable links in context.** When reporting that something is deployed,
+  built, or ready to check — attach the actual URL (Vercel preview, PR, deployed page, report)
+  right there in the same message. Never say "the preview is ready" without the link.
+- **All visual/UX changes require owner approval BEFORE they are pushed.** Show a preview
+  (screenshot, mockup, or preview URL of a local variant) and get an explicit "так/ок/затверджую"
+  first. This covers layout, imagery, colors, typography, and any redesign of an existing
+  section — bug fixes without visual impact are exempt. Never ship a visual direction on
+  your own judgement; prepare options and let the owner pick.
+
 ## Git Workflow
 
 **Always base work on `develop`, never on `main`.**
@@ -248,7 +259,7 @@ All five scheduled jobs run on **`pg_cron`** inside Supabase (not Vercel Cron). 
 
 | Variable                           | Required     | Description                                                                                                                                                                       |
 | ---------------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SITE_URL`             | No           | Site URL (default: `https://dentalstory.com.ua`)                                                                                                                                  |
+| `NEXT_PUBLIC_SITE_URL`             | No           | Site URL (default: `https://dentalstory.ua`)                                                                                                                                      |
 | `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`  | No           | GA4 measurement ID                                                                                                                                                                |
 | `NEXT_PUBLIC_GOOGLE_PLACE_ID`      | No           | GBP Place ID — powers the tracked write-review redirect `/r/google?src=…` (falls back to the Maps share link)                                                                     |
 | `NEXT_PUBLIC_SUPABASE_URL`         | For auth     | Supabase project URL                                                                                                                                                              |
@@ -257,7 +268,7 @@ All five scheduled jobs run on **`pg_cron`** inside Supabase (not Vercel Cron). 
 | `UPSTASH_REDIS_REST_TOKEN`         | For cache    | Upstash Redis token                                                                                                                                                               |
 | `SENTRY_AUTH_TOKEN`                | No           | For source map upload (skipped if missing)                                                                                                                                        |
 | `RESEND_API_KEY`                   | For email    | Resend API key                                                                                                                                                                    |
-| `RESEND_FROM_EMAIL`                | No           | Sender address (default: `DentalStory <noreply@dentalstory.com.ua>`)                                                                                                              |
+| `RESEND_FROM_EMAIL`                | No           | Sender address (default: `DentalStory <noreply@dentalstory.ua>`)                                                                                                                  |
 | `ADMIN_NOTIFICATION_EMAIL`         | No           | Email for admin booking alerts                                                                                                                                                    |
 | `CRON_SECRET`                      | For payments | Admin bearer for `/api/payments/*` routes (analytics/finalize/invalidate/refund). No longer used by any cron — scheduled jobs moved to Supabase `pg_cron` (see "Scheduled jobs"). |
 | `SUPABASE_SERVICE_ROLE_KEY`        | Server-side  | Service role key for server-side Supabase calls (also auto-injected into the `process-notifications` edge fn)                                                                     |

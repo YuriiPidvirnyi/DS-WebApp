@@ -20,7 +20,7 @@ export function SkeletonCard({
 }) {
   return (
     <div
-      className={`animate-pulse bg-white rounded-2xl border border-dental-secondary-100 ${className ?? ''}`}
+      className={`animate-pulse bg-white rounded-lg border border-dental-secondary-100 ${className ?? ''}`}
       role="status"
       aria-busy="true"
     >

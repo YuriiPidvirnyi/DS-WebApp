@@ -114,16 +114,16 @@ export default function DatePicker({
         placeholder={placeholder}
         readOnly
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-3 border border-dental-secondary-200 rounded-xl focus:ring-2 focus:ring-dental-primary-600 focus:border-transparent transition-all cursor-pointer"
+        className="w-full px-4 py-3 border border-dental-secondary-200 rounded-lg focus:ring-2 focus:ring-dental-primary-600 focus:border-transparent transition-all cursor-pointer"
       />
 
       {isOpen && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-80 origin-top-right bg-white rounded-2xl border border-dental-secondary-200 shadow-xl p-6">
+        <div className="absolute right-0 top-full z-50 mt-2 w-80 origin-top-right bg-white rounded-lg border border-dental-secondary-200 shadow-xl p-6">
           {/* Month/Year Header */}
           <div className="flex items-center justify-between mb-6">
             <button
               onClick={previousMonth}
-              className="p-2 hover:bg-dental-primary hover:bg-opacity-10 rounded-lg transition-colors text-dental-primary-ink"
+              className="p-2 hover:bg-dental-primary/10 rounded-lg transition-colors text-dental-primary-ink"
               aria-label="Previous month"
             >
               <ChevronLeft className="w-5 h-5" />
@@ -138,7 +138,7 @@ export default function DatePicker({
 
             <button
               onClick={nextMonth}
-              className="p-2 hover:bg-dental-primary hover:bg-opacity-10 rounded-lg transition-colors text-dental-primary-ink"
+              className="p-2 hover:bg-dental-primary/10 rounded-lg transition-colors text-dental-primary-ink"
               aria-label="Next month"
             >
               <ChevronRight className="w-5 h-5" />
@@ -178,12 +178,12 @@ export default function DatePicker({
                 <button
                   key={day}
                   onClick={() => handleDayClick(day)}
-                  className={`aspect-square rounded-lg text-sm font-medium transition-all flex items-center justify-center ${
+                  className={`aspect-square rounded-md text-sm font-medium transition-all flex items-center justify-center ${
                     isSelected
                       ? 'bg-dental-primary-600 text-white shadow-md'
                       : isToday
-                        ? 'bg-dental-primary bg-opacity-20 text-dental-primary-ink font-semibold'
-                        : 'text-dental-text hover:bg-dental-primary hover:bg-opacity-10'
+                        ? 'bg-dental-primary/20 text-dental-primary-ink font-semibold'
+                        : 'text-dental-text hover:bg-dental-primary/10'
                   }`}
                 >
                   {day}
@@ -200,7 +200,7 @@ export default function DatePicker({
                 onChange(formatDate(today))
                 setIsOpen(false)
               }}
-              className="flex-1 px-3 py-2 text-sm font-medium text-dental-primary-ink hover:bg-dental-primary hover:bg-opacity-10 rounded-lg transition-colors"
+              className="flex-1 px-3 py-2 text-sm font-medium text-dental-primary-ink hover:bg-dental-primary/10 rounded-lg transition-colors"
             >
               Today
             </button>

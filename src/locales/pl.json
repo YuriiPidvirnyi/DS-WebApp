@@ -247,7 +247,7 @@
   "caseStudies": {
     "results": "Wyniki",
     "beforeAfter": "Przed i po leczeniu",
-    "description": "Prawdziwe wyniki naszych pacjentów. Przeciągnij suwak, aby porównać.",
+    "description": "Poglądowe przykłady typowych efektów leczenia — prawdziwe zdjęcia kliniczne dodamy za zgodą pacjentów. Przeciągnij suwak, aby porównać.",
     "duration": "Czas trwania leczenia",
     "procedureType": "Rodzaj zabiegu",
     "afterTreatment": "Po leczeniu",
@@ -271,10 +271,34 @@
         "description": "Leczenie ortodontyczne aparatem",
         "treatment": "Ortodoncja",
         "duration": "18 miesięcy"
+      },
+      "4": {
+        "title": "Wybielanie zębów",
+        "description": "Wybielanie gabinetowe o kilka tonów",
+        "treatment": "Wybielanie",
+        "duration": "1 wizyta"
+      },
+      "5": {
+        "title": "Odbudowa kompozytowa",
+        "description": "Odtworzenie kształtu zębów kompozytem",
+        "treatment": "Odbudowa",
+        "duration": "1–2 wizyty"
+      },
+      "6": {
+        "title": "Korony cyrkonowe",
+        "description": "Zastąpienie zniszczonych zębów koronami bezmetalowymi",
+        "treatment": "Korony",
+        "duration": "2 tygodnie"
+      },
+      "7": {
+        "title": "Higienizacja profesjonalna",
+        "description": "Usuwanie osadu i kamienia: ultradźwięki + Air Flow",
+        "treatment": "Higiena",
+        "duration": "1 wizyta"
       }
     },
-    "beforePlaceholder": "Zdjęcie PRZED — przypadek „{{case}}”",
-    "afterPlaceholder": "Zdjęcie PO — przypadek „{{case}}”",
+    "beforePlaceholder": "Ilustracja PRZED — przypadek „{{case}}”",
+    "afterPlaceholder": "Ilustracja PO — przypadek „{{case}}”",
     "keyboardHint": "←/→ krok 5% · Home/End — krawędzie",
     "sliderAria": "Suwak porównania: {{value}}%. Strzałki — krok 5%, Home/End — krawędzie",
     "selectCase": "Wybierz przypadek"
@@ -469,7 +493,8 @@
       "tagline": "Twój uśmiech — nasza misja",
       "paragraph1": "Klinika Dental Story została założona w 2020 roku w celu świadczenia wysokiej jakości opieki stomatologicznej z wykorzystaniem najnowocześniejszych technologii. Nasz zespół skupia doświadczonych lekarzy, którzy stale podnoszą swoje kwalifikacje i śledzą najnowsze trendy w stomatologii.",
       "paragraph2": "Jesteśmy dumni, że przez lata pracy pomogliśmy tysiącom pacjentów przywrócić zdrowie zębów i piękny uśmiech. Nasza filozofia opiera się na zasadach zaufania, profesjonalizmu i indywidualnego podejścia do każdego pacjenta.",
-      "mission": "Twój uśmiech — nasza misja"
+      "mission": "Twój uśmiech — nasza misja",
+      "photoAlt": "Poczekalnia Dental Story — logo na ścianie i półka z książkami"
     },
     "values": {
       "title": "Nasze wartości",
@@ -1344,6 +1369,8 @@
       "materials": "Materiały",
       "orders": "Zamówienia",
       "analytics": "Analityka",
+      "dataQuality": "Jakość danych",
+      "health": "Stan systemu",
       "settings": "Ustawienia",
       "users": "Użytkownicy",
       "stock": "Magazyn v2",
@@ -3946,101 +3973,6 @@
       "tagline": "Сучасна стоматологія у Львові"
     }
   },
-  "stock": {
-    "title": "Склад",
-    "nav": {
-      "documents": "Документи",
-      "warehouses": "Склади",
-      "balances": "Залишки",
-      "reports": "Звіти",
-      "settings": "Налаштування",
-      "permissions": "Права доступу",
-      "suppliers": "Постачальники",
-      "brands": "Бренди",
-      "categories": "Категорії",
-      "calcCards": "Карти розрахунку",
-      "audits": "Інвентаризація"
-    },
-    "docType": {
-      "incoming": "Прихідна",
-      "writeoff": "Списання",
-      "return": "Повернення",
-      "transfer": "Переміщення",
-      "adjustment": "Коригування"
-    },
-    "docStatus": {
-      "draft": "Чернетка",
-      "posted": "Проведено",
-      "void": "Анульовано"
-    },
-    "warehouseKind": {
-      "main": "Головний",
-      "cabinet": "Кабінет",
-      "doctor": "Лікар",
-      "other": "Інший"
-    },
-    "document": {
-      "number": "Номер",
-      "date": "Дата",
-      "warehouse": "Склад",
-      "warehouseFrom": "Склад (звідки)",
-      "warehouseTo": "Склад (куди)",
-      "supplier": "Постачальник",
-      "responsible": "Відповідальний",
-      "comment": "Коментар",
-      "total": "Сума",
-      "items": "Позиції",
-      "createDraft": "Створити чернетку",
-      "post": "Провести",
-      "unpost": "Скасувати проведення",
-      "copy": "Копіювати",
-      "unpostReason": "Причина скасування",
-      "noItems": "Немає позицій",
-      "addItem": "Додати позицію",
-      "emptyDocuments": "Документи відсутні"
-    },
-    "warehouse": {
-      "name": "Назва",
-      "kind": "Тип",
-      "responsible": "Відповідальний",
-      "doctor": "Лікар",
-      "sortOrder": "Порядок",
-      "comment": "Коментар",
-      "archived": "Архівний",
-      "createWarehouse": "Додати склад",
-      "editWarehouse": "Редагувати склад",
-      "archiveWarehouse": "Архівувати склад",
-      "emptyWarehouses": "Склади відсутні"
-    },
-    "settings": {
-      "allowNegativeBalance": "Дозволити від'ємний залишок",
-      "writeoffMode": "Режим списання",
-      "writeoffModeNone": "Вимкнено",
-      "writeoffModeDraftHybrid": "Авто-чернетка",
-      "writeoffModeAuto": "Автоматично",
-      "autoApBillOnIncoming": "Авто-рахунок на приход",
-      "defaultExpenseCategory": "Категорія витрат за замовчуванням",
-      "enforceStockPermissions": "Застосовувати права складу",
-      "showMyInventory": "Показувати мій склад"
-    },
-    "balance": {
-      "material": "Матеріал",
-      "warehouse": "Склад",
-      "quantity": "Кількість",
-      "unit": "Од.вим.",
-      "criticalLevel": "Критичний рівень",
-      "reorderQty": "Кількість для замовлення",
-      "lowStock": "Малий залишок"
-    },
-    "errors": {
-      "loadFailed": "Помилка завантаження",
-      "saveFailed": "Помилка збереження",
-      "postFailed": "Помилка проведення",
-      "negativeBalance": "Недостатньо залишків",
-      "docLocked": "Документ вже проведено",
-      "flagOff": "Inventory v2 не активовано"
-    }
-  },
   "confirmDialog": {
     "consequencesTitle": "Razem z tym znikną",
     "typeToConfirm": "Aby potwierdzić, wpisz",
@@ -4065,7 +3997,9 @@
       "successMessage": "Płatność zakończona pomyślnie",
       "paymentError": "Błąd płatności",
       "loading": "Ładowanie...",
-      "processing": "Przetwarzanie..."
+      "processing": "Przetwarzanie...",
+      "initError": "Błąd inicjalizacji płatności",
+      "scriptError": "Nie udało się załadować modułu płatności"
     }
   },
   "walletCards": {

@@ -18,6 +18,7 @@ import { can, hasDoctorScope } from '@/lib/permissions'
 import { useConfirm } from '@/hooks/useConfirm'
 import { useCSRF } from '@/hooks/useCSRF'
 import { createClient } from '@/lib/supabase/client'
+import { computeTotalCost } from '@/lib/treatment-cost'
 import { captureException } from '@/utils/sentry'
 import { showError, showSuccess } from '@/utils/toast'
 import { formatCurrency, getJoinedFieldValue } from './utils'
@@ -156,6 +157,15 @@ export default function AdminWorkspacePage() {
     }
     setLoading(true)
     setError(null)
+    // A doctor with no linked doctorId can't be scoped app-side; don't fall back
+    // to fetching (and RLS-filtering) every doctor's day — show empty instead
+    // of relying on RLS alone for the scoping this screen promises (review #9).
+    if (isDoctor && !user?.doctorId) {
+      setAppts([])
+      setServices([])
+      setLoading(false)
+      return
+    }
     try {
       const today = new Date().toISOString().slice(0, 10)
       let q = sb
@@ -297,21 +307,10 @@ export default function AdminWorkspacePage() {
     [t]
   )
 
-  // Mirror what actually gets persisted/billed: linesToPayload only keeps lines
-  // with a service picked, clamps qty to >=1, and the server's computeTotalCost
-  // drops any item with a negative price. Apply the same three rules to the
-  // displayed total so it can't diverge from the billed amount (review #3/#5).
-  const total = useMemo(
-    () =>
-      lines.reduce((s, l) => {
-        if (!l.serviceId) return s
-        const price = Number(l.price) || 0
-        if (price < 0) return s
-        const qty = Math.max(1, parseInt(l.quantity, 10) || 1)
-        return s + qty * price
-      }, 0),
-    [lines]
-  )
+  // Display exactly what will be billed: run the lines through the same payload
+  // mapper and the shared cost calc the server uses, so the on-screen total is
+  // literally the persisted total — one source of truth, no drift (review #6).
+  const total = useMemo(() => computeTotalCost(linesToPayload(lines)), [lines])
 
   const patchLine = (idx: number, patch: Partial<FormLine>) =>
     setLines(prev => prev.map((l, i) => (i === idx ? { ...l, ...patch } : l)))

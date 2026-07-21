@@ -9,6 +9,7 @@ import { useCSRF } from '@/hooks/useCSRF'
 import { useConfirm } from '@/hooks/useConfirm'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { hasPermission } from '@/lib/permissions'
+import { PACK_UNITS, unitLabel } from '@/lib/stock-units'
 import BarcodeInput from '@/components/admin/stock/BarcodeInput'
 import type { StockMaterial, MaterialWarehouseMatrix } from '@/types/stock'
 
@@ -20,30 +21,6 @@ interface DirectoryItem {
   id: string
   name_uk?: string
   name?: string
-}
-
-const PACK_UNITS = [
-  'шт',
-  'г',
-  'кг',
-  'мл',
-  'л',
-  'см',
-  'м',
-  'пара',
-  'набір',
-] as const
-
-const PACK_UNIT_LABEL_KEYS: Record<(typeof PACK_UNITS)[number], string> = {
-  шт: 'admin.stock.materialDetailPage.unitPcs',
-  г: 'admin.stock.materialDetailPage.unitGram',
-  кг: 'admin.stock.materialDetailPage.unitKg',
-  мл: 'admin.stock.materialDetailPage.unitMl',
-  л: 'admin.stock.materialDetailPage.unitLiter',
-  см: 'admin.stock.materialDetailPage.unitCm',
-  м: 'admin.stock.materialDetailPage.unitMeter',
-  пара: 'admin.stock.materialDetailPage.unitPair',
-  набір: 'admin.stock.materialDetailPage.unitSet',
 }
 
 export default function AdminStockMaterialDetailPage({ materialId }: Props) {
@@ -447,7 +424,7 @@ export default function AdminStockMaterialDetailPage({ materialId }: Props) {
               >
                 {PACK_UNITS.map(u => (
                   <option key={u} value={u}>
-                    {t(PACK_UNIT_LABEL_KEYS[u])}
+                    {unitLabel(t, u)}
                   </option>
                 ))}
               </select>

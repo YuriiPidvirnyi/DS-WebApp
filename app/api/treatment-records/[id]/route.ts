@@ -10,6 +10,11 @@ import {
 } from '@/lib/api-security'
 import { captureException } from '@/utils/sentry'
 import {
+  computeTotalCost,
+  isItemInput,
+  type ItemInput,
+} from '@/lib/treatment-cost'
+import {
   isV2On,
   getClinicSetting,
   resolveDoctorCabinetWarehouse,
@@ -73,34 +78,6 @@ const DETAIL_SELECT =
 
 const UPDATED_SELECT =
   'id, appointment_id, patient_id, doctor_id, tooth_numbers, diagnosis, notes, status, total_cost, payment_status, attachment_urls, created_at, patients(first_name,last_name), doctors(first_name,last_name), treatment_record_items(id, service_id, tooth_number, quantity, price_at_time, notes, services(name_uk)), treatment_materials_used(id, material_id, quantity_used, registered_by, created_at, materials(name_uk))'
-
-type ItemInput = {
-  serviceId: string
-  toothNumber?: string | null
-  quantity?: number
-  priceAtTime: number | string
-}
-
-function isItemInput(x: unknown): x is ItemInput {
-  if (!x || typeof x !== 'object') return false
-  const o = x as Record<string, unknown>
-  return (
-    typeof o.serviceId === 'string' &&
-    o.serviceId.length > 0 &&
-    o.priceAtTime !== undefined &&
-    (typeof o.priceAtTime === 'number' || typeof o.priceAtTime === 'string')
-  )
-}
-
-function computeTotalCost(items: ItemInput[]): number {
-  return items.reduce((sum, item) => {
-    const qty = item.quantity ?? 1
-    const price = Number(item.priceAtTime)
-    if (!Number.isFinite(price) || price < 0) return sum
-    if (!Number.isFinite(qty) || qty <= 0) return sum
-    return sum + qty * price
-  }, 0)
-}
 
 async function requireAdmin() {
   const supabase = await createClient()
@@ -275,15 +252,42 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       )
     }
 
-    // Capture prev status for writeoff hook comparison (needs body first)
+    // Fetch the current status once when a status change is requested — used
+    // both to enforce the state machine and (for V2) as the writeoff-hook
+    // prevStatus.
     let prevStatus: string | null = null
-    if (isV2On() && body.status === 'completed') {
-      const { data: prev } = await auth
+    if (body.status !== undefined) {
+      const VALID_STATUSES = ['draft', 'signed', 'completed']
+      if (!VALID_STATUSES.includes(body.status as string)) {
+        return NextResponse.json(
+          { success: false, error: 'Невідомий статус акта' },
+          { status: 400 }
+        )
+      }
+      const { data: cur } = await auth
         .supabase!.from('treatment_records')
         .select('status')
         .eq('id', id)
         .maybeSingle()
-      prevStatus = prev?.status ?? null
+      prevStatus = (cur?.status as string | undefined) ?? null
+      // State machine: draft → signed → completed only. No skipping a step
+      // (draft → completed) and no reversal (signed/completed → draft). Same →
+      // same is allowed (idempotent). Enforced server-side so a direct API call
+      // can't corrupt the act lifecycle regardless of the UI.
+      const ALLOWED_TRANSITIONS: Record<string, string[]> = {
+        draft: ['draft', 'signed'],
+        signed: ['signed', 'completed'],
+        completed: ['completed'],
+      }
+      if (
+        prevStatus &&
+        !ALLOWED_TRANSITIONS[prevStatus]?.includes(body.status as string)
+      ) {
+        return NextResponse.json(
+          { success: false, error: 'Неприпустимий перехід статусу акта' },
+          { status: 409 }
+        )
+      }
     }
 
     const updates: Record<string, unknown> = {}
@@ -321,10 +325,32 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     }
 
     if (Object.keys(updates).length > 0) {
-      const { error: updateError } = await auth
+      let updateQuery = auth
         .supabase!.from('treatment_records')
         .update(updates)
         .eq('id', id)
+      // Make a status transition atomic: only write if the row is still at the
+      // status we validated against, so two concurrent PATCHes (double-click /
+      // retry racing a legit request) can't both pass the read-then-write check
+      // and double-transition (review: TOCTOU).
+      if (body.status !== undefined && prevStatus !== null) {
+        updateQuery = updateQuery.eq('status', prevStatus)
+      }
+      const { data: updatedRows, error: updateError } =
+        await updateQuery.select('id')
+
+      // Guarded transition matched no row → status changed underneath us.
+      if (
+        !updateError &&
+        body.status !== undefined &&
+        prevStatus !== null &&
+        (!updatedRows || updatedRows.length === 0)
+      ) {
+        return NextResponse.json(
+          { success: false, error: 'Неприпустимий перехід статусу акта' },
+          { status: 409 }
+        )
+      }
 
       if (updateError) {
         captureException(

@@ -1,9 +1,12 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 
-// t echoes the key (labels assert on i18n keys); i18n.language drives dates.
+// t echoes the key (labels assert on i18n keys); i18n.language drives dates
+// and service-name localization. Mutable so a test can flip the active
+// language; defaults to 'uk' so every existing assertion is unaffected.
+const i18nState = vi.hoisted(() => ({ language: 'uk' }))
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (k: string) => k, i18n: { language: 'uk' } }),
+  useTranslation: () => ({ t: (k: string) => k, i18n: i18nState }),
 }))
 
 // WalletCards has its own hooks/fetches — stub it; this suite covers the
@@ -88,5 +91,38 @@ describe('CabinetPaymentsPage', () => {
     }
     render(<CabinetPaymentsPage payments={[noService]} cards={[]} />)
     expect(screen.getAllByText('—').length).toBeGreaterThan(0)
+  })
+
+  // Guards the view→helper wiring for #8: a revert to `svc.name_uk` (or an
+  // exact `=== 'en'` check) would still pass the localizedServiceName unit
+  // tests, so assert the rendered name actually follows i18n.language here.
+  it('renders the localized service name for the active language', () => {
+    const localized: Payment = {
+      ...paidPayment,
+      id: 'payLoc',
+      appointments: [
+        {
+          appointment_date: '2026-07-01',
+          appointment_time: '10:00:00',
+          services: [
+            {
+              name_uk: 'Професійна гігієна',
+              name_en: 'Professional hygiene',
+              name_pl: 'Higiena profesjonalna',
+            },
+          ],
+        },
+      ],
+    }
+    i18nState.language = 'en'
+    try {
+      render(<CabinetPaymentsPage payments={[localized]} cards={[]} />)
+      expect(
+        screen.getAllByText('Professional hygiene').length
+      ).toBeGreaterThan(0)
+      expect(screen.queryByText('Професійна гігієна')).not.toBeInTheDocument()
+    } finally {
+      i18nState.language = 'uk'
+    }
   })
 })

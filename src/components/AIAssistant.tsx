@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { trackEvent, AIEvent, AnalyticsEventCategory } from '@/utils/analytics'
 import { CONTACT_INFO } from '@/utils/constants'
+import { renderAssistantMessage } from '@/utils/renderAssistantMessage'
 import {
   X,
   Send,
@@ -242,7 +243,15 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
                           : 'bg-white border border-dental-secondary-200 text-dental-dark rounded-tl-sm'
                       }`}
                     >
-                      <p className="text-sm whitespace-pre-wrap">{text}</p>
+                      {message.role === 'user' ? (
+                        <p className="text-sm whitespace-pre-wrap">{text}</p>
+                      ) : (
+                        /* LLM-текст: мінімальний Markdown у бренд-типографіці
+                           замість сирих ###/** (renderAssistantMessage). */
+                        <div className="text-sm">
+                          {renderAssistantMessage(text)}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )

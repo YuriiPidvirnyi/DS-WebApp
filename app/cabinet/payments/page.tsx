@@ -27,7 +27,7 @@ export default async function PaymentsPage() {
     supabase
       .from('payments')
       .select(
-        'id, invoice_id, amount_kopecks, payment_mode, status, created_at, paid_at, appointments(appointment_date, appointment_time, services(name_uk))'
+        'id, invoice_id, amount_kopecks, payment_mode, status, created_at, paid_at, appointments(appointment_date, appointment_time, services(name_uk, name_en, name_pl))'
       )
       .order('created_at', { ascending: false }),
     supabase

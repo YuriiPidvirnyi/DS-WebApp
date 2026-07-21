@@ -34,7 +34,7 @@ export const Card = ({
   return (
     <Component
       className={clsx(
-        'rounded-xl',
+        'rounded-lg',
         CARD_VARIANT_CLASSES[variant],
         paddingStyles[padding],
         hoverStyles,
@@ -161,7 +161,7 @@ export const CardMedia = ({
   return (
     <div
       className={clsx(
-        'overflow-hidden rounded-t-xl',
+        'overflow-hidden rounded-t-lg',
         aspectStyles[aspectRatio],
         className
       )}

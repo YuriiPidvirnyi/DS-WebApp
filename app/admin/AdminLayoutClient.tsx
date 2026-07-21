@@ -288,7 +288,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       className={
         mobile
           ? 'px-3 py-4 space-y-1'
-          : 'flex-1 px-3 py-4 space-y-1 overflow-y-auto'
+          : 'flex-1 min-h-0 px-3 py-4 space-y-1 overflow-y-auto'
       }
     >
       {NAV_GROUPS.map(group => {
@@ -407,7 +407,11 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
         className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-72 lg:flex-col"
         aria-label={t('admin.layout.sidebarNav')}
       >
-        <div className="flex flex-col flex-1 bg-white border-r border-dental-secondary-100">
+        {/* min-h-0 lets this column shrink to the fixed aside height so the
+            flex-1 <nav> below becomes a bounded scroll area. Without it the
+            column grows to its full content height and the nav never scrolls —
+            bottom items + footer (logout) end up unreachable off-screen. */}
+        <div className="flex flex-col flex-1 min-h-0 bg-white border-r border-dental-secondary-100">
           <div className="flex items-center h-16 px-6 border-b border-dental-secondary-100">
             <Link
               href="/admin"

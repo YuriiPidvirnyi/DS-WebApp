@@ -14,6 +14,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { hasPermission } from '@/lib/permissions'
+import { unitLabel } from '@/lib/stock-units'
 import type { StockMaterial } from '@/types/stock'
 
 interface Category {
@@ -205,7 +206,7 @@ export default function AdminStockMaterialsPage() {
                       {mat.name_uk}
                     </p>
                     <p className="text-xs text-dental-text">
-                      {mat.unit}
+                      {unitLabel(t, mat.unit)}
                       {mat.article_code &&
                         t('admin.stock.materialsPage.articleTag', {
                           code: mat.article_code,

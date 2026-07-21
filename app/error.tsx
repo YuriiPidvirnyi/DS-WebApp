@@ -45,7 +45,7 @@ export default function Error({ error, reset }: ErrorProps) {
             {t('errors.page.description')}
           </p>
           {error.digest && (
-            <p className="text-xs text-dental-text-light font-mono bg-dental-primary-50 px-3 py-2 rounded-lg break-all">
+            <p className="text-xs text-dental-muted font-mono bg-dental-primary-50 px-3 py-2 rounded-lg break-all">
               {t('errors.common.errorId')}: {error.digest}
             </p>
           )}

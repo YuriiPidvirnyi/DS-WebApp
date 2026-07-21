@@ -6,7 +6,9 @@ import { CARD_VARIANT_CLASSES, type CardVariant } from './card-variants'
 
 const hoverClasses: Record<string, string> = {
   lift: 'hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] transition-[transform,box-shadow] duration-300 ease-out shadow-[0_4px_6px_rgba(0,0,0,0.05)]',
-  glow: 'hover:shadow-[0_0_30px_rgba(20,184,166,0.3),0_10px_30px_rgba(0,0,0,0.1)] transition-shadow duration-300 ease-out shadow-[0_4px_6px_rgba(0,0,0,0.05)]',
+  // Brand-teal glow (#3f6f79) — the old value was raw Tailwind teal-500, an
+  // off-token color the design canon bans.
+  glow: 'hover:shadow-[0_0_30px_rgba(63,111,121,0.3),0_10px_30px_rgba(0,0,0,0.1)] transition-shadow duration-300 ease-out shadow-[0_4px_6px_rgba(0,0,0,0.05)]',
   scale: 'hover:scale-[1.02] transition-transform duration-300 ease-out',
   tilt: 'transition-[transform,box-shadow] duration-150 ease-out',
   none: '',
@@ -39,7 +41,7 @@ export default function AnimatedCard({
   return (
     <div
       className={clsx(
-        'rounded-2xl',
+        'rounded-lg',
         CARD_VARIANT_CLASSES[variant],
         hoverClasses[hoverEffect] || '',
         className
