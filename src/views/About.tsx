@@ -130,6 +130,9 @@ const About = () => {
               <LazyImage
                 src="/assets/images/clinic/waiting-room.jpg"
                 alt={t('about.story.photoAlt')}
+                // Just below the text hero — often in the initial viewport and a
+                // likely LCP candidate, so load eagerly (maps to next/image priority).
+                loading="eager"
                 className="absolute inset-0 w-full h-full object-cover"
               />
             </CardMedia>
