@@ -124,13 +124,16 @@
   --text-body-sm--line-height: 1.5;
   --text-body-sm--letter-spacing: 0;
 
-  --radius-sm: 0.5rem;
-  --radius: 0.75rem;
-  --radius-md: 1rem;
-  --radius-lg: 1.25rem;
-  --radius-xl: 1.5rem;
-  --radius-2xl: 2rem;
-  --radius-3xl: 2.5rem;
+  /* Radius scale per handoff canon («контроли 12px, картки 16px, hero 24px»).
+     The previous scale was inflated 1–2 steps (2xl rendered 32px where the
+     deck's cards are 16px) — the root cause of the "bulbous" look. 32px is
+     reserved for the hero photo plate ONLY; 40px does not exist in the deck. */
+  --radius-sm: 0.375rem; /* 6px  — micro chips, edit icon-buttons */
+  --radius: 0.5rem; /* 8px  — small controls (lang button, pricing CTAs) */
+  --radius-md: 0.75rem; /* 12px — buttons, nav items, admin cards */
+  --radius-lg: 1rem; /* 16px — cards, inputs, selects */
+  --radius-xl: 1.5rem; /* 24px — hero-tier surfaces */
+  --radius-2xl: 2rem; /* 32px — hero photo plate only */
 
   --shadow-soft:
     0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
