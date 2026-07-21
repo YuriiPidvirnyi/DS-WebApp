@@ -43,13 +43,13 @@ export default function AdminModal({
           <div>
             <h2 className="text-xl font-bold text-dental-dark">{title}</h2>
             {subtitle ? (
-              <p className="mt-1 text-sm text-dental-text-light">{subtitle}</p>
+              <p className="mt-1 text-sm text-dental-muted">{subtitle}</p>
             ) : null}
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-dental-text-light transition-colors hover:bg-dental-secondary-50 hover:text-dental-dark"
+            className="rounded-lg p-2 text-dental-muted transition-colors hover:bg-dental-secondary-50 hover:text-dental-dark"
             aria-label={t('admin.modal.closeAria')}
           >
             <X className="h-5 w-5" />

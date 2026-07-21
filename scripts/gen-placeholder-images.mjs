@@ -77,7 +77,10 @@ function glyph(kind, cx, cy, s) {
     case 'arrow':
       return `<g ${st}><path d="M ${cx} ${cy - 18 * s} v ${30 * s}"/><path d="M ${cx - 9 * s} ${cy + 2 * s} l ${9 * s} ${11 * s} l ${9 * s} ${-11 * s}"/></g>`
     case 'crown':
-      return `<path d="M ${cx - 20 * s} ${cy + 12 * s} l ${-3 * s} ${-26 * s} l ${12 * s} ${11 * s} l ${11 * s} ${-16 * s} l ${11 * s} ${16 * s} l ${12 * s} ${-11 * s} l ${-3 * s} ${26 * s} Z" ${st} fill="${TEAL}" fill-opacity="0.18"/>`
+      // Note: does NOT reuse `st` — that string carries fill="none", and a
+      // second fill attribute makes the SVG invalid XML (browsers refuse to
+      // render the whole file; this exact bug shipped broken crown cards).
+      return `<path d="M ${cx - 20 * s} ${cy + 12 * s} l ${-3 * s} ${-26 * s} l ${12 * s} ${11 * s} l ${11 * s} ${-16 * s} l ${11 * s} ${16 * s} l ${12 * s} ${-11 * s} l ${-3 * s} ${26 * s} Z" stroke="${TEAL}" stroke-width="${3.2 * s}" stroke-linecap="round" stroke-linejoin="round" fill="${TEAL}" fill-opacity="0.18"/>`
     case 'shine':
       return `<g ${st}><path d="M ${cx - 3 * s} ${cy - 18 * s} q ${-14 * s} ${18 * s} 0 ${36 * s}"/><path d="M ${cx + 9 * s} ${cy - 12 * s} q ${-9 * s} ${12 * s} 0 ${24 * s}"/></g>`
     case 'screw':
@@ -110,6 +113,20 @@ function serviceSvg(kind, i) {
 ${backdrop(W, H, i)}
 ${tooth(W / 2, H * 0.45, 2.15, i)}
 ${glyph(kind, W / 2, H * 0.45, 2.15)}
+${wordmark(W, H)}
+</svg>`)
+}
+
+// Wide (16:9) category tile for the Home services section — same visual
+// system as the per-service placeholders, sized for CardMedia aspect-video so
+// nothing gets crop-mangled. Language-neutral like the rest.
+function categorySvg(kind, i) {
+  const W = 800,
+    H = 450
+  return round2(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Dental Story service category">
+${backdrop(W, H, 'c' + i)}
+${tooth(W / 2, H * 0.46, 1.7, 'c' + i)}
+${glyph(kind, W / 2, H * 0.46, 1.7)}
 ${wordmark(W, H)}
 </svg>`)
 }
@@ -158,6 +175,15 @@ const SERVICES = [
   ['braces-ceramic', 'braces+'],
   ['aligners', 'aligner'],
 ]
+// [slug, glyphKind] — wide 16:9 tiles for the Home category cards. Glyphs
+// mirror each category's flagship procedure (fill=therapy, screw=surgery/
+// implants, crown=orthopedics, braces=orthodontics).
+const CATEGORIES = [
+  ['category-therapy', 'fill'],
+  ['category-surgery', 'screw'],
+  ['category-orthopedics', 'crown'],
+  ['category-orthodontics', 'braces'],
+]
 // [slug, fullName]. The name drives the initials avatar (language-neutral).
 const DOCTORS = [
   ['andrii-melnyk', 'Андрій Мельник'],
@@ -176,15 +202,21 @@ function generateAll() {
   SERVICES.forEach(([slug, kind], i) => {
     writeFileSync(`${ROOT}/services/${slug}.svg`, serviceSvg(kind, i) + '\n')
   })
+  CATEGORIES.forEach(([slug, kind], i) => {
+    writeFileSync(`${ROOT}/services/${slug}.svg`, categorySvg(kind, i) + '\n')
+  })
   DOCTORS.forEach(([slug, name], i) => {
     writeFileSync(`${ROOT}/doctors/${slug}.svg`, doctorSvg(name, i) + '\n')
   })
-  return { services: SERVICES.length, doctors: DOCTORS.length }
+  return {
+    services: SERVICES.length + CATEGORIES.length,
+    doctors: DOCTORS.length,
+  }
 }
 
 // Exported so the drift/existence test can regenerate in-memory and compare
 // against the committed files without triggering any writes.
-export { SERVICES, DOCTORS, serviceSvg, doctorSvg }
+export { SERVICES, CATEGORIES, DOCTORS, serviceSvg, categorySvg, doctorSvg }
 
 // Write files only when run directly (npm run gen:placeholders), never on import.
 // Guarded: fileURLToPath throws on the non-file import.meta.url a bundler hands

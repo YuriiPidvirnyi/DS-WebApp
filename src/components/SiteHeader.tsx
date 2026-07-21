@@ -205,8 +205,11 @@ const Header = memo(() => {
                   </span>
                 </Link>
               )}
-              <div className="hidden lg:block [&_button]:min-h-0! [&_button]:py-0.5! [&_button]:text-white/90! hover:[&_button]:text-white! [&_button]:border-white/20!">
-                <LanguageSwitcher variant="dropdown" />
+              {/* Scope the topbar pill overrides to the TRIGGER only ([&>div>button])
+                  — [&_button] would also hit the dropdown items and paint them
+                  white-on-white. */}
+              <div className="hidden lg:block [&>div>button]:min-h-0! [&>div>button]:py-0.5! [&>div>button]:text-white/90! hover:[&>div>button]:text-white! [&>div>button]:border-white/20!">
+                <LanguageSwitcher variant="dropdown" showNativeName={false} />
               </div>
             </div>
           </div>

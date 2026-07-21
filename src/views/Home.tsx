@@ -10,6 +10,7 @@ import {
   useScrollAnimation,
   useStaggeredAnimation,
 } from '@/hooks/useScrollAnimation'
+import { useSectionSnap } from '@/hooks/useSectionSnap'
 import BeforeAfterGallery from '@/components/BeforeAfterGallery'
 import images from '@/content/images.json'
 import {
@@ -45,6 +46,7 @@ interface HomeProps {
 
 const Home = ({ heroCTAVariant }: HomeProps) => {
   const { t } = useTranslation()
+  useSectionSnap()
 
   // Scroll animation hooks for page sections
   const { ref: featuresRef, isVisible: featuresVisible } = useScrollAnimation()
@@ -118,12 +120,12 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
         ref={featuresRef}
         role="region"
         aria-labelledby="features-heading"
-        className="py-16 lg:py-24 bg-dental-secondary-50"
+        className="snap-start snap-screen flex flex-col justify-center py-12 bg-dental-secondary-50"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection
             isVisible={featuresVisible}
-            className="text-center mb-16"
+            className="text-center mb-10"
           >
             {/* Кікер не дублює H2 (знахідка 06) */}
             <span className="inline-block text-sm font-semibold text-dental-primary-ink tracking-wider uppercase mb-4">
@@ -131,7 +133,7 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
             </span>
             <h2
               id="features-heading"
-              className="text-4xl lg:text-5xl font-bold text-dental-dark mb-6 leading-tight"
+              className="text-4xl lg:text-5xl font-bold text-dental-dark mb-4 leading-tight"
             >
               {t('home.features.title')}
             </h2>
@@ -174,19 +176,19 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
         ref={servicesRef}
         role="region"
         aria-labelledby="services-heading"
-        className="py-16 lg:py-24 bg-white"
+        className="snap-start snap-screen flex flex-col justify-center py-12 bg-white"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection
             isVisible={servicesVisible}
-            className="text-center mb-16"
+            className="text-center mb-10"
           >
             <span className="inline-block text-sm font-semibold text-dental-primary-ink tracking-wider uppercase mb-4">
               {t('navigation.services')}
             </span>
             <h2
               id="services-heading"
-              className="text-4xl lg:text-5xl font-bold text-dental-dark mb-6 leading-tight"
+              className="text-4xl lg:text-5xl font-bold text-dental-dark mb-4 leading-tight"
             >
               {t('home.services.title')}
             </h2>
@@ -195,7 +197,10 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
             </p>
           </AnimatedSection>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Один ряд на lg: 2×2 великих плиток давало секції 1589px — майже
+              дві висоти екрана; чотири компактні картки вміщають секцію в
+              один снап-екран. */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {services.map((service, index) => {
               const svc = typedImages.services?.[index]
               const bg =
@@ -209,6 +214,10 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
                   isVisible={servicesVisible}
                   className="overflow-hidden group"
                 >
+                  {/* Реальне фото категорії (object-cover — кадри не 16:9);
+                      фолбек — брендований SVG-тайл. Заголовок у тілі картки —
+                      не білим по фото, що ламало правило WCAG для Brand Blue
+                      і вимагало темних оверлеїв. */}
                   <CardMedia aspectRatio="video" className="relative">
                     <LazyImage
                       src={svc?.src || bg}
@@ -217,22 +226,23 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
                         svc?.alt ||
                         t('home.services.imageAlt', { title: service.title })
                       }
-                      className="absolute inset-0 w-full h-full transition-transform duration-500 group-hover:scale-105"
-                      width={1200}
-                      height={800}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      width={svc?.width ?? 800}
+                      height={svc?.height ?? 450}
+                      // Фото тепер великі (до 1500px) — без sizes next/image
+                      // добирав би srcset від intrinsic-ширини, а не від
+                      // фактичної чверті ряду.
+                      sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
                     />
-                    <div className="absolute inset-0 bg-dental-dark/40" />
-                    <div className="absolute bottom-4 left-6 right-6">
-                      <h3 className="text-2xl font-bold text-white mb-1">
-                        {service.title}
-                      </h3>
-                    </div>
                   </CardMedia>
-                  <div className="p-6">
-                    <p className="text-dental-muted mb-4 leading-relaxed">
+                  <div className="p-5">
+                    <h3 className="text-lg font-bold text-dental-dark mb-2">
+                      {service.title}
+                    </h3>
+                    <p className="text-sm text-dental-muted mb-3 leading-relaxed">
                       {service.description}
                     </p>
-                    <CardFooter className="mt-4 pt-4">
+                    <CardFooter className="mt-2 pt-3">
                       <Link
                         href="/services"
                         className="inline-flex items-center text-dental-primary-ink hover:text-dental-primary-700 font-semibold group/link"
@@ -250,11 +260,11 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
           <AnimatedSection
             isVisible={servicesVisible}
             delay={600}
-            className="text-center mt-12"
+            className="text-center mt-10"
           >
             <Link
               href="/services"
-              className="inline-flex items-center gap-3 bg-dental-primary-900 hover:bg-dental-primary-800 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-dental-primary-900/20 hover:-translate-y-0.5"
+              className="inline-flex items-center gap-3 bg-dental-primary-900 hover:bg-dental-primary-800 text-white px-8 py-4 rounded-lg font-heading font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-dental-primary-900/20 hover:-translate-y-0.5"
             >
               {t('buttons.allServices')}
               <ArrowRight className="h-5 w-5" />
@@ -271,19 +281,19 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
         ref={pricingRef}
         role="region"
         aria-labelledby="pricing-heading"
-        className="py-16 lg:py-24 bg-dental-secondary-50"
+        className="snap-start snap-screen flex flex-col justify-center py-12 bg-dental-secondary-50"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection
             isVisible={pricingVisible}
-            className="text-center mb-16"
+            className="text-center mb-10"
           >
             <span className="inline-block text-sm font-semibold text-dental-primary-ink tracking-wider uppercase mb-4">
               {t('pricing.title')}
             </span>
             <h2
               id="pricing-heading"
-              className="text-4xl lg:text-5xl font-bold text-dental-dark mb-6 leading-tight"
+              className="text-4xl lg:text-5xl font-bold text-dental-dark mb-4 leading-tight"
             >
               {t('home.pricing.title')}
             </h2>
@@ -321,7 +331,7 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
                 </ul>
                 <Link
                   href="/booking"
-                  className="block w-full bg-dental-secondary-100 hover:bg-dental-secondary-200 text-dental-dark px-6 py-3 rounded-lg font-semibold transition-colors min-h-[44px] flex items-center justify-center"
+                  className="block w-full bg-dental-secondary-100 hover:bg-dental-secondary-200 text-dental-dark px-6 py-3 rounded font-semibold transition-colors min-h-[44px] flex items-center justify-center"
                 >
                   {t('buttons.bookAppointment')}
                 </Link>
@@ -361,7 +371,7 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
                 </ul>
                 <Link
                   href="/booking"
-                  className="block w-full bg-dental-primary-700 hover:bg-dental-primary-800 text-white px-6 py-3 rounded-lg font-semibold transition-colors min-h-[44px] flex items-center justify-center"
+                  className="block w-full bg-dental-primary-700 hover:bg-dental-primary-800 text-white px-6 py-3 rounded font-semibold transition-colors min-h-[44px] flex items-center justify-center"
                 >
                   {t('buttons.bookAppointment')}
                 </Link>
@@ -396,7 +406,7 @@ const Home = ({ heroCTAVariant }: HomeProps) => {
                 </ul>
                 <Link
                   href="/booking"
-                  className="block w-full bg-dental-secondary-100 hover:bg-dental-secondary-200 text-dental-dark px-6 py-3 rounded-lg font-semibold transition-colors min-h-[44px] flex items-center justify-center"
+                  className="block w-full bg-dental-secondary-100 hover:bg-dental-secondary-200 text-dental-dark px-6 py-3 rounded font-semibold transition-colors min-h-[44px] flex items-center justify-center"
                 >
                   {t('buttons.bookAppointment')}
                 </Link>

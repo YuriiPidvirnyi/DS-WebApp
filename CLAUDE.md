@@ -2,6 +2,17 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Communicating with the owner
+
+- **Always include clickable links in context.** When reporting that something is deployed,
+  built, or ready to check — attach the actual URL (Vercel preview, PR, deployed page, report)
+  right there in the same message. Never say "the preview is ready" without the link.
+- **All visual/UX changes require owner approval BEFORE they are pushed.** Show a preview
+  (screenshot, mockup, or preview URL of a local variant) and get an explicit "так/ок/затверджую"
+  first. This covers layout, imagery, colors, typography, and any redesign of an existing
+  section — bug fixes without visual impact are exempt. Never ship a visual direction on
+  your own judgement; prepare options and let the owner pick.
+
 ## Git Workflow
 
 **Always base work on `develop`, never on `main`.**

@@ -97,10 +97,10 @@ export function ConfirmDialog({
         aria-labelledby={titleId}
         aria-describedby={description ? descriptionId : undefined}
         tabIndex={-1}
-        className="w-full max-w-md overflow-hidden rounded-md bg-white shadow-2xl focus:outline-hidden"
+        className="w-full max-w-md overflow-hidden rounded-dialog bg-white shadow-2xl focus:outline-hidden"
       >
         <div className="p-7 pb-5">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-status-error-100">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-md bg-status-error-100">
             <Icon aria-hidden="true" className="h-6 w-6 text-dental-error" />
           </div>
 
@@ -120,7 +120,7 @@ export function ConfirmDialog({
           )}
 
           {consequences && consequences.length > 0 && (
-            <div className="mt-4 rounded-xl border border-dental-secondary-200 bg-dental-secondary-50 px-4 py-3.5">
+            <div className="mt-4 rounded-md border border-dental-secondary-200 bg-dental-secondary-50 px-4 py-3.5">
               <p className="mb-2 text-xs font-semibold tracking-wider text-dental-muted uppercase">
                 {t('confirmDialog.consequencesTitle')}
               </p>
@@ -139,7 +139,7 @@ export function ConfirmDialog({
           )}
 
           {warning && (
-            <div className="mt-4 flex items-start gap-2.5 rounded-lg bg-status-error-100 px-3.5 py-3">
+            <div className="mt-4 flex items-start gap-2.5 rounded-md bg-status-error-100 px-3.5 py-3">
               <AlertTriangle
                 aria-hidden="true"
                 className="mt-0.5 h-4.5 w-4.5 shrink-0 text-dental-error"
@@ -167,7 +167,7 @@ export function ConfirmDialog({
                 onChange={e => setTyped(e.target.value)}
                 autoComplete="off"
                 spellCheck={false}
-                className="min-h-11 w-full rounded-lg border-[1.5px] border-dental-primary-600 px-4 text-[15px] text-dental-dark focus:outline-hidden focus:ring-2 focus:ring-dental-primary-300"
+                className="min-h-11 w-full rounded-md border-[1.5px] border-dental-primary-600 px-4 text-[15px] text-dental-dark focus:outline-hidden focus:ring-2 focus:ring-dental-primary-300"
               />
             </div>
           )}

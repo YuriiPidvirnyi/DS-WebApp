@@ -42,7 +42,7 @@ export default function AdminError({ error, reset }: ErrorProps) {
             {t('errors.admin.description')}
           </p>
           {error.digest && (
-            <p className="text-xs text-dental-text-light font-mono bg-white px-3 py-2 rounded-lg break-all border border-dental-secondary-200">
+            <p className="text-xs text-dental-muted font-mono bg-white px-3 py-2 rounded-lg break-all border border-dental-secondary-200">
               {t('errors.common.errorId')}: {error.digest}
             </p>
           )}

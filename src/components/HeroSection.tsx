@@ -122,7 +122,7 @@ function HeroSection({ heroCTAVariant }: HeroSectionProps) {
       статистика замість абстрактної (17).
     */
     <section
-      className="relative overflow-hidden bg-white"
+      className="snap-start snap-screen relative flex flex-col justify-center overflow-hidden bg-white"
       suppressHydrationWarning
     >
       {/* Subtle background pattern */}

@@ -23,8 +23,16 @@ const NotFound = () => {
           {t('notFound.description')}
         </p>
 
-        {/* Emoji */}
-        <div className="text-6xl mb-8">🦷</div>
+        {/* Brand tooth mark — emoji iconography is banned by the design canon */}
+        {/* eslint-disable-next-line @next/next/no-img-element -- static decorative vector; next/image can't optimize inline SVG */}
+        <img
+          src="/favicon.svg"
+          alt=""
+          aria-hidden="true"
+          width={64}
+          height={64}
+          className="mx-auto mb-8 h-16 w-16 opacity-80"
+        />
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">

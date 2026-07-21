@@ -285,6 +285,30 @@ const pl = {
         treatment: 'Ortodoncja',
         duration: '18 miesięcy',
       },
+      '4': {
+        title: 'Wybielanie zębów',
+        description: 'Wybielanie gabinetowe o kilka tonów',
+        treatment: 'Wybielanie',
+        duration: '1 wizyta',
+      },
+      '5': {
+        title: 'Odbudowa kompozytowa',
+        description: 'Odtworzenie kształtu zębów kompozytem',
+        treatment: 'Odbudowa',
+        duration: '1–2 wizyty',
+      },
+      '6': {
+        title: 'Korony cyrkonowe',
+        description: 'Zastąpienie zniszczonych zębów koronami bezmetalowymi',
+        treatment: 'Korony',
+        duration: '2 tygodnie',
+      },
+      '7': {
+        title: 'Higienizacja profesjonalna',
+        description: 'Usuwanie osadu i kamienia: ultradźwięki + Air Flow',
+        treatment: 'Higiena',
+        duration: '1 wizyta',
+      },
     },
     beforePlaceholder: 'Zdjęcie PRZED — przypadek „{{case}}”',
     afterPlaceholder: 'Zdjęcie PO — przypadek „{{case}}”',
@@ -502,6 +526,8 @@ const pl = {
       paragraph2:
         'Jesteśmy dumni, że przez lata pracy pomogliśmy tysiącom pacjentów przywrócić zdrowie zębów i piękny uśmiech. Nasza filozofia opiera się na zasadach zaufania, profesjonalizmu i indywidualnego podejścia do każdego pacjenta.',
       mission: 'Twój uśmiech — nasza misja',
+      photoAlt:
+        'Poczekalnia Dental Story — logo na ścianie i półka z książkami',
     },
     values: {
       title: 'Nasze wartości',

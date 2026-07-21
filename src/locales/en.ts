@@ -284,6 +284,30 @@ const en = {
         treatment: 'Orthodontics',
         duration: '18 months',
       },
+      '4': {
+        title: 'Teeth Whitening',
+        description: 'In-office whitening several shades brighter',
+        treatment: 'Whitening',
+        duration: '1 visit',
+      },
+      '5': {
+        title: 'Composite Restoration',
+        description: 'Rebuilding tooth shape with composite resin',
+        treatment: 'Restoration',
+        duration: '1–2 visits',
+      },
+      '6': {
+        title: 'Zirconia Crowns',
+        description: 'Replacing damaged teeth with metal-free crowns',
+        treatment: 'Crowns',
+        duration: '2 weeks',
+      },
+      '7': {
+        title: 'Professional Cleaning',
+        description: 'Plaque and tartar removal: ultrasonic + Air Flow',
+        treatment: 'Hygiene',
+        duration: '1 visit',
+      },
     },
     beforePlaceholder: 'BEFORE photo — case “{{case}}”',
     afterPlaceholder: 'AFTER photo — case “{{case}}”',
@@ -500,6 +524,7 @@ const en = {
       paragraph2:
         'We are proud that over the years we have helped thousands of patients restore their dental health and beautiful smiles. Our philosophy is based on the principles of trust, professionalism, and an individual approach to each patient.',
       mission: 'Your Smile — Our Mission',
+      photoAlt: 'Dental Story waiting area — logo wall and book shelf',
     },
     values: {
       title: 'Our Values',
