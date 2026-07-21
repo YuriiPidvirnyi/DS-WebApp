@@ -13,25 +13,26 @@ import {
 
 interface Language {
   code: 'uk' | 'en' | 'pl'
-  flag: string
+  /** Short UI label — NOT the ISO code: 'uk' must read as UA, never "UK". */
+  label: 'UA' | 'EN' | 'PL'
 }
 
+// No country flags: the design canon bans flag/emoji iconography site-wide
+// (handoff rules А2/Л4) — language is text («UA», «Українська»), never a flag.
 const languages: Language[] = [
-  { code: 'uk', flag: '🇺🇦' },
-  { code: 'en', flag: '🇬🇧' },
-  { code: 'pl', flag: '🇵🇱' },
+  { code: 'uk', label: 'UA' },
+  { code: 'en', label: 'EN' },
+  { code: 'pl', label: 'PL' },
 ]
 
 interface LanguageSwitcherProps {
   variant?: 'dropdown' | 'inline'
-  showFlag?: boolean
   showNativeName?: boolean
   className?: string
 }
 
 export default function LanguageSwitcher({
   variant = 'dropdown',
-  showFlag = true,
   showNativeName = true,
   className = '',
 }: LanguageSwitcherProps) {
@@ -152,8 +153,7 @@ export default function LanguageSwitcher({
               aria-label={getSwitchToLabel(lang.code)}
               aria-current={lang.code === displayLang.code ? 'true' : undefined}
             >
-              {showFlag && <span className="mr-1">{lang.flag}</span>}
-              {lang.code.toUpperCase()}
+              {lang.label}
             </button>
             {index < languages.length - 1 && (
               <span className="text-dental-secondary-300 mx-0.5">|</span>
@@ -168,10 +168,19 @@ export default function LanguageSwitcher({
     <div ref={dropdownRef} className={`relative ${className}`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex min-h-[44px] items-center gap-2 px-3 py-2 text-sm font-medium text-dental-muted hover:text-dental-primary-600 transition-colors border border-transparent ${
-          isOpen
-            ? 'rounded-t-2xl border-dental-primary-400 border-b-transparent bg-white shadow-xs'
-            : 'rounded-2xl hover:bg-dental-secondary-50'
+        className={`flex min-h-[44px] items-center font-medium text-dental-muted hover:text-dental-primary-600 transition-colors border border-transparent ${
+          showNativeName
+            ? 'gap-2 px-3 py-2 text-sm'
+            : 'gap-1.5 px-2.5 py-1 text-xs'
+        } ${
+          showNativeName
+            ? isOpen
+              ? 'rounded-t-2xl border-dental-primary-400 border-b-transparent bg-white shadow-xs'
+              : 'rounded-2xl hover:bg-dental-secondary-50'
+            : // Compact mode (topbar «UA ˅» button): handoff canon verbatim —
+              // radius 8px, no flag, stable look in both states (no white
+              // morph that would swallow the light text on the dark bar).
+              'rounded-[8px]'
         }`}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
@@ -181,21 +190,26 @@ export default function LanguageSwitcher({
             : uk.languageSwitcher.aria.select
         }
       >
-        <Globe className="w-4 h-4" />
-        {showFlag && <span>{displayLang.flag}</span>}
-        <span className="hidden sm:inline">
+        {showNativeName && <Globe className="w-4 h-4" />}
+        <span className={showNativeName ? 'hidden sm:inline' : undefined}>
           {showNativeName
             ? getLanguageMeta(displayLang.code).nativeName
-            : displayLang.code.toUpperCase()}
+            : displayLang.label}
         </span>
         <ChevronDown
-          className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`${showNativeName ? 'w-4 h-4' : 'w-3 h-3'} transition-transform ${isOpen ? 'rotate-180' : ''}`}
         />
       </button>
 
       {isOpen && (
         <div
-          className="absolute right-0 top-full z-50 mt-0 w-56 origin-top-right bg-white rounded-b-2xl border border-dental-primary-400 border-t-0 py-1 shadow-xl"
+          className={`absolute right-0 top-full z-50 origin-top-right bg-white py-1 shadow-xl ${
+            showNativeName
+              ? 'mt-0 w-56 rounded-b-2xl border border-dental-primary-400 border-t-0'
+              : // Compact mode: handoff canon — control radius (12px), warm
+                // #d1cac0 border, panel fitted to content (no dead air).
+                'mt-1.5 w-fit min-w-0 rounded-[12px] border border-dental-secondary'
+          }`}
           role="listbox"
           aria-label={
             isMounted
@@ -205,20 +219,47 @@ export default function LanguageSwitcher({
         >
           {languages.map(lang => {
             const meta = getLanguageMeta(lang.code)
+            const active = lang.code === displayLang.code
+            if (!showNativeName) {
+              // Compact mode, handoff canon: no flags (banned deck-wide),
+              // selected = #f0f7f8 tint + teal ink — never a solid dark fill.
+              return (
+                <button
+                  key={lang.code}
+                  onClick={() => handleLanguageChange(lang.code)}
+                  className={`w-full flex min-h-[44px] items-center gap-2.5 whitespace-nowrap px-3.5 py-2 text-left text-sm transition-colors duration-150 first:rounded-t-[11px] last:rounded-b-[11px] ${
+                    active
+                      ? 'bg-dental-primary-50 font-medium text-dental-primary-700'
+                      : 'text-dental-dark hover:bg-dental-primary-50/60 hover:text-dental-primary-700'
+                  }`}
+                  role="option"
+                  aria-selected={active}
+                >
+                  {meta.nativeName}
+                  <Check
+                    className={`ml-auto w-3.5 h-3.5 text-dental-primary-600 ${active ? '' : 'invisible'}`}
+                  />
+                </button>
+              )
+            }
             return (
               <button
                 key={lang.code}
                 onClick={() => handleLanguageChange(lang.code)}
                 className={`w-full flex min-h-[44px] items-center justify-between px-4 py-2.5 text-left transition-colors ${
-                  lang.code === displayLang.code
+                  active
                     ? 'bg-dental-primary-600 text-white'
                     : 'hover:bg-dental-primary-50 hover:text-dental-primary-700'
                 }`}
                 role="option"
-                aria-selected={lang.code === displayLang.code}
+                aria-selected={active}
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-lg">{lang.flag}</span>
+                  <span
+                    className={`text-xs font-semibold ${active ? 'text-white/90' : 'text-dental-muted'}`}
+                  >
+                    {lang.label}
+                  </span>
                   <div>
                     <div
                       className={`font-medium ${
